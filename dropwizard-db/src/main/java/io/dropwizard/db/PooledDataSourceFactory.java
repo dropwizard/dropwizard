@@ -77,6 +77,13 @@ public interface PooledDataSourceFactory {
     String getUrl();
 
     /**
+     * Returns the JDBC connection URL.
+     *
+     * @return the JDBC connection URL as a string
+     */
+    String getReadOnlyUrl();
+
+    /**
      * Configures the pool as a single connection pool.
      * It's useful for tools that use only one database connection,
      * such as database migrations.
@@ -91,5 +98,5 @@ public interface PooledDataSourceFactory {
      * @param name           name of the connection pool
      * @return a new JDBC data source as {@code ManagedDataSource}
      */
-    ManagedDataSource build(MetricRegistry metricRegistry, String name);
+    ManagedDataSources build(MetricRegistry metricRegistry, String name);
 }

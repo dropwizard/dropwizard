@@ -354,6 +354,9 @@ public class DataSourceFactory implements PooledDataSourceFactory {
     @NotEmpty
     private String url = "";
 
+    @Nullable
+    private String readOnlyUrl;
+
     @NotNull
     private Map<String, String> properties = new LinkedHashMap<>();
 
@@ -483,6 +486,17 @@ public class DataSourceFactory implements PooledDataSourceFactory {
     @JsonProperty
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    @JsonProperty
+    @Override
+    public String getReadOnlyUrl() {
+        return readOnlyUrl;
+    }
+
+    @JsonProperty
+    public void setReadOnlyUrl(String readOnlyUrl) {
+        this.readOnlyUrl = readOnlyUrl;
     }
 
     @JsonProperty
@@ -864,7 +878,20 @@ public class DataSourceFactory implements PooledDataSourceFactory {
     }
 
     @Override
-    public ManagedDataSource build(MetricRegistry metricRegistry, String name) {
+    public ManagedDataSources build(MetricRegistry metricRegistry, String name) {
+        final PoolProperties writerPoolConfig = getPoolConfiguration(name, url, readOnlyByDefault);
+        ManagedPooledDataSource writeDataSource = new ManagedPooledDataSource(writerPoolConfig, metricRegistry);
+        ManagedPooledDataSource readDataSource = writeDataSource;
+
+        if (readOnlyUrl != null) {
+            final PoolProperties readerPoolConfig = getPoolConfiguration(name, readOnlyUrl, true);
+            readDataSource = new ManagedPooledDataSource(readerPoolConfig, metricRegistry);
+        }
+
+        return new ManagedDataSources(writeDataSource, readDataSource);
+    }
+
+    private PoolProperties getPoolConfiguration(String name, String url, Boolean readOnlyByDefault) {
         final Properties properties = new Properties();
         for (Map.Entry<String, String> property : this.properties.entrySet()) {
             properties.setProperty(property.getKey(), property.getValue());
@@ -917,6 +944,6 @@ public class DataSourceFactory implements PooledDataSourceFactory {
         }
         validatorClassName.ifPresent(poolConfig::setValidatorClassName);
         jdbcInterceptors.ifPresent(poolConfig::setJdbcInterceptors);
-        return new ManagedPooledDataSource(poolConfig, metricRegistry);
+        return poolConfig;
     }
 }

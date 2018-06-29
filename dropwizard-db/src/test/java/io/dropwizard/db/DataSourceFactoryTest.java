@@ -46,7 +46,7 @@ public class DataSourceFactoryTest {
     }
 
     private ManagedDataSource dataSource() throws Exception {
-        dataSource = factory.build(metricRegistry, "test");
+        dataSource = factory.build(metricRegistry, "test").getWriteDataSource();
         dataSource.start();
         return dataSource;
     }
@@ -55,7 +55,7 @@ public class DataSourceFactoryTest {
     public void testInitialSizeIsZero() throws Exception {
         factory.setUrl("nonsense invalid url");
         factory.setInitialSize(0);
-        ManagedDataSource dataSource = factory.build(metricRegistry, "test");
+        ManagedDataSource dataSource = factory.build(metricRegistry, "test").getWriteDataSource();
         dataSource.start();
     }
 
@@ -98,7 +98,7 @@ public class DataSourceFactoryTest {
         factory.setDriverClass("org.example.no.driver.here");
 
         assertThatExceptionOfType(SQLException.class).isThrownBy(() ->
-            factory.build(metricRegistry, "test").getConnection());
+            factory.build(metricRegistry, "test").getWriteDataSource().getConnection());
     }
 
     @Test
@@ -137,5 +137,18 @@ public class DataSourceFactoryTest {
         assertThat(factory.getUrl()).isEqualTo("jdbc:postgresql://db.example.com/db-prod");
         assertThat(factory.getValidationQuery()).isEqualTo("/* Health Check */ SELECT 1");
         assertThat(factory.getValidationQueryTimeout()).isEqualTo(Optional.empty());
+    }
+
+    @Test
+    public void readDataSourceIsSameAsWriterByDefault() {
+        ManagedDataSources datasources = factory.build(metricRegistry, "test");
+        assertThat(datasources.getWriteDataSource()).isEqualTo(datasources.getReadDataSource());
+    }
+
+    @Test
+    public void separateReadDatasourceWithUrl() {
+        factory.setReadOnlyUrl("some-other-url");
+        ManagedDataSources datasources = factory.build(metricRegistry, "test");
+        assertThat(datasources.getWriteDataSource()).isNotEqualTo(datasources.getReadDataSource());
     }
 }
