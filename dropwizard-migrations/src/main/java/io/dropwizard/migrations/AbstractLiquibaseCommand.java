@@ -75,7 +75,7 @@ public abstract class AbstractLiquibaseCommand<T extends Configuration> extends 
     CloseableLiquibase openLiquibase(final PooledDataSourceFactory dataSourceFactory, final Namespace namespace)
             throws SQLException, LiquibaseException {
         final CloseableLiquibase liquibase;
-        final ManagedDataSource dataSource = dataSourceFactory.build(new MetricRegistry(), "liquibase");
+        final ManagedDataSource dataSource = dataSourceFactory.build(new MetricRegistry(), "liquibase").getWriteDataSource();
         final Database database = createDatabase(dataSource, namespace);
         final String migrationsFile = namespace.getString("migrations-file");
         if (migrationsFile == null) {

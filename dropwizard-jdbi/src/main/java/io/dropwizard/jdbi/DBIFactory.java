@@ -106,7 +106,7 @@ public class DBIFactory {
     public DBI build(Environment environment,
                      PooledDataSourceFactory configuration,
                      String name) {
-        final ManagedDataSource dataSource = configuration.build(environment.metrics(), name);
+        final ManagedDataSource dataSource = configuration.build(environment.metrics(), name).getWriteDataSource();
         return build(environment, configuration, dataSource, name);
     }
 

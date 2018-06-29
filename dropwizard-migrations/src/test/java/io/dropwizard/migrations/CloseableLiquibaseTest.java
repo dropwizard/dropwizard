@@ -24,7 +24,7 @@ public class CloseableLiquibaseTest {
         factory.setUrl("jdbc:h2:mem:DbTest-" + System.currentTimeMillis());
         factory.setUser("DbTest");
 
-        dataSource = (ManagedPooledDataSource) factory.build(new MetricRegistry(), "DbTest");
+        dataSource = (ManagedPooledDataSource) factory.build(new MetricRegistry(), "DbTest").getWriteDataSource();
         liquibase = new CloseableLiquibaseWithClassPathMigrationsFile(dataSource, "migrations.xml");
     }
 
