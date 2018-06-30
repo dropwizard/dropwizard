@@ -42,7 +42,30 @@ public class JdbiFactory {
     public Jdbi build(Environment environment,
                       PooledDataSourceFactory configuration,
                       String name) {
-        final ManagedDataSource dataSource = configuration.build(environment.metrics(), name);
+        final ManagedDataSource dataSource = configuration.build(environment.metrics(), name).getWriteDataSource();
+        return build(environment, configuration, dataSource, name);
+    }
+
+    /**
+     * Build a fully configured {@link Jdbi} instance managed by the DropWizard lifecycle
+     * with the configured health check; this method should not be overridden
+     * (instead, override {@link #newInstance(ManagedDataSource)} and
+     * {@link #configure(Jdbi)})
+     * This will be an instance connected to your read URL. If you do not configure a read URL
+     * Then this is that same as running {@link #buildReadOnly(Environment, PooledDataSourceFactory, String)}
+     *
+     * @param environment
+     * @param configuration
+     * @param name
+     * @return A fully configured {@link Jdbi} object using a managed data source
+     * based on the specified environment and configuration
+     * @see #build(Environment, PooledDataSourceFactory, ManagedDataSource,
+     * String)
+     */
+    public Jdbi buildReadOnly(Environment environment,
+                      PooledDataSourceFactory configuration,
+                      String name) {
+        final ManagedDataSource dataSource = configuration.build(environment.metrics(), name).getReadDataSource();
         return build(environment, configuration, dataSource, name);
     }
 
