@@ -1077,7 +1077,8 @@ Logging Configuration via HTTP
 
 Active log levels can be changed during the runtime of a Dropwizard application via HTTP using
 the ``LogConfigurationTask``. For instance, to configure the log level for a
-single ``Logger``. The ``logger`` parameter may be repeated. The optional ``duration`` parameter must be an ISO 8601 duration format.:
+single ``Logger``. The ``logger`` parameter may be repeated. The optional ``duration`` parameter must be an ISO 8601 duration format.
+When the duration elapses the level will revert to the effective level of the parent logger.:
 
 .. code-block:: shell
 
@@ -1089,6 +1090,11 @@ single ``Logger``. The ``logger`` parameter may be repeated. The optional ``dura
     curl -X POST -d "logger=com.example.helloworld&level=INFO&duration=PT10M" http://localhost:8081/tasks/log-level
     # Revert com.example.helloworld to the default level
     curl -X POST -d "logger=com.example.helloworld" http://localhost:8081/tasks/log-level
+
+.. note::
+
+    Chaining log level changes on the same package may have unexpected consequences due to the naive implementation of a
+    simple FIFO timer.
 
 .. _man-core-logging-filters:
 
