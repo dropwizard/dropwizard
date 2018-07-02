@@ -1,9 +1,14 @@
 dist: trusty
 sudo: false
 language: java
+jdk:
+  - openjdk8
+  - oraclejdk8
+  - openjdk9
+  - openjdk10
+  - openjdk11
 before_install:
   - ulimit -c unlimited -S
-  - 'wget https://raw.githubusercontent.com/sormuras/bach/master/install-jdk.sh'
 script:
   - ./mvnw verify -B -P code-coverage
   - ./mvnw site -pl docs -B
@@ -12,18 +17,6 @@ after_success:
 cache:
   directories:
     - $HOME/.m2
-
-matrix:
-  include:
-    - os: linux
-      jdk: oraclejdk8
-      addons:
-        apt:
-          packages:
-            - oracle-java8-installer
-    - os: linux
-      env: JDK='OpenJDK 10'
-      install: . ./install-jdk.sh -F 10
 deploy:
   provider: script
   script: bash .travis_deploy.sh
