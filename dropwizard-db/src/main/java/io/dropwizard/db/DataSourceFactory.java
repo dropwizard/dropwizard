@@ -3,7 +3,6 @@ package io.dropwizard.db;
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.primitives.Ints;
 import io.dropwizard.util.Duration;
 import io.dropwizard.validation.MinDuration;
 import io.dropwizard.validation.ValidationMethod;
@@ -295,6 +294,15 @@ import java.util.concurrent.TimeUnit;
  *             {@link org.apache.tomcat.jdbc.pool.JdbcInterceptor}
  *         </td>
  *     </tr>
+ *     <tr>
+ *         <td>{@code ignoreExceptionOnPreLoad}</td>
+ *         <td>{@code false}</td>
+ *         <td>
+ *             Flag whether ignore error of connection creation while initializing the pool. Set to
+ *             true if you want to ignore error of connection creation while initializing the pool.
+ *             Set to false if you want to fail the initialization of the pool by throwing exception.
+ *         </td>
+ *     </tr>
  * </table>
  */
 public class DataSourceFactory implements PooledDataSourceFactory {
@@ -419,6 +427,8 @@ public class DataSourceFactory implements PooledDataSourceFactory {
     private Duration removeAbandonedTimeout = Duration.seconds(60L);
 
     private Optional<String> jdbcInterceptors = Optional.empty();
+
+    private boolean ignoreExceptionOnPreLoad = false;
 
     @JsonProperty
     @Override
@@ -836,6 +846,16 @@ public class DataSourceFactory implements PooledDataSourceFactory {
         this.jdbcInterceptors = jdbcInterceptors;
     }
 
+    @JsonProperty
+    public boolean isIgnoreExceptionOnPreLoad() {
+        return ignoreExceptionOnPreLoad;
+    }
+
+    @JsonProperty
+    public void setIgnoreExceptionOnPreLoad(boolean ignoreExceptionOnPreLoad) {
+        this.ignoreExceptionOnPreLoad = ignoreExceptionOnPreLoad;
+    }
+
     @Override
     public void asSingleConnectionPool() {
         minSize = 1;
@@ -862,6 +882,7 @@ public class DataSourceFactory implements PooledDataSourceFactory {
         poolConfig.setDefaultTransactionIsolation(defaultTransactionIsolation.get());
         poolConfig.setDriverClassName(driverClass);
         poolConfig.setFairQueue(useFairQueue);
+        poolConfig.setIgnoreExceptionOnPreLoad(ignoreExceptionOnPreLoad);
         poolConfig.setInitialSize(initialSize);
         poolConfig.setInitSQL(initializationQuery);
         poolConfig.setLogAbandoned(logAbandonedConnections);
@@ -881,7 +902,7 @@ public class DataSourceFactory implements PooledDataSourceFactory {
         poolConfig.setUsername(user);
         poolConfig.setPassword(user != null && password == null ? "" : password);
         poolConfig.setRemoveAbandoned(removeAbandoned);
-        poolConfig.setRemoveAbandonedTimeout(Ints.saturatedCast(removeAbandonedTimeout.toSeconds()));
+        poolConfig.setRemoveAbandonedTimeout((int) removeAbandonedTimeout.toSeconds());
 
         poolConfig.setTestWhileIdle(checkConnectionWhileIdle);
         poolConfig.setValidationQuery(validationQuery);

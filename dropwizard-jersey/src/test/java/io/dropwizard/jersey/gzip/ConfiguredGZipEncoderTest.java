@@ -76,7 +76,7 @@ public class ConfiguredGZipEncoderTest {
         assertThat(context.isProceedCalled(), is(true));
     }
 
-    private class WriterInterceptorContextMock implements WriterInterceptorContext {
+    private static class WriterInterceptorContextMock implements WriterInterceptorContext {
         private final MultivaluedMap<String, Object> headers;
         private OutputStream os = new OutputStream() {
             @Override

@@ -1,8 +1,8 @@
 package io.dropwizard.servlets.tasks;
 
-import com.google.common.collect.ImmutableMultimap;
-
 import java.io.PrintWriter;
+import java.util.List;
+import java.util.Map;
 
 /**
  * An arbitrary administrative task which can be performed via the admin interface.
@@ -37,6 +37,6 @@ public abstract class Task {
      * @param output     a {@link PrintWriter} wrapping the output stream of the task
      * @throws Exception if something goes wrong
      */
-    public abstract void execute(ImmutableMultimap<String, String> parameters,
+    public abstract void execute(Map<String, List<String>> parameters,
                                  PrintWriter output) throws Exception;
 }

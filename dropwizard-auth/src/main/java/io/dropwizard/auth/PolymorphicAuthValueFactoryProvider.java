@@ -4,12 +4,12 @@ import org.glassfish.hk2.api.InjectionResolver;
 import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.hk2.api.TypeLiteral;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
-import org.glassfish.jersey.server.internal.inject.AbstractContainerRequestValueFactory;
-import org.glassfish.jersey.server.internal.inject.AbstractValueFactoryProvider;
+import org.glassfish.jersey.server.ContainerRequest;
+import org.glassfish.jersey.server.internal.inject.AbstractValueParamProvider;
 import org.glassfish.jersey.server.internal.inject.MultivaluedParameterExtractorProvider;
 import org.glassfish.jersey.server.internal.inject.ParamInjectionResolver;
 import org.glassfish.jersey.server.model.Parameter;
-import org.glassfish.jersey.server.spi.internal.ValueFactoryProvider;
+import org.glassfish.jersey.server.spi.internal.ValueParamProvider;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
@@ -18,6 +18,7 @@ import java.lang.reflect.ParameterizedType;
 import java.security.Principal;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 
 /**
  * Value factory provider supporting injection of a hierarchy of
@@ -27,7 +28,7 @@ import java.util.Set;
  *            principals inherit
  */
 @Singleton
-public class PolymorphicAuthValueFactoryProvider<T extends Principal> extends AbstractValueFactoryProvider {
+public class PolymorphicAuthValueFactoryProvider<T extends Principal> extends AbstractValueParamProvider {
     /**
      * Set of provided {@link Principal} subclasses.
      */
@@ -47,41 +48,23 @@ public class PolymorphicAuthValueFactoryProvider<T extends Principal> extends Ab
         ServiceLocator injector,
         PrincipalClassSetProvider<T> principalClassSetProvider
     ) {
-        super(mpep, injector, Parameter.Source.UNKNOWN);
+        super(() -> mpep, Parameter.Source.UNKNOWN);
         this.principalClassSet = principalClassSetProvider.clazzSet;
     }
 
-    /**
-     * Return a factory for the provided parameter. We only expect objects of
-     * the type {@link T} being annotated with {@link Auth} annotation.
-     *
-     * @param parameter parameter that was annotated for being injected
-     * @return the factory if annotated parameter matched type
-     */
-    @Override
     @Nullable
-    public AbstractContainerRequestValueFactory<?> createValueFactory(Parameter parameter) {
+    @Override
+    protected Function<ContainerRequest, ?> createValueProvider(Parameter parameter) {
         if (!parameter.isAnnotationPresent(Auth.class)) {
             return null;
         } else if (principalClassSet.contains(parameter.getRawType())) {
-            return new PrincipalContainerRequestValueFactory();
+            return request -> new PrincipalContainerRequestValueFactory(request).provide();
         } else {
             final boolean isOptionalPrincipal = parameter.getRawType() == Optional.class
                 && ParameterizedType.class.isAssignableFrom(parameter.getType().getClass())
                 && principalClassSet.contains(((ParameterizedType) parameter.getType()).getActualTypeArguments()[0]);
 
-            return isOptionalPrincipal ? new OptionalPrincipalContainerRequestValueFactory() : null;
-        }
-    }
-
-    @Singleton
-    static class AuthInjectionResolver extends ParamInjectionResolver<Auth> {
-
-        /**
-         * Create new {@link Auth} annotation injection resolver.
-         */
-        public AuthInjectionResolver() {
-            super(PolymorphicAuthValueFactoryProvider.class);
+            return isOptionalPrincipal ? request -> new OptionalPrincipalContainerRequestValueFactory(request).provide() : null;
         }
     }
 
@@ -96,8 +79,7 @@ public class PolymorphicAuthValueFactoryProvider<T extends Principal> extends Ab
     }
 
     /**
-     * Injection binder for {@link PolymorphicAuthValueFactoryProvider} and
-     * {@link AuthInjectionResolver}.
+     * Injection binder for {@link PolymorphicAuthValueFactoryProvider}.
      *
      * @param <T> the type of the principal
      */
@@ -112,9 +94,7 @@ public class PolymorphicAuthValueFactoryProvider<T extends Principal> extends Ab
         @Override
         protected void configure() {
             bind(new PrincipalClassSetProvider<>(principalClassSet)).to(PrincipalClassSetProvider.class);
-            bind(PolymorphicAuthValueFactoryProvider.class).to(ValueFactoryProvider.class).in(Singleton.class);
-            bind(AuthInjectionResolver.class).to(new TypeLiteral<InjectionResolver<Auth>>() {
-            }).in(Singleton.class);
+            bind(PolymorphicAuthValueFactoryProvider.class).to(ValueParamProvider.class).in(Singleton.class);
         }
     }
 }

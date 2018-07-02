@@ -18,4 +18,5 @@ layout:
     service-name: "user-service"
     service-build: 218
   includesMdcKeys: [userId]
+  flattenMdc: true
 

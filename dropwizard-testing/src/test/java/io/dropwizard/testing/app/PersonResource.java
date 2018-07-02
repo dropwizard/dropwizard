@@ -1,7 +1,6 @@
 package io.dropwizard.testing.app;
 
 import com.codahale.metrics.annotation.Timed;
-import com.google.common.collect.ImmutableList;
 import io.dropwizard.jersey.params.IntParam;
 import io.dropwizard.validation.Validated;
 import org.eclipse.jetty.io.EofException;
@@ -18,6 +17,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import static java.util.Objects.requireNonNull;
@@ -40,8 +41,8 @@ public class PersonResource {
     @GET
     @Timed
     @Path("/list")
-    public ImmutableList<Person> getPersonList(@PathParam("name") String name) {
-        return ImmutableList.of(getPerson(name));
+    public List<Person> getPersonList(@PathParam("name") String name) {
+        return Collections.singletonList(getPerson(name));
     }
 
     @GET

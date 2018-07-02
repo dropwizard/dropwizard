@@ -9,6 +9,7 @@ import javax.validation.Validator;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 /**
  * A configuration of a Jersey testing environment.
@@ -17,7 +18,7 @@ import java.util.function.Consumer;
  */
 class ResourceTestJerseyConfiguration {
 
-    final Set<Object> singletons;
+    final Set<Supplier<?>> singletons;
     final Set<Class<?>> providers;
     final Map<String, Object> properties;
     final ObjectMapper mapper;
@@ -26,7 +27,7 @@ class ResourceTestJerseyConfiguration {
     final TestContainerFactory testContainerFactory;
     final boolean registerDefaultExceptionMappers;
 
-    ResourceTestJerseyConfiguration(Set<Object> singletons, Set<Class<?>> providers, Map<String, Object> properties,
+    ResourceTestJerseyConfiguration(Set<Supplier<?>> singletons, Set<Class<?>> providers, Map<String, Object> properties,
                                     ObjectMapper mapper, Validator validator, Consumer<ClientConfig> clientConfigurator,
                                     TestContainerFactory testContainerFactory, boolean registerDefaultExceptionMappers) {
         this.singletons = singletons;

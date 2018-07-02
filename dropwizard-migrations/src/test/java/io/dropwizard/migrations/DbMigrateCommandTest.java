@@ -1,6 +1,6 @@
 package io.dropwizard.migrations;
 
-import com.google.common.collect.ImmutableMap;
+import io.dropwizard.util.Maps;
 import net.jcip.annotations.NotThreadSafe;
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.inf.Namespace;
@@ -14,6 +14,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.io.PrintWriter;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -35,18 +36,20 @@ public class DbMigrateCommandTest extends AbstractMigrationTest {
 
     @Test
     public void testRun() throws Exception {
-        migrateCommand.run(null, new Namespace(ImmutableMap.of()), conf);
+        migrateCommand.run(null, new Namespace(Collections.emptyMap()), conf);
         try (Handle handle = new DBI(databaseUrl, "sa", "").open()) {
             final List<Map<String, Object>> rows = handle.select("select * from persons");
             assertThat(rows).hasSize(1);
             assertThat(rows.get(0)).isEqualTo(
-                    ImmutableMap.of("id", 1, "name", "Bill Smith", "email", "bill@smith.me"));
+                    Maps.of("id", 1,
+                            "name", "Bill Smith",
+                            "email", "bill@smith.me"));
         }
     }
 
     @Test
     public void testRunFirstTwoMigration() throws Exception {
-        migrateCommand.run(null, new Namespace(ImmutableMap.of("count", (Object) 2)), conf);
+        migrateCommand.run(null, new Namespace(Collections.singletonMap("count", 2)), conf);
         try (Handle handle = new DBI(databaseUrl, "sa", "").open()) {
             assertThat(handle.select("select * from persons")).isEmpty();
         }
@@ -56,7 +59,7 @@ public class DbMigrateCommandTest extends AbstractMigrationTest {
     public void testDryRun() throws Exception {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         migrateCommand.setOutputStream(new PrintStream(baos));
-        migrateCommand.run(null, new Namespace(ImmutableMap.of("dry-run", (Object) true)), conf);
+        migrateCommand.run(null, new Namespace(Collections.singletonMap("dry-run", true)), conf);
         assertThat(baos.toString(UTF_8)).startsWith(String.format(
                 "-- *********************************************************************%n" +
                 "-- Update Database Script%n" +
@@ -65,7 +68,9 @@ public class DbMigrateCommandTest extends AbstractMigrationTest {
 
     @Test
     public void testPrintHelp() throws Exception {
-        final Subparser subparser = ArgumentParsers.newArgumentParser("db")
+        final Subparser subparser = ArgumentParsers.newFor("db")
+                .terminalWidthDetection(false)
+                .build()
                 .addSubparsers()
                 .addParser(migrateCommand.getName())
                 .description(migrateCommand.getDescription());
@@ -82,7 +87,7 @@ public class DbMigrateCommandTest extends AbstractMigrationTest {
                         "positional arguments:%n" +
                         "  file                   application configuration file%n" +
                         "%n" +
-                        "optional arguments:%n" +
+                        "named arguments:%n" +
                         "  -h, --help             show this help message and exit%n" +
                         "  --migrations MIGRATIONS-FILE%n" +
                         "                         the file containing  the  Liquibase migrations for%n" +

@@ -1,5 +1,6 @@
 package com.example.helloworld.resources;
 
+import com.codahale.metrics.annotation.Metered;
 import com.codahale.metrics.annotation.Timed;
 import com.example.helloworld.api.Saying;
 import com.example.helloworld.core.Template;
@@ -33,7 +34,8 @@ public class HelloWorldResource {
     }
 
     @GET
-    @Timed(name = "get-requests")
+    @Timed(name = "get-requests-timed")
+    @Metered(name = "get-requests-metered")
     @CacheControl(maxAge = 1, maxAgeUnit = TimeUnit.DAYS)
     public Saying sayHello(@QueryParam("name") Optional<String> name) {
         return new Saying(counter.incrementAndGet(), template.render(name));

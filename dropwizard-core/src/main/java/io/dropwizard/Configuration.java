@@ -1,7 +1,6 @@
 package io.dropwizard;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.base.MoreObjects;
 import io.dropwizard.logging.DefaultLoggingFactory;
 import io.dropwizard.logging.LoggingFactory;
 import io.dropwizard.metrics.MetricsFactory;
@@ -125,10 +124,6 @@ public class Configuration {
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this)
-            .add("server", server)
-            .add("logging", logging)
-            .add("metrics", metrics)
-            .toString();
+        return "Configuration{server=" + server + ", logging=" + logging + ", metrics=" + metrics + "}";
     }
 }

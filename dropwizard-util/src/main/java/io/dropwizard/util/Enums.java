@@ -1,7 +1,5 @@
 package io.dropwizard.util;
 
-import com.google.common.base.CharMatcher;
-
 import javax.annotation.Nullable;
 
 /**
@@ -24,10 +22,13 @@ public class Enums {
      */
     @Nullable
     public static Enum<?> fromStringFuzzy(String value, Enum<?>[] constants) {
-        final String text = CharMatcher.whitespace()
-            .removeFrom(value)
-            .replace('-', '_')
-            .replace('.', '_');
+        final String text = value
+                .replace(" ", "")
+                .replace("\n", "")
+                .replace("\r", "")
+                .replace("\t", "")
+                .replace('-', '_')
+                .replace('.', '_');
         for (Enum<?> constant : constants) {
             if (constant.name().equalsIgnoreCase(text)) {
                 return constant;

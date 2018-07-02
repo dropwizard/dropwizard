@@ -4,9 +4,6 @@ import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.annotation.ExceptionMetered;
 import com.codahale.metrics.annotation.Metered;
 import com.codahale.metrics.annotation.Timed;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMultimap;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -21,9 +18,12 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 import static com.codahale.metrics.MetricRegistry.name;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -64,13 +64,13 @@ public class TaskServletTest {
 
         when(request.getMethod()).thenReturn("POST");
         when(request.getPathInfo()).thenReturn("/gc");
-        when(request.getParameterNames()).thenReturn(Collections.enumeration(ImmutableList.of()));
+        when(request.getParameterNames()).thenReturn(Collections.enumeration(Collections.emptyList()));
         when(response.getWriter()).thenReturn(output);
         when(request.getInputStream()).thenReturn(bodyStream);
 
         servlet.service(request, response);
 
-        verify(gc).execute(ImmutableMultimap.of(), output);
+        verify(gc).execute(Collections.emptyMap(), output);
     }
 
     @Test
@@ -80,14 +80,14 @@ public class TaskServletTest {
 
         when(request.getMethod()).thenReturn("POST");
         when(request.getPathInfo()).thenReturn("/gc");
-        when(request.getParameterNames()).thenReturn(Collections.enumeration(ImmutableList.of("runs")));
+        when(request.getParameterNames()).thenReturn(Collections.enumeration(Collections.singletonList("runs")));
         when(request.getParameterValues("runs")).thenReturn(new String[]{"1"});
         when(request.getInputStream()).thenReturn(bodyStream);
         when(response.getWriter()).thenReturn(output);
 
         servlet.service(request, response);
 
-        verify(gc).execute(ImmutableMultimap.of("runs", "1"), output);
+        verify(gc).execute(Collections.singletonMap("runs", Collections.singletonList("1")), output);
     }
 
     @Test
@@ -98,13 +98,13 @@ public class TaskServletTest {
 
         when(request.getMethod()).thenReturn("POST");
         when(request.getPathInfo()).thenReturn("/print-json");
-        when(request.getParameterNames()).thenReturn(Collections.enumeration(ImmutableList.of()));
+        when(request.getParameterNames()).thenReturn(Collections.enumeration(Collections.emptyList()));
         when(request.getInputStream()).thenReturn(bodyStream);
         when(response.getWriter()).thenReturn(output);
 
         servlet.service(request, response);
 
-        verify(printJSON).execute(ImmutableMultimap.of(), body, output);
+        verify(printJSON).execute(Collections.emptyMap(), body, output);
     }
 
     @Test
@@ -112,14 +112,14 @@ public class TaskServletTest {
     public void returnsA500OnExceptions() throws Exception {
         when(request.getMethod()).thenReturn("POST");
         when(request.getPathInfo()).thenReturn("/gc");
-        when(request.getParameterNames()).thenReturn(Collections.enumeration(ImmutableList.of()));
+        when(request.getParameterNames()).thenReturn(Collections.enumeration(Collections.emptyList()));
 
         final PrintWriter output = mock(PrintWriter.class);
         when(response.getWriter()).thenReturn(output);
 
         final RuntimeException ex = new RuntimeException("whoops");
 
-        doThrow(ex).when(gc).execute(any(ImmutableMultimap.class), any(PrintWriter.class));
+        doThrow(ex).when(gc).execute(any(Map.class), any(PrintWriter.class));
 
         servlet.service(request, response);
 
@@ -132,20 +132,14 @@ public class TaskServletTest {
      */
     @Test
     public void verifyTaskExecuteMethod() {
-        try {
-            Task.class.getMethod("execute", ImmutableMultimap.class, PrintWriter.class);
-        } catch (NoSuchMethodException e) {
-            Assert.fail("Execute method for " + Task.class.getName() + " not found");
-        }
+        assertThatCode(() -> Task.class.getMethod("execute", Map.class, PrintWriter.class))
+            .doesNotThrowAnyException();
     }
 
     @Test
     public void verifyPostBodyTaskExecuteMethod() {
-        try {
-            PostBodyTask.class.getMethod("execute", ImmutableMultimap.class, String.class, PrintWriter.class);
-        } catch (NoSuchMethodException e) {
-            Assert.fail("Execute method for " + PostBodyTask.class.getName() + " not found");
-        }
+        assertThatCode(() -> PostBodyTask.class.getMethod("execute", Map.class, String.class, PrintWriter.class))
+            .doesNotThrowAnyException();
     }
 
     @Test
@@ -186,7 +180,7 @@ public class TaskServletTest {
         final Task timedTask = new Task("timed-task") {
             @Override
             @Timed(name = "vacuum-cleaning")
-            public void execute(ImmutableMultimap<String, String> parameters, PrintWriter output) throws Exception {
+            public void execute(Map<String, List<String>> parameters, PrintWriter output) throws Exception {
                 output.println("Vacuum cleaning");
             }
         };
@@ -206,7 +200,7 @@ public class TaskServletTest {
         final Task meteredTask = new Task("metered-task") {
             @Override
             @Metered(name = "vacuum-cleaning")
-            public void execute(ImmutableMultimap<String, String> parameters, PrintWriter output) throws Exception {
+            public void execute(Map<String, List<String>> parameters, PrintWriter output) throws Exception {
                 output.println("Vacuum cleaning");
             }
         };
@@ -226,7 +220,7 @@ public class TaskServletTest {
         final Task exceptionMeteredTask = new Task("exception-metered-task") {
             @Override
             @ExceptionMetered(name = "vacuum-cleaning-exceptions")
-            public void execute(ImmutableMultimap<String, String> parameters, PrintWriter output) throws Exception {
+            public void execute(Map<String, List<String>> parameters, PrintWriter output) throws Exception {
                 throw new RuntimeException("The engine has died");
             }
         };
@@ -242,6 +236,7 @@ public class TaskServletTest {
             "vacuum-cleaning-exceptions"));
     }
 
+    @SuppressWarnings("InputStreamSlowMultibyteRead")
     private static class TestServletInputStream extends ServletInputStream {
         private InputStream delegate;
 

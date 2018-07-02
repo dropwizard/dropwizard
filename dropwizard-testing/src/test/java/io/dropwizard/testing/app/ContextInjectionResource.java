@@ -1,6 +1,7 @@
 package io.dropwizard.testing.app;
 
 import com.codahale.metrics.annotation.Timed;
+import io.dropwizard.jersey.PATCH;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -23,4 +24,10 @@ public class ContextInjectionResource {
     public String getThis() {
         throw new RuntimeException("Can't touch this");
     }
+
+    @PATCH
+    public String echoPatch(String patchMessage) {
+        return patchMessage;
+    }
+
 }

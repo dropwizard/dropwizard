@@ -6,6 +6,7 @@ import org.junit.Test;
 import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 public class SizeTest {
     @Test
@@ -130,19 +131,19 @@ public class SizeTest {
         assertThat(Size.parse("1T")).isEqualTo(Size.terabytes(1));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void unableParseWrongSizeCount() {
-        Size.parse("three bytes");
+        assertThatIllegalArgumentException().isThrownBy(() -> Size.parse("three bytes"));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void unableParseWrongSizeUnit() {
-        Size.parse("1EB");
+        assertThatIllegalArgumentException().isThrownBy(() -> Size.parse("1EB"));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void unableParseWrongSizeFormat() {
-        Size.parse("1 mega byte");
+        assertThatIllegalArgumentException().isThrownBy(() -> Size.parse("1 mega byte"));
     }
 
     @Test
@@ -546,7 +547,7 @@ public class SizeTest {
         assertThat(mapper.readValue("\"1 terabytes\"", Size.class)).isEqualTo(Size.terabytes(1L));
         assertThat(mapper.readValue("\"2 terabytes\"", Size.class)).isEqualTo(Size.terabytes(2L));
     }
-    
+
     @Test
     public void verifyComparableContract() {
         final Size kb = Size.kilobytes(1024L);

@@ -1,8 +1,6 @@
 package io.dropwizard.hibernate;
 
 import com.codahale.metrics.MetricRegistry;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import io.dropwizard.logging.BootstrapLogging;
@@ -11,14 +9,14 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -29,9 +27,6 @@ public class UnitOfWorkAwareProxyFactoryTest {
     }
 
     private SessionFactory sessionFactory;
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
 
     @Before
     public void setUp() throws Exception {
@@ -45,12 +40,12 @@ public class UnitOfWorkAwareProxyFactoryTest {
         dataSourceFactory.setUser("sa");
         dataSourceFactory.setDriverClass("org.hsqldb.jdbcDriver");
         dataSourceFactory.setValidationQuery("SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS");
-        dataSourceFactory.setProperties(ImmutableMap.of("hibernate.dialect", "org.hibernate.dialect.HSQLDialect"));
+        dataSourceFactory.setProperties(Collections.singletonMap("hibernate.dialect", "org.hibernate.dialect.HSQLDialect"));
         dataSourceFactory.setInitialSize(1);
         dataSourceFactory.setMinSize(1);
 
         sessionFactory = new SessionFactoryFactory()
-                .build(bundle, environment, dataSourceFactory, ImmutableList.of());
+                .build(bundle, environment, dataSourceFactory, Collections.emptyList());
         try (Session session = sessionFactory.openSession()) {
             Transaction transaction = session.beginTransaction();
             session.createNativeQuery("create table user_sessions (token varchar(64) primary key, username varchar(16))")
@@ -83,12 +78,11 @@ public class UnitOfWorkAwareProxyFactoryTest {
 
     @Test
     public void testProxyHandlesErrors() {
-        thrown.expect(IllegalStateException.class);
-        thrown.expectMessage("Session cluster is down");
-
-        new UnitOfWorkAwareProxyFactory("default", sessionFactory)
+        assertThatExceptionOfType(IllegalStateException.class).isThrownBy(()->
+            new UnitOfWorkAwareProxyFactory("default", sessionFactory)
                 .create(BrokenAuthenticator.class)
-                .authenticate("b812ae4");
+                .authenticate("b812ae4"))
+            .withMessage("Session cluster is down");
     }
 
     @Test
@@ -96,7 +90,7 @@ public class UnitOfWorkAwareProxyFactoryTest {
         final UnitOfWorkAwareProxyFactory unitOfWorkAwareProxyFactory =
                 new UnitOfWorkAwareProxyFactory("default", sessionFactory);
 
-        ImmutableMap<String, SessionFactory> sessionFactories = ImmutableMap.of("default", sessionFactory);
+        Map<String, SessionFactory> sessionFactories = Collections.singletonMap("default", sessionFactory);
         UnitOfWorkAspect aspect1 = unitOfWorkAwareProxyFactory.newAspect(sessionFactories);
         UnitOfWorkAspect aspect2 = unitOfWorkAwareProxyFactory.newAspect(sessionFactories);
         assertThat(aspect1).isNotSameAs(aspect2);
@@ -108,7 +102,7 @@ public class UnitOfWorkAwareProxyFactoryTest {
         final UnitOfWorkAwareProxyFactory unitOfWorkAwareProxyFactory =
             new UnitOfWorkAwareProxyFactory("default", sessionFactory) {
                 @Override
-                public UnitOfWorkAspect newAspect(ImmutableMap<String, SessionFactory> sessionFactories) {
+                public UnitOfWorkAspect newAspect(Map<String, SessionFactory> sessionFactories) {
                     return new CustomAspect(sessionFactories);
                 }
             };

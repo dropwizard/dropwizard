@@ -1,11 +1,10 @@
 package io.dropwizard.configuration;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.cache.CacheBuilderSpec;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.io.Resources;
+import com.github.benmanes.caffeine.cache.CaffeineSpec;
 import io.dropwizard.jackson.Jackson;
+import io.dropwizard.util.Maps;
+import io.dropwizard.util.Resources;
 import io.dropwizard.validation.BaseValidator;
 import org.assertj.core.data.MapEntry;
 import org.junit.After;
@@ -19,14 +18,15 @@ import javax.validation.constraints.Pattern;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Enumeration;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
 
@@ -62,18 +62,18 @@ public abstract class BaseConfigurationFactoryTest {
         @JsonProperty
         private int age = 1;
 
-        List<String> type = ImmutableList.of();
+        List<String> type = Collections.emptyList();
 
         @JsonProperty
-        private Map<String, String> properties = new LinkedHashMap<>();
+        private Map<String, String> properties = Collections.emptyMap();
 
         @JsonProperty
-        private List<ExampleServer> servers = new ArrayList<>();
+        private List<ExampleServer> servers = Collections.emptyList();
 
         private boolean admin;
 
         @JsonProperty("my.logger")
-        private Map<String, String> logger = new LinkedHashMap<>();
+        private Map<String, String> logger = Collections.emptyMap();
 
         public String getName() {
             return name;
@@ -112,18 +112,18 @@ public abstract class BaseConfigurationFactoryTest {
         String name = "Coda Hale";
 
         @JsonProperty
-        List<String> type = ImmutableList.of("coder", "wizard");
+        List<String> type = Arrays.asList("coder", "wizard");
 
         @JsonProperty
-        Map<String, String> properties = ImmutableMap.of("debug", "true", "settings.enabled", "false");
+        Map<String, String> properties = Maps.of("debug", "true", "settings.enabled", "false");
 
         @JsonProperty
-        List<ExampleServer> servers = ImmutableList.of(
+        List<ExampleServer> servers = Arrays.asList(
                 ExampleServer.create(8080), ExampleServer.create(8081), ExampleServer.create(8082));
 
         @JsonProperty
         @Valid
-        CacheBuilderSpec cacheBuilderSpec = CacheBuilderSpec.disableCaching();
+        CaffeineSpec cacheBuilderSpec = CaffeineSpec.parse("initialCapacity=0,maximumSize=0");
     }
 
     static class NonInsatiableExample {
@@ -181,7 +181,7 @@ public abstract class BaseConfigurationFactoryTest {
         assertThat(example.cacheBuilderSpec)
             .isNotNull();
         assertThat(example.cacheBuilderSpec)
-            .isEqualTo(CacheBuilderSpec.disableCaching());
+            .isEqualTo(CaffeineSpec.parse("initialCapacity=0,maximumSize=0"));
     }
 
     @Test
@@ -318,12 +318,11 @@ public abstract class BaseConfigurationFactoryTest {
         }
     }
 
-    @Test(expected = ConfigurationParsingException.class)
+    @Test
     public void throwsAnExceptionOnArrayOverrideWithInvalidType() throws Exception {
         System.setProperty("dw.servers", "one,two");
 
-        factory.build(validFile);
-        failBecauseExceptionWasNotThrown(ConfigurationParsingException.class);
+        assertThatExceptionOfType(ConfigurationParsingException.class).isThrownBy(() -> factory.build(validFile));
     }
 
     @Test
@@ -410,8 +409,8 @@ public abstract class BaseConfigurationFactoryTest {
                         .build();
 
         assertThat(example.name).isEqualTo("Coda Hale");
-        assertThat(example.type).isEqualTo(ImmutableList.of("coder", "wizard"));
-        assertThat(example.properties).isEqualTo(ImmutableMap.of("debug", "true", "settings.enabled", "false"));
+        assertThat(example.type).isEqualTo(Arrays.asList("coder", "wizard"));
+        assertThat(example.properties).isEqualTo(Maps.of("debug", "true", "settings.enabled", "false"));
         assertThat(example.servers.get(0).getPort()).isEqualTo(8080);
         assertThat(example.servers.get(1).getPort()).isEqualTo(8081);
         assertThat(example.servers.get(2).getPort()).isEqualTo(8082);

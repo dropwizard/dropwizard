@@ -1,0 +1,7 @@
+level: INFO
+appenders:
+  - type: tcp
+    host: localhost
+    port: ${tcp.server.port}
+    immediateFlush: false
+    sendBufferSize: 1KB

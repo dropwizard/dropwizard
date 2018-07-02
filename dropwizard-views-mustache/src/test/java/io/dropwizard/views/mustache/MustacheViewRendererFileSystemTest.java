@@ -1,8 +1,6 @@
 package io.dropwizard.views.mustache;
 
 import com.codahale.metrics.MetricRegistry;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import io.dropwizard.logging.BootstrapLogging;
 import io.dropwizard.views.ViewMessageBodyWriter;
 import io.dropwizard.views.ViewRenderExceptionMapper;
@@ -18,6 +16,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
+import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
@@ -66,8 +65,8 @@ public class MustacheViewRendererFileSystemTest extends JerseyTest {
         forceSet(TestProperties.CONTAINER_PORT, "0");
         ResourceConfig config = new ResourceConfig();
         final ViewRenderer renderer = new MustacheViewRenderer();
-        renderer.configure(ImmutableMap.of("fileRoot", "src/test/resources"));
-        config.register(new ViewMessageBodyWriter(new MetricRegistry(), ImmutableList.of(renderer)));
+        renderer.configure(Collections.singletonMap("fileRoot", "src/test/resources"));
+        config.register(new ViewMessageBodyWriter(new MetricRegistry(), Collections.singletonList(renderer)));
         config.register(new ViewRenderExceptionMapper());
         config.register(new ExampleResource());
         return config;

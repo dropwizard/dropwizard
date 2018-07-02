@@ -41,17 +41,15 @@ import java.util.TimeZone;
 @JsonTypeName("console")
 public class ConsoleReporterFactory extends BaseFormattedReporterFactory {
     public enum ConsoleStream {
-        STDOUT(System.out),
-        STDERR(System.err);
-
-        private final PrintStream printStream;
-
-        ConsoleStream(PrintStream printStream) {
-            this.printStream = printStream;
-        }
+        STDOUT,
+        STDERR;
 
         public PrintStream get() {
-            return printStream;
+            if (this == STDERR) {
+                return System.err;
+            } else {
+                return System.out;
+            }
         }
     }
 

@@ -1,6 +1,5 @@
 package io.dropwizard.jersey.filter;
 
-import com.google.common.annotations.VisibleForTesting;
 import io.dropwizard.util.Duration;
 
 import javax.ws.rs.container.ContainerRequestContext;
@@ -10,6 +9,7 @@ import javax.ws.rs.container.ContainerResponseFilter;
 import javax.ws.rs.container.PreMatching;
 import javax.ws.rs.ext.Provider;
 import java.io.IOException;
+import java.util.Locale;
 import java.util.function.Supplier;
 
 /**
@@ -17,7 +17,7 @@ import java.util.function.Supplier;
  * taken to execute the request, in seconds (based on the implementation from
  * Ruby on Rails).
  *
- * @see https://github.com/rack/rack/blob/master/lib/rack/runtime.rb
+ * @see <a href="https://github.com/rack/rack/blob/2.0.0/lib/rack/runtime.rb">Rack::Runtime</a>
  */
 @Provider
 @PreMatching
@@ -29,7 +29,6 @@ public class RuntimeFilter implements ContainerRequestFilter, ContainerResponseF
 
     private Supplier<Long> currentTimeProvider = System::nanoTime;
 
-    @VisibleForTesting
     void setCurrentTimeProvider(Supplier<Long> currentTimeProvider) {
         this.currentTimeProvider = currentTimeProvider;
     }
@@ -46,7 +45,7 @@ public class RuntimeFilter implements ContainerRequestFilter, ContainerResponseF
         final Long startTime = (Long) request.getProperty(RUNTIME_PROPERTY);
         if (startTime != null) {
             final float seconds = (currentTimeProvider.get() - startTime) / NANOS_IN_SECOND;
-            response.getHeaders().putSingle(RUNTIME_HEADER, String.format("%.6f", seconds));
+            response.getHeaders().putSingle(RUNTIME_HEADER, String.format(Locale.ROOT, "%.6f", seconds));
         }
     }
 }

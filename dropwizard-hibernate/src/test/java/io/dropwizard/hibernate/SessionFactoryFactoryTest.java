@@ -1,13 +1,12 @@
 package io.dropwizard.hibernate;
 
 import com.codahale.metrics.MetricRegistry;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.db.ManagedPooledDataSource;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import io.dropwizard.logging.BootstrapLogging;
 import io.dropwizard.setup.Environment;
+import io.dropwizard.util.Maps;
 import org.hibernate.EmptyInterceptor;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -22,6 +21,8 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
 import javax.annotation.Nullable;
+import java.util.Collections;
+import java.util.Map;
 
 import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -57,7 +58,7 @@ public class SessionFactoryFactoryTest {
         config.setDriverClass("org.hsqldb.jdbcDriver");
         config.setValidationQuery("SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS");
 
-        final ImmutableMap<String, String> properties = ImmutableMap.of(
+        final Map<String, String> properties = Maps.of(
             "hibernate.show_sql", "true",
             "hibernate.dialect", "org.hibernate.dialect.HSQLDialect",
             "hibernate.jdbc.time_zone", "UTC");
@@ -98,7 +99,7 @@ public class SessionFactoryFactoryTest {
     @Test
     public void setsACustomPoolName() {
         this.sessionFactory = factory.build(bundle, environment, config,
-                ImmutableList.of(Person.class), "custom-hibernate-db");
+                Collections.singletonList(Person.class), "custom-hibernate-db");
 
         ArgumentCaptor<SessionFactoryManager> sessionFactoryManager = ArgumentCaptor.forClass(SessionFactoryManager.class);
         verify(lifecycleEnvironment).manage(sessionFactoryManager.capture());
@@ -142,7 +143,7 @@ public class SessionFactoryFactoryTest {
         sessionFactory = customFactory.build(bundle,
                                              environment,
                                              config,
-                                             ImmutableList.of(Person.class));
+                                             Collections.singletonList(Person.class));
 
         assertThat(sessionFactory.getSessionFactoryOptions().getInterceptor()).isSameAs(EmptyInterceptor.INSTANCE);
     }
@@ -151,6 +152,6 @@ public class SessionFactoryFactoryTest {
         this.sessionFactory = factory.build(bundle,
                                             environment,
                                             config,
-                                            ImmutableList.of(Person.class));
+                                            Collections.singletonList(Person.class));
     }
 }

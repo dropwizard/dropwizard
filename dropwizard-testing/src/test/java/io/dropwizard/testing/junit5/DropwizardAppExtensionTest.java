@@ -76,4 +76,12 @@ public class DropwizardAppExtensionTest {
             .request()
             .get(DropwizardTestApplication.MessageView.class).getMessage(), is(Optional.of("Yes, it's here")));
     }
+
+    @Test
+    public void clientSupportsPatchMethod() {
+        assertThat(EXTENSION.client().target("http://localhost:" + EXTENSION.getLocalPort() + "/echoPatch")
+            .request()
+            .method("PATCH", Entity.text("Patch is working"), String.class), is("Patch is working"));
+    }
+
 }

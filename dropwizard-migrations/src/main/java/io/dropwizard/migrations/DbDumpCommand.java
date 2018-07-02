@@ -1,6 +1,5 @@
 package io.dropwizard.migrations;
 
-import com.google.common.annotations.VisibleForTesting;
 import io.dropwizard.Configuration;
 import io.dropwizard.db.DatabaseConfiguration;
 import liquibase.CatalogAndSchema;
@@ -43,17 +42,16 @@ public class DbDumpCommand<T extends Configuration> extends AbstractLiquibaseCom
 
     private PrintStream outputStream = System.out;
 
-    @VisibleForTesting
-    void setOutputStream(PrintStream outputStream) {
-        this.outputStream = outputStream;
-    }
-
     public DbDumpCommand(DatabaseConfiguration<T> strategy, Class<T> configurationClass, String migrationsFileName) {
         super("dump",
               "Generate a dump of the existing database state.",
               strategy,
               configurationClass,
               migrationsFileName);
+    }
+
+    void setOutputStream(PrintStream outputStream) {
+        this.outputStream = outputStream;
     }
 
     @Override

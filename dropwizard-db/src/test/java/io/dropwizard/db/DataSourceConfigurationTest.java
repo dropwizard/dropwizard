@@ -1,10 +1,10 @@
 package io.dropwizard.db;
 
-import com.google.common.io.Resources;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.validation.Validators;
 import io.dropwizard.util.Duration;
+import io.dropwizard.util.Resources;
 import org.junit.Test;
 
 import java.io.File;
@@ -55,6 +55,7 @@ public class DataSourceConfigurationTest {
         assertThat(ds.getValidationQueryTimeout()).isEqualTo(Optional.of(Duration.seconds(3)));
         assertThat(ds.getValidatorClassName()).isEqualTo(Optional.of("io.dropwizard.db.CustomConnectionValidator"));
         assertThat(ds.getJdbcInterceptors()).isEqualTo(Optional.of("StatementFinalizer;SlowQueryReport"));
+        assertThat(ds.isIgnoreExceptionOnPreLoad()).isTrue();
     }
 
     @Test
@@ -96,6 +97,7 @@ public class DataSourceConfigurationTest {
         assertThat(ds.getCheckConnectionOnConnect()).isEqualTo(true);
         assertThat(ds.getCheckConnectionOnReturn()).isEqualTo(false);
         assertThat(ds.getValidationQueryTimeout()).isEqualTo(Optional.empty());
+        assertThat(ds.isIgnoreExceptionOnPreLoad()).isFalse();
     }
 
     @Test

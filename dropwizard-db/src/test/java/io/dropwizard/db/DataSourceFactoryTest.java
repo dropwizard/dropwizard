@@ -20,6 +20,7 @@ import java.sql.SQLException;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 public class DataSourceFactoryTest {
     private final MetricRegistry metricRegistry = new MetricRegistry();
@@ -91,12 +92,13 @@ public class DataSourceFactoryTest {
         }
     }
 
-    @Test(expected = SQLException.class)
-    public void invalidJDBCDriverClassThrowsSQLException() throws SQLException {
+    @Test
+    public void invalidJDBCDriverClassThrowsSQLException() {
         final DataSourceFactory factory = new DataSourceFactory();
         factory.setDriverClass("org.example.no.driver.here");
 
-        factory.build(metricRegistry, "test").getConnection();
+        assertThatExceptionOfType(SQLException.class).isThrownBy(() ->
+            factory.build(metricRegistry, "test").getConnection());
     }
 
     @Test

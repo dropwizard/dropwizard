@@ -281,4 +281,16 @@ public class ValidatingResource {
         return choice.toString();
     }
 
+    @GET
+    @Path("selfValidatingBeanParam")
+    public SelfValidatingClass selfValidating(@Valid @BeanParam SelfValidatingClass beanParameter) {
+        return beanParameter;
+    }
+
+    @POST
+    @Path("selfValidatingPayload")
+    public SelfValidatingClass selfValidatingPayload(@Valid SelfValidatingClass payload) {
+        return payload;
+    }
+
 }

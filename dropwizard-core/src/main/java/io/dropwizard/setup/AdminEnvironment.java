@@ -14,7 +14,6 @@ import org.eclipse.jetty.util.component.LifeCycle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static com.google.common.base.MoreObjects.firstNonNull;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -71,6 +70,10 @@ public class AdminEnvironment extends ServletEnvironment {
         }
 
         LOGGER.info("tasks = {}", stringBuilder.toString());
+    }
+
+    private static <T> T firstNonNull(T first, T second) {
+        return first == null ? second : first;
     }
 
     private void logHealthChecks() {

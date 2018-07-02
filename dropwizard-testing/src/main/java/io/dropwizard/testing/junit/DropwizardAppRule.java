@@ -5,12 +5,13 @@ import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.cli.Command;
 import io.dropwizard.cli.ServerCommand;
-import io.dropwizard.jersey.jackson.JacksonBinder;
+import io.dropwizard.jersey.jackson.JacksonFeature;
 import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.DropwizardTestSupport;
 import org.glassfish.jersey.client.ClientProperties;
+import org.glassfish.jersey.client.HttpUrlConnectorProvider;
 import org.glassfish.jersey.client.JerseyClientBuilder;
 import org.junit.rules.ExternalResource;
 
@@ -191,7 +192,7 @@ public class DropwizardAppRule<C extends Configuration> extends ExternalResource
         return testSupport.newApplication();
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "TypeParameterUnusedInFormals"})
     public <A extends Application<C>> A getApplication() {
         return testSupport.getApplication();
     }
@@ -238,8 +239,9 @@ public class DropwizardAppRule<C extends Configuration> extends ExternalResource
 
     protected JerseyClientBuilder clientBuilder() {
         return new JerseyClientBuilder()
-            .register(new JacksonBinder(getObjectMapper()))
+            .register(new JacksonFeature(getObjectMapper()))
             .property(ClientProperties.CONNECT_TIMEOUT, DEFAULT_CONNECT_TIMEOUT_MS)
-            .property(ClientProperties.READ_TIMEOUT, DEFAULT_READ_TIMEOUT_MS);
+            .property(ClientProperties.READ_TIMEOUT, DEFAULT_READ_TIMEOUT_MS)
+            .property(HttpUrlConnectorProvider.SET_METHOD_WORKAROUND, true);
     }
 }

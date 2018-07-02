@@ -7,8 +7,6 @@ import ch.qos.logback.core.spi.DeferredProcessingAware;
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.ImmutableList;
-import com.google.common.io.Resources;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.logging.BootstrapLogging;
@@ -16,6 +14,7 @@ import io.dropwizard.logging.ConsoleAppenderFactory;
 import io.dropwizard.logging.DefaultLoggingFactory;
 import io.dropwizard.logging.layout.DiscoverableLayoutFactory;
 import io.dropwizard.request.logging.LogbackAccessRequestLogFactory;
+import io.dropwizard.util.Resources;
 import io.dropwizard.validation.BaseValidator;
 import org.eclipse.jetty.http.HttpFields;
 import org.eclipse.jetty.server.Request;
@@ -28,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.PrintStream;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
@@ -74,6 +74,7 @@ public class LayoutIntegrationTests {
             EventAttribute.LOGGER_NAME,
             EventAttribute.EXCEPTION,
             EventAttribute.TIMESTAMP);
+        assertThat(factory.isFlattenMdc()).isTrue();
         assertThat(factory.getCustomFieldNames()).containsOnly(entry("timestamp", "@timestamp"));
         assertThat(factory.getAdditionalFields()).containsOnly(entry("service-name", "user-service"),
             entry("service-build", 218));
@@ -111,7 +112,7 @@ public class LayoutIntegrationTests {
     public void testLogJsonToConsole() throws Exception {
         ConsoleAppenderFactory<ILoggingEvent> consoleAppenderFactory = getAppenderFactory("yaml/json-log-default.yml");
         DefaultLoggingFactory defaultLoggingFactory = new DefaultLoggingFactory();
-        defaultLoggingFactory.setAppenders(ImmutableList.of(consoleAppenderFactory));
+        defaultLoggingFactory.setAppenders(Collections.singletonList(consoleAppenderFactory));
 
         PrintStream old = System.out;
         ByteArrayOutputStream redirectedStream = new ByteArrayOutputStream();
@@ -139,7 +140,7 @@ public class LayoutIntegrationTests {
         consoleAppenderFactory.setTarget(ConsoleAppenderFactory.ConsoleStream.STDERR);
 
         final LogbackAccessRequestLogFactory requestLogHandler = new LogbackAccessRequestLogFactory();
-        requestLogHandler.setAppenders(ImmutableList.of(consoleAppenderFactory));
+        requestLogHandler.setAppenders(Collections.singletonList(consoleAppenderFactory));
 
         PrintStream old = System.err;
         ByteArrayOutputStream redirectedStream = new ByteArrayOutputStream();
@@ -153,11 +154,11 @@ public class LayoutIntegrationTests {
             when(request.getMethod()).thenReturn("GET");
             when(request.getRequestURI()).thenReturn("/test/users?age=22&city=LA");
             when(request.getProtocol()).thenReturn("HTTP/1.1");
-            when(request.getParameterNames()).thenReturn(Collections.enumeration(ImmutableList.of("age", "city")));
+            when(request.getParameterNames()).thenReturn(Collections.enumeration(Arrays.asList("age", "city")));
             when(request.getParameterValues("age")).thenReturn(new String[]{"22"});
             when(request.getParameterValues("city")).thenReturn(new String[]{"LA"});
-            when(request.getAttributeNames()).thenReturn(Collections.enumeration(ImmutableList.of()));
-            when(request.getHeaderNames()).thenReturn(Collections.enumeration(ImmutableList.of("Connection", "User-Agent")));
+            when(request.getAttributeNames()).thenReturn(Collections.enumeration(Collections.emptyList()));
+            when(request.getHeaderNames()).thenReturn(Collections.enumeration(Arrays.asList("Connection", "User-Agent")));
             when(request.getHeader("Connection")).thenReturn("keep-alive");
             when(request.getHeader("User-Agent")).thenReturn("Mozilla/5.0");
 
@@ -168,7 +169,7 @@ public class LayoutIntegrationTests {
             httpFields.add("Date", "Mon, 16 Nov 2012 05:00:48 GMT");
             httpFields.add("Server", "Apache/2.4.12");
             when(response.getHttpFields()).thenReturn(httpFields);
-            when(response.getHeaderNames()).thenReturn(ImmutableList.of("Date", "Server"));
+            when(response.getHeaderNames()).thenReturn(Arrays.asList("Date", "Server"));
             when(response.getHeader("Date")).thenReturn("Mon, 16 Nov 2012 05:00:48 GMT");
             when(response.getHeader("Server")).thenReturn("Apache/2.4.12");
 

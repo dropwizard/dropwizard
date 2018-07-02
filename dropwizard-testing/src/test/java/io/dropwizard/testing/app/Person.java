@@ -1,7 +1,5 @@
 package io.dropwizard.testing.app;
 
-import com.google.common.base.MoreObjects;
-
 import java.util.Objects;
 
 public class Person {
@@ -50,9 +48,6 @@ public class Person {
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this)
-                .add("name", name)
-                .add("email", email)
-                .toString();
+        return "Person{" + "name='" + name + "\'" + ", email='" + email + "'}";
     }
 }

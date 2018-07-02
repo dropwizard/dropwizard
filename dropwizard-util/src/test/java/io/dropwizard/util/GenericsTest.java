@@ -7,9 +7,9 @@ import java.util.HashMap;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import org.junit.Rule;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
@@ -35,30 +35,37 @@ public class GenericsTest<T> {
     private Class<?> typeParameter;
     private Class<? super T> bound;
     private Class<?> boundTypeParameter;
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
+    private Class<? extends Exception> expectedException;
+    private String expectedMessage;
 
-    public GenericsTest(Class<?> klass, Class<?> typeParameter, Class<? super T> bound, Class<?> boundTypeParameter, Class<? extends Exception> expectedException, String expectedMessage) {
+    public GenericsTest(Class<?> klass, Class<?> typeParameter, Class<? super T> bound, Class<?> boundTypeParameter,
+                        Class<? extends Exception> expectedException, String expectedMessage) {
         this.klass = klass;
         this.typeParameter = typeParameter;
         this.bound = bound;
         this.boundTypeParameter = boundTypeParameter;
-
-        if (expectedException != null) {
-            thrown.expect(expectedException);
-            if (expectedMessage != null)
-                thrown.expectMessage(expectedMessage);
-        }
+        this.expectedException = expectedException;
+        this.expectedMessage = expectedMessage;
     }
 
     @Test
     public void testTypeParameter() {
-        assertThat(Generics.getTypeParameter(klass)).isEqualTo(typeParameter);
+        if (expectedException == null) {
+            assertThat(Generics.getTypeParameter(klass)).isEqualTo(typeParameter);
+        } else {
+            assertThatExceptionOfType(expectedException).isThrownBy(() -> Generics.getTypeParameter(klass))
+                .withMessage(expectedMessage);
+        }
     }
 
     @Test
     public void testBoundTypeParameter() {
-        assertThat(Generics.getTypeParameter(klass, bound)).isEqualTo(boundTypeParameter);
+        if (expectedException == null) {
+            assertThat(Generics.getTypeParameter(klass, bound)).isEqualTo(boundTypeParameter);
+        } else {
+            assertThatExceptionOfType(expectedException).isThrownBy(() -> Generics.getTypeParameter(klass, bound))
+                .withMessage(expectedMessage);
+        }
     }
 
     public static class IntegerList extends ArrayList<Integer> { }

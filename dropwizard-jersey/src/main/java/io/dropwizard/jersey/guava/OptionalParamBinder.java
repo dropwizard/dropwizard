@@ -5,7 +5,7 @@ import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import javax.inject.Singleton;
 import javax.ws.rs.ext.ParamConverterProvider;
 
-final class OptionalParamBinder extends AbstractBinder {
+public class OptionalParamBinder extends AbstractBinder {
     @Override
     protected void configure() {
         // Param converter providers

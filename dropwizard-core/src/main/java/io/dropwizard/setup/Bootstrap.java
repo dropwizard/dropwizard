@@ -1,17 +1,16 @@
 package io.dropwizard.setup;
 
-import com.codahale.metrics.jmx.JmxReporter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheckRegistry;
+import com.codahale.metrics.jmx.JmxReporter;
 import com.codahale.metrics.jvm.BufferPoolMetricSet;
 import com.codahale.metrics.jvm.ClassLoadingGaugeSet;
 import com.codahale.metrics.jvm.FileDescriptorRatioGauge;
-import com.codahale.metrics.jvm.JvmAttributeGaugeSet;
 import com.codahale.metrics.jvm.GarbageCollectorMetricSet;
+import com.codahale.metrics.jvm.JvmAttributeGaugeSet;
 import com.codahale.metrics.jvm.MemoryUsageGaugeSet;
 import com.codahale.metrics.jvm.ThreadStatesGaugeSet;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.ImmutableList;
 import io.dropwizard.Application;
 import io.dropwizard.Bundle;
 import io.dropwizard.Configuration;
@@ -204,8 +203,8 @@ public class Bootstrap<T extends Configuration> {
     /**
      * Returns the application's commands.
      */
-    public ImmutableList<Command> getCommands() {
-        return ImmutableList.copyOf(commands);
+    public List<Command> getCommands() {
+        return new ArrayList<>(commands);
     }
 
     /**

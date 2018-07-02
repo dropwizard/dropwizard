@@ -1,9 +1,6 @@
 package io.dropwizard.migrations;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
-import com.google.common.io.Resources;
+import io.dropwizard.util.Resources;
 import net.jcip.annotations.NotThreadSafe;
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.apache.commons.lang3.StringUtils;
@@ -26,17 +23,20 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.HashMap;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @NotThreadSafe
 public class DbDumpCommandTest extends AbstractMigrationTest {
 
+    private static final List<String> ATTRIBUTE_NAMES = Arrays.asList("columns", "foreign-keys", "indexes",
+            "primary-keys", "sequences", "tables", "unique-constraints", "views");
     private static DocumentBuilder xmlParser;
-    private static List<String> attributeNames;
 
     private final DbDumpCommand<TestMigrationConfiguration> dumpCommand =
             new DbDumpCommand<>(new TestMigrationDatabaseConfiguration(), TestMigrationConfiguration.class, "migrations.xml");
@@ -46,8 +46,6 @@ public class DbDumpCommandTest extends AbstractMigrationTest {
     @BeforeClass
     public static void initXmlParser() throws Exception {
         xmlParser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-        attributeNames = ImmutableList.of("columns", "foreign-keys", "indexes", "primary-keys", "sequences",
-                "tables", "unique-constraints", "views");
     }
 
     @Before
@@ -60,11 +58,8 @@ public class DbDumpCommandTest extends AbstractMigrationTest {
 
     @Test
     public void testDumpSchema() throws Exception {
-        final Map<String, Object> attributes = new HashMap<>();
-        for (String name : attributeNames) {
-            attributes.put(name, true);
-        }
-        dumpCommand.run(null, new Namespace(attributes), existedDbConf);
+        dumpCommand.run(null, new Namespace(ATTRIBUTE_NAMES.stream()
+            .collect(Collectors.toMap(a -> a, b -> true))), existedDbConf);
 
         final Element changeSet = getFirstElement(toXmlDocument(baos).getDocumentElement(), "changeSet");
         assertCreateTable(changeSet);
@@ -72,11 +67,8 @@ public class DbDumpCommandTest extends AbstractMigrationTest {
 
     @Test
     public void testDumpSchemaAndData() throws Exception {
-        final Map<String, Object> attributes = new HashMap<>();
-        for (String name : Iterables.concat(attributeNames, ImmutableList.of("data"))) {
-            attributes.put(name, true);
-        }
-        dumpCommand.run(null, new Namespace(attributes), existedDbConf);
+        dumpCommand.run(null, new Namespace(Stream.concat(ATTRIBUTE_NAMES.stream(), Stream.of("data"))
+            .collect(Collectors.toMap(a -> a, b -> true))), existedDbConf);
 
         final NodeList changeSets = toXmlDocument(baos).getDocumentElement().getElementsByTagName("changeSet");
         assertCreateTable((Element) changeSets.item(0));
@@ -85,7 +77,7 @@ public class DbDumpCommandTest extends AbstractMigrationTest {
 
     @Test
     public void testDumpOnlyData() throws Exception {
-        dumpCommand.run(null, new Namespace(ImmutableMap.of("data", (Object) true)), existedDbConf);
+        dumpCommand.run(null, new Namespace(Collections.singletonMap("data", true)), existedDbConf);
 
         final Element changeSet = getFirstElement(toXmlDocument(baos).getDocumentElement(), "changeSet");
         assertInsertData(changeSet);
@@ -94,8 +86,7 @@ public class DbDumpCommandTest extends AbstractMigrationTest {
     @Test
     public void testWriteToFile() throws Exception {
         final File file = File.createTempFile("migration", ".xml");
-        final Map<String, Object> attributes = ImmutableMap.of("output", file.getAbsolutePath());
-        dumpCommand.run(null, new Namespace(attributes), existedDbConf);
+        dumpCommand.run(null, new Namespace(Collections.singletonMap("output", file.getAbsolutePath())), existedDbConf);
         // Check that file is exist, and has some XML content (no reason to make a full-blown XML assertion)
         assertThat(new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8))
             .startsWith("<?xml version=\"1.1\" encoding=\"UTF-8\" standalone=\"no\"?>");
@@ -118,7 +109,7 @@ public class DbDumpCommandTest extends AbstractMigrationTest {
                         "positional arguments:%n" +
                         "  file                   application configuration file%n" +
                         "%n" +
-                        "optional arguments:%n" +
+                        "named arguments:%n" +
                         "  -h, --help             show this help message and exit%n" +
                         "  --migrations MIGRATIONS-FILE%n" +
                         "                         the file containing  the  Liquibase migrations for%n" +
@@ -192,7 +183,7 @@ public class DbDumpCommandTest extends AbstractMigrationTest {
         final Element idColumn = (Element) columns.item(0);
         assertThat(idColumn.getAttribute("autoIncrement")).isEqualTo("true");
         assertThat(idColumn.getAttribute("name")).isEqualTo("ID");
-        assertThat(idColumn.getAttribute("type")).isEqualTo("INT(10)");
+        assertThat(idColumn.getAttribute("type")).isEqualTo("INT");
         final Element idColumnConstraints = getFirstElement(idColumn, "constraints");
         assertThat(idColumnConstraints.getAttribute("primaryKey")).isEqualTo("true");
         assertThat(idColumnConstraints.getAttribute("primaryKeyName")).isEqualTo("PK_PERSONS");

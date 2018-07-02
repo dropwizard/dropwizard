@@ -1,13 +1,11 @@
 package io.dropwizard.hibernate;
 
 import com.codahale.metrics.MetricRegistry;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.jersey.errors.ErrorMessage;
-import io.dropwizard.jersey.jackson.JacksonMessageBodyProvider;
+import io.dropwizard.jersey.jackson.JacksonFeature;
 import io.dropwizard.jersey.optional.EmptyOptionalExceptionMapper;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import io.dropwizard.logging.BootstrapLogging;
@@ -35,6 +33,7 @@ import javax.ws.rs.core.Application;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.Collections;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -104,7 +103,7 @@ public class JerseyIntegrationTest extends JerseyTest {
         final MetricRegistry metricRegistry = new MetricRegistry();
         final SessionFactoryFactory factory = new SessionFactoryFactory();
         final DataSourceFactory dbConfig = new DataSourceFactory();
-        dbConfig.setProperties(ImmutableMap.of("hibernate.jdbc.time_zone", "UTC"));
+        dbConfig.setProperties(Collections.singletonMap("hibernate.jdbc.time_zone", "UTC"));
 
         final HibernateBundle<?> bundle = mock(HibernateBundle.class);
         final Environment environment = mock(Environment.class);
@@ -120,7 +119,7 @@ public class JerseyIntegrationTest extends JerseyTest {
         this.sessionFactory = factory.build(bundle,
                                             environment,
                                             dbConfig,
-                                            ImmutableList.of(Person.class));
+                                            Collections.singletonList(Person.class));
 
         try (Session session = sessionFactory.openSession()) {
             Transaction transaction = session.beginTransaction();
@@ -137,8 +136,8 @@ public class JerseyIntegrationTest extends JerseyTest {
         final DropwizardResourceConfig config = DropwizardResourceConfig.forTesting(new MetricRegistry());
         config.register(new UnitOfWorkApplicationListener("hr-db", sessionFactory));
         config.register(new PersonResource(new PersonDAO(sessionFactory)));
-        config.register(new JacksonMessageBodyProvider(Jackson.newObjectMapper()));
         config.register(new PersistenceExceptionMapper());
+        config.register(new JacksonFeature(Jackson.newObjectMapper()));
         config.register(new DataExceptionMapper());
         config.register(new EmptyOptionalExceptionMapper());
 
@@ -147,7 +146,7 @@ public class JerseyIntegrationTest extends JerseyTest {
 
     @Override
     protected void configureClient(ClientConfig config) {
-        config.register(new JacksonMessageBodyProvider(Jackson.newObjectMapper()));
+        config.register(new JacksonFeature(Jackson.newObjectMapper()));
     }
 
     @Test

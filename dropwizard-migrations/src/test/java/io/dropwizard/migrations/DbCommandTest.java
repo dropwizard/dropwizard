@@ -1,15 +1,15 @@
 package io.dropwizard.migrations;
 
-import com.google.common.collect.ImmutableMap;
+import net.jcip.annotations.NotThreadSafe;
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.junit.Test;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 
-import net.jcip.annotations.NotThreadSafe;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -23,7 +23,7 @@ public class DbCommandTest extends AbstractMigrationTest {
     public void testRunSubCommand() throws Exception {
         final String databaseUrl = getDatabaseUrl();
         final TestMigrationConfiguration conf = createConfiguration(databaseUrl);
-        dbCommand.run(null, new Namespace(ImmutableMap.of("subcommand", "migrate")), conf);
+        dbCommand.run(null, new Namespace(Collections.singletonMap("subcommand", "migrate")), conf);
 
         try (Handle handle = new DBI(databaseUrl, "sa", "").open()) {
             assertThat(handle.createQuery("select count(*) from persons")
@@ -46,7 +46,7 @@ public class DbCommandTest extends AbstractMigrationTest {
                 "positional arguments:%n" +
                 "  {calculate-checksum,clear-checksums,drop-all,dump,fast-forward,generate-docs,locks,migrate,prepare-rollback,rollback,status,tag,test}%n" +
                 "%n" +
-                "optional arguments:%n" +
+                "named arguments:%n" +
                 "  -h, --help             show this help message and exit%n"));
     }
 }

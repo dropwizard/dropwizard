@@ -1,8 +1,6 @@
 package com.example.request_log;
 
 import com.codahale.metrics.health.HealthCheck;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.client.JerseyClientBuilder;
@@ -24,6 +22,7 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.core.Context;
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 
 public abstract class AbstractRequestLogPatternIntegrationTest {
@@ -60,7 +59,7 @@ public abstract class AbstractRequestLogPatternIntegrationTest {
     @Rule
     public DropwizardAppRule<Configuration> dropwizardAppRule = new DropwizardAppRule<>(TestApplication.class,
         ResourceHelpers.resourceFilePath("request_log/test-custom-request-log.yml"),
-        Iterables.toArray(configOverrides(), ConfigOverride.class));
+        configOverrides().toArray(new ConfigOverride[0]));
 
     private static String createTempFile() {
         try {
@@ -71,7 +70,7 @@ public abstract class AbstractRequestLogPatternIntegrationTest {
     }
 
     protected List<ConfigOverride> configOverrides() {
-        return ImmutableList.of(ConfigOverride.config("server.requestLog.appenders[0].currentLogFilename", tempFile));
+        return Collections.singletonList(ConfigOverride.config("server.requestLog.appenders[0].currentLogFilename", tempFile));
     }
 
     @Before

@@ -1,0 +1,5 @@
+level: INFO
+appenders:
+  - type: udp
+    host: localhost
+    port: 32144

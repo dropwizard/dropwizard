@@ -5,8 +5,6 @@ import com.codahale.metrics.SharedMetricRegistries;
 import com.codahale.metrics.health.HealthCheckRegistry;
 import com.codahale.metrics.health.SharedHealthCheckRegistries;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
-
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.jersey.setup.JerseyContainerHolder;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
@@ -20,6 +18,7 @@ import javax.servlet.Servlet;
 import javax.validation.Validator;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import static java.util.Objects.requireNonNull;
@@ -88,19 +87,25 @@ public class Environment {
                 .workQueue(new ArrayBlockingQueue<>(1))
                 .minThreads(1)
                 .maxThreads(4)
-                .threadFactory(new ThreadFactoryBuilder().setDaemon(true).build())
+                .threadFactory(r -> {
+                    final Thread thread = Executors.defaultThreadFactory().newThread(r);
+                    thread.setDaemon(true);
+                    return thread;
+                })
                 .rejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy())
                 .build();
 
+        // Set the default metric registry to the one in this environment, if
+        // the default isn't already set. If a default is already registered,
+        // ignore the exception.
         try {
-            SharedMetricRegistries.getDefault();
-        } catch (IllegalStateException e) {
             SharedMetricRegistries.setDefault("default", metricRegistry);
+        } catch (IllegalStateException ignored) {
         }
+
         try {
-            SharedHealthCheckRegistries.getDefault();
-        } catch (IllegalStateException e) {
             SharedHealthCheckRegistries.setDefault("default", healthCheckRegistry);
+        } catch (IllegalStateException ignored) {
         }
     }
 

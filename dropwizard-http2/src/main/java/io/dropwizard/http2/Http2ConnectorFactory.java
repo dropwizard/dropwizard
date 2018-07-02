@@ -3,8 +3,6 @@ package io.dropwizard.http2;
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.ImmutableList;
 import io.dropwizard.jetty.HttpsConnectorFactory;
 import io.dropwizard.jetty.Jetty93InstrumentedConnectionFactory;
 import io.dropwizard.jetty.SslReload;
@@ -23,6 +21,7 @@ import org.eclipse.jetty.util.thread.ThreadPool;
 import javax.annotation.Nullable;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import java.util.Collections;
 
 /**
  * Builds HTTP/2 over TLS (h2) connectors.
@@ -36,7 +35,7 @@ import javax.validation.constraints.Min;
  *     </tr>
  *     <tr>
  *         <td>{@code maxConcurrentStreams}</td>
- *         <td><1024</td>
+ *         <td>1024</td>
  *         <td>
  *             The maximum number of concurrently open streams allowed on a single HTTP/2 connection.
  *             Larger values increase parallelism, but cost a memory commitment.
@@ -99,7 +98,7 @@ public class Http2ConnectorFactory extends HttpsConnectorFactory {
     public Connector build(Server server, MetricRegistry metrics, String name, @Nullable ThreadPool threadPool) {
         // HTTP/2 requires that a server MUST support TLSv1.2 and TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256 cipher
         // See http://http2.github.io/http2-spec/index.html#rfc.section.9.2.2
-        setSupportedProtocols(ImmutableList.of("TLSv1.2"));
+        setSupportedProtocols(Collections.singletonList("TLSv1.2"));
         checkSupportedCipherSuites();
 
         // Setup connection factories
@@ -127,10 +126,9 @@ public class Http2ConnectorFactory extends HttpsConnectorFactory {
                 alpn, http2, http1);
     }
 
-    @VisibleForTesting
     void checkSupportedCipherSuites() {
         if (getSupportedCipherSuites() == null) {
-            setSupportedCipherSuites(ImmutableList.of(HTTP2_DEFAULT_CIPHER));
+            setSupportedCipherSuites(Collections.singletonList(HTTP2_DEFAULT_CIPHER));
         } else if (!getSupportedCipherSuites().contains(HTTP2_DEFAULT_CIPHER)) {
             throw new IllegalArgumentException("HTTP/2 server configuration must include cipher: " + HTTP2_DEFAULT_CIPHER);
         }

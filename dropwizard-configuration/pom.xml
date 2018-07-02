@@ -5,7 +5,7 @@
     <parent>
         <groupId>io.dropwizard</groupId>
         <artifactId>dropwizard-parent</artifactId>
-        <version>1.3.0-rc7-SNAPSHOT</version>
+        <version>1.4.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>dropwizard-configuration</artifactId>
@@ -41,6 +41,10 @@
             <artifactId>commons-lang3</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.github.ben-manes.caffeine</groupId>
+            <artifactId>caffeine</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-text</artifactId>
         </dependency>
@@ -53,7 +57,8 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <!-- Required for tests related to environment variables -->
                 <configuration>
-                    <forkMode>always</forkMode>
+                    <forkCount>1</forkCount>
+                    <reuseForks>false</reuseForks>
                     <environmentVariables>
                         <TEST>test_value</TEST>
                         <TEST_SUFFIX>2</TEST_SUFFIX>

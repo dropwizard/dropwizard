@@ -1,7 +1,7 @@
 package io.dropwizard.metrics;
 
-import com.google.common.collect.ImmutableSet;
+import java.util.Set;
 
 interface StringMatchingStrategy {
-    boolean containsMatch(ImmutableSet<String> matchExpressions, String metricName);
+    boolean containsMatch(Set<String> matchExpressions, String metricName);
 }

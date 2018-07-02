@@ -1,10 +1,6 @@
 package io.dropwizard.testing;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Strings;
-import com.google.common.base.Throwables;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.cli.Command;
@@ -13,6 +9,8 @@ import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import io.dropwizard.util.Sets;
+import io.dropwizard.util.Strings;
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
@@ -21,12 +19,13 @@ import org.eclipse.jetty.server.ServerConnector;
 import javax.annotation.Nullable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 
-import static com.google.common.base.MoreObjects.firstNonNull;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -85,7 +84,7 @@ public class DropwizardTestSupport<C extends Configuration> {
                                  ConfigOverride... configOverrides) {
         this.applicationClass = applicationClass;
         this.configPath = configPath;
-        this.configOverrides = ImmutableSet.copyOf(firstNonNull(configOverrides, new ConfigOverride[0]));
+        this.configOverrides = configOverrides == null ? Collections.emptySet() : Sets.of(configOverrides);
         this.customPropertyPrefix = customPropertyPrefix;
         explicitConfig = false;
         this.commandInstantiator = commandInstantiator;
@@ -125,7 +124,7 @@ public class DropwizardTestSupport<C extends Configuration> {
         }
         this.applicationClass = applicationClass;
         configPath = "";
-        configOverrides = ImmutableSet.of();
+        configOverrides = Collections.emptySet();
         customPropertyPrefix = Optional.empty();
         this.configuration = configuration;
         explicitConfig = true;
@@ -170,7 +169,9 @@ public class DropwizardTestSupport<C extends Configuration> {
             try {
                 jettyServer.stop();
             } catch (Exception e) {
-                Throwables.throwIfUnchecked(e);
+                if (e instanceof RuntimeException) {
+                  throw (RuntimeException) e;
+                }
                 throw new RuntimeException(e);
             } finally {
                 jettyServer = null;
@@ -228,15 +229,19 @@ public class DropwizardTestSupport<C extends Configuration> {
             getApplication().initialize(bootstrap);
             final Command command = commandInstantiator.apply(application);
 
-            final ImmutableMap.Builder<String, Object> file = ImmutableMap.builder();
+            final Map<String, Object> file;
             if (!Strings.isNullOrEmpty(configPath)) {
-                file.put("file", configPath);
+                file = Collections.singletonMap("file", configPath);
+            } else {
+                file = Collections.emptyMap();
             }
-            final Namespace namespace = new Namespace(file.build());
+            final Namespace namespace = new Namespace(file);
 
             command.run(bootstrap, namespace);
         } catch (Exception e) {
-            Throwables.throwIfUnchecked(e);
+            if (e instanceof RuntimeException) {
+              throw (RuntimeException) e;
+            }
             throw new RuntimeException(e);
         }
     }
@@ -266,7 +271,7 @@ public class DropwizardTestSupport<C extends Configuration> {
         }
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "TypeParameterUnusedInFormals"})
     public <A extends Application<C>> A getApplication() {
         return (A) requireNonNull(application);
     }

@@ -3,12 +3,11 @@ package io.dropwizard.jdbi3;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.jdbi3.strategies.TimedAnnotationNameStrategy;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Charsets;
-import com.google.common.io.Resources;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.jersey.validation.Validators;
 import io.dropwizard.logging.BootstrapLogging;
 import io.dropwizard.setup.Environment;
+import io.dropwizard.util.Resources;
 import org.eclipse.jetty.util.component.LifeCycle;
 import org.jdbi.v3.core.Jdbi;
 import org.joda.time.DateTime;
@@ -16,6 +15,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -46,8 +46,8 @@ public class JdbiTest {
 
         dbi = new JdbiFactory(new TimedAnnotationNameStrategy()).build(environment, dataSourceFactory, "h2");
         dbi.useTransaction(h -> {
-            h.createScript(Resources.toString(Resources.getResource("schema.sql"), Charsets.UTF_8)).execute();
-            h.createScript(Resources.toString(Resources.getResource("data.sql"), Charsets.UTF_8)).execute();
+            h.createScript(Resources.toString(Resources.getResource("schema.sql"), StandardCharsets.UTF_8)).execute();
+            h.createScript(Resources.toString(Resources.getResource("data.sql"), StandardCharsets.UTF_8)).execute();
         });
         dao = dbi.onDemand(GameDao.class);
         for (LifeCycle lc : environment.lifecycle().getManagedObjects()) {

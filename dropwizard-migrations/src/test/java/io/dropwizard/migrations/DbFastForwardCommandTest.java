@@ -1,6 +1,6 @@
 package io.dropwizard.migrations;
 
-import com.google.common.collect.ImmutableMap;
+import io.dropwizard.util.Maps;
 import net.jcip.annotations.NotThreadSafe;
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.junit.Before;
@@ -12,6 +12,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.io.PrintWriter;
+import java.util.Collections;
 import java.util.regex.Pattern;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -41,12 +42,12 @@ public class DbFastForwardCommandTest extends AbstractMigrationTest {
         }
 
         // Fast-forward one change
-        fastForwardCommand.run(null, new Namespace(ImmutableMap.of("all", false, "dry-run", false)), conf);
+        fastForwardCommand.run(null, new Namespace(Maps.of("all", false, "dry-run", false)), conf);
 
         // 2nd and 3rd migrations is performed
         new DbMigrateCommand<>(
             TestMigrationConfiguration::getDataSource, TestMigrationConfiguration.class, "migrations.xml")
-            .run(null, new Namespace(ImmutableMap.of()), conf);
+            .run(null, new Namespace(Collections.emptyMap()), conf);
 
         // 1 entry has been added to the persons table
         try (Handle handle = dbi.open()) {
@@ -66,12 +67,12 @@ public class DbFastForwardCommandTest extends AbstractMigrationTest {
         }
 
         // Fast-forward all the changes
-        fastForwardCommand.run(null, new Namespace(ImmutableMap.of("all", true, "dry-run", false)), conf);
+        fastForwardCommand.run(null, new Namespace(Maps.of("all", true, "dry-run", false)), conf);
 
         // No migrations is performed
         new DbMigrateCommand<>(
             TestMigrationConfiguration::getDataSource, TestMigrationConfiguration.class, "migrations.xml")
-            .run(null, new Namespace(ImmutableMap.of()), conf);
+            .run(null, new Namespace(Collections.emptyMap()), conf);
 
         // Nothing is added to the persons table
         try (Handle handle = dbi.open()) {
@@ -88,7 +89,7 @@ public class DbFastForwardCommandTest extends AbstractMigrationTest {
         fastForwardCommand.setPrintStream(new PrintStream(baos));
 
         // Fast-forward one change
-        fastForwardCommand.run(null, new Namespace(ImmutableMap.of("all", false, "dry-run", true)), conf);
+        fastForwardCommand.run(null, new Namespace(Maps.of("all", false, "dry-run", true)), conf);
 
         assertThat(NEWLINE_PATTERN.splitAsStream(baos.toString(UTF_8))
             .filter(s -> s.startsWith("INSERT INTO PUBLIC.DATABASECHANGELOG (")))
@@ -101,7 +102,7 @@ public class DbFastForwardCommandTest extends AbstractMigrationTest {
         fastForwardCommand.setPrintStream(new PrintStream(baos));
 
         // Fast-forward 3 changes
-        fastForwardCommand.run(null, new Namespace(ImmutableMap.of("all", true, "dry-run", true)), conf);
+        fastForwardCommand.run(null, new Namespace(Maps.of("all", true, "dry-run", true)), conf);
 
         assertThat(NEWLINE_PATTERN.splitAsStream(baos.toString(UTF_8))
             .filter(s -> s.startsWith("INSERT INTO PUBLIC.DATABASECHANGELOG (")))
@@ -122,7 +123,7 @@ public class DbFastForwardCommandTest extends AbstractMigrationTest {
                 "positional arguments:%n" +
                 "  file                   application configuration file%n" +
                 "%n" +
-                "optional arguments:%n" +
+                "named arguments:%n" +
                 "  -h, --help             show this help message and exit%n" +
                 "  --migrations MIGRATIONS-FILE%n" +
                 "                         the file containing  the  Liquibase migrations for%n" +

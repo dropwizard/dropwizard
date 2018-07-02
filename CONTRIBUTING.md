@@ -1,5 +1,6 @@
-Contributing/Development
+Contributing/Development [![Open Source Helpers](https://www.codetriage.com/dropwizard/dropwizard/badges/users.svg)](https://www.codetriage.com/dropwizard/dropwizard)
 ===
+
 Dropwizard is always looking for people to contribute to the project. We welcome your
 feedback and want to listen and discuss your ideas and issues.
 
@@ -9,6 +10,8 @@ There are many different ways to help contribute to the Dropwizard project.
 * Improving or enhancing our [documentation](http://dropwizard.github.io/dropwizard/)
 * Fixing open issues listed in the [issue tracker](https://github.com/dropwizard/dropwizard/issues?state=open)
 * Adding new features to the Dropwizard codebase
+
+You can triage issues which may include reproducing bug reports or asking for vital information, such as version numbers or reproduction instructions. If you would like to start triaging issues, one easy way to get started is to [subscribe to dropwizard on CodeTriage](https://www.codetriage.com/dropwizard/dropwizard).
 
 Guidelines
 ===
@@ -47,13 +50,13 @@ it sits in the queue for a long time, or cannot be accepted at all.**
 
 Developer List
 ===
-The Google Group [dropwizard-dev](https://groups.google.com/forum/#!forum/dropwizard-dev) 
-is the place to discuss everything to do with the development of the framework itself, 
+The Google Group [dropwizard-dev](https://groups.google.com/forum/#!forum/dropwizard-dev)
+is the place to discuss everything to do with the development of the framework itself,
 including docs, process and community management.
 
 
-Feel free to post questions about internals, ideas for new features or refactorings, 
-different strategies, requests for comment/review etc. This is the forum for everyone 
+Feel free to post questions about internals, ideas for new features or refactorings,
+different strategies, requests for comment/review etc. This is the forum for everyone
 who wants to actively contribute to the project itself.
 
 Committers

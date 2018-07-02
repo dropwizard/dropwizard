@@ -5,7 +5,7 @@
     <parent>
         <groupId>io.dropwizard</groupId>
         <artifactId>dropwizard-parent</artifactId>
-        <version>1.3.0-rc7-SNAPSHOT</version>
+        <version>1.4.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>dropwizard-jersey</artifactId>
@@ -60,6 +60,10 @@
             </exclusions>
         </dependency>
         <dependency>
+            <groupId>org.glassfish.jersey.inject</groupId>
+            <artifactId>jersey-hk2</artifactId>
+        </dependency>
+        <dependency>
             <groupId>io.dropwizard.metrics</groupId>
             <artifactId>metrics-jersey2</artifactId>
         </dependency>
@@ -96,6 +100,18 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.github.ben-manes.caffeine</groupId>
+            <artifactId>caffeine</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.activation</groupId>
+            <artifactId>javax.activation-api</artifactId>
         </dependency>
     </dependencies>
 </project>

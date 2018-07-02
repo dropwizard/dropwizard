@@ -1,6 +1,5 @@
 package com.example.app1;
 
-import com.google.common.collect.ImmutableMap;
 import io.dropwizard.Configuration;
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.jackson.Jackson;
@@ -18,6 +17,7 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -98,7 +98,7 @@ public class App1Test {
         final String url = String.format("http://localhost:%d/mapper", RULE.getLocalPort());
         final String response = client.target(url)
             .request()
-            .post(Entity.json(ImmutableMap.of("check", "mate")), String.class);
+            .post(Entity.json(Collections.singletonMap("check", "mate")), String.class);
         assertThat(response).isEqualTo("/** A Dropwizard specialty */\n" +
             "{\"check\":\"mate\",\"hello\":\"world\"}");
     }
@@ -111,7 +111,7 @@ public class App1Test {
 
         final Map<String, String> response = client.target(url)
             .request()
-            .post(Entity.json(ImmutableMap.of("check", "mate")), typ);
+            .post(Entity.json(Collections.singletonMap("check", "mate")), typ);
         assertThat(response).containsExactly(entry("check", "mate"), entry("hello", "world"));
     }
 

@@ -9,14 +9,14 @@ import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.TextNode;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.io.Resources;
 import io.dropwizard.configuration.FileConfigurationSourceProvider;
 import io.dropwizard.configuration.SubstitutingSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.logging.filter.FilterFactory;
+import io.dropwizard.util.Lists;
+import io.dropwizard.util.Maps;
+import io.dropwizard.util.Resources;
 import io.dropwizard.validation.BaseValidator;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StrSubstitutor;
@@ -28,7 +28,6 @@ import org.junit.rules.TemporaryFolder;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.List;
 
@@ -79,7 +78,7 @@ public class DefaultLoggingFactoryTest {
         assertThat(fileAppenderFactory.getArchivedLogFilenamePattern()).isEqualTo("${new_app}-%d.log.gz");
         assertThat(fileAppenderFactory.getArchivedFileCount()).isEqualTo(5);
         assertThat(fileAppenderFactory.getBufferSize().toKilobytes()).isEqualTo(256);
-        final ImmutableList<FilterFactory<ILoggingEvent>> filterFactories = fileAppenderFactory.getFilterFactories();
+        final List<FilterFactory<ILoggingEvent>> filterFactories = fileAppenderFactory.getFilterFactories();
         assertThat(filterFactories).hasSize(2);
         assertThat(filterFactories.get(0)).isExactlyInstanceOf(TestFilterFactory.class);
         assertThat(filterFactories.get(1)).isExactlyInstanceOf(SecondTestFilterFactory.class);
@@ -97,7 +96,7 @@ public class DefaultLoggingFactoryTest {
         final File newAppLog = folder.newFile("example-new-app.log");
         final File newAppNotAdditiveLog = folder.newFile("example-new-app-not-additive.log");
         final File defaultLog = folder.newFile("example.log");
-        final StrSubstitutor substitutor = new StrSubstitutor(ImmutableMap.of(
+        final StrSubstitutor substitutor = new StrSubstitutor(Maps.of(
                 "new_app", StringUtils.removeEnd(newAppLog.getAbsolutePath(), ".log"),
                 "new_app_not_additive", StringUtils.removeEnd(newAppNotAdditiveLog.getAbsolutePath(), ".log"),
                 "default", StringUtils.removeEnd(defaultLog.getAbsolutePath(), ".log")
@@ -146,7 +145,7 @@ public class DefaultLoggingFactoryTest {
 
         // There should be exactly one appender configured, a ConsoleAppender
         final Logger logger = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
-        final List<Appender<ILoggingEvent>> appenders = ImmutableList.copyOf(logger.iteratorForAppenders());
+        final List<Appender<ILoggingEvent>> appenders = Lists.of(logger.iteratorForAppenders());
         assertThat(appenders).hasAtLeastOneElementOfType(ConsoleAppender.class);
         assertThat(appenders).as("context").allMatch((Appender<?> a) -> a.getContext() != null);
         assertThat(appenders).as("started").allMatch(LifeCycle::isStarted);

@@ -1,11 +1,11 @@
 package io.dropwizard.jersey.validation;
 
-import com.google.common.base.Joiner;
-import com.google.common.base.Strings;
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.collect.Iterables;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
+import io.dropwizard.util.Lists;
+import io.dropwizard.util.Strings;
 import io.dropwizard.validation.ValidationMethod;
+import io.dropwizard.validation.selfvalidating.SelfValidating;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -17,15 +17,17 @@ import javax.validation.ElementKind;
 import javax.validation.Path;
 import javax.validation.metadata.ConstraintDescriptor;
 import java.lang.reflect.Field;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 public class ConstraintMessage {
 
     private static final Cache<Pair<Path, ? extends ConstraintDescriptor<?>>, String> PREFIX_CACHE =
-            CacheBuilder.newBuilder()
+            Caffeine.newBuilder()
             .expireAfterWrite(1, TimeUnit.HOURS)
             .build();
 
@@ -55,9 +57,9 @@ public class ConstraintMessage {
             return name + " ";
         }
 
-        // Take the message specified in a ValidationMethod annotation if it
-        // is what caused the violation
-        if (isValidationMethod(v)) {
+        // Take the message specified in a ValidationMethod or SelfValidation
+        // annotation if it is what caused the violation.
+        if (isValidationMethod(v) || isSelfValidating(v)) {
             return "";
         }
 
@@ -82,7 +84,11 @@ public class ConstraintMessage {
      * friendly string representation of where the error occurred (eg. "patient.name")
      */
     public static Optional<String> isRequestEntity(ConstraintViolation<?> violation, Invocable invocable) {
-        final Path.Node parent = Iterables.get(violation.getPropertyPath(), 1, null);
+        final Collection<Path.Node> propertyPath = Lists.of(violation.getPropertyPath());
+        final Path.Node parent = propertyPath.stream()
+                .skip(1L)
+                .findFirst()
+                .orElse(null);
         if (parent == null) {
             return Optional.empty();
         }
@@ -91,7 +97,12 @@ public class ConstraintMessage {
         if (parent.getKind() == ElementKind.PARAMETER) {
             final Parameter param = parameters.get(parent.as(Path.ParameterNode.class).getParameterIndex());
             if (param.getSource().equals(Parameter.Source.UNKNOWN)) {
-                return Optional.of(Joiner.on('.').join(Iterables.skip(violation.getPropertyPath(), 2)));
+                final String path = propertyPath.stream()
+                        .skip(2L)
+                        .map(Path.Node::toString)
+                        .collect(Collectors.joining("."));
+
+                return Optional.of(path);
             }
         }
 
@@ -102,13 +113,14 @@ public class ConstraintMessage {
      * Gets a method parameter (or a parameter field) name, if the violation raised in it.
      */
     private static Optional<String> getMemberName(ConstraintViolation<?> violation, Invocable invocable) {
-        final int size = Iterables.size(violation.getPropertyPath());
+        final List<Path.Node> propertyPath = Lists.of(violation.getPropertyPath());
+        final int size = propertyPath.size();
         if (size < 2) {
             return Optional.empty();
         }
 
-        final Path.Node parent = Iterables.get(violation.getPropertyPath(), size - 2);
-        final Path.Node member = Iterables.getLast(violation.getPropertyPath());
+        final Path.Node parent = propertyPath.get(size - 2);
+        final Path.Node member = propertyPath.get(size - 1);
         switch (parent.getKind()) {
             case PARAMETER:
                 // Constraint violation most likely failed with a BeanParam
@@ -149,6 +161,10 @@ public class ConstraintMessage {
 
     private static boolean isValidationMethod(ConstraintViolation<?> v) {
         return v.getConstraintDescriptor().getAnnotation() instanceof ValidationMethod;
+    }
+
+    private static boolean isSelfValidating(ConstraintViolation<?> v) {
+        return v.getConstraintDescriptor().getAnnotation() instanceof SelfValidating;
     }
 
     /**

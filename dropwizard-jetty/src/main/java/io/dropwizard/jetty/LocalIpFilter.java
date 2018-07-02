@@ -20,10 +20,8 @@ import java.net.NetworkInterface;
 import java.net.SocketException;
 
 /**
- * @see https://github.com/apache/curator/blob/master/curator-x-discovery/src/main/java/org/apache/curator/x/discovery/LocalIpFilter.java
+ * @see <a href="https://github.com/apache/curator/blob/master/curator-x-discovery/src/main/java/org/apache/curator/x/discovery/LocalIpFilter.java">LocalIpFilter</a>
  */
 public interface LocalIpFilter {
-
-    public boolean use(NetworkInterface networkInterface,
-                       InetAddress address) throws SocketException;
+    boolean use(NetworkInterface networkInterface, InetAddress address) throws SocketException;
 }

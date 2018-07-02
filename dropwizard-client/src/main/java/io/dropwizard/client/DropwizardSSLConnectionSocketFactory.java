@@ -8,6 +8,8 @@ import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
 import org.apache.http.ssl.PrivateKeyStrategy;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.ssl.TrustStrategy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 import javax.net.ssl.HostnameVerifier;
@@ -16,11 +18,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.security.KeyStore;
+import java.security.KeyStoreException;
 import java.util.List;
 
 import static java.util.Objects.requireNonNull;
 
 public class DropwizardSSLConnectionSocketFactory {
+    private static final Logger log = LoggerFactory.getLogger(DropwizardSSLConnectionSocketFactory.class);
 
     private final TlsConfiguration configuration;
 
@@ -71,7 +75,11 @@ public class DropwizardSSLConnectionSocketFactory {
         final SSLContext sslContext;
         try {
             final SSLContextBuilder sslContextBuilder = new SSLContextBuilder();
-            sslContextBuilder.useProtocol(configuration.getProtocol());
+            sslContextBuilder.setProtocol(configuration.getProtocol());
+            final String configuredProvider = configuration.getProvider();
+            if (configuredProvider != null) {
+                sslContextBuilder.setProvider(configuredProvider);
+            }
             loadKeyMaterial(sslContextBuilder);
             loadTrustMaterial(sslContextBuilder);
             sslContext = sslContextBuilder.build();
@@ -97,10 +105,10 @@ public class DropwizardSSLConnectionSocketFactory {
     private void loadKeyMaterial(SSLContextBuilder sslContextBuilder) throws Exception {
         if (configuration.getKeyStorePath() != null) {
             final KeyStore keystore = loadKeyStore(configuration.getKeyStoreType(), configuration.getKeyStorePath(),
-                requireNonNull(configuration.getKeyStorePassword()));
+                    requireNonNull(configuration.getKeyStorePassword()), configuration.getKeyStoreProvider());
 
             sslContextBuilder.loadKeyMaterial(keystore,
-                requireNonNull(configuration.getKeyStorePassword()).toCharArray(), choosePrivateKeyStrategy());
+                    requireNonNull(configuration.getKeyStorePassword()).toCharArray(), choosePrivateKeyStrategy());
         }
     }
 
@@ -108,7 +116,7 @@ public class DropwizardSSLConnectionSocketFactory {
         KeyStore trustStore = null;
         if (configuration.getTrustStorePath() != null) {
             trustStore = loadKeyStore(configuration.getTrustStoreType(), configuration.getTrustStorePath(),
-                    requireNonNull(configuration.getTrustStorePassword()));
+                    requireNonNull(configuration.getTrustStorePassword()), configuration.getTrustStoreProvider());
         }
         TrustStrategy trustStrategy = null;
         if (configuration.isTrustSelfSignedCertificates()) {
@@ -117,11 +125,28 @@ public class DropwizardSSLConnectionSocketFactory {
         sslContextBuilder.loadTrustMaterial(trustStore, trustStrategy);
     }
 
-    private static KeyStore loadKeyStore(String type, File path, String password) throws Exception {
-        final KeyStore keyStore = KeyStore.getInstance(type);
+    private static KeyStore loadKeyStore(String type, File path, String password,
+                                         @Nullable String provider) throws Exception {
+        KeyStore keyStore;
+
+        if (provider == null) {
+            keyStore = KeyStore.getInstance(type);
+
+        } else {
+            try {
+                keyStore = KeyStore.getInstance(type, provider);
+
+            } catch (KeyStoreException ignore) {
+                log.warn("Keystore of type: {} is not supported for provider: {}. Trying out other providers...",
+                        type, provider);
+                keyStore = KeyStore.getInstance(type);
+            }
+        }
+
         try (InputStream inputStream = new FileInputStream(path)) {
             keyStore.load(inputStream, password.toCharArray());
         }
+
         return keyStore;
     }
 }
