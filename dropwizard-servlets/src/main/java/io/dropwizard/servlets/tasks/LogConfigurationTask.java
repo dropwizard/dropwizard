@@ -4,7 +4,6 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
 import com.google.errorprone.annotations.concurrent.LazyInit;
-import java.sql.Time;
 import javax.annotation.Nonnull;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.LoggerFactory;
