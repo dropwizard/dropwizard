@@ -380,15 +380,6 @@
             </build>
         </profile>
         <profile>
-            <id>jdk10</id>
-            <activation>
-                <jdk>[9,11)</jdk>
-            </activation>
-            <properties>
-                <argLine>-Duser.language=en -Duser.region=US --add-modules java.xml.bind</argLine>
-            </properties>
-        </profile>
-        <profile>
             <id>jdk11</id>
             <activation>
                 <jdk>11</jdk>
@@ -396,19 +387,7 @@
             <properties>
                 <!-- https://github.com/jacoco/jacoco/issues/663 -->
                 <jacoco.skip>true</jacoco.skip>
-                <argLine>-Duser.language=en -Duser.region=US</argLine>
             </properties>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-compiler-plugin</artifactId>
-                        <configuration>
-                            <debug>true</debug>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
         </profile>
         <profile>
             <id>code-coverage</id>
