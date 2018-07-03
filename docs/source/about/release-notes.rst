@@ -18,6 +18,13 @@ v2.0.0: Unreleased
 * Fix usage ``@SelfValidating`` with ``@BeanParam`` (`#2334 <https://github.com/dropwizard/dropwizard/pull/2334>`_)
 * Fix resource endpoints injected via DI not being logged on startup (`#2389 <https://github.com/dropwizard/dropwizard/pull/2389>`_)
 
+.. _rel-1.1.8:
+
+v1.1.8: Jun 25, 2018
+====================
+
+* Upgrade to Jetty 9.4.11.v20180605 to address `various security issues <http://dev.eclipse.org/mhonarc/lists/jetty-announce/msg00123.html>`__
+
 .. _rel-1.3.4:
 
 v1.3.4: Jun 14, 2018
@@ -135,7 +142,7 @@ v1.2.4: Feb 23, 2018
 v1.1.7: Feb 23, 2018
 ====================
 
-* Upgrade Jackson to 2.8.11 in 1.1.* to address a CVE `#2270 <https://github.com/dropwizard/dropwizard/pull/2270>`_
+* Upgrade to Jackson 2.8.11 to address `CVE <https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-17485>`_ `#2270 <https://github.com/dropwizard/dropwizard/pull/2270>`_
 
 .. _rel-1.2.3:
 
