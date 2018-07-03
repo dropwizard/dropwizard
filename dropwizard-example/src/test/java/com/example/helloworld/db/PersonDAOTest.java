@@ -1,7 +1,7 @@
 package com.example.helloworld.db;
 
 import com.example.helloworld.core.Person;
-import io.dropwizard.testing.junit.DAOTestRule;
+import io.dropwizard.hibernate.testing.junit.DAOTestRule;
 import org.hibernate.exception.ConstraintViolationException;
 import org.junit.Before;
 import org.junit.Rule;

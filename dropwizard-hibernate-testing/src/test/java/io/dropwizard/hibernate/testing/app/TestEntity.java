@@ -1,4 +1,4 @@
-package io.dropwizard.testing.app;
+package io.dropwizard.hibernate.testing.app;
 
 import javax.annotation.Nullable;
 import javax.persistence.Column;

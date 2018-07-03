@@ -490,6 +490,7 @@ public class DataSourceFactory implements PooledDataSourceFactory {
 
     @JsonProperty
     @Override
+    @Nullable
     public String getReadOnlyUrl() {
         return readOnlyUrl;
     }
@@ -891,7 +892,7 @@ public class DataSourceFactory implements PooledDataSourceFactory {
         return new ManagedDataSources(writeDataSource, readDataSource);
     }
 
-    private PoolProperties getPoolConfiguration(String name, String url, Boolean readOnlyByDefault) {
+    private PoolProperties getPoolConfiguration(String name, String url, @Nullable Boolean readOnlyByDefault) {
         final Properties properties = new Properties();
         for (Map.Entry<String, String> property : this.properties.entrySet()) {
             properties.setProperty(property.getKey(), property.getValue());
