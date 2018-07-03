@@ -64,7 +64,7 @@ v1.2.3: Jan 24, 2018
 .. _rel-1.2.2:
 
 v1.2.2: Nov 27, 2017
-==================
+====================
 
 *  Don't shut down asynchronous executor in Jersey `#2221 <https://github.com/dropwizard/dropwizard/pull/2221>`_
 *  Add possibility to possibility to extend `DropwizardApacheConnector` `#2220 <https://github.com/dropwizard/dropwizard/pull/2220>`_
@@ -72,7 +72,7 @@ v1.2.2: Nov 27, 2017
 .. _rel-1.2.1:
 
 v1.2.1: Nov 22, 2017
-==================
+====================
 
 * Correctly set up SO_LINGER for the HTTP connector `#2176 <https://github.com/dropwizard/dropwizard/pull/2176>`_
 * Support fromString in FuzzyEnumParamConverter `#2161 <https://github.com/dropwizard/dropwizard/pull/2161>`_
