@@ -19,15 +19,15 @@ public abstract class ScanningHibernateBundle<T extends Configuration> extends H
      *             annotation) e. g. {@code com.codahale.fake.db.directory.entities}
      */
     protected ScanningHibernateBundle(String pckg) {
-        this(pckg, new SessionFactoryFactory());
+        this(pckg, new ClusteredSessionFactoryFactory());
     }
 
-    protected ScanningHibernateBundle(String pckg, SessionFactoryFactory sessionFactoryFactory) {
-        this(new String[]{pckg}, sessionFactoryFactory);
+    protected ScanningHibernateBundle(String pckg, ClusteredSessionFactoryFactory clusteredSessionFactoryFactory) {
+        this(new String[]{pckg}, clusteredSessionFactoryFactory);
     }
 
-    protected ScanningHibernateBundle(String[] pckgs, SessionFactoryFactory sessionFactoryFactory) {
-        super(findEntityClassesFromDirectory(pckgs), sessionFactoryFactory);
+    protected ScanningHibernateBundle(String[] pckgs, ClusteredSessionFactoryFactory clusteredSessionFactoryFactory) {
+        super(findEntityClassesFromDirectory(pckgs), clusteredSessionFactoryFactory);
     }
 
     /**

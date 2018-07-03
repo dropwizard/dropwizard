@@ -6,7 +6,6 @@ import org.glassfish.jersey.server.monitoring.ApplicationEvent;
 import org.glassfish.jersey.server.monitoring.ApplicationEventListener;
 import org.glassfish.jersey.server.monitoring.RequestEvent;
 import org.glassfish.jersey.server.monitoring.RequestEventListener;
-import org.hibernate.SessionFactory;
 
 import javax.ws.rs.ext.Provider;
 import java.util.HashMap;
@@ -29,7 +28,7 @@ import java.util.concurrent.ConcurrentMap;
 public class UnitOfWorkApplicationListener implements ApplicationEventListener {
 
     private ConcurrentMap<ResourceMethod, Optional<UnitOfWork>> methodMap = new ConcurrentHashMap<>();
-    private Map<String, SessionFactory> sessionFactories = new HashMap<>();
+    private Map<String, ClusteredSessionFactory> clusteredSessionFactories = new HashMap<>();
 
     public UnitOfWorkApplicationListener() {
     }
@@ -42,20 +41,20 @@ public class UnitOfWorkApplicationListener implements ApplicationEventListener {
      * should be added to a Jersey {@code ResourceConfig} as a singleton.
      *
      * @param name a name of a Hibernate bundle
-     * @param sessionFactory a {@link SessionFactory}
+     * @param clusteredSessionFactory a {@link ClusteredSessionFactory}
      */
-    public UnitOfWorkApplicationListener(String name, SessionFactory sessionFactory) {
-        registerSessionFactory(name, sessionFactory);
+    public UnitOfWorkApplicationListener(String name, ClusteredSessionFactory clusteredSessionFactory) {
+        registerSessionFactory(name, clusteredSessionFactory);
     }
 
     /**
      * Register a session factory with the given name.
      *
      * @param name a name of a Hibernate bundle
-     * @param sessionFactory a {@link SessionFactory}
+     * @param clusteredSessionFactory a {@link ClusteredSessionFactory}
      */
-    public void registerSessionFactory(String name, SessionFactory sessionFactory) {
-        sessionFactories.put(name, sessionFactory);
+    public void registerSessionFactory(String name, ClusteredSessionFactory clusteredSessionFactory) {
+        clusteredSessionFactories.put(name, clusteredSessionFactory);
     }
 
     private static class UnitOfWorkEventListener implements RequestEventListener {
@@ -63,9 +62,9 @@ public class UnitOfWorkApplicationListener implements ApplicationEventListener {
         private final UnitOfWorkAspect unitOfWorkAspect;
 
         UnitOfWorkEventListener(ConcurrentMap<ResourceMethod, Optional<UnitOfWork>> methodMap,
-                                Map<String, SessionFactory> sessionFactories) {
+                                Map<String, ClusteredSessionFactory> clusteredSessionFactories) {
             this.methodMap = methodMap;
-            unitOfWorkAspect = new UnitOfWorkAspect(sessionFactories);
+            unitOfWorkAspect = new UnitOfWorkAspect(clusteredSessionFactories);
         }
 
         @Override
@@ -103,8 +102,6 @@ public class UnitOfWorkApplicationListener implements ApplicationEventListener {
 
     @Override
     public RequestEventListener onRequest(RequestEvent event) {
-        return new UnitOfWorkEventListener(methodMap, sessionFactories);
+        return new UnitOfWorkEventListener(methodMap, clusteredSessionFactories);
     }
-
-
 }

@@ -16,7 +16,6 @@ import org.glassfish.jersey.client.JerseyClientBuilder;
 import org.hibernate.FlushMode;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.exception.ConstraintViolationException;
 import org.junit.After;
@@ -53,7 +52,7 @@ public class LazyLoadingTest {
 
     public static class TestApplication extends io.dropwizard.Application<TestConfiguration> {
         final HibernateBundle<TestConfiguration> hibernate = new HibernateBundle<TestConfiguration>(
-                Arrays.asList(Person.class, Dog.class), new SessionFactoryFactory()) {
+                Arrays.asList(Person.class, Dog.class), new ClusteredSessionFactoryFactory()) {
             @Override
             public PooledDataSourceFactory getDataSourceFactory(TestConfiguration configuration) {
                 return configuration.dataSource;
@@ -68,17 +67,17 @@ public class LazyLoadingTest {
         @Override
         public void run(TestConfiguration configuration, Environment environment) throws Exception {
 
-            final SessionFactory sessionFactory = hibernate.getSessionFactory();
-            initDatabase(sessionFactory);
+            final ClusteredSessionFactory clusteredSessionFactory = hibernate.getSessionFactory();
+            initDatabase(clusteredSessionFactory);
 
-            environment.jersey().register(new UnitOfWorkApplicationListener("hr-db", sessionFactory));
-            environment.jersey().register(new DogResource(new DogDAO(sessionFactory)));
+            environment.jersey().register(new UnitOfWorkApplicationListener("hr-db", clusteredSessionFactory));
+            environment.jersey().register(new DogResource(new DogDAO(clusteredSessionFactory)));
             environment.jersey().register(new PersistenceExceptionMapper());
             environment.jersey().register(new ConstraintViolationExceptionMapper());
         }
 
-        private void initDatabase(SessionFactory sessionFactory) {
-            try (Session session = sessionFactory.openSession()) {
+        private void initDatabase(ClusteredSessionFactory clusteredSessionFactory) {
+            try (Session session = clusteredSessionFactory.getSessionFactory().openSession()) {
                 Transaction transaction = session.beginTransaction();
                 session.createNativeQuery(
                     "CREATE TABLE people (name varchar(100) primary key, email varchar(16), birthday timestamp with time zone)")
@@ -106,8 +105,8 @@ public class LazyLoadingTest {
     }
 
     public static class DogDAO extends AbstractDAO<Dog> {
-        DogDAO(SessionFactory sessionFactory) {
-            super(sessionFactory);
+        public DogDAO(ClusteredSessionFactory clusteredSessionFactory) {
+            super(clusteredSessionFactory);
         }
 
         Optional<Dog> findByName(String name) {

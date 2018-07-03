@@ -5,14 +5,12 @@ import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 import org.hibernate.query.internal.AbstractProducedQuery;
 
+import javax.persistence.criteria.CriteriaQuery;
 import java.io.Serializable;
 import java.util.List;
-
-import javax.persistence.criteria.CriteriaQuery;
 
 import static java.util.Objects.requireNonNull;
 
@@ -22,16 +20,16 @@ import static java.util.Objects.requireNonNull;
  * @param <E> the class which this DAO manages
  */
 public class AbstractDAO<E> {
-    private final SessionFactory sessionFactory;
+    private final ClusteredSessionFactory clusteredSessionFactory;
     private final Class<?> entityClass;
 
     /**
      * Creates a new DAO with a given session provider.
      *
-     * @param sessionFactory    a session provider
+     * @param clusteredSessionFactory    a session provider
      */
-    public AbstractDAO(SessionFactory sessionFactory) {
-        this.sessionFactory = requireNonNull(sessionFactory);
+    public AbstractDAO(ClusteredSessionFactory clusteredSessionFactory) {
+        this.clusteredSessionFactory = requireNonNull(clusteredSessionFactory);
         this.entityClass = Generics.getTypeParameter(getClass());
     }
 
@@ -41,7 +39,7 @@ public class AbstractDAO<E> {
      * @return the current session
      */
     protected Session currentSession() {
-        return sessionFactory.getCurrentSession();
+        return clusteredSessionFactory.getSessionFactory().getCurrentSession();
     }
 
     /**

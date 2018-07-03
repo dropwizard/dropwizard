@@ -21,4 +21,8 @@ public class ManagedDataSources {
     public ManagedDataSource getReadDataSource() {
         return readDataSource;
     }
+
+    public boolean hasSeparateReader() {
+        return writeDataSource != readDataSource;
+    }
 }

@@ -29,8 +29,8 @@ import static org.mockito.Mockito.when;
 @SuppressWarnings("deprecation")
 public class AbstractDAOTest {
     private static class MockDAO extends AbstractDAO<String> {
-        MockDAO(SessionFactory factory) {
-            super(factory);
+        public MockDAO(ClusteredSessionFactory clusteredSessionFactory) {
+            super(clusteredSessionFactory);
         }
 
         @Override
@@ -89,6 +89,7 @@ public class AbstractDAOTest {
         }
     }
 
+    private final ClusteredSessionFactory clusteredSessionFactory = mock(ClusteredSessionFactory.class);
     private final SessionFactory factory = mock(SessionFactory.class);
     private final CriteriaBuilder criteriaBuilder = mock(CriteriaBuilder.class);
     private final Criteria criteria = mock(Criteria.class);
@@ -97,10 +98,11 @@ public class AbstractDAOTest {
     @SuppressWarnings("unchecked")
     private final Query<String> query = mock(Query.class);
     private final Session session = mock(Session.class);
-    private final MockDAO dao = new MockDAO(factory);
+    private final MockDAO dao = new MockDAO(clusteredSessionFactory);
 
     @Before
     public void setup() throws Exception {
+        when(clusteredSessionFactory.getSessionFactory()).thenReturn(factory);
         when(criteriaBuilder.createQuery(same(String.class))).thenReturn(criteriaQuery);
         when(factory.getCurrentSession()).thenReturn(session);
         when(session.createCriteria(String.class)).thenReturn(criteria);

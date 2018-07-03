@@ -26,6 +26,7 @@ public class UnitOfWorkAwareProxyFactoryTest {
         BootstrapLogging.bootstrap();
     }
 
+    private ClusteredSessionFactory clusteredSessionFactory;
     private SessionFactory sessionFactory;
 
     @Before
@@ -44,8 +45,9 @@ public class UnitOfWorkAwareProxyFactoryTest {
         dataSourceFactory.setInitialSize(1);
         dataSourceFactory.setMinSize(1);
 
-        sessionFactory = new SessionFactoryFactory()
+        clusteredSessionFactory = new ClusteredSessionFactoryFactory()
                 .build(bundle, environment, dataSourceFactory, Collections.emptyList());
+        sessionFactory = clusteredSessionFactory.getSessionFactory();
         try (Session session = sessionFactory.openSession()) {
             Transaction transaction = session.beginTransaction();
             session.createNativeQuery("create table user_sessions (token varchar(64) primary key, username varchar(16))")
@@ -60,7 +62,7 @@ public class UnitOfWorkAwareProxyFactoryTest {
     public void testProxyWorks() throws Exception {
         final SessionDao sessionDao = new SessionDao(sessionFactory);
         final UnitOfWorkAwareProxyFactory unitOfWorkAwareProxyFactory =
-                new UnitOfWorkAwareProxyFactory("default", sessionFactory);
+                new UnitOfWorkAwareProxyFactory("default", clusteredSessionFactory);
 
         final OAuthAuthenticator oAuthAuthenticator = unitOfWorkAwareProxyFactory
                 .create(OAuthAuthenticator.class, SessionDao.class, sessionDao);
@@ -70,7 +72,7 @@ public class UnitOfWorkAwareProxyFactoryTest {
 
     @Test
     public void testProxyWorksWithoutUnitOfWork() {
-        assertThat(new UnitOfWorkAwareProxyFactory("default", sessionFactory)
+        assertThat(new UnitOfWorkAwareProxyFactory("default", clusteredSessionFactory)
                 .create(PlainAuthenticator.class)
                 .authenticate("c82d11e"))
                 .isTrue();
@@ -79,7 +81,7 @@ public class UnitOfWorkAwareProxyFactoryTest {
     @Test
     public void testProxyHandlesErrors() {
         assertThatExceptionOfType(IllegalStateException.class).isThrownBy(()->
-            new UnitOfWorkAwareProxyFactory("default", sessionFactory)
+            new UnitOfWorkAwareProxyFactory("default", clusteredSessionFactory)
                 .create(BrokenAuthenticator.class)
                 .authenticate("b812ae4"))
             .withMessage("Session cluster is down");
@@ -88,11 +90,11 @@ public class UnitOfWorkAwareProxyFactoryTest {
     @Test
     public void testNewAspect() {
         final UnitOfWorkAwareProxyFactory unitOfWorkAwareProxyFactory =
-                new UnitOfWorkAwareProxyFactory("default", sessionFactory);
+                new UnitOfWorkAwareProxyFactory("default", clusteredSessionFactory);
 
-        Map<String, SessionFactory> sessionFactories = Collections.singletonMap("default", sessionFactory);
-        UnitOfWorkAspect aspect1 = unitOfWorkAwareProxyFactory.newAspect(sessionFactories);
-        UnitOfWorkAspect aspect2 = unitOfWorkAwareProxyFactory.newAspect(sessionFactories);
+        Map<String, ClusteredSessionFactory> sessionSelectors = Collections.singletonMap("default", clusteredSessionFactory);
+        UnitOfWorkAspect aspect1 = unitOfWorkAwareProxyFactory.newAspect(sessionSelectors);
+        UnitOfWorkAspect aspect2 = unitOfWorkAwareProxyFactory.newAspect(sessionSelectors);
         assertThat(aspect1).isNotSameAs(aspect2);
     }
 
@@ -100,10 +102,10 @@ public class UnitOfWorkAwareProxyFactoryTest {
     public void testCanBeConfiguredWithACustomAspect() {
         final SessionDao sessionDao = new SessionDao(sessionFactory);
         final UnitOfWorkAwareProxyFactory unitOfWorkAwareProxyFactory =
-            new UnitOfWorkAwareProxyFactory("default", sessionFactory) {
+            new UnitOfWorkAwareProxyFactory("default", clusteredSessionFactory) {
                 @Override
-                public UnitOfWorkAspect newAspect(Map<String, SessionFactory> sessionFactories) {
-                    return new CustomAspect(sessionFactories);
+                public UnitOfWorkAspect newAspect(Map<String, ClusteredSessionFactory> clusteredSessionFactories) {
+                    return new CustomAspect(clusteredSessionFactories);
                 }
             };
 
@@ -160,8 +162,8 @@ public class UnitOfWorkAwareProxyFactoryTest {
     }
 
     static class CustomAspect extends UnitOfWorkAspect {
-        public CustomAspect(Map<String, SessionFactory> sessionFactories) {
-            super(sessionFactories);
+        public CustomAspect(Map<String, ClusteredSessionFactory> sessionSelectors) {
+            super(sessionSelectors);
         }
 
         @Override

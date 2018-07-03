@@ -1,6 +1,6 @@
 package io.dropwizard.hibernate;
 
-import io.dropwizard.db.ManagedDataSource;
+import io.dropwizard.db.ManagedDataSources;
 import io.dropwizard.db.PooledDataSourceFactory;
 import io.dropwizard.setup.Environment;
 import org.hibernate.SessionFactory;
@@ -19,41 +19,57 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-public class SessionFactoryFactory {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SessionFactoryFactory.class);
+public class ClusteredSessionFactoryFactory {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ClusteredSessionFactoryFactory.class);
     private static final String DEFAULT_NAME = "hibernate";
 
-    public SessionFactory build(HibernateBundle<?> bundle,
-                                Environment environment,
-                                PooledDataSourceFactory dbConfig,
-                                List<Class<?>> entities) {
+    public ClusteredSessionFactory build(HibernateBundle<?> bundle,
+                                         Environment environment,
+                                         PooledDataSourceFactory dbConfig,
+                                         List<Class<?>> entities) {
         return build(bundle, environment, dbConfig, entities, DEFAULT_NAME);
     }
 
-    public SessionFactory build(HibernateBundle<?> bundle,
-                                Environment environment,
-                                PooledDataSourceFactory dbConfig,
-                                List<Class<?>> entities,
-                                String name) {
-        final ManagedDataSource dataSource = dbConfig.build(environment.metrics(), name);
-        return build(bundle, environment, dbConfig, dataSource, entities);
+    public ClusteredSessionFactory build(HibernateBundle<?> bundle,
+                                         Environment environment,
+                                         PooledDataSourceFactory dbConfig,
+                                         List<Class<?>> entities,
+                                         String name) {
+        final ManagedDataSources dataSources = dbConfig.build(environment.metrics(), name);
+        return build(bundle, environment, dbConfig, dataSources, entities);
     }
 
-    public SessionFactory build(HibernateBundle<?> bundle,
-                                Environment environment,
-                                PooledDataSourceFactory dbConfig,
-                                ManagedDataSource dataSource,
-                                List<Class<?>> entities) {
-        final ConnectionProvider provider = buildConnectionProvider(dataSource,
-                                                                    dbConfig.getProperties());
-        final SessionFactory factory = buildSessionFactory(bundle,
-                                                           dbConfig,
-                                                           provider,
-                                                           dbConfig.getProperties(),
-                                                           entities);
-        final SessionFactoryManager managedFactory = new SessionFactoryManager(factory, dataSource);
+    public ClusteredSessionFactory build(HibernateBundle<?> bundle,
+                                         Environment environment,
+                                         PooledDataSourceFactory dbConfig,
+                                         ManagedDataSources dataSources,
+                                         List<Class<?>> entities) {
+        final ConnectionProvider writeProvider = buildConnectionProvider(dataSources.getWriteDataSource(),
+                                                                         dbConfig.getProperties());
+        final SessionFactory writeFactory = buildSessionFactory(bundle,
+                                                                dbConfig,
+                                                                writeProvider,
+                                                                dbConfig.getProperties(),
+                                                                entities);
+
+        final SessionFactoryManager managedFactory = new SessionFactoryManager(writeFactory, dataSources.getWriteDataSource());
         environment.lifecycle().manage(managedFactory);
-        return factory;
+        SessionFactory readFactory = writeFactory;
+
+        if (dataSources.hasSeparateReader()) {
+            final ConnectionProvider readProvider = buildConnectionProvider(dataSources.getReadDataSource(),
+                dbConfig.getProperties());
+            readFactory = buildSessionFactory(bundle,
+                dbConfig,
+                readProvider,
+                dbConfig.getProperties(),
+                entities);
+
+            final SessionFactoryManager managedReadFactory = new SessionFactoryManager(writeFactory, dataSources.getWriteDataSource());
+            environment.lifecycle().manage(managedReadFactory);
+        }
+
+        return new ClusteredSessionFactory(writeFactory, readFactory);
     }
 
     private ConnectionProvider buildConnectionProvider(DataSource dataSource,

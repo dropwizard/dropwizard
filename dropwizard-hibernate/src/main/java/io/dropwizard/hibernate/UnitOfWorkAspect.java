@@ -36,10 +36,10 @@ import static java.util.Objects.requireNonNull;
  */
 public class UnitOfWorkAspect {
 
-    private final Map<String, SessionFactory> sessionFactories;
+    private final Map<String, ClusteredSessionFactory> clusteredSessionFactories;
 
-    public UnitOfWorkAspect(Map<String, SessionFactory> sessionFactories) {
-        this.sessionFactories = sessionFactories;
+    public UnitOfWorkAspect(Map<String, ClusteredSessionFactory> clusteredSessionFactories) {
+        this.clusteredSessionFactories = clusteredSessionFactories;
     }
 
     // Context variables
@@ -50,7 +50,7 @@ public class UnitOfWorkAspect {
     private Session session;
 
     @Nullable
-    private SessionFactory sessionFactory;
+    private ClusteredSessionFactory clusteredSessionFactory;
 
     public void beforeStart(@Nullable UnitOfWork unitOfWork) {
         if (unitOfWork == null) {
@@ -58,17 +58,19 @@ public class UnitOfWorkAspect {
         }
         this.unitOfWork = unitOfWork;
 
-        sessionFactory = sessionFactories.get(unitOfWork.value());
-        if (sessionFactory == null) {
+        clusteredSessionFactory = clusteredSessionFactories.get(unitOfWork.value());
+        if (clusteredSessionFactory == null) {
             // If the user didn't specify the name of a session factory,
             // and we have only one registered, we can assume that it's the right one.
-            if (unitOfWork.value().equals(HibernateBundle.DEFAULT_NAME) && sessionFactories.size() == 1) {
-                sessionFactory = sessionFactories.values().iterator().next();
+            if (unitOfWork.value().equals(HibernateBundle.DEFAULT_NAME) && clusteredSessionFactories.size() == 1) {
+                clusteredSessionFactory = clusteredSessionFactories.values().iterator().next();
             } else {
                 throw new IllegalArgumentException("Unregistered Hibernate bundle: '" + unitOfWork.value() + "'");
             }
         }
-        session = sessionFactory.openSession();
+        clusteredSessionFactory.setReadOnly(unitOfWork.readOnly());
+        session = clusteredSessionFactory.getSessionFactory().openSession();
+
         try {
             configureSession();
             ManagedSessionContext.bind(session);
@@ -76,7 +78,7 @@ public class UnitOfWorkAspect {
         } catch (Throwable th) {
             session.close();
             session = null;
-            ManagedSessionContext.unbind(sessionFactory);
+            ManagedSessionContext.unbind(clusteredSessionFactory.getSessionFactory());
             throw th;
         }
     }
@@ -115,7 +117,7 @@ public class UnitOfWorkAspect {
             }
         } finally {
             session = null;
-            ManagedSessionContext.unbind(sessionFactory);
+            ManagedSessionContext.unbind(getSessionFactory());
         }
     }
 
@@ -160,7 +162,8 @@ public class UnitOfWorkAspect {
     }
 
     protected SessionFactory getSessionFactory() {
-        return requireNonNull(sessionFactory);
+        ClusteredSessionFactory clusteredSessionFactory = requireNonNull(this.clusteredSessionFactory);
+        return requireNonNull(clusteredSessionFactory.getSessionFactory());
     }
 
 }

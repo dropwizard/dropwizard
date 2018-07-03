@@ -2,7 +2,6 @@ package io.dropwizard.hibernate;
 
 import javassist.util.proxy.Proxy;
 import javassist.util.proxy.ProxyFactory;
-import org.hibernate.SessionFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
@@ -18,18 +17,18 @@ import java.util.Map;
  */
 public class UnitOfWorkAwareProxyFactory {
 
-    private final Map<String, SessionFactory> sessionFactories;
+    private final Map<String, ClusteredSessionFactory> clusteredSessionFactories;
 
-    public UnitOfWorkAwareProxyFactory(String name, SessionFactory sessionFactory) {
-        sessionFactories = Collections.singletonMap(name, sessionFactory);
+    public UnitOfWorkAwareProxyFactory(String name, ClusteredSessionFactory clusteredSessionFactory) {
+        clusteredSessionFactories = Collections.singletonMap(name, clusteredSessionFactory);
     }
 
     public UnitOfWorkAwareProxyFactory(HibernateBundle<?>... bundles) {
-        final Map<String, SessionFactory> sessionFactoriesBuilder = new HashMap<>();
+        final Map<String, ClusteredSessionFactory> clusteredSessionFactoriesBuilder = new HashMap<>();
         for (HibernateBundle<?> bundle : bundles) {
-            sessionFactoriesBuilder.put(bundle.name(), bundle.getSessionFactory());
+            clusteredSessionFactoriesBuilder.put(bundle.name(), bundle.getSessionFactory());
         }
-        sessionFactories = Collections.unmodifiableMap(sessionFactoriesBuilder);
+        clusteredSessionFactories = Collections.unmodifiableMap(clusteredSessionFactoriesBuilder);
     }
 
 
@@ -77,7 +76,7 @@ public class UnitOfWorkAwareProxyFactory {
                     factory.create(constructorParamTypes, constructorArguments));
             proxy.setHandler((self, overridden, proceed, args) -> {
                 final UnitOfWork unitOfWork = overridden.getAnnotation(UnitOfWork.class);
-                final UnitOfWorkAspect unitOfWorkAspect = newAspect(sessionFactories);
+                final UnitOfWorkAspect unitOfWorkAspect = newAspect(clusteredSessionFactories);
                 try {
                     unitOfWorkAspect.beforeStart(unitOfWork);
                     Object result = proceed.invoke(self, args);
@@ -104,14 +103,14 @@ public class UnitOfWorkAwareProxyFactory {
      * @return a new aspect
      */
     public UnitOfWorkAspect newAspect() {
-        return new UnitOfWorkAspect(sessionFactories);
+        return new UnitOfWorkAspect(clusteredSessionFactories);
     }
 
     /**
      * @return a new aspect
-     * @param sessionFactories
+     * @param clusteredSessionFactories
      */
-    public UnitOfWorkAspect newAspect(Map<String, SessionFactory> sessionFactories) {
-        return new UnitOfWorkAspect(sessionFactories);
+    public UnitOfWorkAspect newAspect(Map<String, ClusteredSessionFactory> clusteredSessionFactories) {
+        return new UnitOfWorkAspect(clusteredSessionFactories);
     }
 }

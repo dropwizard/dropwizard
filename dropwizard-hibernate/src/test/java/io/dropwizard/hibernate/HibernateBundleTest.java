@@ -29,7 +29,8 @@ import static org.mockito.Mockito.when;
 public class HibernateBundleTest {
     private final DataSourceFactory dbConfig = new DataSourceFactory();
     private final List<Class<?>> entities = Collections.singletonList(Person.class);
-    private final SessionFactoryFactory factory = mock(SessionFactoryFactory.class);
+    private final ClusteredSessionFactoryFactory factory = mock(ClusteredSessionFactoryFactory.class);
+    private final ClusteredSessionFactory clusteredSessionFactory = mock(ClusteredSessionFactory.class);
     private final SessionFactory sessionFactory = mock(SessionFactory.class);
     private final Configuration configuration = mock(Configuration.class);
     private final HealthCheckRegistry healthChecks = mock(HealthCheckRegistry.class);
@@ -49,12 +50,14 @@ public class HibernateBundleTest {
         when(environment.jersey()).thenReturn(jerseyEnvironment);
         when(jerseyEnvironment.getResourceConfig()).thenReturn(new DropwizardResourceConfig());
 
+        when(clusteredSessionFactory.getSessionFactory())
+            .thenReturn(sessionFactory);
 
         when(factory.build(eq(bundle),
                            any(Environment.class),
                            any(DataSourceFactory.class),
                            anyList(),
-                           eq("hibernate"))).thenReturn(sessionFactory);
+                           eq("hibernate"))).thenReturn(clusteredSessionFactory);
     }
 
     @Test
@@ -121,7 +124,7 @@ public class HibernateBundleTest {
                 any(Environment.class),
                 any(DataSourceFactory.class),
                 anyList(),
-                eq("custom-hibernate"))).thenReturn(sessionFactory);
+                eq("custom-hibernate"))).thenReturn(clusteredSessionFactory);
 
         customBundle.run(configuration, environment);
 
@@ -134,6 +137,6 @@ public class HibernateBundleTest {
     public void hasASessionFactory() throws Exception {
         bundle.run(configuration, environment);
 
-        assertThat(bundle.getSessionFactory()).isEqualTo(sessionFactory);
+        assertThat(bundle.getSessionFactory()).isEqualTo(clusteredSessionFactory);
     }
 }

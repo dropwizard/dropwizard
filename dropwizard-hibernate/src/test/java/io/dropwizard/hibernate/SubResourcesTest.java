@@ -10,7 +10,6 @@ import io.dropwizard.setup.Environment;
 import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -56,15 +55,15 @@ public class SubResourcesTest {
 
         @Override
         public void run(TestConfiguration configuration, Environment environment) throws Exception {
-            final SessionFactory sessionFactory = hibernate.getSessionFactory();
-            initDatabase(sessionFactory);
+            final ClusteredSessionFactory clusteredSessionFactory = hibernate.getSessionFactory();
+            initDatabase(clusteredSessionFactory);
 
-            environment.jersey().register(new UnitOfWorkApplicationListener("hr-db", sessionFactory));
-            environment.jersey().register(new PersonResource(new PersonDAO(sessionFactory), new DogDAO(sessionFactory)));
+            environment.jersey().register(new UnitOfWorkApplicationListener("hr-db", clusteredSessionFactory));
+            environment.jersey().register(new PersonResource(new PersonDAO(clusteredSessionFactory), new DogDAO(clusteredSessionFactory)));
         }
 
-        private void initDatabase(SessionFactory sessionFactory) {
-            try (Session session = sessionFactory.openSession()) {
+        private void initDatabase(ClusteredSessionFactory clusteredSessionFactory) {
+            try (Session session = clusteredSessionFactory.getSessionFactory().openSession()) {
                 Transaction transaction = session.beginTransaction();
                 session.createNativeQuery("CREATE TABLE people (name varchar(100) primary key, email varchar(16), birthday timestamp)")
                     .executeUpdate();
@@ -147,8 +146,8 @@ public class SubResourcesTest {
     }
 
     public static class PersonDAO extends AbstractDAO<Person> {
-        PersonDAO(SessionFactory sessionFactory) {
-            super(sessionFactory);
+        public PersonDAO(ClusteredSessionFactory clusteredSessionFactory) {
+            super(clusteredSessionFactory);
         }
 
         Optional<Person> findByName(String name) {
@@ -157,8 +156,8 @@ public class SubResourcesTest {
     }
 
     public static class DogDAO extends AbstractDAO<Dog> {
-        DogDAO(SessionFactory sessionFactory) {
-            super(sessionFactory);
+        public DogDAO(ClusteredSessionFactory clusteredSessionFactory) {
+            super(clusteredSessionFactory);
         }
 
         Optional<Dog> findByOwnerAndName(String ownerName, String dogName) {

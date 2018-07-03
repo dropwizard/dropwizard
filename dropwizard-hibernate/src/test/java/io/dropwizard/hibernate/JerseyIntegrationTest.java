@@ -47,8 +47,8 @@ public class JerseyIntegrationTest extends JerseyTest {
     }
 
     public static class PersonDAO extends AbstractDAO<Person> {
-        public PersonDAO(SessionFactory sessionFactory) {
-            super(sessionFactory);
+        public PersonDAO(ClusteredSessionFactory clusteredSessionFactory) {
+            super(clusteredSessionFactory);
         }
 
         public Optional<Person> findByName(String name) {
@@ -101,7 +101,7 @@ public class JerseyIntegrationTest extends JerseyTest {
         forceSet(TestProperties.CONTAINER_PORT, "0");
 
         final MetricRegistry metricRegistry = new MetricRegistry();
-        final SessionFactoryFactory factory = new SessionFactoryFactory();
+        final ClusteredSessionFactoryFactory factory = new ClusteredSessionFactoryFactory();
         final DataSourceFactory dbConfig = new DataSourceFactory();
         dbConfig.setProperties(Collections.singletonMap("hibernate.jdbc.time_zone", "UTC"));
 
@@ -116,10 +116,11 @@ public class JerseyIntegrationTest extends JerseyTest {
         dbConfig.setDriverClass("org.hsqldb.jdbcDriver");
         dbConfig.setValidationQuery("SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS");
 
-        this.sessionFactory = factory.build(bundle,
+        ClusteredSessionFactory clusteredSessionFactory = factory.build(bundle,
                                             environment,
                                             dbConfig,
                                             Collections.singletonList(Person.class));
+        this.sessionFactory = clusteredSessionFactory.getSessionFactory();
 
         try (Session session = sessionFactory.openSession()) {
             Transaction transaction = session.beginTransaction();
@@ -134,8 +135,8 @@ public class JerseyIntegrationTest extends JerseyTest {
         }
 
         final DropwizardResourceConfig config = DropwizardResourceConfig.forTesting(new MetricRegistry());
-        config.register(new UnitOfWorkApplicationListener("hr-db", sessionFactory));
-        config.register(new PersonResource(new PersonDAO(sessionFactory)));
+        config.register(new UnitOfWorkApplicationListener("hr-db", clusteredSessionFactory));
+        config.register(new PersonResource(new PersonDAO(clusteredSessionFactory)));
         config.register(new PersistenceExceptionMapper());
         config.register(new JacksonFeature(Jackson.newObjectMapper()));
         config.register(new DataExceptionMapper());

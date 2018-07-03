@@ -30,6 +30,8 @@ import static org.mockito.Mockito.when;
 
 @SuppressWarnings("HibernateResourceOpenedButNotSafelyClosed")
 public class UnitOfWorkApplicationListenerTest {
+    private final ClusteredSessionFactory clusteredSessionFactory = mock(ClusteredSessionFactory.class);
+    private final ClusteredSessionFactory analyticsClusteredSessionFactory = mock(ClusteredSessionFactory.class);
     private final SessionFactory sessionFactory = mock(SessionFactory.class);
     private final SessionFactory analyticsSessionFactory = mock(SessionFactory.class);
     private final UnitOfWorkApplicationListener listener = new UnitOfWorkApplicationListener();
@@ -48,15 +50,18 @@ public class UnitOfWorkApplicationListenerTest {
     @SuppressWarnings("unchecked")
     @Before
     public void setUp() throws Exception {
-        listener.registerSessionFactory(HibernateBundle.DEFAULT_NAME, sessionFactory);
-        listener.registerSessionFactory("analytics", analyticsSessionFactory);
+        listener.registerSessionFactory(HibernateBundle.DEFAULT_NAME, clusteredSessionFactory);
+        listener.registerSessionFactory("analytics", analyticsClusteredSessionFactory);
 
+
+        when(clusteredSessionFactory.getSessionFactory()).thenReturn(sessionFactory);
         when(sessionFactory.openSession()).thenReturn(session);
         when(session.getSessionFactory()).thenReturn(sessionFactory);
         when(session.beginTransaction()).thenReturn(transaction);
         when(session.getTransaction()).thenReturn(transaction);
         when(transaction.getStatus()).thenReturn(ACTIVE);
 
+        when(analyticsClusteredSessionFactory.getSessionFactory()).thenReturn(analyticsSessionFactory);
         when(analyticsSessionFactory.openSession()).thenReturn(analyticsSession);
         when(analyticsSession.getSessionFactory()).thenReturn(analyticsSessionFactory);
         when(analyticsSession.beginTransaction()).thenReturn(analyticsTransaction);

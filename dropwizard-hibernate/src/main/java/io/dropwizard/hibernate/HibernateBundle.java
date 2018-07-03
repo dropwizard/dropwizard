@@ -9,7 +9,6 @@ import io.dropwizard.db.PooledDataSourceFactory;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.util.Duration;
-import org.hibernate.SessionFactory;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -23,11 +22,11 @@ public abstract class HibernateBundle<T extends Configuration> implements Config
     public static final String DEFAULT_NAME = "hibernate";
 
     @Nullable
-    private SessionFactory sessionFactory;
+    private ClusteredSessionFactory clusteredSessionFactory;
     private boolean lazyLoadingEnabled = true;
 
     private final List<Class<?>> entities;
-    private final SessionFactoryFactory sessionFactoryFactory;
+    private final ClusteredSessionFactoryFactory clusteredSessionFactoryFactory;
 
     protected HibernateBundle(Class<?> entity, Class<?>... entities) {
         final List<Class<?>> entityClasses = new ArrayList<>();
@@ -35,13 +34,13 @@ public abstract class HibernateBundle<T extends Configuration> implements Config
         entityClasses.addAll(Arrays.asList(entities));
 
         this.entities = Collections.unmodifiableList(entityClasses);
-        this.sessionFactoryFactory = new SessionFactoryFactory();
+        this.clusteredSessionFactoryFactory = new ClusteredSessionFactoryFactory();
     }
 
     protected HibernateBundle(List<Class<?>> entities,
-                              SessionFactoryFactory sessionFactoryFactory) {
+                              ClusteredSessionFactoryFactory clusteredSessionFactoryFactory) {
         this.entities = entities;
-        this.sessionFactoryFactory = sessionFactoryFactory;
+        this.clusteredSessionFactoryFactory = clusteredSessionFactoryFactory;
     }
 
     @Override
@@ -69,16 +68,16 @@ public abstract class HibernateBundle<T extends Configuration> implements Config
     }
 
     @Override
-    public final void run(T configuration, Environment environment) throws Exception {
+    public final void run(T configuration, Environment environment) {
         final PooledDataSourceFactory dbConfig = getDataSourceFactory(configuration);
-        this.sessionFactory = requireNonNull(sessionFactoryFactory.build(this, environment, dbConfig,
+        this.clusteredSessionFactory = requireNonNull(clusteredSessionFactoryFactory.build(this, environment, dbConfig,
             entities, name()));
-        registerUnitOfWorkListenerIfAbsent(environment).registerSessionFactory(name(), sessionFactory);
+        registerUnitOfWorkListenerIfAbsent(environment).registerSessionFactory(name(), clusteredSessionFactory);
         environment.healthChecks().register(name(),
                                             new SessionFactoryHealthCheck(
                                                     environment.getHealthCheckExecutorService(),
                                                     dbConfig.getValidationQueryTimeout().orElse(Duration.seconds(5)),
-                                                    sessionFactory,
+                                                    clusteredSessionFactory.getSessionFactory(),
                                                     dbConfig.getValidationQuery()));
     }
 
@@ -101,8 +100,8 @@ public abstract class HibernateBundle<T extends Configuration> implements Config
         this.lazyLoadingEnabled = lazyLoadingEnabled;
     }
 
-    public SessionFactory getSessionFactory() {
-        return requireNonNull(sessionFactory);
+    public ClusteredSessionFactory getSessionFactory() {
+        return requireNonNull(clusteredSessionFactory);
     }
 
     protected void configure(org.hibernate.cfg.Configuration configuration) {

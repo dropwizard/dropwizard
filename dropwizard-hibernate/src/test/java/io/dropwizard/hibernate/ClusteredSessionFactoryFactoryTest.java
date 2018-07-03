@@ -31,12 +31,12 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class SessionFactoryFactoryTest {
+public class ClusteredSessionFactoryFactoryTest {
     static {
         BootstrapLogging.bootstrap();
     }
 
-    private final SessionFactoryFactory factory = new SessionFactoryFactory();
+    private final ClusteredSessionFactoryFactory factory = new ClusteredSessionFactoryFactory();
 
     private final HibernateBundle<?> bundle = mock(HibernateBundle.class);
     private final LifecycleEnvironment lifecycleEnvironment = mock(LifecycleEnvironment.class);
@@ -99,7 +99,7 @@ public class SessionFactoryFactoryTest {
     @Test
     public void setsACustomPoolName() {
         this.sessionFactory = factory.build(bundle, environment, config,
-                Collections.singletonList(Person.class), "custom-hibernate-db");
+                Collections.singletonList(Person.class), "custom-hibernate-db").getSessionFactory();
 
         ArgumentCaptor<SessionFactoryManager> sessionFactoryManager = ArgumentCaptor.forClass(SessionFactoryManager.class);
         verify(lifecycleEnvironment).manage(sessionFactoryManager.capture());
@@ -133,7 +133,7 @@ public class SessionFactoryFactoryTest {
 
     @Test
     public void configureRunsBeforeSessionFactoryCreation() {
-        final SessionFactoryFactory customFactory = new SessionFactoryFactory() {
+        final ClusteredSessionFactoryFactory customFactory = new ClusteredSessionFactoryFactory() {
             @Override
             protected void configure(Configuration configuration, ServiceRegistry registry) {
                 super.configure(configuration, registry);
@@ -143,7 +143,7 @@ public class SessionFactoryFactoryTest {
         sessionFactory = customFactory.build(bundle,
                                              environment,
                                              config,
-                                             Collections.singletonList(Person.class));
+                                             Collections.singletonList(Person.class)).getSessionFactory();
 
         assertThat(sessionFactory.getSessionFactoryOptions().getInterceptor()).isSameAs(EmptyInterceptor.INSTANCE);
     }
@@ -152,6 +152,6 @@ public class SessionFactoryFactoryTest {
         this.sessionFactory = factory.build(bundle,
                                             environment,
                                             config,
-                                            Collections.singletonList(Person.class));
+                                            Collections.singletonList(Person.class)).getSessionFactory();
     }
 }
