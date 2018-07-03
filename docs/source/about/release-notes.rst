@@ -18,6 +18,13 @@ v2.0.0: Unreleased
 * Fix usage ``@SelfValidating`` with ``@BeanParam`` (`#2334 <https://github.com/dropwizard/dropwizard/pull/2334>`_)
 * Fix resource endpoints injected via DI not being logged on startup (`#2389 <https://github.com/dropwizard/dropwizard/pull/2389>`_)
 
+.. _rel-1.3.5:
+
+v1.3.5: Jun 25, 2018
+====================
+
+* Upgrade to Jetty 9.4.11.v20180605 to address `various security issues <http://dev.eclipse.org/mhonarc/lists/jetty-announce/msg00123.html>`__
+
 .. _rel-1.2.8:
 
 v1.2.8: Jun 25, 2018
