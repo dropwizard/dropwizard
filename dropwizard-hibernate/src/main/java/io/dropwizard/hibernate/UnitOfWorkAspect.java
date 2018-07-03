@@ -117,7 +117,9 @@ public class UnitOfWorkAspect {
             }
         } finally {
             session = null;
-            ManagedSessionContext.unbind(getSessionFactory());
+            if (clusteredSessionFactory != null) {
+                ManagedSessionContext.unbind(clusteredSessionFactory.getSessionFactory());
+            }
         }
     }
 
@@ -162,7 +164,7 @@ public class UnitOfWorkAspect {
     }
 
     protected SessionFactory getSessionFactory() {
-        ClusteredSessionFactory clusteredSessionFactory = requireNonNull(this.clusteredSessionFactory);
+        requireNonNull(this.clusteredSessionFactory);
         return requireNonNull(clusteredSessionFactory.getSessionFactory());
     }
 
