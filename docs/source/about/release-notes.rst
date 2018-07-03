@@ -4,6 +4,13 @@
 Release Notes
 #############
 
+.. _rel-1.3.5:
+
+v1.3.5: Jun 25, 2018
+====================
+
+* Upgrade to Jetty 9.4.11.v20180605 to address `various security issues <http://dev.eclipse.org/mhonarc/lists/jetty-announce/msg00123.html>`__
+
 .. _rel-1.2.8:
 
 v1.2.8: Jun 25, 2018
