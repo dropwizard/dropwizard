@@ -51,8 +51,9 @@ public class JdbiFactory {
      * with the configured health check; this method should not be overridden
      * (instead, override {@link #newInstance(ManagedDataSource)} and
      * {@link #configure(Jdbi)})
+     *
      * This will be an instance connected to your read URL. If you do not configure a read URL
-     * Then this is that same as running {@link #buildReadOnly(Environment, PooledDataSourceFactory, String)}
+     * Then this is that same as running {@link #build(Environment, PooledDataSourceFactory, String)}
      *
      * @param environment
      * @param configuration

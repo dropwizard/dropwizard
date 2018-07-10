@@ -32,7 +32,8 @@ public class JdbiFactoryTest {
         final PooledDataSourceFactory configuration = mock(PooledDataSourceFactory.class);
         final String name = UUID.randomUUID().toString();
         final ManagedDataSource dataSource = mock(ManagedDataSource.class);
-        final ManagedDataSources dataSources = new ManagedDataSources(dataSource, dataSource);
+        final ManagedDataSource readDataSource = mock(ManagedDataSource.class);
+        final ManagedDataSources dataSources = new ManagedDataSources(dataSource, readDataSource);
         final String validationQuery = UUID.randomUUID().toString();
         final Jdbi jdbi = mock(Jdbi.class);
         final SqlStatements sqlStatements = new SqlStatements();
@@ -70,7 +71,8 @@ public class JdbiFactoryTest {
         final PooledDataSourceFactory configuration = mock(PooledDataSourceFactory.class);
         final String name = UUID.randomUUID().toString();
         final ManagedDataSource dataSource = mock(ManagedDataSource.class);
-        final ManagedDataSources dataSources = new ManagedDataSources(dataSource, dataSource);
+        final ManagedDataSource readDataSource = mock(ManagedDataSource.class);
+        final ManagedDataSources dataSources = new ManagedDataSources(dataSource, readDataSource);
         final String validationQuery = UUID.randomUUID().toString();
         final Jdbi jdbi = mock(Jdbi.class);
         final SqlStatements sqlStatements = new SqlStatements();
@@ -87,12 +89,12 @@ public class JdbiFactoryTest {
 
         final JdbiFactory factory = spy(new JdbiFactory());
 
-        when(factory.newInstance(dataSource)).thenReturn(jdbi);
+        when(factory.newInstance(readDataSource)).thenReturn(jdbi);
 
         final Jdbi result = factory.buildReadOnly(environment, configuration, name);
 
         assertThat(result).isSameAs(jdbi);
-        verify(lifecycle).manage(dataSource);
+        verify(lifecycle).manage(readDataSource);
         verify(healthChecks).register(eq(name), any(JdbiHealthCheck.class));
         verify(jdbi).setTimingCollector(any(InstrumentedTimingCollector.class));
         verify(jdbi).setTemplateEngine(any(NamePrependingTemplateEngine.class));
