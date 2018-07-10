@@ -22,7 +22,7 @@ import org.glassfish.jersey.client.spi.ConnectorProvider;
 
 import javax.annotation.Nullable;
 import javax.net.ssl.HostnameVerifier;
-import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.RxInvokerProvider;
@@ -61,7 +61,7 @@ public class JerseyClientBuilder {
     private JerseyClientConfiguration configuration = new JerseyClientConfiguration();
 
     private HttpClientBuilder apacheHttpClientBuilder;
-    private Validator validator = Validators.newValidator();
+    private ValidatorFactory validatorFactory = Validators.newValidatorFactory();
 
     @Nullable
     private Environment environment;
@@ -151,13 +151,13 @@ public class JerseyClientBuilder {
     }
 
     /**
-     * Use the given {@link Validator} instance.
+     * Use the given {@link ValidatorFactory} instance.
      *
-     * @param validator a {@link Validator} instance
+     * @param validatorFactory a {@link ValidatorFactory} instance
      * @return {@code this}
      */
-    public JerseyClientBuilder using(Validator validator) {
-        this.validator = validator;
+    public JerseyClientBuilder using(ValidatorFactory validatorFactory) {
+        this.validatorFactory = validatorFactory;
         return this;
     }
 
@@ -354,20 +354,20 @@ public class JerseyClientBuilder {
         }
 
         if (environment != null) {
-            validator = environment.getValidator();
+            validatorFactory = environment.getValidatorFactory();
         }
 
-        return build(name, executorService, objectMapper, validator);
+        return build(name, executorService, objectMapper, validatorFactory);
     }
 
     private Client build(String name, ExecutorService threadPool,
                          ObjectMapper objectMapper,
-                         Validator validator) {
+                         ValidatorFactory validatorFactory) {
         if (!configuration.isGzipEnabled()) {
             apacheHttpClientBuilder.disableContentCompression(true);
         }
 
-        final Client client = ClientBuilder.newClient(buildConfig(name, threadPool, objectMapper, validator));
+        final Client client = ClientBuilder.newClient(buildConfig(name, threadPool, objectMapper, validatorFactory));
         client.register(new JerseyIgnoreRequestUserAgentHeaderFilter());
 
         // Tie the client to server lifecycle
@@ -393,7 +393,7 @@ public class JerseyClientBuilder {
 
     private Configuration buildConfig(final String name, final ExecutorService threadPool,
                                       final ObjectMapper objectMapper,
-                                      final Validator validator) {
+                                      final ValidatorFactory validatorFactory) {
         final ClientConfig config = new ClientConfig();
 
         for (Object singleton : this.singletons) {
@@ -405,7 +405,7 @@ public class JerseyClientBuilder {
         }
 
         config.register(new JacksonFeature(objectMapper));
-        config.register(new HibernateValidationBinder(validator));
+        config.register(new HibernateValidationBinder(validatorFactory));
 
         for (Map.Entry<String, Object> property : this.properties.entrySet()) {
             config.property(property.getKey(), property.getValue());

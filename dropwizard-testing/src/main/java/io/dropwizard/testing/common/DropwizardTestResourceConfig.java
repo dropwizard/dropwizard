@@ -43,7 +43,7 @@ class DropwizardTestResourceConfig extends DropwizardResourceConfig {
             property(property.getKey(), property.getValue());
         }
         register(new JacksonFeature(configuration.mapper));
-        register(new HibernateValidationBinder(configuration.validator));
+        register(new HibernateValidationBinder(configuration.validatorFactory));
         for (Supplier<?> singleton : configuration.singletons) {
             register(singleton.get());
         }

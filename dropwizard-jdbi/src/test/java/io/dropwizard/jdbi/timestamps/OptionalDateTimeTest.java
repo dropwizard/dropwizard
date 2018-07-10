@@ -24,7 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class OptionalDateTimeTest {
 
     private final Environment env = new Environment("test-optional-date-time", Jackson.newObjectMapper(),
-            Validators.newValidator(), new MetricRegistry(), null);
+            Validators.newValidatorFactory(), new MetricRegistry(), null);
 
 
     private TaskDao dao;

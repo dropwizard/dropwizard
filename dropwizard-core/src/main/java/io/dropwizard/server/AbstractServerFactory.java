@@ -42,7 +42,7 @@ import javax.annotation.Nullable;
 import javax.servlet.DispatcherType;
 import javax.servlet.Servlet;
 import javax.validation.Valid;
-import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.io.BufferedReader;
@@ -529,7 +529,7 @@ public abstract class AbstractServerFactory implements ServerFactory {
     protected Handler createAppServlet(Server server,
                                        JerseyEnvironment jersey,
                                        ObjectMapper objectMapper,
-                                       Validator validator,
+                                       ValidatorFactory validatorFactory,
                                        MutableServletContextHandler handler,
                                        @Nullable Servlet jerseyContainer,
                                        MetricRegistry metricRegistry) {
@@ -545,7 +545,7 @@ public abstract class AbstractServerFactory implements ServerFactory {
         if (jerseyContainer != null) {
             jerseyRootPath.ifPresent(jersey::setUrlPattern);
             jersey.register(new JacksonFeature(objectMapper));
-            jersey.register(new HibernateValidationBinder(validator));
+            jersey.register(new HibernateValidationBinder(validatorFactory));
             if (registerDefaultExceptionMappers == null || registerDefaultExceptionMappers) {
                 jersey.register(new ExceptionMapperBinder(detailedJsonProcessingExceptionMapper));
             }

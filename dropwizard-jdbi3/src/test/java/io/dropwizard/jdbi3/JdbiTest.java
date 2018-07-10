@@ -35,7 +35,7 @@ public class JdbiTest {
 
     @Before
     public void setUp() throws Exception {
-        environment = new Environment("test", new ObjectMapper(), Validators.newValidator(),
+        environment = new Environment("test", new ObjectMapper(), Validators.newValidatorFactory(),
             metricRegistry, ClassLoader.getSystemClassLoader());
 
         DataSourceFactory dataSourceFactory = new DataSourceFactory();

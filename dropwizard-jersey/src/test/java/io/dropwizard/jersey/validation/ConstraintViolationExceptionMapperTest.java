@@ -6,12 +6,17 @@ import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.jersey.jackson.JacksonMessageBodyProviderTest.Example;
 import io.dropwizard.jersey.jackson.JacksonMessageBodyProviderTest.ListExample;
 import io.dropwizard.jersey.jackson.JacksonMessageBodyProviderTest.PartialExample;
+import org.glassfish.jersey.servlet.ServletContainer;
+import org.glassfish.jersey.test.DeploymentContext;
+import org.glassfish.jersey.test.ServletDeploymentContext;
+import org.glassfish.jersey.test.grizzly.GrizzlyWebTestContainerFactory;
+import org.glassfish.jersey.test.spi.TestContainerException;
+import org.glassfish.jersey.test.spi.TestContainerFactory;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Form;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
@@ -27,16 +32,21 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assume.assumeThat;
 
 public class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
-
-
     private static final Locale DEFAULT_LOCALE = Locale.getDefault();
 
     @Override
-    protected Application configure() {
-        return DropwizardResourceConfig.forTesting(new MetricRegistry())
+    protected DeploymentContext configureDeployment() {
+        return ServletDeploymentContext.forServlet(
+                new ServletContainer(DropwizardResourceConfig.forTesting(new MetricRegistry())
                 .packages("io.dropwizard.jersey.validation")
                 .register(new ValidatingResource2())
-                .register(new HibernateValidationBinder(Validators.newValidator()));
+                .register(new HibernateValidationBinder(Validators.newValidatorFactory()))))
+            .build();
+    }
+
+    @Override
+    protected TestContainerFactory getTestContainerFactory() throws TestContainerException {
+        return new GrizzlyWebTestContainerFactory();
     }
 
     @BeforeClass
@@ -676,6 +686,28 @@ public class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
         assertThat(response.getStatus()).isEqualTo(400);
         assertThat(response.readEntity(String.class))
             .containsOnlyOnce("query param choice must be one of [OptionA, OptionB, OptionC]");
+    }
+
+
+    @Test
+    public void invalidCustomContextValidation() {
+        final Response response = target("/valid/customValidation")
+            .queryParam("coolness", "Dropwizard iscool")
+            .request().get();
+        assertThat(response.getStatus()).isEqualTo(400);
+        assertThat(response.readEntity(String.class))
+            .containsOnlyOnce("query param coolness is not yet cool enough (or maybe it's too cool)!");
+    }
+
+    @Test
+    public void validCustomContextValidation() {
+        final Response response = target("/valid/customValidation")
+            .queryParam("coolness", "Dropwizard iscool")
+            .queryParam("sneaky-param", "")
+            .request().get();
+        assertThat(response.getStatus()).isEqualTo(200);
+        assertThat(response.readEntity(String.class))
+            .containsOnlyOnce("Dropwizard iscool");
     }
 
     @Test

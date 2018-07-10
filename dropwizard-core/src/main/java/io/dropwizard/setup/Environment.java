@@ -16,6 +16,7 @@ import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import javax.annotation.Nullable;
 import javax.servlet.Servlet;
 import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -32,6 +33,7 @@ public class Environment {
     private final HealthCheckRegistry healthCheckRegistry;
 
     private final ObjectMapper objectMapper;
+    private ValidatorFactory validatorFactory;
     private Validator validator;
 
     private final JerseyContainerHolder jerseyServletContainer;
@@ -55,7 +57,7 @@ public class Environment {
      */
     public Environment(String name,
                        ObjectMapper objectMapper,
-                       Validator validator,
+                       ValidatorFactory validatorFactory,
                        MetricRegistry metricRegistry,
                        @Nullable ClassLoader classLoader,
                        HealthCheckRegistry healthCheckRegistry) {
@@ -63,7 +65,8 @@ public class Environment {
         this.objectMapper = objectMapper;
         this.metricRegistry = metricRegistry;
         this.healthCheckRegistry = healthCheckRegistry;
-        this.validator = validator;
+        this.validatorFactory = validatorFactory;
+        this.validator = validatorFactory.getValidator();
 
         this.servletContext = new MutableServletContextHandler();
         servletContext.setClassLoader(classLoader);
@@ -114,10 +117,10 @@ public class Environment {
      */
     public Environment(String name,
                        ObjectMapper objectMapper,
-                       Validator validator,
+                       ValidatorFactory validatorFactory,
                        MetricRegistry metricRegistry,
                        @Nullable ClassLoader classLoader) {
-        this(name, objectMapper, validator, metricRegistry, classLoader, new HealthCheckRegistry());
+        this(name, objectMapper, validatorFactory, metricRegistry, classLoader, new HealthCheckRegistry());
     }
 
     /**
@@ -177,10 +180,18 @@ public class Environment {
     }
 
     /**
+     * Returns the {@link ValidatorFactory} that will create the {@link Validator}
+     */
+    public ValidatorFactory getValidatorFactory() {
+        return validatorFactory;
+    }
+
+    /**
      * Sets the application's {@link Validator}.
      */
-    public void setValidator(Validator validator) {
-        this.validator = requireNonNull(validator);
+    public void setValidatorFactory(ValidatorFactory validatorFactory) {
+        this.validatorFactory = requireNonNull(validatorFactory);
+        this.validator = validatorFactory.getValidator();
     }
 
     /**
