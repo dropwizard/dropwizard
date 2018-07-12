@@ -15,13 +15,13 @@
  */
 package io.dropwizard.jetty;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.ArrayList;
@@ -73,9 +73,9 @@ public class NetUtil {
             // The known defaults:
             // - Windows NT Server 4.0+: 200
             // - Linux and Mac OS X: 128
-            try {
-                return Integer.parseInt(new String(Files.readAllBytes(Paths.get(TCP_BACKLOG_SETTING_LOCATION)),
-                    StandardCharsets.UTF_8).trim());
+            final File file = new File(TCP_BACKLOG_SETTING_LOCATION);
+            try (BufferedReader in = new BufferedReader(new FileReader(file))) {
+                return Integer.parseInt(in.readLine().trim());
             } catch (SecurityException | IOException | NumberFormatException | NullPointerException e) {
                 return tcpBacklog;
             }
