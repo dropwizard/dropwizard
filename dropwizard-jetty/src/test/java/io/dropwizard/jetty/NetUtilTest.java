@@ -55,6 +55,9 @@ public class NetUtilTest {
         assumeThat(System.getProperty(OS_NAME_PROPERTY), containsString("Linux"));
         assumeThat(isTcpBacklogSettingReadable(), is(true));
         assertNotEquals(-1, NetUtil.getTcpBacklog(-1));
+        assertThat(NetUtil.getTcpBacklog())
+            .as("NetUtil should read more than the first character of somaxconn")
+            .isGreaterThan(2);
     }
 
     @Test
