@@ -4,12 +4,10 @@ import io.dropwizard.Bundle;
 import io.dropwizard.jersey.validation.MutableValidatorFactory;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.jersey.server.validation.internal.InjectingConstraintValidatorFactory;
 
 import javax.annotation.Nullable;
 import javax.validation.ConstraintValidatorFactory;
-import javax.validation.ValidatorFactory;
 import javax.ws.rs.container.ResourceContext;
 
 public class InjectValidatorBundle implements Bundle {
@@ -30,17 +28,17 @@ public class InjectValidatorBundle implements Bundle {
 
     @Override
     public void run(Environment environment) {
-        GetLocatorFeature getLocatorFeature = new GetLocatorFeature(this::setValidatorFactory);
-        environment.jersey().register(getLocatorFeature);
+        GetResourceContextFeature getResourceContext = new GetResourceContextFeature(this::setValidatorFactory);
+        environment.jersey().register(getResourceContext);
     }
 
-    private void setValidatorFactory(ServiceLocator serviceLocator) {
+    private void setValidatorFactory(ResourceContext resourceContext) {
         if (mutableValidatorFactory == null) {
             return;
         }
 
-        ConstraintValidatorFactory validatorFactory = serviceLocator
-            .getService(ResourceContext.class)
+        // Get original Jersey's ConstraintValidatorFactory
+        ConstraintValidatorFactory validatorFactory = resourceContext
             .getResource(InjectingConstraintValidatorFactory.class);
 
         mutableValidatorFactory.setValidatorFactory(validatorFactory);
