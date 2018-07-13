@@ -1,26 +1,25 @@
 package io.dropwizard.validation;
 
-import org.glassfish.hk2.api.ServiceLocator;
-
 import javax.inject.Inject;
+import javax.ws.rs.container.ResourceContext;
 import javax.ws.rs.core.Feature;
 import javax.ws.rs.core.FeatureContext;
 import java.util.function.Consumer;
 
-public class GetLocatorFeature implements Feature {
+public class GetResourceContextFeature implements Feature {
 
-    private final Consumer<ServiceLocator> action;
+    private final Consumer<ResourceContext> action;
 
     @Inject
-    private ServiceLocator serviceLocator;
+    private ResourceContext resourceContext;
 
-    public GetLocatorFeature(Consumer<ServiceLocator> action) {
+    public GetResourceContextFeature(Consumer<ResourceContext> action) {
         this.action = action;
     }
 
     @Override
     public boolean configure(FeatureContext context) {
-        action.accept(serviceLocator);
+        action.accept(resourceContext);
         return true;
     }
 }
