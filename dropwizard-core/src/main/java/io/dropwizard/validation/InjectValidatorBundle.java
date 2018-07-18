@@ -10,6 +10,9 @@ import javax.annotation.Nullable;
 import javax.validation.ConstraintValidatorFactory;
 import javax.ws.rs.container.ResourceContext;
 
+/**
+ * Dropwizard Bundle that enables injecting into constraint validators
+ */
 public class InjectValidatorBundle implements Bundle {
 
     @Nullable
@@ -43,5 +46,4 @@ public class InjectValidatorBundle implements Bundle {
 
         mutableValidatorFactory.setValidatorFactory(validatorFactory);
     }
-
 }
