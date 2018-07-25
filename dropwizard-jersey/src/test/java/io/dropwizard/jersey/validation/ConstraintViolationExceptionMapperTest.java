@@ -49,8 +49,9 @@ public class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
     }
 
     @Before
-    public void setUp() {
+    public void setUp() throws Exception {
         assumeThat(Locale.getDefault().getLanguage()).isEqualTo("en");
+        super.setUp();
     }
 
     @Test
