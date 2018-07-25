@@ -11,8 +11,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -39,6 +38,6 @@ public class DBIHealthCheckTest {
                 validationQuery);
         HealthCheck.Result result = dbiHealthCheck.check();
         executorService.shutdown();
-        assertThat("is unhealthy", false, is(result.isHealthy()));
+        assertThat(result.isHealthy()).isFalse();
     }
 }
