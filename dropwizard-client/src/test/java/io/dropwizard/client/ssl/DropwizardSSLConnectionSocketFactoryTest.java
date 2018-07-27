@@ -31,6 +31,7 @@ import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.core.Response;
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.SocketException;
 import java.security.Security;
@@ -256,7 +257,7 @@ public class DropwizardSSLConnectionSocketFactoryTest {
         final Client client = new JerseyClientBuilder(TLS_APP_RULE.getEnvironment()).using(jerseyClientConfiguration).build("reject_non_supported");
         assertThatThrownBy(() -> client.target(String.format("https://localhost:%d", TLS_APP_RULE.getPort(4))).request().get())
             .isInstanceOf(ProcessingException.class)
-            .hasRootCauseInstanceOf(SSLException.class);
+            .hasRootCauseInstanceOf(IOException.class);
     }
 
     @Test(expected = SSLInitializationException.class)
