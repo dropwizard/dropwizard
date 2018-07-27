@@ -4,13 +4,12 @@ import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.hamcrest.core.IsNull.nullValue;
-import static org.junit.Assume.assumeThat;
+import static org.assertj.core.api.Assumptions.assumeThat;
 
 public class EnvironmentVariableLookupTest {
     @Test
     public void defaultConstructorEnablesStrict() {
-        assumeThat(System.getenv("nope"), nullValue());
+        assumeThat(System.getenv("nope")).isNull();
 
         assertThatExceptionOfType(UndefinedEnvironmentVariableException.class).isThrownBy(()->
             new EnvironmentVariableLookup().lookup("nope"));
@@ -27,7 +26,7 @@ public class EnvironmentVariableLookupTest {
 
     @Test
     public void lookupThrowsExceptionInStrictMode() {
-        assumeThat(System.getenv("nope"), nullValue());
+        assumeThat(System.getenv("nope")).isNull();
 
         assertThatExceptionOfType(UndefinedEnvironmentVariableException.class).isThrownBy(() ->
             new EnvironmentVariableLookup(true).lookup("nope"));

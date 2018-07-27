@@ -2,7 +2,6 @@ package io.dropwizard.auth;
 
 import com.codahale.metrics.MetricRegistry;
 import com.github.benmanes.caffeine.cache.CaffeineSpec;
-import com.google.common.cache.CacheBuilderSpec;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;

@@ -7,6 +7,7 @@ import io.dropwizard.jersey.jackson.JacksonMessageBodyProviderTest.Example;
 import io.dropwizard.jersey.jackson.JacksonMessageBodyProviderTest.ListExample;
 import io.dropwizard.jersey.jackson.JacksonMessageBodyProviderTest.PartialExample;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -23,12 +24,9 @@ import java.util.Map;
 
 import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assume.assumeThat;
+import static org.assertj.core.api.Assumptions.assumeThat;
 
 public class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
-
-
     private static final Locale DEFAULT_LOCALE = Locale.getDefault();
 
     @Override
@@ -50,10 +48,14 @@ public class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
         Locale.setDefault(DEFAULT_LOCALE);
     }
 
-    @Test
-    public void postInvalidEntityIs422() throws Exception {
-        assumeThat(Locale.getDefault().getLanguage(), is("en"));
+    @Before
+    public void setUp() throws Exception {
+        assumeThat(Locale.getDefault().getLanguage()).isEqualTo("en");
+        super.setUp();
+    }
 
+    @Test
+    public void postInvalidEntityIs422() {
         final Response response = target("/valid/foo").request(MediaType.APPLICATION_JSON)
                 .post(Entity.entity("{}", MediaType.APPLICATION_JSON));
         assertThat(response.getStatus()).isEqualTo(422);
@@ -61,7 +63,7 @@ public class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void postNullEntityIs422() throws Exception {
+    public void postNullEntityIs422() {
         final Response response = target("/valid/foo").request(MediaType.APPLICATION_JSON)
                 .post(Entity.entity(null, MediaType.APPLICATION_JSON));
         assertThat(response.getStatus()).isEqualTo(422);
@@ -71,9 +73,7 @@ public class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void postInvalidatedEntityIs422() throws Exception {
-        assumeThat(Locale.getDefault().getLanguage(), is("en"));
-
+    public void postInvalidatedEntityIs422() {
         final Response response = target("/valid/fooValidated").request(MediaType.APPLICATION_JSON)
                 .post(Entity.entity("{}", MediaType.APPLICATION_JSON));
         assertThat(response.getStatus()).isEqualTo(422);
@@ -81,7 +81,7 @@ public class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void postInvalidInterfaceEntityIs422() throws Exception {
+    public void postInvalidInterfaceEntityIs422() {
         final Response response = target("/valid2/repr").request(MediaType.APPLICATION_JSON)
             .post(Entity.entity("{\"name\": \"a\"}", MediaType.APPLICATION_JSON));
         assertThat(response.getStatus()).isEqualTo(400);
@@ -90,9 +90,7 @@ public class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void returnInvalidEntityIs500() throws Exception {
-        assumeThat(Locale.getDefault().getLanguage(), is("en"));
-
+    public void returnInvalidEntityIs500() {
         final Response response = target("/valid/foo").request(MediaType.APPLICATION_JSON)
                 .post(Entity.entity("{ \"name\": \"Coda\" }", MediaType.APPLICATION_JSON));
         assertThat(response.getStatus()).isEqualTo(500);
@@ -101,9 +99,7 @@ public class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void returnInvalidatedEntityIs500() throws Exception {
-        assumeThat(Locale.getDefault().getLanguage(), is("en"));
-
+    public void returnInvalidatedEntityIs500() {
         final Response response = target("/valid/fooValidated").request(MediaType.APPLICATION_JSON)
                 .post(Entity.entity("{ \"name\": \"Coda\" }", MediaType.APPLICATION_JSON));
         assertThat(response.getStatus()).isEqualTo(500);
@@ -112,7 +108,7 @@ public class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void getInvalidReturnIs500() throws Exception {
+    public void getInvalidReturnIs500() {
         // return value is too long and so will fail validation
         final Response response = target("/valid/bar")
                 .queryParam("name", "dropwizard").request().get();
@@ -123,7 +119,7 @@ public class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void getInvalidQueryParamsIs400() throws Exception {
+    public void getInvalidQueryParamsIs400() {
         // query parameter is too short and so will fail validation
         final Response response = target("/valid/bar")
                 .queryParam("name", "hi").request().get();
@@ -141,7 +137,7 @@ public class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void cacheIsForParamNamesOnly() throws Exception {
+    public void cacheIsForParamNamesOnly() {
         // query parameter must not be null, and must be at least 3
         final Response response = target("/valid/fhqwhgads")
                 .queryParam("num", 2).request().get();
@@ -160,7 +156,7 @@ public class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void postInvalidPrimitiveIs422() throws Exception {
+    public void postInvalidPrimitiveIs422() {
         // query parameter is too short and so will fail validation
         final Response response = target("/valid/simpleEntity")
                 .request().post(Entity.json("hi"));
@@ -172,7 +168,7 @@ public class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void getInvalidCustomTypeIs400() throws Exception {
+    public void getInvalidCustomTypeIs400() {
         // query parameter is too short and so will fail validation
         final Response response = target("/valid/barter")
                 .queryParam("name", "hi").request().get();
@@ -184,7 +180,7 @@ public class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void getInvalidBeanParamsIs400() throws Exception {
+    public void getInvalidBeanParamsIs400() {
         // bean parameter is too short and so will fail validation
         Response response = target("/valid/zoo")
                 .request().get();
@@ -197,7 +193,7 @@ public class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void getInvalidSubBeanParamsIs400() throws Exception {
+    public void getInvalidSubBeanParamsIs400() {
         final Response response = target("/valid/sub-zoo")
                 .queryParam("address", "42 Wallaby Way")
                 .request().get();
@@ -209,7 +205,7 @@ public class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void getGroupSubBeanParamsIs400() throws Exception {
+    public void getGroupSubBeanParamsIs400() {
         final Response response = target("/valid/sub-group-zoo")
             .queryParam("address", "42 WALLABY WAY")
             .queryParam("name", "Coda")
@@ -221,7 +217,7 @@ public class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void postValidGroupsIs400() throws Exception {
+    public void postValidGroupsIs400() {
         final Response response = target("/valid/sub-valid-group-zoo")
             .queryParam("address", "42 WALLABY WAY")
             .queryParam("name", "Coda")
@@ -234,7 +230,7 @@ public class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void getInvalidatedBeanParamsIs400() throws Exception {
+    public void getInvalidatedBeanParamsIs400() {
         // bean parameter is too short and so will fail validation
         final Response response = target("/valid/zoo2")
                 .request().get();
@@ -246,7 +242,7 @@ public class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void getInvalidHeaderParamsIs400() throws Exception {
+    public void getInvalidHeaderParamsIs400() {
         final Response response = target("/valid/head")
                 .request().get();
         assertThat(response.getStatus()).isEqualTo(400);
@@ -256,7 +252,7 @@ public class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void getInvalidCookieParamsIs400() throws Exception {
+    public void getInvalidCookieParamsIs400() {
         final Response response = target("/valid/cooks")
                 .request().get();
         assertThat(response.getStatus()).isEqualTo(400);
@@ -266,7 +262,7 @@ public class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void getInvalidPathParamsIs400() throws Exception {
+    public void getInvalidPathParamsIs400() {
         final Response response = target("/valid/goods/11")
                 .request().get();
         assertThat(response.getStatus()).isEqualTo(400);
@@ -276,7 +272,7 @@ public class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void getInvalidFormParamsIs400() throws Exception {
+    public void getInvalidFormParamsIs400() {
         final Response response = target("/valid/form")
                 .request().post(Entity.form(new Form()));
         assertThat(response.getStatus()).isEqualTo(400);
@@ -286,7 +282,7 @@ public class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void postInvalidMethodClassIs422() throws Exception {
+    public void postInvalidMethodClassIs422() {
         final Response response = target("/valid/nothing")
                 .request().post(Entity.entity("{}", MediaType.APPLICATION_JSON_TYPE));
         assertThat(response.getStatus()).isEqualTo(422);
@@ -296,7 +292,7 @@ public class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void getInvalidNestedReturnIs500() throws Exception {
+    public void getInvalidNestedReturnIs500() {
         final Response response = target("/valid/nested").request().get();
         assertThat(response.getStatus()).isEqualTo(500);
 
@@ -305,7 +301,7 @@ public class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void getInvalidNested2ReturnIs500() throws Exception {
+    public void getInvalidNested2ReturnIs500() {
         final Response response = target("/valid/nested2").request().get();
         assertThat(response.getStatus()).isEqualTo(500);
 
@@ -314,7 +310,7 @@ public class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void getInvalidContextIs400() throws Exception {
+    public void getInvalidContextIs400() {
         final Response response = target("/valid/context").request().get();
         assertThat(response.getStatus()).isEqualTo(400);
 
@@ -323,7 +319,7 @@ public class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void getInvalidMatrixParamIs400() throws Exception {
+    public void getInvalidMatrixParamIs400() {
         final Response response = target("/valid/matrix")
                 .matrixParam("bob", "").request().get();
         assertThat(response.getStatus()).isEqualTo(400);
@@ -333,7 +329,7 @@ public class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void functionWithSameNameReturnDifferentErrors() throws Exception {
+    public void functionWithSameNameReturnDifferentErrors() {
         // This test is to make sure that functions with the same name and
         // number of parameters (but different parameter types), don't return
         // the same validation error due to any caching effects
