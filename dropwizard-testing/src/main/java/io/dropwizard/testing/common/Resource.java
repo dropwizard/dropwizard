@@ -17,6 +17,7 @@ import org.glassfish.jersey.test.spi.TestContainerFactory;
 
 import javax.annotation.Nullable;
 import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
 import java.util.HashMap;
@@ -40,7 +41,7 @@ public class Resource {
         private final Set<Class<?>> providers = new HashSet<>();
         private final Map<String, Object> properties = new HashMap<>();
         private ObjectMapper mapper = Jackson.newObjectMapper();
-        private Validator validator = Validators.newValidator();
+        private ValidatorFactory validatorFactory = Validators.newValidatorFactory();
         private Consumer<ClientConfig> clientConfigurator = c -> {
         };
         private TestContainerFactory testContainerFactory = new InMemoryTestContainerFactory();
@@ -52,8 +53,8 @@ public class Resource {
             return (B) this;
         }
 
-        public B setValidator(Validator validator) {
-            this.validator = validator;
+        public B setValidatorFactory(ValidatorFactory validatorFactory) {
+            this.validatorFactory = validatorFactory;
             return (B) this;
         }
 
@@ -119,7 +120,7 @@ public class Resource {
                 config.property(HttpUrlConnectorProvider.SET_METHOD_WORKAROUND, true);
             };
             return new Resource(new ResourceTestJerseyConfiguration(
-                singletons, providers, properties, mapper, validator,
+                singletons, providers, properties, mapper, validatorFactory,
                 extendedConfigurator, testContainerFactory, registerDefaultExceptionMappers));
         }
     }

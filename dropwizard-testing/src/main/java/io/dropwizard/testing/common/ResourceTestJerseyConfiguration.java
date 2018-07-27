@@ -6,6 +6,7 @@ import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.test.spi.TestContainerFactory;
 
 import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -22,19 +23,21 @@ class ResourceTestJerseyConfiguration {
     final Set<Class<?>> providers;
     final Map<String, Object> properties;
     final ObjectMapper mapper;
+    final ValidatorFactory validatorFactory;
     final Validator validator;
     final Consumer<ClientConfig> clientConfigurator;
     final TestContainerFactory testContainerFactory;
     final boolean registerDefaultExceptionMappers;
 
     ResourceTestJerseyConfiguration(Set<Supplier<?>> singletons, Set<Class<?>> providers, Map<String, Object> properties,
-                                    ObjectMapper mapper, Validator validator, Consumer<ClientConfig> clientConfigurator,
+                                    ObjectMapper mapper, ValidatorFactory validatorFactory, Consumer<ClientConfig> clientConfigurator,
                                     TestContainerFactory testContainerFactory, boolean registerDefaultExceptionMappers) {
         this.singletons = singletons;
         this.providers = providers;
         this.properties = properties;
         this.mapper = mapper;
-        this.validator = validator;
+        this.validatorFactory = validatorFactory;
+        this.validator = validatorFactory.getValidator();
         this.clientConfigurator = clientConfigurator;
         this.testContainerFactory = testContainerFactory;
         this.registerDefaultExceptionMappers = registerDefaultExceptionMappers;

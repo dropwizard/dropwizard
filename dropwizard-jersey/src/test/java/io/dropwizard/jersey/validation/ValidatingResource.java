@@ -14,8 +14,9 @@ import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.hibernate.validator.valuehandling.UnwrapValidatedValue;
 
-import javax.servlet.ServletContext;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -259,7 +260,7 @@ public class ValidatingResource {
 
     @GET
     @Path("context")
-    public String contextual(@Valid @Context @NotNull ServletContext con) {
+    public String contextual(@Valid @Context @NotNull HttpSession con) {
         return "A";
     }
 
@@ -279,6 +280,12 @@ public class ValidatingResource {
     @Path("enumParam")
     public String enumParam(@NotNull @QueryParam("choice") Choice choice) {
         return choice.toString();
+    }
+
+    @GET
+    @Path("customValidation")
+    public String enumParam(@IsCool @QueryParam("coolness") String param) {
+        return param;
     }
 
     @GET

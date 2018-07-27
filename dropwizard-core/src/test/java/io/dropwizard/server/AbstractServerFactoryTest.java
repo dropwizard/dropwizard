@@ -81,7 +81,7 @@ public class AbstractServerFactoryTest {
             createAppServlet(server,
                                   environment.jersey(),
                                   environment.getObjectMapper(),
-                                  environment.getValidator(),
+                                  environment.getValidatorFactory(),
                                   environment.getApplicationContext(),
                                   environment.getJerseyServletContainer(),
                                   environment.metrics());

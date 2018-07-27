@@ -20,7 +20,7 @@ public class MultiPartBundleTest {
         final Environment environment = new Environment(
                 "multipart-test",
                 Jackson.newObjectMapper(),
-                BaseValidator.newValidator(),
+                BaseValidator.newConfiguration().buildValidatorFactory(),
                 new MetricRegistry(),
                 getClass().getClassLoader()
         );

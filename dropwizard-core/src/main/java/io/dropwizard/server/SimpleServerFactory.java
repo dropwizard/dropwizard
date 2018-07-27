@@ -110,7 +110,7 @@ public class SimpleServerFactory extends AbstractServerFactory {
         final Handler applicationHandler = createAppServlet(server,
                                                             environment.jersey(),
                                                             environment.getObjectMapper(),
-                                                            environment.getValidator(),
+                                                            environment.getValidatorFactory(),
                                                             environment.getApplicationContext(),
                                                             environment.getJerseyServletContainer(),
                                                             environment.metrics());
