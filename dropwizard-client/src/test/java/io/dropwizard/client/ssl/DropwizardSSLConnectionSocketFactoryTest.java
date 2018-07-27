@@ -174,7 +174,7 @@ public class DropwizardSSLConnectionSocketFactoryTest {
         final Client client = new JerseyClientBuilder(TLS_APP_RULE.getEnvironment()).using(jerseyClientConfiguration).build("client_auth_broken");
         final Throwable exn = catchThrowable(() -> client.target(String.format("https://localhost:%d", TLS_APP_RULE.getPort(2))).request().get());
         assertThat(exn).isInstanceOf(ProcessingException.class);
-        assertThat(exn.getCause()).isInstanceOfAny(SocketException.class, SSLHandshakeException.class);
+        assertThat(exn.getCause()).isInstanceOfAny(SocketException.class, SSLHandshakeException.class, SSLException.class);
     }
 
     @Test
@@ -197,7 +197,7 @@ public class DropwizardSSLConnectionSocketFactoryTest {
         final Client client = new JerseyClientBuilder(TLS_APP_RULE.getEnvironment()).using(jerseyClientConfiguration).build("client_auth_using_cert_alias_broken");
         final Throwable exn = catchThrowable(() -> client.target(String.format("https://localhost:%d", TLS_APP_RULE.getPort(2))).request().get());
         assertThat(exn).isInstanceOf(ProcessingException.class);
-        assertThat(exn.getCause()).isInstanceOfAny(SocketException.class, SSLHandshakeException.class);
+        assertThat(exn.getCause()).isInstanceOfAny(SocketException.class, SSLHandshakeException.class, SSLException.class);
     }
 
     @Test
@@ -209,7 +209,7 @@ public class DropwizardSSLConnectionSocketFactoryTest {
         final Client client = new JerseyClientBuilder(TLS_APP_RULE.getEnvironment()).using(jerseyClientConfiguration).build("client_auth_using_unknown_cert_alias_broken");
         final Throwable exn = catchThrowable(() -> client.target(String.format("https://localhost:%d", TLS_APP_RULE.getPort(2))).request().get());
         assertThat(exn).isInstanceOf(ProcessingException.class);
-        assertThat(exn.getCause()).isInstanceOfAny(SocketException.class, SSLHandshakeException.class);
+        assertThat(exn.getCause()).isInstanceOfAny(SocketException.class, SSLHandshakeException.class, SSLException.class);
     }
 
     @Test
