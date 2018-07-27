@@ -8,6 +8,8 @@ import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import jnr.unixsocket.UnixSocketAddress;
 import jnr.unixsocket.UnixSocketChannel;
+import org.apache.commons.lang3.SystemUtils;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -21,6 +23,8 @@ import java.io.PrintWriter;
 import java.io.Reader;
 import java.nio.channels.Channels;
 
+import static org.junit.Assume.assumeTrue;
+
 public class UnixSocketConnectorFactoryTest {
 
     @Rule
@@ -32,6 +36,11 @@ public class UnixSocketConnectorFactoryTest {
     private String httpRequest = "GET /app/hello HTTP/1.1\r\n" +
         "Host: dropwizard-unixsock\r\n" +
         "\r\n";
+
+    @Before
+    public void setUp() {
+        assumeTrue(SystemUtils.IS_OS_UNIX);
+    }
 
     @Test
     public void testClient() throws Exception {
