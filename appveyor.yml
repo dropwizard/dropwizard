@@ -1,3 +1,5 @@
+before_test:
+  - mvnw -V
 test_script:
-  - mvn package
+  - mvnw verify -B
 build: off
