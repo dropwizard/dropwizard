@@ -1,11 +1,11 @@
 package io.dropwizard.testing.common;
 
-import com.codahale.metrics.MetricRegistry;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.jersey.jackson.JacksonFeature;
 import io.dropwizard.jersey.validation.HibernateValidationBinder;
 import io.dropwizard.setup.ExceptionMapperBinder;
 import org.glassfish.jersey.server.ServerProperties;
+import org.glassfish.jersey.test.TestProperties;
 
 import javax.servlet.ServletConfig;
 import javax.ws.rs.core.Context;
@@ -30,8 +30,9 @@ class DropwizardTestResourceConfig extends DropwizardResourceConfig {
     static final String CONFIGURATION_ID = "io.dropwizard.testing.junit.resourceTestJerseyConfigurationId";
 
     DropwizardTestResourceConfig(ResourceTestJerseyConfiguration configuration) {
-        super(true, new MetricRegistry());
+        super();
 
+        property(TestProperties.CONTAINER_PORT, "0");
         if (configuration.registerDefaultExceptionMappers) {
             register(new ExceptionMapperBinder(false));
         }

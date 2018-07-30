@@ -1,6 +1,5 @@
 package io.dropwizard.jersey.validation;
 
-import com.codahale.metrics.MetricRegistry;
 import io.dropwizard.jersey.AbstractJerseyTest;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.jersey.jackson.JacksonMessageBodyProviderTest.Example;
@@ -31,7 +30,7 @@ public class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
 
     @Override
     protected Application configure() {
-        return DropwizardResourceConfig.forTesting(new MetricRegistry())
+        return DropwizardResourceConfig.forTesting()
                 .packages("io.dropwizard.jersey.validation")
                 .register(new ValidatingResource2())
                 .register(new HibernateValidationBinder(Validators.newValidator()));

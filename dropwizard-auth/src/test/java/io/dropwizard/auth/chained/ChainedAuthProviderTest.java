@@ -1,6 +1,5 @@
 package io.dropwizard.auth.chained;
 
-import com.codahale.metrics.MetricRegistry;
 import io.dropwizard.auth.AuthBaseTest;
 import io.dropwizard.auth.AuthDynamicFeature;
 import io.dropwizard.auth.AuthFilter;
@@ -13,6 +12,7 @@ import io.dropwizard.auth.oauth.OAuthCredentialAuthFilter;
 import io.dropwizard.auth.util.AuthUtil;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
+import org.glassfish.jersey.test.TestProperties;
 import org.junit.Test;
 
 import javax.ws.rs.core.HttpHeaders;
@@ -27,7 +27,7 @@ public class ChainedAuthProviderTest extends AuthBaseTest<ChainedAuthProviderTes
     public static class ChainedAuthTestResourceConfig extends DropwizardResourceConfig {
         @SuppressWarnings("unchecked")
         public ChainedAuthTestResourceConfig() {
-            super(true, new MetricRegistry());
+            super();
 
             final Authorizer<Principal> authorizer = AuthUtil.getTestAuthorizer(ADMIN_USER, ADMIN_ROLE);
             final AuthFilter<BasicCredentials, Principal> basicAuthFilter = new BasicCredentialAuthFilter.Builder<>()
@@ -41,6 +41,7 @@ public class ChainedAuthProviderTest extends AuthBaseTest<ChainedAuthProviderTes
                 .setAuthorizer(authorizer)
                 .buildAuthFilter();
 
+            property(TestProperties.CONTAINER_PORT, "0");
             register(new AuthValueFactoryProvider.Binder(Principal.class));
             register(new AuthDynamicFeature(new ChainedAuthFilter<>(buildHandlerList(basicAuthFilter, oAuthFilter))));
             register(RolesAllowedDynamicFeature.class);

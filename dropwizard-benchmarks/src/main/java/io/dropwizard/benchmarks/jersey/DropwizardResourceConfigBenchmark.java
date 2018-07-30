@@ -1,6 +1,5 @@
 package io.dropwizard.benchmarks.jersey;
 
-import com.codahale.metrics.MetricRegistry;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.openjdk.jmh.annotations.Benchmark;
@@ -29,8 +28,7 @@ import java.util.concurrent.TimeUnit;
 @State(Scope.Benchmark)
 public class DropwizardResourceConfigBenchmark {
 
-    private DropwizardResourceConfig dropwizardResourceConfig =
-            new DropwizardResourceConfig(true, new MetricRegistry());
+    private DropwizardResourceConfig dropwizardResourceConfig = DropwizardResourceConfig.forTesting();
 
     @Setup
     public void setUp() throws Exception {

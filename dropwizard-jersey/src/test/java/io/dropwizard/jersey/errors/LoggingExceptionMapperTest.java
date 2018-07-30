@@ -1,6 +1,5 @@
 package io.dropwizard.jersey.errors;
 
-import com.codahale.metrics.MetricRegistry;
 import io.dropwizard.jersey.AbstractJerseyTest;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import org.junit.Test;
@@ -21,7 +20,7 @@ public class LoggingExceptionMapperTest extends AbstractJerseyTest {
 
     @Override
     protected Application configure() {
-        return DropwizardResourceConfig.forTesting(new MetricRegistry())
+        return DropwizardResourceConfig.forTesting()
                 .register(DefaultLoggingExceptionMapper.class)
                 .register(DefaultJacksonMessageBodyProvider.class)
                 .register(ExceptionResource.class);

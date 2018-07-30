@@ -1,6 +1,5 @@
 package io.dropwizard.jersey;
 
-import com.codahale.metrics.MetricRegistry;
 import io.dropwizard.jersey.dummy.DummyResource;
 import org.junit.Test;
 
@@ -14,7 +13,7 @@ public class AsyncServletTest extends AbstractJerseyTest {
 
     @Override
     protected Application configure() {
-        return DropwizardResourceConfig.forTesting(new MetricRegistry())
+        return DropwizardResourceConfig.forTesting()
                 .register(DummyResource.class);
     }
 

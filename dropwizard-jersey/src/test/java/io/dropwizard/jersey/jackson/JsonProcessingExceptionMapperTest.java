@@ -1,6 +1,5 @@
 package io.dropwizard.jersey.jackson;
 
-import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.jersey.AbstractJerseyTest;
@@ -23,7 +22,7 @@ public class JsonProcessingExceptionMapperTest extends AbstractJerseyTest {
 
     @Override
     protected Application configure() {
-        return DropwizardResourceConfig.forTesting(new MetricRegistry())
+        return DropwizardResourceConfig.forTesting()
                 .packages("io.dropwizard.jersey.jackson")
                 .register(new LoggingExceptionMapper<Throwable>() { });
     }

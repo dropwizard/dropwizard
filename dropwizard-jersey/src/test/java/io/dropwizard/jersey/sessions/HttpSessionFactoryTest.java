@@ -1,6 +1,5 @@
 package io.dropwizard.jersey.sessions;
 
-import com.codahale.metrics.MetricRegistry;
 import io.dropwizard.jersey.AbstractJerseyTest;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -33,7 +32,7 @@ public class HttpSessionFactoryTest extends AbstractJerseyTest {
 
     @Override
     protected DeploymentContext configureDeployment() {
-        final ResourceConfig rc = DropwizardResourceConfig.forTesting(new MetricRegistry());
+        final ResourceConfig rc = DropwizardResourceConfig.forTesting();
         return ServletDeploymentContext.builder(rc)
                 .initParam(ServletProperties.JAXRS_APPLICATION_CLASS, DropwizardResourceConfig.class.getName())
                 .initParam(ServerProperties.PROVIDER_CLASSNAMES, SessionResource.class.getName())
