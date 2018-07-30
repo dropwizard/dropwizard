@@ -1,6 +1,5 @@
 package io.dropwizard.jersey.filter;
 
-import com.codahale.metrics.MetricRegistry;
 import io.dropwizard.jersey.AbstractJerseyTest;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -58,7 +57,7 @@ public class AllowedMethodsFilterTest extends AbstractJerseyTest {
 
     @Override
     protected DeploymentContext configureDeployment() {
-        final ResourceConfig rc = DropwizardResourceConfig.forTesting(new MetricRegistry());
+        final ResourceConfig rc = DropwizardResourceConfig.forTesting();
 
         final Map<String, String> filterParams = Collections.singletonMap(AllowedMethodsFilter.ALLOWED_METHODS_PARAM, "GET,POST");
 

@@ -44,15 +44,11 @@ public class DropwizardResourceConfig extends ResourceConfig {
     private String contextPath = "/";
     private final ComponentLoggingListener loggingListener = new ComponentLoggingListener(this);
 
-    public DropwizardResourceConfig(MetricRegistry metricRegistry) {
-        this(false, metricRegistry);
-    }
-
     public DropwizardResourceConfig() {
-        this(true, null);
+        this(null);
     }
 
-    public DropwizardResourceConfig(boolean testOnly, @Nullable MetricRegistry metricRegistry) {
+    public DropwizardResourceConfig(@Nullable MetricRegistry metricRegistry) {
         super();
 
         if (metricRegistry == null) {
@@ -76,8 +72,23 @@ public class DropwizardResourceConfig extends ResourceConfig {
         register(new SessionFactoryProvider.Binder());
     }
 
-    public static DropwizardResourceConfig forTesting(MetricRegistry metricRegistry) {
-        return new DropwizardResourceConfig(true, metricRegistry);
+    /**
+     * Build a {@link DropwizardResourceConfig} which makes Jersey Test run on a random port,
+     * also see {@code org.glassfish.jersey.test.TestProperties#CONTAINER_PORT}.
+     */
+    public static DropwizardResourceConfig forTesting() {
+        return forTesting(null);
+    }
+
+    /**
+     * Build a {@link DropwizardResourceConfig} which makes Jersey Test run on a random port,
+     * also see {@code org.glassfish.jersey.test.TestProperties#CONTAINER_PORT}.
+     */
+    public static DropwizardResourceConfig forTesting(@Nullable MetricRegistry metricRegistry) {
+        final DropwizardResourceConfig config = new DropwizardResourceConfig(metricRegistry);
+        // See org.glassfish.jersey.test.TestProperties#CONTAINER_PORT
+        config.property("jersey.config.test.container.port", "0");
+        return config;
     }
 
     public String getUrlPattern() {
@@ -92,7 +103,7 @@ public class DropwizardResourceConfig extends ResourceConfig {
         return contextPath;
     }
 
-    public void setContextPath(String contextPath){
+    public void setContextPath(String contextPath) {
         this.contextPath = contextPath;
     }
 
@@ -162,12 +173,12 @@ public class DropwizardResourceConfig extends ResourceConfig {
                 providers = event.getProviders();
 
                 final String resourceClasses = resources.stream()
-                    .map(x -> x.getClass().getCanonicalName())
-                    .collect(Collectors.joining(", "));
+                        .map(x -> x.getClass().getCanonicalName())
+                        .collect(Collectors.joining(", "));
 
                 final String providerClasses = providers.stream()
-                    .map(Class::getCanonicalName)
-                    .collect(Collectors.joining(", "));
+                        .map(Class::getCanonicalName)
+                        .collect(Collectors.joining(", "));
 
                 LOGGER.debug("resources = {}", resourceClasses);
                 LOGGER.debug("providers = {}", providerClasses);
@@ -190,10 +201,10 @@ public class DropwizardResourceConfig extends ResourceConfig {
                         break;
                     case SUB_RESOURCE_LOCATOR:
                         final ResolvedType responseType = TYPE_RESOLVER
-                            .resolve(method.getInvocable().getResponseType());
+                                .resolve(method.getInvocable().getResponseType());
                         final Class<?> erasedType = !responseType.getTypeBindings().isEmpty() ?
-                            responseType.getTypeBindings().getBoundType(0).getErasedType() :
-                            responseType.getErasedType();
+                                responseType.getTypeBindings().getBoundType(0).getErasedType() :
+                                responseType.getErasedType();
 
                         final Resource res = Resource.from(erasedType);
                         if (res == null) {
@@ -227,10 +238,10 @@ public class DropwizardResourceConfig extends ResourceConfig {
             final Set<EndpointLogLine> endpointLogLines = new TreeSet<>(new EndpointComparator());
             final String contextPath = config.getContextPath();
             final String normalizedContextPath = contextPath.isEmpty() || contextPath.equals("/") ? "" :
-                contextPath.startsWith("/") ? contextPath : "/" + contextPath;
+                    contextPath.startsWith("/") ? contextPath : "/" + contextPath;
             final String pattern = config.getUrlPattern().endsWith("/*") ?
-                config.getUrlPattern().substring(0, config.getUrlPattern().length() - 1) :
-                config.getUrlPattern();
+                    config.getUrlPattern().substring(0, config.getUrlPattern().length() - 1) :
+                    config.getUrlPattern();
 
             final String path = cleanUpPath(normalizedContextPath + pattern);
 
@@ -242,10 +253,10 @@ public class DropwizardResourceConfig extends ResourceConfig {
             }
 
             final List<EndpointLogLine> providerLines = providers.stream()
-                .map(Resource::from)
-                .filter(Objects::nonNull)
-                .flatMap(res -> logResourceLines(res, path).stream())
-                .collect(Collectors.toList());
+                    .map(Resource::from)
+                    .filter(Objects::nonNull)
+                    .flatMap(res -> logResourceLines(res, path).stream())
+                    .collect(Collectors.toList());
 
             endpointLogLines.addAll(providerLines);
 

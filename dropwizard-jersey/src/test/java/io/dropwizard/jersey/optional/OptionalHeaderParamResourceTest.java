@@ -1,6 +1,5 @@
 package io.dropwizard.jersey.optional;
 
-import com.codahale.metrics.MetricRegistry;
 import io.dropwizard.jersey.AbstractJerseyTest;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.jersey.MyMessage;
@@ -22,7 +21,7 @@ public class OptionalHeaderParamResourceTest extends AbstractJerseyTest {
 
     @Override
     protected Application configure() {
-        return DropwizardResourceConfig.forTesting(new MetricRegistry())
+        return DropwizardResourceConfig.forTesting()
                 .register(OptionalHeaderParamResource.class)
                 .register(MyMessageParamConverterProvider.class);
     }

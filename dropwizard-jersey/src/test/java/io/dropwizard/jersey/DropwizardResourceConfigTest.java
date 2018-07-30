@@ -1,6 +1,5 @@
 package io.dropwizard.jersey;
 
-import com.codahale.metrics.MetricRegistry;
 import io.dropwizard.jersey.dummy.DummyResource;
 import io.dropwizard.logging.BootstrapLogging;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
@@ -29,7 +28,7 @@ public class DropwizardResourceConfigTest {
 
     @Before
     public void setUp() {
-        rc = DropwizardResourceConfig.forTesting(new MetricRegistry());
+        rc = DropwizardResourceConfig.forTesting();
     }
 
     // Start and stop a jersey test instance so that our resource config

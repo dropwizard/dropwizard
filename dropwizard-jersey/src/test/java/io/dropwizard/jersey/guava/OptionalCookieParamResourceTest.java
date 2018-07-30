@@ -1,6 +1,5 @@
 package io.dropwizard.jersey.guava;
 
-import com.codahale.metrics.MetricRegistry;
 import com.google.common.base.Optional;
 import io.dropwizard.jersey.AbstractJerseyTest;
 import io.dropwizard.jersey.DropwizardResourceConfig;
@@ -22,7 +21,7 @@ public class OptionalCookieParamResourceTest extends AbstractJerseyTest {
 
     @Override
     protected Application configure() {
-        return DropwizardResourceConfig.forTesting(new MetricRegistry())
+        return DropwizardResourceConfig.forTesting()
                 .register(OptionalCookieParamResource.class)
                 .register(MyMessageParamConverterProvider.class);
     }
