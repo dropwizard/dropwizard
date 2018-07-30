@@ -9,7 +9,7 @@ import io.dropwizard.testing.junit.DropwizardAppRule;
 import jnr.unixsocket.UnixSocketAddress;
 import jnr.unixsocket.UnixSocketChannel;
 import org.apache.commons.lang3.SystemUtils;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -37,8 +37,8 @@ public class UnixSocketConnectorFactoryTest {
         "Host: dropwizard-unixsock\r\n" +
         "\r\n";
 
-    @Before
-    public void setUp() {
+    @BeforeClass
+    public static void setUp() {
         assumeFalse(SystemUtils.IS_OS_WINDOWS);
     }
 
