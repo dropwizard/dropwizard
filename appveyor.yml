@@ -1,5 +1,5 @@
 before_test:
-  - mvnw -V
+  - mvnw --version
 test_script:
   - mvnw verify -B
 build: off
