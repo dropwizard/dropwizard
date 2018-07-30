@@ -23,7 +23,7 @@ import java.io.PrintWriter;
 import java.io.Reader;
 import java.nio.channels.Channels;
 
-import static org.junit.Assume.assumeTrue;
+import static org.junit.Assume.assumeFalse;
 
 public class UnixSocketConnectorFactoryTest {
 
@@ -39,7 +39,7 @@ public class UnixSocketConnectorFactoryTest {
 
     @Before
     public void setUp() {
-        assumeTrue(SystemUtils.IS_OS_UNIX);
+        assumeFalse(SystemUtils.IS_OS_WINDOWS);
     }
 
     @Test
