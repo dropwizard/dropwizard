@@ -26,7 +26,7 @@ import static com.codahale.metrics.MetricRegistry.name;
  *     </tr>
  *     <tr>
  *         <td>{@code socketFilename}</td>
- *         <td></tmp/dropwizard.sock</td>
+ *         <td>/tmp/dropwizard.sock</td>
  *         <td>
  *             The filename of the opened Unix socket on the filesystem.
  *         </td>
