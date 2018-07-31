@@ -391,9 +391,6 @@
         </profile>
         <profile>
             <id>code-coverage</id>
-            <activation>
-                <jdk>[9,11)</jdk>
-            </activation>
             <build>
                 <plugins>
                     <plugin>
