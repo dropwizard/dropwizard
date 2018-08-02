@@ -19,10 +19,13 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import java.io.File;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.nio.channels.Channels;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assume.assumeFalse;
 
 public class UnixSocketConnectorFactoryTest {
@@ -45,29 +48,49 @@ public class UnixSocketConnectorFactoryTest {
     @Test
     public void testClient() throws Exception {
         try (UnixSocketChannel channel = UnixSocketChannel.open(new UnixSocketAddress(socket));
-             PrintWriter writer = new PrintWriter(Channels.newOutputStream(channel));
-             Reader reader = new InputStreamReader(Channels.newInputStream(channel))) {
+             PrintWriter writer = new PrintWriter(new OutputStreamWriter(Channels.newOutputStream(channel), UTF_8));
+             Reader reader = new InputStreamReader(Channels.newInputStream(channel), UTF_8)) {
             writer.print(httpRequest);
             writer.flush();
 
-            char[] buf = new char[4096];
-            int read = reader.read(buf);
-            System.out.println("Read from the server: " + new String(buf, 0, read));
+            char[] buf = new char[256];
+            int readHeaders = reader.read(buf);
+            assertThat(readHeaders).isGreaterThan(0);
+            String headers = new String(buf, 0, readHeaders);
+            int readBody = reader.read(buf);
+            assertThat(readBody).isGreaterThan(0);
+            String body = new String(buf, 0, readBody);
+            assertThat(headers).isEqualToNormalizingNewlines("HTTP/1.1 200 OK\r\n" +
+                                                             "Content-Type: application/json\r\n" +
+                                                             "Vary: Accept-Encoding\r\n" +
+                                                             "Content-Length: 18\r\n" +
+                                                             "\r\n");
+            assertThat(body).isEqualTo("{\"hello\": \"World\"}");
         }
     }
 
     @Test
-    public void testManyClientCalls() throws Exception {
+    public void testManyCalls() throws Exception {
         try (UnixSocketChannel channel = UnixSocketChannel.open(new UnixSocketAddress(socket));
-             PrintWriter writer = new PrintWriter(Channels.newOutputStream(channel));
-             Reader reader = new InputStreamReader(Channels.newInputStream(channel))) {
-            char[] buf = new char[4096];
+             PrintWriter writer = new PrintWriter(new OutputStreamWriter(Channels.newOutputStream(channel), UTF_8));
+             Reader reader = new InputStreamReader(Channels.newInputStream(channel), UTF_8)) {
+            char[] buf = new char[256];
             for (int i = 0; i < 1000; i++) {
                 writer.print(httpRequest);
                 writer.flush();
 
-                int read = reader.read(buf);
-                System.out.println("Read from the server: " + new String(buf, 0, read));
+                int readHeaders = reader.read(buf);
+                assertThat(readHeaders).isGreaterThan(0);
+                String headers = new String(buf, 0, readHeaders);
+                int readBody = reader.read(buf, 0, 18);
+                assertThat(readBody).isGreaterThan(0);
+                String body = new String(buf, 0, readBody);
+                assertThat(headers).isEqualToNormalizingNewlines("HTTP/1.1 200 OK\r\n" +
+                                                                 "Content-Type: application/json\r\n" +
+                                                                 "Vary: Accept-Encoding\r\n" +
+                                                                 "Content-Length: 18\r\n" +
+                                                                 "\r\n");
+                assertThat(body).isEqualTo("{\"hello\": \"World\"}");
             }
         }
     }
