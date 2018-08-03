@@ -12,7 +12,6 @@ import com.google.common.util.concurrent.RateLimiter;
 import io.dropwizard.util.Duration;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /**
  * An {@link AsyncAppenderBase} that applies throttling to a proxied appender.
