@@ -16,6 +16,8 @@ import java.util.HashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import javax.annotation.Nullable;
+
 import org.apache.commons.text.StrSubstitutor;
 import org.assertj.core.api.Condition;
 import org.junit.After;
@@ -55,8 +57,13 @@ public class ThrottlingAppenderWrapperTest {
     @SuppressWarnings("rawtypes")
     private final YamlConfigurationFactory<ConsoleAppenderFactory> factory;
 
+    @Nullable
     private ByteArrayOutputStream bos;
+
+    @Nullable
     private PrintStream oldSysOut;
+
+    @Nullable
     private PrintStream newSysOut;
 
     public ThrottlingAppenderWrapperTest() {
@@ -83,9 +90,17 @@ public class ThrottlingAppenderWrapperTest {
 
     @After
     public void teardown() throws IOException {
-        System.setOut(this.oldSysOut);
-        this.newSysOut.close();
-        this.bos.close();
+        if (this.oldSysOut != null) {
+            System.setOut(this.oldSysOut);
+        }
+
+        if (this.newSysOut != null) {
+            this.newSysOut.close();
+        }
+
+        if (this.bos != null) {
+            this.bos.close();
+        }
     }
 
     @Test
@@ -131,7 +146,10 @@ public class ThrottlingAppenderWrapperTest {
 
         final long rwNanos = runWindow.toNanoseconds();
         final double seconds = rwNanos / NANOS_PER_SECOND;
-        final double limit = lineCount / seconds;
+
+        // We need to subtract 1 as we automatically get one at time zero; how
+        // long should the remaining take?
+        final double limit = (lineCount - 1) / seconds;
 
         final RateLimiter rateLimiter = RateLimiter.create(limit);
         for (int i = 0; i < lineCount; i++) {
