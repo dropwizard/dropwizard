@@ -171,9 +171,15 @@ public class ThrottlingAppenderWrapperTest {
         // Force logger to flush
         defaultLoggingFactory.stop();
 
-        // Force streams to flush.
-        this.newSysOut.flush();
-        this.bos.flush();
+        // Force streams to flush. NullAway doesn't understand that if we made
+        // it here, these can't be null. C'est la vie.
+        if (this.newSysOut != null) {
+            this.newSysOut.flush();
+        }
+
+        if (this.bos != null) {
+            this.bos.flush();
+        }
 
         final byte[] rawBuffer = this.bos.toByteArray();
         final String strBuffer = new String(rawBuffer, StandardCharsets.UTF_8);
