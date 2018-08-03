@@ -58,8 +58,7 @@ public class ThrottlingAppenderWrapperTest {
     @SuppressWarnings("rawtypes")
     private final YamlConfigurationFactory<ConsoleAppenderFactory> factory;
 
-    @Nullable
-    private ByteArrayOutputStream bos;
+    private final ByteArrayOutputStream bos;
 
     @Nullable
     private PrintStream oldSysOut;
@@ -82,15 +81,13 @@ public class ThrottlingAppenderWrapperTest {
     @Before
     public void setup() throws UnsupportedEncodingException {
         this.oldSysOut = System.out;
-        this.bos = new ByteArrayOutputStream();
-
         // This forces auto-flush, which should help with buffering issues
         this.newSysOut = new PrintStream(this.bos, true, StandardCharsets.UTF_8.name());
         System.setOut(this.newSysOut);
     }
 
     @After
-    public void teardown() throws IOException {
+    public void teardown() {
         if (this.oldSysOut != null) {
             System.setOut(this.oldSysOut);
         }
@@ -99,9 +96,7 @@ public class ThrottlingAppenderWrapperTest {
             this.newSysOut.close();
         }
 
-        if (this.bos != null) {
-            this.bos.close();
-        }
+        this.bos.reset();
     }
 
     @Test
@@ -177,11 +172,8 @@ public class ThrottlingAppenderWrapperTest {
             this.newSysOut.flush();
         }
 
-        if (this.bos != null) {
-            this.bos.flush();
-        }
-
         final byte[] rawBuffer = this.bos.toByteArray();
+
         final String strBuffer = new String(rawBuffer, StandardCharsets.UTF_8);
         final String[] logArray = strBuffer.split(LINE_SEPERATOR);
 
