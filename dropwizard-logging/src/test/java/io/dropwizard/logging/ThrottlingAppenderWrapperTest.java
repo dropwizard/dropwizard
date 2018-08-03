@@ -49,7 +49,8 @@ public class ThrottlingAppenderWrapperTest {
     private static final Duration RUN_WINDOW = Duration.seconds(1);
 
     // Test helpers:
-    private static final Condition<String> APP_LOG_CONDITION = new Condition<>(o -> o.contains("Application log"), "contains application log");
+    private static final String APP_LOG_PREFIX = "Application log";
+    private static final Condition<String> APP_LOG_CONDITION = new Condition<>(o -> o.contains(APP_LOG_PREFIX), "contains application log");
 
     // Asynchronous timeouts
     private static final Duration LOG_WAIT = Duration.seconds(90);
@@ -154,7 +155,7 @@ public class ThrottlingAppenderWrapperTest {
         final RateLimiter rateLimiter = RateLimiter.create(limit);
         for (int i = 0; i < lineCount; i++) {
             rateLimiter.acquire();
-            logger.info("Application log {}", i);
+            logger.info("{} {}", APP_LOG_PREFIX, i);
         }
 
         final long elapsed = System.nanoTime() - start;
