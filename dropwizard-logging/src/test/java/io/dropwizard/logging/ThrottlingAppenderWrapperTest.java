@@ -192,13 +192,7 @@ public class ThrottlingAppenderWrapperTest {
         // If we had a fractional interval, round up instead of down. We have to
         // add one regardless as at full speed, we end up with 1 + executed
         // intervals as an event fires at time zero.
-        int high = (int) intervals;
-        if ((intervals - high > 0d)) {
-            high += 2;
-        } else {
-            high += 1;
-        }
-
+        int high = 1 + (int) Math.ceil(intervals);
         high = Math.min(high, lineCount);
 
         assertThat(Arrays.asList(logArray))
