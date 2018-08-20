@@ -11,7 +11,7 @@ import io.dropwizard.util.Duration;
 import io.dropwizard.util.Resources;
 import io.dropwizard.util.Size;
 import io.dropwizard.validation.BaseValidator;
-import org.apache.commons.text.StrSubstitutor;
+import org.apache.commons.text.StringSubstitutor;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -70,7 +70,7 @@ public class TcpSocketAppenderFactoryTest {
     public void testTestTcpLogging() throws Exception {
         DefaultLoggingFactory loggingFactory = yamlConfigurationFactory.build(new SubstitutingSourceProvider(
                 new ResourceConfigurationSourceProvider(),
-                new StrSubstitutor(Collections.singletonMap("tcp.server.port", tcpServer.getPort()))),
+                new StringSubstitutor(Collections.singletonMap("tcp.server.port", tcpServer.getPort()))),
             "yaml/logging-tcp.yml");
         loggingFactory.configure(new MetricRegistry(), "tcp-test");
 
@@ -88,7 +88,7 @@ public class TcpSocketAppenderFactoryTest {
     public void testBufferingTcpLogging() throws Exception {
         DefaultLoggingFactory loggingFactory = yamlConfigurationFactory.build(new SubstitutingSourceProvider(
             new ResourceConfigurationSourceProvider(),
-                new StrSubstitutor(Collections.singletonMap("tcp.server.port", tcpServer.getPort()))),
+                new StringSubstitutor(Collections.singletonMap("tcp.server.port", tcpServer.getPort()))),
             "yaml/logging-tcp-buffered.yml");
         loggingFactory.configure(new MetricRegistry(), "tcp-test");
 

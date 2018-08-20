@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Nullable;
 
-import org.apache.commons.text.StrSubstitutor;
+import org.apache.commons.text.StringSubstitutor;
 import org.assertj.core.api.Condition;
 import org.junit.After;
 import org.junit.Before;
@@ -127,7 +127,7 @@ public class ThrottlingAppenderWrapperTest {
 
         @SuppressWarnings("unchecked")
         final ConsoleAppenderFactory<ILoggingEvent> config = this.factory.build(
-            new SubstitutingSourceProvider(new FileConfigurationSourceProvider(), new StrSubstitutor(variables)),
+            new SubstitutingSourceProvider(new FileConfigurationSourceProvider(), new StringSubstitutor(variables)),
             this.findResource("/yaml/logging-message-rate.yml").getPath());
 
         final DefaultLoggingFactory defaultLoggingFactory = new DefaultLoggingFactory();

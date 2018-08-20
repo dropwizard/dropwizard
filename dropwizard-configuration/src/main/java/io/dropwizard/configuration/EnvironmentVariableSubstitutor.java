@@ -1,11 +1,11 @@
 package io.dropwizard.configuration;
 
-import org.apache.commons.text.StrSubstitutor;
+import org.apache.commons.text.StringSubstitutor;
 
 /**
  * A custom {@link StrSubstitutor} using environment variables as lookup source.
  */
-public class EnvironmentVariableSubstitutor extends StrSubstitutor {
+public class EnvironmentVariableSubstitutor extends StringSubstitutor {
     public EnvironmentVariableSubstitutor() {
         this(true, false);
     }
