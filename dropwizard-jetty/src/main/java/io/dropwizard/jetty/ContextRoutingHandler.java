@@ -4,7 +4,6 @@ import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandlerContainer;
 import org.eclipse.jetty.util.ArrayTernaryTrie;
-import org.eclipse.jetty.util.Trie;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -16,7 +15,7 @@ import java.util.Map;
  * A Jetty router which routes requests based on context path.
  */
 public class ContextRoutingHandler extends AbstractHandlerContainer {
-    private final Trie<Handler> handlers;
+    private final ArrayTernaryTrie<Handler> handlers;
 
     public ContextRoutingHandler(Map<String, ? extends Handler> handlers) {
         this.handlers = new ArrayTernaryTrie<>(false);
@@ -57,6 +56,6 @@ public class ContextRoutingHandler extends AbstractHandlerContainer {
 
     @Override
     public Handler[] getHandlers() {
-        return handlers.keySet().stream().map(key -> handlers.get(key)).toArray(Handler[]::new);
+        return handlers.entrySet().stream().map(e -> e.getValue()).toArray(Handler[]::new);
     }
 }
