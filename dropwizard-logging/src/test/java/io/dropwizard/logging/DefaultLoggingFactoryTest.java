@@ -19,7 +19,7 @@ import io.dropwizard.util.Maps;
 import io.dropwizard.util.Resources;
 import io.dropwizard.validation.BaseValidator;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.text.StrSubstitutor;
+import org.apache.commons.text.StringSubstitutor;
 import org.assertj.core.data.MapEntry;
 import org.junit.Before;
 import org.junit.Rule;
@@ -96,7 +96,7 @@ public class DefaultLoggingFactoryTest {
         final File newAppLog = folder.newFile("example-new-app.log");
         final File newAppNotAdditiveLog = folder.newFile("example-new-app-not-additive.log");
         final File defaultLog = folder.newFile("example.log");
-        final StrSubstitutor substitutor = new StrSubstitutor(Maps.of(
+        final StringSubstitutor substitutor = new StringSubstitutor(Maps.of(
                 "new_app", StringUtils.removeEnd(newAppLog.getAbsolutePath(), ".log"),
                 "new_app_not_additive", StringUtils.removeEnd(newAppNotAdditiveLog.getAbsolutePath(), ".log"),
                 "default", StringUtils.removeEnd(defaultLog.getAbsolutePath(), ".log")

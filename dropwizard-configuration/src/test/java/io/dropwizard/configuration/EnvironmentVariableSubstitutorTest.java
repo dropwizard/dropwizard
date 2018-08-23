@@ -1,12 +1,13 @@
 package io.dropwizard.configuration;
 
-import org.junit.Test;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assumptions.assumeThat;
 
+import org.junit.Test;
+
 public class EnvironmentVariableSubstitutorTest {
+
     @Test
     public void defaultConstructorDisablesSubstitutionInVariables() {
         EnvironmentVariableSubstitutor substitutor = new EnvironmentVariableSubstitutor();
@@ -30,7 +31,7 @@ public class EnvironmentVariableSubstitutorTest {
     @Test
     public void substitutorUsesEnvironmentVariableLookup() {
         EnvironmentVariableSubstitutor substitutor = new EnvironmentVariableSubstitutor();
-        assertThat(substitutor.getVariableResolver()).isInstanceOf(EnvironmentVariableLookup.class);
+        assertThat(substitutor.getStringLookup()).isInstanceOf(EnvironmentVariableLookup.class);
     }
 
     @Test

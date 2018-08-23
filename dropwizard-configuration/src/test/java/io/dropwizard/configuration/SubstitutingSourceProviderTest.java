@@ -1,30 +1,24 @@
 package io.dropwizard.configuration;
 
-import org.apache.commons.text.StrLookup;
-import org.apache.commons.text.StrSubstitutor;
-import org.junit.Test;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import javax.annotation.Nullable;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import org.apache.commons.text.StringSubstitutor;
+import org.apache.commons.text.lookup.StringLookup;
+import org.junit.Test;
 
 public class SubstitutingSourceProviderTest {
     @Test
     public void shouldSubstituteCorrectly() throws IOException {
-        StrLookup<?> dummyLookup = new StrLookup<Object>() {
-            @Override
-            public String lookup(String key) {
-                return "baz";
-            }
-        };
+        StringLookup dummyLookup = (x) -> "baz";
         DummySourceProvider dummyProvider = new DummySourceProvider();
-        SubstitutingSourceProvider provider = new SubstitutingSourceProvider(dummyProvider, new StrSubstitutor(dummyLookup));
+        SubstitutingSourceProvider provider = new SubstitutingSourceProvider(dummyProvider, new StringSubstitutor(dummyLookup));
 
         assertThat(provider.open("foo: ${bar}")).hasSameContentAs(new ByteArrayInputStream("foo: baz".getBytes(StandardCharsets.UTF_8)));
 
@@ -36,28 +30,16 @@ public class SubstitutingSourceProviderTest {
 
     @Test
     public void shouldSubstituteOnlyExistingVariables() throws IOException {
-        StrLookup<?> dummyLookup = new StrLookup<Object>() {
-            @Override
-            @Nullable
-            public String lookup(String key) {
-                return null;
-            }
-        };
-        SubstitutingSourceProvider provider = new SubstitutingSourceProvider(new DummySourceProvider(), new StrSubstitutor(dummyLookup));
+        StringLookup dummyLookup = (x) -> null;
+        SubstitutingSourceProvider provider = new SubstitutingSourceProvider(new DummySourceProvider(), new StringSubstitutor(dummyLookup));
 
         assertThat(provider.open("foo: ${bar}")).hasSameContentAs(new ByteArrayInputStream("foo: ${bar}".getBytes(StandardCharsets.UTF_8)));
     }
 
     @Test
     public void shouldSubstituteWithDefaultValue() throws IOException {
-        StrLookup<?> dummyLookup = new StrLookup<Object>() {
-            @Override
-            @Nullable
-            public String lookup(String key) {
-                return null;
-            }
-        };
-        SubstitutingSourceProvider provider = new SubstitutingSourceProvider(new DummySourceProvider(), new StrSubstitutor(dummyLookup));
+        StringLookup dummyLookup = (x) -> null;
+        SubstitutingSourceProvider provider = new SubstitutingSourceProvider(new DummySourceProvider(), new StringSubstitutor(dummyLookup));
 
         assertThat(provider.open("foo: ${bar:-default}")).hasSameContentAs(new ByteArrayInputStream("foo: default".getBytes(StandardCharsets.UTF_8)));
     }

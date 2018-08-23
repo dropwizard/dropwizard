@@ -10,7 +10,7 @@ import io.dropwizard.jackson.Jackson;
 import io.dropwizard.util.Maps;
 import io.dropwizard.util.Resources;
 import io.dropwizard.validation.BaseValidator;
-import org.apache.commons.text.StrSubstitutor;
+import org.apache.commons.text.StringSubstitutor;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.junit.Before;
 import org.junit.Rule;
@@ -62,7 +62,7 @@ public class TlsSocketAppenderFactoryTest {
     @Test
     public void testTlsLogging() throws Exception {
         DefaultLoggingFactory loggingFactory = yamlConfigurationFactory.build(new SubstitutingSourceProvider(
-            new ResourceConfigurationSourceProvider(), new StrSubstitutor(Maps.of(
+            new ResourceConfigurationSourceProvider(), new StringSubstitutor(Maps.of(
             "tls.trust_store.path", resourcePath("stores/tls_client.jks").getAbsolutePath(),
             "tls.trust_store.pass", "client_pass",
             "tls.server_port", tcpServer.getPort()
