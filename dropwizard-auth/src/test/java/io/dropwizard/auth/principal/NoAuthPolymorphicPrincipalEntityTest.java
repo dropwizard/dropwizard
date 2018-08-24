@@ -66,7 +66,7 @@ public class NoAuthPolymorphicPrincipalEntityTest extends JerseyTest {
         }
 
         @Override protected DynamicFeature getAuthDynamicFeature(ContainerRequestFilter authFilter) {
-            return new PolymorphicAuthDynamicFeature(Maps.of(
+            return new PolymorphicAuthDynamicFeature<>(Maps.of(
                 JsonPrincipal.class, getAuthFilter(),
                 NullPrincipal.class, getAuthFilter()
             ));

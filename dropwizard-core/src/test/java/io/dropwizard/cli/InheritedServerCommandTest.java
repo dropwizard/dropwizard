@@ -88,14 +88,14 @@ public class InheritedServerCommandTest {
     @Test
     public void usesDefaultConfigPath() throws Exception {
 
-        class SingletonConfigurationFactory implements ConfigurationFactory {
+        class SingletonConfigurationFactory implements ConfigurationFactory<Configuration> {
             @Override
-            public Object build(final ConfigurationSourceProvider provider, final String path) throws IOException, ConfigurationException {
+            public Configuration build(final ConfigurationSourceProvider provider, final String path) throws IOException, ConfigurationException {
                 return configuration;
             }
 
             @Override
-            public Object build() throws IOException, ConfigurationException {
+            public Configuration build() throws IOException, ConfigurationException {
                 throw new AssertionError("Didn't use the default config path variable");
             }
         }

@@ -40,7 +40,7 @@ import java.util.List;
  * </table>
  */
 @JsonTypeName("logback-access")
-public class LogbackAccessRequestLogFactory implements RequestLogFactory {
+public class LogbackAccessRequestLogFactory implements RequestLogFactory<RequestLog> {
 
     @Valid
     @NotNull

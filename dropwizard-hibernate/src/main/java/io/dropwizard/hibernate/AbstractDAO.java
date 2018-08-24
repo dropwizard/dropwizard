@@ -72,7 +72,7 @@ public class AbstractDAO<E> {
      * @return the named query
      * @see Session#getNamedQuery(String)
      */
-    protected Query namedQuery(String queryName) throws HibernateException {
+    protected Query<?> namedQuery(String queryName) throws HibernateException {
         return currentSession().getNamedQuery(requireNonNull(queryName));
     }
 

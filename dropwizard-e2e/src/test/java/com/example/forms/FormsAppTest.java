@@ -22,6 +22,8 @@ import javax.ws.rs.core.Response;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.io.IOException;
+
 public class FormsAppTest {
     @ClassRule
     public static final DropwizardAppRule<Configuration> RULE =
@@ -35,41 +37,48 @@ public class FormsAppTest {
     }
 
     @Test
-    public void canSubmitFormAndReceiveResponse() {
+    public void canSubmitFormAndReceiveResponse() throws IOException {
         config.setChunkedEncodingEnabled(false);
 
         final Client client = new JerseyClientBuilder(RULE.getEnvironment())
             .using(config)
             .build("test client 1");
 
-        final MultiPart mp = new FormDataMultiPart()
-            .bodyPart(new FormDataBodyPart(
+        try (final FormDataMultiPart fdmp = new FormDataMultiPart()) {
+            final MultiPart mp = fdmp.bodyPart(new FormDataBodyPart(
                 FormDataContentDisposition.name("file").fileName("fileName").build(), "CONTENT"));
-
-        final String url = String.format("http://localhost:%d/uploadFile", RULE.getLocalPort());
-        final String response = client.target(url).register(MultiPartFeature.class).request()
-            .post(Entity.entity(mp, mp.getMediaType()), String.class);
-        assertThat(response).isEqualTo("fileName:\nCONTENT");
+    
+            final String url = String.format("http://localhost:%d/uploadFile", RULE.getLocalPort());
+            final String response = client.target(url).register(MultiPartFeature.class).request()
+                .post(Entity.entity(mp, mp.getMediaType()), String.class);
+            assertThat(response).isEqualTo("fileName:\nCONTENT");
+        }
     }
 
-    /** Test confirms that chunked encoding has to be disabled in order for sending forms to work.
-     *  Maybe someday this requirement will be relaxed and this test can be updated for the new
-     *  behavior. For more info, see issues #1013 and #1094 */
+    /**
+     * Test confirms that chunked encoding has to be disabled in order for
+     * sending forms to work. Maybe someday this requirement will be relaxed and
+     * this test can be updated for the new behavior. For more info, see issues
+     * #1013 and #1094
+     * 
+     * @throws IOException
+     */
     @Test
-    public void failOnNoChunkedEncoding() {
+    public void failOnNoChunkedEncoding() throws IOException {
         final Client client = new JerseyClientBuilder(RULE.getEnvironment())
             .using(config)
             .build("test client 2");
 
-        final MultiPart mp = new FormDataMultiPart()
-            .bodyPart(new FormDataBodyPart(
+        try (final FormDataMultiPart fdmp = new FormDataMultiPart()) {
+            final MultiPart mp = fdmp.bodyPart(new FormDataBodyPart(
                 FormDataContentDisposition.name("file").fileName("fileName").build(), "CONTENT"));
 
-        final String url = String.format("http://localhost:%d/uploadFile", RULE.getLocalPort());
-        final Response response = client.target(url).register(MultiPartFeature.class).request()
-            .post(Entity.entity(mp, mp.getMediaType()));
-        assertThat(response.getStatus()).isEqualTo(400);
-        assertThat(response.readEntity(ErrorMessage.class))
-            .isEqualTo(new ErrorMessage(400, "HTTP 400 Bad Request"));
+            final String url = String.format("http://localhost:%d/uploadFile", RULE.getLocalPort());
+            final Response response = client.target(url).register(MultiPartFeature.class).request()
+                .post(Entity.entity(mp, mp.getMediaType()));
+            assertThat(response.getStatus()).isEqualTo(400);
+            assertThat(response.readEntity(ErrorMessage.class))
+                .isEqualTo(new ErrorMessage(400, "HTTP 400 Bad Request"));
+        }
     }
 }

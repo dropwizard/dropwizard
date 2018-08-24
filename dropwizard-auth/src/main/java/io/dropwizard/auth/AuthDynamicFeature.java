@@ -3,7 +3,6 @@ package io.dropwizard.auth;
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 import org.glassfish.jersey.server.model.AnnotatedMethod;
 
-import javax.annotation.Nullable;
 import javax.annotation.security.DenyAll;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;

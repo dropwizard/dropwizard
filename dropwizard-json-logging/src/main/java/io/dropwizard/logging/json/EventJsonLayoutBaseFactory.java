@@ -79,7 +79,6 @@ public class EventJsonLayoutBaseFactory extends AbstractJsonLayoutBaseFactory<IL
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public LayoutBase<ILoggingEvent> build(LoggerContext context, TimeZone timeZone) {
         final EventJsonLayout jsonLayout = new EventJsonLayout(createDropwizardJsonFormatter(),
             createTimestampFormatter(timeZone), createThrowableProxyConverter(), includes, getCustomFieldNames(),

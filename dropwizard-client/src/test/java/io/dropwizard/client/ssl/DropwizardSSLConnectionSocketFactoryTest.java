@@ -13,10 +13,8 @@ import io.dropwizard.util.Duration;
 import org.apache.http.conn.ssl.SSLInitializationException;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.glassfish.jersey.client.ClientResponse;
-import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
 

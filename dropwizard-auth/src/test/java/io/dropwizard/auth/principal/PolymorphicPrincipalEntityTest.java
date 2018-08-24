@@ -90,15 +90,15 @@ public class PolymorphicPrincipalEntityTest extends JerseyTest {
                 }
             };
 
-            final BasicCredentialAuthFilter jsonAuthFilter = new BasicCredentialAuthFilter.Builder<JsonPrincipal>()
+            final BasicCredentialAuthFilter<?> jsonAuthFilter = new BasicCredentialAuthFilter.Builder<JsonPrincipal>()
                 .setAuthenticator(jsonAuthenticator)
                 .buildAuthFilter();
 
-            final BasicCredentialAuthFilter nullAuthFilter = new BasicCredentialAuthFilter.Builder<NullPrincipal>()
+            final BasicCredentialAuthFilter<?> nullAuthFilter = new BasicCredentialAuthFilter.Builder<NullPrincipal>()
                 .setAuthenticator(nullAuthenticator)
                 .buildAuthFilter();
 
-            return new PolymorphicAuthDynamicFeature<Principal>(Maps.of(
+            return new PolymorphicAuthDynamicFeature<>(Maps.of(
                 JsonPrincipal.class, jsonAuthFilter,
                 NullPrincipal.class, nullAuthFilter
             ));

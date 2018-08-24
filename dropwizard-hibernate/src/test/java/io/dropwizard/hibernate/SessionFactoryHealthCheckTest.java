@@ -42,7 +42,7 @@ public class SessionFactoryHealthCheckTest {
         final Transaction transaction = mock(Transaction.class);
         when(session.beginTransaction()).thenReturn(transaction);
 
-        final NativeQuery query = mock(NativeQuery.class);
+        final NativeQuery<?> query = mock(NativeQuery.class);
         when(session.createNativeQuery(anyString())).thenReturn(query);
 
         assertThat(healthCheck.execute().isHealthy()).isTrue();
@@ -65,7 +65,7 @@ public class SessionFactoryHealthCheckTest {
         when(session.beginTransaction()).thenReturn(transaction);
         when(transaction.getStatus()).thenReturn(ACTIVE);
 
-        final NativeQuery query = mock(NativeQuery.class);
+        final NativeQuery<?> query = mock(NativeQuery.class);
         when(session.createNativeQuery(anyString())).thenReturn(query);
         when(query.list()).thenThrow(new HibernateException("OH NOE"));
 

@@ -43,7 +43,6 @@ public class HibernateBundleTest {
     };
 
     @Before
-    @SuppressWarnings("unchecked")
     public void setUp() throws Exception {
         when(environment.healthChecks()).thenReturn(healthChecks);
         when(environment.jersey()).thenReturn(jerseyEnvironment);
@@ -104,7 +103,6 @@ public class HibernateBundleTest {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void registersACustomNameOfHealthCheckAndDBPoolMetrics() throws Exception {
         final HibernateBundle<Configuration> customBundle = new HibernateBundle<Configuration>(entities, factory) {
             @Override

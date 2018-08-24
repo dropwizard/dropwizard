@@ -45,7 +45,6 @@ public class UnitOfWorkApplicationListenerTest {
     private final Transaction transaction = mock(Transaction.class);
     private final Transaction analyticsTransaction = mock(Transaction.class);
 
-    @SuppressWarnings("unchecked")
     @Before
     public void setUp() throws Exception {
         listener.registerSessionFactory(HibernateBundle.DEFAULT_NAME, sessionFactory);
