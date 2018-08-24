@@ -1,5 +1,7 @@
 package io.dropwizard.jersey;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import io.dropwizard.jersey.dummy.DummyResource;
 import io.dropwizard.logging.BootstrapLogging;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
@@ -16,8 +18,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class DropwizardResourceConfigTest {
     static {
@@ -238,6 +238,24 @@ public class DropwizardResourceConfigTest {
         assertThat(rc.getEndpointsInfo())
             .contains("GET     /context/pattern/dummy (io.dropwizard.jersey.DropwizardResourceConfigTest.TestResource)")
             .contains("GET     /context/pattern/another (io.dropwizard.jersey.DropwizardResourceConfigTest.ImplementingResource)");
+    }
+
+    @Test
+    public void testMixedClassAndInstanceRegistration() {
+        rc.setContextPath("/context");
+        rc.setUrlPattern("/pattern");
+        Object[] registrations = new Object[] {
+                TestResource.class,
+                new ImplementingResource()
+        };
+        for (Object registration : registrations) {
+            rc.register(registration);
+        }
+
+        runJersey();
+        assertThat(rc.getEndpointsInfo())
+                .contains("GET     /context/pattern/dummy (io.dropwizard.jersey.DropwizardResourceConfigTest.TestResource)")
+                .contains("GET     /context/pattern/another (io.dropwizard.jersey.DropwizardResourceConfigTest.ImplementingResource)");
     }
 
     @Test

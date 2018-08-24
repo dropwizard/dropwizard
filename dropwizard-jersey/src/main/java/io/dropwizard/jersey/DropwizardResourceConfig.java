@@ -1,5 +1,7 @@
 package io.dropwizard.jersey;
 
+import static java.util.Objects.requireNonNull;
+
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.jersey2.InstrumentedResourceMethodApplicationListener;
 import com.fasterxml.classmate.ResolvedType;
@@ -9,6 +11,11 @@ import io.dropwizard.jersey.params.AbstractParamConverterProvider;
 import io.dropwizard.jersey.sessions.SessionFactoryProvider;
 import io.dropwizard.jersey.validation.FuzzyEnumParamConverterProvider;
 import io.dropwizard.util.Strings;
+import javassist.ClassPool;
+import javassist.CtClass;
+import org.glassfish.hk2.utilities.Binder;
+import org.glassfish.jersey.internal.inject.AbstractBinder;
+import org.glassfish.jersey.internal.inject.Providers;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.ServerProperties;
 import org.glassfish.jersey.server.model.Resource;
@@ -20,7 +27,6 @@ import org.glassfish.jersey.server.monitoring.RequestEventListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,8 +36,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.UUID;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import javax.annotation.Nullable;
 
 public class DropwizardResourceConfig extends ResourceConfig {
     private static final Logger LOGGER = LoggerFactory.getLogger(DropwizardResourceConfig.class);
@@ -124,8 +132,50 @@ public class DropwizardResourceConfig extends ResourceConfig {
         return allClasses;
     }
 
+    @Override
+    public ResourceConfig register(final Object component) {
+        final Object object = requireNonNull(component);
+        Class<?> clazz = object.getClass();
+        // If a class gets passed through as an object, cast to Class and register directly
+        if (component instanceof Class<?>) {
+            return super.register((Class<?>) component);
+        } else if (Providers.isProvider(clazz) || Binder.class.isAssignableFrom(clazz)) {
+            // If jersey supports this component's class (including hk2 Binders), register directly
+            return super.register(object);
+        } else {
+            // Else register a binder that binds the instance to its class type
+            try {
+                // Need to create a new subclass dynamically here because hk2/jersey
+                // doesn't add new bindings for the same class
+                ClassPool pool = ClassPool.getDefault();
+                CtClass cc = pool.makeClass(SpecificBinder.class.getName() + UUID.randomUUID());
+                cc.setSuperclass(pool.get(SpecificBinder.class.getName()));
+                Object binderProxy = cc.toClass().getConstructor(Object.class, Class.class).newInstance(object, clazz);
+                super.register(binderProxy);
+                return super.register(clazz);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
     static String cleanUpPath(String path) {
         return PATH_DIRTY_SLASHES.matcher(path).replaceAll("/").trim();
+    }
+
+    public static class SpecificBinder extends AbstractBinder {
+        private Object object;
+        private Class clazz;
+
+        public SpecificBinder(Object object, Class clazz) {
+            this.object = object;
+            this.clazz = clazz;
+        }
+
+        @Override
+        public void configure() {
+            bind(object).to(clazz);
+        }
     }
 
     private static class EndpointLogLine {
