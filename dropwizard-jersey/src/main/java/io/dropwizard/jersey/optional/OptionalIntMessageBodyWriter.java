@@ -26,7 +26,6 @@ public class OptionalIntMessageBodyWriter implements MessageBodyWriter<OptionalI
         return OptionalInt.class.isAssignableFrom(type);
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
     public void writeTo(OptionalInt entity,
                         Class<?> type,

@@ -26,7 +26,6 @@ public class OptionalDoubleMessageBodyWriter implements MessageBodyWriter<Option
         return OptionalDouble.class.isAssignableFrom(type);
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
     public void writeTo(OptionalDouble entity,
                         Class<?> type,

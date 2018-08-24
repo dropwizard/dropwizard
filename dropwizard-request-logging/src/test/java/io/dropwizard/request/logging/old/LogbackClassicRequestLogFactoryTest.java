@@ -26,7 +26,7 @@ public class LogbackClassicRequestLogFactoryTest {
         BootstrapLogging.bootstrap();
     }
 
-    private RequestLogFactory requestLog;
+    private RequestLogFactory<?> requestLog;
 
     @Before
     public void setUp() throws Exception {

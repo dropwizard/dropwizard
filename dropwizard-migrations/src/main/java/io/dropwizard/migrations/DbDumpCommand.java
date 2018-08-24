@@ -205,7 +205,7 @@ public class DbDumpCommand<T extends Configuration> extends AbstractLiquibaseCom
                                    final DiffToChangeLog changeLogWriter, PrintStream outputStream,
                                    final Set<Class<? extends DatabaseObject>> compareTypes)
             throws DatabaseException, IOException, ParserConfigurationException {
-        @SuppressWarnings({"unchecked", "rawtypes"})
+        @SuppressWarnings("unchecked")
         final SnapshotControl snapshotControl = new SnapshotControl(database,
                 compareTypes.toArray(new Class[compareTypes.size()]));
         final CompareControl compareControl = new CompareControl(new CompareControl.SchemaComparison[]{

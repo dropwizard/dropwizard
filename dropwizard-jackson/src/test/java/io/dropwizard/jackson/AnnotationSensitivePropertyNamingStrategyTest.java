@@ -16,7 +16,7 @@ public class AnnotationSensitivePropertyNamingStrategyTest {
         @Nullable
         String firstName;
 
-        @SuppressWarnings("UnusedDeclaration") // Jackson
+        @SuppressWarnings({ "UnusedDeclaration", "unused" }) // Jackson
         private RegularExample() {}
 
         public RegularExample(String firstName) {
@@ -30,7 +30,7 @@ public class AnnotationSensitivePropertyNamingStrategyTest {
         @Nullable
         String firstName;
 
-        @SuppressWarnings("UnusedDeclaration") // Jackson
+        @SuppressWarnings({ "UnusedDeclaration", "unused" }) // Jackson
         private SnakeCaseExample() {}
 
         public SnakeCaseExample(String firstName) {

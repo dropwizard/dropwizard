@@ -2,7 +2,6 @@ package io.dropwizard.jdbi.args;
 
 import org.joda.time.DateTime;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.skife.jdbi.v2.StatementContext;
 
 import java.sql.ResultSet;

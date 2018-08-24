@@ -10,7 +10,7 @@ import org.eclipse.jetty.server.Slf4jRequestLog;
  * Useful when the user doesn't want to configure request logging via the Dropwizard configuration.
  */
 @JsonTypeName("external")
-public class ExternalRequestLogFactory implements RequestLogFactory {
+public class ExternalRequestLogFactory implements RequestLogFactory<RequestLog> {
 
     private boolean enabled = true;
 

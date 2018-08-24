@@ -321,7 +321,7 @@ public class JerseyClientBuilder {
      *
      * @return a fully-configured {@link Client}
      */
-    public <RX extends RxInvokerProvider> Client buildRx(String name, Class<RX> invokerType) {
+    public <RX extends RxInvokerProvider<?>> Client buildRx(String name, Class<RX> invokerType) {
         return build(name).register(invokerType);
     }
 

@@ -44,6 +44,8 @@ public class LayoutIntegrationTests {
     }
 
     private final ObjectMapper objectMapper = Jackson.newObjectMapper();
+
+    @SuppressWarnings("rawtypes")
     private final YamlConfigurationFactory<ConsoleAppenderFactory> yamlFactory = new YamlConfigurationFactory<>(
         ConsoleAppenderFactory.class, BaseValidator.newValidator(), objectMapper, "dw-json-log");
 
@@ -60,7 +62,7 @@ public class LayoutIntegrationTests {
     @Test
     public void testDeserializeJson() throws Exception {
         ConsoleAppenderFactory<ILoggingEvent> appenderFactory = getAppenderFactory("yaml/json-log.yml");
-        DiscoverableLayoutFactory layout = requireNonNull(appenderFactory.getLayout());
+        DiscoverableLayoutFactory<?> layout = requireNonNull(appenderFactory.getLayout());
         assertThat(layout).isInstanceOf(EventJsonLayoutBaseFactory.class);
         EventJsonLayoutBaseFactory factory = (EventJsonLayoutBaseFactory) layout;
         assertThat(factory).isNotNull();
@@ -84,7 +86,7 @@ public class LayoutIntegrationTests {
     @Test
     public void testDeserializeAccessJson() throws Exception {
         ConsoleAppenderFactory<IAccessEvent> appenderFactory = getAppenderFactory("yaml/json-access-log.yml");
-        DiscoverableLayoutFactory layout = requireNonNull(appenderFactory.getLayout());
+        DiscoverableLayoutFactory<?> layout = requireNonNull(appenderFactory.getLayout());
         assertThat(layout).isInstanceOf(AccessJsonLayoutBaseFactory.class);
         AccessJsonLayoutBaseFactory factory = (AccessJsonLayoutBaseFactory) layout;
         assertThat(factory.getTimestampFormat()).isEqualTo("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");

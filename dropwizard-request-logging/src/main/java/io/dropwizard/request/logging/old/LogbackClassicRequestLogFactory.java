@@ -53,7 +53,7 @@ import java.util.TimeZone;
  * </table>
  */
 @JsonTypeName("classic")
-public class LogbackClassicRequestLogFactory implements RequestLogFactory {
+public class LogbackClassicRequestLogFactory implements RequestLogFactory<RequestLog> {
     private static class RequestLogLayout extends PatternLayoutBase<ILoggingEvent> {
 
         private RequestLogLayout(Context context) {

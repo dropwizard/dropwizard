@@ -65,7 +65,7 @@ public class FileAppenderFactoryTest {
     @Test
     public void isRolling() throws Exception {
         // the method we want to test is protected, so we need to override it so we can see it
-        FileAppenderFactory fileAppenderFactory = new FileAppenderFactory<ILoggingEvent>() {
+        FileAppenderFactory<ILoggingEvent> fileAppenderFactory = new FileAppenderFactory<ILoggingEvent>() {
             @Override
             public FileAppender<ILoggingEvent> buildAppender(LoggerContext context) {
                 return super.buildAppender(context);
@@ -80,7 +80,7 @@ public class FileAppenderFactoryTest {
 
     @Test
     public void hasArchivedLogFilenamePattern() throws Exception {
-        FileAppenderFactory fileAppenderFactory = new FileAppenderFactory();
+        FileAppenderFactory<?> fileAppenderFactory = new FileAppenderFactory<>();
         fileAppenderFactory.setCurrentLogFilename(folder.newFile("logfile.log").toString());
         Collection<String> errors =
                 ConstraintViolations.format(validator.validate(fileAppenderFactory));
@@ -94,7 +94,7 @@ public class FileAppenderFactoryTest {
 
     @Test
     public void isValidForInfiniteRolledFiles() throws Exception {
-        FileAppenderFactory fileAppenderFactory = new FileAppenderFactory();
+        FileAppenderFactory<?> fileAppenderFactory = new FileAppenderFactory<>();
         fileAppenderFactory.setCurrentLogFilename(folder.newFile("logfile.log").toString());
         fileAppenderFactory.setArchivedFileCount(0);
         fileAppenderFactory.setArchivedLogFilenamePattern(folder.newFile("example-%d.log.gz").toString());
@@ -106,7 +106,7 @@ public class FileAppenderFactoryTest {
 
     @Test
     public void isValidForMaxFileSize() throws Exception {
-        FileAppenderFactory fileAppenderFactory = new FileAppenderFactory();
+        FileAppenderFactory<?> fileAppenderFactory = new FileAppenderFactory<>();
         fileAppenderFactory.setCurrentLogFilename(folder.newFile("logfile.log").toString());
         fileAppenderFactory.setMaxFileSize(Size.kilobytes(1));
         fileAppenderFactory.setArchivedLogFilenamePattern(folder.newFile("example-%d.log.gz").toString());
@@ -121,7 +121,7 @@ public class FileAppenderFactoryTest {
 
     @Test
     public void hasMaxFileSizeValidation() throws Exception {
-        FileAppenderFactory fileAppenderFactory = new FileAppenderFactory();
+        FileAppenderFactory<?> fileAppenderFactory = new FileAppenderFactory<>();
         fileAppenderFactory.setCurrentLogFilename(folder.newFile("logfile.log").toString());
         fileAppenderFactory.setArchivedLogFilenamePattern(folder.newFile("example-%i.log.gz").toString());
         Collection<String> errors =
@@ -135,7 +135,7 @@ public class FileAppenderFactoryTest {
 
     @Test
     public void testCurrentFileNameErrorWhenArchiveIsNotEnabled() throws Exception {
-        FileAppenderFactory fileAppenderFactory = new FileAppenderFactory();
+        FileAppenderFactory<?> fileAppenderFactory = new FileAppenderFactory<>();
         fileAppenderFactory.setArchive(false);
         Collection<String> errors =
                 ConstraintViolations.format(validator.validate(fileAppenderFactory));
@@ -148,7 +148,7 @@ public class FileAppenderFactoryTest {
 
     @Test
     public void testCurrentFileNameCanBeNullWhenArchiveIsEnabled() throws Exception {
-        FileAppenderFactory fileAppenderFactory = new FileAppenderFactory();
+        FileAppenderFactory<?> fileAppenderFactory = new FileAppenderFactory<>();
         fileAppenderFactory.setArchive(true);
         fileAppenderFactory.setArchivedLogFilenamePattern("name-to-be-used");
         fileAppenderFactory.setCurrentLogFilename(null);
@@ -170,7 +170,7 @@ public class FileAppenderFactoryTest {
 
     @Test
     public void hasMaxFileSize() throws Exception {
-        FileAppenderFactory fileAppenderFactory = new FileAppenderFactory();
+        FileAppenderFactory<ILoggingEvent> fileAppenderFactory = new FileAppenderFactory<>();
         fileAppenderFactory.setCurrentLogFilename(folder.newFile("logfile.log").toString());
         fileAppenderFactory.setArchive(true);
         fileAppenderFactory.setMaxFileSize(Size.kilobytes(1));
@@ -186,7 +186,7 @@ public class FileAppenderFactoryTest {
 
     @Test
     public void hasMaxFileSizeFixedWindow() throws Exception {
-        FileAppenderFactory fileAppenderFactory = new FileAppenderFactory();
+        FileAppenderFactory<ILoggingEvent> fileAppenderFactory = new FileAppenderFactory<>();
         fileAppenderFactory.setCurrentLogFilename(folder.newFile("logfile.log").toString());
         fileAppenderFactory.setArchive(true);
         fileAppenderFactory.setMaxFileSize(Size.kilobytes(1));

@@ -696,7 +696,7 @@ public class HttpClientBuilderTest {
     public void allowsCustomBuilderConfiguration() throws Exception {
         CustomBuilder builder = new CustomBuilder(new MetricRegistry());
         assertThat(builder.customized).isFalse();
-        ConfiguredCloseableHttpClient client = builder.createClient(apacheBuilder, connectionManager, "test");
+        builder.createClient(apacheBuilder, connectionManager, "test");
         assertThat(builder.customized).isTrue();
     }
 
