@@ -33,7 +33,7 @@ Name                                Default                                     
 type                                default                                          - default
                                                                                      - simple
 maxThreads                          1024                                             The maximum number of threads the thread pool is allowed to grow. Jetty will throw ``java.lang.IllegalStateException: Insufficient threads:`` in case of too aggressive limit on the thread count.
-minThreads                          8                                                The minimum number of threads to keep alive in the thread pool. Note that each Jetty's connector consumes threads from the pool. See :ref:`HTTP connector <man-configuration-http>` how the thread counts are calculated.
+minThreads                          8                                                The minimum number of threads to keep alive in the thread pool. Note that each Jetty connector consumes threads from the pool. See :ref:`HTTP connector <man-configuration-http>` how the thread counts are calculated.
 maxQueuedRequests                   1024                                             The maximum number of requests to queue before blocking
                                                                                      the acceptors.
 idleThreadTimeout                   1 minute                                         The amount of time a worker thread can be idle before
@@ -94,7 +94,7 @@ GZip
 | compressedMimeTypes       | Jetty's default     | The list of mime types to compress. The default is all types apart                                   |
 |                           |                     | the commonly known image, video, audio and compressed types.                                         |
 +---------------------------+---------------------+------------------------------------------------------------------------------------------------------+
-| includedMethods           | Jetty's default     | The list list of HTTP methods to compress. The default is to compress only GET responses.            |
+| includedMethods           | Jetty's default     | The list of HTTP methods to compress. The default is to compress only GET responses.                 |
 +---------------------------+---------------------+------------------------------------------------------------------------------------------------------+
 | deflateCompressionLevel   | -1                  | The compression level used for ZLIB deflation(compression).                                          |
 +---------------------------+---------------------+------------------------------------------------------------------------------------------------------+
@@ -181,17 +181,17 @@ It works only for HTTP/2 connections.
 | enabled         | false      | If true, the filter will organize resources as primary resources (those referenced by the            |
 |                 |            | ``Referer`` header) and secondary resources (those that have the ``Referer`` header). Secondary      |
 |                 |            | resources that have been requested within a time window from the request of the primary resource     |
-|                 |            | will be associated with the it. The next time a client will request the primary resource, the        |
-|                 |            | server will send to the client the secondary resources along with the primary in a single response.  |
+|                 |            | will be associated with it. The next time a client requests the primary resource, the server will    |
+|                 |            | send to the client the secondary resources along with the primary in a single response.              |
 +-----------------+------------+------------------------------------------------------------------------------------------------------+
 | associatePeriod | 4 seconds  | The time window within which a request for a secondary resource will be associated to a              |
-|                 |            | primary resource..                                                                                   |
+|                 |            | primary resource.                                                                                    |
 +-----------------+------------+------------------------------------------------------------------------------------------------------+
 | maxAssociations | 16         | The maximum number of secondary resources that may be associated to a primary resource.              |
 +-----------------+------------+------------------------------------------------------------------------------------------------------+
 | refererHosts    | All hosts  | The list of referrer hosts for which the server push technology is supported.                        |
 +-----------------+------------+------------------------------------------------------------------------------------------------------+
-| refererPorts    | All ports  | The list of referrer ports for which the server push technology is supported                         |
+| refererPorts    | All ports  | The list of referrer ports for which the server push technology is supported.                        |
 +-----------------+------------+------------------------------------------------------------------------------------------------------+
 
 
@@ -327,7 +327,7 @@ outputBufferSize         32KiB               The size of the buffer into which r
                                              to run without blocking, however larger buffers consume more memory and may induce
                                              some latency before a client starts processing the content.
 maxRequestHeaderSize     8KiB                The maximum size of a request header. Larger headers will allow for more and/or
-                                             larger cookies plus larger form content encoded  in a URL. However, larger headers
+                                             larger cookies plus larger form content encoded in a URL. However, larger headers
                                              consume more memory and can make a server more vulnerable to denial of service
                                              attacks.
 maxResponseHeaderSize    8KiB                The maximum size of a response header. Larger headers will allow for more and/or
@@ -347,7 +347,7 @@ blockingTimeout          (none)              The timeout applied to blocking ope
 minBufferPoolSize        64 bytes            The minimum size of the buffer pool.
 bufferPoolIncrement      1KiB                The increment by which the buffer pool should be increased.
 maxBufferPoolSize        64KiB               The maximum size of the buffer pool.
-minRequestDataRate       0                   The minimum request data rate in bytes per second; or <= 0 for no limit
+minRequestDataRate       0                   The minimum request data rate in bytes per second; or <= 0 for no limit.
 acceptorThreads          (Jetty's default)   The number of worker threads dedicated to accepting connections.
                                              By default is *max(1, min(4, #CPUs/8))*.
 selectorThreads          (Jetty's default)   The number of worker threads dedicated to sending and receiving data.
@@ -1290,7 +1290,7 @@ supportedProtocols           (none)             A list of protocols (e.g., ``SSL
 supportedCipherSuites        (none)             A list of cipher suites (e.g., ``TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256``) which
                                                 are supported. All other cipher suites will be refused.
 certAlias                    (none)             The alias of a specific client certificate to present when authenticating. Use this when
-                                                the specified keystore has multiple certificates to force use of a non-default certficate.
+                                                the specified keystore has multiple certificates to force use of a non-default certificate.
 ===========================  =================  ============================================================================================================================
 
 
