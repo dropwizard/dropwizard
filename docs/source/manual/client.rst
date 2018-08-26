@@ -62,7 +62,7 @@ Dropwizard's ``HttpClientBuilder`` actually gives you an instrumented subclass w
 following pieces of data:
 
 ``org.apache.http.conn.ClientConnectionManager.available-connections``
-    The number the number idle connections ready to be used to execute requests.
+    The number of idle connections ready to be used to execute requests.
 
 ``org.apache.http.conn.ClientConnectionManager.leased-connections``
     The number of persistent connections currently being used to execute requests.
@@ -71,7 +71,7 @@ following pieces of data:
     The maximum number of allowed connections.
 
 ``org.apache.http.conn.ClientConnectionManager.pending-connections``
-    The number of connection requests being blocked awaiting a free connection
+    The number of connection requests being blocked awaiting a free connection.
 
 ``org.apache.http.client.HttpClient.get-requests``
     The rate at which ``GET`` requests are being sent.
@@ -140,7 +140,7 @@ To create a :ref:`managed <man-core-managed>`, instrumented ``JerseyClient`` ins
         public JerseyClientConfiguration getJerseyClientConfiguration() {
             return jerseyClient;
         }
-        
+
         @JsonProperty("jerseyClient")
         public void setJerseyClientConfiguration(JerseyClientConfiguration jerseyClient) {
             this.jerseyClient = jerseyClient;
@@ -225,11 +225,11 @@ synchronous and asynchronous requests, is used for rx requests.
 Proxy Authentication
 --------------------
 
-The client can utilise a forward proxy, supporting both Basic and NTLM authentication schemes. 
+The client can utilise a forward proxy, supporting both Basic and NTLM authentication schemes.
 Basic Auth against a proxy is simple:
 
 .. code-block:: yaml
- 
+
      proxy:
           host: '192.168.52.11'
           port: 8080
@@ -240,9 +240,9 @@ Basic Auth against a proxy is simple:
           nonProxyHosts:
             - 'localhost'
             - '192.168.52.*'
-            - '*.example.com'   
+            - '*.example.com'
 
-NTLM Auth is configured by setting the the relevant windows properties. 
+NTLM Auth is configured by setting the the relevant windows properties.
 
 .. code-block:: yaml
 
@@ -261,6 +261,6 @@ NTLM Auth is configured by setting the the relevant windows properties.
           nonProxyHosts:
             - 'localhost'
             - '192.168.52.*'
-            - '*.example.com'   
+            - '*.example.com'
 
 
