@@ -28,7 +28,9 @@ import org.apache.http.impl.client.SystemDefaultCredentialsProvider;
 import org.apache.http.impl.conn.SystemDefaultDnsResolver;
 import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
 import org.glassfish.jersey.client.ClientRequest;
+import org.glassfish.jersey.client.JerseyClient;
 import org.glassfish.jersey.client.rx.rxjava2.RxFlowableInvokerProvider;
+import org.glassfish.jersey.client.spi.ConnectorProvider;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -192,6 +194,25 @@ public class JerseyClientBuilderTest {
             }
         }
 
+    }
+
+    @Test
+    public void createsNewConnectorProvider(){
+        final JerseyClient clientA = (JerseyClient) builder.using(executorService, objectMapper).build("testA");
+        final JerseyClient clientB = (JerseyClient) builder.build("testB");
+        assertThat(clientA.getConfiguration().getConnectorProvider())
+            .isNotSameAs(clientB.getConfiguration().getConnectorProvider());
+    }
+
+    @Test
+    public void usesSameConnectorProvider(){
+        final JerseyClient clientA = (JerseyClient) builder.using(executorService, objectMapper)
+            .using(mock(ConnectorProvider.class))
+            .build("testA");
+        final JerseyClient clientB = (JerseyClient) builder.build("testB");
+
+        assertThat(clientA.getConfiguration().getConnectorProvider())
+            .isSameAs(clientB.getConfiguration().getConnectorProvider());
     }
 
     @Test
