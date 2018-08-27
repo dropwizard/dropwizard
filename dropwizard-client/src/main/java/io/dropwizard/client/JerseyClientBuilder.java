@@ -412,12 +412,14 @@ public class JerseyClientBuilder {
         }
 
         config.register(new DropwizardExecutorProvider(threadPool));
+
         if (connectorProvider == null) {
             final ConfiguredCloseableHttpClient apacheHttpClient =
                     apacheHttpClientBuilder.buildWithDefaultRequestConfiguration(name);
-            connectorProvider = (client, runtimeConfig) -> createDropwizardApacheConnector(apacheHttpClient);
+            config.connectorProvider((client, runtimeConfig) -> createDropwizardApacheConnector(apacheHttpClient));
+        } else {
+            config.connectorProvider(connectorProvider);
         }
-        config.connectorProvider(connectorProvider);
 
         return config;
     }
