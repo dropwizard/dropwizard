@@ -8,6 +8,7 @@ jdk:
   - openjdk10
   - openjdk11
 before_install:
+  - rm ~/.m2/settings.xml || true
   - ulimit -c unlimited -S
 script:
   - ./mvnw verify -B
