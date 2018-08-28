@@ -259,7 +259,7 @@ value of environment variables using a ``SubstitutingSourceProvider`` and ``Envi
     }
 
 The configuration settings which should be substituted need to be explicitly written in the configuration file and
-follow the substitution rules of StrSubstitutor_ from the Apache Commons Lang library.
+follow the substitution rules of StringSubstitutor_ from the Apache Commons Text library.
 
 .. code-block:: yaml
 
@@ -267,9 +267,9 @@ follow the substitution rules of StrSubstitutor_ from the Apache Commons Lang li
     defaultSetting: ${DW_DEFAULT_SETTING:-default value}
 
 In general ``SubstitutingSourceProvider`` isn't restricted to substitute environment variables but can be used to replace
-variables in the configuration source with arbitrary values by passing a custom ``StrSubstitutor`` implementation.
+variables in the configuration source with arbitrary values by passing a custom ``StringSubstitutor`` implementation.
 
-.. _StrSubstitutor: https://commons.apache.org/proper/commons-lang/javadocs/api-release/org/apache/commons/lang3/text/StrSubstitutor.html
+.. _StringSubstitutor: http://commons.apache.org/proper/commons-text/javadocs/api-release/org/apache/commons/text/StringSubstitutor.html
 
 .. _man-core-ssl:
 
