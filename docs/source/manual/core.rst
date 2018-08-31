@@ -259,7 +259,7 @@ value of environment variables using a ``SubstitutingSourceProvider`` and ``Envi
     }
 
 The configuration settings which should be substituted need to be explicitly written in the configuration file and
-follow the substitution rules of StrSubstitutor_ from the Apache Commons Lang library.
+follow the substitution rules of StringSubstitutor_ from the Apache Commons Text library.
 
 .. code-block:: yaml
 
@@ -267,9 +267,9 @@ follow the substitution rules of StrSubstitutor_ from the Apache Commons Lang li
     defaultSetting: ${DW_DEFAULT_SETTING:-default value}
 
 In general ``SubstitutingSourceProvider`` isn't restricted to substitute environment variables but can be used to replace
-variables in the configuration source with arbitrary values by passing a custom ``StrSubstitutor`` implementation.
+variables in the configuration source with arbitrary values by passing a custom ``StringSubstitutor`` implementation.
 
-.. _StrSubstitutor: https://commons.apache.org/proper/commons-lang/javadocs/api-release/org/apache/commons/lang3/text/StrSubstitutor.html
+.. _StringSubstitutor: http://commons.apache.org/proper/commons-text/javadocs/api-release/org/apache/commons/text/StringSubstitutor.html
 
 .. _man-core-ssl:
 
@@ -1415,7 +1415,7 @@ Error Handling
 --------------
 
 Almost as important as an application's happy path (receiving expected input and returning expected
-output) is an application behavior when something goes wrong.
+output) is an application's behavior when something goes wrong.
 
 If your resource class unintentionally throws an exception, Dropwizard will log that exception under
 the ``ERROR`` level (including stack traces) and return a terse, safe ``application/json`` ``500
@@ -1427,7 +1427,7 @@ exist), you have two options: throw a subclass of ``Exception`` or restructure y
 return a ``Response``. If at all possible, prefer throwing ``Exception`` instances to returning
 ``Response`` objects, as that will make resource endpoints more self describing and easier to test.
 
-The least instrusive way to map error conditions to a response is to throw a ``WebApplicationException``:
+The least intrusive way to map error conditions to a response is to throw a ``WebApplicationException``:
 
 .. code-block:: java
 
@@ -1777,7 +1777,7 @@ You typically register the feature in your Application class, like so:
 Servlet filters
 ---------------
 
-Another way to create filters is by creating servlet filters. They offer a way to to register filters that apply both to servlet requests as well as resource requests.
+Another way to create filters is by creating servlet filters. They offer a way to register filters that apply both to servlet requests as well as resource requests.
 Jetty comes with a few `bundled`_  filters which may already suit your needs. If you want to create your own filter,
 this example demonstrates a servlet filter analogous to the previous example:
 
@@ -1806,7 +1806,7 @@ this example demonstrates a servlet filter analogous to the previous example:
 
 
 This servlet filter can then be registered in your Application class by wrapping it in ``FilterHolder`` and adding it to the application context together with a
-specification for which paths this filter should active. Here's an example:
+specification for which paths this filter will be active. Here's an example:
 
 .. code-block:: java
 

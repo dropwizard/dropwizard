@@ -141,6 +141,7 @@ public class CachingAuthenticator<C, P extends Principal> implements Authenticat
      * Exception thrown by {@link CacheLoader#load(Object)} when the authenticator returns {@link Optional#empty()}.
      * This is used to prevent caching of invalid credentials.
      */
+    @SuppressWarnings("serial")
     private static class InvalidCredentialsException extends Exception {
     }
 }

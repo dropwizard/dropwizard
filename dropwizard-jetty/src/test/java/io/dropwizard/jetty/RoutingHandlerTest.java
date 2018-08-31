@@ -56,7 +56,6 @@ public class RoutingHandlerTest {
     }
 
     @Test
-    @SuppressWarnings({ "rawtypes", "unchecked" })
     public void routesRequestsToTheConnectorSpecificHandler() throws Exception {
         final HttpChannel channel = mock(HttpChannel.class);
         when(channel.getConnector()).thenReturn(connector1);

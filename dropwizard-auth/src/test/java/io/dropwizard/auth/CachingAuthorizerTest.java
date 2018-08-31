@@ -30,7 +30,6 @@ public class CachingAuthorizerTest {
 
     private final Principal principal = new PrincipalImpl("principal");
     private final Principal principal2 = new PrincipalImpl("principal2");
-    private final Principal principal3 = new PrincipalImpl("principal3");
     private final String role = "popular_kids";
 
     @Before

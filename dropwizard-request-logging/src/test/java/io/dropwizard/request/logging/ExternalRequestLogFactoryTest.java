@@ -20,7 +20,7 @@ public class ExternalRequestLogFactoryTest {
 
     @Test
     public void canBeDeserialized() throws Exception {
-        RequestLogFactory externalRequestLogFactory = new YamlConfigurationFactory<>(RequestLogFactory.class,
+        RequestLogFactory<?> externalRequestLogFactory = new YamlConfigurationFactory<>(RequestLogFactory.class,
             BaseValidator.newValidator(), Jackson.newObjectMapper(), "dw")
             .build(new File(Resources.getResource("yaml/externalRequestLog.yml").toURI()));
         assertThat(externalRequestLogFactory).isNotNull();

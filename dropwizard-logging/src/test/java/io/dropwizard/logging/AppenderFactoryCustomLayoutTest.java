@@ -29,6 +29,7 @@ public class AppenderFactoryCustomLayoutTest {
     }
 
     private final ObjectMapper objectMapper = Jackson.newObjectMapper();
+    @SuppressWarnings("rawtypes")
     private final YamlConfigurationFactory<ConsoleAppenderFactory> factory = new YamlConfigurationFactory<>(
         ConsoleAppenderFactory.class, BaseValidator.newValidator(), objectMapper, "dw-layout");
 
@@ -55,8 +56,8 @@ public class AppenderFactoryCustomLayoutTest {
             .build(new LoggerContext(), "test-custom-layout", new DropwizardLayoutFactory(),
                 new NullLevelFilterFactory<>(), new AsyncLoggingEventAppenderFactory());
 
-        ConsoleAppender consoleAppender = (ConsoleAppender) appender.getAppender("console-appender");
-        LayoutWrappingEncoder encoder = (LayoutWrappingEncoder) consoleAppender.getEncoder();
+        ConsoleAppender<?> consoleAppender = (ConsoleAppender<?>) appender.getAppender("console-appender");
+        LayoutWrappingEncoder<?> encoder = (LayoutWrappingEncoder<?>) consoleAppender.getEncoder();
         assertThat(encoder.getLayout()).isInstanceOf(TestLayoutFactory.TestLayout.class);
     }
 }

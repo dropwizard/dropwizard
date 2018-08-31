@@ -2,7 +2,6 @@ package io.dropwizard.logging.layout;
 
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.core.LayoutBase;
-import ch.qos.logback.core.pattern.PatternLayoutBase;
 import ch.qos.logback.core.spi.DeferredProcessingAware;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import io.dropwizard.jackson.Discoverable;

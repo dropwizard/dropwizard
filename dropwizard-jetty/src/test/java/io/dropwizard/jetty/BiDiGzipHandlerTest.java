@@ -13,7 +13,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -148,6 +147,7 @@ public class BiDiGzipHandlerTest {
         request.setHeader(HttpHeader.CONTENT_ENCODING.asString(), "gzip");
     }
 
+    @SuppressWarnings("serial")
     public static class BannerServlet extends HttpServlet {
 
         @Override

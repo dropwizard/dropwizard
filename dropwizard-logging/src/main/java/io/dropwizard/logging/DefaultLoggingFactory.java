@@ -1,6 +1,5 @@
 package io.dropwizard.logging;
 
-import ch.qos.logback.classic.AsyncAppender;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
@@ -177,9 +176,9 @@ public class DefaultLoggingFactory implements LoggingFactory {
             final List<Appender<ILoggingEvent>> appenders = Lists.of(logger.iteratorForAppenders());
             for (Appender<ILoggingEvent> appender : appenders) {
                 if (appender instanceof AsyncAppenderBase) {
-                    flushAppender((AsyncAppenderBase) appender);
+                    flushAppender((AsyncAppenderBase<?>) appender);
                 } else if (appender instanceof AsyncAppenderBaseProxy) {
-                    flushAppender(((AsyncAppenderBaseProxy) appender).getAppender());
+                    flushAppender(((AsyncAppenderBaseProxy<?>) appender).getAppender());
                 }
             }
         } catch (InterruptedException ignored) {
@@ -217,7 +216,7 @@ public class DefaultLoggingFactory implements LoggingFactory {
         }
     }
 
-    private void flushAppender(AsyncAppenderBase appender) throws InterruptedException {
+    private void flushAppender(AsyncAppenderBase<?> appender) throws InterruptedException {
         int timeWaiting = 0;
         while (timeWaiting < appender.getMaxFlushTime() && appender.getNumberOfElementsInQueue() > 0) {
             Thread.sleep(100);

@@ -44,7 +44,7 @@ public class AbstractDAOTest {
         }
 
         @Override
-        public Query namedQuery(String queryName) throws HibernateException {
+        public Query<?> namedQuery(String queryName) throws HibernateException {
             return super.namedQuery(queryName);
         }
 

@@ -151,7 +151,7 @@ public class LazyLoadingTest {
         }
     }
 
-    private DropwizardTestSupport dropwizardTestSupport = mock(DropwizardTestSupport.class);
+    private DropwizardTestSupport<?> dropwizardTestSupport = mock(DropwizardTestSupport.class);
     private Client client = new JerseyClientBuilder().build();
 
     public void setup(Class<? extends Application<TestConfiguration>> applicationClass) {

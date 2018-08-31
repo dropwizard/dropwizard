@@ -62,6 +62,12 @@ public class FuzzyEnumParamConverterProviderTest {
             this.code = code;
         }
 
+        @SuppressWarnings("unused")
+        public String getCode() {
+            return this.code;
+        }
+
+        @SuppressWarnings("unused")
         public static ExplicitFromStringThrowsWebApplicationException fromString(String str) {
             throw new WebApplicationException(Response.status(new Response.StatusType() {
                 @Override
@@ -92,6 +98,12 @@ public class FuzzyEnumParamConverterProviderTest {
             this.code = code;
         }
 
+        @SuppressWarnings("unused")
+        public String getCode() {
+            return this.code;
+        }
+
+        @SuppressWarnings("unused")
         public static ExplicitFromStringThrowsOtherException fromString(String str) {
             throw new RuntimeException("Boo!");
         }

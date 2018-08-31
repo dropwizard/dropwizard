@@ -54,7 +54,6 @@ import java.util.EnumSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -212,11 +211,10 @@ import java.util.stream.Collectors;
  */
 public abstract class AbstractServerFactory implements ServerFactory {
     private static final Logger LOGGER = LoggerFactory.getLogger(ServerFactory.class);
-    private static final Pattern WINDOWS_NEWLINE = Pattern.compile("\\r\\n?");
 
     @Valid
     @Nullable
-    private RequestLogFactory requestLog;
+    private RequestLogFactory<?> requestLog;
 
     @Valid
     @NotNull
@@ -283,7 +281,7 @@ public abstract class AbstractServerFactory implements ServerFactory {
     }
 
     @JsonProperty("requestLog")
-    public synchronized RequestLogFactory getRequestLogFactory() {
+    public synchronized RequestLogFactory<?> getRequestLogFactory() {
         if (requestLog == null) {
             // Lazy init to avoid a hard dependency to logback
             requestLog = new LogbackAccessRequestLogFactory();
@@ -292,7 +290,7 @@ public abstract class AbstractServerFactory implements ServerFactory {
     }
 
     @JsonProperty("requestLog")
-    public synchronized void setRequestLogFactory(RequestLogFactory requestLog) {
+    public synchronized void setRequestLogFactory(RequestLogFactory<?> requestLog) {
         this.requestLog = requestLog;
     }
 

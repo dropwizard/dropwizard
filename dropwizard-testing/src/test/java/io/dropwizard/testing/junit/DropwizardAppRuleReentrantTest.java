@@ -14,6 +14,7 @@ import static org.mockito.Mockito.times;
 
 public class DropwizardAppRuleReentrantTest {
 
+    @SuppressWarnings("unchecked")
     DropwizardTestSupport<TestConfiguration> testSupport = mock(DropwizardTestSupport.class);
     Statement statement = mock(Statement.class);
     Description description = mock(Description.class);

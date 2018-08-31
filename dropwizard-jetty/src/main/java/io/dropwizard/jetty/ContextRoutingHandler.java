@@ -2,9 +2,8 @@ package io.dropwizard.jetty;
 
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Request;
-import org.eclipse.jetty.server.handler.AbstractHandler;
+import org.eclipse.jetty.server.handler.AbstractHandlerContainer;
 import org.eclipse.jetty.util.ArrayTernaryTrie;
-import org.eclipse.jetty.util.Trie;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -15,8 +14,8 @@ import java.util.Map;
 /**
  * A Jetty router which routes requests based on context path.
  */
-public class ContextRoutingHandler extends AbstractHandler {
-    private final Trie<Handler> handlers;
+public class ContextRoutingHandler extends AbstractHandlerContainer {
+    private final ArrayTernaryTrie<Handler> handlers;
 
     public ContextRoutingHandler(Map<String, ? extends Handler> handlers) {
         this.handlers = new ArrayTernaryTrie<>(false);
@@ -53,5 +52,10 @@ public class ContextRoutingHandler extends AbstractHandler {
         for (String key : handlers.keySet()) {
             handlers.get(key).stop();
         }
+    }
+
+    @Override
+    public Handler[] getHandlers() {
+        return handlers.entrySet().stream().map(e -> e.getValue()).toArray(Handler[]::new);
     }
 }

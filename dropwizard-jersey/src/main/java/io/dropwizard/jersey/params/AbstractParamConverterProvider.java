@@ -43,7 +43,6 @@ public class AbstractParamConverterProvider implements ParamConverterProvider {
             }
             return new ParamConverter<T>() {
                 @Override
-                @SuppressWarnings("unchecked")
                 @Nullable
                 public T fromString(String value) {
                     if (rawType != NonEmptyStringParam.class && Strings.isNullOrEmpty(value)) {

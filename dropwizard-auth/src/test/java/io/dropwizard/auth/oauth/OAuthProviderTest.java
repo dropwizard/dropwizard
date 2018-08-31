@@ -2,13 +2,14 @@ package io.dropwizard.auth.oauth;
 
 import io.dropwizard.auth.AbstractAuthResourceConfig;
 import io.dropwizard.auth.AuthBaseTest;
-import io.dropwizard.auth.AuthFilter;
 import io.dropwizard.auth.AuthResource;
 import io.dropwizard.auth.util.AuthUtil;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import org.junit.Test;
 
 import java.util.Arrays;
+
+import javax.ws.rs.container.ContainerRequestFilter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -18,7 +19,7 @@ public class OAuthProviderTest extends AuthBaseTest<OAuthProviderTest.OAuthTestR
             register(AuthResource.class);
         }
 
-        @Override protected AuthFilter getAuthFilter() {
+        @Override protected ContainerRequestFilter getAuthFilter() {
             return new OAuthCredentialAuthFilter.Builder<>()
                 .setAuthenticator(AuthUtil.getMultiplyUsersOAuthAuthenticator(Arrays.asList(ADMIN_USER, ORDINARY_USER)))
                 .setAuthorizer(AuthUtil.getTestAuthorizer(ADMIN_USER, ADMIN_ROLE))
