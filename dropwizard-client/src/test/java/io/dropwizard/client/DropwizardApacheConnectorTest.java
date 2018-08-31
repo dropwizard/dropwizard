@@ -46,7 +46,7 @@ import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.CoreMatchers.any;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -98,12 +98,9 @@ public class DropwizardApacheConnectorTest {
 
     @Test
     public void when_no_read_timeout_override_then_client_request_times_out() {
-        thrown.expect(ProcessingException.class);
-        thrown.expectCause(any(SocketTimeoutException.class));
-
-        client.target(testUri + "/long_running")
-                .request()
-                .get();
+        assertThatThrownBy(() ->client.target(testUri + "/long_running").request().get())
+                .isInstanceOf(ProcessingException.class)
+                .hasCauseInstanceOf(SocketTimeoutException.class);
     }
 
     @Test
@@ -233,11 +230,11 @@ public class DropwizardApacheConnectorTest {
         }
 
         @Override
-        public void run(Configuration configuration, Environment environment) throws Exception {
+        public void run(Configuration configuration, Environment environment) {
             environment.jersey().register(TestResource.class);
             environment.healthChecks().register("dummy", new HealthCheck() {
                 @Override
-                protected Result check() throws Exception {
+                protected Result check() {
                     return Result.healthy();
                 }
             });

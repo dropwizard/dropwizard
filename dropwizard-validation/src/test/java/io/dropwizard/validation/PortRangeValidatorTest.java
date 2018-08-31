@@ -10,8 +10,7 @@ import java.util.List;
 import java.util.Locale;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assume.assumeThat;
+import static org.assertj.core.api.Assumptions.assumeThat;
 
 public class PortRangeValidatorTest {
     @SuppressWarnings("PublicField")
@@ -32,7 +31,7 @@ public class PortRangeValidatorTest {
 
     @Before
     public void setUp() throws Exception {
-        assumeThat(Locale.getDefault().getLanguage(), is("en"));
+        assumeThat(Locale.getDefault().getLanguage()).isEqualTo("en");
     }
 
     @Test

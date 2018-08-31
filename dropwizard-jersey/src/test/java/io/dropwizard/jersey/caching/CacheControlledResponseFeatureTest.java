@@ -1,6 +1,5 @@
 package io.dropwizard.jersey.caching;
 
-import com.codahale.metrics.MetricRegistry;
 import io.dropwizard.jersey.AbstractJerseyTest;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -16,7 +15,7 @@ public class CacheControlledResponseFeatureTest extends AbstractJerseyTest {
 
     @Override
     protected Application configure() {
-        ResourceConfig rc = DropwizardResourceConfig.forTesting(new MetricRegistry());
+        ResourceConfig rc = DropwizardResourceConfig.forTesting();
         rc = rc.register(CachingResource.class);
         return rc;
     }

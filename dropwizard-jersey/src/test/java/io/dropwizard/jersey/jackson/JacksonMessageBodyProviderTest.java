@@ -35,8 +35,7 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assume.assumeThat;
+import static org.assertj.core.api.Assumptions.assumeThat;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -109,7 +108,7 @@ public class JacksonMessageBodyProviderTest {
 
     @Before
     public void setUp() throws Exception {
-        assumeThat(Locale.getDefault().getLanguage(), is("en"));
+        assumeThat(Locale.getDefault().getLanguage()).isEqualTo("en");
     }
 
     @Test

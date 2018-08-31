@@ -10,7 +10,7 @@ jdk:
 before_install:
   - ulimit -c unlimited -S
 script:
-  - ./mvnw verify -B -P code-coverage
+  - ./mvnw verify -B
   - ./mvnw site -pl docs -B
 after_success:
   - bash .travis_after_success.sh

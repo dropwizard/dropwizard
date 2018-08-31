@@ -4,8 +4,7 @@ import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.hamcrest.core.IsNull.nullValue;
-import static org.junit.Assume.assumeThat;
+import static org.assertj.core.api.Assumptions.assumeThat;
 
 public class EnvironmentVariableSubstitutorTest {
     @Test
@@ -16,7 +15,7 @@ public class EnvironmentVariableSubstitutorTest {
 
     @Test
     public void defaultConstructorEnablesStrict() {
-        assumeThat(System.getenv("DOES_NOT_EXIST"), nullValue());
+        assumeThat(System.getenv("DOES_NOT_EXIST")).isNull();
 
         assertThatExceptionOfType(UndefinedEnvironmentVariableException.class).isThrownBy(() ->
             new EnvironmentVariableSubstitutor().replace("${DOES_NOT_EXIST}"));
@@ -46,7 +45,7 @@ public class EnvironmentVariableSubstitutorTest {
 
     @Test
     public void substitutorThrowsExceptionInStrictMode() {
-        assumeThat(System.getenv("DOES_NOT_EXIST"), nullValue());
+        assumeThat(System.getenv("DOES_NOT_EXIST")).isNull();
 
         assertThatExceptionOfType(UndefinedEnvironmentVariableException.class).isThrownBy(() ->
             new EnvironmentVariableSubstitutor(true).replace("${DOES_NOT_EXIST}"));

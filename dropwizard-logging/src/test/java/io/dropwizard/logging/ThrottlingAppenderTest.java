@@ -115,7 +115,7 @@ public class ThrottlingAppenderTest {
         assertThat(throttledLines(Duration.milliseconds(100)))
             .doesNotHaveDuplicates()
             .haveAtLeast(9, containsApplicationLog)
-            .haveAtMost(12, containsApplicationLog);
+            .haveAtMost(13, containsApplicationLog);
     }
 
     @Test

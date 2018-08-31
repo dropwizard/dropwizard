@@ -31,6 +31,7 @@ import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.core.Response;
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.SocketException;
 import java.security.Security;
@@ -173,7 +174,7 @@ public class DropwizardSSLConnectionSocketFactoryTest {
         final Client client = new JerseyClientBuilder(TLS_APP_RULE.getEnvironment()).using(jerseyClientConfiguration).build("client_auth_broken");
         final Throwable exn = catchThrowable(() -> client.target(String.format("https://localhost:%d", TLS_APP_RULE.getPort(2))).request().get());
         assertThat(exn).isInstanceOf(ProcessingException.class);
-        assertThat(exn.getCause()).isInstanceOfAny(SocketException.class, SSLHandshakeException.class);
+        assertThat(exn.getCause()).isInstanceOfAny(SocketException.class, SSLHandshakeException.class, SSLException.class);
     }
 
     @Test
@@ -196,7 +197,7 @@ public class DropwizardSSLConnectionSocketFactoryTest {
         final Client client = new JerseyClientBuilder(TLS_APP_RULE.getEnvironment()).using(jerseyClientConfiguration).build("client_auth_using_cert_alias_broken");
         final Throwable exn = catchThrowable(() -> client.target(String.format("https://localhost:%d", TLS_APP_RULE.getPort(2))).request().get());
         assertThat(exn).isInstanceOf(ProcessingException.class);
-        assertThat(exn.getCause()).isInstanceOfAny(SocketException.class, SSLHandshakeException.class);
+        assertThat(exn.getCause()).isInstanceOfAny(SocketException.class, SSLHandshakeException.class, SSLException.class);
     }
 
     @Test
@@ -208,7 +209,7 @@ public class DropwizardSSLConnectionSocketFactoryTest {
         final Client client = new JerseyClientBuilder(TLS_APP_RULE.getEnvironment()).using(jerseyClientConfiguration).build("client_auth_using_unknown_cert_alias_broken");
         final Throwable exn = catchThrowable(() -> client.target(String.format("https://localhost:%d", TLS_APP_RULE.getPort(2))).request().get());
         assertThat(exn).isInstanceOf(ProcessingException.class);
-        assertThat(exn.getCause()).isInstanceOfAny(SocketException.class, SSLHandshakeException.class);
+        assertThat(exn.getCause()).isInstanceOfAny(SocketException.class, SSLHandshakeException.class, SSLException.class);
     }
 
     @Test
@@ -256,7 +257,7 @@ public class DropwizardSSLConnectionSocketFactoryTest {
         final Client client = new JerseyClientBuilder(TLS_APP_RULE.getEnvironment()).using(jerseyClientConfiguration).build("reject_non_supported");
         assertThatThrownBy(() -> client.target(String.format("https://localhost:%d", TLS_APP_RULE.getPort(4))).request().get())
             .isInstanceOf(ProcessingException.class)
-            .hasRootCauseInstanceOf(SSLException.class);
+            .hasRootCauseInstanceOf(IOException.class);
     }
 
     @Test(expected = SSLInitializationException.class)

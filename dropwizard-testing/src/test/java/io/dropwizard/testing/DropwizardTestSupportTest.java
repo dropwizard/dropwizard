@@ -22,9 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class DropwizardTestSupportTest {
 
@@ -46,25 +44,25 @@ public class DropwizardTestSupportTest {
         final String content = ClientBuilder.newClient().target(
             "http://localhost:" + TEST_SUPPORT.getLocalPort() + "/test").request().get(String.class);
 
-        assertThat(content, is("Yes, it's here"));
+        assertThat(content).isEqualTo("Yes, it's here");
     }
 
     @Test
     public void returnsConfiguration() {
         final TestConfiguration config = TEST_SUPPORT.getConfiguration();
-        assertThat(config.getMessage(), is("Yes, it's here"));
+        assertThat(config.getMessage()).isEqualTo("Yes, it's here");
     }
 
     @Test
     public void returnsApplication() {
         final TestApplication application = TEST_SUPPORT.getApplication();
-        assertNotNull(application);
+        assertThat(application).isNotNull();
     }
 
     @Test
     public void returnsEnvironment() {
         final Environment environment = TEST_SUPPORT.getEnvironment();
-        assertThat(environment.getName(), is("TestApplication"));
+        assertThat(environment.getName()).isEqualTo("TestApplication");
     }
 
     @Test
@@ -75,7 +73,7 @@ public class DropwizardTestSupportTest {
                 .request()
                 .post(Entity.entity("", MediaType.TEXT_PLAIN), String.class);
 
-        assertThat(response, is("Hello has been said to test_user"));
+        assertThat(response).isEqualTo("Hello has been said to test_user");
     }
 
     @Test
@@ -86,12 +84,12 @@ public class DropwizardTestSupportTest {
             .request()
             .post(Entity.entity("Custom message", MediaType.TEXT_PLAIN), String.class);
 
-        assertThat(response, is("Custom message"));
+        assertThat(response).isEqualTo("Custom message");
     }
 
     public static class TestApplication extends Application<TestConfiguration> {
         @Override
-        public void run(TestConfiguration configuration, Environment environment) throws Exception {
+        public void run(TestConfiguration configuration, Environment environment) {
             environment.jersey().register(new TestResource(configuration.getMessage()));
             environment.admin().addTask(new HelloTask());
             environment.admin().addTask(new EchoTask());
