@@ -372,7 +372,7 @@ and can be reused across tests.
 
         @ClassRule
         public static final DropwizardAppRule<TestConfiguration> RULE =
-                new DropwizardAppRule<TestConfiguration>(MyApp.class, ResourceHelpers.resourceFilePath("my-app-config.yaml"));
+                new DropwizardAppRule<>(MyApp.class, ResourceHelpers.resourceFilePath("my-app-config.yaml"));
 
         @Test
         public void loginHandlerRedirectsAfterPost() {
