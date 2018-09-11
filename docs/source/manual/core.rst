@@ -218,6 +218,8 @@ Dropwizard then calls your ``Application`` subclass to initialize your applicati
     You can override configuration settings in maps like this:
 
     ``java -Ddw.database.properties.hibernate.hbm2ddl.auto=none server my-config.json``
+    
+    If you need to use the '.' character in one of the values, you can escape it by using '\\.' instead.
 
     You can also override a configuration setting that is an array of strings by using the ',' character
     as an array element separator. For example, to override a configuration setting myapp.myserver.hosts
