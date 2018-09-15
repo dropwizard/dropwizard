@@ -8,8 +8,8 @@ import org.hibernate.SessionFactory;
 import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.proxy.LazyInitializer;
 import org.hibernate.query.Query;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -99,7 +99,7 @@ public class AbstractDAOTest {
     private final Session session = mock(Session.class);
     private final MockDAO dao = new MockDAO(factory);
 
-    @Before
+    @BeforeEach
     public void setup() throws Exception {
         when(criteriaBuilder.createQuery(same(String.class))).thenReturn(criteriaQuery);
         when(factory.getCurrentSession()).thenReturn(session);

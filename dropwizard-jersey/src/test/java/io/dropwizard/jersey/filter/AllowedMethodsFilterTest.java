@@ -10,8 +10,8 @@ import org.glassfish.jersey.test.ServletDeploymentContext;
 import org.glassfish.jersey.test.grizzly.GrizzlyWebTestContainerFactory;
 import org.glassfish.jersey.test.spi.TestContainerException;
 import org.glassfish.jersey.test.spi.TestContainerFactory;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -25,7 +25,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -43,7 +43,7 @@ public class AllowedMethodsFilterTest extends AbstractJerseyTest {
     private final FilterConfig config = mock(FilterConfig.class);
     private final AllowedMethodsFilter filter = new AllowedMethodsFilter();
 
-    @Before
+    @BeforeEach
     public void setUpFilter() {
         filter.init(config);
     }

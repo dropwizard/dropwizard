@@ -13,8 +13,8 @@ import io.dropwizard.logging.filter.NullLevelFilterFactory;
 import io.dropwizard.logging.layout.DropwizardLayoutFactory;
 import io.dropwizard.util.Resources;
 import io.dropwizard.validation.BaseValidator;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.net.URISyntaxException;
@@ -37,7 +37,7 @@ public class AppenderFactoryCustomLayoutTest {
         return new File(Resources.getResource("yaml/appender_with_custom_layout.yml").toURI());
     }
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         objectMapper.registerSubtypes(TestLayoutFactory.class);
     }

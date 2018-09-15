@@ -6,7 +6,7 @@ import io.dropwizard.jersey.AbstractJerseyTest;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.jersey.errors.LoggingExceptionMapper;
 import org.glassfish.jersey.client.ClientConfig;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Application;

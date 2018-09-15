@@ -3,8 +3,8 @@ package io.dropwizard.jetty;
 import io.dropwizard.util.Maps;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Request;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 
 import javax.servlet.http.HttpServletRequest;
@@ -26,7 +26,7 @@ public class ContextRoutingHandlerTest {
 
     private ContextRoutingHandler handler;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         this.handler = new ContextRoutingHandler(Maps.of(
                 "/", handler1,

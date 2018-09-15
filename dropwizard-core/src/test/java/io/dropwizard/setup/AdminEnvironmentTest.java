@@ -6,7 +6,7 @@ import io.dropwizard.jetty.MutableServletContextHandler;
 import io.dropwizard.logging.BootstrapLogging;
 import io.dropwizard.servlets.tasks.Task;
 import org.eclipse.jetty.server.Server;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.servlet.ServletRegistration;
 import java.io.PrintWriter;

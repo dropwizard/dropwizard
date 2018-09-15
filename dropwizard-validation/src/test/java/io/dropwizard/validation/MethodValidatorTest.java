@@ -1,6 +1,6 @@
 package io.dropwizard.validation;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.validation.Valid;
 import javax.validation.Validator;

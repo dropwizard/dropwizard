@@ -8,8 +8,8 @@ import io.dropwizard.util.Size;
 import io.dropwizard.validation.BaseValidator;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.handler.gzip.GzipHandler;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.util.Collections;
@@ -21,7 +21,7 @@ import static org.mockito.Mockito.mock;
 public class GzipHandlerFactoryTest {
     private GzipHandlerFactory gzip;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         this.gzip = new YamlConfigurationFactory<>(GzipHandlerFactory.class,
                 BaseValidator.newValidator(), Jackson.newObjectMapper(), "dw")

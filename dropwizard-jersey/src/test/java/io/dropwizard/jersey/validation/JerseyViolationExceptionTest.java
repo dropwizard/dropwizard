@@ -2,14 +2,14 @@ package io.dropwizard.jersey.validation;
 
 import org.glassfish.jersey.process.Inflector;
 import org.glassfish.jersey.server.model.Invocable;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.validation.ConstraintViolation;
 import javax.ws.rs.core.Request;
 import java.util.Collections;
 import java.util.Set;
 
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.Mockito.mock;
 
 public class JerseyViolationExceptionTest {

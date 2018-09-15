@@ -2,7 +2,7 @@ package io.dropwizard.validation.valuehandling;
 
 import com.google.common.base.Optional;
 import org.hibernate.validator.HibernateValidator;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;

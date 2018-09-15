@@ -1,7 +1,7 @@
 package io.dropwizard.validation;
 
 import io.dropwizard.util.Duration;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.validation.Valid;
 import javax.validation.Validator;

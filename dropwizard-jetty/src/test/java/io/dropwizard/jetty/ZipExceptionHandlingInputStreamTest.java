@@ -1,23 +1,23 @@
 package io.dropwizard.jetty;
 
 import org.eclipse.jetty.http.BadMessageException;
-import org.junit.Test;
-import org.junit.experimental.runners.Enclosed;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
 
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
-import java.util.Collection;
+import java.util.stream.Stream;
 import java.util.zip.ZipException;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
@@ -29,9 +29,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 @SuppressWarnings("ALL")
-@RunWith(Enclosed.class)
 public class ZipExceptionHandlingInputStreamTest {
 
+    @Nested
     public static class DelegateTest {
 
         private final InputStream delegate = Mockito.mock(InputStream.class);
@@ -104,31 +104,23 @@ public class ZipExceptionHandlingInputStreamTest {
         }
     }
 
-    @RunWith(Parameterized.class)
+    @Nested
     public static class ExceptionTest {
 
-        @Parameterized.Parameters(name = "{0}")
-        public static Collection<Object[]> parameters() {
-            return Arrays.asList(new Object[][] {
-                {new EOFException(), BadMessageException.class},
-                {new ZipException(), BadMessageException.class},
-                {new IOException(), IOException.class},
-            });
+        public static Stream<Arguments> parameters() {
+            return Stream.of(
+                Arguments.of(new EOFException(), BadMessageException.class),
+                Arguments.of(new ZipException(), BadMessageException.class),
+                Arguments.of(new IOException(), IOException.class)
+            );
         }
 
         private final InputStream delegate = Mockito.mock(InputStream.class);
         private final ZipExceptionHandlingInputStream in = new ZipExceptionHandlingInputStream(delegate, "gzip");
 
-        private final Exception t;
-        private final Class<? extends Exception> expected;
-
-        public ExceptionTest(Exception t, Class<? extends Exception> expected) {
-            this.t = t;
-            this.expected = expected;
-        }
-
-        @Test
-        public void testReadBytes() throws Exception {
+        @ParameterizedTest
+        @MethodSource("parameters")
+        public void testReadBytes(Exception t, Class<? extends Exception> expected) throws Exception {
             doThrow(t).when(delegate).read(Mockito.any(byte[].class), anyInt(), anyInt());
             byte[] buffer = new byte[20];
             try {
@@ -142,7 +134,8 @@ public class ZipExceptionHandlingInputStreamTest {
         }
 
         @Test
-        public void testReadByte() throws Exception {
+        @MethodSource("parameters")
+        public void testReadByte(Exception t, Class<? extends Exception> expected) throws Exception {
             doThrow(t).when(delegate).read();
             try {
                 in.read();
@@ -155,7 +148,8 @@ public class ZipExceptionHandlingInputStreamTest {
         }
 
         @Test
-        public void testSkip() throws Exception {
+        @MethodSource("parameters")
+        public void testSkip(Exception t, Class<? extends Exception> expected) throws Exception {
             doThrow(t).when(delegate).skip(anyLong());
             try {
                 in.skip(42L);
@@ -168,7 +162,8 @@ public class ZipExceptionHandlingInputStreamTest {
         }
 
         @Test
-        public void testAvailable() throws Exception {
+        @MethodSource("parameters")
+        public void testAvailable(Exception t, Class<? extends Exception> expected) throws Exception {
             doThrow(t).when(delegate).available();
             try {
                 in.available();
@@ -181,7 +176,8 @@ public class ZipExceptionHandlingInputStreamTest {
         }
 
         @Test
-        public void testClose() throws Exception {
+        @MethodSource("parameters")
+        public void testClose(Exception t, Class<? extends Exception> expected) throws Exception {
             doThrow(t).when(delegate).close();
             try {
                 in.close();
@@ -194,7 +190,8 @@ public class ZipExceptionHandlingInputStreamTest {
         }
 
         @Test
-        public void testReset() throws Exception {
+        @MethodSource("parameters")
+        public void testReset(Exception t, Class<? extends Exception> expected) throws Exception {
             doThrow(t).when(delegate).reset();
             try {
                 in.reset();

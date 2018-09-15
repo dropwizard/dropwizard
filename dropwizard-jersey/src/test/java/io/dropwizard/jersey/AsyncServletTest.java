@@ -1,7 +1,7 @@
 package io.dropwizard.jersey;
 
 import io.dropwizard.jersey.dummy.DummyResource;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;

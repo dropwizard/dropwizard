@@ -7,13 +7,13 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.validation.Validated;
-import javax.validation.constraints.NotEmpty;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.annotation.Nullable;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.groups.Default;
 import javax.ws.rs.WebApplicationException;
@@ -106,7 +106,7 @@ public class JacksonMessageBodyProviderTest {
     private final JacksonMessageBodyProvider provider =
             new JacksonMessageBodyProvider(mapper);
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         assumeThat(Locale.getDefault().getLanguage()).isEqualTo("en");
     }

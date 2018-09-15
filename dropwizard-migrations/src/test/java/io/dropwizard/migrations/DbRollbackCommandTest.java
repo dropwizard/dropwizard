@@ -3,8 +3,8 @@ package io.dropwizard.migrations;
 import io.dropwizard.util.Maps;
 import net.jcip.annotations.NotThreadSafe;
 import net.sourceforge.argparse4j.inf.Namespace;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.skife.jdbi.v2.DBI;
 
 import java.io.ByteArrayOutputStream;
@@ -28,7 +28,7 @@ public class DbRollbackCommandTest extends AbstractMigrationTest {
     private TestMigrationConfiguration conf;
     private DBI dbi;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         final String databaseUrl = getDatabaseUrl();
         conf = createConfiguration(databaseUrl);
@@ -65,7 +65,7 @@ public class DbRollbackCommandTest extends AbstractMigrationTest {
         long migrationDate = System.currentTimeMillis();
         migrateCommand.run(null, new Namespace(Collections.emptyMap()), conf);
 
-        // Rollback both changes (they're after the migration date)
+        // Rollback both changes (they're tearDown the migration date)
         rollbackCommand.run(null, new Namespace(Collections.singletonMap("date", new Date(migrationDate - 1000))),
             conf);
 
@@ -79,7 +79,7 @@ public class DbRollbackCommandTest extends AbstractMigrationTest {
         long migrationDate = System.currentTimeMillis();
         migrateCommand.run(null, new Namespace(Collections.emptyMap()), conf);
 
-        // Print out a rollback script for both changes after the migration date
+        // Print out a rollback script for both changes tearDown the migration date
         rollbackCommand.setOutputStream(new PrintStream(baos, true));
         rollbackCommand.run(null, new Namespace(Maps.of(
                 "date", new Date(migrationDate - 1000),

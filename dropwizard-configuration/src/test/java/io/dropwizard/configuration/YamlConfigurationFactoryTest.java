@@ -1,12 +1,13 @@
 package io.dropwizard.configuration;
 
 import io.dropwizard.jackson.Jackson;
+import org.junit.jupiter.api.BeforeEach;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class YamlConfigurationFactoryTest extends BaseConfigurationFactoryTest {
 
-    @Override
+    @BeforeEach
     public void setUp() throws Exception {
         this.factory = new YamlConfigurationFactory<>(Example.class, validator, Jackson.newObjectMapper(), "dw");
         this.malformedFile = resourceFileName("factory-test-malformed.yml");

@@ -3,9 +3,9 @@ package io.dropwizard.logging.socket;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Context;
 import ch.qos.logback.core.OutputStreamAppender;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.io.IOException;
@@ -25,7 +25,7 @@ public class DropwizardUdpSocketAppenderTest {
     private Thread thread;
     private CountDownLatch countDownLatch = new CountDownLatch(1);
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         datagramSocket = new DatagramSocket();
         thread = new Thread(() -> {
@@ -48,7 +48,7 @@ public class DropwizardUdpSocketAppenderTest {
         udpStreamAppender.start();
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         datagramSocket.close();
         thread.interrupt();

@@ -2,7 +2,7 @@ package io.dropwizard.jersey.params;
 
 import io.dropwizard.jersey.errors.ErrorMessage;
 import io.dropwizard.util.Duration;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.WebApplicationException;
 

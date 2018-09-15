@@ -23,8 +23,8 @@ import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.util.thread.ScheduledExecutorScheduler;
 import org.eclipse.jetty.util.thread.ThreadPool;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.validation.Validator;
 import java.io.File;
@@ -38,7 +38,7 @@ public class HttpConnectorFactoryTest {
     private final ObjectMapper objectMapper = Jackson.newObjectMapper();
     private final Validator validator = BaseValidator.newValidator();
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         objectMapper.getSubtypeResolver().registerSubtypes(ConsoleAppenderFactory.class,
                 FileAppenderFactory.class, SyslogAppenderFactory.class, HttpConnectorFactory.class);

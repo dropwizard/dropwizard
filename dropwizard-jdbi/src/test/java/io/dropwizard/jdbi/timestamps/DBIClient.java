@@ -7,7 +7,9 @@ import io.dropwizard.jdbi.DBIFactory;
 import io.dropwizard.jersey.validation.Validators;
 import io.dropwizard.setup.Environment;
 import org.eclipse.jetty.util.component.LifeCycle;
-import org.junit.rules.ExternalResource;
+import org.junit.jupiter.api.extension.AfterEachCallback;
+import org.junit.jupiter.api.extension.BeforeEachCallback;
+import org.junit.jupiter.api.extension.ExtensionContext;
 import org.skife.jdbi.v2.DBI;
 
 import javax.annotation.Nullable;
@@ -21,7 +23,7 @@ import static java.util.Objects.requireNonNull;
 /**
  * Configured JDBI client for the database
  */
-public class DBIClient extends ExternalResource {
+public class DBIClient  {
 
     private final TimeZone dbTimeZone;
 
@@ -37,11 +39,10 @@ public class DBIClient extends ExternalResource {
         return requireNonNull(dbi);
     }
 
-    @Override
-    protected void before() throws Throwable {
+    public void before() throws Exception {
         final Environment environment = new Environment("test", Jackson.newObjectMapper(),
-                Validators.newValidator(), new MetricRegistry(),
-                getClass().getClassLoader());
+                                                        Validators.newValidator(), new MetricRegistry(),
+                                                        getClass().getClassLoader());
 
         final DataSourceFactory dataSourceFactory = new DataSourceFactory();
         dataSourceFactory.setDriverClass("org.h2.Driver");
@@ -65,8 +66,7 @@ public class DBIClient extends ExternalResource {
         }
     }
 
-    @Override
-    protected void after() {
+    public void after() throws Exception {
         // Shutdown the DB pool
         try {
             for (LifeCycle managedObject : managedObjects) {
@@ -76,4 +76,5 @@ public class DBIClient extends ExternalResource {
             throw new IllegalStateException(e);
         }
     }
+
 }

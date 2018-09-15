@@ -1,6 +1,6 @@
 package io.dropwizard.testing;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static io.dropwizard.testing.FixtureHelpers.fixture;
 import static org.assertj.core.api.Assertions.assertThat;

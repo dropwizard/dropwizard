@@ -5,6 +5,8 @@ import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.test.JerseyTest;
 import org.glassfish.jersey.test.TestProperties;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 /**
  * Extension of {@link JerseyTest} which provides commons features for tests of the `dropwizard-jersey` module.
@@ -21,6 +23,18 @@ public abstract class AbstractJerseyTest extends JerseyTest {
     protected AbstractJerseyTest() {
         super();
         forceSet(TestProperties.CONTAINER_PORT, "0");
+    }
+
+    @Override
+    @BeforeEach
+    public void setUp() throws Exception {
+        super.setUp();
+    }
+
+    @Override
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
     }
 
     @Override

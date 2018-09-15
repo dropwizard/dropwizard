@@ -17,8 +17,8 @@ import org.eclipse.jetty.server.CustomRequestLog;
 import org.eclipse.jetty.server.HttpChannelState;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Response;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import java.io.File;
@@ -41,7 +41,7 @@ public class LogbackClassicRequestLogFactoryTest {
 
     private RequestLogFactory<?> requestLog;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         final ObjectMapper objectMapper = Jackson.newObjectMapper();
         objectMapper.getSubtypeResolver().registerSubtypes(ConsoleAppenderFactory.class, FileAppenderFactory.class,

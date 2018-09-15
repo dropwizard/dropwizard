@@ -1,8 +1,8 @@
 package io.dropwizard.configuration;
 
 import io.dropwizard.validation.BaseValidator;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.annotation.Nullable;
 import javax.validation.ConstraintViolation;
@@ -23,7 +23,7 @@ public class ConfigurationValidationExceptionTest {
 
     private ConfigurationValidationException e;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         assumeThat(Locale.getDefault().getLanguage()).isEqualTo("en");
 

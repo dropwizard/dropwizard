@@ -22,8 +22,8 @@ import org.eclipse.jetty.server.AbstractNetworkConnector;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.NetworkConnector;
 import org.eclipse.jetty.server.Server;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -42,7 +42,7 @@ import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DefaultServerFactoryTest {
     private Environment environment = new Environment("test", Jackson.newObjectMapper(),
@@ -50,7 +50,7 @@ public class DefaultServerFactoryTest {
             ClassLoader.getSystemClassLoader());
     private DefaultServerFactory http;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
 
         final ObjectMapper objectMapper = Jackson.newObjectMapper();

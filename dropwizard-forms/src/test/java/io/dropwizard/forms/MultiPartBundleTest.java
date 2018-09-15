@@ -7,7 +7,7 @@ import io.dropwizard.logging.BootstrapLogging;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.validation.BaseValidator;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

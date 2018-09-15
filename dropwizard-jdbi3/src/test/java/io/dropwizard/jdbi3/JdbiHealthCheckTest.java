@@ -4,9 +4,9 @@ import com.codahale.metrics.health.HealthCheck;
 import io.dropwizard.util.Duration;
 import org.jdbi.v3.core.Handle;
 import org.jdbi.v3.core.Jdbi;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.stubbing.Answer;
 
 import java.util.concurrent.ExecutorService;
@@ -25,7 +25,7 @@ public class JdbiHealthCheckTest {
     private ExecutorService executorService;
     private JdbiHealthCheck sut;
 
-    @Before
+    @BeforeEach
     public void setup() {
         jdbi = mock(Jdbi.class);
         handle = mock(Handle.class);
@@ -40,7 +40,7 @@ public class JdbiHealthCheckTest {
             VALIDATION_QUERY);
     }
 
-    @After
+    @AfterEach
     public void teardown() {
         executorService.shutdown();
     }

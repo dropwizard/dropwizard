@@ -8,8 +8,8 @@ import io.dropwizard.logging.BootstrapLogging;
 import io.dropwizard.util.Duration;
 import io.dropwizard.util.Resources;
 import io.dropwizard.validation.BaseValidator;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.util.EnumSet;
@@ -26,7 +26,7 @@ public class MetricsFactoryTest {
         MetricsFactory.class, BaseValidator.newValidator(), objectMapper, "dw");
     private MetricsFactory config;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         objectMapper.getSubtypeResolver().registerSubtypes(ConsoleReporterFactory.class, CsvReporterFactory.class,
             Slf4jReporterFactory.class);

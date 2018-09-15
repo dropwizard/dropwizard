@@ -3,7 +3,8 @@ package io.dropwizard.configuration;
 import com.fasterxml.jackson.core.JsonParser.Feature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.jackson.Jackson;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,7 +15,7 @@ public class JsonConfigurationFactoryTest extends BaseConfigurationFactoryTest {
 
     private File commentFile;
 
-    @Override
+    @BeforeEach
     public void setUp() throws Exception {
         this.factory = new JsonConfigurationFactory<>(Example.class, validator, Jackson.newObjectMapper(), "dw");
         this.malformedFile = resourceFileName("factory-test-malformed.json");

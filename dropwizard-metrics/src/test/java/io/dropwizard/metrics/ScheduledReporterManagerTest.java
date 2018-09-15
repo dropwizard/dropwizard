@@ -2,7 +2,7 @@ package io.dropwizard.metrics;
 
 import com.codahale.metrics.ScheduledReporter;
 import io.dropwizard.util.Duration;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.concurrent.TimeUnit;

@@ -10,8 +10,8 @@ import io.dropwizard.jackson.Jackson;
 import io.dropwizard.logging.json.EventAttribute;
 import io.dropwizard.util.Maps;
 import io.dropwizard.util.Sets;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.time.ZoneId;
@@ -52,7 +52,7 @@ public class EventJsonLayoutTest {
 
     private EventJsonLayout eventJsonLayout;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         when(event.getTimeStamp()).thenReturn(1514906361000L);
         when(event.getLevel()).thenReturn(Level.INFO);

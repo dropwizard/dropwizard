@@ -7,8 +7,8 @@ import io.dropwizard.setup.Environment;
 import io.dropwizard.util.JarLocation;
 import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Optional;
@@ -44,7 +44,7 @@ public class CommandTest {
     private final Command command = new TestCommand();
     private Cli cli;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         final JarLocation location = mock(JarLocation.class);
         final Bootstrap<Configuration> bootstrap = new Bootstrap<>(app);

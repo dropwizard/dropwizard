@@ -7,9 +7,9 @@ import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpTester;
 import org.eclipse.jetty.server.handler.gzip.GzipHandler;
 import org.eclipse.jetty.servlet.ServletTester;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -19,8 +19,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.zip.Deflater;
-import java.util.zip.DeflaterOutputStream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -41,7 +39,7 @@ public class GzipHandlerTest {
         gzipHandler = gzipHandlerFactory.build(null);
     }
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         request.setHeader(HttpHeader.HOST.asString(), "localhost");
         request.setHeader("Connection", "close");
@@ -54,7 +52,7 @@ public class GzipHandlerTest {
         servletTester.start();
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         servletTester.stop();
     }

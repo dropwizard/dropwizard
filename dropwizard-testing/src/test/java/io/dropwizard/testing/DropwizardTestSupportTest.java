@@ -2,7 +2,6 @@ package io.dropwizard.testing;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.configuration.ConfigurationException;
@@ -14,19 +13,17 @@ import io.dropwizard.servlets.tasks.Task;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.validation.BaseValidator;
-
-import javax.validation.constraints.NotEmpty;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import javax.validation.Validator;
+import javax.validation.constraints.NotEmpty;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -42,12 +39,12 @@ public class DropwizardTestSupportTest {
     public static final DropwizardTestSupport<TestConfiguration> TEST_SUPPORT =
             new DropwizardTestSupport<>(TestApplication.class, resourceFilePath("test-config.yaml"));
 
-    @BeforeClass
+    @BeforeAll
     public static void setUp() {
         TEST_SUPPORT.before();
     }
 
-    @AfterClass
+    @AfterAll
     public static void tearDown() {
         TEST_SUPPORT.after();
     }

@@ -6,8 +6,8 @@ import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jdbi.DBIFactory;
 import io.dropwizard.jersey.validation.Validators;
 import io.dropwizard.setup.Environment;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.sqlobject.Bind;
@@ -28,7 +28,7 @@ public class OptionalInstantTest {
 
     private TaskDao dao;
 
-    @Before
+    @BeforeEach
     public void setupTests() throws IOException {
         final DataSourceFactory dataSourceFactory = new DataSourceFactory();
         dataSourceFactory.setDriverClass("org.h2.Driver");

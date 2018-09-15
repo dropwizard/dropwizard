@@ -1,8 +1,8 @@
 package io.dropwizard.servlets;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -27,12 +27,12 @@ public class ThreadNameFilterTest {
 
     private ThreadNameFilter threadNameFilter = new ThreadNameFilter();
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         threadNameFilter.init(filterConfig);
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         threadNameFilter.destroy();
     }

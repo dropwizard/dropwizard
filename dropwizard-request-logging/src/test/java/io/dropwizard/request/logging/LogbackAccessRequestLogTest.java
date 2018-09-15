@@ -5,9 +5,9 @@ import ch.qos.logback.core.Appender;
 import org.eclipse.jetty.server.HttpChannelState;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Response;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import java.util.concurrent.TimeUnit;
@@ -28,7 +28,7 @@ public class LogbackAccessRequestLogTest {
     private final Response response = mock(Response.class);
     private final HttpChannelState channelState = mock(HttpChannelState.class);
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         when(channelState.isInitial()).thenReturn(true);
 
@@ -47,7 +47,7 @@ public class LogbackAccessRequestLogTest {
         requestLog.start();
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         requestLog.stop();
     }

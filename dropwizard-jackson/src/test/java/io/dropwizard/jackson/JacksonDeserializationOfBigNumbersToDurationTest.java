@@ -3,22 +3,24 @@ package io.dropwizard.jackson;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.annotation.Nullable;
 import java.time.Duration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.junit.jupiter.api.Assertions.assertTimeout;
+
 
 public class JacksonDeserializationOfBigNumbersToDurationTest {
 
     private final ObjectMapper objectMapper = Jackson.newObjectMapper();
 
-    @Test(timeout = 5000)
+    @Test
     public void testDoesNotAttemptToDeserializeExtremelyBigNumbers() throws Exception {
         Task task = objectMapper.readValue("{\"id\": 42, \"duration\": 1e1000000000}", Task.class);
-        assertThat(task.getDuration()).isEqualTo(Duration.ofSeconds(0));
+        assertTimeout(Duration.ofSeconds(5L), () -> assertThat(task.getDuration()).isEqualTo(Duration.ofSeconds(0)));
     }
 
     @Test

@@ -3,9 +3,9 @@ package io.dropwizard.migrations;
 import io.dropwizard.util.Resources;
 import net.jcip.annotations.NotThreadSafe;
 import net.sourceforge.argparse4j.inf.Namespace;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 
@@ -24,7 +24,7 @@ public class DbMigrateDifferentFileCommandTest extends AbstractMigrationTest {
     private TestMigrationConfiguration conf;
     private String databaseUrl;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         databaseUrl = getDatabaseUrl();
         conf = createConfiguration(databaseUrl);
@@ -40,7 +40,7 @@ public class DbMigrateDifferentFileCommandTest extends AbstractMigrationTest {
     }
 
     @Test
-    @Ignore("Ignored until https://liquibase.jira.com/browse/CORE-3262 has been solved")
+    @Disabled("Ignored until https://liquibase.jira.com/browse/CORE-3262 has been solved")
     public void testRunForFileFromFilesystem() throws Exception {
         final String migrationsPath = new File(Resources.getResource("migrations.xml").toURI())
             .getAbsolutePath();

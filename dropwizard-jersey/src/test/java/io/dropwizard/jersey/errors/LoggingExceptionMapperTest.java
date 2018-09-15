@@ -2,7 +2,7 @@ package io.dropwizard.jersey.errors;
 
 import io.dropwizard.jersey.AbstractJerseyTest;
 import io.dropwizard.jersey.DropwizardResourceConfig;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Entity;

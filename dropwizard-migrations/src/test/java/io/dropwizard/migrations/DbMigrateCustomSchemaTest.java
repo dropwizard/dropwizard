@@ -4,8 +4,8 @@ import io.dropwizard.util.Maps;
 import net.jcip.annotations.NotThreadSafe;
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.assertj.core.data.Index;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.skife.jdbi.v2.DBI;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -18,7 +18,7 @@ public class DbMigrateCustomSchemaTest extends AbstractMigrationTest {
     private TestMigrationConfiguration conf;
     private String databaseUrl;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         databaseUrl = getDatabaseUrl();
         conf = createConfiguration(databaseUrl);

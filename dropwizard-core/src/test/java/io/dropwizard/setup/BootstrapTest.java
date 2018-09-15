@@ -11,8 +11,8 @@ import io.dropwizard.configuration.DefaultConfigurationFactoryFactory;
 import io.dropwizard.configuration.FileConfigurationSourceProvider;
 import io.dropwizard.jackson.Jackson;
 import org.hibernate.validator.HibernateValidator;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.validation.Validation;
 import javax.validation.ValidatorFactory;
@@ -27,7 +27,7 @@ public class BootstrapTest {
     };
     private Bootstrap<Configuration> bootstrap;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         bootstrap = new Bootstrap<>(application);
     }

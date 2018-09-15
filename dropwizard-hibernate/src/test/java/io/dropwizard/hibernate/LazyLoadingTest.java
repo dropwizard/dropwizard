@@ -19,8 +19,8 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.exception.ConstraintViolationException;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
@@ -161,7 +161,7 @@ public class LazyLoadingTest {
         dropwizardTestSupport.before();
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         dropwizardTestSupport.after();
         client.close();

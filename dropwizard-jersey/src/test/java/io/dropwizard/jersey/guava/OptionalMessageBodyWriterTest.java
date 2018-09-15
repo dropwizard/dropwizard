@@ -4,7 +4,7 @@ import com.google.common.base.Optional;
 import io.dropwizard.jersey.AbstractJerseyTest;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.jersey.optional.EmptyOptionalExceptionMapper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;

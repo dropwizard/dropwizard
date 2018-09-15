@@ -15,9 +15,9 @@ import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import javax.annotation.Nullable;
@@ -48,7 +48,7 @@ public class SessionFactoryFactoryTest {
     @Nullable
     private SessionFactory sessionFactory;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         when(environment.metrics()).thenReturn(metricRegistry);
         when(environment.lifecycle()).thenReturn(lifecycleEnvironment);
@@ -65,7 +65,7 @@ public class SessionFactoryFactoryTest {
         config.setProperties(properties);
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         if (sessionFactory != null) {
             sessionFactory.close();
