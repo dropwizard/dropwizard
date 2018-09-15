@@ -68,8 +68,8 @@ public class HttpConnectorFactoryTest {
         assertThat(http.getMinBufferPoolSize()).isEqualTo(Size.bytes(64));
         assertThat(http.getBufferPoolIncrement()).isEqualTo(Size.bytes(1024));
         assertThat(http.getMaxBufferPoolSize()).isEqualTo(Size.kilobytes(64));
-        assertThat(http.getMinRequestDataRate()).isEqualTo(0);
-        assertThat(http.getMinResponseDataRate()).isEqualTo(0);
+        assertThat(http.getMinRequestDataPerSecond()).isEqualTo(Size.bytes(0));
+        assertThat(http.getMinResponseDataPerSecond()).isEqualTo(Size.bytes(0));
         assertThat(http.getAcceptorThreads()).isEmpty();
         assertThat(http.getSelectorThreads()).isEmpty();
         assertThat(http.getAcceptQueueSize()).isNull();
@@ -98,8 +98,8 @@ public class HttpConnectorFactoryTest {
         assertThat(http.getMinBufferPoolSize()).isEqualTo(Size.bytes(128));
         assertThat(http.getBufferPoolIncrement()).isEqualTo(Size.bytes(500));
         assertThat(http.getMaxBufferPoolSize()).isEqualTo(Size.kilobytes(32));
-        assertThat(http.getMinRequestDataRate()).isEqualTo(42);
-        assertThat(http.getMinResponseDataRate()).isEqualTo(200);
+        assertThat(http.getMinRequestDataPerSecond()).isEqualTo(Size.bytes(42));
+        assertThat(http.getMinResponseDataPerSecond()).isEqualTo(Size.bytes(200));
         assertThat(http.getAcceptorThreads()).contains(1);
         assertThat(http.getSelectorThreads()).contains(4);
         assertThat(http.getAcceptQueueSize()).isEqualTo(1024);
@@ -117,8 +117,8 @@ public class HttpConnectorFactoryTest {
         http.setAcceptorThreads(Optional.of(1));
         http.setSelectorThreads(Optional.of(2));
         http.setAcceptQueueSize(1024);
-        http.setMinResponseDataRate(200);
-        http.setMinRequestDataRate(42);
+        http.setMinResponseDataPerSecond(Size.bytes(200));
+        http.setMinRequestDataPerSecond(Size.bytes(42));
 
         Server server = new Server();
         MetricRegistry metrics = new MetricRegistry();
