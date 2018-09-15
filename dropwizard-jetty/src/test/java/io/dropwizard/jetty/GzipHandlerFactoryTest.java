@@ -7,6 +7,7 @@ import io.dropwizard.util.Sets;
 import io.dropwizard.util.Size;
 import io.dropwizard.validation.BaseValidator;
 import org.eclipse.jetty.server.Handler;
+import org.eclipse.jetty.server.handler.gzip.GzipHandler;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -59,7 +60,7 @@ public class GzipHandlerFactoryTest {
 
     @Test
     public void testBuild() {
-        final BiDiGzipHandler handler = gzip.build(null);
+        final GzipHandler handler = gzip.build(null);
 
         assertThat(handler.getMinGzipSize()).isEqualTo((int) gzip.getMinimumEntitySize().toBytes());
         assertThat(handler.getExcludedAgentPatterns()).hasSize(1);
@@ -67,12 +68,11 @@ public class GzipHandlerFactoryTest {
         assertThat(handler.getIncludedMimeTypes()).containsOnly("text/plain");
         assertThat(handler.getIncludedMethods()).containsOnly("GET", "POST");
         assertThat(handler.getCompressionLevel()).isEqualTo(Deflater.DEFAULT_COMPRESSION);
-        assertThat(handler.isInflateNoWrap()).isTrue();
     }
 
     @Test
     public void testBuildDefault() throws Exception {
-        final BiDiGzipHandler handler = new YamlConfigurationFactory<>(GzipHandlerFactory.class,
+        final GzipHandler handler = new YamlConfigurationFactory<>(GzipHandlerFactory.class,
                 BaseValidator.newValidator(), Jackson.newObjectMapper(), "dw")
                 .build(new File(Resources.getResource("yaml/default_gzip.yml").toURI()))
                 .build(null);
@@ -82,13 +82,11 @@ public class GzipHandlerFactoryTest {
         assertThat(handler.getIncludedMimeTypes()).isEmpty(); // All apart excluded
         assertThat(handler.getIncludedMethods()).containsOnly("GET");
         assertThat(handler.getCompressionLevel()).isEqualTo(Deflater.DEFAULT_COMPRESSION);
-        assertThat(handler.isInflateNoWrap()).isTrue();
     }
 
     @Test
     public void testBuilderProperties() {
         GzipHandlerFactory gzip = new GzipHandlerFactory();
-        gzip.setGzipCompatibleInflation(true); // Also known as "inflate no wrap"
         gzip.setMinimumEntitySize(Size.bytes(4096));
         gzip.setIncludedMethods(Sets.of("GET", "POST"));
         gzip.setExcludedUserAgentPatterns(Collections.singleton("MSIE 6.0"));
@@ -97,9 +95,8 @@ public class GzipHandlerFactoryTest {
         gzip.setIncludedPaths(Collections.singleton("/include/me"));
         gzip.setExcludedPaths(Collections.singleton("/exclude/me"));
         Handler handler = mock(Handler.class);
-        BiDiGzipHandler biDiGzipHandler = gzip.build(handler);
+        GzipHandler biDiGzipHandler = gzip.build(handler);
 
-        assertThat(biDiGzipHandler.isInflateNoWrap()).isTrue();
         assertThat(biDiGzipHandler.getMinGzipSize()).isEqualTo(4096);
         assertThat(biDiGzipHandler.getIncludedMethods()).containsExactlyInAnyOrder("GET", "POST");
         assertThat(biDiGzipHandler.getExcludedAgentPatterns()).containsExactly("MSIE 6.0");

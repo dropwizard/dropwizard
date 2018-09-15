@@ -81,8 +81,8 @@ GZip
 +---------------------------+---------------------+------------------------------------------------------------------------------------------------------+
 |     Name                  | Default             | Description                                                                                          |
 +===========================+=====================+======================================================================================================+
-| enabled                   | true                | If true, all requests with ``gzip`` or ``deflate`` in the ``Accept-Encoding`` header will have their |
-|                           |                     | response entities compressed and requests with ``gzip`` or ``deflate`` in the ``Content-Encoding``   |
+| enabled                   | true                | If true, all requests with ``gzip`` in the ``Accept-Encoding`` header will have their                |
+|                           |                     | response entities compressed and requests with ``gzip`` in the ``Content-Encoding``                  |
 |                           |                     | header will have their request entities decompressed.                                                |
 +---------------------------+---------------------+------------------------------------------------------------------------------------------------------+
 | minimumEntitySize         | 256 bytes           | All response entities under this size are not compressed.                                            |
@@ -96,9 +96,9 @@ GZip
 +---------------------------+---------------------+------------------------------------------------------------------------------------------------------+
 | includedMethods           | Jetty's default     | The list of HTTP methods to compress. The default is to compress only GET responses.                 |
 +---------------------------+---------------------+------------------------------------------------------------------------------------------------------+
-| deflateCompressionLevel   | -1                  | The compression level used for ZLIB deflation(compression).                                          |
+| deflateCompressionLevel   | -1                  | The compression level used for deflation(compression).                                               |
 +---------------------------+---------------------+------------------------------------------------------------------------------------------------------+
-| gzipCompatibleInflation   | true                | If true, then ZLIB inflation(decompression) will be performed in the GZIP-compatible mode.           |
+| gzipCompatibleInflation   | true                | This option is unused and deprecated as compressed requests without header info are unsupported      |
 +---------------------------+---------------------+------------------------------------------------------------------------------------------------------+
 | syncFlush                 | false               | The flush mode. Set to true if the application wishes to stream (e.g. SSE) the data,                 |
 |                           |                     | but this may hurt compression performance (as all pending output is flushed).                        |

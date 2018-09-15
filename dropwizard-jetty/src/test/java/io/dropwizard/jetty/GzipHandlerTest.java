@@ -2,8 +2,10 @@ package io.dropwizard.jetty;
 
 import io.dropwizard.util.CharStreams;
 import io.dropwizard.util.Resources;
+import io.dropwizard.util.Size;
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpTester;
+import org.eclipse.jetty.server.handler.gzip.GzipHandler;
 import org.eclipse.jetty.servlet.ServletTester;
 import org.junit.After;
 import org.junit.Before;
@@ -24,14 +26,20 @@ import java.util.zip.GZIPOutputStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class BiDiGzipHandlerTest {
+public class GzipHandlerTest {
 
     private static final String PLAIN_TEXT_UTF_8 = "text/plain;charset=UTF-8";
 
-    private final BiDiGzipHandler gzipHandler = new BiDiGzipHandler();
+    private final GzipHandler gzipHandler;
 
     private final ServletTester servletTester = new ServletTester();
     private final HttpTester.Request request = HttpTester.newRequest();
+
+    public GzipHandlerTest() {
+        final GzipHandlerFactory gzipHandlerFactory = new GzipHandlerFactory();
+        gzipHandlerFactory.setMinimumEntitySize(Size.bytes(0));
+        gzipHandler = gzipHandlerFactory.build(null);
+    }
 
     @Before
     public void setUp() throws Exception {
@@ -41,7 +49,6 @@ public class BiDiGzipHandlerTest {
 
         gzipHandler.setExcludedAgentPatterns();
         gzipHandler.addIncludedMethods("POST");
-
         servletTester.addServlet(BannerServlet.class, "/banner");
         servletTester.getContext().setGzipHandler(gzipHandler);
         servletTester.start();
@@ -85,61 +92,10 @@ public class BiDiGzipHandlerTest {
 
     }
 
-    @Test
-    public void testDecompressBadRequest() throws Exception {
-        setRequestPostGzipPlainText("Non-gziped content".getBytes("UTF-8"));
-        testBadRequest("Invalid gzip data in request");
-    }
-
-    @Test
-    public void testDecompressDeflateRequestGzipIncompatible() throws Exception {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        try (DeflaterOutputStream deflate = new DeflaterOutputStream(baos)) {
-            Resources.copy(Resources.getResource("assets/new-banner.txt"), deflate);
-        }
-        setRequestPostDeflatePlainText(baos.toByteArray());
-        gzipHandler.setInflateNoWrap(false);
-
-        HttpTester.Response response = HttpTester.parseResponse(servletTester.getResponses(request.generate()));
-        assertThat(response.getStatus()).isEqualTo(200);
-        assertThat(response.getContent()).isEqualTo("Banner has been updated");
-    }
-
-    @Test
-    public void testDecompressDeflateRequestGzipCompatible() throws Exception {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        try (DeflaterOutputStream deflate = new DeflaterOutputStream(baos,  new Deflater(-1, true))) {
-            Resources.copy(Resources.getResource("assets/new-banner.txt"), deflate);
-        }
-
-        setRequestPostDeflatePlainText(baos.toByteArray());
-
-        HttpTester.Response response = HttpTester.parseResponse(servletTester.getResponses(request.generate()));
-        assertThat(response.getStatus()).isEqualTo(200);
-        assertThat(response.getContent()).isEqualTo("Banner has been updated");
-    }
-
-    @Test
-    public void testDecompressDeflateBadRequest() throws Exception {
-        setRequestPostDeflatePlainText("Non-deflate content".getBytes("UTF-8"));
-        testBadRequest("Invalid deflate data in request");
-    }
-
-    private void testBadRequest(String responseContains) throws Exception {
-        HttpTester.Response response = HttpTester.parseResponse(servletTester.getResponses(request.generate()));
-        assertThat(response.getStatus()).isEqualTo(400);
-        assertThat(response.getContent()).contains(responseContains);
-    }
-
     private void setRequestPostPlainText(byte[] content) {
         request.setMethod("POST");
         request.setHeader(HttpHeader.CONTENT_TYPE.asString(), PLAIN_TEXT_UTF_8);
         request.setContent(content);
-    }
-
-    private void setRequestPostDeflatePlainText(byte[] content) {
-        setRequestPostPlainText(content);
-        request.setHeader(HttpHeader.CONTENT_ENCODING.asString(), "deflate");
     }
 
     private void setRequestPostGzipPlainText(byte[] content) {
