@@ -303,11 +303,11 @@ HTTP
           bufferPoolIncrement: 1KiB
           maxBufferPoolSize: 64KiB
           minRequestDataRate: 0
+          minResponseDataRate: 0
           acceptorThreads: 1
           selectorThreads: 2
           acceptQueueSize: 1024
           reuseAddress: true
-          soLingerTime: 345s
           useServerHeader: false
           useDateHeader: true
           useForwardedHeaders: true
@@ -341,20 +341,17 @@ idleTimeout              30 seconds          The maximum idle time for a connect
                                              or when waiting for a new message to be sent on a connection.
                                              This value is interpreted as the maximum time between some progress being made on the
                                              connection. So if a single byte is read or written, then the timeout is reset.
-blockingTimeout          (none)              The timeout applied to blocking operations. This timeout is in addition to
-                                             the `idleTimeout`, and applies to the total operation (as opposed to the
-                                             idle timeout that applies to the time no data is being sent).
 minBufferPoolSize        64 bytes            The minimum size of the buffer pool.
 bufferPoolIncrement      1KiB                The increment by which the buffer pool should be increased.
 maxBufferPoolSize        64KiB               The maximum size of the buffer pool.
 minRequestDataRate       0                   The minimum request data rate in bytes per second; or <= 0 for no limit.
+minResponseDataRate      0                   The minimum response data rate in bytes per second; or <= 0 for no limit.
 acceptorThreads          (Jetty's default)   The number of worker threads dedicated to accepting connections.
                                              By default is *max(1, min(4, #CPUs/8))*.
 selectorThreads          (Jetty's default)   The number of worker threads dedicated to sending and receiving data.
                                              By default is *max(1, min(4, #CPUs/2))*.
 acceptQueueSize          (OS default)        The size of the TCP/IP accept queue for the listening socket.
 reuseAddress             true                Whether or not ``SO_REUSEADDR`` is enabled on the listening socket.
-soLingerTime             (disabled)          Enable/disable ``SO_LINGER`` with the specified linger time.
 useServerHeader          false               Whether or not to add the ``Server`` header to each response.
 useDateHeader            true                Whether or not to add the ``Date`` header to each response.
 useForwardedHeaders      true                Whether or not to look at ``X-Forwarded-*`` headers added by proxies. See
