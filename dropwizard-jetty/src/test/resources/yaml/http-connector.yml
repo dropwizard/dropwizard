@@ -11,8 +11,8 @@ idleTimeout: 10 seconds
 minBufferPoolSize: 128B
 bufferPoolIncrement: 500B
 maxBufferPoolSize: 32KiB
-minRequestDataRate: 42
-minResponseDataRate: 200
+minRequestDataPerSecond: '42 bytes'
+minResponseDataPerSecond: '200 bytes'
 acceptorThreads: 1
 selectorThreads: 4
 acceptQueueSize: 1024

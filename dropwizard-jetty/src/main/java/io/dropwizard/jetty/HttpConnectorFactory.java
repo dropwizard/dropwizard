@@ -167,15 +167,15 @@ import static com.codahale.metrics.MetricRegistry.name;
  *         <td>Whether or not to add the {@code Date} header to each response.</td>
  *     </tr>
  *     <tr>
- *         <td>{@code minResponseDataRate}</td>
- *         <td>0</td>
+ *         <td>{@code minResponseDataPerSecond}</td>
+ *         <td>0 bytes</td>
  *         <td>
  *             The minimum response data rate in bytes per second; or &lt;=0 for no limit
  *         </td>
  *     </tr>
  *     <tr>
- *         <td>{@code minRequestDataRate}</td>
- *         <td>0</td>
+ *         <td>{@code minRequestDataPerSecond}</td>
+ *         <td>0 bytes</td>
  *         <td>
  *             The minimum request data rate in bytes per second; or &lt;=0 for no limit
  *         </td>
@@ -252,12 +252,12 @@ public class HttpConnectorFactory implements ConnectorFactory {
     private Duration idleTimeout = Duration.seconds(30);
 
     @NotNull
-    @Min(0)
-    private long minResponseDataRate = 0;
+    @MinSize(0)
+    private Size minResponseDataPerSecond = Size.bytes(0);
 
     @NotNull
-    @Min(0)
-    private long minRequestDataRate = 0;
+    @MinSize(0)
+    private Size minRequestDataPerSecond = Size.bytes(0);
 
     @NotNull
     @MinSize(value = 1, unit = SizeUnit.BYTES)
@@ -412,23 +412,23 @@ public class HttpConnectorFactory implements ConnectorFactory {
     }
 
     @JsonProperty
-    public long getMinResponseDataRate() {
-        return minResponseDataRate;
+    public Size getMinResponseDataPerSecond() {
+        return minResponseDataPerSecond;
     }
 
     @JsonProperty
-    public void setMinResponseDataRate(long minResponseDataRate) {
-        this.minResponseDataRate = minResponseDataRate;
+    public void setMinResponseDataPerSecond(Size minResponseDataPerSecond) {
+        this.minResponseDataPerSecond = minResponseDataPerSecond;
     }
 
     @JsonProperty
-    public long getMinRequestDataRate() {
-        return minRequestDataRate;
+    public Size getMinRequestDataPerSecond() {
+        return minRequestDataPerSecond;
     }
 
     @JsonProperty
-    public void setMinRequestDataRate(long minRequestDataRate) {
-        this.minRequestDataRate = minRequestDataRate;
+    public void setMinRequestDataPerSecond(Size minRequestDataPerSecond) {
+        this.minRequestDataPerSecond = minRequestDataPerSecond;
     }
 
     @JsonProperty
@@ -586,8 +586,8 @@ public class HttpConnectorFactory implements ConnectorFactory {
         httpConfig.setResponseHeaderSize((int) maxResponseHeaderSize.toBytes());
         httpConfig.setSendDateHeader(useDateHeader);
         httpConfig.setSendServerVersion(useServerHeader);
-        httpConfig.setMinResponseDataRate(minResponseDataRate);
-        httpConfig.setMinRequestDataRate(minRequestDataRate);
+        httpConfig.setMinResponseDataRate(minResponseDataPerSecond.toBytes());
+        httpConfig.setMinRequestDataRate(minRequestDataPerSecond.toBytes());
 
         if (useForwardedHeaders) {
             httpConfig.addCustomizer(new ForwardedRequestCustomizer());

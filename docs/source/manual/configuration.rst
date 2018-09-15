@@ -302,8 +302,8 @@ HTTP
           minBufferPoolSize: 64 bytes
           bufferPoolIncrement: 1KiB
           maxBufferPoolSize: 64KiB
-          minRequestDataRate: 0
-          minResponseDataRate: 0
+          minRequestDataPerSecond: '0 bytes'
+          minResponseDataPerSecond: '0 bytes'
           acceptorThreads: 1
           selectorThreads: 2
           acceptQueueSize: 1024
@@ -344,8 +344,8 @@ idleTimeout              30 seconds          The maximum idle time for a connect
 minBufferPoolSize        64 bytes            The minimum size of the buffer pool.
 bufferPoolIncrement      1KiB                The increment by which the buffer pool should be increased.
 maxBufferPoolSize        64KiB               The maximum size of the buffer pool.
-minRequestDataRate       0                   The minimum request data rate in bytes per second; or <= 0 for no limit.
-minResponseDataRate      0                   The minimum response data rate in bytes per second; or <= 0 for no limit.
+minRequestDataPerSecond       0                   The minimum request data rate in bytes per second; or <= 0 for no limit.
+minResponseDataPerSecond      0                   The minimum response data rate in bytes per second; or <= 0 for no limit.
 acceptorThreads          (Jetty's default)   The number of worker threads dedicated to accepting connections.
                                              By default is *max(1, min(4, #CPUs/8))*.
 selectorThreads          (Jetty's default)   The number of worker threads dedicated to sending and receiving data.
