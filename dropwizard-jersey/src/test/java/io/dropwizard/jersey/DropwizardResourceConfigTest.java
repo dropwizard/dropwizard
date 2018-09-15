@@ -3,11 +3,9 @@ package io.dropwizard.jersey;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.dropwizard.jersey.dummy.DummyResource;
-import io.dropwizard.logging.BootstrapLogging;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.model.Resource;
-import org.glassfish.jersey.test.JerseyTest;
-import org.junit.Before;
+import org.junit.After;
 import org.junit.Test;
 
 import javax.ws.rs.DELETE;
@@ -20,36 +18,26 @@ import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
 
 public class DropwizardResourceConfigTest {
-    static {
-        BootstrapLogging.bootstrap();
+    private DropwizardResourceConfig rc = DropwizardResourceConfig.forTesting();
+    private AbstractJerseyTest jerseyTest = new AbstractJerseyTest() {
+        @Override
+        protected Application configure() {
+            return rc;
+        }
+    };
+
+    @After
+    public void teardown() throws Exception {
+        jerseyTest.tearDown();
     }
 
-    private DropwizardResourceConfig rc;
-
-    @Before
-    public void setUp() {
-        rc = DropwizardResourceConfig.forTesting();
-    }
-
-    // Start and stop a jersey test instance so that our resource config
+    // Start jersey test instance so that our resource config
     // successfully hooks into the Jersey start up application event
     private void runJersey() {
-        final JerseyTest jerseyTest = new JerseyTest() {
-            @Override
-            protected Application configure() {
-                return rc;
-            }
-        };
-
         try {
             jerseyTest.setUp();
         } catch (Exception e) {
             throw new RuntimeException("Could not start jersey", e);
-        } finally {
-            try {
-                jerseyTest.tearDown();
-            } catch (Exception ignored) {
-            }
         }
     }
 
