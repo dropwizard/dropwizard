@@ -355,6 +355,7 @@ v1.1.0: Mar 21 2017
 * Upgraded to Joda-Time 2.9.7
 * Upgraded to commons-lang3 3.5
 * Upgraded to Apache HTTP Client 4.5.3
+* Upgraded to Jadira Usertype Core 6.0.1.GA
 
 .. _rel-1.0.7:
 
