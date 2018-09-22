@@ -1,6 +1,7 @@
 package io.dropwizard.logging.json;
 
 import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.pattern.ExtendedThrowableProxyConverter;
 import ch.qos.logback.classic.pattern.RootCauseFirstThrowableProxyConverter;
 import ch.qos.logback.classic.pattern.ThrowableHandlingConverter;
 import ch.qos.logback.classic.spi.ILoggingEvent;
@@ -9,10 +10,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.dropwizard.logging.json.layout.EventJsonLayout;
 
+import io.dropwizard.logging.json.layout.ExceptionFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Set;
 import java.util.TimeZone;
+import javax.annotation.Nullable;
 
 /**
  * <table>
@@ -48,6 +53,9 @@ public class EventJsonLayoutBaseFactory extends AbstractJsonLayoutBaseFactory<IL
     private Set<String> includesMdcKeys = Collections.emptySet();
     private boolean flattenMdc = false;
 
+    @Nullable
+    private ExceptionFormat exceptionFormat;
+
     @JsonProperty
     public EnumSet<EventAttribute> getIncludes() {
         return includes;
@@ -78,17 +86,47 @@ public class EventJsonLayoutBaseFactory extends AbstractJsonLayoutBaseFactory<IL
         this.flattenMdc = flattenMdc;
     }
 
+    @JsonProperty("exception")
+    public void setExceptionFormat(ExceptionFormat exceptionFormat) {
+        this.exceptionFormat = exceptionFormat;
+    }
+
+    @JsonProperty("exception")
+    @Nullable
+    public ExceptionFormat getExceptionFormat() {
+        return exceptionFormat;
+    }
+
     @Override
     public LayoutBase<ILoggingEvent> build(LoggerContext context, TimeZone timeZone) {
         final EventJsonLayout jsonLayout = new EventJsonLayout(createDropwizardJsonFormatter(),
-            createTimestampFormatter(timeZone), createThrowableProxyConverter(), includes, getCustomFieldNames(),
+            createTimestampFormatter(timeZone), createThrowableProxyConverter(context), includes, getCustomFieldNames(),
             getAdditionalFields(), includesMdcKeys, flattenMdc);
         jsonLayout.setContext(context);
         return jsonLayout;
     }
 
-    protected ThrowableHandlingConverter createThrowableProxyConverter() {
-        return new RootCauseFirstThrowableProxyConverter();
+    protected ThrowableHandlingConverter createThrowableProxyConverter(LoggerContext context) {
+        if (exceptionFormat == null) {
+            return new RootCauseFirstThrowableProxyConverter();
+        }
+
+        ThrowableHandlingConverter throwableHandlingConverter;
+        if (exceptionFormat.isRootFirst()) {
+            throwableHandlingConverter = new RootCauseFirstThrowableProxyConverter();
+        } else {
+            throwableHandlingConverter = new ExtendedThrowableProxyConverter();
+        }
+
+        List<String> options = new ArrayList<>();
+        // depth must be added first
+        options.add(exceptionFormat.getDepth());
+        options.addAll(exceptionFormat.getEvaluators());
+
+        throwableHandlingConverter.setOptionList(options);
+        throwableHandlingConverter.setContext(context);
+
+        return throwableHandlingConverter;
     }
 
 }
