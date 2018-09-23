@@ -690,6 +690,8 @@ maxFileSize                  (unlimited)                                The maxi
                                                                         expressed in bytes, kilobytes, megabytes, gigabytes, and terabytes by appending B, K, MB, GB, or
                                                                         TB to the numeric value.  Examples include 100MB, 1GB, 1TB.  Sizes can also be spelled out, such
                                                                         as 100 megabytes, 1 gigabyte, 1 terabyte.
+totalSizeCap                 (unlimited)                                Controls the total size of all files.
+                                                                        Oldest archives are deleted asynchronously when the total size cap is exceeded.
 timeZone                     UTC                                        The time zone to which event timestamps will be converted.
 logFormat                    %-5p [%d{ISO8601,UTC}] %c: %m%n%rEx        The Logback pattern with which events will be formatted. See
                                                                         the Logback_ documentation for details.
