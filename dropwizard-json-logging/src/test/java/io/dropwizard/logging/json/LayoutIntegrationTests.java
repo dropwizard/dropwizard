@@ -12,6 +12,7 @@ import io.dropwizard.jackson.Jackson;
 import io.dropwizard.logging.BootstrapLogging;
 import io.dropwizard.logging.ConsoleAppenderFactory;
 import io.dropwizard.logging.DefaultLoggingFactory;
+import io.dropwizard.logging.json.layout.ExceptionFormat;
 import io.dropwizard.logging.layout.DiscoverableLayoutFactory;
 import io.dropwizard.request.logging.LogbackAccessRequestLogFactory;
 import io.dropwizard.util.Resources;
@@ -81,6 +82,11 @@ public class LayoutIntegrationTests {
         assertThat(factory.getAdditionalFields()).containsOnly(entry("service-name", "user-service"),
             entry("service-build", 218));
         assertThat(factory.getIncludesMdcKeys()).containsOnly("userId");
+
+        ExceptionFormat exceptionFormat = requireNonNull(factory.getExceptionFormat());
+        assertThat(exceptionFormat.getDepth()).isEqualTo("10");
+        assertThat(exceptionFormat.isRootFirst()).isFalse();
+        assertThat(exceptionFormat.getEvaluators()).contains("io.dropwizard");
     }
 
     @Test
@@ -115,6 +121,21 @@ public class LayoutIntegrationTests {
         ConsoleAppenderFactory<ILoggingEvent> consoleAppenderFactory = getAppenderFactory("yaml/json-log-default.yml");
         DefaultLoggingFactory defaultLoggingFactory = new DefaultLoggingFactory();
         defaultLoggingFactory.setAppenders(Collections.singletonList(consoleAppenderFactory));
+
+        DiscoverableLayoutFactory<?> layout = requireNonNull(consoleAppenderFactory.getLayout());
+        assertThat(layout).isInstanceOf(EventJsonLayoutBaseFactory.class);
+        EventJsonLayoutBaseFactory factory = (EventJsonLayoutBaseFactory) layout;
+        assertThat(factory).isNotNull();
+        assertThat(factory.getIncludes()).contains(EventAttribute.LEVEL,
+            EventAttribute.THREAD_NAME,
+            EventAttribute.MDC,
+            EventAttribute.LOGGER_NAME,
+            EventAttribute.MESSAGE,
+            EventAttribute.EXCEPTION,
+            EventAttribute.TIMESTAMP);
+        assertThat(factory.isFlattenMdc()).isFalse();
+        assertThat(factory.getIncludesMdcKeys()).isEmpty();
+        assertThat(factory.getExceptionFormat()).isNull();
 
         PrintStream old = System.out;
         ByteArrayOutputStream redirectedStream = new ByteArrayOutputStream();

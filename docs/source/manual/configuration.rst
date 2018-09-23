@@ -842,6 +842,11 @@ JSON layout
       additionalFields:
         service-name: "user-service"
       includesMdcKeys: [userId]
+      flattenMDC: true
+      exception:
+        rootFirst: true
+        depth: full
+        evaluators: [org.apache]
 
 
 =======================  =====================  ================
@@ -868,9 +873,37 @@ includes                 (timestamp, level,
 customFieldNames         (empty)                Map of field name replacements . For example ``(requestTime:request_time, userAgent:user_agent)``.
 additionalFields         (empty)                Map of fields to add in the JSON map.
 includesMdcKeys          (empty)                Set of MDC keys which should be included in the JSON map. By default includes everything.
+flattenMdc               false                  Flatten the MDC to the root of the JSON object instead of nested in the ``mdc`` field.
+exception                (empty)                The :ref:`exception <man-configuration-json-layout-exception>` configuration for the ``exception`` field.
 =======================  =====================  ================
 
 .. _DateTimeFormatter:  https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html
+
+.. _man-configuration-json-layout-exception:
+
+Exception
+.........
+
+.. code-block:: yaml
+
+    layout:
+      type: json
+      exception:
+        rootFirst: false
+        depth: 25
+        evaluators: [org.apache]
+
+
+====================== ===========  ================================
+Name                   Default      Description
+====================== ===========  ================================
+rootFirst              true         Whether the root cause should be displayed first.
+depth                  full         The stack trace depth_.
+evaluators             (empty)      The packages to filter_ from the stacktrace.
+====================== ===========  ================================
+
+.. _depth:  https://logback.qos.ch/manual/layouts.html#ex
+.. _filter:  https://github.com/qos-ch/logback/pull/244
 
 .. _man-configuration-json-access-layout:
 
