@@ -175,7 +175,7 @@ public class LayoutIntegrationTests {
             when(request.getRemoteAddr()).thenReturn("10.0.0.1");
             when(request.getTimeStamp()).thenReturn(TimeUnit.SECONDS.toMillis(1353042047));
             when(request.getMethod()).thenReturn("GET");
-            when(request.getRequestURI()).thenReturn("/test/users?age=22&city=LA");
+            when(request.getRequestURI()).thenReturn("/test/users");
             when(request.getProtocol()).thenReturn("HTTP/1.1");
             when(request.getParameterNames()).thenReturn(Collections.enumeration(Arrays.asList("age", "city")));
             when(request.getParameterValues("age")).thenReturn(new String[]{"22"});
@@ -206,7 +206,7 @@ public class LayoutIntegrationTests {
             assertThat(jsonNode.get("remoteAddress").asText()).isEqualTo("10.0.0.1");
             assertThat(jsonNode.get("status").asInt()).isEqualTo(200);
             assertThat(jsonNode.get("method").asText()).isEqualTo("GET");
-            assertThat(jsonNode.get("uri").asText()).isEqualTo("/test/users?age=22&city=LA");
+            assertThat(jsonNode.get("uri").asText()).isEqualTo("/test/users");
             assertThat(jsonNode.get("protocol").asText()).isEqualTo("HTTP/1.1");
             assertThat(jsonNode.get("userAgent").asText()).isEqualTo("Mozilla/5.0");
             assertThat(jsonNode.get("contentLength").asInt()).isEqualTo(8290);
