@@ -58,21 +58,21 @@ public class EventJsonLayout extends AbstractJsonLayout<ILoggingEvent> {
 
     @Override
     protected Map<String, Object> toJsonMap(ILoggingEvent event) {
-        final MapBuilder mapBuilder = new MapBuilder(timestampFormatter, customFieldNames, additionalFields, 16)
+        final MapBuilder mapBuilder = new MapBuilder(timestampFormatter, customFieldNames, additionalFields, includes.size())
             .addTimestamp("timestamp", isIncluded(EventAttribute.TIMESTAMP), event.getTimeStamp())
-            .add("level", isIncluded(EventAttribute.LEVEL), String.valueOf(event.getLevel()))
-            .add("thread", isIncluded(EventAttribute.THREAD_NAME), event.getThreadName())
-            .add("logger", isIncluded(EventAttribute.LOGGER_NAME), event.getLoggerName())
-            .add("message", isIncluded(EventAttribute.MESSAGE), event.getFormattedMessage())
-            .add("context", isIncluded(EventAttribute.CONTEXT_NAME), event.getLoggerContextVO().getName())
+            .add("level", isIncluded(EventAttribute.LEVEL), () -> String.valueOf(event.getLevel()))
+            .add("thread", isIncluded(EventAttribute.THREAD_NAME), event::getThreadName)
+            .add("logger", isIncluded(EventAttribute.LOGGER_NAME), event::getLoggerName)
+            .add("message", isIncluded(EventAttribute.MESSAGE), event::getFormattedMessage)
+            .add("context", isIncluded(EventAttribute.CONTEXT_NAME), () -> event.getLoggerContextVO().getName())
             .add("version", jsonProtocolVersion != null, jsonProtocolVersion)
             .add("exception", isIncluded(EventAttribute.EXCEPTION) && event.getThrowableProxy() != null,
-                 throwableProxyConverter.convert(event));
+                () -> throwableProxyConverter.convert(event));
         final boolean includeMdc = isIncluded(EventAttribute.MDC);
         if (flattenMdc) {
             filterMdc(event.getMDCPropertyMap()).forEach((k,v) -> mapBuilder.add(k, includeMdc, v));
         } else {
-            mapBuilder.add("mdc", includeMdc, filterMdc(event.getMDCPropertyMap()));
+            mapBuilder.addMap("mdc", includeMdc, () -> filterMdc(event.getMDCPropertyMap()));
         }
         return mapBuilder.build();
     }
