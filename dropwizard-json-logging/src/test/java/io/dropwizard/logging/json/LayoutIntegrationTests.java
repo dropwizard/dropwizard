@@ -107,7 +107,8 @@ public class LayoutIntegrationTests {
             AccessAttribute.REQUEST_PARAMETERS,
             AccessAttribute.REQUEST_CONTENT,
             AccessAttribute.TIMESTAMP,
-            AccessAttribute.USER_AGENT);
+            AccessAttribute.USER_AGENT,
+            AccessAttribute.PATH_QUERY);
         assertThat(factory.getResponseHeaders()).containsOnly("X-Request-Id");
         assertThat(factory.getRequestHeaders()).containsOnly("User-Agent", "X-Request-Id");
         assertThat(factory.getCustomFieldNames()).containsOnly(entry("statusCode", "status_code"),

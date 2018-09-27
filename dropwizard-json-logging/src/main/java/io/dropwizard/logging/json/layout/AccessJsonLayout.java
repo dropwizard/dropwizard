@@ -58,6 +58,7 @@ public class AccessJsonLayout extends AbstractJsonLayout<IAccessEvent> {
             .addNumber("requestTime", isIncluded(AccessAttribute.REQUEST_TIME), event::getElapsedTime)
             .add("uri", isIncluded(AccessAttribute.REQUEST_URI), event::getRequestURI)
             .add("url", isIncluded(AccessAttribute.REQUEST_URL), event::getRequestURL)
+            .add("pathQuery", isIncluded(AccessAttribute.PATH_QUERY), () -> event.getRequestURI() + event.getQueryString())
             .add("remoteHost", isIncluded(AccessAttribute.REMOTE_HOST), event::getRemoteHost)
             .add("responseContent", isIncluded(AccessAttribute.RESPONSE_CONTENT), event::getResponseContent)
             .addMap("responseHeaders", !responseHeaders.isEmpty(),
