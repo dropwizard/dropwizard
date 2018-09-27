@@ -367,8 +367,8 @@ httpCompliance           RFC7230             This sets the http compliance level
                                              * RFC2616: Allow header folding.
 ======================== ==================  ======================================================================================
 
-.. _`java.net.Socket#setSoTimeout(int)`: http://docs.oracle.com/javase/7/docs/api/java/net/Socket.html#setSoTimeout(int)
-.. _`ForwardedRequestCustomizer`: http://download.eclipse.org/jetty/stable-9/apidocs/org/eclipse/jetty/server/ForwardedRequestCustomizer.html
+.. _`java.net.Socket#setSoTimeout(int)`: https://docs.oracle.com/javase/8/docs/api/java/net/Socket.html#setSoTimeout-int-
+.. _`ForwardedRequestCustomizer`: https://www.eclipse.org/jetty/javadoc/current/org/eclipse/jetty/server/ForwardedRequestCustomizer.html
 
 .. _`Server::Starter`:  https://github.com/kazuho/p5-Server-Starter
 
