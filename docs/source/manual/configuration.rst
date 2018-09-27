@@ -368,7 +368,7 @@ httpCompliance           RFC7230             This sets the http compliance level
 ======================== ==================  ======================================================================================
 
 .. _`java.net.Socket#setSoTimeout(int)`: https://docs.oracle.com/javase/8/docs/api/java/net/Socket.html#setSoTimeout-int-
-.. _`ForwardedRequestCustomizer`: https://www.eclipse.org/jetty/javadoc/current/org/eclipse/jetty/server/ForwardedRequestCustomizer.html
+.. _`ForwardedRequestCustomizer`: https://www.eclipse.org/jetty/javadoc/9.4.12.v20180830/org/eclipse/jetty/server/ForwardedRequestCustomizer.html
 
 .. _`Server::Starter`:  https://github.com/kazuho/p5-Server-Starter
 
