@@ -953,7 +953,8 @@ includes                 (timestamp, remoteAddress,
                                                       - ``userAgent``         *true*     Whether to include the user agent of the request as the ``userAgent`` field.
                                                       - ``requestParameters`` *false*    Whether to include the request parameters as the ``params`` field.
                                                       - ``requestContent``    *false*    Whether to include the body of the request as the ``requestContent`` field.
-                                                      - ``requestUrl``        *false*    Whether to include the request URL (method, URI, query parameters, protocol) as the ``contentLength`` field.
+                                                      - ``requestUrl``        *false*    Whether to include the request URL (method, URI, query parameters, protocol) as the ``url`` field.
+                                                      - ``pathQuery``         *false*    Whether to include the URI and query parameters of the request as the ``pathQuery`` field.
                                                       - ``remoteHost``        *false*    Whether to include the fully qualified name of the client or the last proxy that sent the request as the ``remoteHost`` field.
                                                       - ``responseContent``   *false*    Whether to include the response body as the ``responseContent`` field.
                                                       - ``serverName``        *false*    Whether to include the name of the server to which the request was sent as the ``serverName`` field.
