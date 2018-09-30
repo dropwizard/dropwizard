@@ -4,9 +4,12 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 
 /**
- * A reusable bundle of functionality, used to define blocks of application behavior.
+ * A reusable bundle of functionality, used to define blocks of application behavior
+ *
+ * @param <T>    the required configuration interface, use {@link Configuration} if specific config not required
  */
-public interface Bundle {
+public interface Bundle<T> {
+
     /**
      * Initializes the application bootstrap.
      *
@@ -15,9 +18,11 @@ public interface Bundle {
     void initialize(Bootstrap<?> bootstrap);
 
     /**
-     * Initializes the application environment.
+     * Initializes the environment.
      *
-     * @param environment the application environment
+     * @param configuration    the configuration object
+     * @param environment      the application's {@link Environment}
+     * @throws Exception if something goes wrong
      */
-    void run(Environment environment);
+    void run(T configuration, Environment environment) throws Exception;
 }

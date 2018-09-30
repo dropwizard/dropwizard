@@ -1,5 +1,6 @@
 package io.dropwizard.assets;
 
+import io.dropwizard.Configuration;
 import io.dropwizard.Bundle;
 import io.dropwizard.servlets.assets.AssetServlet;
 import io.dropwizard.setup.Bootstrap;
@@ -12,7 +13,7 @@ import java.nio.charset.StandardCharsets;
 /**
  * A bundle for serving static asset files from the classpath.
  */
-public class AssetsBundle implements Bundle {
+public class AssetsBundle implements Bundle<Configuration> {
     private static final Logger LOGGER = LoggerFactory.getLogger(AssetsBundle.class);
 
     private static final String DEFAULT_ASSETS_NAME = "assets";
@@ -109,7 +110,7 @@ public class AssetsBundle implements Bundle {
     }
 
     @Override
-    public void run(Environment environment) {
+    public void run(Configuration configuration, Environment environment) {
         LOGGER.info("Registering AssetBundle with name: {} for path {}", assetsName, uriPath + '*');
         environment.servlets().addServlet(assetsName, createServlet()).addMapping(uriPath + '*');
     }

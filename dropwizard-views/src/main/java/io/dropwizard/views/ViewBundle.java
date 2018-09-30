@@ -1,8 +1,7 @@
 package io.dropwizard.views;
 
-import io.dropwizard.Bundle;
 import io.dropwizard.Configuration;
-import io.dropwizard.ConfiguredBundle;
+import io.dropwizard.Bundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.util.Sets;
@@ -87,7 +86,7 @@ import java.util.ServiceLoader;
  *
  * See Also: <a href="http://mustache.github.io/mustache.5.html">Mustache Manual</a>
  */
-public class ViewBundle<T extends Configuration> implements ConfiguredBundle<T>, ViewConfigurable<T> {
+public class ViewBundle<T extends Configuration> implements Bundle<T>, ViewConfigurable<T> {
     private final Iterable<ViewRenderer> viewRenderers;
 
     public ViewBundle() {
