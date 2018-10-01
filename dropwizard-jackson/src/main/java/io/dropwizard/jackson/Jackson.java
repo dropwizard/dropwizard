@@ -62,6 +62,7 @@ public class Jackson {
         mapper.setPropertyNamingStrategy(new AnnotationSensitivePropertyNamingStrategy());
         mapper.setSubtypeResolver(new DiscoverableSubtypeResolver());
 
+        mapper.registerModule(new SafeJavaTimeModule());
         return mapper;
     }
 }
