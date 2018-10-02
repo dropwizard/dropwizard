@@ -242,7 +242,7 @@ Basic Auth against a proxy is simple:
             - '192.168.52.*'
             - '*.example.com'
 
-NTLM Auth is configured by setting the the relevant windows properties.
+NTLM Auth is configured by setting the relevant windows properties.
 
 .. code-block:: yaml
 

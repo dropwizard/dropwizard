@@ -34,7 +34,7 @@ Startup Sequence
 	  cli.run(arguments); 
 	}
 
-``Bootstrap`` is the the pre-start (temp) application environment, containing everything required to bootstrap a Dropwizard command. Here is a simplified code snippet to illustrate its structure:
+``Bootstrap`` is the pre-start (temp) application environment, containing everything required to bootstrap a Dropwizard command. Here is a simplified code snippet to illustrate its structure:
 
 .. code-block:: java
 
