@@ -1,12 +1,12 @@
 package io.dropwizard.migrations;
 
-import io.dropwizard.Bundle;
 import io.dropwizard.Configuration;
+import io.dropwizard.Bundle;
 import io.dropwizard.db.DatabaseConfiguration;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 
-public abstract class MigrationsBundle<T extends Configuration> implements Bundle, DatabaseConfiguration<T> {
+public abstract class MigrationsBundle<T extends Configuration> implements Bundle<T>, DatabaseConfiguration<T> {
     private static final String DEFAULT_NAME = "db";
     private static final String DEFAULT_MIGRATIONS_FILE = "migrations.xml";
 
@@ -26,7 +26,7 @@ public abstract class MigrationsBundle<T extends Configuration> implements Bundl
     }
 
     @Override
-    public final void run(Environment environment) {
+    public final void run(T configuration, Environment environment) {
         // nothing doing
     }
 }

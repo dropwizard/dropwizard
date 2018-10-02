@@ -1,5 +1,6 @@
 package io.dropwizard.sslreload;
 
+import io.dropwizard.Configuration;
 import io.dropwizard.Bundle;
 import io.dropwizard.jetty.MutableServletContextHandler;
 import io.dropwizard.jetty.SslReload;
@@ -16,7 +17,7 @@ import java.util.Set;
 
 /** Bundle that gathers all the ssl connectors and registers an admin task that will
  *  refresh ssl configuration on request */
-public class SslReloadBundle implements Bundle {
+public class SslReloadBundle implements Bundle<Configuration> {
     private static final Logger LOGGER = LoggerFactory.getLogger(SslReloadBundle.class);
 
     private final SslReloadTask reloadTask = new SslReloadTask();
@@ -26,7 +27,7 @@ public class SslReloadBundle implements Bundle {
     }
 
     @Override
-    public void run(Environment environment) {
+    public void run(Configuration configuration, Environment environment) {
         environment.getApplicationContext().addLifeCycleListener(new AbstractLifeCycle.AbstractLifeCycleListener() {
             @Override
             public void lifeCycleStarted(LifeCycle event) {
