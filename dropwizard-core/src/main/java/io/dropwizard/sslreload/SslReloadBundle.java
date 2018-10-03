@@ -16,8 +16,8 @@ import java.util.Set;
 
 /**
  * Bundle that gathers all the ssl connectors and registers an admin task that will
- *  refresh ssl configuration on request
- *  */
+ * refresh ssl configuration on request
+ */
 public class SslReloadBundle implements ConfiguredBundle<Configuration> {
     private static final Logger LOGGER = LoggerFactory.getLogger(SslReloadBundle.class);
 
