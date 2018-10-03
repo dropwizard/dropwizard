@@ -1,5 +1,6 @@
 package io.dropwizard.jdbi.bundles;
 
+import io.dropwizard.Configuration;
 import io.dropwizard.jdbi.jersey.LoggingDBIExceptionMapper;
 import io.dropwizard.jdbi.jersey.LoggingSQLExceptionMapper;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
@@ -20,7 +21,7 @@ public class DBIExceptionsBundleTest {
         JerseyEnvironment jerseyEnvironment = mock(JerseyEnvironment.class);
         when(environment.jersey()).thenReturn(jerseyEnvironment);
 
-        new DBIExceptionsBundle().run(environment);
+        new DBIExceptionsBundle().run(new Configuration(), environment);
 
         verify(jerseyEnvironment, times(1)).register(isA(LoggingSQLExceptionMapper.class));
         verify(jerseyEnvironment, times(1)).register(isA(LoggingDBIExceptionMapper.class));
