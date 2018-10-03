@@ -47,7 +47,7 @@ public class AppenderFactoryCustomLayoutTest {
         final ConsoleAppenderFactory<ILoggingEvent> appender = factory.build(loadResource());
         assertThat(appender.getLayout()).isNotNull().isInstanceOf(TestLayoutFactory.class);
         TestLayoutFactory layoutFactory = (TestLayoutFactory) appender.getLayout();
-        assertThat(layoutFactory).isNotNull().extracting(TestLayoutFactory::isIncludeSeparator).contains(true);
+        assertThat(layoutFactory).isNotNull().extracting(TestLayoutFactory::isIncludeSeparator).isEqualTo(true);
     }
 
     @Test

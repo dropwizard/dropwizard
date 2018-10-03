@@ -21,7 +21,7 @@
         <dropwizard.version>${project.version}</dropwizard.version>
         <guava.version>26.0-jre</guava.version>
         <jersey.version>2.27</jersey.version>
-        <jackson.version>2.9.6</jackson.version>
+        <jackson.version>2.9.7</jackson.version>
         <jetty.version>9.4.12.v20180830</jetty.version>
         <servlet.version>3.0.0.v201112011016</servlet.version>
         <metrics4.version>4.0.3</metrics4.version>
@@ -41,7 +41,7 @@
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
-                <version>3.7</version>
+                <version>3.8.1</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
@@ -120,7 +120,7 @@
             <dependency>
                 <groupId>org.apache.tomcat</groupId>
                 <artifactId>tomcat-jdbc</artifactId>
-                <version>9.0.10</version>
+                <version>9.0.12</version>
             </dependency>
             <dependency>
                 <groupId>com.h2database</groupId>
@@ -149,7 +149,7 @@
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-core</artifactId>
-                <version>5.3.3.Final</version>
+                <version>5.3.6.Final</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.jboss.logging</groupId>
@@ -165,7 +165,12 @@
             <dependency>
                 <groupId>com.fasterxml</groupId>
                 <artifactId>classmate</artifactId>
-                <version>1.3.4</version>
+                <version>1.4.0</version>
+            </dependency>
+            <dependency>
+                <groupId>net.bytebuddy</groupId>
+                <artifactId>byte-buddy</artifactId>
+                <version>1.8.21</version>
             </dependency>
             <dependency>
                 <groupId>org.hsqldb</groupId>
