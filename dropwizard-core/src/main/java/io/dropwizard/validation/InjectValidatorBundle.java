@@ -1,6 +1,7 @@
 package io.dropwizard.validation;
 
-import io.dropwizard.Bundle;
+import io.dropwizard.Configuration;
+import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.jersey.validation.MutableValidatorFactory;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
@@ -13,7 +14,7 @@ import javax.ws.rs.container.ResourceContext;
 /**
  * Dropwizard Bundle that enables injecting into constraint validators
  */
-public class InjectValidatorBundle implements Bundle {
+public class InjectValidatorBundle implements ConfiguredBundle<Configuration> {
 
     @Nullable
     private MutableValidatorFactory mutableValidatorFactory;
@@ -30,7 +31,7 @@ public class InjectValidatorBundle implements Bundle {
     }
 
     @Override
-    public void run(Environment environment) {
+    public void run(Configuration configuration, Environment environment) {
         GetResourceContextFeature getResourceContext = new GetResourceContextFeature(this::setValidatorFactory);
         environment.jersey().register(getResourceContext);
     }

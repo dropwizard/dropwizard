@@ -1,6 +1,7 @@
 package io.dropwizard.forms;
 
 import com.codahale.metrics.MetricRegistry;
+import io.dropwizard.Configuration;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.logging.BootstrapLogging;
 import io.dropwizard.setup.Environment;
@@ -25,7 +26,7 @@ public class MultiPartBundleTest {
                 getClass().getClassLoader()
         );
 
-        new MultiPartBundle().run(environment);
+        new MultiPartBundle().run(new Configuration(), environment);
 
         assertThat(environment.jersey().getResourceConfig().getClasses()).contains(MultiPartFeature.class);
     }

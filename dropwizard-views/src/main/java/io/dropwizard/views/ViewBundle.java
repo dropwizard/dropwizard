@@ -1,9 +1,7 @@
 package io.dropwizard.views;
 
-import io.dropwizard.Bundle;
 import io.dropwizard.Configuration;
 import io.dropwizard.ConfiguredBundle;
-import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.util.Sets;
 
@@ -13,10 +11,10 @@ import java.util.ServiceLoader;
 
 
 /**
- * A {@link Bundle}, which by default, enables the rendering of FreeMarker & Mustache views by your application.
+ * A {@link ConfiguredBundle}, which by default, enables the rendering of FreeMarker & Mustache views by your application.
  *
  * <p>Other instances of {@link ViewRenderer} can be used by initializing your {@link ViewBundle} with a
- * {@link Iterable} of the {@link ViewRenderer} instances to be used when configuring your {@link Bundle}:</p>
+ * {@link Iterable} of the {@link ViewRenderer} instances to be used when configuring your {@link ConfiguredBundle}:</p>
  *
  * <pre><code>
  * new ViewBundle(ImmutableList.of(myViewRenderer))
@@ -111,10 +109,5 @@ public class ViewBundle<T extends Configuration> implements ConfiguredBundle<T>,
             viewRenderer.configure(viewOptions == null ? Collections.emptyMap() : viewOptions);
         }
         environment.jersey().register(new ViewMessageBodyWriter(environment.metrics(), viewRenderers));
-    }
-
-    @Override
-    public void initialize(Bootstrap<?> bootstrap) {
-        // nothing doing
     }
 }
