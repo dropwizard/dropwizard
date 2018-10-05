@@ -885,7 +885,7 @@ public class DataSourceFactory implements PooledDataSourceFactory {
         ManagedPooledDataSource readDataSource = writeDataSource;
 
         if (readOnlyUrl != null) {
-            final PoolProperties readerPoolConfig = getPoolConfiguration(name, readOnlyUrl, true);
+            final PoolProperties readerPoolConfig = getPoolConfiguration(name+"-ro", readOnlyUrl, true);
             readDataSource = new ManagedPooledDataSource(readerPoolConfig, metricRegistry);
         }
 

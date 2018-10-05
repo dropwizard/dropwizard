@@ -65,7 +65,7 @@ public class ClusteredSessionFactoryFactory {
                 dbConfig.getProperties(),
                 entities);
 
-            final SessionFactoryManager managedReadFactory = new SessionFactoryManager(writeFactory, dataSources.getWriteDataSource());
+            final SessionFactoryManager managedReadFactory = new SessionFactoryManager(writeFactory, dataSources.getReadDataSource());
             environment.lifecycle().manage(managedReadFactory);
         }
 
