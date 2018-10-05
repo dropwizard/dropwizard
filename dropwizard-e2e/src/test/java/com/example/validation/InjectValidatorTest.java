@@ -12,7 +12,7 @@ import javax.ws.rs.core.Response;
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class DefaultValidatorTest {
+public class InjectValidatorTest {
 
     @ClassRule
     public static final DropwizardAppRule<Configuration> RULE = new DropwizardAppRule<>(
@@ -42,7 +42,7 @@ public class DefaultValidatorTest {
     }
 
     @Test
-    public void shouldNotInjectValidator() {
+    public void shouldInjectValidator() {
         final Client client = RULE.client();
         final String url = String.format("http://localhost:%d/injectable", RULE.getLocalPort());
 
@@ -51,8 +51,6 @@ public class DefaultValidatorTest {
             .request()
             .get();
 
-        assertThat(response.getStatus()).isEqualTo(400);
-        assertThat(response.readEntity(String.class))
-            .isEqualTo("{\"errors\":[\"query param value validator was not injected\"]}");
+        assertThat(response.getStatus()).isEqualTo(204);
     }
 }

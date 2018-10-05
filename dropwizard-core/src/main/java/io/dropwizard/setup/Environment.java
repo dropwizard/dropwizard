@@ -12,6 +12,7 @@ import io.dropwizard.jersey.setup.JerseyServletContainer;
 import io.dropwizard.jetty.MutableServletContextHandler;
 import io.dropwizard.jetty.setup.ServletEnvironment;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
+import io.dropwizard.validation.InjectValidatorFeature;
 
 import javax.annotation.Nullable;
 import javax.servlet.Servlet;
@@ -82,6 +83,7 @@ public class Environment {
 
         this.jerseyServletContainer = new JerseyContainerHolder(new JerseyServletContainer(jerseyConfig));
         this.jerseyEnvironment = new JerseyEnvironment(jerseyServletContainer, jerseyConfig);
+        this.jerseyEnvironment.register(new InjectValidatorFeature(validatorFactory));
 
         this.healthCheckExecutorService = this.lifecycle().executorService("TimeBoundHealthCheck-pool-%d")
                 .workQueue(new ArrayBlockingQueue<>(1))
