@@ -23,7 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class OptionalLocalDateTimeTest {
     private final Environment env = new Environment("test-optional-local-date-time", Jackson.newObjectMapper(),
-            Validators.newValidator(), new MetricRegistry(), null);
+            Validators.newValidatorFactory(), new MetricRegistry(), null);
 
     private TaskDao dao;
 

@@ -20,6 +20,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -41,15 +42,15 @@ public class SimpleServerFactoryTest {
 
     private SimpleServerFactory http;
     private final ObjectMapper objectMapper = Jackson.newObjectMapper();
-    private Validator validator = BaseValidator.newValidator();
-    private Environment environment = new Environment("testEnvironment", objectMapper, validator, new MetricRegistry(),
+    private ValidatorFactory validatorFactory = BaseValidator.newConfiguration().buildValidatorFactory();
+    private Environment environment = new Environment("testEnvironment", objectMapper, validatorFactory, new MetricRegistry(),
             ClassLoader.getSystemClassLoader());
 
     @Before
     public void setUp() throws Exception {
         objectMapper.getSubtypeResolver().registerSubtypes(ConsoleAppenderFactory.class,
                 FileAppenderFactory.class, SyslogAppenderFactory.class, HttpConnectorFactory.class);
-        http = (SimpleServerFactory) new YamlConfigurationFactory<>(ServerFactory.class, validator, objectMapper, "dw")
+        http = (SimpleServerFactory) new YamlConfigurationFactory<>(ServerFactory.class, validatorFactory.getValidator(), objectMapper, "dw")
                 .build(new File(Resources.getResource("yaml/simple_server.yml").toURI()));
     }
 

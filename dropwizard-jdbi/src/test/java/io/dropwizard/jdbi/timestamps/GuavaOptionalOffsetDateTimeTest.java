@@ -24,7 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class GuavaOptionalOffsetDateTimeTest {
 
     private final Environment env = new Environment("test-guava-offset-date-time", Jackson.newObjectMapper(),
-            Validators.newValidator(), new MetricRegistry(), null);
+            Validators.newValidatorFactory(), new MetricRegistry(), null);
 
     private TaskDao dao;
 

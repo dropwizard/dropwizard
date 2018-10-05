@@ -23,7 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class GuavaOptionalLocalDateTest {
     private final Environment env = new Environment("test-guava-local-date", Jackson.newObjectMapper(),
-            Validators.newValidator(), new MetricRegistry(), null);
+            Validators.newValidatorFactory(), new MetricRegistry(), null);
 
     private TaskDao dao;
 
