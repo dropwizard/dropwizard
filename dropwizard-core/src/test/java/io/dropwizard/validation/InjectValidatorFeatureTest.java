@@ -24,13 +24,11 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-public class InjectValidatorBundleTest {
+public class InjectValidatorFeatureTest {
 
     private final Application<Configuration> application = new Application<Configuration>() {
         @Override
-        public void initialize(Bootstrap<Configuration> bootstrap) {
-            bootstrap.addBundle(new InjectValidatorBundle());
-        }
+        public void initialize(Bootstrap<Configuration> bootstrap) { }
 
         @Override
         public void run(Configuration configuration, Environment environment) { }
