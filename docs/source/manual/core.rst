@@ -218,6 +218,8 @@ Dropwizard then calls your ``Application`` subclass to initialize your applicati
     You can override configuration settings in maps like this:
 
     ``java -Ddw.database.properties.hibernate.hbm2ddl.auto=none server my-config.json``
+    
+    If you need to use the '.' character in one of the values, you can escape it by using '\\.' instead.
 
     You can also override a configuration setting that is an array of strings by using the ',' character
     as an array element separator. For example, to override a configuration setting myapp.myserver.hosts
@@ -509,24 +511,18 @@ Bundles
 =======
 
 A Dropwizard bundle is a reusable group of functionality, used to define blocks of an application's
-behavior. For example, ``AssetBundle`` from the ``dropwizard-assets`` module provides a simple way
+behavior by implementing the ``ConfiguredBundle`` interface.
+
+For example, ``AssetBundle`` from the ``dropwizard-assets`` module provides a simple way
 to serve static assets from your application's ``src/main/resources/assets`` directory as files
 available from ``/assets/*`` (or any other path) in your application.
 
-Configured Bundles
-------------------
-
-Some bundles require configuration parameters. These bundles implement ``ConfiguredBundle`` and will
-require your application's ``Configuration`` subclass to implement a specific interface.
-
-
-For example: given the configured bundle ``MyConfiguredBundle`` and the interface ``MyConfiguredBundleConfig`` below.
-Your application's ``Configuration`` subclass would need to implement ``MyConfiguredBundleConfig``.
+Given the bundle ``MyConfiguredBundle`` and the interface ``MyConfiguredBundleConfig`` below,
+your application's ``Configuration`` subclass would need to implement ``MyConfiguredBundleConfig``.
 
 .. code-block:: java
 
-    public class MyConfiguredBundle implements ConfiguredBundle<MyConfiguredBundleConfig>{
-
+    public class MyConfiguredBundle implements ConfiguredBundle<MyConfiguredBundleConfig> {
         @Override
         public void run(MyConfiguredBundleConfig applicationConfig, Environment environment) {
             applicationConfig.getBundleSpecificConfig();
@@ -538,10 +534,8 @@ Your application's ``Configuration`` subclass would need to implement ``MyConfig
         }
     }
 
-    public interface MyConfiguredBundleConfig{
-
+    public interface MyConfiguredBundleConfig {
         String getBundleSpecificConfig();
-
     }
 
 

@@ -12,6 +12,11 @@ layout:
     - message
     - exception
     - timestamp
+  exception:
+    rootFirst: false
+    depth: 10
+    evaluators:
+    - io.dropwizard
   customFieldNames:
     timestamp: "@timestamp"
   additionalFields:

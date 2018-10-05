@@ -1,5 +1,6 @@
 package io.dropwizard.assets;
 
+import io.dropwizard.Configuration;
 import io.dropwizard.jetty.setup.ServletEnvironment;
 import io.dropwizard.servlets.assets.AssetServlet;
 import io.dropwizard.servlets.assets.ResourceURL;
@@ -142,7 +143,7 @@ public class AssetsBundleTest {
         final ServletRegistration.Dynamic registration = mock(ServletRegistration.Dynamic.class);
         when(servletEnvironment.addServlet(anyString(), any(AssetServlet.class))).thenReturn(registration);
 
-        bundle.run(environment);
+        bundle.run(new Configuration(), environment);
 
         final ArgumentCaptor<AssetServlet> servletCaptor = ArgumentCaptor.forClass(AssetServlet.class);
         final ArgumentCaptor<String> pathCaptor = ArgumentCaptor.forClass(String.class);

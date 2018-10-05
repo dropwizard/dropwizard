@@ -66,7 +66,7 @@ public abstract class Application<T extends Configuration> {
     }
 
     /**
-     * When the application runs, this is called after the {@link Bundle}s are run. Override it to add
+     * When the application runs, this is called after the {@link ConfiguredBundle}s are run. Override it to add
      * providers, resources, etc. for your application.
      *
      * @param configuration the parsed {@link Configuration} object

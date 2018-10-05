@@ -15,6 +15,7 @@ layout:
     - requestContent
     - userAgent
     - timestamp
+    - pathQuery
   responseHeaders:
     - X-Request-Id
   requestHeaders:

@@ -3,9 +3,6 @@ sudo: false
 language: java
 jdk:
   - openjdk8
-  - oraclejdk8
-  - openjdk9
-  - openjdk10
   - openjdk11
 before_install:
   - rm ~/.m2/settings.xml || true

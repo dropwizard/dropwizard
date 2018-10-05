@@ -302,12 +302,12 @@ HTTP
           minBufferPoolSize: 64 bytes
           bufferPoolIncrement: 1KiB
           maxBufferPoolSize: 64KiB
-          minRequestDataRate: 0
+          minRequestDataPerSecond: '0 bytes'
+          minResponseDataPerSecond: '0 bytes'
           acceptorThreads: 1
           selectorThreads: 2
           acceptQueueSize: 1024
           reuseAddress: true
-          soLingerTime: 345s
           useServerHeader: false
           useDateHeader: true
           useForwardedHeaders: true
@@ -341,20 +341,17 @@ idleTimeout              30 seconds          The maximum idle time for a connect
                                              or when waiting for a new message to be sent on a connection.
                                              This value is interpreted as the maximum time between some progress being made on the
                                              connection. So if a single byte is read or written, then the timeout is reset.
-blockingTimeout          (none)              The timeout applied to blocking operations. This timeout is in addition to
-                                             the `idleTimeout`, and applies to the total operation (as opposed to the
-                                             idle timeout that applies to the time no data is being sent).
 minBufferPoolSize        64 bytes            The minimum size of the buffer pool.
 bufferPoolIncrement      1KiB                The increment by which the buffer pool should be increased.
 maxBufferPoolSize        64KiB               The maximum size of the buffer pool.
-minRequestDataRate       0                   The minimum request data rate in bytes per second; or <= 0 for no limit.
+minRequestDataPerSecond       0                   The minimum request data rate in bytes per second; or <= 0 for no limit.
+minResponseDataPerSecond      0                   The minimum response data rate in bytes per second; or <= 0 for no limit.
 acceptorThreads          (Jetty's default)   The number of worker threads dedicated to accepting connections.
                                              By default is *max(1, min(4, #CPUs/8))*.
 selectorThreads          (Jetty's default)   The number of worker threads dedicated to sending and receiving data.
                                              By default is *max(1, min(4, #CPUs/2))*.
 acceptQueueSize          (OS default)        The size of the TCP/IP accept queue for the listening socket.
 reuseAddress             true                Whether or not ``SO_REUSEADDR`` is enabled on the listening socket.
-soLingerTime             (disabled)          Enable/disable ``SO_LINGER`` with the specified linger time.
 useServerHeader          false               Whether or not to add the ``Server`` header to each response.
 useDateHeader            true                Whether or not to add the ``Date`` header to each response.
 useForwardedHeaders      true                Whether or not to look at ``X-Forwarded-*`` headers added by proxies. See
@@ -370,8 +367,8 @@ httpCompliance           RFC7230             This sets the http compliance level
                                              * RFC2616: Allow header folding.
 ======================== ==================  ======================================================================================
 
-.. _`java.net.Socket#setSoTimeout(int)`: http://docs.oracle.com/javase/7/docs/api/java/net/Socket.html#setSoTimeout(int)
-.. _`ForwardedRequestCustomizer`: http://download.eclipse.org/jetty/stable-9/apidocs/org/eclipse/jetty/server/ForwardedRequestCustomizer.html
+.. _`java.net.Socket#setSoTimeout(int)`: https://docs.oracle.com/javase/8/docs/api/java/net/Socket.html#setSoTimeout-int-
+.. _`ForwardedRequestCustomizer`: https://www.eclipse.org/jetty/javadoc/9.4.12.v20180830/org/eclipse/jetty/server/ForwardedRequestCustomizer.html
 
 .. _`Server::Starter`:  https://github.com/kazuho/p5-Server-Starter
 
@@ -693,6 +690,8 @@ maxFileSize                  (unlimited)                                The maxi
                                                                         expressed in bytes, kilobytes, megabytes, gigabytes, and terabytes by appending B, K, MB, GB, or
                                                                         TB to the numeric value.  Examples include 100MB, 1GB, 1TB.  Sizes can also be spelled out, such
                                                                         as 100 megabytes, 1 gigabyte, 1 terabyte.
+totalSizeCap                 (unlimited)                                Controls the total size of all files.
+                                                                        Oldest archives are deleted asynchronously when the total size cap is exceeded.
 timeZone                     UTC                                        The time zone to which event timestamps will be converted.
 logFormat                    %-5p [%d{ISO8601,UTC}] %c: %m%n%rEx        The Logback pattern with which events will be formatted. See
                                                                         the Logback_ documentation for details.
@@ -843,6 +842,11 @@ JSON layout
       additionalFields:
         service-name: "user-service"
       includesMdcKeys: [userId]
+      flattenMDC: true
+      exception:
+        rootFirst: true
+        depth: full
+        evaluators: [org.apache]
 
 
 =======================  =====================  ================
@@ -869,9 +873,37 @@ includes                 (timestamp, level,
 customFieldNames         (empty)                Map of field name replacements . For example ``(requestTime:request_time, userAgent:user_agent)``.
 additionalFields         (empty)                Map of fields to add in the JSON map.
 includesMdcKeys          (empty)                Set of MDC keys which should be included in the JSON map. By default includes everything.
+flattenMdc               false                  Flatten the MDC to the root of the JSON object instead of nested in the ``mdc`` field.
+exception                (empty)                The :ref:`exception <man-configuration-json-layout-exception>` configuration for the ``exception`` field.
 =======================  =====================  ================
 
 .. _DateTimeFormatter:  https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html
+
+.. _man-configuration-json-layout-exception:
+
+Exception
+.........
+
+.. code-block:: yaml
+
+    layout:
+      type: json
+      exception:
+        rootFirst: false
+        depth: 25
+        evaluators: [org.apache]
+
+
+====================== ===========  ================================
+Name                   Default      Description
+====================== ===========  ================================
+rootFirst              true         Whether the root cause should be displayed first.
+depth                  full         The stack trace depth_.
+evaluators             (empty)      The packages to filter_ from the stacktrace.
+====================== ===========  ================================
+
+.. _depth:  https://logback.qos.ch/manual/layouts.html#ex
+.. _filter:  https://github.com/qos-ch/logback/pull/244
 
 .. _man-configuration-json-access-layout:
 
@@ -921,7 +953,8 @@ includes                 (timestamp, remoteAddress,
                                                       - ``userAgent``         *true*     Whether to include the user agent of the request as the ``userAgent`` field.
                                                       - ``requestParameters`` *false*    Whether to include the request parameters as the ``params`` field.
                                                       - ``requestContent``    *false*    Whether to include the body of the request as the ``requestContent`` field.
-                                                      - ``requestUrl``        *false*    Whether to include the request URL (method, URI, query parameters, protocol) as the ``contentLength`` field.
+                                                      - ``requestUrl``        *false*    Whether to include the request URL (method, URI, query parameters, protocol) as the ``url`` field.
+                                                      - ``pathQuery``         *false*    Whether to include the URI and query parameters of the request as the ``pathQuery`` field.
                                                       - ``remoteHost``        *false*    Whether to include the fully qualified name of the client or the last proxy that sent the request as the ``remoteHost`` field.
                                                       - ``responseContent``   *false*    Whether to include the response body as the ``responseContent`` field.
                                                       - ``serverName``        *false*    Whether to include the name of the server to which the request was sent as the ``serverName`` field.

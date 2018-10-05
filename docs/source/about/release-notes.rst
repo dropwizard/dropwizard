@@ -18,6 +18,7 @@ v2.0.0: Unreleased
 * Fix usage ``@SelfValidating`` with ``@BeanParam`` (`#2334 <https://github.com/dropwizard/dropwizard/pull/2334>`_)
 * Fix resource endpoints injected via DI not being logged on startup (`#2389 <https://github.com/dropwizard/dropwizard/pull/2389>`_)
 * Retired use of deprecated Apache ``StrSubstitutor`` and ``StrLookup`` classes and replaced them with Apache's ``StringSubstitutor`` and ``StringLookup`` (`#2462 <https://github.com/dropwizard/dropwizard/pull/2462>`_)
+* Deprecate ``Bundle`` in favor of ``ConfiguredBundle<T>`` (`#2516 <https://github.com/dropwizard/dropwizard/pull/2516>`_)
 
 .. _rel-1.3.5:
 
@@ -355,6 +356,7 @@ v1.1.0: Mar 21 2017
 * Upgraded to Joda-Time 2.9.7
 * Upgraded to commons-lang3 3.5
 * Upgraded to Apache HTTP Client 4.5.3
+* Upgraded to Jadira Usertype Core 6.0.1.GA
 
 .. _rel-1.0.7:
 

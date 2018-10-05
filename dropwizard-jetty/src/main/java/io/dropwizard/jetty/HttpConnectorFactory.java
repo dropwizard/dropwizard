@@ -120,14 +120,6 @@ import static com.codahale.metrics.MetricRegistry.name;
  *         </td>
  *     </tr>
  *     <tr>
- *         <td>{@code blockingTimeout}</td>
- *         <td>(none)</td>
- *         <td>The timeout applied to blocking operations. This timeout is in addition to the {@code idleTimeout},
- *             and applies to the total operation (as opposed to the idle timeout that applies to the time no data
- *             is being sent).
- *          </td>
- *     </tr>
- *     <tr>
  *         <td>{@code minBufferPoolSize}</td>
  *         <td>64 bytes</td>
  *         <td>The minimum size of the buffer pool.</td>
@@ -165,11 +157,6 @@ import static com.codahale.metrics.MetricRegistry.name;
  *         <td>Whether or not {@code SO_REUSEADDR} is enabled on the listening socket.</td>
  *     </tr>
  *     <tr>
- *         <td>{@code soLingerTime}</td>
- *         <td>(disabled)</td>
- *         <td>Enable/disable {@code SO_LINGER} with the specified linger time.</td>
- *     </tr>
- *     <tr>
  *         <td>{@code useServerHeader}</td>
  *         <td>false</td>
  *         <td>Whether or not to add the {@code Server} header to each response.</td>
@@ -178,6 +165,20 @@ import static com.codahale.metrics.MetricRegistry.name;
  *         <td>{@code useDateHeader}</td>
  *         <td>true</td>
  *         <td>Whether or not to add the {@code Date} header to each response.</td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code minResponseDataPerSecond}</td>
+ *         <td>0 bytes</td>
+ *         <td>
+ *             The minimum response data rate in bytes per second; or &lt;=0 for no limit
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code minRequestDataPerSecond}</td>
+ *         <td>0 bytes</td>
+ *         <td>
+ *             The minimum request data rate in bytes per second; or &lt;=0 for no limit
+ *         </td>
  *     </tr>
  *     <tr>
  *         <td>{@code useForwardedHeaders}</td>
@@ -250,8 +251,13 @@ public class HttpConnectorFactory implements ConnectorFactory {
     @MinDuration(value = 1, unit = TimeUnit.MILLISECONDS)
     private Duration idleTimeout = Duration.seconds(30);
 
-    @Nullable
-    private Duration blockingTimeout;
+    @NotNull
+    @MinSize(0)
+    private Size minResponseDataPerSecond = Size.bytes(0);
+
+    @NotNull
+    @MinSize(0)
+    private Size minRequestDataPerSecond = Size.bytes(0);
 
     @NotNull
     @MinSize(value = 1, unit = SizeUnit.BYTES)
@@ -264,8 +270,6 @@ public class HttpConnectorFactory implements ConnectorFactory {
     @NotNull
     @MinSize(value = 1, unit = SizeUnit.BYTES)
     private Size maxBufferPoolSize = Size.kilobytes(64);
-
-    private long minRequestDataRate = 0L;
 
     @Min(1)
     @UnwrapValidatedValue
@@ -281,8 +285,6 @@ public class HttpConnectorFactory implements ConnectorFactory {
 
     private boolean reuseAddress = true;
 
-    @Nullable
-    private Duration soLingerTime;
     private boolean useServerHeader = false;
     private boolean useDateHeader = true;
     private boolean useForwardedHeaders = true;
@@ -380,17 +382,6 @@ public class HttpConnectorFactory implements ConnectorFactory {
     }
 
     @JsonProperty
-    @Nullable
-    public Duration getBlockingTimeout() {
-        return blockingTimeout;
-    }
-
-    @JsonProperty
-    public void setBlockingTimeout(Duration blockingTimeout) {
-        this.blockingTimeout = blockingTimeout;
-    }
-
-    @JsonProperty
     public Size getMinBufferPoolSize() {
         return minBufferPoolSize;
     }
@@ -421,13 +412,23 @@ public class HttpConnectorFactory implements ConnectorFactory {
     }
 
     @JsonProperty
-    public long getMinRequestDataRate() {
-        return minRequestDataRate;
+    public Size getMinResponseDataPerSecond() {
+        return minResponseDataPerSecond;
     }
 
     @JsonProperty
-    public void setMinRequestDataRate(long minRequestDataRate) {
-        this.minRequestDataRate = minRequestDataRate;
+    public void setMinResponseDataPerSecond(Size minResponseDataPerSecond) {
+        this.minResponseDataPerSecond = minResponseDataPerSecond;
+    }
+
+    @JsonProperty
+    public Size getMinRequestDataPerSecond() {
+        return minRequestDataPerSecond;
+    }
+
+    @JsonProperty
+    public void setMinRequestDataPerSecond(Size minRequestDataPerSecond) {
+        this.minRequestDataPerSecond = minRequestDataPerSecond;
     }
 
     @JsonProperty
@@ -469,17 +470,6 @@ public class HttpConnectorFactory implements ConnectorFactory {
     @JsonProperty
     public void setReuseAddress(boolean reuseAddress) {
         this.reuseAddress = reuseAddress;
-    }
-
-    @JsonProperty
-    @Nullable
-    public Duration getSoLingerTime() {
-        return soLingerTime;
-    }
-
-    @JsonProperty
-    public void setSoLingerTime(Duration soLingerTime) {
-        this.soLingerTime = soLingerTime;
     }
 
     @JsonProperty
@@ -576,9 +566,6 @@ public class HttpConnectorFactory implements ConnectorFactory {
         }
 
         connector.setReuseAddress(reuseAddress);
-        if (soLingerTime != null) {
-            connector.setSoLingerTime((int) soLingerTime.toMilliseconds());
-        }
         connector.setIdleTimeout(idleTimeout.toMilliseconds());
         connector.setName(name);
 
@@ -599,14 +586,13 @@ public class HttpConnectorFactory implements ConnectorFactory {
         httpConfig.setResponseHeaderSize((int) maxResponseHeaderSize.toBytes());
         httpConfig.setSendDateHeader(useDateHeader);
         httpConfig.setSendServerVersion(useServerHeader);
-        httpConfig.setMinRequestDataRate(minRequestDataRate);
+        httpConfig.setMinResponseDataRate(minResponseDataPerSecond.toBytes());
+        httpConfig.setMinRequestDataRate(minRequestDataPerSecond.toBytes());
 
         if (useForwardedHeaders) {
             httpConfig.addCustomizer(new ForwardedRequestCustomizer());
         }
-        if (blockingTimeout != null) {
-            httpConfig.setBlockingTimeout(blockingTimeout.toMilliseconds());
-        }
+
         return httpConfig;
     }
 

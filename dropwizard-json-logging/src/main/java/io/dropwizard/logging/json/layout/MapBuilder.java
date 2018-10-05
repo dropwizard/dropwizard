@@ -1,6 +1,8 @@
 package io.dropwizard.logging.json.layout;
 
 import javax.annotation.Nullable;
+
+import java.util.function.Supplier;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,7 +37,7 @@ public class MapBuilder {
 
     /**
      * Adds the string value to the provided map under the provided field name,
-     * if it's should be included.
+     * if it should be included.
      */
     public MapBuilder add(String fieldName, boolean include, @Nullable String value) {
         if (include && value != null) {
@@ -45,11 +47,39 @@ public class MapBuilder {
     }
 
     /**
+     * Adds the string value to the provided map under the provided field name,
+     * if it should be included. The supplier is only invoked if the field is to be included.
+     */
+    public MapBuilder add(String fieldName, boolean include, Supplier<String> supplier) {
+        if (include) {
+            String value = supplier.get();
+            if (value != null) {
+                map.put(getFieldName(fieldName), value);
+            }
+        }
+        return this;
+    }
+
+    /**
      * Adds the number to the provided map under the provided field name if it's should be included.
      */
-    public MapBuilder add(String fieldName, boolean include, @Nullable Number number) {
+    public MapBuilder addNumber(String fieldName, boolean include, @Nullable Number number) {
         if (include && number != null) {
             map.put(getFieldName(fieldName), number);
+        }
+        return this;
+    }
+
+    /**
+     * Adds the number value to the provided map under the provided field name,
+     * if it should be included. The supplier is only invoked if the field is to be included.
+     */
+    public MapBuilder addNumber(String fieldName, boolean include, Supplier<Number> supplier) {
+        if (include) {
+            Number value = supplier.get();
+            if (value != null) {
+                map.put(getFieldName(fieldName), value);
+            }
         }
         return this;
     }
@@ -63,6 +93,21 @@ public class MapBuilder {
         }
         return this;
     }
+
+    /**
+    * Adds the map value to the provided map under the provided field name, if it should be
+    * included. The supplier is only invoked if the field is to be included.
+    */
+    public MapBuilder addMap(String fieldName, boolean include, Supplier<Map<String, ?>> supplier) {
+        if (include) {
+            Map<String, ?> value = supplier.get();
+            if (value != null && !value.isEmpty()) {
+                map.put(getFieldName(fieldName), value);
+            }
+        }
+        return this;
+    }
+
 
     /**
      * Adds and optionally formats the timestamp to the provided map under the provided field name,

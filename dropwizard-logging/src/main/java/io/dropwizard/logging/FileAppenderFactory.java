@@ -86,6 +86,14 @@ import static java.util.Objects.requireNonNull;
  *         </td>
  *     </tr>
  *     <tr>
+ *         <td>{@code totalSizeCap}</td>
+ *         <td>(unlimited)</td>
+ *         <td>
+ *             Controls the total size of all files. Oldest archives are deleted asynchronously when the total
+ *             size cap is exceeded.
+ *         </td>
+ *     </tr>
+ *     <tr>
  *         <td>{@code timeZone}</td>
  *         <td>{@code UTC}</td>
  *         <td>The time zone to which event timestamps will be converted.</td>
@@ -137,6 +145,9 @@ public class FileAppenderFactory<E extends DeferredProcessingAware> extends Abst
 
     @Nullable
     private Size maxFileSize;
+
+    @Nullable
+    private Size totalSizeCap;
 
     @MinSize(1)
     private Size bufferSize = Size.bytes(FileAppender.DEFAULT_BUFFER_SIZE);
@@ -197,6 +208,17 @@ public class FileAppenderFactory<E extends DeferredProcessingAware> extends Abst
     }
 
     @JsonProperty
+    @Nullable
+    public Size getTotalSizeCap() {
+        return totalSizeCap;
+    }
+
+    @JsonProperty
+    public void setTotalSizeCap(@Nullable Size totalSizeCap) {
+        this.totalSizeCap = totalSizeCap;
+    }
+
+    @JsonProperty
     public Size getBufferSize() {
         return bufferSize;
     }
@@ -213,6 +235,13 @@ public class FileAppenderFactory<E extends DeferredProcessingAware> extends Abst
     @JsonProperty
     public void setImmediateFlush(boolean immediateFlush) {
         this.immediateFlush = immediateFlush;
+    }
+
+    @JsonIgnore
+    @ValidationMethod(message = "totalSizeCap has no effect when using maxFileSize and an archivedLogFilenamePattern without %d, as archivedFileCount implicitly controls the total size cap")
+    public boolean isTotalSizeCapValid() {
+        return !archive || totalSizeCap == null ||
+            !(maxFileSize != null && !requireNonNull(archivedLogFilenamePattern).contains("%d"));
     }
 
     @JsonIgnore
@@ -290,6 +319,10 @@ public class FileAppenderFactory<E extends DeferredProcessingAware> extends Abst
                     final SizeAndTimeBasedRollingPolicy<E> sizeAndTimeBasedRollingPolicy = new SizeAndTimeBasedRollingPolicy<>();
                     sizeAndTimeBasedRollingPolicy.setMaxFileSize(new FileSize(maxFileSize.toBytes()));
                     rollingPolicy = sizeAndTimeBasedRollingPolicy;
+                }
+
+                if (totalSizeCap != null) {
+                    rollingPolicy.setTotalSizeCap(new FileSize(totalSizeCap.toBytes()));
                 }
 
                 rollingPolicy.setContext(context);
