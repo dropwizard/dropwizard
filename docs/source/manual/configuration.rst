@@ -630,6 +630,7 @@ target                 stdout                                   The name of the 
                                                                 Can be ``stdout`` or ``stderr``.
 logFormat              %-5p [%d{ISO8601,UTC}] %c: %m%n%rEx      The Logback pattern with which events will be formatted. See
                                                                 the Logback_ documentation for details.
+                                                                The default log pattern is ```%h %l %u [%t{dd/MMM/yyyy:HH:mm:ss Z,UTC}] "%r" %s %b "%i{Referer}" "%i{User-Agent}" %D```.
 filterFactories        (none)                                   The list of filters to apply to the appender, in order, after
                                                                 the threshold.
 neverBlock             false                                    Prevent the wrapping asynchronous appender from blocking when its underlying queue is full.
@@ -695,6 +696,7 @@ totalSizeCap                 (unlimited)                                Controls
 timeZone                     UTC                                        The time zone to which event timestamps will be converted.
 logFormat                    %-5p [%d{ISO8601,UTC}] %c: %m%n%rEx        The Logback pattern with which events will be formatted. See
                                                                         the Logback_ documentation for details.
+                                                                        The default log pattern is ```%h %l %u [%t{dd/MMM/yyyy:HH:mm:ss Z,UTC}] "%r" %s %b "%i{Referer}" "%i{User-Agent}" %D```.
 filterFactories              (none)                                     The list of filters to apply to the appender, in order, after
                                                                         the threshold.
 neverBlock                   false                                      Prevent the wrapping asynchronous appender from blocking when its underlying queue is full.
@@ -740,6 +742,7 @@ facility                     local0                                 The syslog f
 threshold                    ALL                                    The lowest level of events to write to the file.
 logFormat                    %-5p [%d{ISO8601,UTC}] %c: %m%n%rEx    The Logback pattern with which events will be formatted. See
                                                                     the Logback_ documentation for details.
+                                                                    The default log pattern is ```%h %l %u [%t{dd/MMM/yyyy:HH:mm:ss Z,UTC}] "%r" %s %b "%i{Referer}" "%i{User-Agent}" %D```.
 stackTracePrefix             \t                                     The prefix to use when writing stack trace lines (these are sent
                                                                     to the syslog server separately from the main message)
 filterFactories              (none)                                 The list of filters to apply to the appender, in order, after
