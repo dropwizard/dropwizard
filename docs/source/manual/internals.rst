@@ -10,7 +10,7 @@ Congrats! Then you are ready to have a look into some nitty-gritty details of Dr
 Startup Sequence
 ================
 
-``Application<T extends Configuration>`` is the “Main” class of a dropwizard Application.
+``Application<T extends Configuration>`` is the “Main” class of a Dropwizard Application.
 
 ``application.run(args)`` is the first method to be called on startup - Here is a simplified code snippet of its implementation:
 
@@ -47,7 +47,7 @@ Startup Sequence
 	  this.validatorFactory = Validators.newValidatorFactory();
 	  this.metricRegistry = new MetricRegistry();
 	  this.classLoader = Thread.currentThread().getContextClassLoader();
-	  this.onfigurationFactory = new DefaultConfigurationFactoryFactory<>();
+	  this.configurationFactory = new DefaultConfigurationFactoryFactory<>();
 	  this.healthCheckRegistry = new HealthCheckRegistry();
 	}
 
@@ -132,7 +132,7 @@ Just note the two basic commands are built of a parent, and a sub-class:
 
 The order of operations is therefore:
 
-1. Parse cmdline args, determine subcommand.
+1. Parse cmdline args, determine sub-command.
 2. Run ``ConfiguredCommand``, which get a parameter with the location of a YAML configuration file - parses and validates it.
 3. ``CheckCommand.run()`` runs next, and does almost nothing: it logs ``"Configuration is OK"``
 4. Run ``EnvironmentCommand``:
@@ -151,7 +151,7 @@ The order of operations is therefore:
 Jetty Lifecycle
 ===============
 If you have a component of your app that needs to know when Jetty is going to start, 
-you can implement Managed as described in the dropwizard docs. 
+you can implement Managed as described in the Dropwizard docs.
 
 If you have a component that needs to be signaled that Jetty has started 
 (this happens after all Managed objects' start() methods are called), 
