@@ -20,6 +20,20 @@ v2.0.0: Unreleased
 * Retired use of deprecated Apache ``StrSubstitutor`` and ``StrLookup`` classes and replaced them with Apache's ``StringSubstitutor`` and ``StringLookup`` (`#2462 <https://github.com/dropwizard/dropwizard/pull/2462>`_)
 * Deprecate ``Bundle`` in favor of ``ConfiguredBundle<T>`` (`#2516 <https://github.com/dropwizard/dropwizard/pull/2516>`_)
 
+.. _rel-1.3.7:
+
+v1.3.7: Oct 2, 2018
+===================
+
+* Fix incorrect reading of ``somaxconn`` for TCP backlog on Linux (`#2430 <https://github.com/dropwizard/dropwizard/pull/2430>`_)
+
+.. _rel-1.3.6:
+
+v1.3.6: Oct 1, 2018
+===================
+
+* Fix a DoS attack vulnerability in Jackson: `FasterXML/jackson-databind#2141 <https://github.com/FasterXML/jackson-databind/issues/2141>`_ (`#2511 <https://github.com/dropwizard/dropwizard/pull/2512>`_)
+
 .. _rel-1.3.5:
 
 v1.3.5: Jun 25, 2018
