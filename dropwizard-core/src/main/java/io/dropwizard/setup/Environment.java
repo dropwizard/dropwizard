@@ -57,7 +57,7 @@ public class Environment {
      */
     public Environment(String name,
                        ObjectMapper objectMapper,
-                       Validator validator,
+                       ValidatorFactory validatorFactory,
                        MetricRegistry metricRegistry,
                        @Nullable ClassLoader classLoader,
                        HealthCheckRegistry healthCheckRegistry) {
@@ -65,7 +65,7 @@ public class Environment {
         this.objectMapper = objectMapper;
         this.metricRegistry = metricRegistry;
         this.healthCheckRegistry = healthCheckRegistry;
-        this.validator = validator;
+        this.validator = validatorFactory.getValidator();
 
         this.servletContext = new MutableServletContextHandler();
         servletContext.setClassLoader(classLoader);
@@ -83,7 +83,7 @@ public class Environment {
 
         this.jerseyServletContainer = new JerseyContainerHolder(new JerseyServletContainer(jerseyConfig));
         this.jerseyEnvironment = new JerseyEnvironment(jerseyServletContainer, jerseyConfig);
-
+        this.jerseyEnvironment.register(new InjectValidatorFeature(validatorFactory));
 
         this.healthCheckExecutorService = this.lifecycle().executorService("TimeBoundHealthCheck-pool-%d")
                 .workQueue(new ArrayBlockingQueue<>(1))
@@ -129,10 +129,10 @@ public class Environment {
      */
     public Environment(String name,
                        ObjectMapper objectMapper,
-                       Validator validator,
+                       ValidatorFactory validatorFactory,
                        MetricRegistry metricRegistry,
                        @Nullable ClassLoader classLoader) {
-        this(name, objectMapper, validator, metricRegistry, classLoader, new HealthCheckRegistry());
+        this(name, objectMapper, validatorFactory, metricRegistry, classLoader, new HealthCheckRegistry());
     }
 
     /**

@@ -43,7 +43,7 @@ import static org.junit.Assert.assertEquals;
 
 public class DefaultServerFactoryTest {
     private Environment environment = new Environment("test", Jackson.newObjectMapper(),
-            Validators.newValidator(), new MetricRegistry(),
+            Validators.newValidatorFactory(), new MetricRegistry(),
             ClassLoader.getSystemClassLoader());
     private DefaultServerFactory http;
 
@@ -118,7 +118,7 @@ public class DefaultServerFactoryTest {
         http.setRegisterDefaultExceptionMappers(false);
         assertThat(http.getRegisterDefaultExceptionMappers()).isFalse();
         Environment environment = new Environment("test", Jackson.newObjectMapper(),
-                Validators.newValidator(), new MetricRegistry(),
+                Validators.newValidatorFactory(), new MetricRegistry(),
                 ClassLoader.getSystemClassLoader());
         http.build(environment);
         assertThat(environment.jersey().getResourceConfig().getSingletons())

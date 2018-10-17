@@ -40,7 +40,7 @@ public class DBIClient extends ExternalResource {
     @Override
     protected void before() throws Throwable {
         final Environment environment = new Environment("test", Jackson.newObjectMapper(),
-                Validators.newValidator(), new MetricRegistry(),
+                Validators.newValidatorFactory(), new MetricRegistry(),
                 getClass().getClassLoader());
 
         final DataSourceFactory dataSourceFactory = new DataSourceFactory();

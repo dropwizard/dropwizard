@@ -24,7 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class GuavaOptionalZonedDateTimeTest {
 
     private final Environment env = new Environment("test-guava-zoned-date-time", Jackson.newObjectMapper(),
-            Validators.newValidator(), new MetricRegistry(), null);
+            Validators.newValidatorFactory(), new MetricRegistry(), null);
 
     private TaskDao dao;
 
