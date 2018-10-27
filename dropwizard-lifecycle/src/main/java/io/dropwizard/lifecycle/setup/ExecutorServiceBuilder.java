@@ -18,6 +18,7 @@ import java.util.concurrent.atomic.AtomicLong;
 public class ExecutorServiceBuilder {
     private static Logger log = LoggerFactory.getLogger(ExecutorServiceBuilder.class);
 
+    private static final AtomicLong COUNT = new AtomicLong(0);
     private final LifecycleEnvironment environment;
     private final String nameFormat;
     private int corePoolSize;
@@ -47,11 +48,10 @@ public class ExecutorServiceBuilder {
     }
 
     private static ThreadFactory buildThreadFactory(String nameFormat) {
-        final AtomicLong count = (nameFormat != null) ? new AtomicLong(0) : null;
         return r -> {
             final Thread thread = Executors.defaultThreadFactory().newThread(r);
             if (nameFormat != null) {
-                thread.setName(String.format(Locale.ROOT, nameFormat, count.incrementAndGet()));
+                thread.setName(String.format(Locale.ROOT, nameFormat, COUNT.incrementAndGet()));
             }
             return thread;
         };
