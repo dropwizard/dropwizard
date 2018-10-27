@@ -97,9 +97,9 @@
          see http://www.eclipse.org/jetty/documentation/current/alpn-chapter.html for reference. -->
     <profiles>
         <profile>
-            <id>jdk10</id>
+            <id>jdk9+</id>
             <activation>
-                <jdk>[9, 11]</jdk>
+                <jdk>[9,)</jdk>
             </activation>
             <properties>
                 <argLine>-Duser.language=en -Duser.region=US</argLine>
@@ -505,6 +505,18 @@
                 <property>
                     <name>java.version</name>
                     <value>1.8.0_172</value>
+                </property>
+            </activation>
+            <properties>
+                <alpn-boot.version>8.1.12.v20180117</alpn-boot.version>
+            </properties>
+        </profile>
+        <profile>
+            <id>jdk-1.8.0_181</id>
+            <activation>
+                <property>
+                    <name>java.version</name>
+                    <value>1.8.0_181</value>
                 </property>
             </activation>
             <properties>
