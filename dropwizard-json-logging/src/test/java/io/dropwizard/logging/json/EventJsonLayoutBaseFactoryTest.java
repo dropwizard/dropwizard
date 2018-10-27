@@ -1,20 +1,22 @@
 package io.dropwizard.logging.json;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
-
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.pattern.ThrowableHandlingConverter;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.ThrowableProxy;
-import com.google.common.base.Throwables;
 import io.dropwizard.logging.json.layout.ExceptionFormat;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.regex.Pattern;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.Collections;
+import java.util.regex.Pattern;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
 
 public class EventJsonLayoutBaseFactoryTest {
 
@@ -43,7 +45,7 @@ public class EventJsonLayoutBaseFactoryTest {
         converter.start();
 
         // Verify the original stack includes the excluded packages
-        assertThat(Throwables.getStackTraceAsString(proxy.getThrowable())).contains(packageFilter);
+        assertThat(getStackTraceAsString(proxy.getThrowable())).contains(packageFilter);
 
         String conversion = converter.convert(event);
 
@@ -68,12 +70,18 @@ public class EventJsonLayoutBaseFactoryTest {
 
         String conversion = converter.convert(event);
 
-        int originalSize = Throwables.getStackTraceAsString(proxy.getThrowable()).split(LINE_SEPERATOR).length;
+        int originalSize = getStackTraceAsString(proxy.getThrowable()).split(LINE_SEPERATOR).length;
 
         // Verify that the full stack is included
         assertThat(conversion.split(LINE_SEPERATOR)).hasSize(originalSize);
 
         // Verify that the root is first
         assertThat(conversion).containsPattern(Pattern.compile("r00t.*wrapp3d", Pattern.DOTALL));
+    }
+
+    private static String getStackTraceAsString(Throwable throwable) {
+        StringWriter stringWriter = new StringWriter();
+        throwable.printStackTrace(new PrintWriter(stringWriter));
+        return stringWriter.toString();
     }
 }

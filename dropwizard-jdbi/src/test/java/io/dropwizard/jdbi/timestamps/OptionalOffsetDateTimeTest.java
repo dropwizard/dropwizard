@@ -17,7 +17,9 @@ import org.skife.jdbi.v2.sqlobject.customizers.SingleValueResult;
 
 import java.io.IOException;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.Optional;
+import java.util.TimeZone;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -34,7 +36,13 @@ public class OptionalOffsetDateTimeTest {
         dataSourceFactory.setDriverClass("org.h2.Driver");
         dataSourceFactory.setUrl("jdbc:h2:mem:optional-offset-date-time-" + System.currentTimeMillis() + "?user=sa");
         dataSourceFactory.setInitialSize(1);
-        final DBI dbi = new DBIFactory().build(env, dataSourceFactory, "test");
+        final DBIFactory dbiFactory = new DBIFactory() {
+            @Override
+            protected Optional<TimeZone> databaseTimeZone() {
+                final TimeZone timeZone = TimeZone.getTimeZone(ZoneOffset.UTC);
+                return Optional.of(timeZone);
+            }
+        };        final DBI dbi = dbiFactory.build(env, dataSourceFactory, "test");
         try (Handle h = dbi.open()) {
             h.execute("CREATE TABLE IF NOT EXISTS tasks (" +
                     "id INT PRIMARY KEY, " +
@@ -49,7 +57,7 @@ public class OptionalOffsetDateTimeTest {
 
     @Test
     public void testPresent() {
-        final OffsetDateTime startDate = OffsetDateTime.now();
+        final OffsetDateTime startDate = OffsetDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC);
         final OffsetDateTime endDate = startDate.plusDays(1L);
         dao.insert(1, Optional.of("John Hughes"), startDate, Optional.of(endDate), Optional.empty());
 

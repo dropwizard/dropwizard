@@ -56,8 +56,11 @@ public class Jackson {
     }
 
     private static ObjectMapper configure(ObjectMapper mapper) {
-        mapper.registerModule(new GuavaModule());
-        mapper.registerModule(new GuavaExtrasModule());
+        if (isGuavaOnClassPath()) {
+            mapper.registerModule(new GuavaModule());
+            mapper.registerModule(new GuavaExtrasModule());
+        }
+
         mapper.registerModule(new CaffeineModule());
         mapper.registerModule(new JodaModule());
         mapper.registerModule(new AfterburnerModule());
@@ -71,5 +74,13 @@ public class Jackson {
 
         mapper.registerModule(new SafeJavaTimeModule());
         return mapper;
+    }
+
+    private static boolean isGuavaOnClassPath() {
+        try {
+            return Class.forName("com.google.common.base.Optional") != null;
+        } catch (Exception e) {
+            return false;
+        }
     }
 }

@@ -113,5 +113,10 @@
             <groupId>javax.activation</groupId>
             <artifactId>javax.activation-api</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <optional>true</optional>
+        </dependency>
     </dependencies>
 </project>

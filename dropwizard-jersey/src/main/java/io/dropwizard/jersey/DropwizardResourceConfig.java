@@ -1,7 +1,5 @@
 package io.dropwizard.jersey;
 
-import static java.util.Objects.requireNonNull;
-
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.jersey2.InstrumentedResourceMethodApplicationListener;
 import com.fasterxml.classmate.ResolvedType;
@@ -27,6 +25,7 @@ import org.glassfish.jersey.server.monitoring.RequestEventListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -39,7 +38,8 @@ import java.util.TreeSet;
 import java.util.UUID;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import javax.annotation.Nullable;
+
+import static java.util.Objects.requireNonNull;
 
 public class DropwizardResourceConfig extends ResourceConfig {
     private static final Logger LOGGER = LoggerFactory.getLogger(DropwizardResourceConfig.class);
@@ -67,17 +67,20 @@ public class DropwizardResourceConfig extends ResourceConfig {
         register(loggingListener);
 
         register(new InstrumentedResourceMethodApplicationListener(metricRegistry));
-        register(CacheControlledResponseFeature.class);
-        register(io.dropwizard.jersey.guava.OptionalMessageBodyWriter.class);
-        register(new io.dropwizard.jersey.guava.OptionalParamBinder());
-        register(io.dropwizard.jersey.optional.OptionalMessageBodyWriter.class);
-        register(io.dropwizard.jersey.optional.OptionalDoubleMessageBodyWriter.class);
-        register(io.dropwizard.jersey.optional.OptionalIntMessageBodyWriter.class);
-        register(io.dropwizard.jersey.optional.OptionalLongMessageBodyWriter.class);
+        register(new CacheControlledResponseFeature());
+        register(new io.dropwizard.jersey.guava.OptionalMessageBodyWriter());
+        register(new io.dropwizard.jersey.optional.OptionalMessageBodyWriter());
+        register(new io.dropwizard.jersey.optional.OptionalDoubleMessageBodyWriter());
+        register(new io.dropwizard.jersey.optional.OptionalIntMessageBodyWriter());
+        register(new io.dropwizard.jersey.optional.OptionalLongMessageBodyWriter());
         register(new io.dropwizard.jersey.optional.OptionalParamBinder());
-        register(AbstractParamConverterProvider.class);
+        register(new AbstractParamConverterProvider());
         register(new FuzzyEnumParamConverterProvider());
         register(new SessionFactoryProvider.Binder());
+
+        if (isGuavaOnClassPath()) {
+            register(new io.dropwizard.jersey.guava.OptionalParamBinder());
+        }
     }
 
     /**
@@ -161,6 +164,14 @@ public class DropwizardResourceConfig extends ResourceConfig {
 
     static String cleanUpPath(String path) {
         return PATH_DIRTY_SLASHES.matcher(path).replaceAll("/").trim();
+    }
+
+    private static boolean isGuavaOnClassPath() {
+        try {
+            return Class.forName("com.google.common.base.Optional") != null;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     public static class SpecificBinder extends AbstractBinder {

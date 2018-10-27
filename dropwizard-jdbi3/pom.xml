@@ -43,6 +43,12 @@
         <dependency>
             <groupId>org.jdbi</groupId>
             <artifactId>jdbi3-guava</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>io.dropwizard.metrics</groupId>

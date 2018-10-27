@@ -184,7 +184,6 @@ public class DBIFactory {
     protected void configure(final DBI dbi, final PooledDataSourceFactory configuration) {
         final String driverClazz = configuration.getDriverClass();
 
-        dbi.registerArgumentFactory(new GuavaOptionalArgumentFactory(driverClazz));
         dbi.registerArgumentFactory(new OptionalArgumentFactory(driverClazz));
         dbi.registerArgumentFactory(new OptionalDoubleArgumentFactory());
         dbi.registerArgumentFactory(new OptionalIntArgumentFactory());
@@ -192,9 +191,7 @@ public class DBIFactory {
         dbi.registerColumnMapper(new OptionalDoubleMapper());
         dbi.registerColumnMapper(new OptionalIntMapper());
         dbi.registerColumnMapper(new OptionalLongMapper());
-        dbi.registerContainerFactory(new ImmutableListContainerFactory());
-        dbi.registerContainerFactory(new ImmutableSetContainerFactory());
-        dbi.registerContainerFactory(new GuavaOptionalContainerFactory());
+
         dbi.registerContainerFactory(new OptionalContainerFactory());
 
         final Optional<TimeZone> timeZone = databaseTimeZone();
@@ -204,15 +201,6 @@ public class DBIFactory {
         dbi.registerArgumentFactory(new InstantArgumentFactory(timeZone));
         dbi.registerArgumentFactory(new OffsetDateTimeArgumentFactory(timeZone));
         dbi.registerArgumentFactory(new ZonedDateTimeArgumentFactory(timeZone));
-
-        // Should be registered after GuavaOptionalArgumentFactory to be
-        // processed first
-        dbi.registerArgumentFactory(new GuavaOptionalJodaTimeArgumentFactory(timeZone));
-        dbi.registerArgumentFactory(new GuavaOptionalLocalDateArgumentFactory());
-        dbi.registerArgumentFactory(new GuavaOptionalLocalDateTimeArgumentFactory());
-        dbi.registerArgumentFactory(new GuavaOptionalInstantArgumentFactory(timeZone));
-        dbi.registerArgumentFactory(new GuavaOptionalOffsetTimeArgumentFactory(timeZone));
-        dbi.registerArgumentFactory(new GuavaOptionalZonedTimeArgumentFactory(timeZone));
 
         // Should be registered after OptionalArgumentFactory to be processed
         // first
@@ -229,5 +217,29 @@ public class DBIFactory {
         dbi.registerColumnMapper(new InstantMapper(timeZone));
         dbi.registerColumnMapper(new OffsetDateTimeMapper(timeZone));
         dbi.registerColumnMapper(new ZonedDateTimeMapper(timeZone));
+
+        if (isGuavaOnClassPath()) {
+            dbi.registerArgumentFactory(new GuavaOptionalArgumentFactory(driverClazz));
+            dbi.registerContainerFactory(new ImmutableListContainerFactory());
+            dbi.registerContainerFactory(new ImmutableSetContainerFactory());
+            dbi.registerContainerFactory(new GuavaOptionalContainerFactory());
+
+            // Should be registered after GuavaOptionalArgumentFactory to be
+            // processed first
+            dbi.registerArgumentFactory(new GuavaOptionalJodaTimeArgumentFactory(timeZone));
+            dbi.registerArgumentFactory(new GuavaOptionalLocalDateArgumentFactory());
+            dbi.registerArgumentFactory(new GuavaOptionalLocalDateTimeArgumentFactory());
+            dbi.registerArgumentFactory(new GuavaOptionalInstantArgumentFactory(timeZone));
+            dbi.registerArgumentFactory(new GuavaOptionalOffsetTimeArgumentFactory(timeZone));
+            dbi.registerArgumentFactory(new GuavaOptionalZonedTimeArgumentFactory(timeZone));
+        }
+    }
+
+    private static boolean isGuavaOnClassPath() {
+        try {
+            return Class.forName("com.google.common.base.Optional") != null;
+        } catch (Exception e) {
+            return false;
+        }
     }
 }

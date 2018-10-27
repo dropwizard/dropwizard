@@ -94,8 +94,6 @@ public class DBIFactoryTest {
         assertFalse(cf.isEmpty());
         assertFalse(af.isEmpty());
 
-        // Verify Argument Factory Order
-        assertEquals(GuavaOptionalArgumentFactory.class, af.removeFirst());
         assertEquals(OptionalArgumentFactory.class, af.removeFirst());
         assertEquals(OptionalDoubleArgumentFactory.class, af.removeFirst());
         assertEquals(OptionalIntArgumentFactory.class, af.removeFirst());
@@ -108,19 +106,20 @@ public class DBIFactoryTest {
         assertEquals(OffsetDateTimeArgumentFactory.class, af.removeFirst());
         assertEquals(ZonedDateTimeArgumentFactory.class, af.removeFirst());
 
-        assertEquals(GuavaOptionalJodaTimeArgumentFactory.class, af.removeFirst());
-        assertEquals(GuavaOptionalLocalDateArgumentFactory.class, af.removeFirst());
-        assertEquals(GuavaOptionalLocalDateTimeArgumentFactory.class, af.removeFirst());
-        assertEquals(GuavaOptionalInstantArgumentFactory.class, af.removeFirst());
-        assertEquals(GuavaOptionalOffsetTimeArgumentFactory.class, af.removeFirst());
-        assertEquals(GuavaOptionalZonedTimeArgumentFactory.class, af.removeFirst());
-
         assertEquals(OptionalJodaTimeArgumentFactory.class, af.removeFirst());
         assertEquals(OptionalLocalDateArgumentFactory.class, af.removeFirst());
         assertEquals(OptionalLocalDateTimeArgumentFactory.class, af.removeFirst());
         assertEquals(OptionalInstantArgumentFactory.class, af.removeFirst());
         assertEquals(OptionalOffsetDateTimeArgumentFactory.class, af.removeFirst());
         assertEquals(OptionalZonedDateTimeArgumentFactory.class, af.removeFirst());
+
+        assertEquals(GuavaOptionalArgumentFactory.class, af.removeFirst());
+        assertEquals(GuavaOptionalJodaTimeArgumentFactory.class, af.removeFirst());
+        assertEquals(GuavaOptionalLocalDateArgumentFactory.class, af.removeFirst());
+        assertEquals(GuavaOptionalLocalDateTimeArgumentFactory.class, af.removeFirst());
+        assertEquals(GuavaOptionalInstantArgumentFactory.class, af.removeFirst());
+        assertEquals(GuavaOptionalOffsetTimeArgumentFactory.class, af.removeFirst());
+        assertEquals(GuavaOptionalZonedTimeArgumentFactory.class, af.removeFirst());
 
         // Verify Column Mapper Order
         assertEquals(OptionalDoubleMapper.class, cm.removeFirst());
@@ -135,10 +134,10 @@ public class DBIFactoryTest {
         assertEquals(ZonedDateTimeMapper.class, cm.removeFirst());
 
         // Verify Container Factory Order
+        assertEquals(OptionalContainerFactory.class, cf.removeFirst());
         assertEquals(ImmutableListContainerFactory.class, cf.removeFirst());
         assertEquals(ImmutableSetContainerFactory.class, cf.removeFirst());
         assertEquals(GuavaOptionalContainerFactory.class, cf.removeFirst());
-        assertEquals(OptionalContainerFactory.class, cf.removeFirst());
 
         // Verify we have accounted for everything
         assertTrue(cm.isEmpty());

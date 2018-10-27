@@ -117,6 +117,17 @@ public class JdbiFactory {
     protected void configure(final Jdbi jdbi) {
         jdbi.installPlugin(new SqlObjectPlugin());
         jdbi.installPlugin(new JodaTimePlugin());
-        jdbi.installPlugin(new GuavaPlugin());
+
+        if (isGuavaOnClassPath()) {
+            jdbi.installPlugin(new GuavaPlugin());
+        }
+    }
+
+    private static boolean isGuavaOnClassPath() {
+        try {
+            return Class.forName("com.google.common.base.Optional") != null;
+        } catch (Exception e) {
+            return false;
+        }
     }
 }

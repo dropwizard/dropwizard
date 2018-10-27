@@ -25,12 +25,25 @@ public class BaseValidator {
      * org.hibernate.validator.spi.valuehandling.ValidatedValueUnwrapper} registered.
      */
     public static HibernateValidatorConfiguration newConfiguration() {
-        return Validation
-            .byProvider(HibernateValidator.class)
-            .configure()
-            .addValidatedValueHandler(new GuavaOptionalValidatedValueUnwrapper())
-            .addValidatedValueHandler(new OptionalDoubleValidatedValueUnwrapper())
-            .addValidatedValueHandler(new OptionalIntValidatedValueUnwrapper())
-            .addValidatedValueHandler(new OptionalLongValidatedValueUnwrapper());
+        final HibernateValidatorConfiguration configuration = Validation
+                .byProvider(HibernateValidator.class)
+                .configure()
+                .addValidatedValueHandler(new OptionalDoubleValidatedValueUnwrapper())
+                .addValidatedValueHandler(new OptionalIntValidatedValueUnwrapper())
+                .addValidatedValueHandler(new OptionalLongValidatedValueUnwrapper());
+
+        if (isGuavaOptionalOnClassPath()) {
+            configuration.addValidatedValueHandler(new GuavaOptionalValidatedValueUnwrapper());
+        }
+
+        return configuration;
+    }
+
+    private static boolean isGuavaOptionalOnClassPath() {
+        try {
+            return Class.forName("com.google.common.base.Optional") != null;
+        } catch (Exception e) {
+            return false;
+        }
     }
 }
