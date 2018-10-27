@@ -11,10 +11,10 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.atomic.AtomicLong;
-import javax.annotation.Nullable;
 
 public class ScheduledExecutorServiceBuilder {
 
+    private static final AtomicLong COUNT = new AtomicLong(0);
     private final LifecycleEnvironment environment;
     private final String nameFormat;
     private int poolSize;
@@ -38,12 +38,10 @@ public class ScheduledExecutorServiceBuilder {
     }
 
     private static ThreadFactory buildThreadFactory(String nameFormat, boolean daemon) {
-        @Nullable
-        final AtomicLong count = (nameFormat != null) ? new AtomicLong(0) : null;
         return r -> {
             final Thread thread = Executors.defaultThreadFactory().newThread(r);
-            if (nameFormat != null && count != null) {
-                thread.setName(String.format(Locale.ROOT, nameFormat, count.incrementAndGet()));
+            if (nameFormat != null) {
+                thread.setName(String.format(Locale.ROOT, nameFormat, COUNT.incrementAndGet()));
             }
             thread.setDaemon(daemon);
             return thread;
