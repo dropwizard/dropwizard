@@ -42,7 +42,7 @@ public class ScheduledExecutorServiceBuilder {
         final AtomicLong count = (nameFormat != null) ? new AtomicLong(0) : null;
         return r -> {
             final Thread thread = Executors.defaultThreadFactory().newThread(r);
-            if (nameFormat != null) {
+            if (nameFormat != null && count != null) {
                 thread.setName(String.format(Locale.ROOT, nameFormat, count.incrementAndGet()));
             }
             thread.setDaemon(daemon);
