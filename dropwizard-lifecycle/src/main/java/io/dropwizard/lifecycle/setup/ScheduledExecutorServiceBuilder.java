@@ -11,6 +11,7 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.atomic.AtomicLong;
+import javax.annotation.Nullable;
 
 public class ScheduledExecutorServiceBuilder {
 
@@ -37,6 +38,7 @@ public class ScheduledExecutorServiceBuilder {
     }
 
     private static ThreadFactory buildThreadFactory(String nameFormat, boolean daemon) {
+        @Nullable
         final AtomicLong count = (nameFormat != null) ? new AtomicLong(0) : null;
         return r -> {
             final Thread thread = Executors.defaultThreadFactory().newThread(r);
