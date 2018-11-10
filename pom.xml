@@ -385,6 +385,8 @@
                 <jdk>[9,)</jdk>
             </activation>
             <properties>
+                <!-- https://github.com/jacoco/jacoco/issues/663 -->
+                <jacoco.skip>true</jacoco.skip>
                 <maven.compiler.release>8</maven.compiler.release>
             </properties>
         </profile>
