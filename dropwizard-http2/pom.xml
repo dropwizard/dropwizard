@@ -13,21 +13,9 @@
 
     <properties>
         <!-- Default alpn-boot version. See <profiles> for specific profiles. -->
-        <alpn-boot.version>8.1.12.v20180117</alpn-boot.version>
+        <alpn-boot.version>8.1.13.v20181017</alpn-boot.version>
+        <argLine>"-Xbootclasspath/p:/${user.home}/.m2/repository/org/mortbay/jetty/alpn/alpn-boot/${alpn-boot.version}/alpn-boot-${alpn-boot.version}.jar" -Duser.language=en -Duser.region=US</argLine>
     </properties>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <argLine>-Xbootclasspath/p:/"${user.home}/.m2/repository/org/mortbay/jetty/alpn/alpn-boot/${alpn-boot.version}/alpn-boot-${alpn-boot.version}.jar"
-                             -Duser.language=en -Duser.region=US</argLine>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 
     <dependencyManagement>
         <dependencies>
@@ -478,6 +466,66 @@
             </activation>
             <properties>
                 <alpn-boot.version>8.1.12.v20180117</alpn-boot.version>
+            </properties>
+        </profile>
+        <profile>
+            <id>jdk-1.8.0_171</id>
+            <activation>
+                <property>
+                    <name>java.version</name>
+                    <value>1.8.0_171</value>
+                </property>
+            </activation>
+            <properties>
+                <alpn-boot.version>8.1.12.v20180117</alpn-boot.version>
+            </properties>
+        </profile>
+        <profile>
+            <id>jdk-1.8.0_172</id>
+            <activation>
+                <property>
+                    <name>java.version</name>
+                    <value>1.8.0_172</value>
+                </property>
+            </activation>
+            <properties>
+                <alpn-boot.version>8.1.12.v20180117</alpn-boot.version>
+            </properties>
+        </profile>
+        <profile>
+            <id>jdk-1.8.0_181</id>
+            <activation>
+                <property>
+                    <name>java.version</name>
+                    <value>1.8.0_181</value>
+                </property>
+            </activation>
+            <properties>
+                <alpn-boot.version>8.1.12.v20180117</alpn-boot.version>
+            </properties>
+        </profile>
+        <profile>
+            <id>jdk-1.8.0_191</id>
+            <activation>
+                <property>
+                    <name>java.version</name>
+                    <value>1.8.0_191</value>
+                </property>
+            </activation>
+            <properties>
+                <alpn-boot.version>8.1.13.v20181017</alpn-boot.version>
+            </properties>
+        </profile>
+        <profile>
+            <id>jdk-1.8.0_192</id>
+            <activation>
+                <property>
+                    <name>java.version</name>
+                    <value>1.8.0_192</value>
+                </property>
+            </activation>
+            <properties>
+                <alpn-boot.version>8.1.13.v20181017</alpn-boot.version>
             </properties>
         </profile>
     </profiles>
