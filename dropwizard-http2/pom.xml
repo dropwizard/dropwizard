@@ -13,7 +13,7 @@
 
     <properties>
         <!-- Default alpn-boot version. See <profiles> for specific profiles. -->
-        <alpn-boot.version>8.1.12.v20180117</alpn-boot.version>
+        <alpn-boot.version>8.1.13.v20181017</alpn-boot.version>
         <argLine>"-Xbootclasspath/p:/${user.home}/.m2/repository/org/mortbay/jetty/alpn/alpn-boot/${alpn-boot.version}/alpn-boot-${alpn-boot.version}.jar" -Duser.language=en -Duser.region=US</argLine>
     </properties>
 
@@ -521,6 +521,30 @@
             </activation>
             <properties>
                 <alpn-boot.version>8.1.12.v20180117</alpn-boot.version>
+            </properties>
+        </profile>
+        <profile>
+            <id>jdk-1.8.0_191</id>
+            <activation>
+                <property>
+                    <name>java.version</name>
+                    <value>1.8.0_191</value>
+                </property>
+            </activation>
+            <properties>
+                <alpn-boot.version>8.1.13.v20181017</alpn-boot.version>
+            </properties>
+        </profile>
+        <profile>
+            <id>jdk-1.8.0_192</id>
+            <activation>
+                <property>
+                    <name>java.version</name>
+                    <value>1.8.0_192</value>
+                </property>
+            </activation>
+            <properties>
+                <alpn-boot.version>8.1.13.v20181017</alpn-boot.version>
             </properties>
         </profile>
     </profiles>
