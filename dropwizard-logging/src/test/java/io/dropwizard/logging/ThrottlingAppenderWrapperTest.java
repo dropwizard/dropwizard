@@ -95,6 +95,8 @@ public class ThrottlingAppenderWrapperTest {
         }
 
         this.bos.reset();
+
+        new DefaultLoggingFactory().configure(new MetricRegistry(), "test-logger");
     }
 
     @Test
