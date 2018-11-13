@@ -15,7 +15,6 @@ It includes:
 * Jersey, a full-featured RESTful web framework.
 * Jackson, the best JSON library for the JVM.
 * Metrics, an excellent library for application metrics.
-* Guava, Google's excellent utility library.
 * Logback, the successor to Log4j, Java's most widely-used logging framework.
 * Hibernate Validator, the reference implementation of the Java Bean Validation standard.
 
@@ -1827,6 +1826,6 @@ your application resources are served from one ``Servlet``
 enable the following functionality:
 
     * Resource method requests with ``@Timed``, ``@Metered``, ``@ExceptionMetered`` are delegated to special dispatchers which decorate the metric telemetry
-    * Resources that return Guava Optional are unboxed. Present returns underlying type, and non-present 404s
+    * Resources that return Optional are unboxed. Present returns underlying type, and non-present 404s
     * Resource methods that are annotated with ``@CacheControl`` are delegated to a special dispatcher that decorates on the cache control headers
     * Enables using Jackson to parse request entities into objects and generate response entities from objects, all while performing validation
