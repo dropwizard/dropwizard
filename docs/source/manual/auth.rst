@@ -57,14 +57,14 @@ server, for example), Dropwizard provides a decorator class which provides cachi
                                metricRegistry, simpleAuthenticator,
                                config.getAuthenticationCachePolicy());
 
-Dropwizard can parse Guava's ``CacheBuilderSpec`` from the configuration policy, allowing your
+Dropwizard can parse Caffeine's ``CaffeineSpec`` from the configuration policy, allowing your
 configuration file to look like this:
 
 .. code-block:: yaml
 
     authenticationCachePolicy: maximumSize=10000, expireAfterAccess=10m
 
-This caches up to 10,000 principals with an LRU policy, evicting stale entries after 10 minutes.
+This caches up to 10,000 principals, evicting stale entries after 10 minutes.
 
 .. _man-auth-authorizer:
 
