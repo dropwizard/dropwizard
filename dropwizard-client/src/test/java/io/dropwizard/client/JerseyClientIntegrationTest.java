@@ -7,6 +7,7 @@ import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 import io.dropwizard.jackson.Jackson;
+import io.dropwizard.util.Duration;
 import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.protocol.HttpContext;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
@@ -192,6 +193,10 @@ public class JerseyClientIntegrationTest {
     }
 
     private void postRequest(JerseyClientConfiguration configuration) {
+        // Avoid flakiness with CI by increasing timeouts
+        configuration.setTimeout(Duration.seconds(10));
+        configuration.setConnectionTimeout(Duration.seconds(10));
+
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Client jersey = new JerseyClientBuilder(new MetricRegistry())
                 .using(executor, JSON_MAPPER)
