@@ -5,12 +5,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
+import io.dropwizard.configuration.ConfigurationException;
 import io.dropwizard.configuration.JsonConfigurationFactory;
+import io.dropwizard.configuration.YamlConfigurationFactory;
+import io.dropwizard.jackson.Jackson;
 import io.dropwizard.servlets.tasks.PostBodyTask;
 import io.dropwizard.servlets.tasks.Task;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import io.dropwizard.testing.DropwizardTestSupportTest.TestConfiguration;
+import io.dropwizard.validation.BaseValidator;
 
 import org.hibernate.validator.constraints.NotEmpty;
 import org.junit.AfterClass;
@@ -23,6 +26,9 @@ import javax.ws.rs.Path;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
+
+import java.io.File;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Collections;
 import java.util.List;
@@ -94,18 +100,27 @@ public class DropwizardTestSupportTest {
         assertThat(response).isEqualTo("Custom message");
     }
     
-    @Test(expected=ExpectedException.class)
-    public void isCustomFactoryCalled() {
-        new DropwizardTestSupport<>(
-        	FailingApplication.class, 
-            resourceFilePath("test-config.yaml")
-        ).before();
+    @Test
+    public void isCustomFactoryCalled() throws IOException, ConfigurationException {
+        //load the test-config so that we can call the support with an explicit config
+        TestConfiguration config = new YamlConfigurationFactory<>(
+            TestConfiguration.class, 
+            BaseValidator.newValidator(),
+            Jackson.newObjectMapper(),
+            "dw"
+        ).build(new File(resourceFilePath("test-config.yaml")));
+        
+        DropwizardTestSupport<TestConfiguration> support = new DropwizardTestSupport<>(
+            FailingApplication.class, 
+            config
+        );
+        try {
+            support.before();
+        } finally {
+            support.after();
+        }
     }
 
-    public static class ExpectedException extends RuntimeException {
-        private static final long serialVersionUID = 1L;
-    }
-    
     public static class FailingApplication extends Application<TestConfiguration> {
         
         @Override
@@ -121,7 +136,7 @@ public class DropwizardTestSupportTest {
 
         public FailingConfigurationFactory(Class<TestConfiguration> klass, Validator validator, ObjectMapper objectMapper, String propertyPrefix) {
             super(klass, validator, objectMapper, propertyPrefix);
-            throw new ExpectedException();
+            throw new IllegalStateException();
         }
         
     }
