@@ -1,16 +1,23 @@
 package io.dropwizard.testing;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
+import io.dropwizard.configuration.JsonConfigurationFactory;
 import io.dropwizard.servlets.tasks.PostBodyTask;
 import io.dropwizard.servlets.tasks.Task;
+import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import io.dropwizard.testing.DropwizardTestSupportTest.TestConfiguration;
+
 import org.hibernate.validator.constraints.NotEmpty;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import javax.validation.Validator;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.client.ClientBuilder;
@@ -85,6 +92,38 @@ public class DropwizardTestSupportTest {
             .post(Entity.entity("Custom message", MediaType.TEXT_PLAIN), String.class);
 
         assertThat(response).isEqualTo("Custom message");
+    }
+    
+    @Test(expected=ExpectedException.class)
+    public void isCustomFactoryCalled() {
+        new DropwizardTestSupport<>(
+        	FailingApplication.class, 
+            resourceFilePath("test-config.yaml")
+        ).before();
+    }
+
+    public static class ExpectedException extends RuntimeException {
+        private static final long serialVersionUID = 1L;
+    }
+    
+    public static class FailingApplication extends Application<TestConfiguration> {
+        
+        @Override
+        public void initialize(Bootstrap<TestConfiguration> bootstrap) {
+            bootstrap.setConfigurationFactoryFactory(FailingConfigurationFactory::new);
+        }
+        
+        @Override
+        public void run(TestConfiguration configuration, Environment environment) {}
+    }
+    
+    public static class FailingConfigurationFactory extends JsonConfigurationFactory<TestConfiguration> {
+
+        public FailingConfigurationFactory(Class<TestConfiguration> klass, Validator validator, ObjectMapper objectMapper, String propertyPrefix) {
+            super(klass, validator, objectMapper, propertyPrefix);
+            throw new ExpectedException();
+        }
+        
     }
 
     public static class TestApplication extends Application<TestConfiguration> {
