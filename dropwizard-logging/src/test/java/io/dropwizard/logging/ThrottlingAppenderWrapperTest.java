@@ -151,11 +151,11 @@ public class ThrottlingAppenderWrapperTest {
             logger.info("{} {}", APP_LOG_PREFIX, i);
         }
 
-        final long elapsed = System.nanoTime() - start;
-
         // We need to sleep for at least message duration to ensure our line
         // will be written and thus invoke the countdown on the latch.
         Thread.sleep(messageRate.toMilliseconds() + 1L);
+
+        final long elapsed = System.nanoTime() - start;
 
         final LogWait lwait = new LogWait(1);
         logger.info("Log termination {}", lwait);
