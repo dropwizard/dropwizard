@@ -1,21 +1,34 @@
 package io.dropwizard.testing;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
+import io.dropwizard.configuration.ConfigurationException;
+import io.dropwizard.configuration.JsonConfigurationFactory;
+import io.dropwizard.configuration.YamlConfigurationFactory;
+import io.dropwizard.jackson.Jackson;
 import io.dropwizard.servlets.tasks.PostBodyTask;
 import io.dropwizard.servlets.tasks.Task;
+import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import io.dropwizard.validation.BaseValidator;
+
 import org.hibernate.validator.constraints.NotEmpty;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import javax.validation.Validator;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
+
+import java.io.File;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Collections;
 import java.util.List;
@@ -85,6 +98,47 @@ public class DropwizardTestSupportTest {
             .post(Entity.entity("Custom message", MediaType.TEXT_PLAIN), String.class);
 
         assertThat(response).isEqualTo("Custom message");
+    }
+    
+    @Test
+    public void isCustomFactoryCalled() throws IOException, ConfigurationException {
+        //load the test-config so that we can call the support with an explicit config
+        TestConfiguration config = new YamlConfigurationFactory<>(
+            TestConfiguration.class, 
+            BaseValidator.newValidator(),
+            Jackson.newObjectMapper(),
+            "dw"
+        ).build(new File(resourceFilePath("test-config.yaml")));
+        
+        DropwizardTestSupport<TestConfiguration> support = new DropwizardTestSupport<>(
+            FailingApplication.class, 
+            config
+        );
+        try {
+            support.before();
+        } finally {
+            support.after();
+        }
+    }
+
+    public static class FailingApplication extends Application<TestConfiguration> {
+        
+        @Override
+        public void initialize(Bootstrap<TestConfiguration> bootstrap) {
+            bootstrap.setConfigurationFactoryFactory(FailingConfigurationFactory::new);
+        }
+        
+        @Override
+        public void run(TestConfiguration configuration, Environment environment) {}
+    }
+    
+    public static class FailingConfigurationFactory extends JsonConfigurationFactory<TestConfiguration> {
+
+        public FailingConfigurationFactory(Class<TestConfiguration> klass, Validator validator, ObjectMapper objectMapper, String propertyPrefix) {
+            super(klass, validator, objectMapper, propertyPrefix);
+            throw new IllegalStateException();
+        }
+        
     }
 
     public static class TestApplication extends Application<TestConfiguration> {

@@ -218,6 +218,9 @@ public class DropwizardTestSupport<C extends Configuration> {
                     }
                 }
             };
+
+            getApplication().initialize(bootstrap);
+
             if (explicitConfig) {
                 bootstrap.setConfigurationFactoryFactory((klass, validator, objectMapper, propertyPrefix) ->
                     new POJOConfigurationFactory<>(getConfiguration()));
@@ -226,7 +229,6 @@ public class DropwizardTestSupport<C extends Configuration> {
                     new YamlConfigurationFactory<>(klass, validator, objectMapper, customPropertyPrefix.get()));
             }
 
-            getApplication().initialize(bootstrap);
             final Command command = commandInstantiator.apply(application);
 
             final Map<String, Object> file;
