@@ -1,6 +1,8 @@
 package io.dropwizard.server;
 
 import com.codahale.metrics.MetricRegistry;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.io.CharStreams;
 import io.dropwizard.configuration.YamlConfigurationFactory;
@@ -39,6 +41,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.junit.Assert.assertEquals;
 
 public class DefaultServerFactoryTest {
@@ -217,6 +220,20 @@ public class DefaultServerFactoryTest {
 
         assertEquals(http.getAdminContextPath(), environment.getAdminContext().getContextPath());
         assertEquals(http.getApplicationContextPath(), environment.getApplicationContext().getContextPath());
+    }
+
+    @Test
+    public void testDeserializeWithoutJsonAutoDetect() {
+        final ObjectMapper objectMapper = Jackson.newObjectMapper()
+            .setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE);
+
+        assertThatCode(() -> new YamlConfigurationFactory<>(
+            DefaultServerFactory.class,
+            BaseValidator.newValidator(),
+            objectMapper,
+            "dw"
+            ).build(new File(Resources.getResource("yaml/server.yml").toURI()))
+        ).doesNotThrowAnyException();
     }
 
     @Path("/test")

@@ -446,6 +446,7 @@ public abstract class AbstractServerFactory implements ServerFactory {
         return registerDefaultExceptionMappers;
     }
 
+    @JsonProperty
     public void setRegisterDefaultExceptionMappers(Boolean registerDefaultExceptionMappers) {
         this.registerDefaultExceptionMappers = registerDefaultExceptionMappers;
     }
@@ -454,6 +455,7 @@ public abstract class AbstractServerFactory implements ServerFactory {
         return detailedJsonProcessingExceptionMapper;
     }
 
+    @JsonProperty
     public void setDetailedJsonProcessingExceptionMapper(Boolean detailedJsonProcessingExceptionMapper) {
         this.detailedJsonProcessingExceptionMapper = detailedJsonProcessingExceptionMapper;
     }
