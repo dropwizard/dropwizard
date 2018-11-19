@@ -36,6 +36,11 @@ import java.util.List;
  *         <td>No reporters.</td>
  *         <td>A list of {@link ReporterFactory reporters} to report metrics.</td>
  *     </tr>
+ *     <tr>
+ *         <td>reportOnStop</td>
+ *         <td>{@code false}</td>
+ *         <td>To report metrics one last time when stopping Dropwizard.</td>
+ *     </tr>
  * </table>
  */
 public class MetricsFactory {
