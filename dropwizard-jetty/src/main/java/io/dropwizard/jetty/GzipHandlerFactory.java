@@ -3,6 +3,7 @@ package io.dropwizard.jetty;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.util.Size;
 import org.eclipse.jetty.server.Handler;
+import org.eclipse.jetty.server.handler.gzip.GzipHandler;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.Max;
@@ -28,8 +29,8 @@ import static java.util.Objects.requireNonNull;
  *     <tr>
  *         <td>{@code enabled}</td>
  *         <td>true</td>
- *         <td>If true, all requests with `gzip` or `deflate` in the `Accept-Encoding` header will have their
- *             response entities compressed and requests with `gzip` or `deflate` in the `Content-Encoding`
+ *         <td>If true, all requests with `gzip` in the `Accept-Encoding` header will have their
+ *             response entities compressed and requests with `gzip` in the `Content-Encoding`
  *             header will have their request entities decompressed.</td>
  *     </tr>
  *     <tr>
@@ -81,12 +82,12 @@ import static java.util.Objects.requireNonNull;
  *     <tr>
  *         <td>{@code deflateCompressionLevel}</td>
  *         <td>-1</td>
- *         <td>The compression level used for ZLIB deflation(compression).</td>
+ *         <td>The compression level used for deflation(compression).</td>
  *     </tr>
  *     <tr>
  *         <td>{@code gzipCompatibleInflation}</td>
  *         <td>true</td>
- *         <td>If true, then ZLIB inflation(decompression) will be performed in the GZIP-compatible mode.</td>
+ *         <td>This option is unused and deprecated as compressed requests without header info are unsupported</td>
  *     </tr>
  * </table>
  */
@@ -188,11 +189,18 @@ public class GzipHandlerFactory {
         this.deflateCompressionLevel = level;
     }
 
+    /**
+     * @deprecated  gzip handler no longer supports inflate streams
+     */
     @JsonProperty
     public boolean isGzipCompatibleInflation() {
         return gzipCompatibleInflation;
     }
 
+    /**
+     * @deprecated  gzip handler no longer supports inflate streams
+     */
+    @Deprecated
     @JsonProperty
     public void setGzipCompatibleInflation(boolean gzipCompatibleInflation) {
         this.gzipCompatibleInflation = gzipCompatibleInflation;
@@ -249,11 +257,11 @@ public class GzipHandlerFactory {
         this.syncFlush = syncFlush;
     }
 
-    public BiDiGzipHandler build(@Nullable Handler handler) {
-        final BiDiGzipHandler gzipHandler = new BiDiGzipHandler();
+    public GzipHandler build(@Nullable Handler handler) {
+        final GzipHandler gzipHandler = new GzipHandler();
         gzipHandler.setHandler(handler);
         gzipHandler.setMinGzipSize((int) minimumEntitySize.toBytes());
-        gzipHandler.setInputBufferSize((int) bufferSize.toBytes());
+        gzipHandler.setInflateBufferSize((int) bufferSize.toBytes());
         gzipHandler.setCompressionLevel(deflateCompressionLevel);
         gzipHandler.setSyncFlush(syncFlush);
 
@@ -278,7 +286,6 @@ public class GzipHandlerFactory {
         }
 
         gzipHandler.setExcludedAgentPatterns(excludedUserAgentPatterns.toArray(new String[0]));
-        gzipHandler.setInflateNoWrap(gzipCompatibleInflation);
 
         return gzipHandler;
     }
