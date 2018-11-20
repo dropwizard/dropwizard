@@ -17,6 +17,8 @@ v2.0.0: Unreleased
 * Fix ``UUIDParams`` accepting input of incorrect length (`#2382 <https://github.com/dropwizard/dropwizard/pull/2382>`_)
 * Fix usage ``@SelfValidating`` with ``@BeanParam`` (`#2334 <https://github.com/dropwizard/dropwizard/pull/2334>`_)
 * Fix resource endpoints injected via DI not being logged on startup (`#2389 <https://github.com/dropwizard/dropwizard/pull/2389>`_)
+* Deflate content encoded requests no longer accepted (`#2566 <https://github.com/dropwizard/dropwizard/pull/2566>`_)
+* Gzipped content encoded requests and responses are compatible with Servlet 3.1 and Async IO (`#2566 <https://github.com/dropwizard/dropwizard/pull/2566>`_)
 * Retired use of deprecated Apache ``StrSubstitutor`` and ``StrLookup`` classes and replaced them with Apache's ``StringSubstitutor`` and ``StringLookup`` (`#2462 <https://github.com/dropwizard/dropwizard/pull/2462>`_)
 * Deprecate ``Bundle`` in favor of ``ConfiguredBundle<T>`` (`#2516 <https://github.com/dropwizard/dropwizard/pull/2516>`_)
 
