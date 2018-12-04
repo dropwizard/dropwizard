@@ -1680,6 +1680,26 @@ This gets converted into this JSON:
 
 .. _man-core-representations-streaming:
 
+Unknown properties
+~~~~~~~~~~~~~~~~~~
+
+If the name of a JSON property cannot be mapped to a Java property (or otherwise handled), that
+JSON property will simply be ignored.
+
+You can change this behavior by configuring Dropwizard's object mapper:
+
+.. code-block:: java
+
+    public void initialize(Bootstrap<ExampleConfiguration> bootstrap) {
+        bootstrap.getObjectMapper().enable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+    }
+
+.. note::
+
+    The YAML configuration parser will fail on unknown properties regardless of the object mapper
+    configuration.
+
+
 Streaming Output
 ----------------
 
