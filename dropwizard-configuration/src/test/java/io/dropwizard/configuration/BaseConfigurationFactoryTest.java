@@ -428,21 +428,6 @@ public abstract class BaseConfigurationFactoryTest {
     }
 
     @Test
-    public void printsDidYouMeanOnUnrecognizedField() throws Exception {
-        assertThatThrownBy(() -> factory.build(typoFile))
-            .isInstanceOf(ConfigurationParsingException.class)
-            .hasMessage(String.format("%s has an error:%n" +
-                "  * Unrecognized field at: propertis%n" +
-                "    Did you mean?:%n" +
-                "      - properties%n" +
-                "      - servers%n" +
-                "      - type%n" +
-                "      - name%n" +
-                "      - age%n" +
-                "        [2 more]%n", typoFile));
-    }
-
-    @Test
     public void incorrectTypeIsFound() throws Exception {
         assertThatThrownBy(() -> factory.build(wrongTypeFile))
             .isInstanceOf(ConfigurationParsingException.class)
