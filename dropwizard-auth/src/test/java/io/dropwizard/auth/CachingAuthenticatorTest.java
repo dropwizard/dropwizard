@@ -1,14 +1,19 @@
 package io.dropwizard.auth;
 
 import com.codahale.metrics.MetricRegistry;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.CaffeineSpec;
+import com.google.common.util.concurrent.MoreExecutors;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;
+import org.mockito.stubbing.Answer;
 
 import java.security.Principal;
 import java.util.Collections;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -20,10 +25,19 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class CachingAuthenticatorTest {
+
+    private final Authenticator<String, Principal> underlying;
+    private final CachingAuthenticator<String, Principal> cached;
+
     @SuppressWarnings("unchecked")
-    private final Authenticator<String, Principal> underlying = mock(Authenticator.class);
-    private final CachingAuthenticator<String, Principal> cached =
-        new CachingAuthenticator<>(new MetricRegistry(), underlying, CaffeineSpec.parse("maximumSize=1"));
+    public CachingAuthenticatorTest() {
+        super();
+
+        final Caffeine<Object, Object> caff = Caffeine.from(CaffeineSpec.parse("maximumSize=1"))
+            .executor(MoreExecutors.directExecutor());
+        this.underlying = mock(Authenticator.class);
+        this.cached = new CachingAuthenticator<>(new MetricRegistry(), this.underlying, caff);
+    }
 
     @Before
     public void setUp() throws Exception {
@@ -32,25 +46,42 @@ public class CachingAuthenticatorTest {
 
     @Test
     public void cachesTheFirstReturnedPrincipal() throws Exception {
-        assertThat(cached.authenticate("credentials")).isEqualTo(Optional.<Principal>of(new PrincipalImpl("principal")));
-        assertThat(cached.authenticate("credentials")).isEqualTo(Optional.<Principal>of(new PrincipalImpl("principal")));
+        assertThat(cached.authenticate("credentials")).isEqualTo(Optional.<Principal> of(new PrincipalImpl("principal")));
+        assertThat(cached.authenticate("credentials")).isEqualTo(Optional.<Principal> of(new PrincipalImpl("principal")));
 
         verify(underlying, times(1)).authenticate("credentials");
     }
 
     @Test
     public void respectsTheCacheConfiguration() throws Exception {
-        cached.authenticate("credentials1");
-        Thread.sleep(10L);
-        cached.authenticate("credentials2");
-        Thread.sleep(10L);
-        cached.authenticate("credentials1");
-        Thread.sleep(10L);
+        final String c1 = "credentials1";
+        final String c2 = "credentials2";
+
+        final AtomicInteger counter = new AtomicInteger(0);
+        final Answer<Optional<Principal>> principalFactory = (x) -> Optional.of(new PrincipalImpl("principal" + Integer.toString(counter.incrementAndGet())));
+
+        when(underlying.authenticate(c1)).then(principalFactory);
+        when(underlying.authenticate(c2)).then(principalFactory);
+
+        Optional<Principal> result = cached.authenticate(c1);
+        assertThat(result.isPresent()).isTrue();
+
+        Principal last = result.get();
+
+        result = cached.authenticate(c2);
+        assertThat(result.isPresent()).isTrue();
+        assertThat(result.get()).isNotSameAs(last);
+
+        last = result.get();
+
+        result = cached.authenticate(c1);
+        assertThat(result.isPresent()).isTrue();
+        assertThat(result.get()).isNotSameAs(last);
 
         final InOrder inOrder = inOrder(underlying);
-        inOrder.verify(underlying, times(1)).authenticate("credentials1");
-        inOrder.verify(underlying, times(1)).authenticate("credentials2");
-        inOrder.verify(underlying, times(1)).authenticate("credentials1");
+        inOrder.verify(underlying, times(1)).authenticate(c1);
+        inOrder.verify(underlying, times(1)).authenticate(c2);
+        inOrder.verify(underlying, times(1)).authenticate(c1);
     }
 
     @Test
