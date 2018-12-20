@@ -64,9 +64,15 @@ public class ThrottlingAppenderWrapperTest {
     @Nullable
     private PrintStream newSysOut;
 
+    @Nullable
+    private DefaultLoggingFactory defaultLoggingFactory;
+
     public ThrottlingAppenderWrapperTest() {
         super();
         this.oldSysOut = null;
+        this.newSysOut = null;
+        this.defaultLoggingFactory = null;
+
         this.bos = new ByteArrayOutputStream();
 
         this.factory = new YamlConfigurationFactory<>(
@@ -95,6 +101,12 @@ public class ThrottlingAppenderWrapperTest {
         }
 
         this.bos.reset();
+
+        if (this.defaultLoggingFactory != null) {
+            // Our use of this class has broken static state; this forces a
+            // clean slate for said state.
+            this.defaultLoggingFactory.clear();
+        }
     }
 
     @Test
@@ -130,9 +142,9 @@ public class ThrottlingAppenderWrapperTest {
             new SubstitutingSourceProvider(new FileConfigurationSourceProvider(), new StringSubstitutor(variables)),
             this.findResource("/yaml/logging-message-rate.yml").getPath());
 
-        final DefaultLoggingFactory defaultLoggingFactory = new DefaultLoggingFactory();
-        defaultLoggingFactory.setAppenders(Collections.singletonList(config));
-        defaultLoggingFactory.configure(new MetricRegistry(), "test-logger");
+        this.defaultLoggingFactory = new DefaultLoggingFactory();
+        this.defaultLoggingFactory.setAppenders(Collections.singletonList(config));
+        this.defaultLoggingFactory.configure(new MetricRegistry(), "test-logger");
 
         final Logger logger = LoggerFactory.getLogger("com.example.app");
 
@@ -162,7 +174,7 @@ public class ThrottlingAppenderWrapperTest {
         assertThat(lwait.block(LOG_WAIT.toNanoseconds(), TimeUnit.NANOSECONDS)).isTrue();
 
         // Force logger to flush
-        defaultLoggingFactory.stop();
+        this.defaultLoggingFactory.stop();
 
         // Force streams to flush. NullAway doesn't understand that if we made
         // it here, these can't be null. C'est la vie.
