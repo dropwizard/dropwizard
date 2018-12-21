@@ -7,18 +7,14 @@ import com.google.common.util.concurrent.MoreExecutors;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.InOrder;
-import org.mockito.stubbing.Answer;
 
 import java.security.Principal;
 import java.util.Collections;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.anyString;
-import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -50,38 +46,6 @@ public class CachingAuthenticatorTest {
         assertThat(cached.authenticate("credentials")).isEqualTo(Optional.<Principal> of(new PrincipalImpl("principal")));
 
         verify(underlying, times(1)).authenticate("credentials");
-    }
-
-    @Test
-    public void respectsTheCacheConfiguration() throws Exception {
-        final String c1 = "credentials1";
-        final String c2 = "credentials2";
-
-        final AtomicInteger counter = new AtomicInteger(0);
-        final Answer<Optional<Principal>> principalFactory = (x) -> Optional.of(new PrincipalImpl("principal" + Integer.toString(counter.incrementAndGet())));
-
-        when(underlying.authenticate(c1)).then(principalFactory);
-        when(underlying.authenticate(c2)).then(principalFactory);
-
-        Optional<Principal> result = cached.authenticate(c1);
-        assertThat(result.isPresent()).isTrue();
-
-        Principal last = result.get();
-
-        result = cached.authenticate(c2);
-        assertThat(result.isPresent()).isTrue();
-        assertThat(result.get()).isNotSameAs(last);
-
-        last = result.get();
-
-        result = cached.authenticate(c1);
-        assertThat(result.isPresent()).isTrue();
-        assertThat(result.get()).isNotSameAs(last);
-
-        final InOrder inOrder = inOrder(underlying);
-        inOrder.verify(underlying, times(1)).authenticate(c1);
-        inOrder.verify(underlying, times(1)).authenticate(c2);
-        inOrder.verify(underlying, times(1)).authenticate(c1);
     }
 
     @Test
