@@ -3,7 +3,6 @@ package io.dropwizard.auth;
 import com.codahale.metrics.MetricRegistry;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.CaffeineSpec;
-import com.google.common.util.concurrent.MoreExecutors;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -11,6 +10,7 @@ import org.junit.Test;
 import java.security.Principal;
 import java.util.Collections;
 import java.util.Optional;
+import java.util.concurrent.Executor;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -30,7 +30,7 @@ public class CachingAuthenticatorTest {
         super();
 
         final Caffeine<Object, Object> caff = Caffeine.from(CaffeineSpec.parse("maximumSize=1"))
-            .executor(MoreExecutors.directExecutor());
+            .executor(new DirectExecutor());
         this.underlying = mock(Authenticator.class);
         this.cached = new CachingAuthenticator<>(new MetricRegistry(), this.underlying, caff);
     }
@@ -123,5 +123,12 @@ public class CachingAuthenticatorTest {
         assertThatExceptionOfType(RuntimeException.class)
             .isThrownBy(() -> cached.authenticate("credentials"))
             .satisfies(i -> assertThat(i).isSameAs(e));
+    }
+
+    private static class DirectExecutor implements Executor {
+        @Override
+        public void execute(Runnable command) {
+            command.run();
+        }
     }
 }
