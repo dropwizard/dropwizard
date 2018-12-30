@@ -112,8 +112,7 @@ public class BootstrapTest {
         // https://hibernate.atlassian.net/browse/HV-904
         assertThat(validatorFactory.getValidatedValueHandlers())
                 .extractingResultOf("getClass")
-                .contains(GuavaOptionalValidatedValueUnwrapper.class,
-                        OptionalDoubleValidatedValueUnwrapper.class,
+                .contains(OptionalDoubleValidatedValueUnwrapper.class,
                         OptionalIntValidatedValueUnwrapper.class,
                         OptionalLongValidatedValueUnwrapper.class,
                         NonEmptyStringParamUnwrapper.class,
