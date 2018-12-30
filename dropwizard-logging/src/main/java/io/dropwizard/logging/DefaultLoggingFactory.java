@@ -19,6 +19,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.dropwizard.jackson.Jackson;
+import io.dropwizard.logback.AsyncAppenderBaseProxy;
 import io.dropwizard.logging.async.AsyncAppenderFactory;
 import io.dropwizard.logging.async.AsyncLoggingEventAppenderFactory;
 import io.dropwizard.logging.filter.LevelFilterFactory;

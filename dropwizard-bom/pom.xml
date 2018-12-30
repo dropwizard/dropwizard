@@ -583,6 +583,11 @@
                     </exclusion>
                 </exclusions>
             </dependency>
+            <dependency>
+                <groupId>io.dropwizard.logback</groupId>
+                <artifactId>logback-throttling-appender</artifactId>
+                <version>1.0.1</version>
+            </dependency>
 
             <!-- Test dependencies -->
             <dependency>
