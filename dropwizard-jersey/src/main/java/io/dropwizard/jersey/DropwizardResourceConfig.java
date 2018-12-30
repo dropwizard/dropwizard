@@ -68,7 +68,6 @@ public class DropwizardResourceConfig extends ResourceConfig {
 
         register(new InstrumentedResourceMethodApplicationListener(metricRegistry));
         register(new CacheControlledResponseFeature());
-        register(new io.dropwizard.jersey.guava.OptionalMessageBodyWriter());
         register(new io.dropwizard.jersey.optional.OptionalMessageBodyWriter());
         register(new io.dropwizard.jersey.optional.OptionalDoubleMessageBodyWriter());
         register(new io.dropwizard.jersey.optional.OptionalIntMessageBodyWriter());
@@ -79,6 +78,7 @@ public class DropwizardResourceConfig extends ResourceConfig {
         register(new SessionFactoryProvider.Binder());
 
         if (isGuavaOnClassPath()) {
+            register(new io.dropwizard.jersey.guava.OptionalMessageBodyWriter());
             register(new io.dropwizard.jersey.guava.OptionalParamBinder());
         }
     }
