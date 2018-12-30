@@ -20,4 +20,8 @@
         <notes><![CDATA[slf4j-ext module which the cve is listed for is only imported transitively for tests and can only be fixed by a beta version]]></notes>
         <cve>CVE-2018-8088</cve>
     </suppress>
+    <suppress>
+        <notes><![CDATA[false positive]]></notes>
+        <cve>CVE-2017-5929</cve>
+    </suppress>
 </suppressions>
