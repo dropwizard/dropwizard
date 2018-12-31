@@ -166,7 +166,7 @@ public class FileAppenderFactoryTest {
 
         final String file = rollingAppender.getFile();
         assertThat(new File(file)).hasName("test-archived-name-" +
-            LocalDateTime.now().format(DateTimeFormatter.ofPattern("YYYY-MM-dd")) + ".log");
+            LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + ".log");
     }
 
     @Test
