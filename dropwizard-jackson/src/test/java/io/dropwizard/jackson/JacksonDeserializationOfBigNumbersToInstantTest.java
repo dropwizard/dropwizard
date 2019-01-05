@@ -16,10 +16,9 @@ public class JacksonDeserializationOfBigNumbersToInstantTest {
     private final ObjectMapper objectMapper = Jackson.newObjectMapper();
 
     @Test(timeout = 5000)
-    public void testDoesNotAttemptToDeserializeExtremelBigNumbers() {
-        assertThatExceptionOfType(JsonMappingException.class).isThrownBy(
-            () -> objectMapper.readValue("{\"id\": 42, \"createdAt\": 1e1000000000}", Event.class))
-            .withMessageStartingWith("Value is out of range of Instant");
+    public void testDoesNotAttemptToDeserializeExtremelBigNumbers() throws Exception {
+        Event event = objectMapper.readValue("{\"id\": 42, \"createdAt\": 1e1000000000}", Event.class);
+        assertThat(event.getCreatedAt()).isEqualTo(Instant.ofEpochMilli(0));
     }
 
     @Test
