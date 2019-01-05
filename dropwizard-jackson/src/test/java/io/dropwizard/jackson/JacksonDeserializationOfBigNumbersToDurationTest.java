@@ -16,10 +16,9 @@ public class JacksonDeserializationOfBigNumbersToDurationTest {
     private final ObjectMapper objectMapper = Jackson.newObjectMapper();
 
     @Test(timeout = 5000)
-    public void testDoesNotAttemptToDeserializeExtremelyBigNumbers() {
-        assertThatExceptionOfType(JsonMappingException.class).isThrownBy(
-            () -> objectMapper.readValue("{\"id\": 42, \"duration\": 1e1000000000}", Task.class))
-            .withMessageStartingWith("Value is out of range of Duration");
+    public void testDoesNotAttemptToDeserializeExtremelyBigNumbers() throws Exception {
+        Task task = objectMapper.readValue("{\"id\": 42, \"duration\": 1e1000000000}", Task.class);
+        assertThat(task.getDuration()).isEqualTo(Duration.ofSeconds(0));
     }
 
     @Test
