@@ -23,6 +23,14 @@ v2.0.0: Unreleased
 * Deprecate ``Bundle`` in favor of ``ConfiguredBundle<T>`` (`#2516 <https://github.com/dropwizard/dropwizard/pull/2516>`_)
 * Allow unknown JSON properties (i.e. disable ``DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES``) by default (`#2570 <https://github.com/dropwizard/dropwizard/pull/2570>`_)
 
+.. _rel-1.3.8:
+
+v1.3.8: Jan 2, 2018
+===================
+
+* Fix CVE-2018-10237 by upgrading Guava to 24.1.1 (`#2587 <https://github.com/dropwizard/dropwizard/pull/2587>`_)
+
+
 .. _rel-1.3.7:
 
 v1.3.7: Oct 2, 2018
