@@ -1,0 +1,3 @@
+io.dropwizard.jdbi3
+io.dropwizard.jdbi3.bundles
+io.dropwizard.jdbi3.jersey
