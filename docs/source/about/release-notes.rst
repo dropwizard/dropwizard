@@ -4,6 +4,13 @@
 Release Notes
 #############
 
+.. _rel-1.3.8:
+
+v1.3.8: Jan 2, 2018
+===================
+
+* Fix CVE-2018-10237 by upgrading Guava to 24.1.1 (`#2587 <https://github.com/dropwizard/dropwizard/pull/2587>`_)
+
 .. _rel-1.3.7:
 
 v1.3.7: Oct 2, 2018
