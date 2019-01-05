@@ -30,6 +30,6 @@ public class YamlConfigurationFactoryTest extends BaseConfigurationFactoryTest {
             .hasMessageContaining(String.format(
                 "%s has an error:%n" +
                 "  * Malformed YAML at line: 3, column: 22; while parsing a flow sequence\n" +
-                " in 'reader', line 2, column 7:\n", malformedAdvancedFile.getName()));
+                " in 'reader'", malformedAdvancedFile.getName()));
     }
 }

@@ -69,7 +69,6 @@ public class Jackson {
         mapper.setSubtypeResolver(new DiscoverableSubtypeResolver());
         mapper.disable(FAIL_ON_UNKNOWN_PROPERTIES);
 
-        mapper.registerModule(new SafeJavaTimeModule());
         return mapper;
     }
 }
