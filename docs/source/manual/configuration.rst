@@ -955,11 +955,11 @@ includes                 (timestamp, remoteAddress,
                                                       - ``timestamp``         *true*     Whether to include the timestamp of the event the ``timestamp`` field.
                                                       - ``userAgent``         *true*     Whether to include the user agent of the request as the ``userAgent`` field.
                                                       - ``requestParameters`` *false*    Whether to include the request parameters as the ``params`` field.
-                                                      - ``requestContent``    *false*    Whether to include the body of the request as the ``requestContent`` field.
+                                                      - ``requestContent``    *false*    Whether to include the body of the request as the ``requestContent`` field. Must register_ the TeeFilter_ to be effective.
                                                       - ``requestUrl``        *false*    Whether to include the request URL (method, URI, query parameters, protocol) as the ``url`` field.
                                                       - ``pathQuery``         *false*    Whether to include the URI and query parameters of the request as the ``pathQuery`` field.
                                                       - ``remoteHost``        *false*    Whether to include the fully qualified name of the client or the last proxy that sent the request as the ``remoteHost`` field.
-                                                      - ``responseContent``   *false*    Whether to include the response body as the ``responseContent`` field.
+                                                      - ``responseContent``   *false*    Whether to include the response body as the ``responseContent`` field. Must register_ the TeeFilter_ to be effective.
                                                       - ``serverName``        *false*    Whether to include the name of the server to which the request was sent as the ``serverName`` field.
 requestHeaders           (empty)                      Set of request headers included in the JSON map as the ``headers`` field.
 responseHeaders          (empty)                      Set of response headers included in the JSON map as the ``responseHeaders`` field.
@@ -968,6 +968,10 @@ additionalFields         (empty)                      Map of fields to add in th
 =======================  ===========================  ================
 
 .. _DateTimeFormatter:  https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html
+
+.. _TeeFilter: https://logback.qos.ch/access.html#teeFilter           
+
+.. _register: https://github.com/dropwizard/dropwizard/issues/2045#issuecomment-299149563
 
 .. _man-configuration-metrics:
 
