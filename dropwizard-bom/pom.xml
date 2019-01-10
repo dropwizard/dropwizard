@@ -19,7 +19,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <dropwizard.version>${project.version}</dropwizard.version>
-        <guava.version>27.0-jre</guava.version>
+        <guava.version>27.0.1-jre</guava.version>
         <jersey.version>2.27</jersey.version>
         <jackson.version>2.9.8</jackson.version>
         <jetty.version>9.4.14.v20181114</jetty.version>
