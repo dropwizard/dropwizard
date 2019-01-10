@@ -24,4 +24,8 @@
         <notes><![CDATA[false positive]]></notes>
         <cve>CVE-2017-5929</cve>
     </suppress>
+    <suppress>
+        <notes><![CDATA[false positive]]></notes>
+        <cve>CVE-2018-1279</cve>
+    </suppress>
 </suppressions>
