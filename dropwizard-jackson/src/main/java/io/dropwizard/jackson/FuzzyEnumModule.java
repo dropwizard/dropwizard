@@ -74,8 +74,10 @@ public class FuzzyEnumModule extends Module {
                                                         DeserializationConfig config,
                                                         BeanDescription desc) throws JsonMappingException {
             // If the user configured to use `toString` method to deserialize enums
-            if (config.hasDeserializationFeatures(
-                    DeserializationFeature.READ_ENUMS_USING_TO_STRING.getMask())) {
+            if (config.hasDeserializationFeatures(DeserializationFeature.READ_ENUMS_USING_TO_STRING.getMask()) ||
+                config.hasDeserializationFeatures(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL.getMask()) ||
+                // The presence of @JsonEnumDefaultValue will cause a fallback to the default, however lets short circuit here
+                config.hasDeserializationFeatures(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE.getMask())) {
                 return null;
             }
 
