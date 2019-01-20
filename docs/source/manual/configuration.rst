@@ -978,7 +978,7 @@ additionalFields         (empty)                      Map of fields to add in th
 Metrics
 =======
 
-The metrics configuration has two fields; frequency and reporters.
+The metrics configuration has three fields; frequency, reporters and reportOnStop.
 
 .. code-block:: yaml
 
@@ -986,6 +986,7 @@ The metrics configuration has two fields; frequency and reporters.
       frequency: 1 minute
       reporters:
         - type: <type>
+      reportOnStop: false
 
 
 ====================== ===========  ===========
@@ -993,6 +994,7 @@ Name                   Default      Description
 ====================== ===========  ===========
 frequency              1 minute     The frequency to report metrics. Overridable per-reporter.
 reporters              (none)       A list of reporters to report metrics.
+reportOnStop           false        To report metrics one last time when stopping Dropwizard.
 ====================== ===========  ===========
 
 

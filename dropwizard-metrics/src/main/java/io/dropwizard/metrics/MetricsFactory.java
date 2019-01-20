@@ -36,6 +36,11 @@ import java.util.List;
  *         <td>No reporters.</td>
  *         <td>A list of {@link ReporterFactory reporters} to report metrics.</td>
  *     </tr>
+ *     <tr>
+ *         <td>reportOnStop</td>
+ *         <td>{@code false}</td>
+ *         <td>To report metrics one last time when stopping Dropwizard.</td>
+ *     </tr>
  * </table>
  */
 public class MetricsFactory {
@@ -69,6 +74,9 @@ public class MetricsFactory {
         this.frequency = frequency;
     }
 
+    @JsonProperty
+    public boolean reportOnStop = false;
+
     /**
      * Configures the given lifecycle with the {@link com.codahale.metrics.ScheduledReporter
      * reporters} configured for the given registry.
@@ -86,7 +94,8 @@ public class MetricsFactory {
             try {
                 final ScheduledReporterManager manager =
                         new ScheduledReporterManager(reporter.build(registry),
-                                                     reporter.getFrequency().orElseGet(this::getFrequency));
+                                                     reporter.getFrequency().orElseGet(this::getFrequency),
+                                                     reportOnStop);
                 environment.manage(manager);
             } catch (Exception e) {
                 LOGGER.warn("Failed to create reporter, metrics may not be properly reported.", e);
@@ -96,6 +105,6 @@ public class MetricsFactory {
 
     @Override
     public String toString() {
-        return "MetricsFactory{frequency=" + frequency + ", reporters=" + reporters + '}';
+        return "MetricsFactory{frequency=" + frequency + ", reporters=" + reporters + ", reportOnStop=" + reportOnStop + '}';
     }
 }

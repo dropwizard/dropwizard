@@ -66,4 +66,16 @@ public class MetricsFactoryTest {
         assertThat(csvReporterFactory.getIncludesAttributes()).isEqualTo(EnumSet.allOf(MetricAttribute.class));
         assertThat(csvReporterFactory.getExcludesAttributes()).isEmpty();
     }
+
+    @Test
+    public void reportOnStopFalseByDefault() {
+        assertThat(config.reportOnStop).isFalse();
+    }
+
+    @Test
+    public void reportOnStopCanBeTrue() throws Exception {
+        config = factory.build(new File(Resources.getResource("yaml/metrics-report-on-stop.yml").toURI()));
+        assertThat(config.reportOnStop).isTrue();
+    }
+
 }
