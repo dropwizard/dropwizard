@@ -141,4 +141,19 @@
             </plugin>
         </plugins>
     </reporting>
+    <profiles>
+        <profile>
+            <id>java11+</id>
+            <activation>
+                <jdk>[11,)</jdk>
+            </activation>
+            <properties>
+                <!--
+                Workaround for "javadoc: error - The code being documented uses modules but the packages
+                defined in https://docs.oracle.com/javase/8/docs/api/ are in the unnamed module."
+                -->
+                <maven.javadoc.skip>true</maven.javadoc.skip>
+            </properties>
+        </profile>
+    </profiles>
 </project>
