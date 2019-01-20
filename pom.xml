@@ -536,7 +536,7 @@
                 <plugin>
                     <groupId>org.owasp</groupId>
                     <artifactId>dependency-check-maven</artifactId>
-                    <version>3.3.4</version>
+                    <version>4.0.2</version>
                 </plugin>
                 <plugin>
                     <groupId>org.eluder.coveralls</groupId>
