@@ -28,4 +28,8 @@
         <notes><![CDATA[false positive]]></notes>
         <cve>CVE-2018-1279</cve>
     </suppress>
+    <suppress>
+        <notes><![CDATA[false positive]]></notes>
+        <cve>CVE-2002-1533</cve>
+    </suppress>
 </suppressions>
