@@ -38,11 +38,17 @@ import java.util.TimeZone;
  */
 @JsonTypeName("access-json")
 public class AccessJsonLayoutBaseFactory extends AbstractJsonLayoutBaseFactory<IAccessEvent> {
-
-    private EnumSet<AccessAttribute> includes = EnumSet.of(AccessAttribute.REMOTE_ADDRESS,
-        AccessAttribute.REMOTE_USER, AccessAttribute.REQUEST_TIME, AccessAttribute.REQUEST_URI,
-        AccessAttribute.STATUS_CODE, AccessAttribute.METHOD, AccessAttribute.PROTOCOL, AccessAttribute.CONTENT_LENGTH,
-        AccessAttribute.USER_AGENT, AccessAttribute.TIMESTAMP);
+    private EnumSet<AccessAttribute> includes = EnumSet.of(
+            AccessAttribute.REMOTE_ADDRESS,
+            AccessAttribute.REMOTE_USER,
+            AccessAttribute.REQUEST_TIME,
+            AccessAttribute.REQUEST_URI,
+            AccessAttribute.STATUS_CODE,
+            AccessAttribute.METHOD,
+            AccessAttribute.PROTOCOL,
+            AccessAttribute.CONTENT_LENGTH,
+            AccessAttribute.USER_AGENT,
+            AccessAttribute.TIMESTAMP);
 
     private Set<String> responseHeaders = Collections.emptySet();
     private Set<String> requestHeaders = Collections.emptySet();
@@ -79,8 +85,12 @@ public class AccessJsonLayoutBaseFactory extends AbstractJsonLayoutBaseFactory<I
 
     @Override
     public LayoutBase<IAccessEvent> build(LoggerContext context, TimeZone timeZone) {
-        final AccessJsonLayout jsonLayout = new AccessJsonLayout(createDropwizardJsonFormatter(),
-            createTimestampFormatter(timeZone), includes, getCustomFieldNames(), getAdditionalFields());
+        final AccessJsonLayout jsonLayout = new AccessJsonLayout(
+                createDropwizardJsonFormatter(),
+                createTimestampFormatter(timeZone),
+                includes,
+                getCustomFieldNames(),
+                getAdditionalFields());
         jsonLayout.setContext(context);
         jsonLayout.setRequestHeaders(requestHeaders);
         jsonLayout.setResponseHeaders(responseHeaders);

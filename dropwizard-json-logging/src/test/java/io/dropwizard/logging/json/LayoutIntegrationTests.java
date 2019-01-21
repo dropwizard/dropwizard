@@ -76,7 +76,8 @@ public class LayoutIntegrationTests {
             EventAttribute.MESSAGE,
             EventAttribute.LOGGER_NAME,
             EventAttribute.EXCEPTION,
-            EventAttribute.TIMESTAMP);
+            EventAttribute.TIMESTAMP,
+            EventAttribute.CALLER_DATA);
         assertThat(factory.isFlattenMdc()).isTrue();
         assertThat(factory.getCustomFieldNames()).containsOnly(entry("timestamp", "@timestamp"));
         assertThat(factory.getAdditionalFields()).containsOnly(entry("service-name", "user-service"),

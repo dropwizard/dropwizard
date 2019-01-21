@@ -28,7 +28,7 @@ import javax.annotation.Nullable;
  * </tr>
  * <tr>
  * <td>{@code includes}</td>
- * <td>(level, threadName, mdc, loggerName, message, exception, timestamp)</td>
+ * <td>(level, threadName, mdc, loggerName, message, exception, timestamp, callerData)</td>
  * <td>Set of logging event attributes to include in the JSON map.</td>
  * </tr>
  * <tr>

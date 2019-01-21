@@ -68,12 +68,24 @@ public class EventJsonLayout extends AbstractJsonLayout<ILoggingEvent> {
             .add("version", jsonProtocolVersion != null, jsonProtocolVersion)
             .add("exception", isIncluded(EventAttribute.EXCEPTION) && event.getThrowableProxy() != null,
                 () -> throwableProxyConverter.convert(event));
+
         final boolean includeMdc = isIncluded(EventAttribute.MDC);
         if (flattenMdc) {
             filterMdc(event.getMDCPropertyMap()).forEach((k,v) -> mapBuilder.add(k, includeMdc, v));
         } else {
             mapBuilder.addMap("mdc", includeMdc, () -> filterMdc(event.getMDCPropertyMap()));
         }
+
+        final boolean includeCallerData = isIncluded(EventAttribute.CALLER_DATA);
+        final StackTraceElement[] callerData = event.getCallerData();
+        if (includeCallerData && callerData.length >= 1) {
+            final StackTraceElement stackTraceElement = callerData[0];
+            mapBuilder.add("caller_class_name", includeCallerData, stackTraceElement.getClassName());
+            mapBuilder.add("caller_method_name", includeCallerData, stackTraceElement.getMethodName());
+            mapBuilder.add("caller_file_name", includeCallerData, stackTraceElement.getFileName());
+            mapBuilder.addNumber("caller_line_number", includeCallerData, stackTraceElement.getLineNumber());
+        }
+
         return mapBuilder.build();
     }
 
