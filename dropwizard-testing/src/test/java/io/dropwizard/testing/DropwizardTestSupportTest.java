@@ -15,7 +15,7 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.validation.BaseValidator;
 
-import org.hibernate.validator.constraints.NotEmpty;
+import javax.validation.constraints.NotEmpty;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;

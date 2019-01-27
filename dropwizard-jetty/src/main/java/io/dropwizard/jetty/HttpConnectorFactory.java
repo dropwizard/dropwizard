@@ -22,11 +22,11 @@ import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.util.thread.ScheduledExecutorScheduler;
 import org.eclipse.jetty.util.thread.Scheduler;
 import org.eclipse.jetty.util.thread.ThreadPool;
-import org.hibernate.validator.valuehandling.UnwrapValidatedValue;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.validation.valueextraction.Unwrapping;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -271,12 +271,10 @@ public class HttpConnectorFactory implements ConnectorFactory {
     @MinSize(value = 1, unit = SizeUnit.BYTES)
     private Size maxBufferPoolSize = Size.kilobytes(64);
 
-    @Min(1)
-    @UnwrapValidatedValue
+    @Min(value = 1, payload = Unwrapping.Unwrap.class)
     private Optional<Integer> acceptorThreads = Optional.empty();
 
-    @Min(1)
-    @UnwrapValidatedValue
+    @Min(value = 1, payload = Unwrapping.Unwrap.class)
     private Optional<Integer> selectorThreads = Optional.empty();
 
     @Min(0)

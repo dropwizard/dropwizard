@@ -26,14 +26,11 @@ public class OptionalIntParamConverterProvider implements ParamConverterProvider
     public static class OptionalIntParamConverter implements ParamConverter<OptionalInt> {
         @Override
         public OptionalInt fromString(final String value) {
-            if (value == null) {
-                return OptionalInt.empty();
-            }
-
             try {
-                return OptionalInt.of(Integer.parseInt(value));
+                final int i = Integer.parseInt(value);
+                return OptionalInt.of(i);
             } catch (NumberFormatException e) {
-                throw new IllegalArgumentException(e);
+                return OptionalInt.empty();
             }
         }
 

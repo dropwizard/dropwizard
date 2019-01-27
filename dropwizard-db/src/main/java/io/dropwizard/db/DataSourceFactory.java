@@ -7,7 +7,7 @@ import io.dropwizard.util.Duration;
 import io.dropwizard.validation.MinDuration;
 import io.dropwizard.validation.ValidationMethod;
 import org.apache.tomcat.jdbc.pool.PoolProperties;
-import org.hibernate.validator.constraints.NotEmpty;
+import javax.validation.constraints.NotEmpty;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.Max;

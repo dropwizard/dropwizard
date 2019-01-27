@@ -84,9 +84,9 @@ public class DurationValidatorTest {
                             "tooBigExclusive must be less than 30 SECONDS",
                             "tooSmall must be greater than or equal to 30 SECONDS",
                             "tooSmallExclusive must be greater than 30 SECONDS",
-                            "maxDurs[0].<collection element> must be less than or equal to 30 SECONDS",
-                            "minDurs[0].<collection element> must be greater than or equal to 30 SECONDS",
-                            "rangeDurs[0].<collection element> must be between 10 MINUTES and 30 MINUTES");
+                            "maxDurs[0].<list element> must be less than or equal to 30 SECONDS",
+                            "minDurs[0].<list element> must be greater than or equal to 30 SECONDS",
+                            "rangeDurs[0].<list element> must be between 10 MINUTES and 30 MINUTES");
         }
     }
 

@@ -7,10 +7,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.util.Duration;
 import io.dropwizard.validation.MinDuration;
-import org.hibernate.validator.valuehandling.UnwrapValidatedValue;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import javax.validation.valueextraction.Unwrapping;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashSet;
@@ -105,8 +105,7 @@ public abstract class BaseReporterFactory implements ReporterFactory {
     private Set<String> includes = Collections.emptySet();
 
     @Valid
-    @MinDuration(0)
-    @UnwrapValidatedValue
+    @MinDuration(value = 0, payload = Unwrapping.Unwrap.class)
     private Optional<Duration> frequency = Optional.empty();
 
     private boolean useRegexFilters = false;

@@ -8,7 +8,9 @@ import org.eclipse.jetty.io.EofException;
 import javax.annotation.Nullable;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import javax.validation.groups.Default;
+import javax.validation.valueextraction.Unwrapping;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -48,7 +50,8 @@ public class PersonResource {
     @GET
     @Timed
     @Path("/index")
-    public Person getPersonWithIndex(@Min(0) @QueryParam("ind") IntParam index,
+    public Person getPersonWithIndex(@QueryParam("ind")
+                                     @NotNull(payload = Unwrapping.Skip.class) @Min(0) IntParam index,
                                      @PathParam("name") String name) {
         return getPersonList(name).get(index.get());
     }

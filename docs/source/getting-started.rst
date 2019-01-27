@@ -195,7 +195,7 @@ Here's what our configuration class will look like, full `example conf here`_:
 
     import io.dropwizard.Configuration;
     import com.fasterxml.jackson.annotation.JsonProperty;
-    import org.hibernate.validator.constraints.NotEmpty;
+    import javax.validation.constraints.NotEmpty;
 
     public class HelloWorldConfiguration extends Configuration {
         @NotEmpty

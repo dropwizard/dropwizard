@@ -5,7 +5,7 @@ import io.dropwizard.Configuration;
 import io.dropwizard.jersey.validation.MutableValidatorFactory;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import org.hibernate.validator.internal.constraintvalidators.bv.MinValidatorForNumber;
+import org.hibernate.validator.internal.constraintvalidators.bv.number.bound.MinValidatorForNumber;
 import org.hibernate.validator.internal.engine.constraintvalidation.ConstraintValidatorFactoryImpl;
 import org.junit.Before;
 import org.junit.Test;
