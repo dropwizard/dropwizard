@@ -53,7 +53,7 @@ public class OneOfValidatorTest {
         example.basicList = Collections.singletonList("four");
 
         assertThat(format(validator.validate(example)))
-            .containsOnly("basicList[0].<collection element> must be one of [one, two, three]");
+            .containsOnly("basicList[0].<list element> must be one of [one, two, three]");
     }
 
     @Test

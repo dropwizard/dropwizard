@@ -1,7 +1,6 @@
 package io.dropwizard.validation.valuehandling;
 
 import org.hibernate.validator.HibernateValidator;
-import org.hibernate.validator.valuehandling.UnwrapValidatedValue;
 import org.junit.Test;
 
 import javax.validation.ConstraintViolation;
@@ -9,6 +8,7 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.validation.valueextraction.Unwrapping;
 import java.util.OptionalDouble;
 import java.util.Set;
 
@@ -17,19 +17,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class OptionalDoubleValidatedValueUnwrapperTest {
 
     public static class Example {
-        @Min(3)
-        @UnwrapValidatedValue
+        @Min(value = 3, payload = {Unwrapping.Unwrap.class})
         public OptionalDouble three = OptionalDouble.empty();
 
-        @NotNull
-        @UnwrapValidatedValue
+        @NotNull(payload = {Unwrapping.Unwrap.class})
         public OptionalDouble notNull = OptionalDouble.of(123.456D);
     }
 
     private final Validator validator = Validation
         .byProvider(HibernateValidator.class)
         .configure()
-        .addValidatedValueHandler(new OptionalDoubleValidatedValueUnwrapper())
+        .addValueExtractor(new OptionalDoubleValidatedValueExtractor())
         .buildValidatorFactory()
         .getValidator();
 

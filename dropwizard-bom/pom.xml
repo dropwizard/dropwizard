@@ -20,7 +20,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <dropwizard.version>${project.version}</dropwizard.version>
         <guava.version>27.0.1-jre</guava.version>
-        <jersey.version>2.27</jersey.version>
+        <jersey.version>2.28</jersey.version>
         <jackson.version>2.9.8</jackson.version>
         <jetty.version>9.4.14.v20181114</jetty.version>
         <servlet.version>3.0.0.v201112011016</servlet.version>
@@ -80,9 +80,9 @@
                 <version>2.10.1</version>
             </dependency>
             <dependency>
-                <groupId>org.hibernate</groupId>
+                <groupId>org.hibernate.validator</groupId>
                 <artifactId>hibernate-validator</artifactId>
-                <version>5.4.2.Final</version>
+                <version>6.0.14.Final</version>
             </dependency>
             <dependency>
                 <groupId>org.glassfish</groupId>

@@ -1,9 +1,9 @@
 package io.dropwizard.validation;
 
-import io.dropwizard.validation.valuehandling.GuavaOptionalValidatedValueUnwrapper;
-import io.dropwizard.validation.valuehandling.OptionalDoubleValidatedValueUnwrapper;
-import io.dropwizard.validation.valuehandling.OptionalIntValidatedValueUnwrapper;
-import io.dropwizard.validation.valuehandling.OptionalLongValidatedValueUnwrapper;
+import io.dropwizard.validation.valuehandling.GuavaOptionalValidatedValueExtractor;
+import io.dropwizard.validation.valuehandling.OptionalDoubleValidatedValueExtractor;
+import io.dropwizard.validation.valuehandling.OptionalIntValidatedValueExtractor;
+import io.dropwizard.validation.valuehandling.OptionalLongValidatedValueExtractor;
 import org.hibernate.validator.HibernateValidator;
 import org.hibernate.validator.HibernateValidatorConfiguration;
 
@@ -22,15 +22,15 @@ public class BaseValidator {
 
     /**
      * Creates a new {@link HibernateValidatorConfiguration} with the base custom {@link
-     * org.hibernate.validator.spi.valuehandling.ValidatedValueUnwrapper} registered.
+     * javax.validation.valueextraction.ValueExtractor} registered.
      */
     public static HibernateValidatorConfiguration newConfiguration() {
         return Validation
             .byProvider(HibernateValidator.class)
             .configure()
-            .addValidatedValueHandler(new GuavaOptionalValidatedValueUnwrapper())
-            .addValidatedValueHandler(new OptionalDoubleValidatedValueUnwrapper())
-            .addValidatedValueHandler(new OptionalIntValidatedValueUnwrapper())
-            .addValidatedValueHandler(new OptionalLongValidatedValueUnwrapper());
+            .addValueExtractor(new GuavaOptionalValidatedValueExtractor())
+            .addValueExtractor(new OptionalDoubleValidatedValueExtractor())
+            .addValueExtractor(new OptionalIntValidatedValueExtractor())
+            .addValueExtractor(new OptionalLongValidatedValueExtractor());
     }
 }

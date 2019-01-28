@@ -34,7 +34,7 @@ public class Validators {
         return BaseValidator.newConfiguration()
                 .constraintValidatorFactory(new MutableValidatorFactory())
                 .parameterNameProvider(new JerseyParameterNameProvider())
-                .addValidatedValueHandler(new NonEmptyStringParamUnwrapper())
-                .addValidatedValueHandler(new ParamValidatorUnwrapper());
+                .addValueExtractor(new NonEmptyStringParamExtractor())
+                .addValueExtractor(new ParamValidatorValueExtractor());
     }
 }

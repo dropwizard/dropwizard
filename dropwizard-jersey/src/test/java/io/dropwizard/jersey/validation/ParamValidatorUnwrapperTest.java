@@ -3,12 +3,12 @@ package io.dropwizard.jersey.validation;
 import io.dropwizard.jersey.params.IntParam;
 import io.dropwizard.jersey.params.NonEmptyStringParam;
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.valuehandling.UnwrapValidatedValue;
 import org.junit.Test;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 import javax.validation.constraints.Min;
+import javax.validation.valueextraction.Unwrapping;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -16,12 +16,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class ParamValidatorUnwrapperTest {
 
     public static class Example {
-        @Min(3)
-        @UnwrapValidatedValue
+        @Min(value = 3, payload = { Unwrapping.Unwrap.class })
         public IntParam inter = new IntParam("4");
 
-        @Length(max = 3)
-        @UnwrapValidatedValue
+        @Length(max = 3, payload = { Unwrapping.Unwrap.class })
         public NonEmptyStringParam name = new NonEmptyStringParam("a");
     }
 

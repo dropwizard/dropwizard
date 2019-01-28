@@ -4,13 +4,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.client.proxy.ProxyConfiguration;
 import io.dropwizard.client.ssl.TlsConfiguration;
 import io.dropwizard.util.Duration;
-import org.hibernate.validator.valuehandling.UnwrapValidatedValue;
 
 import javax.annotation.Nullable;
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.validation.valueextraction.Unwrapping;
 import java.util.Optional;
 
 /**
@@ -48,8 +48,7 @@ public class HttpClientConfiguration {
     @Max(1000)
     private int retries = 0;
 
-    @NotNull
-    @UnwrapValidatedValue(false)
+    @NotNull (payload = {Unwrapping.Skip.class})
     private Optional<String> userAgent = Optional.empty();
 
     @Valid

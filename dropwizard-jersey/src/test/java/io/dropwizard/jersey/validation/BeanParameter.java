@@ -1,7 +1,7 @@
 package io.dropwizard.jersey.validation;
 
 import io.dropwizard.validation.ValidationMethod;
-import org.hibernate.validator.constraints.NotEmpty;
+import javax.validation.constraints.NotEmpty;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;

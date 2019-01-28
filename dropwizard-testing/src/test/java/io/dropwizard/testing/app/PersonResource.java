@@ -9,6 +9,7 @@ import javax.annotation.Nullable;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.groups.Default;
+import javax.validation.valueextraction.Unwrapping;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -48,7 +49,7 @@ public class PersonResource {
     @GET
     @Timed
     @Path("/index")
-    public Person getPersonWithIndex(@Min(0) @QueryParam("ind") IntParam index,
+    public Person getPersonWithIndex(@Min(value = 0, payload = {Unwrapping.Unwrap.class}) @QueryParam("ind") IntParam index,
                                      @PathParam("name") String name) {
         return getPersonList(name).get(index.get());
     }

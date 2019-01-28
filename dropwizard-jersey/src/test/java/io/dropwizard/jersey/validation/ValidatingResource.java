@@ -9,10 +9,10 @@ import io.dropwizard.jersey.params.IntParam;
 import io.dropwizard.jersey.params.LongParam;
 import io.dropwizard.jersey.params.NonEmptyStringParam;
 import io.dropwizard.validation.Validated;
-import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotEmpty;
-import org.hibernate.validator.valuehandling.UnwrapValidatedValue;
+
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
 
 import javax.servlet.ServletContext;
 import javax.validation.Valid;
@@ -20,18 +20,8 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-import javax.ws.rs.BeanParam;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.CookieParam;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.MatrixParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.validation.valueextraction.Unwrapping;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import java.util.Collection;
@@ -78,16 +68,15 @@ public class ValidatingResource {
 
     @GET
     @Path("paramValidation")
-    public String paramValidation(@UnwrapValidatedValue @NotNull @Min(2) @Max(5) @QueryParam("length") LongParam length) {
+    public String paramValidation(@NotNull @Min(value = 2, payload = { Unwrapping.Unwrap.class }) @Max(value = 5, payload = { Unwrapping.Unwrap.class }) @QueryParam("length") LongParam length) {
         return Long.toString(length.get());
     }
 
     @GET
     @Path("messageValidation")
     public String messageValidation(
-        @UnwrapValidatedValue
-        @NotNull
-        @Min(value = 2, message = "The value ${validatedValue} is less then {value}")
+        @NotNull(payload = { Unwrapping.Unwrap.class })
+        @Min(value = 2, message = "The value ${validatedValue} is less then {value}", payload = { Unwrapping.Unwrap.class })
         @QueryParam("length")
             LongParam length
     ) {
@@ -96,7 +85,7 @@ public class ValidatingResource {
 
     @GET
     @Path("barter")
-    public String isnt(@QueryParam("name") @Length(min = 3) @UnwrapValidatedValue NonEmptyStringParam name) {
+    public String isnt(@QueryParam("name") @Length(min = 3, payload = { Unwrapping.Unwrap.class }) NonEmptyStringParam name) {
         return name.get().orElse(null);
     }
 
@@ -210,13 +199,13 @@ public class ValidatingResource {
 
     @GET
     @Path("headCopy")
-    public String heads(@QueryParam("cheese") @NotNull @UnwrapValidatedValue(false) IntParam secretSauce) {
+    public String heads(@QueryParam("cheese") @NotNull(payload = { Unwrapping.Skip.class }) IntParam secretSauce) {
         return secretSauce.get().toString();
     }
 
     @GET
     @Path("nullable-int-param")
-    public String nullableIntParam(@QueryParam("num") @Max(3) IntParam secretSauce) {
+    public String nullableIntParam(@QueryParam("num") @Max(value = 3, payload = { Unwrapping.Unwrap.class }) IntParam secretSauce) {
         return secretSauce == null ? "I was null" : secretSauce.get().toString();
     }
 
