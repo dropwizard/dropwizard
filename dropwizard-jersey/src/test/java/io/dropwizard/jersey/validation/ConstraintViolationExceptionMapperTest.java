@@ -266,7 +266,7 @@ public class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
                 .request().get();
         assertThat(response.getStatus()).isEqualTo(400);
 
-        String ret = "{\"errors\":[\"path param id not a well-formed email address\"]}";
+        String ret = "{\"errors\":[\"path param id must be a well-formed email address\"]}";
         assertThat(response.readEntity(String.class)).isEqualTo(ret);
     }
 
