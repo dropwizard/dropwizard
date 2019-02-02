@@ -8,7 +8,7 @@ import javax.ws.rs.ext.MessageBodyReader;
 import javax.ws.rs.ext.MessageBodyWriter;
 
 /**
- * An HK2 binder that registers the Jackson JSON provider while allowing users to override.
+ * A binder that registers the Jackson JSON provider while allowing users to override.
  */
 public class JacksonFeature implements Feature {
     private final ObjectMapper mapper;

@@ -3,7 +3,7 @@ package io.dropwizard.auth;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.dropwizard.auth.principal.NullPrincipal;
-import org.glassfish.hk2.utilities.binding.AbstractBinder;
+import org.glassfish.jersey.internal.inject.AbstractBinder;
 import org.glassfish.jersey.servlet.ServletProperties;
 import org.glassfish.jersey.test.DeploymentContext;
 import org.glassfish.jersey.test.JerseyTest;

@@ -1,6 +1,6 @@
 package io.dropwizard.jersey.validation;
 
-import org.glassfish.hk2.utilities.binding.AbstractBinder;
+import org.glassfish.jersey.internal.inject.AbstractBinder;
 import org.glassfish.jersey.server.internal.inject.ConfiguredValidator;
 
 import javax.validation.Validator;
