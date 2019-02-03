@@ -116,7 +116,8 @@ public class TaskServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req,
                           HttpServletResponse resp) throws ServletException, IOException {
-        final Task task = tasks.get(req.getPathInfo());
+        final String pathInfo = req.getPathInfo();
+        final Task task = pathInfo != null ? tasks.get(pathInfo) : null;
         if (task != null) {
             resp.setContentType(CONTENT_TYPE);
             final PrintWriter output = resp.getWriter();
