@@ -11,6 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import javax.servlet.ReadListener;
+import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -242,6 +243,17 @@ public class TaskServletTest {
             "vacuum-cleaning-exceptions"));
     }
 
+    @Test
+    public void testReturnsA404ForTaskRoot() throws ServletException, IOException {
+        when(request.getMethod()).thenReturn("POST");
+        when(request.getPathInfo()).thenReturn(null);
+
+        servlet.service(request, response);
+
+        verify(response).sendError(404);
+    }
+
+    @SuppressWarnings("InputStreamSlowMultibyteRead")
     private static class TestServletInputStream extends ServletInputStream {
         private InputStream delegate;
 
