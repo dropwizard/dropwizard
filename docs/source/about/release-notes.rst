@@ -4,6 +4,13 @@
 Release Notes
 #############
 
+.. _rel-1.3.9:
+
+v1.3.9: TBD
+===========
+
+* Deprecate IntParam and LongParam (`#2625 <https://github.com/dropwizard/dropwizard/pull/2625>`_)
+
 .. _rel-1.3.8:
 
 v1.3.8: Jan 2, 2018
