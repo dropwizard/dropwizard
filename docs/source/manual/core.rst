@@ -1224,7 +1224,7 @@ mapping various aspects of POJOs to outgoing HTTP responses. Here's a basic reso
 
         @GET
         public NotificationList fetch(@PathParam("user") LongParam userId,
-                                      @QueryParam("count") @DefaultValue("20") IntParam count) {
+                                      @QueryParam("count") @DefaultValue("20") OptionalInt count) {
             final List<Notification> notifications = store.fetch(userId.get(), count.get());
             if (notifications != null) {
                 return new NotificationList(userId, notifications);
@@ -1313,10 +1313,10 @@ For example:
 
 * A ``@PathParam("user")``-annotated ``String`` takes the raw value from the ``user`` variable in
   the matched URI template and passes it into the method as a ``String``.
-* A ``@QueryParam("count")``-annotated ``IntParam`` parameter takes the first ``count`` value from
-  the request's query string and passes it as a ``String`` to ``IntParam``'s constructor.
-  ``IntParam`` (and all other ``io.dropwizard.jersey.params.*`` classes) parses the string
-  as an ``Integer``, returning a ``400 Bad Request`` if the value is malformed.
+* A ``@QueryParam("isMore")``-annotated ``BooleanParam`` parameter takes the first ``isMore`` value from
+  the request's query string and passes it as a ``String`` to ``BooleanParam``'s constructor.
+  ``BooleanParam`` (and all other ``io.dropwizard.jersey.params.*`` classes) parses the string
+  as an ``Boolean``, returning a ``400 Bad Request`` if the value is malformed.
 * A ``@FormParam("name")``-annotated ``Set<String>`` parameter takes all the ``name`` values from a
   posted form and passes them to the method as a set of strings.
 * A ``*Param``--annotated ``NonEmptyStringParam`` will interpret empty strings as absent strings,
@@ -1522,7 +1522,7 @@ Testing, then, consists of creating an instance of your resource class and passi
             final List<Notification> notifications = mock(List.class);
             when(store.fetch(1, 20)).thenReturn(notifications);
 
-            final NotificationList list = resource.fetch(new LongParam("1"), new IntParam("20"));
+            final NotificationList list = resource.fetch(OptionalLong.of(1), OptionalInt.of(20));
 
             assertThat(list.getUserId(),
                       is(1L));

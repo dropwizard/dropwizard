@@ -101,7 +101,7 @@ inner value can still be constrained with the ``@UnwrapValidatedValue`` annotati
 
 .. note::
 
-    Param types such as ``IntParam`` and ``NonEmptyStringParam`` can also be constrained.
+    Param types such as ``BooleanParam`` and ``NonEmptyStringParam`` can also be constrained.
 
 There is a caveat regarding ``@UnwrapValidatedValue`` and ``*Param`` types, as there still are some
 cumbersome situations when constraints need to be applied to the container and the value.
@@ -111,16 +111,9 @@ cumbersome situations when constraints need to be applied to the container and t
     @POST
     // The @NotNull is supposed to mean that the parameter is required but the Max(3) is supposed to
     // apply to the contained integer. Currently, this code will fail saying that Max can't
-    // be applied on an IntParam
+    // be applied on an OptionalInt
     public List<Person> createNum(@QueryParam("num") @UnwrapValidatedValue(false)
-                                  @NotNull @Max(3) IntParam num) {
-        // ...
-    }
-
-    @GET
-    // Similarly, the underlying validation framework can't unwrap nested types (an integer wrapped
-    // in an IntParam wrapped in an Optional), regardless if the @UnwrapValidatedValue is used
-    public Person retrieve(@QueryParam("num") @Max(3) Optional<IntParam> num) {
+                                  @NotNull @Max(3) OptionalInt num) {
         // ...
     }
 
@@ -131,7 +124,7 @@ throw an exception, else use ``@DefaultValue`` or move the ``Optional`` into the
 
     @POST
     // Workaround to handle required int params and validations
-    public List<Person> createNum(@QueryParam("num") @Max(3) IntParam num) {
+    public List<Person> createNum(@QueryParam("num") @Max(3) OptionalInt num) {
         if (num == null) {
             throw new WebApplicationException("query param num must not be null", 400);
         }
@@ -140,14 +133,13 @@ throw an exception, else use ``@DefaultValue`` or move the ``Optional`` into the
 
     @GET
     // Workaround to handle optional int params and validations with DefaultValue
-    public Person retrieve(@QueryParam("num") @DefaultValue("0") @Max(3) IntParam num) {
+    public Person retrieve(@QueryParam("num") @DefaultValue("0") @Max(3) OptionalInt num) {
         // ...
     }
 
     @GET
     // Workaround to handle optional int params and validations with Optional
-    public Person retrieve2(@QueryParam("num") @Max(3) IntParam num) {
-        Optional.fromNullable(num);
+    public Person retrieve2(@QueryParam("num") @Max(3) OptionalInt num) {
         // ...
     }
 
