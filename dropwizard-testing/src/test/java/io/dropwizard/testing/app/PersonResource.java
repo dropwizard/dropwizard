@@ -1,7 +1,6 @@
 package io.dropwizard.testing.app;
 
 import com.codahale.metrics.annotation.Timed;
-import io.dropwizard.jersey.params.IntParam;
 import io.dropwizard.validation.Validated;
 import org.eclipse.jetty.io.EofException;
 
@@ -9,6 +8,7 @@ import javax.annotation.Nullable;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.groups.Default;
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -20,6 +20,7 @@ import javax.ws.rs.core.MediaType;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.OptionalInt;
 
 import static java.util.Objects.requireNonNull;
 
@@ -48,9 +49,9 @@ public class PersonResource {
     @GET
     @Timed
     @Path("/index")
-    public Person getPersonWithIndex(@QueryParam("ind") @Min(0) IntParam index,
+    public Person getPersonWithIndex(@QueryParam("ind") @Min(0) OptionalInt index,
                                      @PathParam("name") String name) {
-        return getPersonList(name).get(index.get());
+        return getPersonList(name).get(index.orElseThrow(BadRequestException::new));
     }
 
     @POST

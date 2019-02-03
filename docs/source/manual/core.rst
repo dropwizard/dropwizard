@@ -1231,17 +1231,18 @@ mapping various aspects of POJOs to outgoing HTTP responses. Here's a basic reso
         @GET
         public NotificationList fetch(@PathParam("user") OptionalLong userId,
                                       @QueryParam("count") @DefaultValue("20") OptionalInt count) {
-            final List<Notification> notifications = store.fetch(userId.get(), count.get());
+            final List<Notification> notifications = store.fetch(
+                userId.orElseThrow(BadRequestException::new), count.orElseThrow(BadRequestException::new));
             if (notifications != null) {
                 return new NotificationList(userId, notifications);
             }
-            throw new WebApplicationException(Status.NOT_FOUND);
+            throw new NotFoundException();
         }
 
         @POST
         public Response add(@PathParam("user") OptionalLong userId,
                             @NotNull @Valid Notification notification) {
-            final long id = store.add(userId.get(), notification);
+            final long id = store.add(userId.orElseThrow(BadRequestException::new), notification);
             return Response.created(UriBuilder.fromResource(NotificationResource.class)
                                               .build(userId.get(), id))
                            .build();
@@ -1353,7 +1354,7 @@ this:
     @POST
     public Response add(@PathParam("user") OptionalLong userId,
                         @NotNull @Valid Notification notification) {
-        final long id = store.add(userId.get(), notification);
+        final long id = store.add(userId.orElseThrow(BadRequestException::new), notification);
         return Response.created(UriBuilder.fromResource(NotificationResource.class)
                                           .build(userId.get(), id)
                        .build();
@@ -1533,7 +1534,7 @@ Testing, then, consists of creating an instance of your resource class and passi
             final List<Notification> notifications = mock(List.class);
             when(store.fetch(1, 20)).thenReturn(notifications);
 
-            final NotificationList list = resource.fetch(new LongParam("1"), new IntParam("20"));
+            final NotificationList list = resource.fetch(OptionalLong.of(1L), OptionalInt.of(20));
 
             assertThat(list.getUserId(),
                       is(1L));

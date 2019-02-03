@@ -135,8 +135,8 @@ actually require database access, so the ``@UnitOfWork`` annotation is provided:
     @Path("/{id}")
     @Timed
     @UnitOfWork
-    public Person findPerson(@PathParam("id") LongParam id) {
-        return dao.findById(id.get());
+    public Person findPerson(@PathParam("id") OptionalLong id) {
+        return dao.findById(id.orElseThrow(BadRequestException::new));
     }
 
 This will automatically open a session, begin a transaction, call ``findById``, commit the

@@ -69,8 +69,8 @@ public class ResourceTestRuleTest {
 
     @Test
     public void testGetPersonWithQueryParam() {
-        // Test to ensure that the dropwizard validator is registered so that
-        // it can validate the "ind" IntParam.
+        // Test to ensure that the Dropwizard validator is registered so that
+        // it can validate the "ind" parameter.
         assertThat(resourceTestRule.target("/person/blah/index")
                 .queryParam("ind", 0).request()
                 .get(Person.class))

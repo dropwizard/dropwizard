@@ -179,6 +179,24 @@ public class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
     }
 
     @Test
+    public void nonEmptyString_succeeds_with_valid_string() {
+        final Response response = target("/valid/barter")
+                .queryParam("name", "Joe User")
+                .request().get();
+
+        assertThat(response.getStatus()).isEqualTo(200);
+        assertThat(response.readEntity(String.class)).isEqualTo("Joe User");
+    }
+
+    @Test
+    public void nonEmptyString_succeeds_with_missing() {
+        final Response response = target("/valid/barter").request().get();
+
+        assertThat(response.getStatus()).isEqualTo(200);
+        assertThat(response.readEntity(String.class)).isEqualTo("TEST");
+    }
+
+    @Test
     public void getInvalidBeanParamsIs400() {
         // bean parameter is too short and so will fail validation
         Response response = target("/valid/zoo")
@@ -340,14 +358,13 @@ public class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
 
         final Response response2 = target("/valid/headCopy")
                 .request().get();
-        assertThat(response2.readEntity(String.class))
-                .isEqualTo("{\"code\":400,\"message\":\"query param cheese is not a number.\"}");
+        assertThat(response2.readEntity(Long.class)).isEqualTo(0L);
     }
 
     @Test
     public void paramsCanBeValidatedWhenNull() {
         assertThat(target("/valid/nullable-int-param")
-            .request().get().readEntity(String.class)).isEqualTo("{\"code\":400,\"message\":\"query param num is not a number.\"}");
+            .request().get().readEntity(String.class)).isEqualTo("Not a number");
     }
 
     @Test
@@ -576,9 +593,8 @@ public class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
         final Response response = target("/valid/paramValidation")
             .request()
             .get();
-        assertThat(response.getStatus()).isEqualTo(400);
-        assertThat(response.readEntity(String.class))
-            .containsOnlyOnce("query param length is not a number.");
+        assertThat(response.getStatus()).isEqualTo(200);
+        assertThat(response.readEntity(Long.class)).isEqualTo(0L);
     }
 
     @Test
@@ -587,9 +603,8 @@ public class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
             .queryParam("length", "")
             .request()
             .get();
-        assertThat(response.getStatus()).isEqualTo(400);
-        assertThat(response.readEntity(String.class))
-                .isEqualTo("{\"code\":400,\"message\":\"query param length is not a number.\"}");
+        assertThat(response.getStatus()).isEqualTo(200);
+        assertThat(response.readEntity(Long.class)).isEqualTo(0L);
     }
 
     @Test
@@ -719,242 +734,6 @@ public class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
         assertThat(response.getStatus()).isEqualTo(200);
         assertThat(response.readEntity(String.class))
             .isEqualTo(payload);
-    }
-
-    @Test
-    public void intParam_fails_with_null() {
-        final Response response = target("/valid/intParam")
-                .queryParam("num")
-                .request()
-                .get();
-
-        assertThat(response.getStatus()).isEqualTo(400);
-        assertThat(response.readEntity(String.class))
-                .isEqualTo("{\"code\":400,\"message\":\"query param num is not a number.\"}");
-    }
-
-    @Test
-    public void intParam_fails_with_emptyString() {
-        final Response response = target("/valid/intParam")
-                .queryParam("num", "")
-                .request()
-                .get();
-
-        assertThat(response.getStatus()).isEqualTo(400);
-        assertThat(response.readEntity(String.class))
-                .isEqualTo("{\"code\":400,\"message\":\"query param num is not a number.\"}");
-    }
-
-    @Test
-    public void intParam_fails_with_constraint_violation() {
-        final Response response = target("/valid/intParam")
-                .queryParam("num", 5)
-                .request()
-                .get();
-
-        assertThat(response.getStatus()).isEqualTo(400);
-        assertThat(response.readEntity(String.class))
-                .isEqualTo("{\"errors\":[\"query param num must be greater than or equal to 23\"]}");
-    }
-
-    @Test
-    public void intParam_fails_with_string() {
-        final Response response = target("/valid/intParam")
-                .queryParam("num", "string")
-                .request()
-                .get();
-
-        assertThat(response.getStatus()).isEqualTo(400);
-        assertThat(response.readEntity(String.class))
-                .isEqualTo("{\"code\":400,\"message\":\"query param num is not a number.\"}");
-    }
-
-
-    @Test
-    public void intParam_succeeds() {
-        final Response response = target("/valid/intParam")
-                .queryParam("num", 42)
-                .request()
-                .get();
-
-        assertThat(response.getStatus()).isEqualTo(200);
-        assertThat(response.readEntity(Integer.class)).isEqualTo(42);
-    }
-
-    @Test
-    public void intParamNotNull_fails_with_null() {
-        final Response response = target("/valid/intParamNotNull")
-                .queryParam("num")
-                .request()
-                .get();
-
-        assertThat(response.getStatus()).isEqualTo(400);
-        assertThat(response.readEntity(String.class))
-                .isEqualTo("{\"code\":400,\"message\":\"query param num is not a number.\"}");
-    }
-
-    @Test
-    public void intParamNotNull_fails_with_empty_string() {
-        final Response response = target("/valid/intParamNotNull")
-                .queryParam("num", "")
-                .request()
-                .get();
-
-        assertThat(response.getStatus()).isEqualTo(400);
-        assertThat(response.readEntity(String.class))
-                .isEqualTo("{\"code\":400,\"message\":\"query param num is not a number.\"}");
-    }
-
-    @Test
-    public void intParamNotNull_fails_with_constraint_violation() {
-        final Response response = target("/valid/intParamNotNull")
-                .queryParam("num", 5)
-                .request()
-                .get();
-
-        assertThat(response.getStatus()).isEqualTo(400);
-        assertThat(response.readEntity(String.class))
-                .isEqualTo("{\"errors\":[\"query param num must be greater than or equal to 23\"]}");
-    }
-
-    @Test
-    public void intParamNotNull_fails_with_string() {
-        final Response response = target("/valid/intParamNotNull")
-                .queryParam("num", "test")
-                .request()
-                .get();
-
-        assertThat(response.getStatus()).isEqualTo(400);
-        assertThat(response.readEntity(String.class))
-                .isEqualTo("{\"code\":400,\"message\":\"query param num is not a number.\"}");
-    }
-
-    @Test
-    public void intParamNotNull_succeeds() {
-        final Response response = target("/valid/intParamNotNull")
-                .queryParam("num", 42)
-                .request()
-                .get();
-
-        assertThat(response.getStatus()).isEqualTo(200);
-        assertThat(response.readEntity(Integer.class)).isEqualTo(42);
-    }
-
-    @Test
-    public void intParamWithDefault_succeeds_with_null() {
-        final Response response = target("/valid/intParamWithDefault")
-                .queryParam("num")
-                .request()
-                .get();
-
-        assertThat(response.getStatus()).isEqualTo(200);
-        assertThat(response.readEntity(Integer.class)).isEqualTo(42);
-    }
-
-    @Test
-    public void intParamWithDefault_succeeds_with_empty_string() {
-        final Response response = target("/valid/intParamWithDefault")
-                .queryParam("num", "")
-                .request()
-                .get();
-
-        assertThat(response.getStatus()).isEqualTo(400);
-        assertThat(response.readEntity(String.class))
-                .isEqualTo("{\"code\":400,\"message\":\"query param num is not a number.\"}");
-    }
-
-    @Test
-    public void intParamWithDefault_fails_with_constraint_violation() {
-        final Response response = target("/valid/intParamWithDefault")
-                .queryParam("num", 5)
-                .request()
-                .get();
-
-        assertThat(response.getStatus()).isEqualTo(400);
-        assertThat(response.readEntity(String.class))
-                .isEqualTo("{\"errors\":[\"query param num must be greater than or equal to 23\"]}");
-    }
-
-    @Test
-    public void intParamWithDefault_fails_with_string() {
-        final Response response = target("/valid/intParamWithDefault")
-                .queryParam("num", "test")
-                .request()
-                .get();
-
-        assertThat(response.getStatus()).isEqualTo(400);
-        assertThat(response.readEntity(String.class))
-                .isEqualTo("{\"code\":400,\"message\":\"query param num is not a number.\"}");
-    }
-
-    @Test
-    public void intParamWithDefault_succeeds() {
-        final Response response = target("/valid/intParamWithDefault")
-                .queryParam("num", 30)
-                .request()
-                .get();
-
-        assertThat(response.getStatus()).isEqualTo(200);
-        assertThat(response.readEntity(Integer.class)).isEqualTo(30);
-    }
-
-    @Test
-    public void intParamWithOptionalInside_succeeds_with_missing() {
-        final Response response = target("/valid/intParamWithOptionalInside")
-                .queryParam("num")
-                .request()
-                .get();
-
-        assertThat(response.getStatus()).isEqualTo(400);
-        assertThat(response.readEntity(String.class))
-                .isEqualTo("{\"code\":400,\"message\":\"query param num is not a number.\"}");
-    }
-
-    @Test
-    public void intParamWithOptionalInside_succeeds_with_empty_string() {
-        final Response response = target("/valid/intParamWithOptionalInside")
-                .queryParam("num", "")
-                .request()
-                .get();
-
-        assertThat(response.getStatus()).isEqualTo(400);
-        assertThat(response.readEntity(String.class))
-                .isEqualTo("{\"code\":400,\"message\":\"query param num is not a number.\"}");
-    }
-
-    @Test
-    public void intParamWithOptionalInside_fails_with_constraint_vioalation() {
-        final Response response = target("/valid/intParamWithOptionalInside")
-                .queryParam("num", 5)
-                .request()
-                .get();
-
-        assertThat(response.getStatus()).isEqualTo(400);
-        assertThat(response.readEntity(String.class))
-                .isEqualTo("{\"errors\":[\"query param num must be greater than or equal to 23\"]}");
-    }
-
-    @Test
-    public void intParamWithOptionalInside_fails_with_string() {
-        final Response response = target("/valid/intParamWithOptionalInside")
-                .queryParam("num", "test")
-                .request()
-                .get();
-
-        assertThat(response.getStatus()).isEqualTo(400);
-        assertThat(response.readEntity(String.class))
-                .isEqualTo("{\"code\":400,\"message\":\"query param num is not a number.\"}");
-    }
-
-    @Test
-    public void intParamWithOptionalInside_succeeds() {
-        final Response response = target("/valid/intParamWithOptionalInside")
-                .queryParam("num", 30)
-                .request()
-                .get();
-
-        assertThat(response.getStatus()).isEqualTo(200);
-        assertThat(response.readEntity(Integer.class)).isEqualTo(30);
     }
 
     @Test
