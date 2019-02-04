@@ -1229,20 +1229,19 @@ mapping various aspects of POJOs to outgoing HTTP responses. Here's a basic reso
         }
 
         @GET
-        public NotificationList fetch(@PathParam("user") OptionalLong userId,
-                                      @QueryParam("count") @DefaultValue("20") OptionalInt count) {
-            final List<Notification> notifications = store.fetch(
-                userId.orElseThrow(BadRequestException::new), count.orElseThrow(BadRequestException::new));
+        public NotificationList fetch(@PathParam("user") LongParam userId,
+                                      @QueryParam("count") @DefaultValue("20") IntParam count) {
+            final List<Notification> notifications = store.fetch(userId.get(), count.get());
             if (notifications != null) {
                 return new NotificationList(userId, notifications);
             }
-            throw new NotFoundException();
+            throw new WebApplicationException(Status.NOT_FOUND);
         }
 
         @POST
-        public Response add(@PathParam("user") OptionalLong userId,
+        public Response add(@PathParam("user") LongParam userId,
                             @NotNull @Valid Notification notification) {
-            final long id = store.add(userId.orElseThrow(BadRequestException::new), notification);
+            final long id = store.add(userId.get(), notification);
             return Response.created(UriBuilder.fromResource(NotificationResource.class)
                                               .build(userId.get(), id))
                            .build();
@@ -1352,9 +1351,9 @@ this:
     :emphasize-lines: 3
 
     @POST
-    public Response add(@PathParam("user") OptionalLong userId,
+    public Response add(@PathParam("user") LongParam userId,
                         @NotNull @Valid Notification notification) {
-        final long id = store.add(userId.orElseThrow(BadRequestException::new), notification);
+        final long id = store.add(userId.get(), notification);
         return Response.created(UriBuilder.fromResource(NotificationResource.class)
                                           .build(userId.get(), id)
                        .build();
@@ -1534,7 +1533,7 @@ Testing, then, consists of creating an instance of your resource class and passi
             final List<Notification> notifications = mock(List.class);
             when(store.fetch(1, 20)).thenReturn(notifications);
 
-            final NotificationList list = resource.fetch(OptionalLong.of(1L), OptionalInt.of(20));
+            final NotificationList list = resource.fetch(new LongParam("1"), new IntParam("20"));
 
             assertThat(list.getUserId(),
                       is(1L));

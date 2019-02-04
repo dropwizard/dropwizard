@@ -89,18 +89,7 @@ Constraints on optional types
 *****************************
 
 If an entity, field, or parameter is not strictly required, it can be wrapped in an ``Optional<T>``, but the
-wrapped value can still be constrained by setting the annotation parameter ``payload = Unwrapping.Unwrap.class``
-or adding the constraint to the wrapped types.
-
-    public List<Person> createName(@QueryParam("name") Optional<@NotBlank String> num) {
-        // ...
-    }
-
-    public List<Person> createName(@QueryParam("name")
-                                   @NotBlank(payload = Unwrapping.Unwrap.class) Optional<String> num) {
-        // ...
-    }
-
+wrapped value can still be constrained by setting the annotation parameter ``payload = Unwrapping.Unwrap.class``.
 If the optional container is empty, then the constraints are not applied.
 
 Numeric optional types, such as ``OptionalDouble``, ``OptionalInt``, and ``OptionalLong`` do not require explicit
@@ -115,7 +104,56 @@ unwrapping.
 
 .. note::
 
-    The parameter type ``NonEmptyStringParam`` can also be constrained.
+    Parameter types such as ``IntParam`` and ``NonEmptyStringParam`` can also be constrained.
+
+There is a caveat regarding ``payload = Unwrapping.Unwrap.class`` and ``*Param`` types, as there still are some
+cumbersome situations when constraints need to be applied to the container and the value.
+
+.. code-block:: java
+
+    @POST
+    // The @NotNull is supposed to mean that the parameter is required but the Max(3) is supposed to
+    // apply to the contained integer. Currently, this code will fail saying that Max can't
+    // be applied on an IntParam
+    public List<Person> createNum(@QueryParam("num")
+                                  @NotNull(payload = Unwrapping.Unwrap.class)
+                                  @Max(value = 3, payload = Unwrapping.Unwrap.class) IntParam num) {
+        // ...
+    }
+
+    @GET
+    // Similarly, the underlying validation framework can't unwrap nested types (an integer wrapped
+    // in an IntParam wrapped in an Optional), regardless if `Unwrapping.Unwrap.class` is used
+    public Person retrieve(@QueryParam("num") @Max(3) Optional<IntParam> num) {
+        // ...
+    }
+
+To work around these limitations, if the parameter is required check for it in the endpoint and
+throw an exception, else use ``@DefaultValue`` or move the ``Optional<T>`` into the endpoint.
+
+.. code-block:: java
+
+    @POST
+    // Workaround to handle required int params and validations
+    public List<Person> createNum(@QueryParam("num") @Max(3) IntParam num) {
+        if (num == null) {
+            throw new BadRequestException("query param num must not be null");
+        }
+        // ...
+    }
+
+    @GET
+    // Workaround to handle optional int params and validations with DefaultValue
+    public Person retrieve(@QueryParam("num") @DefaultValue("0") @Max(3) IntParam num) {
+        // ...
+    }
+
+    @GET
+    // Workaround to handle optional int params and validations with Optional
+    public Person retrieve2(@QueryParam("num") @Max(3) IntParam num) {
+        Optional.fromNullable(num);
+        // ...
+    }
 
 .. _man-validation-validations-enum-constraints:
 
