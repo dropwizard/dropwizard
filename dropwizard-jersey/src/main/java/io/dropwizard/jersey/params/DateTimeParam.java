@@ -8,7 +8,10 @@ import javax.annotation.Nullable;
 /**
  * A parameter encapsulating date/time values. All non-parsable values will return a {@code 400 Bad
  * Request} response. All values returned are in UTC.
+ *
+ * @deprecated As of release 1.3.9, will be removed in 2.0.0.
  */
+@Deprecated
 public class DateTimeParam extends AbstractParam<DateTime> {
     public DateTimeParam(@Nullable String input) {
         super(input);

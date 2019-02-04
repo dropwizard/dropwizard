@@ -6,7 +6,7 @@ import javax.annotation.Nullable;
  * A parameter encapsulating long values. All non-decimal values will return a {@code 400 Bad
  * Request} response.
  * 
- * @deprecated As of release 1.3.9, will be removed in 2.0.0. Please use {@link java.util.OptionalLong} instead.
+ * @deprecated As of release 1.3.9, will be removed in 2.0.0.
  */
 @Deprecated
 public class LongParam extends AbstractParam<Long> {

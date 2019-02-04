@@ -9,7 +9,7 @@ Release Notes
 v1.3.9: TBD
 ===========
 
-* Deprecate IntParam and LongParam (`#2625 <https://github.com/dropwizard/dropwizard/pull/2625>`_)
+* Deprecate *Param classes and will be removed in 2.0.0 (`#2625 <https://github.com/dropwizard/dropwizard/pull/2625>`_)
 
 .. _rel-1.3.8:
 

@@ -9,7 +9,10 @@ import static java.util.Objects.requireNonNull;
 /**
  * A parameter encapsulating size values. All non-parsable values will return a {@code 400 Bad
  * Request} response. Supports all input formats the {@link Size} class supports.
+ *
+ * @deprecated As of release 1.3.9, will be removed in 2.0.0.
  */
+@Deprecated
 public class SizeParam extends AbstractParam<Size> {
 
     public SizeParam(@Nullable String input) {

@@ -7,7 +7,10 @@ import javax.annotation.Nullable;
  * regardless of case, the returned value is {@link Boolean#TRUE}. If the query parameter value is
  * {@code "false"}, regardless of case, the returned value is {@link Boolean#FALSE}. All other
  * values will return a {@code 400 Bad Request} response.
+ *
+ * @deprecated As of release 1.3.9, will be removed in 2.0.0.
  */
+@Deprecated
 public class BooleanParam extends AbstractParam<Boolean> {
     public BooleanParam(@Nullable String input) {
         super(input);

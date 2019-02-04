@@ -6,7 +6,10 @@ import java.util.UUID;
 /**
  * A parameter encapsulating UUID values. All non-parsable values will return a {@code 400 Bad
  * Request} response.
+ *
+ * @deprecated As of release 1.3.9, will be removed in 2.0.0.
  */
+@Deprecated
 public class UUIDParam extends AbstractParam<UUID> {
 
     public UUIDParam(@Nullable String input) {
