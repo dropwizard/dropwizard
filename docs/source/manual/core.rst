@@ -1229,8 +1229,8 @@ mapping various aspects of POJOs to outgoing HTTP responses. Here's a basic reso
         }
 
         @GET
-        public NotificationList fetch(@PathParam("user") LongParam userId,
-                                      @QueryParam("count") @DefaultValue("20") IntParam count) {
+        public NotificationList fetch(@PathParam("user") OptionalLong userId,
+                                      @QueryParam("count") @DefaultValue("20") OptionalInt count) {
             final List<Notification> notifications = store.fetch(userId.get(), count.get());
             if (notifications != null) {
                 return new NotificationList(userId, notifications);
@@ -1239,7 +1239,7 @@ mapping various aspects of POJOs to outgoing HTTP responses. Here's a basic reso
         }
 
         @POST
-        public Response add(@PathParam("user") LongParam userId,
+        public Response add(@PathParam("user") OptionalLong userId,
                             @NotNull @Valid Notification notification) {
             final long id = store.add(userId.get(), notification);
             return Response.created(UriBuilder.fromResource(NotificationResource.class)
@@ -1318,17 +1318,16 @@ Parameters
 ----------
 
 The annotated methods on a resource class can accept parameters which are mapped to from aspects of
-the incoming request. The ``*Param`` annotations determine which part of the request the data is
-mapped, and the parameter *type* determines how the data is mapped.
+the incoming request.
 
 For example:
 
 * A ``@PathParam("user")``-annotated ``String`` takes the raw value from the ``user`` variable in
   the matched URI template and passes it into the method as a ``String``.
-* A ``@QueryParam("count")``-annotated ``IntParam`` parameter takes the first ``count`` value from
-  the request's query string and passes it as a ``String`` to ``IntParam``'s constructor.
-  ``IntParam`` (and all other ``io.dropwizard.jersey.params.*`` classes) parses the string
-  as an ``Integer``, returning a ``400 Bad Request`` if the value is malformed.
+* A ``@QueryParam("count")``-annotated ``OptionalInt`` parameter takes the first ``count`` value from
+  the request's query string and passes it as a ``String`` to ``OptionalInt``'s constructor.
+  ``OptionalInt`` parses the string as an ``Integer``, returning a ``400 Bad Request`` if the value
+  is malformed.
 * A ``@FormParam("name")``-annotated ``Set<String>`` parameter takes all the ``name`` values from a
   posted form and passes them to the method as a set of strings.
 * A ``*Param``--annotated ``NonEmptyStringParam`` will interpret empty strings as absent strings,
@@ -1352,7 +1351,7 @@ this:
     :emphasize-lines: 3
 
     @POST
-    public Response add(@PathParam("user") LongParam userId,
+    public Response add(@PathParam("user") OptionalLong userId,
                         @NotNull @Valid Notification notification) {
         final long id = store.add(userId.get(), notification);
         return Response.created(UriBuilder.fromResource(NotificationResource.class)

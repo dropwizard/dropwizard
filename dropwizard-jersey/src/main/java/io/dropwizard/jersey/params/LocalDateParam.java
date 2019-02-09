@@ -7,7 +7,10 @@ import javax.annotation.Nullable;
 /**
  * A parameter encapsulating local date values. All non-parsable values will return a {@code 400 Bad
  * Request} response.
+ *
+ * @deprecated As of release 2.0.0, will be removed in 3.0.0. Please use {@link java.util.Optional} instead.
  */
+@Deprecated
 public class LocalDateParam extends AbstractParam<LocalDate> {
     public LocalDateParam(@Nullable String input) {
         super(input);
