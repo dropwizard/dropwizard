@@ -5,7 +5,10 @@ import java.time.Instant;
 
 /**
  * A parameter encapsulating date/time values. All non-parsable values will return a {@code 400 Bad Request} response.
+ *
+ * @deprecated As of release 2.0.0, will be removed in 3.0.0. Please use {@link java.util.Optional} instead.
  */
+@Deprecated
 public class InstantParam extends AbstractParam<Instant> {
     public InstantParam(@Nullable final String input) {
         super(input);

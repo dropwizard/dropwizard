@@ -22,6 +22,7 @@ v2.0.0: Unreleased
 * Retired use of deprecated Apache ``StrSubstitutor`` and ``StrLookup`` classes and replaced them with Apache's ``StringSubstitutor`` and ``StringLookup`` (`#2462 <https://github.com/dropwizard/dropwizard/pull/2462>`_)
 * Deprecate ``Bundle`` in favor of ``ConfiguredBundle<T>`` (`#2516 <https://github.com/dropwizard/dropwizard/pull/2516>`_)
 * Allow unknown JSON properties (i.e. disable ``DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES``) by default (`#2570 <https://github.com/dropwizard/dropwizard/pull/2570>`_)
+* Deprecate ``*Param`` classes and will be removed in 3.0.0 (`#2637 <https://github.com/dropwizard/dropwizard/pull/2637>`_)
 
 .. _rel-1.3.8:
 
