@@ -1,5 +1,7 @@
 package io.dropwizard.lifecycle.setup;
 
+import com.codahale.metrics.InstrumentedExecutorService;
+import com.codahale.metrics.MetricRegistry;
 import io.dropwizard.util.Duration;
 import org.junit.Before;
 import org.junit.Test;
@@ -140,5 +142,22 @@ public class ExecutorServiceBuilderTest {
         } catch (InterruptedException ex) {
             throw new RuntimeException(ex);
         }
+    }
+
+    @Test
+    public void shouldReturnInstrumentedExecutorWhenMetricRegistryIsProvided() {
+        ExecutorService exe = executorServiceBuilder
+                .metricRegistry(new MetricRegistry())
+                .build();
+
+        assertThat(exe).isInstanceOf(InstrumentedExecutorService.class);
+    }
+
+    @Test
+    public void shouldNotReturnInstrumentedExecutorWhenMetricRegistryIsProvided() {
+        ExecutorService exe = executorServiceBuilder
+                .build();
+
+        assertThat(exe).isNotInstanceOf(InstrumentedExecutorService.class);
     }
 }

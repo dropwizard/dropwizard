@@ -1,10 +1,13 @@
 package io.dropwizard.lifecycle.setup;
 
+import com.codahale.metrics.InstrumentedExecutorService;
+import com.codahale.metrics.MetricRegistry;
 import io.dropwizard.lifecycle.ExecutorServiceManager;
 import io.dropwizard.util.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
 import java.util.Locale;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
@@ -18,6 +21,8 @@ import java.util.concurrent.atomic.AtomicLong;
 public class ExecutorServiceBuilder {
     private static Logger log = LoggerFactory.getLogger(ExecutorServiceBuilder.class);
 
+    @Nullable
+    private MetricRegistry metricRegistry;
     private static final AtomicLong COUNT = new AtomicLong(0);
     private final LifecycleEnvironment environment;
     private final String nameFormat;
@@ -97,6 +102,11 @@ public class ExecutorServiceBuilder {
         return this;
     }
 
+    public ExecutorServiceBuilder metricRegistry(MetricRegistry metricRegistry) {
+        this.metricRegistry = metricRegistry;
+        return this;
+    }
+
     public ExecutorService build() {
         if (corePoolSize != maximumPoolSize && maximumPoolSize > 1 && !isBoundedQueue()) {
             log.warn("Parameter 'maximumPoolSize' is conflicting with unbounded work queues");
@@ -110,7 +120,7 @@ public class ExecutorServiceBuilder {
                                                                    handler);
         executor.allowCoreThreadTimeOut(allowCoreThreadTimeOut);
         environment.manage(new ExecutorServiceManager(executor, shutdownTime, nameFormat));
-        return executor;
+        return metricRegistry != null ? new InstrumentedExecutorService(executor, metricRegistry, nameFormat) :  executor;
     }
 
     private boolean isBoundedQueue() {

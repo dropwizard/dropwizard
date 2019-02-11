@@ -1,5 +1,7 @@
 package io.dropwizard.lifecycle.setup;
 
+import com.codahale.metrics.InstrumentedScheduledExecutorService;
+import com.codahale.metrics.MetricRegistry;
 import io.dropwizard.lifecycle.ExecutorServiceManager;
 import io.dropwizard.util.Duration;
 import org.junit.After;
@@ -140,5 +142,31 @@ public class ScheduledExecutorServiceBuilderTest {
         assertThat(esmCaptured.getExecutor()).isSameAs(this.execTracker);
         assertThat(esmCaptured.getShutdownPeriod()).isEqualTo(DEFAULT_SHUTDOWN_PERIOD);
         assertThat(esmCaptured.getPoolName()).isSameAs(poolName);
+    }
+
+    @Test
+    public void shouldReturnInstrumentedScheduledExecutorWhenMetricRegistryIsProvided() {
+        final String poolName = this.getClass().getSimpleName();
+
+        final ScheduledExecutorServiceBuilder test = new ScheduledExecutorServiceBuilder(this.le,
+                poolName,
+                false);
+
+        this.execTracker = test.metricRegistry(new MetricRegistry()).build();
+
+        assertThat(execTracker).isInstanceOf(InstrumentedScheduledExecutorService.class);
+    }
+
+    @Test
+    public void shouldNotReturnInstrumentedScheduledExecutorWhenMetricRegistryIsProvided() {
+        final String poolName = this.getClass().getSimpleName();
+
+        final ScheduledExecutorServiceBuilder test = new ScheduledExecutorServiceBuilder(this.le,
+                poolName,
+                false);
+
+        this.execTracker = test.build();
+
+        assertThat(execTracker).isNotInstanceOf(InstrumentedScheduledExecutorService.class);
     }
 }

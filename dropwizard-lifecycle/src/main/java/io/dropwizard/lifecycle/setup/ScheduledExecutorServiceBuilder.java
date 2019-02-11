@@ -1,8 +1,11 @@
 package io.dropwizard.lifecycle.setup;
 
+import com.codahale.metrics.InstrumentedScheduledExecutorService;
+import com.codahale.metrics.MetricRegistry;
 import io.dropwizard.lifecycle.ExecutorServiceManager;
 import io.dropwizard.util.Duration;
 
+import javax.annotation.Nullable;
 import java.util.Locale;
 import java.util.concurrent.Executors;
 import java.util.concurrent.RejectedExecutionHandler;
@@ -14,6 +17,8 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class ScheduledExecutorServiceBuilder {
 
+    @Nullable
+    private MetricRegistry metricRegistry;
     private static final AtomicLong COUNT = new AtomicLong(0);
     private final LifecycleEnvironment environment;
     private final String nameFormat;
@@ -73,11 +78,16 @@ public class ScheduledExecutorServiceBuilder {
         return this;
     }
 
-    public ScheduledExecutorService build() {
-        final ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(this.poolSize, this.threadFactory, this.handler);
-        executor.setRemoveOnCancelPolicy(this.removeOnCancel);
+    public ScheduledExecutorServiceBuilder metricRegistry(MetricRegistry metricRegistry) {
+        this.metricRegistry = metricRegistry;
+        return this;
+    }
 
-        this.environment.manage(new ExecutorServiceManager(executor, this.shutdownTime, this.nameFormat));
-        return executor;
+    public ScheduledExecutorService build() {
+        final ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(poolSize, threadFactory, handler);
+        executor.setRemoveOnCancelPolicy(removeOnCancel);
+
+        this.environment.manage(new ExecutorServiceManager(executor, shutdownTime, nameFormat));
+        return metricRegistry != null ? new InstrumentedScheduledExecutorService(executor, metricRegistry, nameFormat) : executor;
     }
 }

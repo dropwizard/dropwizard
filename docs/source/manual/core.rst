@@ -501,8 +501,26 @@ application will not start and a full exception will be logged. If ``RiakClientM
 an exception, the exception will be logged but your application will still be able to shut down.
 
 It should be noted that ``Environment`` has built-in factory methods for ``ExecutorService`` and
-``ScheduledExecutorService`` instances which are managed. See ``LifecycleEnvironment#executorService``
-and ``LifecycleEnvironment#scheduledExecutorService`` for details.
+``ScheduledExecutorService`` instances which are managed.
+
+.. code-block:: java
+
+    public class MyApplication extends Application<MyConfiguration> {
+        @Override
+        public void run(MyApplicationConfiguration configuration, Environment environment) {
+
+            ExecutorService executorService = environment.lifecycle()
+                .executorService(nameFormat)
+                .maxThreads(maxThreads)
+                .metricRegistry(environment.metrics()) // Returns InstrumentedExecutorService if metricRegistry is passed
+                .build();
+
+            ScheduledExecutorService scheduledExecutorService = environment.lifecycle()
+                .scheduledExecutorService(nameFormat)
+                .metricRegistry(environment.metrics()) // Returns InstrumentedScheduledExecutorService if metricRegistry is passed
+                .build();
+        }
+    }
 
 .. _man-core-bundles:
 
