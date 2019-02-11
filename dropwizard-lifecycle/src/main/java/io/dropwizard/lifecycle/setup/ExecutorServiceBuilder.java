@@ -1,5 +1,6 @@
 package io.dropwizard.lifecycle.setup;
 
+import com.codahale.metrics.InstrumentedExecutorService;
 import io.dropwizard.lifecycle.ExecutorServiceManager;
 import io.dropwizard.util.Duration;
 import org.slf4j.Logger;
@@ -110,7 +111,7 @@ public class ExecutorServiceBuilder {
                                                                    handler);
         executor.allowCoreThreadTimeOut(allowCoreThreadTimeOut);
         environment.manage(new ExecutorServiceManager(executor, shutdownTime, nameFormat));
-        return executor;
+        return new InstrumentedExecutorService(executor, environment.getMetricRegistry(), nameFormat);
     }
 
     private boolean isBoundedQueue() {

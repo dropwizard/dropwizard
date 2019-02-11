@@ -217,7 +217,7 @@ Dropwizard then calls your ``Application`` subclass to initialize your applicati
     You can override configuration settings in maps like this:
 
     ``java -Ddw.database.properties.hibernate.hbm2ddl.auto=none server my-config.json``
-    
+
     If you need to use the '.' character in one of the values, you can escape it by using '\\.' instead.
 
     You can also override a configuration setting that is an array of strings by using the ',' character
@@ -501,8 +501,26 @@ application will not start and a full exception will be logged. If ``RiakClientM
 an exception, the exception will be logged but your application will still be able to shut down.
 
 It should be noted that ``Environment`` has built-in factory methods for ``ExecutorService`` and
-``ScheduledExecutorService`` instances which are managed. See ``LifecycleEnvironment#executorService``
-and ``LifecycleEnvironment#scheduledExecutorService`` for details.
+``ScheduledExecutorService`` instances which are managed. These managed instances use ``InstrumentedExecutorService``
+and ```InstrumentedScheduledExecutorService``` respectively, that monitors the number of tasks submitted, running,
+completed and also keeps track of task durations.
+
+.. code-block:: java
+
+    public class MyApplication extends Application<MyConfiguration> {
+        @Override
+        public void run(MyApplicationConfiguration configuration, Environment environment) {
+
+            ExecutorService executorService = environment.lifecycle()
+                .executorService(nameFormat)
+                .maxThreads(maxThreads)
+                .build();
+
+            ScheduledExecutorService scheduledExecutorService = environment.lifecycle()
+                .scheduledExecutorService(nameFormat)
+                .build();
+        }
+    }
 
 .. _man-core-bundles:
 

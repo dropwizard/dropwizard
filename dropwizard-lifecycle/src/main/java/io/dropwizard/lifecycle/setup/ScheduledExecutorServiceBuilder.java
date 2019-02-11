@@ -1,5 +1,6 @@
 package io.dropwizard.lifecycle.setup;
 
+import com.codahale.metrics.InstrumentedScheduledExecutorService;
 import io.dropwizard.lifecycle.ExecutorServiceManager;
 import io.dropwizard.util.Duration;
 
@@ -74,10 +75,10 @@ public class ScheduledExecutorServiceBuilder {
     }
 
     public ScheduledExecutorService build() {
-        final ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(this.poolSize, this.threadFactory, this.handler);
-        executor.setRemoveOnCancelPolicy(this.removeOnCancel);
+        final ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(poolSize, threadFactory, handler);
+        executor.setRemoveOnCancelPolicy(removeOnCancel);
 
-        this.environment.manage(new ExecutorServiceManager(executor, this.shutdownTime, this.nameFormat));
-        return executor;
+        environment.manage(new ExecutorServiceManager(executor, shutdownTime, nameFormat));
+        return new InstrumentedScheduledExecutorService(executor, environment.getMetricRegistry(), nameFormat);
     }
 }
