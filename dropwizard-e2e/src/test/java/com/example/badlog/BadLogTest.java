@@ -66,10 +66,16 @@ public class BadLogTest {
         // Clear out the log file
         Files.write(logFile, new byte[]{});
 
+        final ConfigOverride logOverride = ConfigOverride.config("logging.appenders[0].currentLogFilename", logFile.toString());
         final String configPath = ResourceHelpers.resourceFilePath("badlog/config.yaml");
-        final DropwizardTestSupport<Configuration> app = new DropwizardTestSupport<>(BadLogApp.class, configPath,
-            ConfigOverride.config("logging.appenders[0].currentLogFilename", logFile.toString()));
+        final DropwizardTestSupport<Configuration> app = new DropwizardTestSupport<>(BadLogApp.class, configPath, logOverride);
         assertThatThrownBy(app::before).hasMessage("I'm a bad app");
+
+        // Dropwizard test support resets configuration overrides if `before` throws an exception
+        // which is fine, as that would normally signal the end of the test, but since we're
+        // testing logging behavior that is setup in the application `run` method, we need
+        // to ensure our log override is still present (it's removed again in `after`)
+        logOverride.addToSystemProperties();
 
         // Explicitly run the command so that the fatal error function runs
         app.getApplication().run("server", configPath);
@@ -109,9 +115,11 @@ public class BadLogTest {
         // Clear out the log file
         Files.write(logFile, new byte[]{});
 
-        final DropwizardTestSupport<Configuration> app3 = new DropwizardTestSupport<>(BadLogApp.class, configPath,
-            ConfigOverride.config("logging.appenders[0].currentLogFilename", logFile.toString()));
+        final DropwizardTestSupport<Configuration> app3 = new DropwizardTestSupport<>(BadLogApp.class, configPath, logOverride);
         assertThatThrownBy(app3::before).hasMessage("I'm a bad app");
+
+        // See comment above about manually adding config to system properties
+        logOverride.addToSystemProperties();
 
         // Explicitly run the command so that the fatal error function runs
         app3.getApplication().run("server", configPath);
