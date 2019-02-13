@@ -48,14 +48,15 @@ public class ZonedDateTimeMapper implements ResultColumnMapper<ZonedDateTime> {
      *
      * @return a clone of calendar, representing a database time zone
      */
-    private Calendar cloneCalendar() {
-        return (Calendar) calendar.get().clone();
+    private Optional<Calendar> cloneCalendar() {
+        return calendar.map(Calendar::clone).map(x -> (Calendar)x);
     }
 
     @Override
     @Nullable
     public ZonedDateTime mapColumn(ResultSet r, int columnNumber, StatementContext ctx) throws SQLException {
-        final Timestamp timestamp = calendar.isPresent() ? r.getTimestamp(columnNumber, cloneCalendar()) :
+        final Optional<Calendar> instance = cloneCalendar();
+        final Timestamp timestamp = instance.isPresent() ? r.getTimestamp(columnNumber, instance.get()) :
             r.getTimestamp(columnNumber);
         return convertToZonedDateTime(timestamp);
     }
@@ -63,7 +64,8 @@ public class ZonedDateTimeMapper implements ResultColumnMapper<ZonedDateTime> {
     @Override
     @Nullable
     public ZonedDateTime mapColumn(ResultSet r, String columnLabel, StatementContext ctx) throws SQLException {
-        final Timestamp timestamp = calendar.isPresent() ? r.getTimestamp(columnLabel, cloneCalendar()) :
+        final Optional<Calendar> instance = cloneCalendar();
+        final Timestamp timestamp = instance.isPresent() ? r.getTimestamp(columnLabel, instance.get()) :
             r.getTimestamp(columnLabel);
         return convertToZonedDateTime(timestamp);
     }

@@ -69,7 +69,7 @@ public class ScheduledExecutorServiceBuilder {
     }
 
     public ScheduledExecutorServiceBuilder removeOnCancelPolicy(boolean removeOnCancel) {
-        this.removeOnCancel = Boolean.valueOf(removeOnCancel);
+        this.removeOnCancel = removeOnCancel;
         return this;
     }
 

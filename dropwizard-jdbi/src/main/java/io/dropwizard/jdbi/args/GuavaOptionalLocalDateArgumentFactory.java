@@ -25,6 +25,6 @@ public class GuavaOptionalLocalDateArgumentFactory implements ArgumentFactory<Op
     @Override
     public Argument build(Class<?> expectedType, Optional<LocalDate> value, StatementContext ctx) {
         // accepts guarantees that the value is present
-        return new LocalDateArgument(value.get());
+        return new LocalDateArgument(value.orNull());
     }
 }

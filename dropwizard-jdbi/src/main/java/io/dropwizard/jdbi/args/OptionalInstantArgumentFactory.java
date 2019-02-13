@@ -39,6 +39,6 @@ public class OptionalInstantArgumentFactory implements ArgumentFactory<Optional<
     @Override
     public Argument build(Class<?> expectedType, Optional<Instant> value, StatementContext ctx) {
         // accepts guarantees that the value is present
-        return new InstantArgument(value.get(), calendar);
+        return new InstantArgument(value.orElse(null), calendar);
     }
 }

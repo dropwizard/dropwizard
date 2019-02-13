@@ -25,6 +25,6 @@ public class OptionalLocalDateArgumentFactory implements ArgumentFactory<Optiona
     @Override
     public Argument build(Class<?> expectedType, Optional<LocalDate> value, StatementContext ctx) {
         // accepts guarantees that the value is present
-        return new LocalDateArgument(value.get());
+        return new LocalDateArgument(value.orElse(null));
     }
 }

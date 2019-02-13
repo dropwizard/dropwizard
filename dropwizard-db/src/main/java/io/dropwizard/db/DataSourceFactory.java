@@ -891,10 +891,7 @@ public class DataSourceFactory implements PooledDataSourceFactory {
         poolConfig.setMaxIdle(maxSize);
         poolConfig.setMinIdle(minSize);
 
-        if (getMaxConnectionAge().isPresent()) {
-            poolConfig.setMaxAge(getMaxConnectionAge().get().toMilliseconds());
-        }
-
+        getMaxConnectionAge().map(Duration::toMilliseconds).ifPresent(poolConfig::setMaxAge);
         poolConfig.setMaxWait((int) maxWaitForConnection.toMilliseconds());
         poolConfig.setMinEvictableIdleTimeMillis((int) minIdleTime.toMilliseconds());
         poolConfig.setName(name);
@@ -912,9 +909,7 @@ public class DataSourceFactory implements PooledDataSourceFactory {
         poolConfig.setTimeBetweenEvictionRunsMillis((int) evictionInterval.toMilliseconds());
         poolConfig.setValidationInterval(validationInterval.toMilliseconds());
 
-        if (getValidationQueryTimeout().isPresent()) {
-            poolConfig.setValidationQueryTimeout((int) getValidationQueryTimeout().get().toSeconds());
-        }
+        getValidationQueryTimeout().map(x -> (int)x.toSeconds()).ifPresent(poolConfig::setValidationQueryTimeout);
         validatorClassName.ifPresent(poolConfig::setValidatorClassName);
         jdbcInterceptors.ifPresent(poolConfig::setJdbcInterceptors);
         return new ManagedPooledDataSource(poolConfig, metricRegistry);

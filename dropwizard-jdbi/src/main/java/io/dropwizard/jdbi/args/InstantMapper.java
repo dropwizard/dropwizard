@@ -37,8 +37,9 @@ public class InstantMapper implements ResultColumnMapper<Instant> {
     @Override
     @Nullable
     public Instant mapColumn(ResultSet r, int columnNumber, StatementContext ctx) throws SQLException {
-        final Timestamp timestamp = calendar.isPresent() ?
-                r.getTimestamp(columnNumber, cloneCalendar()) :
+        final Optional<Calendar> instance = cloneCalendar();
+        final Timestamp timestamp = instance.isPresent() ?
+                r.getTimestamp(columnNumber, instance.get()) :
                 r.getTimestamp(columnNumber);
         return timestamp == null ? null : timestamp.toInstant();
     }
@@ -46,13 +47,14 @@ public class InstantMapper implements ResultColumnMapper<Instant> {
     @Override
     @Nullable
     public Instant mapColumn(ResultSet r, String columnLabel, StatementContext ctx) throws SQLException {
-        final Timestamp timestamp = calendar.isPresent() ?
-                r.getTimestamp(columnLabel, cloneCalendar()) :
+        final Optional<Calendar> instance = cloneCalendar();
+        final Timestamp timestamp = instance.isPresent() ?
+                r.getTimestamp(columnLabel, instance.get()) :
                 r.getTimestamp(columnLabel);
         return timestamp == null ? null : timestamp.toInstant();
     }
 
-    private Calendar cloneCalendar() {
-        return (Calendar) calendar.get().clone();
+    private Optional<Calendar> cloneCalendar() {
+        return calendar.map(Calendar::clone).map(x -> (Calendar) x);
     }
 }
