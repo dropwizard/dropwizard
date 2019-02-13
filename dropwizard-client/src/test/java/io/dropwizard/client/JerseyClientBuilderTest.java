@@ -75,8 +75,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class JerseyClientBuilderTest {
-    private final JerseyClientBuilder builder = new JerseyClientBuilder(new MetricRegistry());
-    private final LifecycleEnvironment lifecycleEnvironment = spy(new LifecycleEnvironment());
+    private final MetricRegistry metricRegistry = new MetricRegistry();
+    private final JerseyClientBuilder builder = new JerseyClientBuilder(metricRegistry);
+    private final LifecycleEnvironment lifecycleEnvironment = spy(new LifecycleEnvironment(metricRegistry));
     private final Environment environment = mock(Environment.class);
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
     private final ObjectMapper objectMapper = mock(ObjectMapper.class);

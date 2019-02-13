@@ -1,5 +1,7 @@
 package io.dropwizard.lifecycle.setup;
 
+import com.codahale.metrics.InstrumentedThreadFactory;
+import com.codahale.metrics.MetricRegistry;
 import io.dropwizard.util.Duration;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,6 +15,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.anyString;
@@ -29,7 +32,7 @@ public class ExecutorServiceBuilderTest {
 
     @Before
     public void setUp() throws Exception {
-        executorServiceBuilder = new ExecutorServiceBuilder(new LifecycleEnvironment(), "test");
+        executorServiceBuilder = new ExecutorServiceBuilder(new LifecycleEnvironment(new MetricRegistry()), "test");
         log = mock(Logger.class);
         ExecutorServiceBuilder.setLog(log);
     }
@@ -111,6 +114,14 @@ public class ExecutorServiceBuilderTest {
             // no warning has been given so we should be able to execute at least 2 things at once
             assertCanExecuteAtLeast2ConcurrentTasks(exe);
         }
+    }
+
+    @Test
+    public void shouldUseInstrumentedThreadFactory() {
+        ExecutorService exe = executorServiceBuilder.build();
+        final ThreadPoolExecutor castedExec = (ThreadPoolExecutor) exe;
+
+        assertThat(castedExec.getThreadFactory()).isInstanceOf(InstrumentedThreadFactory.class);
     }
 
     /**

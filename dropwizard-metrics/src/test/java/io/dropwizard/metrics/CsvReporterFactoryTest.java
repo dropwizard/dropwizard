@@ -41,7 +41,8 @@ public class CsvReporterFactoryTest {
         dir.delete();
 
         MetricsFactory config = factory.build(new File(Resources.getResource("yaml/metrics.yml").toURI()));
-        config.configure(new LifecycleEnvironment(), new MetricRegistry());
+        MetricRegistry metricRegistry = new MetricRegistry();
+        config.configure(new LifecycleEnvironment(metricRegistry), metricRegistry);
         assertThat(dir.exists()).isEqualTo(true);
     }
 }
