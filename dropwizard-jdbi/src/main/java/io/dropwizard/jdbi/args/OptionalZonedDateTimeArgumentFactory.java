@@ -39,6 +39,6 @@ public class OptionalZonedDateTimeArgumentFactory implements ArgumentFactory<Opt
     @Override
     public Argument build(Class<?> expectedType, Optional<ZonedDateTime> value, StatementContext ctx) {
         // accepts guarantees that the value is present
-        return new ZonedDateTimeArgument(value.get(), calendar);
+        return new ZonedDateTimeArgument(value.orElse(null), calendar);
     }
 }

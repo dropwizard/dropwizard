@@ -39,6 +39,6 @@ public class OptionalJodaTimeArgumentFactory implements ArgumentFactory<Optional
     @Override
     public Argument build(Class<?> expectedType, Optional<DateTime> value, StatementContext ctx) {
         // accepts guarantees that the value is present
-        return new JodaDateTimeArgument(value.get(), calendar);
+        return new JodaDateTimeArgument(value.orElse(null), calendar);
     }
 }
