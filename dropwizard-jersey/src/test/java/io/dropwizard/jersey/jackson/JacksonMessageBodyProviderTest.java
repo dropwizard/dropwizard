@@ -60,7 +60,7 @@ public class JacksonMessageBodyProviderTest {
             if (this == obj) {
                 return true;
             }
-            if (obj == null || getClass() != obj.getClass()) {
+            if (!(obj instanceof Example)) {
                 return false;
             }
             final Example other = (Example) obj;

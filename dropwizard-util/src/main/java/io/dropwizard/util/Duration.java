@@ -140,7 +140,7 @@ public class Duration implements Comparable<Duration> {
         if (this == obj) {
             return true;
         }
-        if ((obj == null) || (getClass() != obj.getClass())) {
+        if (!(obj instanceof Duration)) {
             return false;
         }
         final Duration duration = (Duration) obj;

@@ -117,7 +117,7 @@ public abstract class AbstractParam<T> {
         if (this == obj) {
             return true;
         }
-        if ((obj == null) || (getClass() != obj.getClass())) {
+        if (!(obj instanceof AbstractParam)) {
             return false;
         }
         final AbstractParam<?> that = (AbstractParam<?>) obj;

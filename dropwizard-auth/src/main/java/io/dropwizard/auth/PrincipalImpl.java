@@ -20,7 +20,7 @@ public class PrincipalImpl implements Principal {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (!(o instanceof PrincipalImpl)) {
             return false;
         }
 

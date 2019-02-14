@@ -51,7 +51,7 @@ public class BasicCredentials {
         if (this == obj) {
             return true;
         }
-        if (obj == null || getClass() != obj.getClass()) {
+        if (!(obj instanceof BasicCredentials)) {
             return false;
         }
         final BasicCredentials other = (BasicCredentials) obj;

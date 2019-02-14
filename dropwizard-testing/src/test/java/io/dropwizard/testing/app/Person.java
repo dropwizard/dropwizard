@@ -39,7 +39,7 @@ public class Person {
         if (this == obj) {
             return true;
         }
-        if (obj == null || getClass() != obj.getClass()) {
+        if (!(obj instanceof Person)) {
             return false;
         }
         final Person other = (Person) obj;

@@ -122,7 +122,7 @@ public class Size implements Comparable<Size> {
         if (this == obj) {
             return true;
         }
-        if ((obj == null) || (getClass() != obj.getClass())) {
+        if (!(obj instanceof Size)) {
             return false;
         }
         final Size size = (Size) obj;
