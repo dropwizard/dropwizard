@@ -71,6 +71,13 @@ public abstract class ConfiguredCommand<T extends Configuration> extends Command
     @SuppressWarnings("unchecked")
     public void run(Bootstrap<?> wildcardBootstrap, Namespace namespace) throws Exception {
         final Bootstrap<T> bootstrap = (Bootstrap<T>) wildcardBootstrap;
+        final String applicationName = bootstrap.getApplication().getName();
+
+        if (namespace.getString("file") == null && (applicationName != null && !applicationName.trim().isEmpty())) {
+            String key = applicationName.toLowerCase().replaceAll("\\s+", ".") + ".configurationFile";
+            namespace.getAttrs().put("file", System.getProperty(key));
+        }
+
         configuration = parseConfiguration(bootstrap.getConfigurationFactoryFactory(),
                                            bootstrap.getConfigurationSourceProvider(),
                                            bootstrap.getValidatorFactory().getValidator(),
