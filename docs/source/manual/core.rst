@@ -489,7 +489,7 @@ For example, given a theoretical Riak__ client which needs to be started and sto
 
     public class MyApplication extends Application<MyConfiguration>{
         @Override
-        public void run(MyApplicationConfiguration configuration, Environment environment) {
+        public void run(MyConfiguration configuration, Environment environment) {
             RiakClient client = ...;
             RiakClientManager riakClientManager = new RiakClientManager(client);
             environment.lifecycle().manage(riakClientManager);
@@ -509,7 +509,7 @@ completed and also keeps track of task durations.
 
     public class MyApplication extends Application<MyConfiguration> {
         @Override
-        public void run(MyApplicationConfiguration configuration, Environment environment) {
+        public void run(MyConfiguration configuration, Environment environment) {
 
             ExecutorService executorService = environment.lifecycle()
                 .executorService(nameFormat)
