@@ -18,6 +18,7 @@ import io.dropwizard.logging.filter.LevelFilterFactory;
 import io.dropwizard.logging.filter.NullLevelFilterFactory;
 import io.dropwizard.logging.layout.LayoutFactory;
 import io.dropwizard.request.logging.RequestLogFactory;
+import org.eclipse.jetty.server.CustomRequestLog;
 import org.eclipse.jetty.server.RequestLog;
 import org.slf4j.LoggerFactory;
 
@@ -121,6 +122,6 @@ public class LogbackClassicRequestLogFactory implements RequestLogFactory<Reques
             attachable.addAppender(appender.build(context, name, layoutFactory, levelFilterFactory, asyncAppenderFactory));
         }
 
-        return new DropwizardSlf4jRequestLog(attachable, timeZone);
+        return new CustomRequestLog(new DropwizardSlf4jRequestLogWriter(attachable), ClassicLogFormat.pattern(timeZone));
     }
 }
