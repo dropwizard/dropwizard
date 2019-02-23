@@ -1229,8 +1229,8 @@ mapping various aspects of POJOs to outgoing HTTP responses. Here's a basic reso
         }
 
         @GET
-        public NotificationList fetch(@PathParam("user") LongParam userId,
-                                      @QueryParam("count") @DefaultValue("20") IntParam count) {
+        public NotificationList fetch(@PathParam("user") OptionalLong userId,
+                                      @QueryParam("count") @DefaultValue("20") OptionalInt count) {
             final List<Notification> notifications = store.fetch(userId.get(), count.get());
             if (notifications != null) {
                 return new NotificationList(userId, notifications);
@@ -1239,7 +1239,7 @@ mapping various aspects of POJOs to outgoing HTTP responses. Here's a basic reso
         }
 
         @POST
-        public Response add(@PathParam("user") LongParam userId,
+        public Response add(@PathParam("user") OptionalLong userId,
                             @NotNull @Valid Notification notification) {
             final long id = store.add(userId.get(), notification);
             return Response.created(UriBuilder.fromResource(NotificationResource.class)
@@ -1351,7 +1351,7 @@ this:
     :emphasize-lines: 3
 
     @POST
-    public Response add(@PathParam("user") LongParam userId,
+    public Response add(@PathParam("user") OptionalLong userId,
                         @NotNull @Valid Notification notification) {
         final long id = store.add(userId.get(), notification);
         return Response.created(UriBuilder.fromResource(NotificationResource.class)
