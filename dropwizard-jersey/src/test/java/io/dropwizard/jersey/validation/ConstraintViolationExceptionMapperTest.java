@@ -852,7 +852,7 @@ public class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void intParamWithDefault_succeeds_with_empty_string() {
+    public void intParamWithDefault_fails_with_empty_string() {
         final Response response = target("/valid/intParamWithDefault")
                 .queryParam("num", "")
                 .request()
@@ -899,9 +899,8 @@ public class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void intParamWithOptionalInside_succeeds_with_missing() {
+    public void intParamWithOptionalInside_fails_with_missing() {
         final Response response = target("/valid/intParamWithOptionalInside")
-                .queryParam("num")
                 .request()
                 .get();
 
@@ -911,7 +910,7 @@ public class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void intParamWithOptionalInside_succeeds_with_empty_string() {
+    public void intParamWithOptionalInside_fails_with_empty_string() {
         final Response response = target("/valid/intParamWithOptionalInside")
                 .queryParam("num", "")
                 .request()
@@ -923,7 +922,7 @@ public class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void intParamWithOptionalInside_fails_with_constraint_vioalation() {
+    public void intParamWithOptionalInside_fails_with_constraint_violation() {
         final Response response = target("/valid/intParamWithOptionalInside")
                 .queryParam("num", 5)
                 .request()
@@ -960,7 +959,6 @@ public class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
     @Test
     public void optionalInt_succeeds_with_missing() {
         final Response response = target("/valid/optionalInt")
-                .queryParam("num")
                 .request()
                 .get();
 
@@ -980,7 +978,7 @@ public class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void optionalInt_fails_with_constraint_vioalation() {
+    public void optionalInt_fails_with_constraint_violation() {
         final Response response = target("/valid/optionalInt")
                 .queryParam("num", 5)
                 .request()
@@ -1017,7 +1015,6 @@ public class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
     @Test
     public void optionalIntWithDefault_succeeds_with_missing() {
         final Response response = target("/valid/optionalIntWithDefault")
-                .queryParam("num")
                 .request()
                 .get();
 
@@ -1073,7 +1070,6 @@ public class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
     @Test
     public void optionalInteger_succeeds_with_missing() {
         final Response response = target("/valid/optionalInteger")
-                .queryParam("num")
                 .request()
                 .get();
 
@@ -1093,7 +1089,7 @@ public class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void optionalInteger_fails_with_constraint_vioalation() {
+    public void optionalInteger_fails_with_constraint_violation() {
         final Response response = target("/valid/optionalInteger")
                 .queryParam("num", 5)
                 .request()
@@ -1130,7 +1126,6 @@ public class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
     @Test
     public void optionalIntegerWithDefault_succeeds_with_missing() {
         final Response response = target("/valid/optionalIntegerWithDefault")
-                .queryParam("num")
                 .request()
                 .get();
 
@@ -1150,7 +1145,7 @@ public class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void optionalIntegerWithDefault_fails_with_constraint_vioalation() {
+    public void optionalIntegerWithDefault_fails_with_constraint_violation() {
         final Response response = target("/valid/optionalIntegerWithDefault")
                 .queryParam("num", 5)
                 .request()
