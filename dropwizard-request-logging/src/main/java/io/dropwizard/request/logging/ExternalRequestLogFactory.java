@@ -2,8 +2,10 @@ package io.dropwizard.request.logging;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import io.dropwizard.request.logging.old.ClassicLogFormat;
+import org.eclipse.jetty.server.CustomRequestLog;
 import org.eclipse.jetty.server.RequestLog;
-import org.eclipse.jetty.server.Slf4jRequestLog;
+import org.eclipse.jetty.server.Slf4jRequestLogWriter;
 
 /**
  * A request log factory which writes request logs via Slf4j and doesn't configure any logging infrastructure.
@@ -27,6 +29,6 @@ public class ExternalRequestLogFactory implements RequestLogFactory<RequestLog> 
 
     @Override
     public RequestLog build(String name) {
-        return new Slf4jRequestLog();
+        return new CustomRequestLog(new Slf4jRequestLogWriter(), ClassicLogFormat.pattern());
     }
 }
