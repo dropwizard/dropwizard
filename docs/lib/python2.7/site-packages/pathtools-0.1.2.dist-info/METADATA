@@ -1,0 +1,27 @@
+Metadata-Version: 2.1
+Name: pathtools
+Version: 0.1.2
+Summary: File system general utilities
+Home-page: http://github.com/gorakhargosh/pathtools
+Author: Yesudeep Mangalapilly
+Author-email: yesudeep@gmail.com
+License: MIT License
+Platform: UNKNOWN
+Classifier: Development Status :: 3 - Alpha
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Natural Language :: English
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python
+Classifier: Topic :: Software Development :: Libraries
+Classifier: Topic :: System :: Filesystems
+Classifier: Topic :: Utilities
+
+pathtools
+=========
+
+Pattern matching and various utilities for file systems paths.
+
+
+
+
