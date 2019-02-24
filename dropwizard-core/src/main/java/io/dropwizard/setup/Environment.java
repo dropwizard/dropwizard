@@ -76,7 +76,7 @@ public class Environment {
 
         this.adminEnvironment = new AdminEnvironment(adminContext, healthCheckRegistry, metricRegistry);
 
-        this.lifecycleEnvironment = new LifecycleEnvironment();
+        this.lifecycleEnvironment = new LifecycleEnvironment(metricRegistry);
 
         final DropwizardResourceConfig jerseyConfig = new DropwizardResourceConfig(metricRegistry);
         jerseyConfig.setContextPath(servletContext.getContextPath());
