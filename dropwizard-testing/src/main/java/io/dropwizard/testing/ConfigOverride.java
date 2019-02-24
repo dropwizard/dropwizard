@@ -1,11 +1,10 @@
 package io.dropwizard.testing;
 
 import java.util.function.Supplier;
-import io.dropwizard.testing.junit.DropwizardAppRule;
 
 /**
  * An override for a field in dropwizard configuration intended for use with
- * {@link DropwizardAppRule}.
+ * {@link io.dropwizard.testing.junit5.DropwizardAppExtension}.
  * <p>
  * Given a configuration file containing
  * <pre>

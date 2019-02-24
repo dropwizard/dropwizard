@@ -10,7 +10,7 @@ import org.junit.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class DAOTestRuleConfigTest {
-
+    @SuppressWarnings("deprecation")
     @Rule
     public final DAOTestRule database = DAOTestRule.newBuilder()
         .setUrl("jdbc:h2:mem:rule-config-test")

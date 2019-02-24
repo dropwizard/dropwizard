@@ -12,9 +12,11 @@ import java.nio.charset.StandardCharsets;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class DropwizardClientRuleTest {
+    @SuppressWarnings("deprecation")
     @ClassRule
     public static final DropwizardClientRule RULE_WITH_INSTANCE = new DropwizardClientRule(new TestResource("foo"));
 
+    @SuppressWarnings("deprecation")
     @ClassRule
     public static final DropwizardClientRule RULE_WITH_CLASS = new DropwizardClientRule(TestResource.class);
 

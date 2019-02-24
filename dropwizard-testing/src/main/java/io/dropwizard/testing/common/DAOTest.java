@@ -1,7 +1,6 @@
 package io.dropwizard.testing.common;
 
 import io.dropwizard.logging.BootstrapLogging;
-import io.dropwizard.testing.junit.DAOTestRule;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -113,7 +112,7 @@ public class DAOTest {
     private final SessionFactory sessionFactory;
 
     /**
-     * Use {@link DAOTestRule#newBuilder()}
+     * Use {@link io.dropwizard.testing.junit5.DAOTestExtension#newBuilder()}
      */
     private DAOTest(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
