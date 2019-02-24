@@ -10,4 +10,7 @@ logs
 .settings/
 .classpath
 .project
-
+docs/.Python
+docs/bin
+docs/include/python2.7
+docs/lib/python2.7
