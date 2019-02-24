@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.client.proxy.ProxyConfiguration;
 import io.dropwizard.client.ssl.TlsConfiguration;
 import io.dropwizard.util.Duration;
-import org.hibernate.validator.valuehandling.UnwrapValidatedValue;
 
 import javax.annotation.Nullable;
 import javax.validation.Valid;
@@ -49,7 +48,6 @@ public class HttpClientConfiguration {
     private int retries = 0;
 
     @NotNull
-    @UnwrapValidatedValue(false)
     private Optional<String> userAgent = Optional.empty();
 
     @Valid

@@ -26,14 +26,11 @@ public class OptionalDoubleParamConverterProvider implements ParamConverterProvi
     public static class OptionalDoubleParamConverter implements ParamConverter<OptionalDouble> {
         @Override
         public OptionalDouble fromString(final String value) {
-            if (value == null) {
-                return OptionalDouble.empty();
-            }
-
             try {
-                return OptionalDouble.of(Double.parseDouble(value));
+                final double d = Double.parseDouble(value);
+                return OptionalDouble.of(d);
             } catch (NumberFormatException e) {
-                throw new IllegalArgumentException(e);
+                return OptionalDouble.empty();
             }
         }
 

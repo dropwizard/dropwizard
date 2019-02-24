@@ -18,12 +18,45 @@ public class LongParamTest {
     }
 
     @Test
+    public void nullThrowsAnException() {
+        assertThatThrownBy(() -> new LongParam(null))
+                .isInstanceOfSatisfying(WebApplicationException.class, e -> {
+                    assertThat(e.getResponse().getStatus()).isEqualTo(400);
+                    assertThat(e.getResponse().getEntity()).isEqualTo(
+                            new ErrorMessage(400, "Parameter is not a number.")
+                    );
+                });
+    }
+
+    @Test
+    public void emptyStringThrowsAnException() {
+        assertThatThrownBy(() -> new LongParam(""))
+                .isInstanceOfSatisfying(WebApplicationException.class, e -> {
+                    assertThat(e.getResponse().getStatus()).isEqualTo(400);
+                    assertThat(e.getResponse().getEntity()).isEqualTo(
+                            new ErrorMessage(400, "Parameter is not a number.")
+                    );
+                });
+    }
+
+    @Test
     public void aNonIntegerThrowsAnException() {
         assertThatThrownBy(() -> new LongParam("foo"))
             .isInstanceOfSatisfying(WebApplicationException.class, e -> {
                 assertThat(e.getResponse().getStatus()).isEqualTo(400);
                 assertThat(e.getResponse().getEntity()).isEqualTo(
                     new ErrorMessage(400, "Parameter is not a number.")
+                );
+            });
+    }
+
+    @Test
+    public void aNonIntegerThrowsAnExceptionWithCustomName() {
+        assertThatThrownBy(() -> new LongParam("foo", "customName"))
+            .isInstanceOfSatisfying(WebApplicationException.class, e -> {
+                assertThat(e.getResponse().getStatus()).isEqualTo(400);
+                assertThat(e.getResponse().getEntity()).isEqualTo(
+                    new ErrorMessage(400, "customName is not a number.")
                 );
             });
     }

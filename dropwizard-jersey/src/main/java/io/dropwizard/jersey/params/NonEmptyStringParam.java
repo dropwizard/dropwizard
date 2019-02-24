@@ -22,7 +22,7 @@ public class NonEmptyStringParam extends AbstractParam<Optional<String>> {
     }
 
     @Override
-    protected Optional<String> parse(@Nullable String input) throws Exception {
+    protected Optional<String> parse(@Nullable String input) {
         return Optional.ofNullable(Strings.emptyToNull(input));
     }
 }

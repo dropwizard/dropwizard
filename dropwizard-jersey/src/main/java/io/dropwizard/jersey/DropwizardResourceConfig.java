@@ -13,8 +13,8 @@ import io.dropwizard.jersey.validation.FuzzyEnumParamConverterProvider;
 import io.dropwizard.util.Strings;
 import javassist.ClassPool;
 import javassist.CtClass;
-import org.glassfish.hk2.utilities.Binder;
 import org.glassfish.jersey.internal.inject.AbstractBinder;
+import org.glassfish.jersey.internal.inject.Binder;
 import org.glassfish.jersey.internal.inject.Providers;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.ServerProperties;
@@ -140,12 +140,12 @@ public class DropwizardResourceConfig extends ResourceConfig {
         if (component instanceof Class<?>) {
             return super.register((Class<?>) component);
         } else if (Providers.isProvider(clazz) || Binder.class.isAssignableFrom(clazz)) {
-            // If jersey supports this component's class (including hk2 Binders), register directly
+            // If Jersey supports this component's class (including Binders), register directly
             return super.register(object);
         } else {
             // Else register a binder that binds the instance to its class type
             try {
-                // Need to create a new subclass dynamically here because hk2/jersey
+                // Need to create a new subclass dynamically here because Jersey
                 // doesn't add new bindings for the same class
                 ClassPool pool = ClassPool.getDefault();
                 CtClass cc = pool.makeClass(SpecificBinder.class.getName() + UUID.randomUUID());

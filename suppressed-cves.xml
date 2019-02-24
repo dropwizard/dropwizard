@@ -32,4 +32,12 @@
         <notes><![CDATA[false positive]]></notes>
         <cve>CVE-2002-1533</cve>
     </suppress>
+    <suppress>
+        <notes><![CDATA[false positive, mimepull]]></notes>
+        <cve>CVE-2010-4647</cve>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[false positive, mimepull]]></notes>
+        <cve>CVE-2008-7271</cve>
+    </suppress>
 </suppressions>

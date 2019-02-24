@@ -76,34 +76,37 @@ detailing the validation errors: ``name may not be empty``
     class must be marked ``@Valid``. For more information, see the Hibernate Validator documentation
     on `Object graphs`_ and `Cascaded validation`_.
 
-.. _Object graphs: https://docs.jboss.org/hibernate/validator/5.4/reference/en-US/html_single/#section-object-graph-validation
+.. _Object graphs: https://docs.jboss.org/hibernate/validator/6.0/reference/en-US/html_single/#section-object-graph-validation
 
-.. _Cascaded validation: https://docs.jboss.org/hibernate/validator/5.4/reference/en-US/html_single/#example-cascaded-validation
+.. _Cascaded validation: https://docs.jboss.org/hibernate/validator/6.0/reference/en-US/html_single/#example-cascaded-validation
 
 Since our entity is also annotated with ``@NotNull``, Dropwizard will also guard against ``null``
 input with a response stating that the body must not be null.
 
 .. _man-validation-validations-optional-constraints:
 
-``Optional<T>`` Constraints
-***************************
+Constraints on optional types
+*****************************
 
-If an entity, field, or parameter is not required, it can be wrapped in an ``Optional<T>``, but the
-inner value can still be constrained with the ``@UnwrapValidatedValue`` annotation. If the
-``Optional`` is absent, then the constraints are not applied.
+If an entity, field, or parameter is not strictly required, it can be wrapped in an ``Optional<T>``, but the
+wrapped value can still be constrained by setting the annotation parameter ``payload = Unwrapping.Unwrap.class``.
+If the optional container is empty, then the constraints are not applied.
+
+Numeric optional types, such as ``OptionalDouble``, ``OptionalInt``, and ``OptionalLong`` do not require explicit
+unwrapping.
 
 .. note::
 
-    Be careful when using constraints with ``*Param`` annotations on ``Optional<String>`` parameters
+    Be careful when using constraints with validation annotations on ``Optional<String>`` parameters
     as there is a subtle, but important distinction between null and empty. If a client requests
-    ``bar?q=``, ``q`` will evaluate to ``Optional.of("")``. If you want ``q`` to evaluate to
-    ``Optional.absent()`` in this situation, change the type to ``NonEmptyStringParam``
+    ``bar?q=``, the query parameter ``q`` will evaluate to ``Optional.of("")``.
+    If you want ``q`` to evaluate to ``Optional.empty()`` in this situation, change the type to ``NonEmptyStringParam``.
 
 .. note::
 
-    Param types such as ``IntParam`` and ``NonEmptyStringParam`` can also be constrained.
+    Parameter types such as ``IntParam`` and ``NonEmptyStringParam`` can also be constrained.
 
-There is a caveat regarding ``@UnwrapValidatedValue`` and ``*Param`` types, as there still are some
+There is a caveat regarding ``payload = Unwrapping.Unwrap.class`` and ``*Param`` types, as there still are some
 cumbersome situations when constraints need to be applied to the container and the value.
 
 .. code-block:: java
@@ -112,20 +115,21 @@ cumbersome situations when constraints need to be applied to the container and t
     // The @NotNull is supposed to mean that the parameter is required but the Max(3) is supposed to
     // apply to the contained integer. Currently, this code will fail saying that Max can't
     // be applied on an IntParam
-    public List<Person> createNum(@QueryParam("num") @UnwrapValidatedValue(false)
-                                  @NotNull @Max(3) IntParam num) {
+    public List<Person> createNum(@QueryParam("num")
+                                  @NotNull(payload = Unwrapping.Unwrap.class)
+                                  @Max(value = 3, payload = Unwrapping.Unwrap.class) IntParam num) {
         // ...
     }
 
     @GET
     // Similarly, the underlying validation framework can't unwrap nested types (an integer wrapped
-    // in an IntParam wrapped in an Optional), regardless if the @UnwrapValidatedValue is used
+    // in an IntParam wrapped in an Optional), regardless if `Unwrapping.Unwrap.class` is used
     public Person retrieve(@QueryParam("num") @Max(3) Optional<IntParam> num) {
         // ...
     }
 
 To work around these limitations, if the parameter is required check for it in the endpoint and
-throw an exception, else use ``@DefaultValue`` or move the ``Optional`` into the endpoint.
+throw an exception, else use ``@DefaultValue`` or move the ``Optional<T>`` into the endpoint.
 
 .. code-block:: java
 
@@ -133,7 +137,7 @@ throw an exception, else use ``@DefaultValue`` or move the ``Optional`` into the
     // Workaround to handle required int params and validations
     public List<Person> createNum(@QueryParam("num") @Max(3) IntParam num) {
         if (num == null) {
-            throw new WebApplicationException("query param num must not be null", 400);
+            throw new BadRequestException("query param num must not be null");
         }
         // ...
     }
@@ -312,7 +316,7 @@ Annotations
 In addition to the `annotations defined in Hibernate Validator`_, Dropwizard contains another set of annotations,
 which are briefly shown below.
 
-.. _annotations defined in Hibernate Validator: https://docs.jboss.org/hibernate/validator/5.4/reference/en-US/html_single/#section-builtin-constraints
+.. _annotations defined in Hibernate Validator: https://docs.jboss.org/hibernate/validator/6.0/reference/en-US/html_single/#section-builtin-constraints
 
 .. code-block:: java
 
@@ -325,8 +329,8 @@ which are briefly shown below.
         // @OneOf forces a value to value within certain values.
         private final String gender;
 
-        @Max(10)
-        @Min(0)
+        @Min(value = 0, payload = Unwrapping.Unwrap.class)
+        @Max(value = 10, payload = Unwrapping.Unwrap.class)
         // The integer contained, if present, can attain a min value of 0 and a max of 10.
         private final Optional<Integer> animals;
 
@@ -368,7 +372,7 @@ The ``@Validated`` annotation allows for `validation groups`_ to be specifically
 default group. This is useful when different endpoints share the same entity but may have different
 validation requirements.
 
-.. _validation groups: https://docs.jboss.org/hibernate/validator/5.4/reference/en-US/html_single/#chapter-groups
+.. _validation groups: https://docs.jboss.org/hibernate/validator/6.0/reference/en-US/html_single/#chapter-groups
 
 Going back to our favorite ``Person`` class. Let's say in the initial version of our API, ``name``
 has to be non-empty, but realized that business requirements changed and a name can't be longer than

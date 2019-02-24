@@ -78,6 +78,6 @@ public class PortRangeValidatorTest {
     public void rejectsInvalidPortsInList() {
         example.ports = Collections.singletonList(-1);
         assertThat(ConstraintViolations.format(validator.validate(example)))
-            .containsOnly("ports[0].<collection element> must be between 1 and 65535");
+            .containsOnly("ports[0].<list element> must be between 1 and 65535");
     }
 }

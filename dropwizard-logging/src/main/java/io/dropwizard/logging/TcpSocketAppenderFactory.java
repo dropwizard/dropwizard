@@ -10,7 +10,7 @@ import io.dropwizard.util.Duration;
 import io.dropwizard.util.Size;
 import io.dropwizard.validation.MinSize;
 import io.dropwizard.validation.PortRange;
-import org.hibernate.validator.constraints.NotEmpty;
+import javax.validation.constraints.NotEmpty;
 
 import javax.net.SocketFactory;
 import javax.validation.constraints.NotNull;

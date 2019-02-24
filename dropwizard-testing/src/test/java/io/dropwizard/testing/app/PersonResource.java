@@ -48,7 +48,7 @@ public class PersonResource {
     @GET
     @Timed
     @Path("/index")
-    public Person getPersonWithIndex(@Min(0) @QueryParam("ind") IntParam index,
+    public Person getPersonWithIndex(@QueryParam("ind") @Min(0) IntParam index,
                                      @PathParam("name") String name) {
         return getPersonList(name).get(index.get());
     }

@@ -1,12 +1,10 @@
 package io.dropwizard.jersey.validation;
 
 import io.dropwizard.validation.ValidationMethod;
-import org.hibernate.validator.constraints.NotEmpty;
 
-import javax.annotation.Nullable;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.QueryParam;
-import java.util.Objects;
 
 public class BeanParameter {
     @QueryParam("name")
@@ -19,11 +17,11 @@ public class BeanParameter {
 
     @QueryParam("choice")
     @NotNull
-    @Nullable
+    @SuppressWarnings("NullAway.Init")
     private Choice choice;
 
     public Choice getChoice() {
-        return Objects.requireNonNull(choice);
+        return choice;
     }
 
     @ValidationMethod(message = "name must be Coda")

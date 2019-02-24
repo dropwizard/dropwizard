@@ -29,7 +29,6 @@ public abstract class AbstractParam<T> {
      *
      * @param input an input value from a client request
      */
-    @SuppressWarnings({"AbstractMethodCallInConstructor", "OverriddenMethodCallDuringObjectConstruction"})
     protected AbstractParam(@Nullable String input, String parameterName) {
         this.parameterName = parameterName;
         try {

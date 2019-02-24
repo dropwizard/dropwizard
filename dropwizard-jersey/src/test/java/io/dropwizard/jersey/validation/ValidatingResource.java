@@ -9,20 +9,21 @@ import io.dropwizard.jersey.params.IntParam;
 import io.dropwizard.jersey.params.LongParam;
 import io.dropwizard.jersey.params.NonEmptyStringParam;
 import io.dropwizard.validation.Validated;
-import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotEmpty;
-import org.hibernate.validator.valuehandling.UnwrapValidatedValue;
 
 import javax.servlet.ServletContext;
 import javax.validation.Valid;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import javax.validation.valueextraction.Unwrapping;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.CookieParam;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -37,6 +38,8 @@ import javax.ws.rs.core.MediaType;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.OptionalInt;
 import java.util.Set;
 
 @Path("/valid/")
@@ -51,7 +54,8 @@ public class ValidatingResource {
     @POST
     @Path("foo")
     @Valid
-    public ValidRepresentation blah(@NotNull @Valid ValidRepresentation representation, @QueryParam("somethingelse") String xer) {
+    public ValidRepresentation blah(@NotNull @Valid ValidRepresentation representation,
+                                    @QueryParam("somethingelse") String xer) {
         return new ValidRepresentation();
     }
 
@@ -78,25 +82,23 @@ public class ValidatingResource {
 
     @GET
     @Path("paramValidation")
-    public String paramValidation(@UnwrapValidatedValue @NotNull @Min(2) @Max(5) @QueryParam("length") LongParam length) {
-        return Long.toString(length.get());
+    public Long paramValidation(@NotNull(payload = Unwrapping.Skip.class)
+                                @Min(2) @Max(5)
+                                @QueryParam("length") LongParam length) {
+        return length.get();
     }
 
     @GET
     @Path("messageValidation")
-    public String messageValidation(
-        @UnwrapValidatedValue
-        @NotNull
-        @Min(value = 2, message = "The value ${validatedValue} is less then {value}")
-        @QueryParam("length")
-            LongParam length
-    ) {
-        return Long.toString(length.get());
+    public Long messageValidation(@NotNull(payload = Unwrapping.Skip.class)
+                                  @Min(value = 2, message = "The value ${validatedValue} is less then {value}")
+                                  @QueryParam("length") LongParam length) {
+        return length.get();
     }
 
     @GET
     @Path("barter")
-    public String isnt(@QueryParam("name") @Length(min = 3) @UnwrapValidatedValue NonEmptyStringParam name) {
+    public String isnt(@QueryParam("name") @Length(min = 3) NonEmptyStringParam name) {
         return name.get().orElse(null);
     }
 
@@ -106,7 +108,7 @@ public class ValidatingResource {
             @NotNull
             @Valid
             @Validated({Partial1.class, Partial2.class})
-            PartialExample obj
+                    PartialExample obj
     ) {
         return obj;
     }
@@ -153,7 +155,7 @@ public class ValidatingResource {
             @NotNull(groups = Partial1.class)
             @Valid
             @Validated({Partial1.class})
-            PartialExample obj
+                    PartialExample obj
     ) {
         return obj;
     }
@@ -191,8 +193,8 @@ public class ValidatingResource {
     @POST
     @Path("sub-valid-group-zoo")
     public String subValidGroupBlazer(
-        @Valid @Validated(Partial1.class) @BeanParam SubBeanParameter params,
-        @Valid @Validated(Partial1.class) ValidRepresentation entity) {
+            @Valid @Validated(Partial1.class) @BeanParam SubBeanParameter params,
+            @Valid @Validated(Partial1.class) ValidRepresentation entity) {
         return params.getName() + " " + params.getAddress() + " " + entity.getName();
     }
 
@@ -210,7 +212,7 @@ public class ValidatingResource {
 
     @GET
     @Path("headCopy")
-    public String heads(@QueryParam("cheese") @NotNull @UnwrapValidatedValue(false) IntParam secretSauce) {
+    public String heads(@QueryParam("cheese") @NotNull(payload = Unwrapping.Skip.class) IntParam secretSauce) {
         return secretSauce.get().toString();
     }
 
@@ -293,4 +295,54 @@ public class ValidatingResource {
         return payload;
     }
 
+    @GET
+    @Path("intParam")
+    public Integer intParam(@QueryParam("num") @Min(23) IntParam intParam) {
+        return intParam.get();
+    }
+
+    @GET
+    @Path("intParamNotNull")
+    public Integer intParamNotNull(@QueryParam("num")
+                                   @NotNull(payload = Unwrapping.Skip.class) @Min(23) IntParam intParam) {
+        return intParam.get();
+    }
+
+    @GET
+    @Path("intParamWithDefault")
+    public Integer intParamWithDefault(@QueryParam("num") @DefaultValue("42") @Min(23) IntParam intParam) {
+        return intParam.get();
+    }
+
+    @GET
+    @Path("intParamWithOptionalInside")
+    public Integer intParamWithOptionalInside(@QueryParam("num") @Min(23) IntParam intParam) {
+        return Optional.ofNullable(intParam).orElse(new IntParam("42")).get();
+    }
+
+    @GET
+    @Path("optionalInt")
+    public int optionalInt(@QueryParam("num") @Min(23) OptionalInt optionalInt) {
+        return optionalInt.orElse(42);
+    }
+
+    @GET
+    @Path("optionalIntWithDefault")
+    public int optionalIntWithDefault(@QueryParam("num") @DefaultValue("23") @Min(23) OptionalInt optionalInt) {
+        return optionalInt.orElse(42);
+    }
+
+    @GET
+    @Path("optionalInteger")
+    public int optionalInteger(@QueryParam("num")
+                               @Min(value = 23, payload = Unwrapping.Unwrap.class) Optional<Integer> optionalInt) {
+        return optionalInt.orElse(42);
+    }
+
+    @GET
+    @Path("optionalIntegerWithDefault")
+    public int optionalIntegerWithDefault(@QueryParam("num") @DefaultValue("23")
+                                          @Min(value = 23, payload = Unwrapping.Unwrap.class) Optional<Integer> optionalInt) {
+        return optionalInt.orElse(42);
+    }
 }

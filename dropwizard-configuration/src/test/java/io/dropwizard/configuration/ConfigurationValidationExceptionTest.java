@@ -37,7 +37,7 @@ public class ConfigurationValidationExceptionTest {
         assertThat(e.getMessage())
                 .isEqualTo(String.format(
                         "config.yml has an error:%n" +
-                                "  * woo may not be null%n"
+                                "  * woo must not be null%n"
                 ));
     }
 
