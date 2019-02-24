@@ -4,6 +4,36 @@
 Release Notes
 #############
 
+Please refer to `GitHub releases <https://github.com/dropwizard/dropwizard/releases>`__ for the most up-to-date release notes.
+
+.. _rel-1.3.9:
+
+v1.3.9: Feb 24, 2019
+====================
+
+* Fix NPE when requesting /admin/tasks (`#2626 <https://github.com/dropwizard/dropwizard/pull/2626>`_, `#2627 <https://github.com/dropwizard/dropwizard/pull/2627>`_)
+* Remove prerequisites from archetype-generated POM (`#2320 <https://github.com/dropwizard/dropwizard/pull/2320>`_)
+* Upgrade to Jackson 2.9.8, addressing various CVEs (`#2591 <https://github.com/dropwizard/dropwizard/pull/2591>`_)
+* Upgrade JDBI3 to 3.5.1 (`# <https://github.com/dropwizard/dropwizard/pull/>`_#2593)
+* Upgrade Dropwizard Metrics to 4.0.5 (`#2594 <https://github.com/dropwizard/dropwizard/pull/2594>`_)
+* Upgrade Jetty to 9.4.14.v20181114 (`#2592 <https://github.com/dropwizard/dropwizard/pull/2592>`_)
+* Update dependencies to latest patch versions (`#2628 <https://github.com/dropwizard/dropwizard/pull/2628>`_)
+  * Joda-Time 2.10.1
+  * Apache HttpClient 4.5.7
+  * Apache Tomcat JDBC Pool: 9.0.14
+  * Hibernate ORM 5.2.18.Final
+  * Liquibase 3.6.3
+  * Freemarker 2.3.28
+  * Mustache 0.9.6
+  * Javassist 3.24.1-GA
+  * Classmate 1.4.0
+  * HSQLDB 2.4.1
+  * Mockito 2.24.0
+* Upgrade to SLF4J 1.7.26 (`CVE-2018-8088 <https://nvd.nist.gov/vuln/detail/CVE-2018-8088>`_)
+* Upgrade to Tomcat JDBC Connection Pool 9.0.16
+* Upgrade to Hibernate Validator 5.4.3.Final
+
+
 .. _rel-1.3.8:
 
 v1.3.8: Jan 2, 2018
@@ -11,19 +41,6 @@ v1.3.8: Jan 2, 2018
 
 * Fix CVE-2018-10237 by upgrading Guava to 24.1.1 (`#2587 <https://github.com/dropwizard/dropwizard/pull/2587>`_)
 
-.. _rel-1.3.7:
-
-v1.3.7: Oct 2, 2018
-===================
-
-* Fix incorrect reading of ``somaxconn`` for TCP backlog on Linux (`#2430 <https://github.com/dropwizard/dropwizard/pull/2430>`_)
-
-.. _rel-1.3.6:
-
-v1.3.6: Oct 1, 2018
-===================
-
-* Fix a DoS attack vulnerability in Jackson: `FasterXML/jackson-databind#2141 <https://github.com/FasterXML/jackson-databind/issues/2141>`_ (`#2511 <https://github.com/dropwizard/dropwizard/pull/2512>`_)
 
 .. _rel-1.3.7:
 
