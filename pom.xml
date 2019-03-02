@@ -288,6 +288,7 @@
             <properties>
                 <maven.javadoc.skip>true</maven.javadoc.skip>
                 <maven.source.skip>true</maven.source.skip>
+                <pgpverify.skip>true</pgpverify.skip>
             </properties>
             <build>
                 <plugins>
@@ -567,6 +568,11 @@
                     <artifactId>sphinx-maven-plugin</artifactId>
                     <version>2.3.1</version>
                 </plugin>
+                <plugin>
+                    <groupId>org.simplify4u.plugins</groupId>
+                    <artifactId>pgpverify-maven-plugin</artifactId>
+                    <version>1.4.0</version>
+                </plugin>
             </plugins>
         </pluginManagement>
 
@@ -668,6 +674,21 @@
                 <executions>
                     <execution>
                         <id>security-check</id>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.simplify4u.plugins</groupId>
+                <artifactId>pgpverify-maven-plugin</artifactId>
+                <configuration>
+                    <quiet>true</quiet>
+                    <pgpKeyServer>hkps://keyserver.ubuntu.com</pgpKeyServer>
+                </configuration>
+                <executions>
+                    <execution>
                         <goals>
                             <goal>check</goal>
                         </goals>
