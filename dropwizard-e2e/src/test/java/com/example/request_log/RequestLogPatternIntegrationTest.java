@@ -1,6 +1,8 @@
 package com.example.request_log;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import java.nio.file.Files;
 import java.util.List;
@@ -9,6 +11,7 @@ import java.util.regex.Pattern;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 
+@DisabledOnOs(OS.WINDOWS) // FIXME: Make tests run on Windows
 class RequestLogPatternIntegrationTest extends AbstractRequestLogPatternIntegrationTest {
 
     private static final Pattern REQUEST_LOG_PATTERN = Pattern.compile(

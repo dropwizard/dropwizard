@@ -2,6 +2,8 @@ package com.example.request_log;
 
 import io.dropwizard.testing.ConfigOverride;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -10,6 +12,7 @@ import java.util.List;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 
+@DisabledOnOs(OS.WINDOWS) // FIXME: Make tests run on Windows
 class CustomRequestLogPatternIntegrationTest extends AbstractRequestLogPatternIntegrationTest {
     private static final String LOG_FORMAT = "%h|%reqParameter{name}|%m|%U|%s|%b|%i{User-Agent}|%responseHeader{Content-Type}";
 
