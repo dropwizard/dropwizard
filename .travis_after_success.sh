@@ -5,4 +5,4 @@ if [[ "${TRAVIS_JDK_VERSION}" != "openjdk8" ]]; then
     exit
 fi
 
-./mvnw test jacoco:report coveralls:report -P code-coverage
+./mvnw test jacoco:report coveralls:report -P code-coverage -B -q
