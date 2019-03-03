@@ -43,9 +43,7 @@ public class ResourceURL {
                     // This seems to return null for directories (though that behavior is undocumented as far as I
                     // can tell). If you have a better idea, please improve this.
 
-                    final String fileName = resourceURL.getFile();
-                    // leaves just the relative file path inside the jar
-                    final String relativeFilePath = fileName.substring(fileName.lastIndexOf('!') + 2);
+                    final String relativeFilePath = entry.getName();
                     final JarFile jarFile = jarConnection.getJarFile();
                     final ZipEntry zipEntry = jarFile.getEntry(relativeFilePath);
                     final InputStream inputStream = jarFile.getInputStream(zipEntry);
