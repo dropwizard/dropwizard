@@ -2,12 +2,13 @@ package com.example.helloworld.resources;
 
 import com.example.helloworld.core.Person;
 import com.example.helloworld.db.PersonDAO;
-import io.dropwizard.testing.junit.ResourceTestRule;
+import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
+import io.dropwizard.testing.junit5.ResourceExtension;
 import org.glassfish.jersey.test.grizzly.GrizzlyWebTestContainerFactory;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import javax.ws.rs.core.Response;
 import java.util.Optional;
@@ -21,22 +22,22 @@ import static org.mockito.Mockito.when;
 /**
  * Unit tests for {@link PersonResource}.
  */
+@ExtendWith(DropwizardExtensionsSupport.class)
 public class PersonResourceTest {
     private static final PersonDAO DAO = mock(PersonDAO.class);
-    @ClassRule
-    public static final ResourceTestRule RULE = ResourceTestRule.builder()
+    public static final ResourceExtension RULE = ResourceExtension.builder()
             .addResource(new PersonResource(DAO))
             .setTestContainerFactory(new GrizzlyWebTestContainerFactory())
             .build();
     private Person person;
 
-    @Before
+    @BeforeEach
     public void setup() {
         person = new Person();
         person.setId(1L);
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         reset(DAO);
     }

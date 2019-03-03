@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
 
 public class DAOTestRuleTest {
-
+    @SuppressWarnings("deprecation")
     @Rule
     public final DAOTestRule daoTestRule = DAOTestRule.newBuilder().addEntityClass(TestEntity.class).build();
 

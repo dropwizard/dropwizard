@@ -3,7 +3,7 @@ package io.dropwizard.client.proxy;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
 import org.apache.http.protocol.HttpContext;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 

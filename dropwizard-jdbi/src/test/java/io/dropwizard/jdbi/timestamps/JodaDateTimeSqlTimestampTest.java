@@ -4,19 +4,19 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.rules.RuleChain;
-import org.junit.rules.TemporaryFolder;
-import org.junit.rules.TestRule;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.SqlUpdate;
 
 import javax.annotation.Nullable;
+import java.nio.file.Path;
 import java.util.Random;
 import java.util.TimeZone;
 
@@ -32,10 +32,7 @@ public class JodaDateTimeSqlTimestampTest {
 
     private static DateTimeZone dbTimeZone = DateTimeZone.UTC;
     private static DBIClient dbiClient = new DBIClient(TimeZone.getDefault());
-
-    @ClassRule
-    @Nullable
-    public static TestRule chain;
+    private static DatabaseInTimeZone databaseInTimeZone = new DatabaseInTimeZone(TimeZone.getDefault());
 
     static {
         boolean done = false;
@@ -43,11 +40,8 @@ public class JodaDateTimeSqlTimestampTest {
             try {
                 final TimeZone timeZone = getRandomTimeZone();
                 dbTimeZone = DateTimeZone.forTimeZone(timeZone);
-                final TemporaryFolder temporaryFolder = new TemporaryFolder();
                 dbiClient = new DBIClient(timeZone);
-                chain = RuleChain.outerRule(temporaryFolder)
-                        .around(new DatabaseInTimeZone(temporaryFolder, timeZone))
-                        .around(dbiClient);
+                databaseInTimeZone = new DatabaseInTimeZone(timeZone);
                 done = true;
             } catch (IllegalArgumentException e) {
                 if (e.getMessage() == null || !e.getMessage().contains("is not recognised")) {
@@ -66,7 +60,19 @@ public class JodaDateTimeSqlTimestampTest {
         return TimeZone.getTimeZone(ids[new Random().nextInt(ids.length)]);
     }
 
-    @Before
+    @BeforeAll
+    static void beforeAll(@TempDir Path tempDir) throws Exception {
+        databaseInTimeZone.before(tempDir);
+        dbiClient.before();
+    }
+
+    @AfterAll
+    static void afterAll() throws Exception {
+        dbiClient.after();
+        databaseInTimeZone.after();
+    }
+
+    @BeforeEach
     public void setUp() throws Exception {
         handle = dbiClient.getDbi().open();
         handle.execute("CREATE TABLE flights (" +
@@ -79,7 +85,7 @@ public class JodaDateTimeSqlTimestampTest {
         flightDao = handle.attach(FlightDao.class);
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         handle.execute("DROP TABLE flights");
         handle.close();

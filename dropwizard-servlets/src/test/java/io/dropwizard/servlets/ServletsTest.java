@@ -1,7 +1,7 @@
 package io.dropwizard.servlets;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -13,7 +13,7 @@ public class ServletsTest {
     private final HttpServletRequest request = mock(HttpServletRequest.class);
     private final HttpServletRequest fullRequest = mock(HttpServletRequest.class);
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         when(request.getRequestURI()).thenReturn("/one/two");
         when(fullRequest.getRequestURI()).thenReturn("/one/two");

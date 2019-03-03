@@ -30,7 +30,10 @@ import static java.util.Objects.requireNonNull;
  * @see org.junit.rules.RuleChain
  * @see <a href="https://github.com/junit-team/junit4/issues/351">#351: missing current instance in TestRule apply()</a>
  * @see <a href="https://github.com/mockito/mockito/issues/997">#997: ClassRule/TestRule version of Mockito's JUnitRule</a>
+ *
+ * @deprecated Deprecated since Dropwizard 2.0.0. Please migrate to JUnit 5.
  */
+@Deprecated
 public class MockitoTestRule implements TestRule {
     private final Object testInstance;
     private final MockitoRule delegate;

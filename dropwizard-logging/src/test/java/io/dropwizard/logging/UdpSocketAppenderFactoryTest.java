@@ -6,9 +6,9 @@ import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.util.Resources;
 import io.dropwizard.validation.BaseValidator;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +33,7 @@ public class UdpSocketAppenderFactoryTest {
     private int messagesCount = 100;
     private CountDownLatch countDownLatch = new CountDownLatch(messagesCount);
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         datagramSocket = new DatagramSocket(UDP_PORT);
         thread = new Thread(() -> {
@@ -55,7 +55,7 @@ public class UdpSocketAppenderFactoryTest {
         thread.start();
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         thread.interrupt();
         datagramSocket.close();

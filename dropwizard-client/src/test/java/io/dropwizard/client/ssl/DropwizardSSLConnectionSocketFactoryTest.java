@@ -8,15 +8,18 @@ import io.dropwizard.client.JerseyClientConfiguration;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.ResourceHelpers;
-import io.dropwizard.testing.junit.DropwizardAppRule;
+import io.dropwizard.testing.junit5.DropwizardAppExtension;
+import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import io.dropwizard.util.Duration;
+import org.apache.commons.lang3.reflect.FieldUtils;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLInitializationException;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.glassfish.jersey.client.ClientResponse;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLException;
@@ -36,14 +39,13 @@ import java.security.Security;
 import java.util.Collections;
 import java.util.Optional;
 
-import org.apache.commons.lang3.reflect.FieldUtils;
-import org.apache.http.conn.ssl.NoopHostnameVerifier;
-
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.bouncycastle.jce.provider.BouncyCastleProvider.PROVIDER_NAME;
 
+@ExtendWith(DropwizardExtensionsSupport.class)
 public class DropwizardSSLConnectionSocketFactoryTest {
     private TlsConfiguration tlsConfiguration;
     private JerseyClientConfiguration jerseyClientConfiguration;
@@ -71,13 +73,12 @@ public class DropwizardSSLConnectionSocketFactoryTest {
         Security.addProvider(new BouncyCastleProvider());
     }
 
-    @AfterClass
+    @AfterAll
     public static void classTearDown() throws Exception {
         Security.removeProvider(PROVIDER_NAME);
     }
 
-    @ClassRule
-    public static final DropwizardAppRule<Configuration> TLS_APP_RULE = new DropwizardAppRule<>(TlsTestApplication.class,
+    public static final DropwizardAppExtension<Configuration> TLS_APP_RULE = new DropwizardAppExtension<>(TlsTestApplication.class,
         ResourceHelpers.resourceFilePath("yaml/ssl_connection_socket_factory_test.yml"),
         Optional.of("tls"),
         ConfigOverride.config("tls", "server.applicationConnectors[0].keyStorePath", ResourceHelpers.resourceFilePath("stores/server/keycert.p12")),
@@ -101,7 +102,7 @@ public class DropwizardSSLConnectionSocketFactoryTest {
         ConfigOverride.config("tls", "server.applicationConnectors[5].trustStoreProvider", PROVIDER_NAME),
         ConfigOverride.config("tls", "server.applicationConnectors[5].keyStoreProvider", PROVIDER_NAME));
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         tlsConfiguration = new TlsConfiguration();
         tlsConfiguration.setTrustStorePath(new File(ResourceHelpers.resourceFilePath("stores/server/ca_truststore.ts")));
@@ -258,7 +259,7 @@ public class DropwizardSSLConnectionSocketFactoryTest {
             .hasRootCauseInstanceOf(IOException.class);
     }
 
-    @Test(expected = SSLInitializationException.class)
+    @Test
     public void shouldFailDueDefaultProviderInsufficiency() throws Exception {
         tlsConfiguration.setKeyStorePath(new File(ResourceHelpers.resourceFilePath("stores/client/acme-weak.keystore.p12")));
         tlsConfiguration.setKeyStorePassword("acme2");
@@ -268,7 +269,8 @@ public class DropwizardSSLConnectionSocketFactoryTest {
         tlsConfiguration.setTrustStorePassword("acme2");
         tlsConfiguration.setTrustStoreType("PKCS12");
 
-        new JerseyClientBuilder(TLS_APP_RULE.getEnvironment()).using(jerseyClientConfiguration).build("reject_provider_non_supported");
+        assertThatExceptionOfType(SSLInitializationException.class).isThrownBy(() -> new JerseyClientBuilder(TLS_APP_RULE.getEnvironment()).using(
+                jerseyClientConfiguration).build("reject_provider_non_supported"));
     }
 
     @Test

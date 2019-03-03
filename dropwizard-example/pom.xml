@@ -20,6 +20,7 @@
              so that dropwizard-example site doesn't get staged and deployed. -->
         <maven.site.skip>true</maven.site.skip>
         <maven.site.deploy.skip>true</maven.site.deploy.skip>
+        <junit5.version>5.4.0</junit5.version>
     </properties>
 
     <dependencyManagement>
@@ -78,6 +79,18 @@
         <dependency>
             <groupId>io.dropwizard</groupId>
             <artifactId>dropwizard-testing</artifactId>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>junit</groupId>
+                    <artifactId>junit</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${junit5.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -302,28 +315,6 @@
                 </plugins>
             </build>
         </profile>
-        <profile>
-            <id>jdk9</id>
-            <activation>
-                <jdk>9</jdk>
-            </activation>
-            <properties>
-                <maven.compiler.release>9</maven.compiler.release>
-                <maven.compiler.source>1.9</maven.compiler.source>
-                <maven.compiler.target>1.9</maven.compiler.target>
-            </properties>
-        </profile>
-         <profile>
-            <id>jdk10</id>
-            <activation>
-                <jdk>10</jdk>
-            </activation>
-            <properties>
-                <maven.compiler.release>10</maven.compiler.release>
-                <maven.compiler.source>1.10</maven.compiler.source>
-                <maven.compiler.target>1.10</maven.compiler.target>
-            </properties>
-        </profile>
          <profile>
             <id>jdk11</id>
             <activation>
@@ -333,8 +324,6 @@
                 <maven.compiler.release>11</maven.compiler.release>
                 <maven.compiler.source>11</maven.compiler.source>
                 <maven.compiler.target>11</maven.compiler.target>
-                <!-- https://github.com/jacoco/jacoco/issues/663 -->
-                <jacoco.skip>true</jacoco.skip>
             </properties>
         </profile>
     </profiles>

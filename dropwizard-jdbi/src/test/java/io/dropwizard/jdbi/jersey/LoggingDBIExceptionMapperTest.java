@@ -1,7 +1,7 @@
 package io.dropwizard.jdbi.jersey;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.exceptions.DBIException;
 import org.skife.jdbi.v2.exceptions.NoResultsException;
@@ -18,7 +18,7 @@ public class LoggingDBIExceptionMapperTest {
     private LoggingDBIExceptionMapper dbiExceptionMapper;
     private Logger logger;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         logger = mock(Logger.class);
         dbiExceptionMapper = new LoggingDBIExceptionMapper(logger);

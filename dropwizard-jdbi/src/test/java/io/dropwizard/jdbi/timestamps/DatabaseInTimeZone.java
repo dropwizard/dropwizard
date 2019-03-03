@@ -1,10 +1,10 @@
 package io.dropwizard.jdbi.timestamps;
 
 import org.h2.tools.Server;
-import org.junit.rules.ExternalResource;
-import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
@@ -13,30 +13,26 @@ import static org.mockito.Mockito.mock;
 /**
  * Run an instance of the H2 database in an another time zone
  */
-public class DatabaseInTimeZone extends ExternalResource {
+public class DatabaseInTimeZone  {
 
-    private final TemporaryFolder temporaryFolder;
     private final TimeZone timeZone;
 
     private Process process = mock(Process.class);
 
-    public DatabaseInTimeZone(TemporaryFolder temporaryFolder, TimeZone timeZone) {
-        this.temporaryFolder = temporaryFolder;
+    public DatabaseInTimeZone(TimeZone timeZone) {
         this.timeZone = timeZone;
     }
 
-    @Override
-    protected void before() throws Throwable {
+    protected void before(Path tempDir) throws Exception {
         String java = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
         File h2jar = new File(Server.class.getProtectionDomain().getCodeSource().getLocation().toURI());
         String vmArguments = "-Duser.timezone=" + timeZone.getID();
 
         ProcessBuilder pb = new ProcessBuilder(java, vmArguments, "-cp", h2jar.getAbsolutePath(), Server.class.getName(),
-                "-tcp", "-baseDir", temporaryFolder.newFolder().getAbsolutePath());
+                                               "-tcp", "-baseDir", tempDir.resolve("database-in-time-zone").toString());
         process = pb.start();
     }
 
-    @Override
     protected void after() {
         try {
             // Graceful shutdown of the database

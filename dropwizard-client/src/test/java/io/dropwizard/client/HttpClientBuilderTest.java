@@ -54,9 +54,9 @@ import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpProcessor;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import javax.annotation.Nullable;
@@ -115,7 +115,7 @@ public class HttpClientBuilderTest {
         this.httpClientClass = Class.forName("org.apache.http.impl.client.InternalHttpClient");
     }
 
-    @Before
+    @BeforeEach
     public void setUp() {
         final MetricRegistry metricRegistry = new MetricRegistry();
         configuration = new HttpClientConfiguration();
@@ -125,7 +125,7 @@ public class HttpClientBuilderTest {
         initMocks(this);
     }
 
-    @After
+    @AfterEach
     public void validate() {
         validateMockitoUsage();
     }

@@ -4,8 +4,8 @@ import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.annotation.ExceptionMetered;
 import com.codahale.metrics.annotation.Metered;
 import com.codahale.metrics.annotation.Timed;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.servlet.ReadListener;
 import javax.servlet.ServletException;
@@ -40,7 +40,7 @@ public class TaskServletTest {
     private final HttpServletRequest request = mock(HttpServletRequest.class);
     private final HttpServletResponse response = mock(HttpServletResponse.class);
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         when(gc.getName()).thenReturn("gc");
         when(printJSON.getName()).thenReturn("print-json");

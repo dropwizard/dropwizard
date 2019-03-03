@@ -2,7 +2,7 @@ package io.dropwizard.jdbi;
 
 import com.codahale.metrics.health.HealthCheck;
 import io.dropwizard.util.Duration;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;

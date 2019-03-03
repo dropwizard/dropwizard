@@ -21,14 +21,14 @@ import io.dropwizard.validation.BaseValidator;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringSubstitutor;
 import org.assertj.core.data.MapEntry;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -42,10 +42,7 @@ public class DefaultLoggingFactoryTest {
 
     private DefaultLoggingFactory config;
 
-    @Rule
-    public TemporaryFolder folder = new TemporaryFolder();
-
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         objectMapper.getSubtypeResolver().registerSubtypes(ConsoleAppenderFactory.class,
                 FileAppenderFactory.class,
@@ -92,10 +89,10 @@ public class DefaultLoggingFactoryTest {
     }
 
     @Test
-    public void testConfigure() throws Exception {
-        final File newAppLog = folder.newFile("example-new-app.log");
-        final File newAppNotAdditiveLog = folder.newFile("example-new-app-not-additive.log");
-        final File defaultLog = folder.newFile("example.log");
+    public void testConfigure(@TempDir Path tempDir) throws Exception {
+        final File newAppLog = tempDir.resolve("example-new-app.log").toFile();
+        final File newAppNotAdditiveLog = tempDir.resolve("example-new-app-not-additive.log").toFile();
+        final File defaultLog = tempDir.resolve("example.log").toFile();
         final StringSubstitutor substitutor = new StringSubstitutor(Maps.of(
                 "new_app", StringUtils.removeEnd(newAppLog.getAbsolutePath(), ".log"),
                 "new_app_not_additive", StringUtils.removeEnd(newAppNotAdditiveLog.getAbsolutePath(), ".log"),
@@ -103,36 +100,42 @@ public class DefaultLoggingFactoryTest {
         ));
 
         final String configPath = Resources.getResource("yaml/logging_advanced.yml").getFile();
-        final DefaultLoggingFactory config = factory.build(
-                new SubstitutingSourceProvider(new FileConfigurationSourceProvider(), substitutor),
-                configPath);
-        config.configure(new MetricRegistry(), "test-logger");
+        DefaultLoggingFactory config = null;
+        try {
+            config = factory.build(new SubstitutingSourceProvider(new FileConfigurationSourceProvider(), substitutor), configPath);
+            config.configure(new MetricRegistry(), "test-logger");
 
-        LoggerFactory.getLogger("com.example.app").debug("Application debug log");
-        LoggerFactory.getLogger("com.example.app").info("Application log");
-        LoggerFactory.getLogger("com.example.newApp").debug("New application debug log");
-        LoggerFactory.getLogger("com.example.newApp").info("New application info log");
-        LoggerFactory.getLogger("com.example.legacyApp").debug("Legacy application debug log");
-        LoggerFactory.getLogger("com.example.legacyApp").info("Legacy application info log");
-        LoggerFactory.getLogger("com.example.notAdditive").debug("Not additive application debug log");
-        LoggerFactory.getLogger("com.example.notAdditive").info("Not additive application info log");
+            LoggerFactory.getLogger("com.example.app").debug("Application debug log");
+            LoggerFactory.getLogger("com.example.app").info("Application log");
+            LoggerFactory.getLogger("com.example.newApp").debug("New application debug log");
+            LoggerFactory.getLogger("com.example.newApp").info("New application info log");
+            LoggerFactory.getLogger("com.example.legacyApp").debug("Legacy application debug log");
+            LoggerFactory.getLogger("com.example.legacyApp").info("Legacy application info log");
+            LoggerFactory.getLogger("com.example.notAdditive").debug("Not additive application debug log");
+            LoggerFactory.getLogger("com.example.notAdditive").info("Not additive application info log");
 
-        config.stop();
+            config.stop();
+            config.reset();
 
-        assertThat(Files.readAllLines(defaultLog.toPath())).containsOnly(
-                "INFO  com.example.app: Application log",
-                "DEBUG com.example.newApp: New application debug log",
-                "INFO  com.example.newApp: New application info log",
-                "DEBUG com.example.legacyApp: Legacy application debug log",
-                "INFO  com.example.legacyApp: Legacy application info log");
+            assertThat(Files.readAllLines(defaultLog.toPath())).containsOnly(
+                    "INFO  com.example.app: Application log",
+                    "DEBUG com.example.newApp: New application debug log",
+                    "INFO  com.example.newApp: New application info log",
+                    "DEBUG com.example.legacyApp: Legacy application debug log",
+                    "INFO  com.example.legacyApp: Legacy application info log");
 
-        assertThat(Files.readAllLines(newAppLog.toPath())).containsOnly(
-                "DEBUG com.example.newApp: New application debug log",
-                "INFO  com.example.newApp: New application info log");
+            assertThat(Files.readAllLines(newAppLog.toPath())).containsOnly(
+                    "DEBUG com.example.newApp: New application debug log",
+                    "INFO  com.example.newApp: New application info log");
 
-        assertThat(Files.readAllLines(newAppNotAdditiveLog.toPath())).containsOnly(
-            "DEBUG com.example.notAdditive: Not additive application debug log",
-            "INFO  com.example.notAdditive: Not additive application info log");
+            assertThat(Files.readAllLines(newAppNotAdditiveLog.toPath())).containsOnly(
+                    "DEBUG com.example.notAdditive: Not additive application debug log",
+                    "INFO  com.example.notAdditive: Not additive application info log");
+        } finally {
+            if (config != null) {
+                config.reset();
+            }
+        }
     }
 
     @Test
@@ -155,6 +158,6 @@ public class DefaultLoggingFactoryTest {
     @Test
     public void testToStringIsImplented() {
         assertThat(config.toString()).startsWith(
-            "DefaultLoggingFactory{level=INFO, loggers={com.example.app=\"DEBUG\"}, appenders=");
+                "DefaultLoggingFactory{level=INFO, loggers={com.example.app=\"DEBUG\"}, appenders=");
     }
 }

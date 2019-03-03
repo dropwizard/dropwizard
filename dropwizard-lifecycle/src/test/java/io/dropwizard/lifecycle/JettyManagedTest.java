@@ -1,6 +1,6 @@
 package io.dropwizard.lifecycle;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 
 import static org.mockito.Mockito.inOrder;

@@ -8,8 +8,8 @@ import io.dropwizard.jackson.Jackson;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import io.dropwizard.util.Resources;
 import io.dropwizard.validation.BaseValidator;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 
@@ -22,7 +22,7 @@ public class CsvReporterFactoryTest {
                                            BaseValidator.newValidator(),
                                            objectMapper, "dw");
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         objectMapper.getSubtypeResolver().registerSubtypes(ConsoleReporterFactory.class,
                                                            CsvReporterFactory.class,

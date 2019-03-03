@@ -5,7 +5,7 @@ import io.dropwizard.lifecycle.JettyManaged;
 import io.dropwizard.lifecycle.Managed;
 import org.eclipse.jetty.util.component.ContainerLifeCycle;
 import org.eclipse.jetty.util.component.LifeCycle;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;

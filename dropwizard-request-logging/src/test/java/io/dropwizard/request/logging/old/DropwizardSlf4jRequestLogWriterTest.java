@@ -9,9 +9,9 @@ import org.eclipse.jetty.http.HttpURI;
 import org.eclipse.jetty.server.HttpChannelState;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Response;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import java.util.concurrent.TimeUnit;
@@ -37,7 +37,7 @@ public class DropwizardSlf4jRequestLogWriterTest {
     private final Response response = mock(Response.class, RETURNS_DEEP_STUBS);
     private final HttpChannelState channelState = mock(HttpChannelState.class);
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         when(channelState.isInitial()).thenReturn(true);
 
@@ -57,7 +57,7 @@ public class DropwizardSlf4jRequestLogWriterTest {
         slf4jRequestLog.start();
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         slf4jRequestLog.stop();
     }

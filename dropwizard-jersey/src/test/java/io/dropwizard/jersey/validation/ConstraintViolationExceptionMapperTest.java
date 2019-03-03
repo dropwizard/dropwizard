@@ -5,10 +5,10 @@ import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.jersey.jackson.JacksonMessageBodyProviderTest.Example;
 import io.dropwizard.jersey.jackson.JacksonMessageBodyProviderTest.ListExample;
 import io.dropwizard.jersey.jackson.JacksonMessageBodyProviderTest.PartialExample;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Application;
@@ -36,18 +36,18 @@ public class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
                 .register(new HibernateValidationBinder(Validators.newValidator()));
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void init() {
         // Set default locale to English because some tests assert localized error messages
         Locale.setDefault(Locale.ENGLISH);
     }
 
-    @AfterClass
+    @AfterAll
     public static void shutdown() {
         Locale.setDefault(DEFAULT_LOCALE);
     }
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         assumeThat(Locale.getDefault().getLanguage()).isEqualTo("en");
         super.setUp();

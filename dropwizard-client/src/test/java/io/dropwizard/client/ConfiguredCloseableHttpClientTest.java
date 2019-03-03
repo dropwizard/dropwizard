@@ -2,8 +2,8 @@ package io.dropwizard.client;
 
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -14,7 +14,7 @@ public class ConfiguredCloseableHttpClientTest {
     private CloseableHttpClient closeableHttpClientMock = Mockito.mock(CloseableHttpClient.class);
     private RequestConfig defaultRequestConfigMock = Mockito.mock(RequestConfig.class);
 
-    @Before
+    @BeforeEach
     public void setUp() {
         configuredClient = new ConfiguredCloseableHttpClient(closeableHttpClientMock, defaultRequestConfigMock);
     }

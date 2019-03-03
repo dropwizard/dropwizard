@@ -2,7 +2,7 @@ package io.dropwizard.hibernate;
 
 import io.dropwizard.db.ManagedDataSource;
 import org.hibernate.SessionFactory;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;

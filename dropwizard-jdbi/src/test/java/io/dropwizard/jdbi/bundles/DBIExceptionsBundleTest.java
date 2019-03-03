@@ -5,7 +5,7 @@ import io.dropwizard.jdbi.jersey.LoggingDBIExceptionMapper;
 import io.dropwizard.jdbi.jersey.LoggingSQLExceptionMapper;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
 import io.dropwizard.setup.Environment;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.mockito.Mockito.isA;
 import static org.mockito.Mockito.mock;

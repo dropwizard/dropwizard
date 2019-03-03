@@ -1,7 +1,7 @@
 package io.dropwizard.configuration;
 
 import io.dropwizard.util.Resources;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;

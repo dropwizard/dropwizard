@@ -5,16 +5,17 @@ import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.client.JerseyClientConfiguration;
 import io.dropwizard.jersey.errors.ErrorMessage;
 import io.dropwizard.testing.ResourceHelpers;
-import io.dropwizard.testing.junit.DropwizardAppRule;
+import io.dropwizard.testing.junit5.DropwizardAppExtension;
+import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import io.dropwizard.util.Duration;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
@@ -24,14 +25,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
 
+@ExtendWith(DropwizardExtensionsSupport.class)
 public class FormsAppTest {
-    @ClassRule
-    public static final DropwizardAppRule<Configuration> RULE =
-        new DropwizardAppRule<>(FormsApp.class, ResourceHelpers.resourceFilePath("app1/config.yml"));
+    public static final DropwizardAppExtension<Configuration> RULE =
+        new DropwizardAppExtension<>(FormsApp.class, ResourceHelpers.resourceFilePath("app1/config.yml"));
 
     private final JerseyClientConfiguration config = new JerseyClientConfiguration();
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         config.setTimeout(Duration.seconds(2));
     }

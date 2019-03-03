@@ -21,8 +21,8 @@ import org.eclipse.jetty.http.HttpFields;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.RequestLog;
 import org.eclipse.jetty.server.Response;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
@@ -50,7 +50,7 @@ public class LayoutIntegrationTests {
     private final YamlConfigurationFactory<ConsoleAppenderFactory> yamlFactory = new YamlConfigurationFactory<>(
         ConsoleAppenderFactory.class, BaseValidator.newValidator(), objectMapper, "dw-json-log");
 
-    @Before
+    @BeforeEach
     public void setUp() {
         objectMapper.getSubtypeResolver().registerSubtypes(AccessJsonLayoutBaseFactory.class, EventJsonLayoutBaseFactory.class);
     }

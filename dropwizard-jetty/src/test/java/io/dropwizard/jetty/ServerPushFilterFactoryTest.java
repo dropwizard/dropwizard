@@ -7,7 +7,7 @@ import io.dropwizard.util.Resources;
 import io.dropwizard.validation.BaseValidator;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlets.PushCacheFilter;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.servlet.DispatcherType;
 import java.io.File;

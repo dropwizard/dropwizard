@@ -31,9 +31,9 @@ import org.glassfish.jersey.client.ClientRequest;
 import org.glassfish.jersey.client.JerseyClient;
 import org.glassfish.jersey.client.rx.rxjava2.RxFlowableInvokerProvider;
 import org.glassfish.jersey.client.spi.ConnectorProvider;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import javax.annotation.Nullable;
@@ -84,7 +84,7 @@ public class JerseyClientBuilderTest {
     private final Validator validator = Validators.newValidator();
     private final HttpClientBuilder apacheHttpClientBuilder = mock(HttpClientBuilder.class);
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         when(environment.lifecycle()).thenReturn(lifecycleEnvironment);
         when(environment.getObjectMapper()).thenReturn(objectMapper);
@@ -92,7 +92,7 @@ public class JerseyClientBuilderTest {
         builder.setApacheHttpClientBuilder(apacheHttpClientBuilder);
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         executorService.shutdown();
     }

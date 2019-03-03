@@ -1,6 +1,6 @@
 package io.dropwizard.jdbi3.jersey;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 
 import java.sql.SQLException;

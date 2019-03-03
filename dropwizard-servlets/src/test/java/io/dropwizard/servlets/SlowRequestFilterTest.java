@@ -1,9 +1,9 @@
 package io.dropwizard.servlets;
 
 import io.dropwizard.util.Duration;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 
 import javax.servlet.FilterChain;
@@ -27,7 +27,7 @@ public class SlowRequestFilterTest {
 
     private SlowRequestFilter slowRequestFilter = new SlowRequestFilter(Duration.milliseconds(500));
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         slowRequestFilter.init(filterConfig);
         slowRequestFilter.setLogger(logger);
@@ -37,7 +37,7 @@ public class SlowRequestFilterTest {
         when(request.getRequestURI()).thenReturn("/some/path");
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         slowRequestFilter.destroy();
     }

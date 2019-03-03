@@ -4,8 +4,8 @@ import com.codahale.metrics.InstrumentedThreadFactory;
 import com.codahale.metrics.MetricRegistry;
 import io.dropwizard.lifecycle.ExecutorServiceManager;
 import io.dropwizard.util.Duration;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import javax.annotation.Nullable;
@@ -34,7 +34,7 @@ public class ScheduledExecutorServiceBuilderTest {
         when(le.getMetricRegistry()).thenReturn(new MetricRegistry());
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         if (this.execTracker != null) {
             this.execTracker.shutdownNow();

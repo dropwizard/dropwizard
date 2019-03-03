@@ -7,8 +7,8 @@ import io.dropwizard.jackson.Jackson;
 import io.dropwizard.logging.json.AccessAttribute;
 import io.dropwizard.util.Maps;
 import io.dropwizard.util.Sets;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.time.ZoneId;
@@ -47,7 +47,7 @@ public class AccessJsonLayoutTest {
     private AccessJsonLayout accessJsonLayout = new AccessJsonLayout(jsonFormatter, timestampFormatter,
         includes, Collections.emptyMap(), Collections.emptyMap());
 
-    @Before
+    @BeforeEach
     public void setUp() {
         requestHeaders = Maps.of(
                 "Host", "api.example.io",

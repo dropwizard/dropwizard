@@ -3,8 +3,8 @@ package io.dropwizard.jdbi3;
 import org.jdbi.v3.core.extension.ExtensionMethod;
 import org.jdbi.v3.core.statement.StatementContext;
 import org.jdbi.v3.core.statement.TemplateEngine;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
 
@@ -24,7 +24,7 @@ public class NamePrependingTemplateEngineTest {
     private StatementContext ctx;
     private NamePrependingTemplateEngine sut;
 
-    @Before
+    @BeforeEach
     public void setup() {
         original = mock(TemplateEngine.class);
         ctx = mock(StatementContext.class);

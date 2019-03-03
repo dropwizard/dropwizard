@@ -1,9 +1,10 @@
 package com.example.validation;
 
 import io.dropwizard.Configuration;
-import io.dropwizard.testing.junit.DropwizardAppRule;
-import org.junit.ClassRule;
-import org.junit.Test;
+import io.dropwizard.testing.junit5.DropwizardAppExtension;
+import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
@@ -12,11 +13,11 @@ import javax.ws.rs.core.Response;
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static org.assertj.core.api.Assertions.assertThat;
 
+@ExtendWith(DropwizardExtensionsSupport.class)
 public class InjectValidatorTest {
 
-    @ClassRule
-    public static final DropwizardAppRule<Configuration> RULE = new DropwizardAppRule<>(
-        DefaultValidatorApp.class,
+    public static final DropwizardAppExtension<Configuration> RULE = new DropwizardAppExtension<>(
+            DefaultValidatorApp.class,
         resourceFilePath("app1/config.yml")
     );
 

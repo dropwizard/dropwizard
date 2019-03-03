@@ -1,7 +1,7 @@
 package io.dropwizard.jersey.errors;
 
 import org.glassfish.jersey.server.internal.LocalizationMessages;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.NotSupportedException;
 import javax.ws.rs.core.Response;

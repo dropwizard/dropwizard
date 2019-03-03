@@ -1,6 +1,6 @@
 package io.dropwizard.jersey.gzip;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.annotation.Nullable;
 import javax.ws.rs.WebApplicationException;

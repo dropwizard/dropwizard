@@ -12,9 +12,9 @@ import io.dropwizard.util.Resources;
 import io.dropwizard.util.Size;
 import io.dropwizard.validation.BaseValidator;
 import org.apache.commons.text.StringSubstitutor;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,16 +29,20 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class TcpSocketAppenderFactoryTest {
 
-    @Rule
-    public TcpServer tcpServer = new TcpServer(createServerSocket());
-
+    private TcpServer tcpServer = new TcpServer(createServerSocket());
     private ObjectMapper objectMapper = Jackson.newObjectMapper();
     private YamlConfigurationFactory<DefaultLoggingFactory> yamlConfigurationFactory = new YamlConfigurationFactory<>(
         DefaultLoggingFactory.class, BaseValidator.newValidator(), objectMapper, "dw-tcp");
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
+        tcpServer.setUp();
         objectMapper.getSubtypeResolver().registerSubtypes(TcpSocketAppenderFactory.class);
+    }
+
+    @AfterEach
+    void tearDown() throws Exception {
+        tcpServer.tearDown();
     }
 
     private ServerSocket createServerSocket() {

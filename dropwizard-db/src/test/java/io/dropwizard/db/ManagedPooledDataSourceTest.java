@@ -2,7 +2,7 @@ package io.dropwizard.db;
 
 import com.codahale.metrics.MetricRegistry;
 import org.apache.tomcat.jdbc.pool.PoolProperties;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.sql.SQLFeatureNotSupportedException;
 

@@ -3,15 +3,15 @@ package com.example.helloworld.resources;
 import com.example.helloworld.core.Person;
 import com.example.helloworld.db.PersonDAO;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import io.dropwizard.testing.junit.ResourceTestRule;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
+import io.dropwizard.testing.junit5.ResourceExtension;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.Mockito;
 
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.GenericType;
@@ -30,25 +30,23 @@ import static org.mockito.Mockito.when;
 /**
  * Unit tests for {@link PeopleResource}.
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(DropwizardExtensionsSupport.class)
 public class PeopleResourceTest {
     private static final PersonDAO PERSON_DAO = mock(PersonDAO.class);
-    @ClassRule
-    public static final ResourceTestRule RESOURCES = ResourceTestRule.builder()
+    public static final ResourceExtension RESOURCES = ResourceExtension.builder()
             .addResource(new PeopleResource(PERSON_DAO))
             .build();
-    @Captor
-    private ArgumentCaptor<Person> personCaptor;
+    private ArgumentCaptor<Person> personCaptor = ArgumentCaptor.forClass(Person.class);
     private Person person;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         person = new Person();
         person.setFullName("Full Name");
         person.setJobTitle("Job Title");
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         reset(PERSON_DAO);
     }

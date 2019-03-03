@@ -1,6 +1,6 @@
 package io.dropwizard.logging.json.layout;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.time.ZoneId;
 import java.util.Collections;

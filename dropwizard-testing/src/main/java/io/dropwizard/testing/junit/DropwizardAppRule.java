@@ -49,6 +49,7 @@ import java.util.function.Function;
  * started and stopped once, regardless of whether the entire suite or a single test is executed.
  * </p>
  *
+ * <p>
  * <pre>
  * public class FooTest {
  *   &#064;ClassRule public static final DropwizardAppRule&lt;MyConfig> DROPWIZARD = MySuite.DROPWIZARD;
@@ -62,14 +63,14 @@ import java.util.function.Function;
  *   public void testBar() { ... }
  * }
  * </pre>
- *
- * <p>
- *
  * </p>
  *
  * @param <C> the configuration type
+ *
+ * @deprecated Deprecated since Dropwizard 2.0.0. Please migrate to JUnit 5 and {@link io.dropwizard.testing.junit5.DropwizardAppExtension}.
  */
 //@formatter:on
+@Deprecated
 public class DropwizardAppRule<C extends Configuration> extends ExternalResource {
 
     private static final int DEFAULT_CONNECT_TIMEOUT_MS = 1000;

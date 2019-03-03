@@ -4,9 +4,8 @@ import com.codahale.metrics.MetricRegistry;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.CaffeineSpec;
 import com.google.common.util.concurrent.MoreExecutors;
-
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.security.Principal;
 import java.util.Collections;
@@ -35,7 +34,7 @@ public class CachingAuthenticatorTest {
         this.cached = new CachingAuthenticator<>(new MetricRegistry(), this.underlying, caff);
     }
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         when(underlying.authenticate(anyString())).thenReturn(Optional.of(new PrincipalImpl("principal")));
     }

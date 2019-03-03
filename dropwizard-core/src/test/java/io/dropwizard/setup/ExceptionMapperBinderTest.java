@@ -15,11 +15,11 @@ import io.dropwizard.util.Resources;
 import io.dropwizard.validation.BaseValidator;
 import org.eclipse.jetty.server.AbstractNetworkConnector;
 import org.eclipse.jetty.server.Server;
-import javax.validation.constraints.NotEmpty;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.validation.Validator;
+import javax.validation.constraints.NotEmpty;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -38,7 +38,7 @@ public class ExceptionMapperBinderTest {
     private Environment environment = new Environment("testEnvironment", objectMapper, validator, new MetricRegistry(),
         ClassLoader.getSystemClassLoader());
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         objectMapper.getSubtypeResolver().registerSubtypes(ConsoleAppenderFactory.class,
             FileAppenderFactory.class, SyslogAppenderFactory.class, HttpConnectorFactory.class);

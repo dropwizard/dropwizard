@@ -6,8 +6,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.sql.ClientInfoStatus;
 import java.util.concurrent.TimeUnit;
@@ -72,7 +72,7 @@ public class FuzzyEnumModuleTest {
         DEFAULT
     }
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         mapper.registerModule(new FuzzyEnumModule());
     }

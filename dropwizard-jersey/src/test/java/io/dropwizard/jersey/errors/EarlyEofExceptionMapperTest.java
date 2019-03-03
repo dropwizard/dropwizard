@@ -1,8 +1,8 @@
 package io.dropwizard.jersey.errors;
 
 import org.eclipse.jetty.io.EofException;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.core.Response;
 
@@ -13,6 +13,6 @@ public class EarlyEofExceptionMapperTest {
     @Test
     public void testToReponse() {
         final Response reponse = mapper.toResponse(new EofException());
-        Assert.assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), reponse.getStatus());
+        Assertions.assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), reponse.getStatus());
     }
 }

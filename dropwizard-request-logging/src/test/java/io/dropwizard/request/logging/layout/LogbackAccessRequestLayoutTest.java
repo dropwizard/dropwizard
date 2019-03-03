@@ -2,7 +2,7 @@ package io.dropwizard.request.logging.layout;
 
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.core.Context;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.TimeZone;
 

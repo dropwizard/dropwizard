@@ -8,12 +8,13 @@ import io.dropwizard.db.PooledDataSourceFactory;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.testing.ResourceHelpers;
-import io.dropwizard.testing.junit.DropwizardAppRule;
+import io.dropwizard.testing.junit5.DropwizardAppExtension;
+import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -30,6 +31,7 @@ import java.util.Optional;
 import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.Assertions.assertThat;
 
+@ExtendWith(DropwizardExtensionsSupport.class)
 public class SubResourcesTest {
 
     public static class TestConfiguration extends Configuration {
@@ -175,8 +177,7 @@ public class SubResourcesTest {
         }
     }
 
-    @ClassRule
-    public static DropwizardAppRule<TestConfiguration> appRule = new DropwizardAppRule<>(TestApplication.class,
+    public static DropwizardAppExtension<TestConfiguration> appRule = new DropwizardAppExtension<>(TestApplication.class,
         ResourceHelpers.resourceFilePath("hibernate-sub-resource-test.yaml"));
 
     private static String baseUri() {

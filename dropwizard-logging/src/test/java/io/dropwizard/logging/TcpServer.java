@@ -1,6 +1,5 @@
 package io.dropwizard.logging;
 
-import org.junit.rules.ExternalResource;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -13,7 +12,7 @@ import java.util.concurrent.CountDownLatch;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class TcpServer extends ExternalResource {
+class TcpServer {
 
     private final Thread thread;
     private final ServerSocket serverSocket;
@@ -54,13 +53,11 @@ class TcpServer extends ExternalResource {
         return serverSocket.getLocalPort();
     }
 
-    @Override
-    protected void before() throws Throwable {
+    public void setUp() throws Exception {
         thread.start();
     }
 
-    @Override
-    protected void after() {
+    public void tearDown() throws Exception {
         thread.interrupt();
         try {
             serverSocket.close();
@@ -70,8 +67,7 @@ class TcpServer extends ExternalResource {
     }
 
     private void readAndVerifyData(Socket socket) {
-        try (Socket s = socket; BufferedReader reader = new BufferedReader(new InputStreamReader(
-            s.getInputStream(), StandardCharsets.UTF_8))) {
+        try (Socket s = socket; BufferedReader reader = new BufferedReader(new InputStreamReader(s.getInputStream(), StandardCharsets.UTF_8))) {
             for (int i = 0; i < messageCount; i++) {
                 String line = reader.readLine();
                 if (line == null) {

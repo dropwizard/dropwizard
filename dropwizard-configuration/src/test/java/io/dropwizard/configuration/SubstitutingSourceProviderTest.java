@@ -11,7 +11,7 @@ import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.text.StringSubstitutor;
 import org.apache.commons.text.lookup.StringLookup;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class SubstitutingSourceProviderTest {
     @Test

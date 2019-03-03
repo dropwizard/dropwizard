@@ -1,6 +1,6 @@
 package io.dropwizard.validation;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.validation.Valid;
 import javax.validation.Validator;
@@ -10,7 +10,7 @@ import java.util.Locale;
 
 import static io.dropwizard.validation.ConstraintViolations.format;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assume.assumeTrue;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 public class OneOfValidatorTest {
     @SuppressWarnings("UnusedDeclaration")

@@ -2,9 +2,9 @@ package io.dropwizard.request.logging.layout;
 
 import ch.qos.logback.access.spi.AccessEvent;
 import ch.qos.logback.access.spi.ServerAdapter;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import javax.servlet.http.HttpServletRequest;
@@ -19,7 +19,7 @@ public class SafeRequestParameterConverterTest {
     private final HttpServletRequest httpServletRequest = Mockito.mock(HttpServletRequest.class);
     private AccessEvent accessEvent;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         accessEvent = new AccessEvent(httpServletRequest, Mockito.mock(HttpServletResponse.class),
             Mockito.mock(ServerAdapter.class));
@@ -28,7 +28,7 @@ public class SafeRequestParameterConverterTest {
         safeRequestParameterConverter.start();
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         safeRequestParameterConverter.stop();
     }

@@ -3,8 +3,8 @@ package io.dropwizard.migrations;
 import io.dropwizard.util.Maps;
 import net.jcip.annotations.NotThreadSafe;
 import net.sourceforge.argparse4j.inf.Namespace;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 
@@ -27,7 +27,7 @@ public class DbFastForwardCommandTest extends AbstractMigrationTest {
 
     private DBI dbi;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         final String databaseUrl = getDatabaseUrl();
         conf = createConfiguration(databaseUrl);

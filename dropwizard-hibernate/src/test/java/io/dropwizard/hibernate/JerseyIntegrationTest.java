@@ -17,8 +17,9 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.annotation.Nullable;
 import javax.ws.rs.GET;
@@ -86,7 +87,13 @@ public class JerseyIntegrationTest extends JerseyTest {
     private SessionFactory sessionFactory;
 
     @Override
-    @After
+    @BeforeEach
+    public void setUp() throws Exception {
+        super.setUp();
+    }
+
+    @Override
+    @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
 

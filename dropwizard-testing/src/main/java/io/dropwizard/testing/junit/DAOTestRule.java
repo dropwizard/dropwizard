@@ -34,8 +34,11 @@ import java.util.concurrent.Callable;
     }
  * </code></pre>
  * </p>
+ *
+ * @deprecated Deprecated since Dropwizard 2.0.0. Please migrate to JUnit 5 and {@link io.dropwizard.testing.junit5.DAOTestExtension}.
  */
 //@formatter:on
+@Deprecated
 public class DAOTestRule extends ExternalResource {
     private final DAOTest daoTest;
 

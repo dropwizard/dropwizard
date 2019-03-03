@@ -1169,7 +1169,7 @@ tests:
         private final MyApplication application = new MyApplication();
         private final MyConfiguration config = new MyConfiguration();
 
-        @Before
+        @BeforeEach
         public void setup() throws Exception {
             config.setMyParam("yay");
             when(environment.jersey()).thenReturn(jersey);

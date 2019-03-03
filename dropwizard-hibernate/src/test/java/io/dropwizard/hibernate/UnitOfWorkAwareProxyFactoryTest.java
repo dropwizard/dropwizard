@@ -8,8 +8,8 @@ import io.dropwizard.setup.Environment;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 import java.util.Map;
@@ -28,7 +28,7 @@ public class UnitOfWorkAwareProxyFactoryTest {
 
     private SessionFactory sessionFactory;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         final HibernateBundle<?> bundle = mock(HibernateBundle.class);
         final Environment environment = mock(Environment.class);

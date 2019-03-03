@@ -3,16 +3,16 @@ package com.example.sslreload;
 import io.dropwizard.Configuration;
 import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.ResourceHelpers;
-import io.dropwizard.testing.junit.DropwizardAppRule;
+import io.dropwizard.testing.junit5.DropwizardAppExtension;
+import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import io.dropwizard.util.CharStreams;
 import io.dropwizard.util.Resources;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
-import org.junit.After;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
@@ -29,9 +29,8 @@ import java.security.cert.X509Certificate;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;
 
+@ExtendWith(DropwizardExtensionsSupport.class)
 public class SslReloadAppTest {
-    @ClassRule
-    public static final TemporaryFolder FOLDER = new TemporaryFolder();
 
     private static final X509TrustManager TRUST_ALL = new X509TrustManager() {
         @Override
@@ -52,20 +51,19 @@ public class SslReloadAppTest {
 
     private static Path keystore;
 
-    @Rule
-    public final DropwizardAppRule<Configuration> rule =
-        new DropwizardAppRule<>(SslReloadApp.class, ResourceHelpers.resourceFilePath("sslreload/config.yml"),
+    public final DropwizardAppExtension<Configuration> rule =
+        new DropwizardAppExtension<>(SslReloadApp.class, ResourceHelpers.resourceFilePath("sslreload/config.yml"),
             ConfigOverride.config("server.applicationConnectors[0].keyStorePath", keystore.toString()),
             ConfigOverride.config("server.adminConnectors[0].keyStorePath", keystore.toString()));
 
-    @BeforeClass
-    public static void setupClass() throws IOException {
-        keystore = FOLDER.newFile("keystore.jks").toPath();
+    @BeforeAll
+    public static void setupClass(@TempDir Path tempDir) throws IOException {
+        keystore = tempDir.resolve("keystore.jks");
         final byte[] keystoreBytes = Resources.toByteArray(Resources.getResource("sslreload/keystore.jks"));
         Files.write(keystore, keystoreBytes);
     }
 
-    @After
+    @AfterEach
     public void after() throws IOException {
         // Reset keystore to known good keystore
         final byte[] keystoreBytes = Resources.toByteArray(Resources.getResource("sslreload/keystore.jks"));
@@ -103,7 +101,7 @@ public class SslReloadAppTest {
         // Get the bytes for the first certificate. The reload should fail
         byte[] firstCertBytes = certBytes(500, "Keystore was tampered with, or password was incorrect");
 
-        // Issue another request. The returned certificate should be the same as before
+        // Issue another request. The returned certificate should be the same as setUp
         byte[] secondCertBytes = certBytes(500, "Keystore was tampered with, or password was incorrect");
 
         // And just to triple check, a third request will continue with

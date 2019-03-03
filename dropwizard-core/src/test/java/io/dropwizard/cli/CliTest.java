@@ -8,10 +8,10 @@ import io.dropwizard.util.JarLocation;
 import net.sourceforge.argparse4j.impl.Arguments;
 import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
@@ -90,18 +90,18 @@ public class CliTest {
     private final CheckCommand<Configuration> command = spy(new CheckCommand<>(app));
     private Cli cli;
 
-    @BeforeClass
+    @BeforeAll
     public static void init() {
         // Set default locale to English because some tests assert localized error messages
         Locale.setDefault(Locale.ENGLISH);
     }
 
-    @AfterClass
+    @AfterAll
     public static void shutdown() {
         Locale.setDefault(DEFAULT_LOCALE);
     }
 
-    @Before
+    @BeforeEach
     @SuppressWarnings("unchecked")
     public void setUp() throws Exception {
         when(location.toString()).thenReturn("dw-thing.jar");

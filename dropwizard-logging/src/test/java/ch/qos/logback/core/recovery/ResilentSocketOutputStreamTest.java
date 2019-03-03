@@ -1,8 +1,8 @@
 package ch.qos.logback.core.recovery;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.net.SocketFactory;
 import java.io.IOException;
@@ -23,7 +23,7 @@ public class ResilentSocketOutputStreamTest {
     private ServerSocket ss;
     private CountDownLatch latch = new CountDownLatch(1);
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         ss = new ServerSocket(0);
         thread = new Thread(() -> {
@@ -45,7 +45,7 @@ public class ResilentSocketOutputStreamTest {
             1024, 500, SocketFactory.getDefault());
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         ss.close();
         thread.interrupt();
