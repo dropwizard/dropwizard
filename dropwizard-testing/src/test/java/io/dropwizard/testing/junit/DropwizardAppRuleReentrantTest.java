@@ -20,7 +20,6 @@ public class DropwizardAppRuleReentrantTest {
     @Rule
     public final MockitoRule mockitoRule = MockitoJUnit.rule();
 
-    @SuppressWarnings("NullAway")
     @Mock
     DropwizardTestSupport<TestConfiguration> testSupport;
     private Statement statement = mock(Statement.class);

@@ -20,9 +20,9 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 
-@SuppressWarnings("deprecation")
 public class DropwizardAppRuleWithExplicitTest {
 
+    @SuppressWarnings("deprecation")
     @ClassRule
     public static final DropwizardAppRule<TestConfiguration> RULE;
 

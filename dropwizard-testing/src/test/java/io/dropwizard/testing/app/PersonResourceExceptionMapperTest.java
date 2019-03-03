@@ -24,6 +24,7 @@ public class PersonResourceExceptionMapperTest {
     private static final ObjectMapper OBJECT_MAPPER = Jackson.newObjectMapper()
         .registerModule(new GuavaModule());
 
+    @SuppressWarnings("deprecation")
     @ClassRule
     public static final ResourceTestRule RESOURCES = ResourceTestRule.builder()
         .addResource(new PersonResource(PEOPLE_STORE))

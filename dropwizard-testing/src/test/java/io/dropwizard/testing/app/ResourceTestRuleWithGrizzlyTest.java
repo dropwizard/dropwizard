@@ -17,6 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * test container factory.
  */
 public class ResourceTestRuleWithGrizzlyTest {
+    @SuppressWarnings("deprecation")
     @Rule
     public final ResourceTestRule resourceTestRule = ResourceTestRule.builder()
             .addResource(ContextInjectionResource::new)
