@@ -2,10 +2,11 @@ package io.dropwizard.auth;
 
 import com.codahale.metrics.MetricRegistry;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import com.github.benmanes.caffeine.cache.CaffeineSpec;
-import com.google.common.util.concurrent.MoreExecutors;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.security.Principal;
 import java.util.Collections;
@@ -14,41 +15,36 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.anyString;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class CachingAuthenticatorTest {
+@ExtendWith(MockitoExtension.class)
+class CachingAuthenticatorTest {
+    private final Caffeine<Object, Object> caff = Caffeine.newBuilder()
+            .maximumSize(1L)
+            .executor(Runnable::run);
 
-    private final Authenticator<String, Principal> underlying;
-    private final CachingAuthenticator<String, Principal> cached;
-
-    @SuppressWarnings("unchecked")
-    public CachingAuthenticatorTest() {
-        super();
-
-        final Caffeine<Object, Object> caff = Caffeine.from(CaffeineSpec.parse("maximumSize=1"))
-            .executor(MoreExecutors.directExecutor());
-        this.underlying = mock(Authenticator.class);
-        this.cached = new CachingAuthenticator<>(new MetricRegistry(), this.underlying, caff);
-    }
+    @Mock
+    private Authenticator<String, Principal> underlying;
+    private CachingAuthenticator<String, Principal> cached;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         when(underlying.authenticate(anyString())).thenReturn(Optional.of(new PrincipalImpl("principal")));
+        cached = new CachingAuthenticator<>(new MetricRegistry(), underlying, caff);
     }
 
     @Test
-    public void cachesTheFirstReturnedPrincipal() throws Exception {
-        assertThat(cached.authenticate("credentials")).isEqualTo(Optional.<Principal> of(new PrincipalImpl("principal")));
-        assertThat(cached.authenticate("credentials")).isEqualTo(Optional.<Principal> of(new PrincipalImpl("principal")));
+    void cachesTheFirstReturnedPrincipal() throws Exception {
+        assertThat(cached.authenticate("credentials")).isEqualTo(Optional.<Principal>of(new PrincipalImpl("principal")));
+        assertThat(cached.authenticate("credentials")).isEqualTo(Optional.<Principal>of(new PrincipalImpl("principal")));
 
         verify(underlying, times(1)).authenticate("credentials");
     }
 
     @Test
-    public void invalidatesSingleCredentials() throws Exception {
+    void invalidatesSingleCredentials() throws Exception {
         cached.authenticate("credentials");
         cached.invalidate("credentials");
         cached.authenticate("credentials");
@@ -57,7 +53,7 @@ public class CachingAuthenticatorTest {
     }
 
     @Test
-    public void invalidatesSetsOfCredentials() throws Exception {
+    void invalidatesSetsOfCredentials() throws Exception {
         cached.authenticate("credentials");
         cached.invalidateAll(Collections.singleton("credentials"));
         cached.authenticate("credentials");
@@ -66,7 +62,7 @@ public class CachingAuthenticatorTest {
     }
 
     @Test
-    public void invalidatesCredentialsMatchingGivenPredicate() throws Exception {
+    void invalidatesCredentialsMatchingGivenPredicate() throws Exception {
         cached.authenticate("credentials");
         cached.invalidateAll("credentials"::equals);
         cached.authenticate("credentials");
@@ -75,7 +71,7 @@ public class CachingAuthenticatorTest {
     }
 
     @Test
-    public void invalidatesAllCredentials() throws Exception {
+    void invalidatesAllCredentials() throws Exception {
         cached.authenticate("credentials");
         cached.invalidateAll();
         cached.authenticate("credentials");
@@ -84,20 +80,20 @@ public class CachingAuthenticatorTest {
     }
 
     @Test
-    public void calculatesTheSizeOfTheCache() throws Exception {
+    void calculatesTheSizeOfTheCache() throws Exception {
         cached.authenticate("credentials1");
         assertThat(cached.size()).isEqualTo(1);
     }
 
     @Test
-    public void calculatesCacheStats() throws Exception {
+    void calculatesCacheStats() throws Exception {
         cached.authenticate("credentials1");
         assertThat(cached.stats().loadCount()).isEqualTo(1);
         assertThat(cached.size()).isEqualTo(1);
     }
 
     @Test
-    public void shouldNotCacheAbsentPrincipals() throws Exception {
+    void shouldNotCacheAbsentPrincipals() throws Exception {
         when(underlying.authenticate(anyString())).thenReturn(Optional.empty());
         assertThat(cached.authenticate("credentials")).isEqualTo(Optional.empty());
         verify(underlying).authenticate("credentials");
@@ -105,22 +101,22 @@ public class CachingAuthenticatorTest {
     }
 
     @Test
-    public void shouldPropagateAuthenticationException() throws AuthenticationException {
+    void shouldPropagateAuthenticationException() throws AuthenticationException {
         final AuthenticationException e = new AuthenticationException("Auth failed");
         when(underlying.authenticate(anyString())).thenThrow(e);
 
         assertThatExceptionOfType(AuthenticationException.class)
-            .isThrownBy(() -> cached.authenticate("credentials"))
-            .satisfies(i -> assertThat(i).isSameAs(e));
+                .isThrownBy(() -> cached.authenticate("credentials"))
+                .isEqualTo(e);
     }
 
     @Test
-    public void shouldPropagateRuntimeException() throws AuthenticationException {
+    void shouldPropagateRuntimeException() throws AuthenticationException {
         final RuntimeException e = new NullPointerException();
         when(underlying.authenticate(anyString())).thenThrow(e);
 
         assertThatExceptionOfType(RuntimeException.class)
-            .isThrownBy(() -> cached.authenticate("credentials"))
-            .satisfies(i -> assertThat(i).isSameAs(e));
+                .isThrownBy(() -> cached.authenticate("credentials"))
+                .isEqualTo(e);
     }
 }
