@@ -3,11 +3,10 @@ package io.dropwizard.servlets.tasks;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
-import com.google.errorprone.annotations.concurrent.LazyInit;
-import javax.annotation.Nonnull;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.PrintWriter;
 import java.time.Duration;
@@ -16,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Sets the logging level for a number of loggers
@@ -45,8 +45,7 @@ import java.util.TimerTask;
 public class LogConfigurationTask extends Task {
 
     private final ILoggerFactory loggerContext;
-    @LazyInit
-    private volatile Timer timer;
+    private final AtomicReference<Timer> timerReference = new AtomicReference<>();
 
     /**
      * Creates a new LogConfigurationTask.
@@ -114,14 +113,9 @@ public class LogConfigurationTask extends Task {
 
     /**
      * Lazy create the timer to avoid unnecessary thread creation unless an expirable log configuration task is submitted
-     * Method synchronization is acceptable since a log level task does not need to be highly performant
      */
     @Nonnull
-    private final synchronized Timer getTimer() {
-        if (timer == null) {
-            timer = new Timer(LogConfigurationTask.class.getSimpleName(), true);
-        }
-
-        return timer;
+    private Timer getTimer() {
+        return timerReference.updateAndGet(timer -> timer == null ? new Timer(LogConfigurationTask.class.getSimpleName(), true) : timer);
     }
 }
