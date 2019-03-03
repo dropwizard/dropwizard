@@ -7,6 +7,7 @@ import org.junit.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class ResourceTestRuleWithoutLoggingBootstrap {
+    @SuppressWarnings("deprecation")
     @Rule
     public final ResourceTestRule resourceTestRule = ResourceTestRule.builder()
             .addResource(TestResource::new)

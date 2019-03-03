@@ -155,7 +155,7 @@ public class LazyLoadingTest {
     private DropwizardTestSupport<?> dropwizardTestSupport = mock(DropwizardTestSupport.class);
     private Client client = new JerseyClientBuilder().build();
 
-    public void setup(Class<? extends Application<TestConfiguration>> applicationClass) {
+    public void setup(Class<? extends Application<TestConfiguration>> applicationClass) throws Exception {
         dropwizardTestSupport = new DropwizardTestSupport<>(applicationClass, ResourceHelpers.resourceFilePath("hibernate-integration-test.yaml"),
             ConfigOverride.config("dataSource.url", "jdbc:hsqldb:mem:DbTest" + System.nanoTime() + "?hsqldb.translate_dti_types=false"));
         dropwizardTestSupport.before();
