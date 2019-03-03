@@ -29,7 +29,7 @@ public class DatabaseInTimeZone  {
         String vmArguments = "-Duser.timezone=" + timeZone.getID();
 
         ProcessBuilder pb = new ProcessBuilder(java, vmArguments, "-cp", h2jar.getAbsolutePath(), Server.class.getName(),
-                                               "-tcp", "-baseDir", tempDir.resolve("database-in-time-zone").toString());
+                                               "-tcp", "-ifNotExists", "-baseDir", tempDir.resolve("database-in-time-zone").toString());
         process = pb.start();
     }
 
