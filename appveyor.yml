@@ -1,4 +1,5 @@
 version: '{build}'
+max_jobs: 4
 skip_tags: true
 clone_depth: 2
 branches:
