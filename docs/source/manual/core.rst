@@ -1316,11 +1316,63 @@ JSON, and so the ``NotificationList`` is serialized to JSON using Jackson.
 Metrics
 -------
 
-Every resource method can be annotated with ``@Timed``, ``@Metered``, and ``@ExceptionMetered``.
+Every resource method or the class itself can be annotated with @Timed, @Metered, @ResponseMetered
+and @ExceptionMetered. If the annotation is placed on the class, it will apply to all its resource methods.
 Dropwizard augments Jersey to automatically record runtime information about your resource methods.
+
+.. code-block:: java
+
+    public class ExampleApplication extends ResourceConfig {
+        .
+        .
+        .
+        register(new InstrumentedResourceMethodApplicationListener (new MetricRegistry()));
+        config = config.register(ExampleResource.class);
+        .
+        .
+        .
+    }
+
+    @Path("/example")
+    @Produces(MediaType.TEXT_PLAIN)
+    public class ExampleResource {
+        @GET
+        @Timed
+        public String show() {
+            return "yay";
+        }
+
+        @GET
+        @Metered(name = "fancyName") // If name isn't specified, the meter will given the name of the method it decorates.
+        @Path("/metered")
+        public String metered() {
+            return "woo";
+        }
+
+        @GET
+        @ExceptionMetered(cause = IOException.class) // Default cause is Exception.class
+        @Path("/exception-metered")
+        public String exceptionMetered(@QueryParam("splode") @DefaultValue("false") boolean splode) throws IOException {
+            if (splode) {
+                throw new IOException("AUGH");
+            }
+            return "fuh";
+        }
+
+        @GET
+        @ResponseMetered
+        @Path("/response-metered")
+        public Response responseMetered(@QueryParam("invalid") @DefaultValue("false") boolean invalid) {
+            if (invalid) {
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+            }
+            return Response.ok().build();
+        }
+    }
 
 * ``@Timed`` measures the duration of requests to a resource
 * ``@Metered`` measures the rate at which the resource is accessed
+* ``@ResponseMetered`` measures rate for each class of response codes (1xx/2xx/3xx/4xx/5xx)
 * ``@ExceptionMetered`` measures how often exceptions occur processing the resource
 
 .. important::
