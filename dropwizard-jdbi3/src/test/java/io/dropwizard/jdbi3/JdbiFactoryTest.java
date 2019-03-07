@@ -2,7 +2,7 @@ package io.dropwizard.jdbi3;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheckRegistry;
-import com.codahale.metrics.jdbi3.InstrumentedTimingCollector;
+import com.codahale.metrics.jdbi3.InstrumentedSqlLogger;
 import io.dropwizard.db.ManagedDataSource;
 import io.dropwizard.db.PooledDataSourceFactory;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
@@ -50,7 +50,8 @@ public class JdbiFactoryTest {
         assertThat(result).isSameAs(jdbi);
         verify(lifecycle).manage(dataSource);
         verify(healthChecks).register(eq(name), any(JdbiHealthCheck.class));
-        verify(jdbi).setTimingCollector(any(InstrumentedTimingCollector.class));
+        verify(jdbi).setSqlLogger(any(InstrumentedSqlLogger.class));
+        verify(factory).buildSQLLogger(metrics);
         verify(jdbi).setTemplateEngine(any(NamePrependingTemplateEngine.class));
         verify(factory).configure(jdbi);
     }

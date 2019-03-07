@@ -1,6 +1,7 @@
 package io.dropwizard.jdbi3;
 
-import com.codahale.metrics.jdbi3.InstrumentedTimingCollector;
+import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.jdbi3.InstrumentedSqlLogger;
 import com.codahale.metrics.jdbi3.strategies.SmartNameStrategy;
 import com.codahale.metrics.jdbi3.strategies.StatementNameStrategy;
 import io.dropwizard.db.ManagedDataSource;
@@ -15,7 +16,7 @@ import org.jdbi.v3.jodatime2.JodaTimePlugin;
 import org.jdbi.v3.sqlobject.SqlObjectPlugin;
 
 public class JdbiFactory {
-    private final StatementNameStrategy nameStrategy;
+    protected final StatementNameStrategy nameStrategy;
 
     public JdbiFactory() {
         this(new SmartNameStrategy());
@@ -77,8 +78,8 @@ public class JdbiFactory {
             jdbi,
             validationQuery));
 
-        // Setup the timing collector
-        jdbi.setTimingCollector(new InstrumentedTimingCollector(environment.metrics(), nameStrategy));
+        // Setup the SQL logger
+        jdbi.setSqlLogger(buildSQLLogger(environment.metrics()));
 
         if (configuration.isAutoCommentsEnabled()) {
             final TemplateEngine original = jdbi.getConfig(SqlStatements.class).getTemplateEngine();
@@ -88,6 +89,17 @@ public class JdbiFactory {
         configure(jdbi);
 
         return jdbi;
+    }
+
+    /**
+     * This creates a default {@link InstrumentedSqlLogger} instance with the specified
+     * {@link MetricRegistry} and {@link #nameStrategy}. This can be overridden if required.
+     *
+     * @param metricRegistry The {@link MetricRegistry} to send to the {@link InstrumentedSqlLogger}.
+     * @return The created {@link InstrumentedSqlLogger}.
+     */
+    protected InstrumentedSqlLogger buildSQLLogger(MetricRegistry metricRegistry) {
+        return new InstrumentedSqlLogger(metricRegistry, nameStrategy);
     }
 
     /**
