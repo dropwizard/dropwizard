@@ -16,7 +16,7 @@ import org.jdbi.v3.jodatime2.JodaTimePlugin;
 import org.jdbi.v3.sqlobject.SqlObjectPlugin;
 
 public class JdbiFactory {
-    protected final StatementNameStrategy nameStrategy;
+    private final StatementNameStrategy nameStrategy;
 
     public JdbiFactory() {
         this(new SmartNameStrategy());
@@ -79,7 +79,7 @@ public class JdbiFactory {
             validationQuery));
 
         // Setup the SQL logger
-        jdbi.setSqlLogger(buildSQLLogger(environment.metrics()));
+        jdbi.setSqlLogger(buildSQLLogger(environment.metrics(), nameStrategy));
 
         if (configuration.isAutoCommentsEnabled()) {
             final TemplateEngine original = jdbi.getConfig(SqlStatements.class).getTemplateEngine();
@@ -96,9 +96,10 @@ public class JdbiFactory {
      * {@link MetricRegistry} and {@link #nameStrategy}. This can be overridden if required.
      *
      * @param metricRegistry The {@link MetricRegistry} to send to the {@link InstrumentedSqlLogger}.
+     * @param nameStrategy  The {@link StatementNameStrategy} to send to the {@link InstrumentedSqlLogger}.
      * @return The created {@link InstrumentedSqlLogger}.
      */
-    protected InstrumentedSqlLogger buildSQLLogger(MetricRegistry metricRegistry) {
+    protected InstrumentedSqlLogger buildSQLLogger(MetricRegistry metricRegistry, StatementNameStrategy nameStrategy) {
         return new InstrumentedSqlLogger(metricRegistry, nameStrategy);
     }
 
