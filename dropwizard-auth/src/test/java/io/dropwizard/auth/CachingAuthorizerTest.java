@@ -48,11 +48,11 @@ public class CachingAuthorizerTest {
     @Test
     public void respectsTheCacheConfiguration() throws Exception {
         cached.authorize(principal, role);
-        Thread.sleep(10L);
+        // We need to make sure that background cache invalidation is done before other requests
+        cached.cache.cleanUp();
         cached.authorize(principal2, role);
-        Thread.sleep(10L);
+        cached.cache.cleanUp();
         cached.authorize(principal, role);
-        Thread.sleep(10L);
 
         final InOrder inOrder = inOrder(underlying);
         inOrder.verify(underlying, times(1)).authorize(principal, role);
