@@ -925,6 +925,33 @@ acceptable.
               currentLogFilename: ./logs/example-sql.log
               archivedLogFilenamePattern: ./logs/example-sql-%d.log.gz
               archivedFileCount: 5
+
+.. _man-core-logging-asynchronous-logging:
+
+Asynchronous Logging
+--------------------
+
+By default, all logging in Dropwizard is asynchronous, even to typically
+synchronous sinks such as files and the console. When a slow logger (like file
+logger on an overloaded disk) is coupled with a high load, Dropwizard will
+seemlessly drop events of lower importance (``TRACE``, ``DEBUG``, ``INFO``) in
+an attempt to maintain reasonable latency. 
+
+.. TIP::
+   Instead of logging business critical statements under ``INFO``, insert them
+   into a database, durable message queue, or another mechanism that gives
+   confidence that the request has satisfied business requirements before
+   returning the response to the client.
+
+This logging behavior :ref:`can be configured <man-configuration-logging>`:
+
+* Set ``discardingThreshold`` to 0 so that no events are dropped
+* At the opposite end, set ``neverBlock`` to ``true`` so that even ``WARN`` and ``ERROR`` levels will be discarded from logging under heavy load
+
+Request access logging has the same logging behavior, and since all request
+logging is done under ``INFO``, each log statement has an equal chance of being
+dropped if the log queue is nearing full.
+
 .. _man-core-logging-console:
 
 Console Logging
@@ -932,8 +959,6 @@ Console Logging
 
 By default, Dropwizard applications log ``INFO`` and higher to ``STDOUT``. You can configure this by
 editing the ``logging`` section of your YAML configuration file:
-
-
 
 .. code-block:: yaml
 

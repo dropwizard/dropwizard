@@ -619,10 +619,11 @@ Name                   Default                                  Description
 type                   REQUIRED                                 The appender type. Must be ``console``.
 threshold              ALL                                      The lowest level of events to print to the console.
 queueSize              256                                      The maximum capacity of the blocking queue.
-discardingThreshold    51                                       When the blocking queue has only the capacity mentioned in
+discardingThreshold    -1                                       When the blocking queue has only the capacity mentioned in
                                                                 discardingThreshold remaining, it will drop events of level TRACE,
                                                                 DEBUG and INFO, keeping only events of level WARN and ERROR.
-                                                                If no discarding threshold is specified, then a default of queueSize / 5 is used.
+                                                                If no discarding threshold is specified (-1), then a default of 
+                                                                queueSize / 5 (logback's default ratio) is used.
                                                                 To keep all events, set discardingThreshold to 0.
 timeZone               UTC                                      The time zone to which event timestamps will be converted.
                                                                 To use the system/default time zone, set it to ``system``.
@@ -673,10 +674,11 @@ type                         REQUIRED                                   The appe
 currentLogFilename           REQUIRED                                   The filename where current events are logged.
 threshold                    ALL                                        The lowest level of events to write to the file.
 queueSize                    256                                        The maximum capacity of the blocking queue.
-discardingThreshold          51                                         When the blocking queue has only the capacity mentioned in discardingThreshold
+discardingThreshold          -1                                         When the blocking queue has only the capacity mentioned in discardingThreshold
                                                                         remaining, it will drop events of level TRACE, DEBUG and INFO, keeping only events
-                                                                        of level WARN and ERROR. If no discarding threshold is specified, then a default
-                                                                        of queueSize / 5 is used. To keep all events, set discardingThreshold to 0.
+                                                                        of level WARN and ERROR. If no discarding threshold is specified (-1), then a default
+                                                                        of queueSize / 5 (logback's default ratio) is used. To keep all events, set 
+                                                                        discardingThreshold to 0.
 archive                      true                                       Whether or not to archive old events in separate files.
 archivedLogFilenamePattern   (none)                                     Required if ``archive`` is ``true``.
                                                                         The filename pattern for archived files.
