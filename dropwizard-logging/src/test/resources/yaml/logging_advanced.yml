@@ -12,7 +12,7 @@ loggers:
         archivedLogFilenamePattern: '${new_app}-%d.log.gz'
         logFormat: "%-5level %logger: %msg%n"
         archivedFileCount: 5
-        bufferSize: 256KB
+        bufferSize: 256KiB
   "com.example.legacyApp":
     level: DEBUG
   "com.example.notAdditive":

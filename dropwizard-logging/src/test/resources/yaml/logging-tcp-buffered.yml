@@ -4,4 +4,4 @@ appenders:
     host: localhost
     port: ${tcp.server.port}
     immediateFlush: false
-    sendBufferSize: 1KB
+    sendBufferSize: 1KiB

@@ -1,8 +1,8 @@
 package io.dropwizard.jetty;
 
 import io.dropwizard.util.CharStreams;
+import io.dropwizard.util.DataSize;
 import io.dropwizard.util.Resources;
-import io.dropwizard.util.Size;
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpTester;
 import org.eclipse.jetty.server.handler.gzip.GzipHandler;
@@ -11,7 +11,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -24,7 +23,7 @@ import java.util.zip.GZIPOutputStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class GzipHandlerTest {
+class GzipHandlerTest {
 
     private static final String PLAIN_TEXT_UTF_8 = "text/plain;charset=UTF-8";
 
@@ -33,14 +32,14 @@ public class GzipHandlerTest {
     private final ServletTester servletTester = new ServletTester();
     private final HttpTester.Request request = HttpTester.newRequest();
 
-    public GzipHandlerTest() {
+    GzipHandlerTest() {
         final GzipHandlerFactory gzipHandlerFactory = new GzipHandlerFactory();
-        gzipHandlerFactory.setMinimumEntitySize(Size.bytes(0));
+        gzipHandlerFactory.setMinimumEntitySize(DataSize.bytes(0L));
         gzipHandler = gzipHandlerFactory.build(null);
     }
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         request.setHeader(HttpHeader.HOST.asString(), "localhost");
         request.setHeader("Connection", "close");
         request.setURI("/banner");
@@ -53,12 +52,12 @@ public class GzipHandlerTest {
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    void tearDown() throws Exception {
         servletTester.stop();
     }
 
     @Test
-    public void testCompressResponse() throws Exception {
+    void testCompressResponse() throws Exception {
         request.setMethod("GET");
         request.setHeader(HttpHeader.ACCEPT_ENCODING.asString(), "gzip");
 
@@ -76,7 +75,7 @@ public class GzipHandlerTest {
     }
 
     @Test
-    public void testDecompressRequest() throws Exception {
+    void testDecompressRequest() throws Exception {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try (GZIPOutputStream gz = new GZIPOutputStream(baos)) {
             Resources.copy(Resources.getResource("assets/new-banner.txt"), gz);
@@ -105,14 +104,14 @@ public class GzipHandlerTest {
     public static class BannerServlet extends HttpServlet {
 
         @Override
-        protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
             resp.setCharacterEncoding(StandardCharsets.UTF_8.toString());
             resp.setContentType(PLAIN_TEXT_UTF_8);
             resp.getWriter().write(Resources.toString(Resources.getResource("assets/banner.txt"), StandardCharsets.UTF_8));
         }
 
         @Override
-        protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
             assertThat(req.getHeader(HttpHeader.CONTENT_TYPE.asString())).isEqualToIgnoringCase(PLAIN_TEXT_UTF_8);
             assertThat(req.getHeader(HttpHeader.CONTENT_ENCODING.asString())).isNull();
             assertThat(req.getHeader(HttpHeader.CONTENT_LENGTH.asString())).isNull();

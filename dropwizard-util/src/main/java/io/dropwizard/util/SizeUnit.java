@@ -2,7 +2,10 @@ package io.dropwizard.util;
 
 /**
  * A unit of size.
+ *
+ * @deprecated Use {@link DataSizeUnit} for correct SI and IEC prefixes.
  */
+@Deprecated
 public enum SizeUnit {
     /**
      * Bytes.
@@ -94,5 +97,28 @@ public enum SizeUnit {
      */
     public long toTerabytes(long l) {
         return TERABYTES.convert(l, this);
+    }
+
+    /**
+     * Convert this size unit into a data size unit with correct SI and IEC prefix.
+     *
+     * @return the {@link DataSizeUnit} corresponding to this size unit
+     * @see DataSizeUnit
+     */
+    public DataSizeUnit toDataSizeUnit() {
+        switch (this) {
+            case BYTES:
+                return DataSizeUnit.BYTES;
+            case KILOBYTES:
+                return DataSizeUnit.KIBIBYTES;
+            case MEGABYTES:
+                return DataSizeUnit.MEBIBYTES;
+            case GIGABYTES:
+                return DataSizeUnit.GIBIBYTES;
+            case TERABYTES:
+                return DataSizeUnit.TEBIBYTES;
+            default:
+                throw new IllegalArgumentException("Unknown unit: " + this);
+        }
     }
 }

@@ -660,7 +660,7 @@ File
           archivedFileCount: 5
           timeZone: UTC
           logFormat: "%-5p [%d{ISO8601,UTC}] %c: %m%n%rEx"
-          bufferSize: 8KB
+          bufferSize: 8KiB
           immediateFlush: true
           filterFactories:
             - type: URI
@@ -688,9 +688,10 @@ archivedLogFilenamePattern   (none)                                     Required
 archivedFileCount            5                                          The number of archived files to keep. Must be greater than or equal to ``0``. Zero is a
                                                                         special value signifying to keep infinite logs (use with caution)
 maxFileSize                  (unlimited)                                The maximum size of the currently active file before a rollover is triggered. The value can be
-                                                                        expressed in bytes, kilobytes, megabytes, gigabytes, and terabytes by appending B, K, MB, GB, or
-                                                                        TB to the numeric value.  Examples include 100MB, 1GB, 1TB.  Sizes can also be spelled out, such
-                                                                        as 100 megabytes, 1 gigabyte, 1 terabyte.
+                                                                        expressed in bytes, kibibytes, kilobytes, mebibytes, megabytes, gibibytes, gigabytes, tebibytes,
+                                                                        terabytes, pebibytes, and petabytes by appending B, KiB, KB, MiB, MB, GiB, GB, TiB, TB, PiB, or PB
+                                                                        to the numeric value.  Examples include 5KiB, 100MiB, 1GiB, 1TB.  Sizes can also be spelled out, such
+                                                                        as 5 kibibytes, 100 mebibytes, 1 gibibyte, 1 terabyte.
 totalSizeCap                 (unlimited)                                Controls the total size of all files.
                                                                         Oldest archives are deleted asynchronously when the total size cap is exceeded.
 timeZone                     UTC                                        The time zone to which event timestamps will be converted.
@@ -701,8 +702,8 @@ filterFactories              (none)                                     The list
                                                                         the threshold.
 neverBlock                   false                                      Prevent the wrapping asynchronous appender from blocking when its underlying queue is full.
                                                                         Set to true to disable blocking.
-bufferSize                   8KB                                        The buffer size of the underlying FileAppender (setting added in logback 1.1.10). Increasing this
-                                                                        from the default of 8KB to 256KB is reported to significantly reduce thread contention.
+bufferSize                   8KiB                                       The buffer size of the underlying FileAppender (setting added in logback 1.1.10). Increasing this
+                                                                        from the default of 8KiB to 256KiB is reported to significantly reduce thread contention.
 immediateFlush               true                                       If set to true, log events will be immediately flushed to disk. Immediate flushing is safer, but
                                                                         it degrades logging throughput.
 ============================ =========================================  ==================================================================================================
@@ -767,7 +768,7 @@ TCP
           port: 4560
           connectionTimeout: 500ms
           immediateFlush: true
-          sendBufferSize: 8KB
+          sendBufferSize: 8KiB
 
 
 ============================ =============  ==================================================================
@@ -778,7 +779,7 @@ port                         4560           The port on which the TCP server is 
 connectionTimeout            500ms          The timeout to connect to the TCP server.
 immediateFlush               true           If set to true, log events will be immediately send to the server
                                             Immediate flushing is safer, but it degrades logging throughput.
-sendBufferSize               8KB            The buffer size of the underlying SocketAppender.
+sendBufferSize               8KiB           The buffer size of the underlying SocketAppender.
                                             Takes into effect if immediateFlush is disabled.
 ============================ =============  ==================================================================
 

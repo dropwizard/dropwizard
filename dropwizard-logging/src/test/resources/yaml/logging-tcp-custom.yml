@@ -5,4 +5,4 @@ appenders:
     port: 17001
     connectionTimeout: 100ms
     immediateFlush: false
-    sendBufferSize: 2KB
+    sendBufferSize: 2KiB
