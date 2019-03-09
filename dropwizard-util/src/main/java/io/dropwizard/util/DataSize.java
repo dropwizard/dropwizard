@@ -123,12 +123,13 @@ public class DataSize implements Comparable<DataSize> {
         }
 
         final long count = Long.parseLong(matcher.group(1));
-        final DataSizeUnit unit = SUFFIXES.getOrDefault(matcher.group(2), defaultUnit);
-        if (unit == null) {
+        final String unit = matcher.group(2);
+        final DataSizeUnit dataSizeUnit = Strings.isNullOrEmpty(unit) ? defaultUnit : SUFFIXES.get(unit);
+        if (dataSizeUnit == null) {
             throw new IllegalArgumentException("Invalid size: " + size + ". Wrong size unit");
         }
 
-        return new DataSize(count, unit);
+        return new DataSize(count, dataSizeUnit);
     }
 
     private final long count;
