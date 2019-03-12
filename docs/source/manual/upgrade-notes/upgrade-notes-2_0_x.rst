@@ -26,8 +26,12 @@ If one created a custom provider (eg: parse / write JSON differently, so a custo
 you must annotate the class with the appropriate ``@Consumes`` and ``@Produces`` and register it with a Jersey ``Feature``
 instead of an ``AbstractBinder`` if it been so previously.
 
+`Jersey 2.26 <https://jersey.github.io/release-notes/2.26.html>`_ introduced it's own injection facade.
+``dropwizard-jersey`` will automatically bring in the ``jersey-hk2`` dependency, but you will need to change your
+imports from ``org.glassfish.hk2.utilities.binding.*`` to ``org.glassfish.jersey.internal.inject.*``.
+
 HK2 internal API has been updated, so if you previously had a ``AbstractValueFactoryProvider``,
-that will need to migrate to a ``AbstractValueParamProvider``
+that will need to migrate to a ``AbstractValueParamProvider``.
 
 Jersey Reactive Client API was updated to remove ``RxClient``, as reactive capabilities are built into the client.
 You only need to use Dropwizard’s ``buildRx`` for client when you want a switch the default to something like RxJava 2’s ``Flowable``.
