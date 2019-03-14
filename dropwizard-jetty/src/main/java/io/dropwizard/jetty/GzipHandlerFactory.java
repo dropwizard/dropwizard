@@ -1,7 +1,7 @@
 package io.dropwizard.jetty;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.dropwizard.util.Size;
+import io.dropwizard.util.DataSize;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.handler.gzip.GzipHandler;
 
@@ -36,12 +36,12 @@ import static java.util.Objects.requireNonNull;
  *     <tr>
  *         <td>{@code minimumEntitySize}</td>
  *         <td>256 bytes</td>
- *         <td>All response entities under this size are not compressed.</td>
+ *         <td>All response entities under this DataSize are not compressed.</td>
  *     </tr>
  *     <tr>
  *         <td>{@code bufferSize}</td>
  *         <td>8KiB</td>
- *         <td>The size of the buffer to use when compressing.</td>
+ *         <td>The DataSize of the buffer to use when compressing.</td>
  *     </tr>
  *     <tr>
  *         <td>{@code excludedUserAgentPatterns}</td>
@@ -96,10 +96,10 @@ public class GzipHandlerFactory {
     private boolean enabled = true;
 
     @NotNull
-    private Size minimumEntitySize = Size.bytes(256);
+    private DataSize minimumEntitySize = DataSize.bytes(256);
 
     @NotNull
-    private Size bufferSize = Size.kilobytes(8);
+    private DataSize bufferSize = DataSize.kibibytes(8);
 
     // By default compress responses for all user-agents
     private Set<String> excludedUserAgentPatterns = new HashSet<>();
@@ -138,22 +138,22 @@ public class GzipHandlerFactory {
     }
 
     @JsonProperty
-    public Size getMinimumEntitySize() {
+    public DataSize getMinimumEntitySize() {
         return minimumEntitySize;
     }
 
     @JsonProperty
-    public void setMinimumEntitySize(Size size) {
+    public void setMinimumEntitySize(DataSize size) {
         this.minimumEntitySize = requireNonNull(size);
     }
 
     @JsonProperty
-    public Size getBufferSize() {
+    public DataSize getBufferSize() {
         return bufferSize;
     }
 
     @JsonProperty
-    public void setBufferSize(Size size) {
+    public void setBufferSize(DataSize size) {
         this.bufferSize = requireNonNull(size);
     }
 

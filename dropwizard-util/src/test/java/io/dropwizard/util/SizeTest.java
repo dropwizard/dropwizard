@@ -8,39 +8,40 @@ import java.io.IOException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
-public class SizeTest {
+@SuppressWarnings("deprecation")
+class SizeTest {
     @Test
-    public void convertsToTerabytes() throws Exception {
+    void convertsToTerabytes() {
         assertThat(Size.terabytes(2).toTerabytes())
                 .isEqualTo(2);
     }
 
     @Test
-    public void convertsToGigabytes() throws Exception {
+    void convertsToGigabytes() {
         assertThat(Size.terabytes(2).toGigabytes())
                 .isEqualTo(2048);
     }
 
     @Test
-    public void convertsToMegabytes() throws Exception {
+    void convertsToMegabytes() {
         assertThat(Size.gigabytes(2).toMegabytes())
                 .isEqualTo(2048);
     }
 
     @Test
-    public void convertsToKilobytes() throws Exception {
+    void convertsToKilobytes() {
         assertThat(Size.megabytes(2).toKilobytes())
                 .isEqualTo(2048);
     }
 
     @Test
-    public void convertsToBytes() throws Exception {
+    void convertsToBytes() {
         assertThat(Size.kilobytes(2).toBytes())
                 .isEqualTo(2048L);
     }
 
     @Test
-    public void parsesTerabytes() throws Exception {
+    void parsesTerabytes() {
         assertThat(Size.parse("2TB"))
                 .isEqualTo(Size.terabytes(2));
 
@@ -55,7 +56,7 @@ public class SizeTest {
     }
 
     @Test
-    public void parsesGigabytes() throws Exception {
+    void parsesGigabytes() {
         assertThat(Size.parse("2GB"))
                 .isEqualTo(Size.gigabytes(2));
 
@@ -70,7 +71,7 @@ public class SizeTest {
     }
 
     @Test
-    public void parsesMegabytes() throws Exception {
+    void parsesMegabytes() {
         assertThat(Size.parse("2MB"))
                 .isEqualTo(Size.megabytes(2));
 
@@ -85,7 +86,7 @@ public class SizeTest {
     }
 
     @Test
-    public void parsesKilobytes() throws Exception {
+    void parsesKilobytes() {
         assertThat(Size.parse("2KB"))
                 .isEqualTo(Size.kilobytes(2));
 
@@ -100,7 +101,7 @@ public class SizeTest {
     }
 
     @Test
-    public void parsesBytes() throws Exception {
+    void parsesBytes() {
         assertThat(Size.parse("2B"))
                 .isEqualTo(Size.bytes(2));
 
@@ -112,18 +113,18 @@ public class SizeTest {
     }
 
     @Test
-    public void parseSizeWithWhiteSpaces() {
+    void parseSizeWithWhiteSpaces() {
         assertThat(Size.parse("64   kilobytes"))
                 .isEqualTo(Size.kilobytes(64));
     }
 
     @Test
-    public void parseCaseInsensitive() {
+    void parseCaseInsensitive() {
         assertThat(Size.parse("1b")).isEqualTo(Size.parse("1B"));
     }
 
     @Test
-    public void parseSingleLetterSuffix() {
+    void parseSingleLetterSuffix() {
         assertThat(Size.parse("1B")).isEqualTo(Size.bytes(1));
         assertThat(Size.parse("1K")).isEqualTo(Size.kilobytes(1));
         assertThat(Size.parse("1M")).isEqualTo(Size.megabytes(1));
@@ -132,22 +133,22 @@ public class SizeTest {
     }
 
     @Test
-    public void unableParseWrongSizeCount() {
+    void unableParseWrongSizeCount() {
         assertThatIllegalArgumentException().isThrownBy(() -> Size.parse("three bytes"));
     }
 
     @Test
-    public void unableParseWrongSizeUnit() {
+    void unableParseWrongSizeUnit() {
         assertThatIllegalArgumentException().isThrownBy(() -> Size.parse("1EB"));
     }
 
     @Test
-    public void unableParseWrongSizeFormat() {
+    void unableParseWrongSizeFormat() {
         assertThatIllegalArgumentException().isThrownBy(() -> Size.parse("1 mega byte"));
     }
 
     @Test
-    public void isHumanReadable() throws Exception {
+    void isHumanReadable() {
         assertThat(Size.gigabytes(3).toString())
                 .isEqualTo("3 gigabytes");
 
@@ -156,19 +157,19 @@ public class SizeTest {
     }
 
     @Test
-    public void hasAQuantity() throws Exception {
+    void hasAQuantity() {
         assertThat(Size.gigabytes(3).getQuantity())
                 .isEqualTo(3);
     }
 
     @Test
-    public void hasAUnit() throws Exception {
+    void hasAUnit() {
         assertThat(Size.gigabytes(3).getUnit())
                 .isEqualTo(SizeUnit.GIGABYTES);
     }
 
     @Test
-    public void isComparable() throws Exception {
+    void isComparable() {
         // both zero
         assertThat(Size.bytes(0).compareTo(Size.bytes(0))).isEqualTo(0);
         assertThat(Size.bytes(0).compareTo(Size.kilobytes(0))).isEqualTo(0);
@@ -507,7 +508,7 @@ public class SizeTest {
     }
 
     @Test
-    public void serializesCorrectlyWithJackson() throws IOException {
+    void serializesCorrectlyWithJackson() throws IOException {
         final ObjectMapper mapper = new ObjectMapper();
 
         assertThat(mapper.writeValueAsString(Size.bytes(0L))).isEqualTo("\"0 bytes\"");
@@ -528,7 +529,7 @@ public class SizeTest {
     }
 
     @Test
-    public void deserializesCorrectlyWithJackson() throws IOException {
+    void deserializesCorrectlyWithJackson() throws IOException {
         final ObjectMapper mapper = new ObjectMapper();
 
         assertThat(mapper.readValue("\"0 bytes\"", Size.class)).isEqualTo(Size.bytes(0L));
@@ -549,7 +550,7 @@ public class SizeTest {
     }
 
     @Test
-    public void verifyComparableContract() {
+    void verifyComparableContract() {
         final Size kb = Size.kilobytes(1024L);
         final Size bytes = Size.bytes(kb.toBytes());
 
@@ -559,5 +560,29 @@ public class SizeTest {
         // If comparator == 0, then the following must be true
         assertThat(bytes.equals(kb)).isTrue();
         assertThat(kb.equals(bytes)).isTrue();
+    }
+
+    @Test
+    void testFromDataSize() {
+        assertThat(Size.fromDataSize(DataSize.bytes(5L))).isEqualTo(Size.bytes(5L));
+        assertThat(Size.fromDataSize(DataSize.kibibytes(5L))).isEqualTo(Size.kilobytes(5L));
+        assertThat(Size.fromDataSize(DataSize.kilobytes(5L))).isEqualTo(Size.bytes(5L * 1000L));
+        assertThat(Size.fromDataSize(DataSize.mebibytes(5L))).isEqualTo(Size.megabytes(5L));
+        assertThat(Size.fromDataSize(DataSize.megabytes(5L))).isEqualTo(Size.bytes(5L * 1000L * 1000L));
+        assertThat(Size.fromDataSize(DataSize.gibibytes(5L))).isEqualTo(Size.gigabytes(5L));
+        assertThat(Size.fromDataSize(DataSize.gigabytes(5L))).isEqualTo(Size.bytes(5L * 1000L * 1000L * 1000L));
+        assertThat(Size.fromDataSize(DataSize.tebibytes(5L))).isEqualTo(Size.terabytes(5L));
+        assertThat(Size.fromDataSize(DataSize.terabytes(5L))).isEqualTo(Size.bytes(5L * 1000L * 1000L * 1000L * 1000L));
+        assertThat(Size.fromDataSize(DataSize.pebibytes(5L))).isEqualTo(Size.terabytes(5L * 1024L * 1024L));
+        assertThat(Size.fromDataSize(DataSize.petabytes(5L))).isEqualTo(Size.bytes(5L * 1000L * 1000L * 1000L * 1000L * 1000L));
+    }
+
+    @Test
+    void testToDataSize() {
+        assertThat(Size.bytes(5L).toDataSize()).isEqualTo(DataSize.bytes(5L));
+        assertThat(Size.kilobytes(5L).toDataSize()).isEqualTo(DataSize.kibibytes(5L));
+        assertThat(Size.megabytes(5L).toDataSize()).isEqualTo(DataSize.mebibytes(5L));
+        assertThat(Size.gigabytes(5L).toDataSize()).isEqualTo(DataSize.gibibytes(5L));
+        assertThat(Size.terabytes(5L).toDataSize()).isEqualTo(DataSize.tebibytes(5L));
     }
 }

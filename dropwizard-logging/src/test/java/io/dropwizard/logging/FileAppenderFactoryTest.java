@@ -22,8 +22,8 @@ import io.dropwizard.jackson.Jackson;
 import io.dropwizard.logging.async.AsyncLoggingEventAppenderFactory;
 import io.dropwizard.logging.filter.NullLevelFilterFactory;
 import io.dropwizard.logging.layout.DropwizardLayoutFactory;
+import io.dropwizard.util.DataSize;
 import io.dropwizard.util.Resources;
-import io.dropwizard.util.Size;
 import io.dropwizard.validation.BaseValidator;
 import io.dropwizard.validation.ConstraintViolations;
 import org.junit.jupiter.api.Test;
@@ -42,7 +42,7 @@ import java.util.Collection;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-public class FileAppenderFactoryTest {
+class FileAppenderFactoryTest {
 
     static {
         BootstrapLogging.bootstrap();
@@ -52,13 +52,13 @@ public class FileAppenderFactoryTest {
     private final Validator validator = BaseValidator.newValidator();
 
     @Test
-    public void isDiscoverable() throws Exception {
+    void isDiscoverable() throws Exception {
         assertThat(new DiscoverableSubtypeResolver().getDiscoveredSubtypes())
                 .contains(FileAppenderFactory.class);
     }
 
     @Test
-    public void includesCallerData() {
+    void includesCallerData() {
         FileAppenderFactory<ILoggingEvent> fileAppenderFactory = new FileAppenderFactory<>();
         fileAppenderFactory.setArchive(false);
         AsyncAppender asyncAppender = (AsyncAppender) fileAppenderFactory.build(new LoggerContext(), "test", new DropwizardLayoutFactory(), new NullLevelFilterFactory<>(), new AsyncLoggingEventAppenderFactory());
@@ -70,7 +70,7 @@ public class FileAppenderFactoryTest {
     }
 
     @Test
-    public void isRolling(@TempDir Path tempDir) throws Exception {
+    void isRolling(@TempDir Path tempDir) throws Exception {
         // the method we want to test is protected, so we need to override it so we can see it
         FileAppenderFactory<ILoggingEvent> fileAppenderFactory = new FileAppenderFactory<ILoggingEvent>() {
             @Override
@@ -86,7 +86,7 @@ public class FileAppenderFactoryTest {
     }
 
     @Test
-    public void hasArchivedLogFilenamePattern(@TempDir Path tempDir) throws Exception {
+    void hasArchivedLogFilenamePattern(@TempDir Path tempDir) {
         FileAppenderFactory<?> fileAppenderFactory = new FileAppenderFactory<>();
         fileAppenderFactory.setCurrentLogFilename(tempDir.resolve("logfile.log").toString());
         Collection<String> errors =
@@ -100,7 +100,7 @@ public class FileAppenderFactoryTest {
     }
 
     @Test
-    public void isValidForInfiniteRolledFiles(@TempDir Path tempDir) throws Exception {
+    void isValidForInfiniteRolledFiles(@TempDir Path tempDir) {
         FileAppenderFactory<?> fileAppenderFactory = new FileAppenderFactory<>();
         fileAppenderFactory.setCurrentLogFilename(tempDir.resolve("logfile.log").toString());
         fileAppenderFactory.setArchivedFileCount(0);
@@ -112,10 +112,10 @@ public class FileAppenderFactoryTest {
     }
 
     @Test
-    public void isValidForMaxFileSize(@TempDir Path tempDir) throws Exception {
+    void isValidForMaxFileSize(@TempDir Path tempDir) {
         FileAppenderFactory<?> fileAppenderFactory = new FileAppenderFactory<>();
         fileAppenderFactory.setCurrentLogFilename(tempDir.resolve("logfile.log").toString());
-        fileAppenderFactory.setMaxFileSize(Size.kilobytes(1));
+        fileAppenderFactory.setMaxFileSize(DataSize.kibibytes(1));
         fileAppenderFactory.setArchivedLogFilenamePattern(tempDir.resolve("example-%d.log.gz").toString());
         Collection<String> errors =
                 ConstraintViolations.format(validator.validate(fileAppenderFactory));
@@ -127,7 +127,7 @@ public class FileAppenderFactoryTest {
     }
 
     @Test
-    public void hasMaxFileSizeValidation(@TempDir Path tempDir) throws Exception {
+    void hasMaxFileSizeValidation(@TempDir Path tempDir) {
         FileAppenderFactory<?> fileAppenderFactory = new FileAppenderFactory<>();
         fileAppenderFactory.setCurrentLogFilename(tempDir.resolve("logfile.log").toString());
         fileAppenderFactory.setArchivedLogFilenamePattern(tempDir.resolve("example-%i.log.gz").toString());
@@ -135,13 +135,13 @@ public class FileAppenderFactoryTest {
                 ConstraintViolations.format(validator.validate(fileAppenderFactory));
         assertThat(errors)
                 .containsOnly("when archivedLogFilenamePattern contains %i, maxFileSize must be specified");
-        fileAppenderFactory.setMaxFileSize(Size.kilobytes(1));
+        fileAppenderFactory.setMaxFileSize(DataSize.kibibytes(1));
         errors = ConstraintViolations.format(validator.validate(fileAppenderFactory));
         assertThat(errors).isEmpty();
     }
 
     @Test
-    public void testCurrentFileNameErrorWhenArchiveIsNotEnabled() throws Exception {
+    void testCurrentFileNameErrorWhenArchiveIsNotEnabled() {
         FileAppenderFactory<?> fileAppenderFactory = new FileAppenderFactory<>();
         fileAppenderFactory.setArchive(false);
         Collection<String> errors =
@@ -154,7 +154,7 @@ public class FileAppenderFactoryTest {
     }
 
     @Test
-    public void testCurrentFileNameCanBeNullWhenArchiveIsEnabled() throws Exception {
+    void testCurrentFileNameCanBeNullWhenArchiveIsEnabled() {
         FileAppenderFactory<?> fileAppenderFactory = new FileAppenderFactory<>();
         fileAppenderFactory.setArchive(true);
         fileAppenderFactory.setArchivedLogFilenamePattern("name-to-be-used");
@@ -165,7 +165,7 @@ public class FileAppenderFactoryTest {
     }
 
     @Test
-    public void testCurrentLogFileNameIsEmptyAndAppenderUsesArchivedNameInstead(@TempDir Path tempDir) throws Exception {
+    void testCurrentLogFileNameIsEmptyAndAppenderUsesArchivedNameInstead(@TempDir Path tempDir) {
         final FileAppenderFactory<ILoggingEvent> appenderFactory = new FileAppenderFactory<>();
         appenderFactory.setArchivedLogFilenamePattern(tempDir.resolve("test-archived-name-%d.log").toString());
         final FileAppender<ILoggingEvent> rollingAppender = appenderFactory.buildAppender(new LoggerContext());
@@ -176,11 +176,11 @@ public class FileAppenderFactoryTest {
     }
 
     @Test
-    public void hasMaxFileSize(@TempDir Path tempDir) throws Exception {
+    void hasMaxFileSize(@TempDir Path tempDir) throws Exception {
         FileAppenderFactory<ILoggingEvent> fileAppenderFactory = new FileAppenderFactory<>();
         fileAppenderFactory.setCurrentLogFilename(tempDir.resolve("logfile.log").toString());
         fileAppenderFactory.setArchive(true);
-        fileAppenderFactory.setMaxFileSize(Size.kilobytes(1));
+        fileAppenderFactory.setMaxFileSize(DataSize.kibibytes(1));
         fileAppenderFactory.setArchivedLogFilenamePattern(tempDir.resolve("example-%d-%i.log.gz").toString());
         RollingFileAppender<ILoggingEvent> appender = (RollingFileAppender<ILoggingEvent>) fileAppenderFactory.buildAppender(new LoggerContext());
 
@@ -192,11 +192,11 @@ public class FileAppenderFactoryTest {
     }
 
     @Test
-    public void hasMaxFileSizeFixedWindow(@TempDir Path tempDir) throws Exception {
+    void hasMaxFileSizeFixedWindow(@TempDir Path tempDir) throws Exception {
         FileAppenderFactory<ILoggingEvent> fileAppenderFactory = new FileAppenderFactory<>();
         fileAppenderFactory.setCurrentLogFilename(tempDir.resolve("logfile.log").toString());
         fileAppenderFactory.setArchive(true);
-        fileAppenderFactory.setMaxFileSize(Size.kilobytes(1));
+        fileAppenderFactory.setMaxFileSize(DataSize.kibibytes(1));
         fileAppenderFactory.setArchivedLogFilenamePattern(tempDir.resolve("example-%i.log.gz").toString());
         RollingFileAppender<ILoggingEvent> appender = (RollingFileAppender<ILoggingEvent>) fileAppenderFactory.buildAppender(new LoggerContext());
 
@@ -212,7 +212,7 @@ public class FileAppenderFactoryTest {
     }
 
     @Test
-    public void appenderContextIsSet(@TempDir Path tempDir) throws Exception {
+    void appenderContextIsSet(@TempDir Path tempDir) {
         final Logger root = (Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
         final FileAppenderFactory<ILoggingEvent> appenderFactory = new FileAppenderFactory<>();
         appenderFactory.setArchivedLogFilenamePattern(tempDir.resolve("example-%d.log.gz").toString());
@@ -228,7 +228,7 @@ public class FileAppenderFactoryTest {
     }
 
     @Test
-    public void appenderNameIsSet(@TempDir Path tempDir) throws Exception {
+    void appenderNameIsSet(@TempDir Path tempDir) {
         final Logger root = (Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
         final FileAppenderFactory<ILoggingEvent> appenderFactory = new FileAppenderFactory<>();
         appenderFactory.setArchivedLogFilenamePattern(tempDir.resolve("example-%d.log.gz").toString());
@@ -244,7 +244,7 @@ public class FileAppenderFactoryTest {
     }
 
     @Test
-    public void isNeverBlock() throws Exception {
+    void isNeverBlock() {
         FileAppenderFactory<ILoggingEvent> fileAppenderFactory = new FileAppenderFactory<>();
         fileAppenderFactory.setArchive(false);
         fileAppenderFactory.setNeverBlock(true);
@@ -254,7 +254,7 @@ public class FileAppenderFactoryTest {
     }
 
     @Test
-    public void isNotNeverBlock() throws Exception {
+    void isNotNeverBlock() {
         FileAppenderFactory<ILoggingEvent> fileAppenderFactory = new FileAppenderFactory<>();
         fileAppenderFactory.setArchive(false);
         fileAppenderFactory.setNeverBlock(false);
@@ -264,7 +264,7 @@ public class FileAppenderFactoryTest {
     }
 
     @Test
-    public void defaultIsNotNeverBlock() throws Exception {
+    void defaultIsNotNeverBlock() throws Exception {
         FileAppenderFactory<ILoggingEvent> fileAppenderFactory = new FileAppenderFactory<>();
         fileAppenderFactory.setArchive(false);
         // default neverBlock
@@ -274,10 +274,10 @@ public class FileAppenderFactoryTest {
     }
 
     @Test
-    public void overrideBufferSize() throws NoSuchFieldException, IllegalAccessException {
+    void overrideBufferSize() throws NoSuchFieldException, IllegalAccessException {
         FileAppenderFactory<ILoggingEvent> fileAppenderFactory = new FileAppenderFactory<>();
         fileAppenderFactory.setArchive(false);
-        fileAppenderFactory.setBufferSize(Size.kilobytes(256));
+        fileAppenderFactory.setBufferSize(DataSize.kibibytes(256));
         AsyncAppender asyncAppender = (AsyncAppender) fileAppenderFactory.build(new LoggerContext(), "test", new DropwizardLayoutFactory(), new NullLevelFilterFactory<>(), new AsyncLoggingEventAppenderFactory());
         final Appender<ILoggingEvent> fileAppender = asyncAppender.getAppender("file-appender");
         assertThat(fileAppender).isInstanceOf(FileAppender.class);
@@ -288,7 +288,7 @@ public class FileAppenderFactoryTest {
     }
 
     @Test
-    public void isImmediateFlushed() throws Exception {
+    void isImmediateFlushed() throws Exception {
         FileAppenderFactory<ILoggingEvent> fileAppenderFactory = new FileAppenderFactory<>();
         fileAppenderFactory.setArchive(false);
 
@@ -307,7 +307,7 @@ public class FileAppenderFactoryTest {
     }
 
     @Test
-    public void validSetTotalSizeCap() throws IOException, ConfigurationException, NoSuchFieldException {
+    void validSetTotalSizeCap() throws IOException, ConfigurationException, NoSuchFieldException {
         final Field totalSizeCap = TimeBasedRollingPolicy.class.getDeclaredField("totalSizeCap");
         totalSizeCap.setAccessible(true);
 
@@ -324,11 +324,11 @@ public class FileAppenderFactoryTest {
                 try {
                     assertThat(totalSizeCap.get(policy))
                         .isInstanceOfSatisfying(FileSize.class, x ->
-                            assertThat(x.getSize()).isEqualTo(Size.megabytes(50).toBytes()));
+                            assertThat(x.getSize()).isEqualTo(DataSize.mebibytes(50).toBytes()));
 
                     assertThat(maxFileSize.get(policy))
                         .isInstanceOfSatisfying(FileSize.class, x ->
-                            assertThat(x.getSize()).isEqualTo(Size.megabytes(10).toBytes()));
+                            assertThat(x.getSize()).isEqualTo(DataSize.mebibytes(10).toBytes()));
 
                     assertThat(policy.getMaxHistory()).isEqualTo(5);
                 } catch (IllegalAccessException e) {
@@ -339,7 +339,7 @@ public class FileAppenderFactoryTest {
     }
 
     @Test
-    public void validSetTotalSizeCapNoMaxFileSize() throws IOException, ConfigurationException, NoSuchFieldException {
+    void validSetTotalSizeCapNoMaxFileSize() throws IOException, ConfigurationException, NoSuchFieldException {
         final Field totalSizeCap = TimeBasedRollingPolicy.class.getDeclaredField("totalSizeCap");
         totalSizeCap.setAccessible(true);
 
@@ -353,7 +353,7 @@ public class FileAppenderFactoryTest {
                 try {
                     assertThat(totalSizeCap.get(policy))
                         .isInstanceOfSatisfying(FileSize.class, x ->
-                            assertThat(x.getSize()).isEqualTo(Size.megabytes(50).toBytes()));
+                            assertThat(x.getSize()).isEqualTo(DataSize.mebibytes(50).toBytes()));
 
                     assertThat(policy.getMaxHistory()).isEqualTo(5);
                 } catch (IllegalAccessException e) {
@@ -364,7 +364,7 @@ public class FileAppenderFactoryTest {
     }
 
     @Test
-    public void invalidUseOfTotalSizeCap() {
+    void invalidUseOfTotalSizeCap() {
         final YamlConfigurationFactory<FileAppenderFactory> factory =
             new YamlConfigurationFactory<>(FileAppenderFactory.class, validator, mapper, "dw");
         assertThatThrownBy(() ->

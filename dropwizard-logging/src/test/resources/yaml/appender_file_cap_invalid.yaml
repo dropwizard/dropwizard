@@ -2,5 +2,5 @@ type: file
 threshold: ALL
 currentLogFilename: ./logs/example.log
 archivedLogFilenamePattern: ./logs/example-%i.log.gz
-maxFileSize: "10mb"
-totalSizeCap: "50mb"
+maxFileSize: "10mib"
+totalSizeCap: "50mib"

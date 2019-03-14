@@ -25,5 +25,5 @@ logging:
       archivedLogFilenamePattern: './logs/application-%d-%i.log.gz'
       archive: true
       archivedFileCount: 7
-      maxFileSize: '1mb'
+      maxFileSize: '1MiB'
 

@@ -8,9 +8,9 @@ import io.dropwizard.jackson.Jackson;
 import io.dropwizard.logging.ConsoleAppenderFactory;
 import io.dropwizard.logging.FileAppenderFactory;
 import io.dropwizard.logging.SyslogAppenderFactory;
+import io.dropwizard.util.DataSize;
 import io.dropwizard.util.Duration;
 import io.dropwizard.util.Resources;
-import io.dropwizard.util.Size;
 import io.dropwizard.validation.BaseValidator;
 import org.eclipse.jetty.http.HttpCompliance;
 import org.eclipse.jetty.io.ArrayByteBufferPool;
@@ -33,25 +33,25 @@ import java.util.Optional;
 import static org.apache.commons.lang3.reflect.FieldUtils.getField;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class HttpConnectorFactoryTest {
+class HttpConnectorFactoryTest {
 
     private final ObjectMapper objectMapper = Jackson.newObjectMapper();
     private final Validator validator = BaseValidator.newValidator();
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() {
         objectMapper.getSubtypeResolver().registerSubtypes(ConsoleAppenderFactory.class,
                 FileAppenderFactory.class, SyslogAppenderFactory.class, HttpConnectorFactory.class);
     }
 
     @Test
-    public void isDiscoverable() throws Exception {
+    void isDiscoverable() {
         assertThat(new DiscoverableSubtypeResolver().getDiscoveredSubtypes())
                 .contains(HttpConnectorFactory.class);
     }
 
     @Test
-    public void testParseMinimalConfiguration() throws Exception {
+    void testParseMinimalConfiguration() throws Exception {
         HttpConnectorFactory http =
                 new YamlConfigurationFactory<>(HttpConnectorFactory.class, validator, objectMapper, "dw")
                 .build(new File(Resources.getResource("yaml/http-connector-minimal.yml").toURI()));
@@ -59,17 +59,17 @@ public class HttpConnectorFactoryTest {
         assertThat(http.getPort()).isEqualTo(8080);
         assertThat(http.getBindHost()).isNull();
         assertThat(http.isInheritChannel()).isEqualTo(false);
-        assertThat(http.getHeaderCacheSize()).isEqualTo(Size.bytes(512));
-        assertThat(http.getOutputBufferSize()).isEqualTo(Size.kilobytes(32));
-        assertThat(http.getMaxRequestHeaderSize()).isEqualTo(Size.kilobytes(8));
-        assertThat(http.getMaxResponseHeaderSize()).isEqualTo(Size.kilobytes(8));
-        assertThat(http.getInputBufferSize()).isEqualTo(Size.kilobytes(8));
+        assertThat(http.getHeaderCacheSize()).isEqualTo(DataSize.bytes(512));
+        assertThat(http.getOutputBufferSize()).isEqualTo(DataSize.kibibytes(32));
+        assertThat(http.getMaxRequestHeaderSize()).isEqualTo(DataSize.kibibytes(8));
+        assertThat(http.getMaxResponseHeaderSize()).isEqualTo(DataSize.kibibytes(8));
+        assertThat(http.getInputBufferSize()).isEqualTo(DataSize.kibibytes(8));
         assertThat(http.getIdleTimeout()).isEqualTo(Duration.seconds(30));
-        assertThat(http.getMinBufferPoolSize()).isEqualTo(Size.bytes(64));
-        assertThat(http.getBufferPoolIncrement()).isEqualTo(Size.bytes(1024));
-        assertThat(http.getMaxBufferPoolSize()).isEqualTo(Size.kilobytes(64));
-        assertThat(http.getMinRequestDataPerSecond()).isEqualTo(Size.bytes(0));
-        assertThat(http.getMinResponseDataPerSecond()).isEqualTo(Size.bytes(0));
+        assertThat(http.getMinBufferPoolSize()).isEqualTo(DataSize.bytes(64));
+        assertThat(http.getBufferPoolIncrement()).isEqualTo(DataSize.bytes(1024));
+        assertThat(http.getMaxBufferPoolSize()).isEqualTo(DataSize.kibibytes(64));
+        assertThat(http.getMinRequestDataPerSecond()).isEqualTo(DataSize.bytes(0));
+        assertThat(http.getMinResponseDataPerSecond()).isEqualTo(DataSize.bytes(0));
         assertThat(http.getAcceptorThreads()).isEmpty();
         assertThat(http.getSelectorThreads()).isEmpty();
         assertThat(http.getAcceptQueueSize()).isNull();
@@ -81,7 +81,7 @@ public class HttpConnectorFactoryTest {
     }
 
     @Test
-    public void testParseFullConfiguration() throws Exception {
+    void testParseFullConfiguration() throws Exception {
         HttpConnectorFactory http =
                 new YamlConfigurationFactory<>(HttpConnectorFactory.class, validator, objectMapper, "dw")
                 .build(new File(Resources.getResource("yaml/http-connector.yml").toURI()));
@@ -89,17 +89,17 @@ public class HttpConnectorFactoryTest {
         assertThat(http.getPort()).isEqualTo(9090);
         assertThat(http.getBindHost()).isEqualTo("127.0.0.1");
         assertThat(http.isInheritChannel()).isEqualTo(true);
-        assertThat(http.getHeaderCacheSize()).isEqualTo(Size.bytes(256));
-        assertThat(http.getOutputBufferSize()).isEqualTo(Size.kilobytes(128));
-        assertThat(http.getMaxRequestHeaderSize()).isEqualTo(Size.kilobytes(4));
-        assertThat(http.getMaxResponseHeaderSize()).isEqualTo(Size.kilobytes(4));
-        assertThat(http.getInputBufferSize()).isEqualTo(Size.kilobytes(4));
+        assertThat(http.getHeaderCacheSize()).isEqualTo(DataSize.bytes(256));
+        assertThat(http.getOutputBufferSize()).isEqualTo(DataSize.kibibytes(128));
+        assertThat(http.getMaxRequestHeaderSize()).isEqualTo(DataSize.kibibytes(4));
+        assertThat(http.getMaxResponseHeaderSize()).isEqualTo(DataSize.kibibytes(4));
+        assertThat(http.getInputBufferSize()).isEqualTo(DataSize.kibibytes(4));
         assertThat(http.getIdleTimeout()).isEqualTo(Duration.seconds(10));
-        assertThat(http.getMinBufferPoolSize()).isEqualTo(Size.bytes(128));
-        assertThat(http.getBufferPoolIncrement()).isEqualTo(Size.bytes(500));
-        assertThat(http.getMaxBufferPoolSize()).isEqualTo(Size.kilobytes(32));
-        assertThat(http.getMinRequestDataPerSecond()).isEqualTo(Size.bytes(42));
-        assertThat(http.getMinResponseDataPerSecond()).isEqualTo(Size.bytes(200));
+        assertThat(http.getMinBufferPoolSize()).isEqualTo(DataSize.bytes(128));
+        assertThat(http.getBufferPoolIncrement()).isEqualTo(DataSize.bytes(500));
+        assertThat(http.getMaxBufferPoolSize()).isEqualTo(DataSize.kibibytes(32));
+        assertThat(http.getMinRequestDataPerSecond()).isEqualTo(DataSize.bytes(42));
+        assertThat(http.getMinResponseDataPerSecond()).isEqualTo(DataSize.bytes(200));
         assertThat(http.getAcceptorThreads()).contains(1);
         assertThat(http.getSelectorThreads()).contains(4);
         assertThat(http.getAcceptQueueSize()).isEqualTo(1024);
@@ -111,14 +111,14 @@ public class HttpConnectorFactoryTest {
     }
 
     @Test
-    public void testBuildConnector() throws Exception {
+    void testBuildConnector() throws Exception {
         HttpConnectorFactory http = new HttpConnectorFactory();
         http.setBindHost("127.0.0.1");
         http.setAcceptorThreads(Optional.of(1));
         http.setSelectorThreads(Optional.of(2));
         http.setAcceptQueueSize(1024);
-        http.setMinResponseDataPerSecond(Size.bytes(200));
-        http.setMinRequestDataPerSecond(Size.bytes(42));
+        http.setMinResponseDataPerSecond(DataSize.bytes(200));
+        http.setMinRequestDataPerSecond(DataSize.bytes(42));
 
         Server server = new Server();
         MetricRegistry metrics = new MetricRegistry();
@@ -137,7 +137,7 @@ public class HttpConnectorFactoryTest {
         assertThat(connector.getScheduler()).isInstanceOf(ScheduledExecutorScheduler.class);
         assertThat(connector.getExecutor()).isSameAs(threadPool);
 
-        // That's gross, but unfortunately ArrayByteBufferPool doesn't have public API for configuration
+        // That's gross, but unfortunately ArrayByteBufferPool doesn't have API for configuration
         ByteBufferPool byteBufferPool = connector.getByteBufferPool();
         assertThat(byteBufferPool).isInstanceOf(ArrayByteBufferPool.class);
         assertThat(getField(ArrayByteBufferPool.class, "_min", true).get(byteBufferPool)).isEqualTo(64);
@@ -173,7 +173,7 @@ public class HttpConnectorFactoryTest {
     }
 
     @Test
-    public void testDefaultAcceptQueueSize() throws Exception {
+    void testDefaultAcceptQueueSize() throws Exception {
         HttpConnectorFactory http = new HttpConnectorFactory();
         http.setBindHost("127.0.0.1");
         http.setAcceptorThreads(Optional.of(1));
