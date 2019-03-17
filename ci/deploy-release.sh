@@ -6,6 +6,10 @@ set -uxo pipefail
 openssl aes-256-cbc -K $encrypted_ec79e61fc360_key -iv $encrypted_ec79e61fc360_iv -in ci/dropwizard.asc.enc -out ci/dropwizard.asc -d
 gpg --fast-import ci/dropwizard.asc
 
+# Avoid error message: "gpg: signing failed: Inappropriate ioctl for device"
+# https://tutorials.technology/solved_errors/21-gpg-signing-failed-Inappropriate-ioctl-for-device.html
+export GPG_TTY=$(tty)
+
 ./mvnw -B deploy --settings 'ci/settings.xml' -DperformRelease=true -Dmaven.test.skip=true
 
 # Documentation
