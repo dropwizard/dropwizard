@@ -264,6 +264,7 @@
             <properties>
                 <maven.compiler.optimize>true</maven.compiler.optimize>
                 <gpg.executable>gpg</gpg.executable>
+                <gpg.useagent>false</gpg.useagent>
                 <gpg.keyname>7D4868B53E31E7AD</gpg.keyname>
             </properties>
             <build>
