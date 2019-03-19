@@ -3,8 +3,8 @@ set -e
 set -uxo pipefail
 
 # Decrypt and import signing key
-openssl aes-256-cbc -K $encrypted_ec79e61fc360_key -iv $encrypted_ec79e61fc360_iv -in ci/dropwizard.asc.enc -out ci/dropwizard.asc -d
-gpg2 --import ci/dropwizard.asc
+openssl aes-256-cbc -K $encrypted_9f91a893d467_key -iv $encrypted_9f91a893d467_iv -in ci/pubring.gpg.enc -out ci/pubring.gpg -d
+openssl aes-256-cbc -K $encrypted_9f91a893d468_key -iv $encrypted_9f91a893d468_iv -in ci/secring.gpg.enc -out ci/secring.gpg -d
 
 ./mvnw -B deploy --settings 'ci/settings.xml' -DperformRelease=true -Dmaven.test.skip=true
 
