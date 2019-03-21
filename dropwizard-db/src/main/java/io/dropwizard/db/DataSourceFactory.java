@@ -306,6 +306,9 @@ import java.util.concurrent.TimeUnit;
  * </table>
  */
 public class DataSourceFactory implements PooledDataSourceFactory {
+
+    private static final String DEFAULT_VALIDATION_QUERY = "/* Health Check */ SELECT 1";
+
     @SuppressWarnings("UnusedDeclaration")
     public enum TransactionIsolation {
         NONE(Connection.TRANSACTION_NONE),
@@ -393,8 +396,7 @@ public class DataSourceFactory implements PooledDataSourceFactory {
     @MinDuration(value = 0, unit = TimeUnit.MILLISECONDS, inclusive = false)
     private Duration minIdleTime = Duration.minutes(1);
 
-    @NotNull
-    private String validationQuery = "/* Health Check */ SELECT 1";
+    private Optional<String> validationQuery = Optional.of(DEFAULT_VALIDATION_QUERY);
 
     @MinDuration(value = 0, unit = TimeUnit.MILLISECONDS, inclusive = false)
     @Nullable
@@ -508,7 +510,7 @@ public class DataSourceFactory implements PooledDataSourceFactory {
 
     @Override
     @JsonProperty
-    public String getValidationQuery() {
+    public Optional<String> getValidationQuery() {
         return validationQuery;
     }
 
@@ -516,12 +518,12 @@ public class DataSourceFactory implements PooledDataSourceFactory {
     @Deprecated
     @JsonIgnore
     public String getHealthCheckValidationQuery() {
-        return getValidationQuery();
+        return getValidationQuery().orElse(DEFAULT_VALIDATION_QUERY);
     }
 
     @JsonProperty
-    public void setValidationQuery(String validationQuery) {
-        this.validationQuery = validationQuery;
+    public void setValidationQuery(@Nullable String validationQuery) {
+        this.validationQuery = Optional.ofNullable(validationQuery);
     }
 
     @JsonProperty
@@ -902,7 +904,7 @@ public class DataSourceFactory implements PooledDataSourceFactory {
         poolConfig.setRemoveAbandonedTimeout((int) removeAbandonedTimeout.toSeconds());
 
         poolConfig.setTestWhileIdle(checkConnectionWhileIdle);
-        poolConfig.setValidationQuery(validationQuery);
+        validationQuery.ifPresent(poolConfig::setValidationQuery);
         poolConfig.setTestOnBorrow(checkConnectionOnBorrow);
         poolConfig.setTestOnConnect(checkConnectionOnConnect);
         poolConfig.setTestOnReturn(checkConnectionOnReturn);

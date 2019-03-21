@@ -17,6 +17,7 @@ import org.mockito.ArgumentCaptor;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.any;
@@ -99,7 +100,7 @@ public class HibernateBundleTest {
 
         assertThat(captor.getValue().getSessionFactory()).isEqualTo(sessionFactory);
 
-        assertThat(captor.getValue().getValidationQuery()).isEqualTo("SELECT something");
+        assertThat(captor.getValue().getValidationQuery()).isEqualTo(Optional.of("SELECT something"));
     }
 
     @Test

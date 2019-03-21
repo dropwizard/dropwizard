@@ -138,7 +138,7 @@ public class DataSourceFactoryTest {
         assertThat(factory.getUser()).isEqualTo("pg-user");
         assertThat(factory.getPassword()).isEqualTo("iAMs00perSecrEET");
         assertThat(factory.getUrl()).isEqualTo("jdbc:postgresql://db.example.com/db-prod");
-        assertThat(factory.getValidationQuery()).isEqualTo("/* Health Check */ SELECT 1");
+        assertThat(factory.getValidationQuery()).isEqualTo(Optional.of("/* Health Check */ SELECT 1"));
         assertThat(factory.getValidationQueryTimeout()).isEqualTo(Optional.empty());
     }
 

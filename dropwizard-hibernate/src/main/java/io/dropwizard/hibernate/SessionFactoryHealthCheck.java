@@ -8,24 +8,27 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 
+import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 
 public class SessionFactoryHealthCheck extends HealthCheck {
     private final SessionFactory sessionFactory;
-    private final String validationQuery;
+    private final Optional<String> validationQuery;
+    private final int validationQueryTimeout;
     private final TimeBoundHealthCheck timeBoundHealthCheck;
 
     public SessionFactoryHealthCheck(SessionFactory sessionFactory,
-                                     String validationQuery) {
+                                     Optional<String> validationQuery) {
         this(new DirectExecutorService(), Duration.seconds(0), sessionFactory, validationQuery);
     }
 
     public SessionFactoryHealthCheck(ExecutorService executorService,
                                      Duration duration,
                                      SessionFactory sessionFactory,
-                                     String validationQuery) {
+                                     Optional<String> validationQuery) {
         this.sessionFactory = sessionFactory;
         this.validationQuery = validationQuery;
+        this.validationQueryTimeout = (int) duration.toSeconds();
         this.timeBoundHealthCheck = new TimeBoundHealthCheck(executorService, duration);
     }
 
@@ -34,17 +37,22 @@ public class SessionFactoryHealthCheck extends HealthCheck {
         return sessionFactory;
     }
 
-    public String getValidationQuery() {
+    public Optional<String> getValidationQuery() {
         return validationQuery;
     }
 
     @Override
     protected Result check() throws Exception {
         return timeBoundHealthCheck.check(() -> {
+            HealthCheck.Result result = Result.healthy();
             try (Session session = sessionFactory.openSession()) {
                 final Transaction txn = session.beginTransaction();
                 try {
-                    session.createNativeQuery(validationQuery).list();
+                    if (validationQuery.isPresent()) {
+                        session.createNativeQuery(validationQuery.get()).list();
+                    } else if (!isValidConnection(session)){
+                        result = Result.unhealthy("Connection::isValid returned false.");
+                    }
                     txn.commit();
                 } catch (Exception e) {
                     if (txn.getStatus().canRollback()) {
@@ -53,7 +61,11 @@ public class SessionFactoryHealthCheck extends HealthCheck {
                     throw e;
                 }
             }
-            return Result.healthy();
+            return result;
         });
+    }
+
+    private Boolean isValidConnection(Session session) {
+        return session.doReturningWork(connection -> connection.isValid(validationQueryTimeout));
     }
 }
