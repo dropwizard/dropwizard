@@ -4,11 +4,18 @@ import com.google.common.base.MoreObjects;
 
 public class PortDescriptor {
 
+    private static final String UNKNOWN = "UNKNOWN";
+
     private String protocol;
+
     private int port;
+
     private String connectorType;
 
     public PortDescriptor() {
+        this.protocol = UNKNOWN;
+        this.port = 0;
+        this.connectorType = UNKNOWN;
     }
 
     public PortDescriptor(String protocol, int port, String connectorType) {
