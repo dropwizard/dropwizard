@@ -49,7 +49,7 @@ public interface ServerLifecycleListener extends EventListener {
         return Arrays.stream(connectors)
             .map(conn -> conn.getProtocols()
                 .stream()
-                .map(protocol -> new PortDescriptor(protocol, ((ServerConnector) conn).getLocalPort(), conn.getName()))
+                .map(protocol -> new PortDescriptor(protocol, ((ServerConnector) conn).getLocalPort(), conn.getName(), ((ServerConnector) conn).getHost()))
                 .collect(Collectors.toList()))
             .flatMap(List::stream)
             .collect(Collectors.toList());

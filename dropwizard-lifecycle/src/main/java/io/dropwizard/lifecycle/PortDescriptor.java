@@ -5,6 +5,9 @@ import com.google.common.base.MoreObjects;
 public class PortDescriptor {
 
     private static final String UNKNOWN = "UNKNOWN";
+    private static final String DEFAULT_HOST = "0.0.0.0";
+
+    private String host;
 
     private String protocol;
 
@@ -13,15 +16,14 @@ public class PortDescriptor {
     private String connectorType;
 
     public PortDescriptor() {
-        this.protocol = UNKNOWN;
-        this.port = 0;
-        this.connectorType = UNKNOWN;
+        this(UNKNOWN, 0, UNKNOWN, DEFAULT_HOST);
     }
 
-    public PortDescriptor(String protocol, int port, String connectorType) {
+    public PortDescriptor(String protocol, int port, String connectorType, String host) {
         this.protocol = protocol;
         this.port = port;
         this.connectorType = connectorType;
+        this.host = host;
     }
 
     public String getProtocol() {
@@ -48,11 +50,20 @@ public class PortDescriptor {
         this.connectorType = connectorType;
     }
 
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
+    }
+
     public String toString() {
         return MoreObjects.toStringHelper(this)
             .add("port", port)
             .add("protocol", protocol)
             .add("connectorType", connectorType)
+            .add("host", host)
             .toString();
     }
 }
