@@ -264,7 +264,7 @@
             <properties>
                 <maven.compiler.optimize>true</maven.compiler.optimize>
                 <gpg.executable>gpg2</gpg.executable>
-                <gpg.keyname>7D4868B53E31E7AD</gpg.keyname>
+                <gpg.keyname>EDA86E9FB607B5FC9223FB767D4868B53E31E7AD</gpg.keyname>
                 <gpg.passphrase>${env.GPG_PASSWORD}</gpg.passphrase>
                 <gpg.useAgent>false</gpg.useAgent>
                 <gpg.defaultKeyring>false</gpg.defaultKeyring>
