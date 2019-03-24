@@ -8,9 +8,5 @@
             <username>${env.CI_DEPLOY_USERNAME}</username>
             <password>${env.CI_DEPLOY_PASSWORD}</password>
         </server>
-        <server>
-            <id>gpg.passphrase</id>
-            <password>${env.GPG_PASSWORD}</password>
-        </server>
     </servers>
 </settings>
