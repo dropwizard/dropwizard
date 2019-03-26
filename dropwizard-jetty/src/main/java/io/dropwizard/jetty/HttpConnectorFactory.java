@@ -17,6 +17,7 @@ import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.ForwardedRequestCustomizer;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
+import org.eclipse.jetty.server.ProxyConnectionFactory;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.util.thread.ScheduledExecutorScheduler;
@@ -524,7 +525,7 @@ public class HttpConnectorFactory implements ConnectorFactory {
 
         final ByteBufferPool bufferPool = buildBufferPool();
 
-        return buildConnector(server, scheduler, bufferPool, name, threadPool,
+        return buildConnector(server, scheduler, bufferPool, name, threadPool, new ProxyConnectionFactory(),
                               new Jetty93InstrumentedConnectionFactory(httpConnectionFactory,
                                                                 metrics.timer(httpConnections())));
     }
