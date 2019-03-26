@@ -194,7 +194,7 @@ import static com.codahale.metrics.MetricRegistry.name;
  *         <td>{@code useProxyProtocol}</td>
  *         <td>false</td>
  *         <td>
- *             Enable jetty proxy protocol header support for all application exposed ports.
+ *             Enable jetty proxy protocol header support.
  *         </td>
  *     </tr>
  *     <tr>
@@ -563,7 +563,7 @@ public class HttpConnectorFactory implements ConnectorFactory {
                                              @Nullable ThreadPool threadPool,
                                              ConnectionFactory... factories) {
         if (useProxyProtocol) {
-            factories = ArrayUtil.addToArray(factories, new ProxyConnectionFactory(), ConnectorFactory.class);
+            factories = ArrayUtil.prependToArray(new ProxyConnectionFactory(), factories, ConnectorFactory.class);
         }
 
         final ServerConnector connector = new ServerConnector(server,
