@@ -18,6 +18,7 @@ import org.eclipse.jetty.io.ByteBufferPool;
 import org.eclipse.jetty.server.ForwardedRequestCustomizer;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
+import org.eclipse.jetty.server.ProxyConnectionFactory;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
@@ -168,6 +169,23 @@ class HttpConnectorFactoryTest {
         assertThat(httpConfiguration.getMinRequestDataRate()).isEqualTo(42);
         assertThat(httpConfiguration.getMinResponseDataRate()).isEqualTo(200);
 
+        connector.stop();
+        server.stop();
+    }
+
+    @Test
+    void testBuildConnectorWithProxyProtocol() throws Exception {
+        HttpConnectorFactory http = new HttpConnectorFactory();
+        http.setBindHost("127.0.0.1");
+        http.setUseProxyProtocol(true);
+
+        Server server = new Server();
+        MetricRegistry metrics = new MetricRegistry();
+        ThreadPool threadPool = new QueuedThreadPool();
+
+        ServerConnector connector = (ServerConnector) http.build(server, metrics, "test-http-connector-with-proxy-protocol", threadPool);
+
+        assertThat(connector.getConnectionFactories().toArray()[0]).isInstanceOf(ProxyConnectionFactory.class);
         connector.stop();
         server.stop();
     }
