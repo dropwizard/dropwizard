@@ -34,6 +34,7 @@ v2.0.0: Unreleased
 * Upgrade to Jersey 2.28 (`#2613 <https://github.com/dropwizard/dropwizard/pull/2613>`_)
 * Deprecate ``*Param`` classes and will be removed in 3.0.0 (`#2637 <https://github.com/dropwizard/dropwizard/pull/2637>`_)
 * Add data size class adhering to the correct SI and IEC prefixes (`#2686 <https://github.com/dropwizard/dropwizard/pull/2686>`_)
+* Added PortDescriptor class and method in ServerLifeCycleListener to provide a list of PortDescriptors, detailing all listening information for the application.
 
 .. _rel-1.3.9:
 
