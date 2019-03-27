@@ -183,7 +183,7 @@ class HttpConnectorFactoryTest {
         MetricRegistry metrics = new MetricRegistry();
         ThreadPool threadPool = new QueuedThreadPool();
 
-        ServerConnector connector = (ServerConnector) http.build(server, metrics, "test-http-connector-with-proxy-protcol", threadPool);
+        ServerConnector connector = (ServerConnector) http.build(server, metrics, "test-http-connector-with-proxy-protocol", threadPool);
 
         assertThat(connector.getConnectionFactories().toArray()[0]).isInstanceOf(ProxyConnectionFactory.class);
         connector.stop();
