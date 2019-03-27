@@ -24,7 +24,7 @@ public class DataSourceConfigurationTest {
         assertThat(ds.getPassword()).isEqualTo("iAMs00perSecrEET");
         assertThat(ds.getProperties()).containsEntry("charSet", "UTF-8");
         assertThat(ds.getMaxWaitForConnection()).isEqualTo(Duration.seconds(1));
-        assertThat(ds.getValidationQuery()).isEqualTo("/* MyService Health Check */ SELECT 1");
+        assertThat(ds.getValidationQuery()).isEqualTo(Optional.of("/* MyService Health Check */ SELECT 1"));
         assertThat(ds.getMinSize()).isEqualTo(8);
         assertThat(ds.getInitialSize()).isEqualTo(15);
         assertThat(ds.getMaxSize()).isEqualTo(32);
@@ -68,7 +68,7 @@ public class DataSourceConfigurationTest {
         assertThat(ds.getPassword()).isEqualTo("iAMs00perSecrEET");
         assertThat(ds.getProperties()).isEmpty();
         assertThat(ds.getMaxWaitForConnection()).isEqualTo(Duration.seconds(30));
-        assertThat(ds.getValidationQuery()).isEqualTo("/* Health Check */ SELECT 1");
+        assertThat(ds.getValidationQuery()).isEqualTo(Optional.of("/* Health Check */ SELECT 1"));
         assertThat(ds.getMinSize()).isEqualTo(10);
         assertThat(ds.getInitialSize()).isEqualTo(10);
         assertThat(ds.getMaxSize()).isEqualTo(100);

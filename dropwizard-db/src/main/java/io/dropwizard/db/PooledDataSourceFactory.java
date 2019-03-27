@@ -50,7 +50,7 @@ public interface PooledDataSourceFactory {
      *
      * @return the SQL query as a string
      */
-    String getValidationQuery();
+    Optional<String> getValidationQuery();
 
     /**
      * Returns the SQL query, which is being used for the database
