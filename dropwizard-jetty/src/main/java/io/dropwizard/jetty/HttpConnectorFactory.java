@@ -17,8 +17,10 @@ import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.ForwardedRequestCustomizer;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
+import org.eclipse.jetty.server.ProxyConnectionFactory;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.util.ArrayUtil;
 import org.eclipse.jetty.util.thread.ScheduledExecutorScheduler;
 import org.eclipse.jetty.util.thread.Scheduler;
 import org.eclipse.jetty.util.thread.ThreadPool;
@@ -189,6 +191,13 @@ import static com.codahale.metrics.MetricRegistry.name;
  *         </td>
  *     </tr>
  *     <tr>
+ *         <td>{@code useProxyProtocol}</td>
+ *         <td>false</td>
+ *         <td>
+ *             Enable jetty proxy protocol header support.
+ *         </td>
+ *     </tr>
+ *     <tr>
  *         <td>{@code httpCompliance}</td>
  *         <td>RFC7230</td>
  *         <td>
@@ -286,6 +295,7 @@ public class HttpConnectorFactory implements ConnectorFactory {
     private boolean useServerHeader = false;
     private boolean useDateHeader = true;
     private boolean useForwardedHeaders = true;
+    private boolean useProxyProtocol = false;
     private HttpCompliance httpCompliance = HttpCompliance.RFC7230;
 
     @JsonProperty
@@ -501,6 +511,16 @@ public class HttpConnectorFactory implements ConnectorFactory {
     }
 
     @JsonProperty
+    public boolean isUseProxyProtocol() {
+        return useProxyProtocol;
+    }
+
+    @JsonProperty
+    public void setUseProxyProtocol(boolean useProxyProtocol) {
+        this.useProxyProtocol = useProxyProtocol;
+    }
+
+    @JsonProperty
     public HttpCompliance getHttpCompliance() {
         return httpCompliance;
     }
@@ -542,6 +562,10 @@ public class HttpConnectorFactory implements ConnectorFactory {
                                              String name,
                                              @Nullable ThreadPool threadPool,
                                              ConnectionFactory... factories) {
+        if (useProxyProtocol) {
+            factories = ArrayUtil.prependToArray(new ProxyConnectionFactory(), factories, ConnectorFactory.class);
+        }
+
         final ServerConnector connector = new ServerConnector(server,
                                                               threadPool,
                                                               scheduler,
