@@ -1,6 +1,6 @@
 package io.dropwizard.lifecycle;
 
-import com.google.common.base.MoreObjects;
+import java.util.StringJoiner;
 
 public final class PortDescriptor {
 
@@ -42,12 +42,13 @@ public final class PortDescriptor {
         return host;
     }
 
+    @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this)
-            .add("port", port)
-            .add("protocol", protocol)
-            .add("connectorType", connectorType)
-            .add("host", host)
+        return new StringJoiner(", ", PortDescriptor.class.getSimpleName() + "[", "]")
+            .add("host='" + host + "'")
+            .add("protocol='" + protocol + "'")
+            .add("port=" + port)
+            .add("connectorType='" + connectorType + "'")
             .toString();
     }
 }
