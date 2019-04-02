@@ -400,6 +400,8 @@
                             </annotationProcessorPaths>
                             <compilerArgs>
                                 <arg>-XepDisableWarningsInGeneratedCode</arg>
+                                <!-- Disable EqualsGetClass. Further discussion: https://github.com/dropwizard/dropwizard/pull/2647 -->
+                                <arg>-Xep:EqualsGetClass:OFF</arg>
                                 <arg>-Xep:NullAway:ERROR</arg>
                                 <arg>-XepOpt:NullAway:AnnotatedPackages=io.dropwizard</arg>
                                 <arg>-XepOpt:NullAway:ExcludedFieldAnnotations=org.mockito.Mock</arg>
