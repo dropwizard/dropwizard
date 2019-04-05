@@ -6,7 +6,6 @@ import io.dropwizard.Configuration;
 import io.dropwizard.cli.Command;
 import io.dropwizard.cli.ServerCommand;
 import io.dropwizard.configuration.ConfigurationSourceProvider;
-import io.dropwizard.configuration.FileConfigurationSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.setup.Bootstrap;
@@ -46,6 +45,7 @@ public class DropwizardTestSupport<C extends Configuration> {
 
     @Nullable
     protected final String configPath;
+    @Nullable
     protected final ConfigurationSourceProvider configSourceProvider;
     protected final Set<ConfigOverride> configOverrides;
     @Nullable
@@ -80,7 +80,7 @@ public class DropwizardTestSupport<C extends Configuration> {
 
     public DropwizardTestSupport(Class<? extends Application<C>> applicationClass,
                                  @Nullable String configPath,
-                                 ConfigurationSourceProvider configSourceProvider,
+                                 @Nullable ConfigurationSourceProvider configSourceProvider,
                                  ConfigOverride... configOverrides) {
         this(applicationClass, configPath, configSourceProvider, null, configOverrides);
     }
@@ -98,7 +98,7 @@ public class DropwizardTestSupport<C extends Configuration> {
 
     public DropwizardTestSupport(Class<? extends Application<C>> applicationClass,
                                  @Nullable String configPath,
-                                 ConfigurationSourceProvider configSourceProvider,
+                                 @Nullable ConfigurationSourceProvider configSourceProvider,
                                  @Nullable String customPropertyPrefix,
                                  ConfigOverride... configOverrides) {
         this(applicationClass, configPath, configSourceProvider, customPropertyPrefix, ServerCommand::new, configOverrides);
@@ -128,12 +128,12 @@ public class DropwizardTestSupport<C extends Configuration> {
                                  @Nullable String customPropertyPrefix,
                                  Function<Application<C>, Command> commandInstantiator,
                                  ConfigOverride... configOverrides) {
-        this(applicationClass, configPath, new FileConfigurationSourceProvider(), customPropertyPrefix, commandInstantiator, configOverrides);
+        this(applicationClass, configPath, null, customPropertyPrefix, commandInstantiator, configOverrides);
     }
 
     public DropwizardTestSupport(Class<? extends Application<C>> applicationClass,
                                  @Nullable String configPath,
-                                 ConfigurationSourceProvider configSourceProvider,
+                                 @Nullable ConfigurationSourceProvider configSourceProvider,
                                  @Nullable String customPropertyPrefix,
                                  Function<Application<C>, Command> commandInstantiator,
                                  ConfigOverride... configOverrides) {
@@ -180,7 +180,7 @@ public class DropwizardTestSupport<C extends Configuration> {
         }
         this.applicationClass = applicationClass;
         this.configPath = "";
-        this.configSourceProvider = new FileConfigurationSourceProvider();
+        this.configSourceProvider = null;
         this.configOverrides = Collections.emptySet();
         this.customPropertyPrefix = null;
         this.configuration = configuration;
@@ -288,7 +288,9 @@ public class DropwizardTestSupport<C extends Configuration> {
         };
 
         getApplication().initialize(bootstrap);
-        bootstrap.setConfigurationSourceProvider(configSourceProvider);
+        if (configSourceProvider != null) {
+            bootstrap.setConfigurationSourceProvider(configSourceProvider);
+        }
 
         if (explicitConfig) {
             bootstrap.setConfigurationFactoryFactory((klass, validator, objectMapper, propertyPrefix) ->
