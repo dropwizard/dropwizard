@@ -13,4 +13,3 @@ About Dropwizard
     faq
     release-notes
     security
-    todos

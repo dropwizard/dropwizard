@@ -42,12 +42,12 @@ help:
 clean:
 	-rm -rf $(BUILDDIR)/*
 
-html: less
+html:
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
 
-dirhtml: less
+dirhtml:
 	$(SPHINXBUILD) -b dirhtml $(ALLSPHINXOPTS) $(BUILDDIR)/dirhtml
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/dirhtml."
@@ -155,6 +155,3 @@ doctest:
 
 livehtml: html
 	sphinx-autobuild -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
-
-less:
-	lesscpy -x source/_themes/dropwizard/less/dropwizard.less > source/_themes/dropwizard/static/dropwizard.css
