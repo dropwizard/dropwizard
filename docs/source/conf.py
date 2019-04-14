@@ -45,6 +45,9 @@ def get_version():
     version = os.environ.get('DROPWIZARD_VERSION', '').strip()
     return version or maven_version('../../pom.xml')
 
+def setup(app):
+   app.add_css_file("dropwizard.css")
+
 # -- General configuration -----------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
