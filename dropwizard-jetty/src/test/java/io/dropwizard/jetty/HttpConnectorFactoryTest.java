@@ -141,6 +141,14 @@ public class HttpConnectorFactoryTest {
         assertThat(connector.getScheduler()).isInstanceOf(ScheduledExecutorScheduler.class);
         assertThat(connector.getExecutor()).isSameAs(threadPool);
 
+        // That's gross, but unfortunately ArrayByteBufferPool doesn't have API for configuration
+        ByteBufferPool byteBufferPool = connector.getByteBufferPool();
+        assertThat(byteBufferPool).isInstanceOf(ArrayByteBufferPool.class);
+        assertThat(getField(ArrayByteBufferPool.class, "_minCapacity", true).get(byteBufferPool)).isEqualTo(64);
+        assertThat(getField(ArrayByteBufferPool.class, "_factor", true).get(byteBufferPool)).isEqualTo(1024);
+        assertThat(((Object[]) getField(ArrayByteBufferPool.class, "_direct", true)
+                .get(byteBufferPool)).length).isEqualTo(64);
+
         assertThat(connector.getAcceptors()).isEqualTo(1);
         assertThat(connector.getSelectorManager().getSelectorCount()).isEqualTo(2);
 
