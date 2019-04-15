@@ -28,7 +28,7 @@ public class AbstractHttp2Test {
         BootstrapLogging.bootstrap();
     }
 
-    final SslContextFactory sslContextFactory = new SslContextFactory();
+    final SslContextFactory.Server sslContextFactory = new SslContextFactory.Server();
     HttpClient client;
 
     @BeforeEach
