@@ -19,12 +19,12 @@ import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.util.thread.ScheduledExecutorScheduler;
 import org.eclipse.jetty.util.thread.Scheduler;
 import org.eclipse.jetty.util.thread.ThreadPool;
-import javax.validation.constraints.NotEmpty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 import javax.net.ssl.SSLEngine;
+import javax.validation.constraints.NotEmpty;
 import java.io.File;
 import java.net.URI;
 import java.security.KeyStore;
@@ -598,7 +598,7 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
 
         final HttpConnectionFactory httpConnectionFactory = buildHttpConnectionFactory(httpConfig);
 
-        final SslContextFactory sslContextFactory = configureSslContextFactory(new SslContextFactory());
+        final SslContextFactory sslContextFactory = configureSslContextFactory(new SslContextFactory.Server());
         sslContextFactory.addLifeCycleListener(logSslInfoOnStart(sslContextFactory));
 
         server.addBean(sslContextFactory);

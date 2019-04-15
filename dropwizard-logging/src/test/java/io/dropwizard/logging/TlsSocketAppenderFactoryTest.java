@@ -53,7 +53,7 @@ public class TlsSocketAppenderFactoryTest {
     }
 
     private SslContextFactory createSslContextFactory() throws Exception {
-        SslContextFactory sslContextFactory = new SslContextFactory();
+        SslContextFactory sslContextFactory = new SslContextFactory.Server();
         sslContextFactory.setKeyStorePath(resourcePath("stores/tls_server.jks").getAbsolutePath());
         sslContextFactory.setKeyStorePassword("server_pass");
         sslContextFactory.start();
