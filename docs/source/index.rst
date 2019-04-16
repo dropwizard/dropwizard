@@ -4,8 +4,9 @@
 Dropwizard is a Java framework for developing ops-friendly, high-performance, RESTful web services.
 ###################################################################################################
 
-.. image:: _static/dropwizard-hat.png
+.. image:: _static/dropwizard-logo.svg
    :align: right
+   :width: 128px
 
 Dropwizard pulls together **stable**, **mature** libraries from the Java ecosystem into a
 **simple**, **light-weight** package that lets you focus on *getting things done*.
