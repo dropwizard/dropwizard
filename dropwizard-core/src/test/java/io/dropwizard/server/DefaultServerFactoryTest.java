@@ -129,6 +129,30 @@ public class DefaultServerFactoryTest {
     }
 
     @Test
+    public void defaultsDumpAfterStartFalse() throws Exception {
+        assertThat(http.getDumpAfterStart()).isFalse();
+        assertThat(http.build(environment).isDumpAfterStart()).isFalse();
+    }
+
+    @Test
+    public void defaultsDumpBeforeStopFalse() throws Exception {
+        assertThat(http.getDumpBeforeStop()).isFalse();
+        assertThat(http.build(environment).isDumpBeforeStop()).isFalse();
+    }
+
+    @Test
+    public void configuresDumpAfterStart() throws Exception {
+        http.setDumpAfterStart(true);
+        assertThat(http.build(environment).isDumpAfterStart()).isTrue();
+    }
+
+    @Test
+    public void configuresDumpBeforeExit() throws Exception {
+        http.setDumpBeforeStop(true);
+        assertThat(http.build(environment).isDumpBeforeStop()).isTrue();
+    }
+
+    @Test
     public void defaultsDetailedJsonProcessingExceptionToFalse() throws Exception {
         http.build(environment);
         assertThat(environment.jersey().getResourceConfig().getSingletons())
