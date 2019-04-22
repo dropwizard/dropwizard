@@ -22,7 +22,7 @@
         <guava.version>27.1-jre</guava.version>
         <jersey.version>2.28</jersey.version>
         <jackson.version>2.9.8</jackson.version>
-        <jetty.version>9.4.16.v20190411</jetty.version>
+        <jetty.version>9.4.17.v20190418</jetty.version>
         <servlet.version>3.0.0.v201112011016</servlet.version>
         <metrics4.version>4.1.0-rc3</metrics4.version>
         <slf4j.version>1.7.26</slf4j.version>
