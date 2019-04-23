@@ -63,8 +63,11 @@ rootPath                            ``/*``                                      
 registerDefaultExceptionMappers     true                                             Whether or not the default Jersey ExceptionMappers should be registered.
                                                                                      Set this to false if you want to register your own.
 enableThreadNameFilter              true                                             Whether or not to apply the ``ThreadNameFilter`` that adjusts thread names to include the request method and request URI.
+dumpAfterStart                      false                                            Whether or not to dump `Jetty Diagnostics`_ after start.
+dumpBeforeStop                      false                                            Whether or not to dump `Jetty Diagnostics`_ before stop.
 =================================== ===============================================  =============================================================================
 
+.. _Jetty Diagnostics: https://www.eclipse.org/jetty/documentation/9.4.x/jetty-dump-tool.html
 
 .. _man-configuration-gzip:
 
