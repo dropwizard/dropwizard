@@ -6,6 +6,7 @@ import ch.qos.logback.classic.spi.LoggingEvent;
 import ch.qos.logback.core.spi.AppenderAttachableImpl;
 import org.eclipse.jetty.server.AbstractNCSARequestLog;
 import org.eclipse.jetty.server.RequestLog;
+import org.eclipse.jetty.server.Slf4jRequestLogWriter;
 
 import java.io.IOException;
 import java.util.TimeZone;
@@ -23,6 +24,7 @@ public class DropwizardSlf4jRequestLog extends AbstractNCSARequestLog {
      * @param timeZone  the timezone to which timestamps will be converted
      */
     DropwizardSlf4jRequestLog(AppenderAttachableImpl<ILoggingEvent> appenders, TimeZone timeZone) {
+        super(new Slf4jRequestLogWriter());
         this.appenders = appenders;
 
         setLogLatency(true);
