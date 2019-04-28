@@ -36,6 +36,7 @@ v2.0.0: Unreleased
 * Add data size class adhering to the correct SI and IEC prefixes (`#2686 <https://github.com/dropwizard/dropwizard/pull/2686>`_)
 * Added PortDescriptor class and method in ServerLifeCycleListener to provide a list of PortDescriptors, detailing all listening information for the application (`#2711 <https://github.com/dropwizard/dropwizard/pull/2711>`_)
 * Add support for proxy-protocol in http connector configuration (`#2709 <https://github.com/dropwizard/dropwizard/pull/2709>`_)
+* Disable using ``X-Forwarded-*`` headers by default (`#2748 <https://github.com/dropwizard/dropwizard/pull/2748>`_)
 
 .. _rel-1.3.9:
 
