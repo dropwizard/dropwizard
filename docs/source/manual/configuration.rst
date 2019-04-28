@@ -313,7 +313,7 @@ HTTP
           reuseAddress: true
           useServerHeader: false
           useDateHeader: true
-          useForwardedHeaders: true
+          useForwardedHeaders: false
           httpCompliance: RFC7230
 
 
@@ -357,7 +357,7 @@ acceptQueueSize          (OS default)        The size of the TCP/IP accept queue
 reuseAddress             true                Whether or not ``SO_REUSEADDR`` is enabled on the listening socket.
 useServerHeader          false               Whether or not to add the ``Server`` header to each response.
 useDateHeader            true                Whether or not to add the ``Date`` header to each response.
-useForwardedHeaders      true                Whether or not to look at ``X-Forwarded-*`` headers added by proxies. See
+useForwardedHeaders      false               Whether or not to look at ``X-Forwarded-*`` headers added by proxies. See
                                              `ForwardedRequestCustomizer`_ for details.
 httpCompliance           RFC7230             This sets the http compliance level used by Jetty when parsing http, this
                                              can be useful when using a non-RFC7230 compliant front end, such as nginx,

@@ -77,7 +77,7 @@ class HttpConnectorFactoryTest {
         assertThat(http.isReuseAddress()).isTrue();
         assertThat(http.isUseServerHeader()).isFalse();
         assertThat(http.isUseDateHeader()).isTrue();
-        assertThat(http.isUseForwardedHeaders()).isTrue();
+        assertThat(http.isUseForwardedHeaders()).isFalse();
         assertThat(http.getHttpCompliance()).isEqualTo(HttpCompliance.RFC7230);
     }
 
@@ -107,7 +107,9 @@ class HttpConnectorFactoryTest {
         assertThat(http.isReuseAddress()).isFalse();
         assertThat(http.isUseServerHeader()).isTrue();
         assertThat(http.isUseDateHeader()).isFalse();
-        assertThat(http.isUseForwardedHeaders()).isFalse();
+        assertThat(http.isUseForwardedHeaders()).isTrue();
+        HttpConfiguration httpConfiguration = http.buildHttpConfiguration();
+        assertThat(httpConfiguration.getCustomizers()).hasAtLeastOneElementOfType(ForwardedRequestCustomizer.class);
         assertThat(http.getHttpCompliance()).isEqualTo(HttpCompliance.RFC2616);
     }
 
@@ -165,7 +167,7 @@ class HttpConnectorFactoryTest {
         assertThat(httpConfiguration.getResponseHeaderSize()).isEqualTo(8192);
         assertThat(httpConfiguration.getSendDateHeader()).isTrue();
         assertThat(httpConfiguration.getSendServerVersion()).isFalse();
-        assertThat(httpConfiguration.getCustomizers()).hasAtLeastOneElementOfType(ForwardedRequestCustomizer.class);
+        assertThat(httpConfiguration.getCustomizers()).noneMatch(customizer -> customizer.getClass().equals(ForwardedRequestCustomizer.class));
         assertThat(httpConfiguration.getMinRequestDataRate()).isEqualTo(42);
         assertThat(httpConfiguration.getMinResponseDataRate()).isEqualTo(200);
 

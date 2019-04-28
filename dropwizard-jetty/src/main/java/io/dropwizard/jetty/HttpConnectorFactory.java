@@ -184,7 +184,7 @@ import static com.codahale.metrics.MetricRegistry.name;
  *     </tr>
  *     <tr>
  *         <td>{@code useForwardedHeaders}</td>
- *         <td>true</td>
+ *         <td>false</td>
  *         <td>
  *             Whether or not to look at {@code X-Forwarded-*} headers added by proxies. See
  *             {@link ForwardedRequestCustomizer} for details.
@@ -294,7 +294,7 @@ public class HttpConnectorFactory implements ConnectorFactory {
 
     private boolean useServerHeader = false;
     private boolean useDateHeader = true;
-    private boolean useForwardedHeaders = true;
+    private boolean useForwardedHeaders = false;
     private boolean useProxyProtocol = false;
     private HttpCompliance httpCompliance = HttpCompliance.RFC7230;
 
