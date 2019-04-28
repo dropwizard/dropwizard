@@ -21,6 +21,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static com.codahale.metrics.MetricRegistry.name;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -72,6 +73,32 @@ public class TaskServletTest {
         servlet.service(request, response);
 
         verify(gc).execute(Collections.emptyMap(), output);
+    }
+
+    @Test
+    public void responseHasSpecifiedContentType() throws Exception {
+        when(request.getMethod()).thenReturn("POST");
+        when(request.getPathInfo()).thenReturn("/gc");
+        when(request.getParameterNames()).thenReturn(Collections.enumeration(Collections.emptyList()));
+        when(response.getWriter()).thenReturn(mock(PrintWriter.class));
+
+        when(gc.getResponseContentType()).thenReturn(Optional.of("application/json"));
+
+        servlet.service(request, response);
+
+        verify(response).setContentType("application/json");
+    }
+
+    @Test
+    public void responseHasDefaultContentTypeWhenNoneSpecified() throws Exception {
+        when(request.getMethod()).thenReturn("POST");
+        when(request.getPathInfo()).thenReturn("/gc");
+        when(request.getParameterNames()).thenReturn(Collections.enumeration(Collections.emptyList()));
+        when(response.getWriter()).thenReturn(mock(PrintWriter.class));
+
+        servlet.service(request, response);
+
+        verify(response).setContentType("text/plain;charset=UTF-8");
     }
 
     @Test
