@@ -4,7 +4,7 @@
 
     <groupId>io.dropwizard</groupId>
     <artifactId>dropwizard-parent</artifactId>
-    <version>1.3.10</version>
+    <version>1.3.11-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Dropwizard Project</name>
@@ -190,7 +190,7 @@
         <connection>scm:git:git://github.com/dropwizard/dropwizard.git</connection>
         <developerConnection>scm:git:git@github.com:dropwizard/dropwizard.git</developerConnection>
         <url>https://github.com/dropwizard/dropwizard</url>
-        <tag>v1.3.10</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <issueManagement>
