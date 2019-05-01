@@ -25,7 +25,6 @@
         <module>dropwizard-migrations</module>
         <module>dropwizard-hibernate</module>
         <module>dropwizard-auth</module>
-        <module>dropwizard-example</module>
         <module>dropwizard-forms</module>
         <module>dropwizard-views</module>
         <module>dropwizard-views-freemarker</module>
@@ -44,10 +43,8 @@
         <module>dropwizard-lifecycle</module>
         <module>dropwizard-assets</module>
         <module>dropwizard-archetypes</module>
-        <module>dropwizard-benchmarks</module>
         <module>dropwizard-http2</module>
         <module>dropwizard-request-logging</module>
-        <module>dropwizard-e2e</module>
         <module>dropwizard-json-logging</module>
     </modules>
 
@@ -254,6 +251,19 @@
 
     <profiles>
         <profile>
+            <id>all-modules</id>
+            <activation>
+                <property>
+                    <name>!performRelease</name>
+                </property>
+            </activation>
+            <modules>
+                <module>dropwizard-benchmarks</module>
+                <module>dropwizard-example</module>
+                <module>dropwizard-e2e</module>
+            </modules>
+        </profile>
+        <profile>
             <id>release</id>
             <activation>
                 <property>
@@ -274,7 +284,7 @@
                             <execution>
                                 <id>attach-sources</id>
                                 <goals>
-                                    <goal>jar</goal>
+                                    <goal>jar-no-fork</goal>
                                 </goals>
                             </execution>
                         </executions>
@@ -291,6 +301,13 @@
                                 <id>attach-javadocs</id>
                                 <goals>
                                     <goal>jar</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>attach-aggregate-javadocs</id>
+                                <inherited>false</inherited>
+                                <goals>
+                                    <goal>aggregate-jar</goal>
                                 </goals>
                             </execution>
                         </executions>
@@ -513,10 +530,14 @@
                     <artifactId>maven-source-plugin</artifactId>
                     <version>3.0.1</version>
                 </plugin>
+                <!--
+                javadoc:aggregate-jar fails with maven-javadoc-plugin:3.1.0
+                https://issues.apache.org/jira/browse/MJAVADOC-599
+                -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>3.1.0</version>
+                    <version>3.0.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
