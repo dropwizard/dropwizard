@@ -19,7 +19,7 @@ import java.util.List;
 
 import static java.util.Objects.requireNonNull;
 
-public abstract class HibernateBundle<T extends Configuration> implements ConfiguredBundle<T>, DatabaseConfiguration<T> {
+public abstract class HibernateBundle<T> implements ConfiguredBundle<T>, DatabaseConfiguration<T> {
     public static final String DEFAULT_NAME = "hibernate";
 
     @Nullable

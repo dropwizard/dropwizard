@@ -9,7 +9,7 @@ import io.dropwizard.setup.Environment;
  *
  * @param <T>    the required configuration interface
  */
-public interface ConfiguredBundle<T extends Configuration> {
+public interface ConfiguredBundle<T> {
     /**
      * Initializes the environment.
      *
