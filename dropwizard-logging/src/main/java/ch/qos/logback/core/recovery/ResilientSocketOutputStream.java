@@ -9,11 +9,11 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 
 /**
- * Represents a resilent persistent connection via TCP as an {@link OutputStream}.
+ * Represents a resilient persistent connection via TCP as an {@link OutputStream}.
  * Automatically tries to reconnect to the server if it encounters errors during writing
  * data via a TCP connection.
  */
-public class ResilentSocketOutputStream extends ResilientOutputStreamBase {
+public class ResilientSocketOutputStream extends ResilientOutputStreamBase {
 
     private final String host;
     private final int port;
@@ -30,8 +30,8 @@ public class ResilentSocketOutputStream extends ResilientOutputStreamBase {
      * @param sendBufferSize      The size of the send buffer of the socket stream in bytes.
      * @param socketFactory       The factory for customizing the client socket.
      */
-    public ResilentSocketOutputStream(String host, int port, int connectionTimeoutMs, int sendBufferSize,
-                                      SocketFactory socketFactory) {
+    public ResilientSocketOutputStream(String host, int port, int connectionTimeoutMs, int sendBufferSize,
+                                       SocketFactory socketFactory) {
         this.host = host;
         this.port = port;
         this.connectionTimeoutMs = connectionTimeoutMs;

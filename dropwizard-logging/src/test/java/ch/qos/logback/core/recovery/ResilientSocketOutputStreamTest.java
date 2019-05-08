@@ -15,9 +15,9 @@ import java.util.concurrent.TimeUnit;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 
-public class ResilentSocketOutputStreamTest {
+public class ResilientSocketOutputStreamTest {
 
-    private ResilentSocketOutputStream resilentSocketOutputStream;
+    private ResilientSocketOutputStream resilientSocketOutputStream;
 
     private Thread thread;
     private ServerSocket ss;
@@ -41,7 +41,7 @@ public class ResilentSocketOutputStreamTest {
             }
         });
         thread.start();
-        resilentSocketOutputStream = new ResilentSocketOutputStream("localhost", ss.getLocalPort(),
+        resilientSocketOutputStream = new ResilientSocketOutputStream("localhost", ss.getLocalPort(),
             1024, 500, SocketFactory.getDefault());
     }
 
@@ -49,26 +49,26 @@ public class ResilentSocketOutputStreamTest {
     public void tearDown() throws Exception {
         ss.close();
         thread.interrupt();
-        resilentSocketOutputStream.close();
+        resilientSocketOutputStream.close();
     }
 
     @Test
     public void testCreatesCleanOutputStream() throws Exception {
-        assertThat(resilentSocketOutputStream.presumedClean).isTrue();
-        assertThat(resilentSocketOutputStream.os).isNotNull();
+        assertThat(resilientSocketOutputStream.presumedClean).isTrue();
+        assertThat(resilientSocketOutputStream.os).isNotNull();
     }
 
     @Test
     public void testThrowsExceptionIfCantCreateOutputStream() throws Exception {
-        assertThatIllegalStateException().isThrownBy(() -> new ResilentSocketOutputStream("256.256.256.256", 1024,
+        assertThatIllegalStateException().isThrownBy(() -> new ResilientSocketOutputStream("256.256.256.256", 1024,
             100, 1024, SocketFactory.getDefault()))
             .withMessage("Unable to create a TCP connection to 256.256.256.256:1024");
     }
 
     @Test
     public void testWriteMessage() throws Exception {
-        resilentSocketOutputStream.write("Test message".getBytes(StandardCharsets.UTF_8));
-        resilentSocketOutputStream.flush();
+        resilientSocketOutputStream.write("Test message".getBytes(StandardCharsets.UTF_8));
+        resilientSocketOutputStream.flush();
 
         latch.await(5, TimeUnit.SECONDS);
         assertThat(latch.getCount()).isEqualTo(0);
@@ -76,7 +76,7 @@ public class ResilentSocketOutputStreamTest {
 
     @Test
     public void testGetDescription() {
-        assertThat(resilentSocketOutputStream.getDescription()).isEqualTo(String.format("tcp [localhost:%d]",
+        assertThat(resilientSocketOutputStream.getDescription()).isEqualTo(String.format("tcp [localhost:%d]",
             ss.getLocalPort()));
     }
 }
