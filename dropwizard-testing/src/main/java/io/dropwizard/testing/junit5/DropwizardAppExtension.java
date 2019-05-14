@@ -30,42 +30,6 @@ import java.util.function.Function;
  * override the {@link #newApplication()} method to provide your application instance(s).
  * </p>
  *
- * <p>
- * Using DropwizardAppExtension at the suite level can speed up test runs, as the application is only started and stopped
- * once for the entire suite:
- * </p>
- *
- * <pre>
- * public class MySuite {
- *   public static final DropwizardAppExtension&lt;MyConfig> DROPWIZARD = new DropwizardAppExtension&lt;>(...);
- * }
- * </pre>
- *
- * <p>
- * If the same instance of DropwizardAppExtension is reused at the suite- and class-level, then the application will be
- * started and stopped once, regardless of whether the entire suite or a single test is executed.
- * </p>
- *
- * <pre>
- * &#064;ExtendWith(DropwizardExtensionsSupport.class)
- * public class FooTest {
- *   public static final DropwizardAppExtension&lt;MyConfig> DROPWIZARD = MySuite.DROPWIZARD;
- *
- *   public void testFoo() { ... }
- * }
- *
- * &#064;ExtendWith(DropwizardExtensionsSupport.class)
- * public class BarTest {
- *   public static final DropwizardAppExtension&lt;MyConfig> DROPWIZARD = MySuite.DROPWIZARD;
- *
- *   public void testBar() { ... }
- * }
- * </pre>
- *
- * <p>
- *
- * </p>
- *
  * @param <C> the configuration type
  */
 //@formatter:on
