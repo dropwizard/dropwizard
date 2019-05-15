@@ -17,7 +17,10 @@ import static java.util.Objects.requireNonNull;
 
 /**
  * A JUnit {@link TestRule} for testing Jersey resources.
+ *
+ * @deprecated Deprecated since Dropwizard 2.0.0. Please migrate to JUnit 5 and {@link io.dropwizard.testing.junit5.ResourceExtension}.
  */
+@Deprecated
 public class ResourceTestRule implements TestRule {
     /**
      * A {@link ResourceTestRule} builder which enables configuration of a Jersey testing environment.

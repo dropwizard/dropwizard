@@ -7,9 +7,9 @@ import io.dropwizard.util.Maps;
 import io.dropwizard.util.Resources;
 import io.dropwizard.validation.BaseValidator;
 import org.assertj.core.data.MapEntry;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.validation.Valid;
 import javax.validation.Validator;
@@ -160,7 +160,7 @@ public abstract class BaseConfigurationFactoryTest {
         return new File(Resources.getResource(resourceName).toURI());
     }
 
-    @After
+    @AfterEach
     public void resetConfigOverrides() {
         for (Enumeration<?> props = System.getProperties().propertyNames(); props.hasMoreElements();) {
             String keyString = (String) props.nextElement();
@@ -169,9 +169,6 @@ public abstract class BaseConfigurationFactoryTest {
             }
         }
     }
-
-    @Before
-    public abstract void setUp() throws Exception;
 
     @Test
     public void usesDefaultedCacheBuilderSpec() throws Exception {
@@ -425,21 +422,6 @@ public abstract class BaseConfigurationFactoryTest {
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessage("Unable create an instance of the configuration class: " +
                 "'io.dropwizard.configuration.BaseConfigurationFactoryTest.NonInsatiableExample'");
-    }
-
-    @Test
-    public void printsDidYouMeanOnUnrecognizedField() throws Exception {
-        assertThatThrownBy(() -> factory.build(typoFile))
-            .isInstanceOf(ConfigurationParsingException.class)
-            .hasMessage(String.format("%s has an error:%n" +
-                "  * Unrecognized field at: propertis%n" +
-                "    Did you mean?:%n" +
-                "      - properties%n" +
-                "      - servers%n" +
-                "      - type%n" +
-                "      - name%n" +
-                "      - age%n" +
-                "        [2 more]%n", typoFile));
     }
 
     @Test

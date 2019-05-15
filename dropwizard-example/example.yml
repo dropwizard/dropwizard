@@ -76,7 +76,7 @@ logging:
       archivedLogFilenamePattern: /tmp/application-%d{yyyy-MM-dd}-%i.log.gz
       archivedFileCount: 7
       timeZone: UTC
-      maxFileSize: 10MB
+      maxFileSize: 10MiB
 
 # the key needs to match the configuration key of the renderer (ViewRenderer::getConfigurationKey)
 viewRendererConfiguration:

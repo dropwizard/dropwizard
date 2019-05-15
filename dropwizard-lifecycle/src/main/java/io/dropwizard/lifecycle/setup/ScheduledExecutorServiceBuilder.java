@@ -1,5 +1,6 @@
 package io.dropwizard.lifecycle.setup;
 
+import com.codahale.metrics.InstrumentedThreadFactory;
 import io.dropwizard.lifecycle.ExecutorServiceManager;
 import io.dropwizard.util.Duration;
 
@@ -14,6 +15,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class ScheduledExecutorServiceBuilder {
 
+    private static final AtomicLong COUNT = new AtomicLong(0);
     private final LifecycleEnvironment environment;
     private final String nameFormat;
     private int poolSize;
@@ -37,11 +39,10 @@ public class ScheduledExecutorServiceBuilder {
     }
 
     private static ThreadFactory buildThreadFactory(String nameFormat, boolean daemon) {
-        final AtomicLong count = (nameFormat != null) ? new AtomicLong(0) : null;
         return r -> {
             final Thread thread = Executors.defaultThreadFactory().newThread(r);
             if (nameFormat != null) {
-                thread.setName(String.format(Locale.ROOT, nameFormat, count.incrementAndGet()));
+                thread.setName(String.format(Locale.ROOT, nameFormat, COUNT.incrementAndGet()));
             }
             thread.setDaemon(daemon);
             return thread;
@@ -69,15 +70,18 @@ public class ScheduledExecutorServiceBuilder {
     }
 
     public ScheduledExecutorServiceBuilder removeOnCancelPolicy(boolean removeOnCancel) {
-        this.removeOnCancel = Boolean.valueOf(removeOnCancel);
+        this.removeOnCancel = removeOnCancel;
         return this;
     }
 
     public ScheduledExecutorService build() {
-        final ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(this.poolSize, this.threadFactory, this.handler);
-        executor.setRemoveOnCancelPolicy(this.removeOnCancel);
+        final InstrumentedThreadFactory instrumentedThreadFactory = new InstrumentedThreadFactory(threadFactory,
+            environment.getMetricRegistry(), nameFormat);
 
-        this.environment.manage(new ExecutorServiceManager(executor, this.shutdownTime, this.nameFormat));
+        final ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(poolSize, instrumentedThreadFactory, handler);
+        executor.setRemoveOnCancelPolicy(removeOnCancel);
+
+        environment.manage(new ExecutorServiceManager(executor, shutdownTime, nameFormat));
         return executor;
     }
 }

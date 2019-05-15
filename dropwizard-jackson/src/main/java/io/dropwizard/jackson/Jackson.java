@@ -1,5 +1,7 @@
 package io.dropwizard.jackson;
 
+import static com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES;
+
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.guava.GuavaModule;
@@ -49,7 +51,8 @@ public class Jackson {
     public static ObjectMapper newMinimalObjectMapper() {
         return new ObjectMapper()
                 .registerModule(new GuavaModule())
-                .setSubtypeResolver(new DiscoverableSubtypeResolver());
+                .setSubtypeResolver(new DiscoverableSubtypeResolver())
+                .disable(FAIL_ON_UNKNOWN_PROPERTIES);
     }
 
     private static ObjectMapper configure(ObjectMapper mapper) {
@@ -64,6 +67,7 @@ public class Jackson {
         mapper.registerModule(new JavaTimeModule());
         mapper.setPropertyNamingStrategy(new AnnotationSensitivePropertyNamingStrategy());
         mapper.setSubtypeResolver(new DiscoverableSubtypeResolver());
+        mapper.disable(FAIL_ON_UNKNOWN_PROPERTIES);
 
         return mapper;
     }

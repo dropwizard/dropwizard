@@ -1,6 +1,6 @@
 package io.dropwizard.jdbi.args;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.skife.jdbi.v2.StatementContext;
 

@@ -1,7 +1,7 @@
 package io.dropwizard.jersey.validation;
 
 import io.dropwizard.jersey.errors.ErrorMessage;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.annotation.Nullable;
 import javax.ws.rs.WebApplicationException;
@@ -173,9 +173,9 @@ public class FuzzyEnumParamConverterProviderTest {
         final WebApplicationException throwable = catchThrowableOfType(() -> converter.fromString("B"), WebApplicationException.class);
         assertThat(throwable.getResponse())
             .extracting(Response::getEntity)
-            .matches(e -> ((ErrorMessage) e.get(0)).getCode() == 400)
-            .matches(e -> ((ErrorMessage) e.get(0)).getMessage().contains("A_1"))
-            .matches(e -> ((ErrorMessage) e.get(0)).getMessage().contains("A_2"));
+            .matches(e -> ((ErrorMessage) e).getCode() == 400)
+            .matches(e -> ((ErrorMessage) e).getMessage().contains("A_1"))
+            .matches(e -> ((ErrorMessage) e).getMessage().contains("A_2"));
     }
 
 
@@ -198,8 +198,8 @@ public class FuzzyEnumParamConverterProviderTest {
         final WebApplicationException throwable = catchThrowableOfType(() -> converter.fromString("3"), WebApplicationException.class);
         assertThat(throwable.getResponse())
             .extracting(Response::getEntity)
-            .matches(e -> ((ErrorMessage) e.get(0)).getCode() == 400)
-            .matches(e -> ((ErrorMessage) e.get(0)).getMessage().contains("is not a valid ExplicitFromString"));
+            .matches(e -> ((ErrorMessage) e).getCode() == 400)
+            .matches(e -> ((ErrorMessage) e).getMessage().contains("is not a valid ExplicitFromString"));
     }
 
     @Test
@@ -209,8 +209,8 @@ public class FuzzyEnumParamConverterProviderTest {
         final WebApplicationException throwable = catchThrowableOfType(() -> converter.fromString("3"), WebApplicationException.class);
         assertThat(throwable.getResponse())
             .extracting(Response::getStatusInfo)
-            .matches(e -> ((Response.StatusType) e.get(0)).getStatusCode() == 418)
-            .matches(e -> ((Response.StatusType) e.get(0)).getReasonPhrase().contains("I am a teapot"));
+            .matches(e -> ((Response.StatusType) e).getStatusCode() == 418)
+            .matches(e -> ((Response.StatusType) e).getReasonPhrase().contains("I am a teapot"));
     }
 
     @Test
@@ -220,8 +220,8 @@ public class FuzzyEnumParamConverterProviderTest {
         final WebApplicationException throwable = catchThrowableOfType(() -> converter.fromString("1"), WebApplicationException.class);
         assertThat(throwable.getResponse())
             .extracting(Response::getEntity)
-            .matches(e -> ((ErrorMessage) e.get(0)).getCode() == 400)
-            .matches(e -> ((ErrorMessage) e.get(0)).getMessage().contains("Failed to convert"));
+            .matches(e -> ((ErrorMessage) e).getCode() == 400)
+            .matches(e -> ((ErrorMessage) e).getMessage().contains("Failed to convert"));
     }
 
     @Test
@@ -230,9 +230,9 @@ public class FuzzyEnumParamConverterProviderTest {
         final WebApplicationException throwable = catchThrowableOfType(() -> converter.fromString("1"), WebApplicationException.class);
         assertThat(throwable.getResponse())
             .extracting(Response::getEntity)
-            .matches(e -> ((ErrorMessage) e.get(0)).getCode() == 400)
-            .matches(e -> ((ErrorMessage) e.get(0)).getMessage().contains("A"))
-            .matches(e -> ((ErrorMessage) e.get(0)).getMessage().contains("B"));
+            .matches(e -> ((ErrorMessage) e).getCode() == 400)
+            .matches(e -> ((ErrorMessage) e).getMessage().contains("A"))
+            .matches(e -> ((ErrorMessage) e).getMessage().contains("B"));
 
         assertThat(converter.fromString("A")).isSameAs(ExplicitFromStringNonStatic.A);
     }
@@ -243,7 +243,7 @@ public class FuzzyEnumParamConverterProviderTest {
         final WebApplicationException throwable = catchThrowableOfType(() -> converter.fromString("1"), WebApplicationException.class);
         assertThat(throwable.getResponse())
             .extracting(Response::getEntity)
-            .matches(e -> ((ErrorMessage) e.get(0)).getCode() == 400)
-            .matches(e -> ((ErrorMessage) e.get(0)).getMessage().contains("Not permitted to call"));
+            .matches(e -> ((ErrorMessage) e).getCode() == 400)
+            .matches(e -> ((ErrorMessage) e).getMessage().contains("Not permitted to call"));
     }
 }

@@ -1,10 +1,11 @@
 package io.dropwizard.lifecycle.setup;
 
+import com.codahale.metrics.MetricRegistry;
 import io.dropwizard.lifecycle.JettyManaged;
 import io.dropwizard.lifecycle.Managed;
 import org.eclipse.jetty.util.component.ContainerLifeCycle;
 import org.eclipse.jetty.util.component.LifeCycle;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
@@ -20,7 +21,7 @@ import static org.mockito.Mockito.mock;
 
 public class LifecycleEnvironmentTest {
 
-    private final LifecycleEnvironment environment = new LifecycleEnvironment();
+    private final LifecycleEnvironment environment = new LifecycleEnvironment(new MetricRegistry());
 
     @Test
     public void managesLifeCycleObjects() throws Exception {

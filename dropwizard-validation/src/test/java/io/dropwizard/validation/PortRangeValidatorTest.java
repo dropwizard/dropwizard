@@ -1,7 +1,7 @@
 package io.dropwizard.validation;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.validation.Valid;
 import javax.validation.Validator;
@@ -29,7 +29,7 @@ public class PortRangeValidatorTest {
     private final Validator validator = BaseValidator.newValidator();
     private final Example example = new Example();
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         assumeThat(Locale.getDefault().getLanguage()).isEqualTo("en");
     }
@@ -78,6 +78,6 @@ public class PortRangeValidatorTest {
     public void rejectsInvalidPortsInList() {
         example.ports = Collections.singletonList(-1);
         assertThat(ConstraintViolations.format(validator.validate(example)))
-            .containsOnly("ports[0].<collection element> must be between 1 and 65535");
+            .containsOnly("ports[0].<list element> must be between 1 and 65535");
     }
 }

@@ -5,7 +5,7 @@ import io.dropwizard.auth.AuthBaseTest;
 import io.dropwizard.auth.AuthResource;
 import io.dropwizard.auth.util.AuthUtil;
 import io.dropwizard.jersey.DropwizardResourceConfig;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 

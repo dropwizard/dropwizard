@@ -5,6 +5,7 @@ import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.cli.Command;
 import io.dropwizard.cli.ServerCommand;
+import io.dropwizard.configuration.ConfigurationSourceProvider;
 import io.dropwizard.jersey.jackson.JacksonFeature;
 import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.setup.Environment;
@@ -29,42 +30,6 @@ import java.util.function.Function;
  * override the {@link #newApplication()} method to provide your application instance(s).
  * </p>
  *
- * <p>
- * Using DropwizardAppExtension at the suite level can speed up test runs, as the application is only started and stopped
- * once for the entire suite:
- * </p>
- *
- * <pre>
- * public class MySuite {
- *   public static final DropwizardAppExtension&lt;MyConfig> DROPWIZARD = new DropwizardAppExtension&lt;>(...);
- * }
- * </pre>
- *
- * <p>
- * If the same instance of DropwizardAppExtension is reused at the suite- and class-level, then the application will be
- * started and stopped once, regardless of whether the entire suite or a single test is executed.
- * </p>
- *
- * <pre>
- * &#064;ExtendWith(DropwizardExtensionsSupport.class)
- * public class FooTest {
- *   public static final DropwizardAppExtension&lt;MyConfig> DROPWIZARD = MySuite.DROPWIZARD;
- *
- *   public void testFoo() { ... }
- * }
- *
- * &#064;ExtendWith(DropwizardExtensionsSupport.class)
- * public class BarTest {
- *   public static final DropwizardAppExtension&lt;MyConfig> DROPWIZARD = MySuite.DROPWIZARD;
- *
- *   public void testBar() { ... }
- * }
- * </pre>
- *
- * <p>
- *
- * </p>
- *
  * @param <C> the configuration type
  */
 //@formatter:on
@@ -87,19 +52,69 @@ public class DropwizardAppExtension<C extends Configuration> implements Dropwiza
     public DropwizardAppExtension(Class<? extends Application<C>> applicationClass,
                                   @Nullable String configPath,
                                   ConfigOverride... configOverrides) {
-        this(applicationClass, configPath, Optional.empty(), configOverrides);
+        this(applicationClass, configPath, (String) null, configOverrides);
     }
 
-    public DropwizardAppExtension(Class<? extends Application<C>> applicationClass, @Nullable String configPath,
-                                  Optional<String> customPropertyPrefix, ConfigOverride... configOverrides) {
+    public DropwizardAppExtension(Class<? extends Application<C>> applicationClass,
+                                  @Nullable String configPath,
+                                  ConfigurationSourceProvider configSourceProvider,
+                                  ConfigOverride... configOverrides) {
+        this(applicationClass, configPath, configSourceProvider, null, configOverrides);
+    }
+
+    /**
+     * @deprecated Use {@link #DropwizardAppExtension(Class, String, String, ConfigOverride...)} instead.
+     */
+    @Deprecated
+    public DropwizardAppExtension(Class<? extends Application<C>> applicationClass,
+                                  @Nullable String configPath,
+                                  Optional<String> customPropertyPrefix,
+                                  ConfigOverride... configOverrides) {
+        this(applicationClass, configPath, customPropertyPrefix.orElse(null), configOverrides);
+    }
+
+    public DropwizardAppExtension(Class<? extends Application<C>> applicationClass,
+                                  @Nullable String configPath,
+                                  @Nullable String customPropertyPrefix,
+                                  ConfigOverride... configOverrides) {
         this(applicationClass, configPath, customPropertyPrefix, ServerCommand::new, configOverrides);
     }
 
-    public DropwizardAppExtension(Class<? extends Application<C>> applicationClass, @Nullable String configPath,
-                                  Optional<String> customPropertyPrefix, Function<Application<C>,
-        Command> commandInstantiator, ConfigOverride... configOverrides) {
-        this(new DropwizardTestSupport<>(applicationClass, configPath, customPropertyPrefix, commandInstantiator,
-            configOverrides));
+    public DropwizardAppExtension(Class<? extends Application<C>> applicationClass,
+                                  @Nullable String configPath,
+                                  ConfigurationSourceProvider configSourceProvider,
+                                  @Nullable String customPropertyPrefix,
+                                  ConfigOverride... configOverrides) {
+        this(applicationClass, configPath, configSourceProvider, customPropertyPrefix, ServerCommand::new, configOverrides);
+    }
+
+    /**
+     * @deprecated Use {@link #DropwizardAppExtension(Class, String, String, Function, ConfigOverride...)} instead.
+     */
+    @Deprecated
+    public DropwizardAppExtension(Class<? extends Application<C>> applicationClass,
+                                  @Nullable String configPath,
+                                  Optional<String> customPropertyPrefix,
+                                  Function<Application<C>, Command> commandInstantiator,
+                                  ConfigOverride... configOverrides) {
+        this(applicationClass, configPath, customPropertyPrefix.orElse(null), commandInstantiator, configOverrides);
+    }
+
+    public DropwizardAppExtension(Class<? extends Application<C>> applicationClass,
+                                  @Nullable String configPath,
+                                  @Nullable String customPropertyPrefix,
+                                  Function<Application<C>, Command> commandInstantiator,
+                                  ConfigOverride... configOverrides) {
+        this(new DropwizardTestSupport<>(applicationClass, configPath, customPropertyPrefix, commandInstantiator, configOverrides));
+    }
+
+    public DropwizardAppExtension(Class<? extends Application<C>> applicationClass,
+                                  @Nullable String configPath,
+                                  ConfigurationSourceProvider configSourceProvider,
+                                  @Nullable String customPropertyPrefix,
+                                  Function<Application<C>, Command> commandInstantiator,
+                                  ConfigOverride... configOverrides) {
+        this(new DropwizardTestSupport<>(applicationClass, configPath, configSourceProvider, customPropertyPrefix, commandInstantiator, configOverrides));
     }
 
     /**
@@ -152,7 +167,7 @@ public class DropwizardAppExtension<C extends Configuration> implements Dropwiza
     }
 
     @Override
-    public void before() {
+    public void before() throws Exception {
         if (recursiveCallCount.getAndIncrement() == 0) {
             testSupport.before();
         }
@@ -165,6 +180,7 @@ public class DropwizardAppExtension<C extends Configuration> implements Dropwiza
             synchronized (this) {
                 if (client != null) {
                     client.close();
+                    client = null;
                 }
             }
         }

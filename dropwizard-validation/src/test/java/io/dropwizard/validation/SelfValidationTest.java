@@ -5,9 +5,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import javax.annotation.concurrent.NotThreadSafe;
 import javax.validation.Validator;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import io.dropwizard.validation.selfvalidating.SelfValidating;
 import io.dropwizard.validation.selfvalidating.SelfValidation;
@@ -22,7 +22,7 @@ public class SelfValidationTest {
     private static final String FAILED = "failed";
     private static final String FAILED_RESULT = " " + FAILED;
     
-    @Before @After
+    @BeforeEach @AfterEach
     public void clearAllLoggers() {
         //this must be a clear all because the validation runs in other threads
         TestLoggerFactory.clearAll();

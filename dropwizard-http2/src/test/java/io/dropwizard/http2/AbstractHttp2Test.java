@@ -10,8 +10,8 @@ import org.eclipse.jetty.http.HttpVersion;
 import org.eclipse.jetty.http2.client.HTTP2Client;
 import org.eclipse.jetty.http2.client.http.HttpClientTransportOverHTTP2;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.CountDownLatch;
@@ -28,10 +28,10 @@ public class AbstractHttp2Test {
         BootstrapLogging.bootstrap();
     }
 
-    final SslContextFactory sslContextFactory = new SslContextFactory();
+    final SslContextFactory.Server sslContextFactory = new SslContextFactory.Server();
     HttpClient client;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         sslContextFactory.setTrustStorePath(ResourceHelpers.resourceFilePath("stores/http2_client.jts"));
         sslContextFactory.setTrustStorePassword("http2_client");
@@ -41,7 +41,7 @@ public class AbstractHttp2Test {
         client.start();
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         client.stop();
     }

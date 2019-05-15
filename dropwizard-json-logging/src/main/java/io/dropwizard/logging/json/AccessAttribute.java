@@ -14,6 +14,7 @@ public enum AccessAttribute {
     @JsonProperty("requestTime") REQUEST_TIME,
     @JsonProperty("requestUri") REQUEST_URI,
     @JsonProperty("requestUrl") REQUEST_URL,
+    @JsonProperty("pathQuery") PATH_QUERY,
     @JsonProperty("statusCode") STATUS_CODE,
     @JsonProperty("protocol") PROTOCOL,
     @JsonProperty("remoteHost") REMOTE_HOST,

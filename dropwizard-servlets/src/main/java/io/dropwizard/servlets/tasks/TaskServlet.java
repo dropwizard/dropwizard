@@ -42,7 +42,7 @@ import static java.util.Objects.requireNonNull;
 public class TaskServlet extends HttpServlet {
     private static final long serialVersionUID = 7404713218661358124L;
     private static final Logger LOGGER = LoggerFactory.getLogger(TaskServlet.class);
-    private static final String CONTENT_TYPE = "text/plain;charset=UTF-8";
+    private static final String DEFAULT_CONTENT_TYPE = "text/plain;charset=UTF-8";
     private final ConcurrentMap<String, Task> tasks;
     private final ConcurrentMap<Task, TaskExecutor> taskExecutors;
 
@@ -100,7 +100,7 @@ public class TaskServlet extends HttpServlet {
                          HttpServletResponse resp) throws ServletException, IOException {
         if (Strings.isNullOrEmpty(req.getPathInfo())) {
             try (final PrintWriter output = resp.getWriter()) {
-                resp.setContentType(CONTENT_TYPE);
+                resp.setContentType(DEFAULT_CONTENT_TYPE);
                 getTasks().stream()
                     .map(Task::getName)
                     .sorted()
@@ -116,9 +116,10 @@ public class TaskServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req,
                           HttpServletResponse resp) throws ServletException, IOException {
-        final Task task = tasks.get(req.getPathInfo());
+        final String pathInfo = req.getPathInfo();
+        final Task task = pathInfo != null ? tasks.get(pathInfo) : null;
         if (task != null) {
-            resp.setContentType(CONTENT_TYPE);
+            resp.setContentType(task.getResponseContentType().orElse(DEFAULT_CONTENT_TYPE));
             final PrintWriter output = resp.getWriter();
             try {
                 final TaskExecutor taskExecutor = taskExecutors.get(task);

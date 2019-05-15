@@ -1,5 +1,6 @@
 package io.dropwizard.jetty;
 
+import org.eclipse.jetty.io.EofException;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.servlet.ServletHolder;
 
@@ -47,6 +48,11 @@ public class NonblockingServletHolder extends ServletHolder {
         }
         try {
             servlet.service(request, response);
+        } catch (EofException ignored) {
+            // Want to ignore the EofException as this signifies the client has disconnected or the
+            // response has already been written. The problem with using an ExceptionMapper is that
+            // we don't actually want to write a response given that the connection has already been
+            // closed
         } finally {
             baseRequest.setAsyncSupported(asyncSupported, null);
         }

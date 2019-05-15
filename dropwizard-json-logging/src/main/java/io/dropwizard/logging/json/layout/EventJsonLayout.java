@@ -58,22 +58,34 @@ public class EventJsonLayout extends AbstractJsonLayout<ILoggingEvent> {
 
     @Override
     protected Map<String, Object> toJsonMap(ILoggingEvent event) {
-        final MapBuilder mapBuilder = new MapBuilder(timestampFormatter, customFieldNames, additionalFields, 16)
+        final MapBuilder mapBuilder = new MapBuilder(timestampFormatter, customFieldNames, additionalFields, includes.size())
             .addTimestamp("timestamp", isIncluded(EventAttribute.TIMESTAMP), event.getTimeStamp())
-            .add("level", isIncluded(EventAttribute.LEVEL), String.valueOf(event.getLevel()))
-            .add("thread", isIncluded(EventAttribute.THREAD_NAME), event.getThreadName())
-            .add("logger", isIncluded(EventAttribute.LOGGER_NAME), event.getLoggerName())
-            .add("message", isIncluded(EventAttribute.MESSAGE), event.getFormattedMessage())
-            .add("context", isIncluded(EventAttribute.CONTEXT_NAME), event.getLoggerContextVO().getName())
+            .add("level", isIncluded(EventAttribute.LEVEL), () -> String.valueOf(event.getLevel()))
+            .add("thread", isIncluded(EventAttribute.THREAD_NAME), event::getThreadName)
+            .add("logger", isIncluded(EventAttribute.LOGGER_NAME), event::getLoggerName)
+            .add("message", isIncluded(EventAttribute.MESSAGE), event::getFormattedMessage)
+            .add("context", isIncluded(EventAttribute.CONTEXT_NAME), () -> event.getLoggerContextVO().getName())
             .add("version", jsonProtocolVersion != null, jsonProtocolVersion)
             .add("exception", isIncluded(EventAttribute.EXCEPTION) && event.getThrowableProxy() != null,
-                 throwableProxyConverter.convert(event));
+                () -> throwableProxyConverter.convert(event));
+
         final boolean includeMdc = isIncluded(EventAttribute.MDC);
         if (flattenMdc) {
             filterMdc(event.getMDCPropertyMap()).forEach((k,v) -> mapBuilder.add(k, includeMdc, v));
         } else {
-            mapBuilder.add("mdc", includeMdc, filterMdc(event.getMDCPropertyMap()));
+            mapBuilder.addMap("mdc", includeMdc, () -> filterMdc(event.getMDCPropertyMap()));
         }
+
+        final boolean includeCallerData = isIncluded(EventAttribute.CALLER_DATA);
+        final StackTraceElement[] callerData = event.getCallerData();
+        if (includeCallerData && callerData.length >= 1) {
+            final StackTraceElement stackTraceElement = callerData[0];
+            mapBuilder.add("caller_class_name", includeCallerData, stackTraceElement.getClassName());
+            mapBuilder.add("caller_method_name", includeCallerData, stackTraceElement.getMethodName());
+            mapBuilder.add("caller_file_name", includeCallerData, stackTraceElement.getFileName());
+            mapBuilder.addNumber("caller_line_number", includeCallerData, stackTraceElement.getLineNumber());
+        }
+
         return mapBuilder.build();
     }
 

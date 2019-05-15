@@ -3,11 +3,13 @@ package io.dropwizard.http2;
 import io.dropwizard.Configuration;
 import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.ResourceHelpers;
-import io.dropwizard.testing.junit.DropwizardAppRule;
+import io.dropwizard.testing.junit5.DropwizardAppExtension;
+import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import org.glassfish.jersey.client.JerseyClient;
 import org.glassfish.jersey.client.JerseyClientBuilder;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
@@ -16,10 +18,11 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@ExtendWith(DropwizardExtensionsSupport.class)
 public class Http2IntegrationTest extends AbstractHttp2Test {
 
     @Rule
-    public final DropwizardAppRule<Configuration> appRule = new DropwizardAppRule<>(
+    public final DropwizardAppExtension<Configuration> appRule = new DropwizardAppExtension<>(
             FakeApplication.class, ResourceHelpers.resourceFilePath("test-http2.yml"),
             Optional.of("tls_http2"),
             ConfigOverride.config("tls_http2", "server.connector.keyStorePath",

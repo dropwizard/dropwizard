@@ -33,12 +33,13 @@ public class ResourceTestRuleTest {
         }
     }
 
-    @SuppressWarnings("NullAway.Init")
     @Mock
     private PeopleStore peopleStore;
 
     private final Person person = new Person("blah", "blah@example.com");
+    @SuppressWarnings("deprecation")
     private final MockitoTestRule mockitoTestRule = new MockitoTestRule(this, MockitoJUnit.rule());
+    @SuppressWarnings("deprecation")
     private final ResourceTestRule resourceTestRule = ResourceTestRule.builder()
             .addResource(() -> new PersonResource(peopleStore))
             .setClientConfigurator(cc -> cc.register(DummyExceptionMapper.class))

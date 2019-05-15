@@ -1,77 +1,115 @@
 package io.dropwizard.servlets.assets;
 
 import io.dropwizard.util.Resources;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
+import java.io.File;
 import java.net.JarURLConnection;
 import java.net.URL;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.jar.JarEntry;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
-public class ResourceURLTest {
+class ResourceURLTest {
+    private final URL resourceJar = Resources.getResource("resources.jar");
 
     @Test
-    public void isDirectoryReturnsTrueForPlainDirectories() throws Exception {
-        final Path path = Files.createTempDirectory("resource_url_test_dir");
-        final URL url = path.toUri().toURL();
+    void isDirectoryReturnsTrueForPlainDirectories(@TempDir Path tempDir) throws Exception {
+        final URL url = tempDir.toUri().toURL();
 
-        assertThat(url.getProtocol())
-                .isEqualTo("file");
-        assertThat(ResourceURL.isDirectory(url))
-                .isTrue();
-
-        Files.delete(path);
+        assertThat(url.getProtocol()).isEqualTo("file");
+        assertThat(ResourceURL.isDirectory(url)).isTrue();
     }
 
     @Test
-    public void isDirectoryReturnsFalseForPlainFiles() throws Exception {
-        final Path path = Files.createTempFile("resource_url_test", null);
-        final URL url = path.toUri().toURL();
+    void isDirectoryReturnsFalseForPlainFiles(@TempDir Path tempDir) throws Exception {
+        final File tempFile = tempDir.resolve("resource_url_test").toFile();
+        assumeTrue(tempFile.createNewFile());
 
-        assertThat(url.getProtocol())
-                .isEqualTo("file");
-        assertThat(ResourceURL.isDirectory(url))
-                .isFalse();
+        final URL url = tempFile.toURI().toURL();
 
-        Files.delete(path);
+        assertThat(url.getProtocol()).isEqualTo("file");
+        assertThat(ResourceURL.isDirectory(url)).isFalse();
     }
 
     @Test
-    public void isDirectoryReturnsTrueForDirectoriesInJars() throws Exception {
-        final URL url = Resources.getResource("META-INF/");
+    void isDirectoryReturnsTrueForDirectoriesInJars() throws Exception {
+        final URL url = new URL("jar:" + resourceJar.toExternalForm() + "!/dir/");
 
-        assertThat(url.getProtocol())
-                .isEqualTo("jar");
-        assertThat(ResourceURL.isDirectory(url))
-                .isTrue();
+        assertThat(url.getProtocol()).isEqualTo("jar");
+        assertThat(ResourceURL.isDirectory(url)).isTrue();
     }
 
     @Test
-    public void isDirectoryReturnsFalseForFilesInJars() throws Exception {
-        final URL url = Resources.getResource("META-INF/MANIFEST.MF");
+    void isDirectoryReturnsTrueForDirectoriesWithSpacesInJars() throws Exception {
+        final URL url = new URL("jar:" + resourceJar.toExternalForm() + "!/dir with space/");
 
-        assertThat(url.getProtocol())
-                .isEqualTo("jar");
-        assertThat(ResourceURL.isDirectory(url))
-                .isFalse();
+        assertThat(url.getProtocol()).isEqualTo("jar");
+        assertThat(ResourceURL.isDirectory(url)).isTrue();
     }
 
     @Test
-    public void isDirectoryReturnsTrueForDirectoriesInJarsWithoutTrailingSlashes() throws Exception {
-        final URL url = Resources.getResource("META-INF");
+    void isDirectoryReturnsTrueForURLEncodedDirectoriesInJars() throws Exception {
+        final URL url = new URL("jar:" + resourceJar.toExternalForm() + "!/dir%20with%20space/");
 
-        assertThat(url.getProtocol())
-                .isEqualTo("jar");
-        assertThat(ResourceURL.isDirectory(url))
-                .isTrue();
+        assertThat(url.getProtocol()).isEqualTo("jar");
+        assertThat(ResourceURL.isDirectory(url)).isTrue();
     }
 
     @Test
-    public void isDirectoryThrowsResourceNotFoundExceptionForMissingDirectories() throws Exception {
+    void isDirectoryReturnsFalseForFilesInJars() throws Exception {
+        final URL url = new URL("jar:" + resourceJar.toExternalForm() + "!/file.txt");
+
+        assertThat(url.getProtocol()).isEqualTo("jar");
+        assertThat(ResourceURL.isDirectory(url)).isFalse();
+    }
+
+    @Test
+    void isDirectoryReturnsFalseForFilesWithSpacesInJars() throws Exception {
+        final URL url = new URL("jar:" + resourceJar.toExternalForm() + "!/file with space.txt");
+
+        assertThat(url.getProtocol()).isEqualTo("jar");
+        assertThat(ResourceURL.isDirectory(url)).isFalse();
+    }
+
+    @Test
+    void isDirectoryReturnsFalseForURLEncodedFilesInJars() throws Exception {
+        final URL url = new URL("jar:" + resourceJar.toExternalForm() + "!/file%20with%20space.txt");
+
+        assertThat(url.getProtocol()).isEqualTo("jar");
+        assertThat(ResourceURL.isDirectory(url)).isFalse();
+    }
+
+    @Test
+    void isDirectoryReturnsTrueForDirectoriesInJarsWithoutTrailingSlashes() throws Exception {
+        final URL url = new URL("jar:" + resourceJar.toExternalForm() + "!/dir");
+
+        assertThat(url.getProtocol()).isEqualTo("jar");
+        assertThat(ResourceURL.isDirectory(url)).isTrue();
+    }
+
+    @Test
+    void isDirectoryReturnsTrueForDirectoriesWithSpacesInJarsWithoutTrailingSlashes() throws Exception {
+        final URL url = new URL("jar:" + resourceJar.toExternalForm() + "!/dir with space");
+
+        assertThat(url.getProtocol()).isEqualTo("jar");
+        assertThat(ResourceURL.isDirectory(url)).isTrue();
+    }
+
+    @Test
+    void isDirectoryReturnsTrueForURLEncodedDirectoriesInJarsWithoutTrailingSlashes() throws Exception {
+        final URL url = new URL("jar:" + resourceJar.toExternalForm() + "!/dir%20with%20space");
+
+        assertThat(url.getProtocol()).isEqualTo("jar");
+        assertThat(ResourceURL.isDirectory(url)).isTrue();
+    }
+
+    @Test
+    void isDirectoryThrowsResourceNotFoundExceptionForMissingDirectories() throws Exception {
         final URL url = Resources.getResource("META-INF/");
         final URL nurl = new URL(url.toExternalForm() + "missing");
         assertThatThrownBy(() -> ResourceURL.isDirectory(nurl))
@@ -79,7 +117,7 @@ public class ResourceURLTest {
     }
 
     @Test
-    public void appendTrailingSlashAddsASlash() throws Exception {
+    void appendTrailingSlashAddsASlash() throws Exception {
         final URL url = Resources.getResource("META-INF");
 
         assertThat(url.toExternalForm())
@@ -89,7 +127,7 @@ public class ResourceURLTest {
     }
 
     @Test
-    public void appendTrailingSlashDoesntASlashWhenOneIsAlreadyPresent() throws Exception {
+    void appendTrailingSlashDoesntASlashWhenOneIsAlreadyPresent() throws Exception {
         final URL url = Resources.getResource("META-INF/");
 
         assertThat(url.toExternalForm())
@@ -101,21 +139,18 @@ public class ResourceURLTest {
     }
 
     @Test
-    public void getLastModifiedReturnsTheLastModifiedTimeOfAFile() throws Exception {
-        final Path path = Files.createTempFile("resource_url_test", null);
-        final URL url = path.toUri().toURL();
+    void getLastModifiedReturnsTheLastModifiedTimeOfAFile(@TempDir Path tempDir) throws Exception {
+        final URL url = tempDir.toUri().toURL();
         final long lastModified = ResourceURL.getLastModified(url);
 
         assertThat(lastModified)
                 .isGreaterThan(0);
         assertThat(lastModified)
-                .isEqualTo(path.toFile().lastModified());
-
-        Files.delete(path);
+                .isEqualTo(tempDir.toFile().lastModified());
     }
 
     @Test
-    public void getLastModifiedReturnsTheLastModifiedTimeOfAJarEntry() throws Exception {
+    void getLastModifiedReturnsTheLastModifiedTimeOfAJarEntry() throws Exception {
         final URL url = Resources.getResource("META-INF/MANIFEST.MF");
         final long lastModified = ResourceURL.getLastModified(url);
 
@@ -129,7 +164,7 @@ public class ResourceURLTest {
     }
 
     @Test
-    public void getLastModifiedReturnsZeroIfAnErrorOccurs() throws Exception {
+    void getLastModifiedReturnsZeroIfAnErrorOccurs() throws Exception {
         final URL url = new URL("file:/some/path/that/doesnt/exist");
         final long lastModified = ResourceURL.getLastModified(url);
 

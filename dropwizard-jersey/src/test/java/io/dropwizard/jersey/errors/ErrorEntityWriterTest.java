@@ -10,7 +10,7 @@ import org.glassfish.jersey.test.TestProperties;
 import org.glassfish.jersey.test.grizzly.GrizzlyWebTestContainerFactory;
 import org.glassfish.jersey.test.spi.TestContainerException;
 import org.glassfish.jersey.test.spi.TestContainerFactory;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;

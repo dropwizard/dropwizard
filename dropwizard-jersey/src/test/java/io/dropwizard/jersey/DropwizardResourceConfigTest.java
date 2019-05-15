@@ -3,10 +3,10 @@ package io.dropwizard.jersey;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.dropwizard.jersey.dummy.DummyResource;
-import org.glassfish.hk2.utilities.binding.AbstractBinder;
+import org.glassfish.jersey.internal.inject.AbstractBinder;
 import org.glassfish.jersey.server.model.Resource;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -26,7 +26,7 @@ public class DropwizardResourceConfigTest {
         }
     };
 
-    @After
+    @AfterEach
     public void teardown() throws Exception {
         jerseyTest.tearDown();
     }

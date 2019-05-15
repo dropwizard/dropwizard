@@ -12,10 +12,12 @@ import io.dropwizard.jersey.setup.JerseyServletContainer;
 import io.dropwizard.jetty.MutableServletContextHandler;
 import io.dropwizard.jetty.setup.ServletEnvironment;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
+import io.dropwizard.validation.InjectValidatorFeature;
 
 import javax.annotation.Nullable;
 import javax.servlet.Servlet;
 import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -74,7 +76,7 @@ public class Environment {
 
         this.adminEnvironment = new AdminEnvironment(adminContext, healthCheckRegistry, metricRegistry);
 
-        this.lifecycleEnvironment = new LifecycleEnvironment();
+        this.lifecycleEnvironment = new LifecycleEnvironment(metricRegistry);
 
         final DropwizardResourceConfig jerseyConfig = new DropwizardResourceConfig(metricRegistry);
         jerseyConfig.setContextPath(servletContext.getContextPath());
@@ -107,6 +109,19 @@ public class Environment {
             SharedHealthCheckRegistries.setDefault("default", healthCheckRegistry);
         } catch (IllegalStateException ignored) {
         }
+    }
+
+    /**
+     * Creates an environment and enables injecting validator feature.
+     */
+    public Environment(String name,
+                       ObjectMapper objectMapper,
+                       ValidatorFactory validatorFactory,
+                       MetricRegistry metricRegistry,
+                       @Nullable ClassLoader classLoader,
+                       HealthCheckRegistry healthCheckRegistry) {
+        this(name, objectMapper, validatorFactory.getValidator(), metricRegistry, classLoader, healthCheckRegistry);
+        this.jerseyEnvironment.register(new InjectValidatorFeature(validatorFactory));
     }
 
     /**

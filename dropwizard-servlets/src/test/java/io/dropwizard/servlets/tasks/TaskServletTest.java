@@ -4,10 +4,11 @@ import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.annotation.ExceptionMetered;
 import com.codahale.metrics.annotation.Metered;
 import com.codahale.metrics.annotation.Timed;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.servlet.ReadListener;
+import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,6 +21,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static com.codahale.metrics.MetricRegistry.name;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -39,7 +41,7 @@ public class TaskServletTest {
     private final HttpServletRequest request = mock(HttpServletRequest.class);
     private final HttpServletResponse response = mock(HttpServletResponse.class);
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         when(gc.getName()).thenReturn("gc");
         when(printJSON.getName()).thenReturn("print-json");
@@ -71,6 +73,32 @@ public class TaskServletTest {
         servlet.service(request, response);
 
         verify(gc).execute(Collections.emptyMap(), output);
+    }
+
+    @Test
+    public void responseHasSpecifiedContentType() throws Exception {
+        when(request.getMethod()).thenReturn("POST");
+        when(request.getPathInfo()).thenReturn("/gc");
+        when(request.getParameterNames()).thenReturn(Collections.enumeration(Collections.emptyList()));
+        when(response.getWriter()).thenReturn(mock(PrintWriter.class));
+
+        when(gc.getResponseContentType()).thenReturn(Optional.of("application/json"));
+
+        servlet.service(request, response);
+
+        verify(response).setContentType("application/json");
+    }
+
+    @Test
+    public void responseHasDefaultContentTypeWhenNoneSpecified() throws Exception {
+        when(request.getMethod()).thenReturn("POST");
+        when(request.getPathInfo()).thenReturn("/gc");
+        when(request.getParameterNames()).thenReturn(Collections.enumeration(Collections.emptyList()));
+        when(response.getWriter()).thenReturn(mock(PrintWriter.class));
+
+        servlet.service(request, response);
+
+        verify(response).setContentType("text/plain;charset=UTF-8");
     }
 
     @Test
@@ -234,6 +262,16 @@ public class TaskServletTest {
 
         assertThat(metricRegistry.getMeters()).containsKey(name(exceptionMeteredTask.getClass(),
             "vacuum-cleaning-exceptions"));
+    }
+
+    @Test
+    public void testReturnsA404ForTaskRoot() throws ServletException, IOException {
+        when(request.getMethod()).thenReturn("POST");
+        when(request.getPathInfo()).thenReturn(null);
+
+        servlet.service(request, response);
+
+        verify(response).sendError(404);
     }
 
     @SuppressWarnings("InputStreamSlowMultibyteRead")

@@ -4,20 +4,90 @@
 Release Notes
 #############
 
+Please refer to `GitHub releases <https://github.com/dropwizard/dropwizard/releases>`__ for the most up-to-date release notes.
+
+
 .. _rel-2.0.0:
 
 v2.0.0: Unreleased
 ==================
 
+`2.0.x Upgrade Notes <https://www.dropwizard.io/2.0.0/docs/manual/upgrade-notes/upgrade-notes-2_0_x.html>`_
+`GitHub Milestone 2.0.0 Merged PRs <https://github.com/dropwizard/dropwizard/pulls?page=1&q=is%3Apr+is%3Aclosed+milestone%3A2.0.0>`_
+
 * Add TLS socket logging appender (`#2317 <https://github.com/dropwizard/dropwizard/pull/2317>`_)
-* Add opt-in ``EmptyOptionalNoContentExceptionMapper`` for returning 204 responses on empty ``Optional`` responses (`#2356 <https://github.com/dropwizard/dropwizard/pull/2356>`_)
-* Add configuration for excluding mime types and paths to gzip (`#2350 <https://github.com/dropwizard/dropwizard/pull/2350>`_)
+* Add opt-in ``EmptyOptionalNoContentExceptionMapper`` for returning 204 responses on empty ``Optional`` responses (`#2350 <https://github.com/dropwizard/dropwizard/pull/2350>`_)
+* Add configuration for excluding mime types and paths to gzip (`#2356 <https://github.com/dropwizard/dropwizard/pull/2356>`_)
+* Support expirable log level configurations (`#2375 <https://github.com/dropwizard/dropwizard/pull/2375>`_)
 * Add additional syslog logging facilities (`#2381 <https://github.com/dropwizard/dropwizard/pull/2381>`_)
 * Add opt-in logging throttling via the ``messageRate`` config property (`#2384 <https://github.com/dropwizard/dropwizard/pull/2384>`_)
 * Fix ``UUIDParams`` accepting input of incorrect length (`#2382 <https://github.com/dropwizard/dropwizard/pull/2382>`_)
 * Fix usage ``@SelfValidating`` with ``@BeanParam`` (`#2334 <https://github.com/dropwizard/dropwizard/pull/2334>`_)
 * Fix resource endpoints injected via DI not being logged on startup (`#2389 <https://github.com/dropwizard/dropwizard/pull/2389>`_)
+* Disable protocols less secure than tls v1.2 by default (`#2417 <https://github.com/dropwizard/dropwizard/pull/2417>`_)
+* Add totalSizeCap to file log appender (`#2502 <https://github.com/dropwizard/dropwizard/pull/2502>`_)
+* Deflate content encoded requests no longer accepted (`#2566 <https://github.com/dropwizard/dropwizard/pull/2566>`_)
+* Gzipped content encoded requests and responses are compatible with Servlet 3.1 and Async IO (`#2566 <https://github.com/dropwizard/dropwizard/pull/2566>`_)
 * Retired use of deprecated Apache ``StrSubstitutor`` and ``StrLookup`` classes and replaced them with Apache's ``StringSubstitutor`` and ``StringLookup`` (`#2462 <https://github.com/dropwizard/dropwizard/pull/2462>`_)
+* Deprecate ``Bundle`` in favor of ``ConfiguredBundle<T>`` (`#2516 <https://github.com/dropwizard/dropwizard/pull/2516>`_)
+* Allow unknown JSON properties (i.e. disable ``DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES``) by default (`#2570 <https://github.com/dropwizard/dropwizard/pull/2570>`_)
+* Upgrade to Jersey 2.28 (`#2613 <https://github.com/dropwizard/dropwizard/pull/2613>`_)
+* Deprecate ``*Param`` classes and will be removed in 3.0.0 (`#2637 <https://github.com/dropwizard/dropwizard/pull/2637>`_)
+* Add data size class adhering to the correct SI and IEC prefixes (`#2686 <https://github.com/dropwizard/dropwizard/pull/2686>`_)
+* Added PortDescriptor class and method in ServerLifeCycleListener to provide a list of PortDescriptors, detailing all listening information for the application (`#2711 <https://github.com/dropwizard/dropwizard/pull/2711>`_)
+* Add support for proxy-protocol in http connector configuration (`#2709 <https://github.com/dropwizard/dropwizard/pull/2709>`_)
+* Disable using ``X-Forwarded-*`` headers by default (`#2748 <https://github.com/dropwizard/dropwizard/pull/2748>`_)
+* Fix typo by renaming ``ResilentSocketOutputStream`` to ``ResilientSocketOutputStream`` (`#2766 <https://github.com/dropwizard/dropwizard/pull/2766>`_)
+
+.. _rel-1.3.9:
+
+v1.3.9: Feb 24, 2019
+====================
+
+* Fix NPE when requesting /admin/tasks (`#2626 <https://github.com/dropwizard/dropwizard/pull/2626>`_, `#2627 <https://github.com/dropwizard/dropwizard/pull/2627>`_)
+* Remove prerequisites from archetype-generated POM (`#2320 <https://github.com/dropwizard/dropwizard/pull/2320>`_)
+* Upgrade to Jackson 2.9.8, addressing various CVEs (`#2591 <https://github.com/dropwizard/dropwizard/pull/2591>`_)
+* Upgrade JDBI3 to 3.5.1 (`#2593 <https://github.com/dropwizard/dropwizard/pull/2593>`_)
+* Upgrade Dropwizard Metrics to 4.0.5 (`#2594 <https://github.com/dropwizard/dropwizard/pull/2594>`_)
+* Upgrade Jetty to 9.4.14.v20181114 (`#2592 <https://github.com/dropwizard/dropwizard/pull/2592>`_)
+* Update dependencies to latest patch versions (`#2628 <https://github.com/dropwizard/dropwizard/pull/2628>`_)
+  * Joda-Time 2.10.1
+  * Apache HttpClient 4.5.7
+  * Apache Tomcat JDBC Pool: 9.0.14
+  * Hibernate ORM 5.2.18.Final
+  * Liquibase 3.6.3
+  * Freemarker 2.3.28
+  * Mustache 0.9.6
+  * Javassist 3.24.1-GA
+  * Classmate 1.4.0
+  * HSQLDB 2.4.1
+  * Mockito 2.24.0
+* Upgrade to SLF4J 1.7.26 (`CVE-2018-8088 <https://nvd.nist.gov/vuln/detail/CVE-2018-8088>`_)
+* Upgrade to Tomcat JDBC Connection Pool 9.0.16
+* Upgrade to Hibernate Validator 5.4.3.Final
+
+
+.. _rel-1.3.8:
+
+v1.3.8: Jan 2, 2019
+===================
+
+* Fix CVE-2018-10237 by upgrading Guava to 24.1.1 (`#2587 <https://github.com/dropwizard/dropwizard/pull/2587>`_)
+
+
+.. _rel-1.3.7:
+
+v1.3.7: Oct 2, 2018
+===================
+
+* Fix incorrect reading of ``somaxconn`` for TCP backlog on Linux (`#2430 <https://github.com/dropwizard/dropwizard/pull/2430>`_)
+
+.. _rel-1.3.6:
+
+v1.3.6: Oct 1, 2018
+===================
+
+* Fix a DoS attack vulnerability in Jackson: `FasterXML/jackson-databind#2141 <https://github.com/FasterXML/jackson-databind/issues/2141>`_ (`#2511 <https://github.com/dropwizard/dropwizard/pull/2512>`_)
 
 .. _rel-1.3.5:
 
@@ -355,6 +425,7 @@ v1.1.0: Mar 21 2017
 * Upgraded to Joda-Time 2.9.7
 * Upgraded to commons-lang3 3.5
 * Upgraded to Apache HTTP Client 4.5.3
+* Upgraded to Jadira Usertype Core 6.0.1.GA
 
 .. _rel-1.0.7:
 

@@ -21,6 +21,16 @@ public abstract class PostBodyTask extends Task {
     }
 
     /**
+     * Create a new task with the given name and response content type
+     *
+     * @param name the task's name
+     * @param responseContentType the task's response content type
+     */
+    protected PostBodyTask(String name, String responseContentType) {
+        super(name, responseContentType);
+    }
+
+    /**
      * @param parameters the query string parameters
      * @param body       the plain text request body
      * @param output     a {@link PrintWriter} wrapping the output stream of the task

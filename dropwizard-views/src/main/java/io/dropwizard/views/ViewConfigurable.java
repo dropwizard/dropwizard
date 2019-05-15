@@ -1,9 +1,7 @@
 package io.dropwizard.views;
 
-import io.dropwizard.Configuration;
-
 import java.util.Map;
 
-public interface ViewConfigurable<T extends Configuration> {
+public interface ViewConfigurable<T> {
     Map<String, Map<String, String>> getViewConfiguration(T configuration);
 }

@@ -15,7 +15,6 @@ It includes:
 * Jersey, a full-featured RESTful web framework.
 * Jackson, the best JSON library for the JVM.
 * Metrics, an excellent library for application metrics.
-* Guava, Google's excellent utility library.
 * Logback, the successor to Log4j, Java's most widely-used logging framework.
 * Hibernate Validator, the reference implementation of the Java Bean Validation standard.
 
@@ -218,7 +217,7 @@ Dropwizard then calls your ``Application`` subclass to initialize your applicati
     You can override configuration settings in maps like this:
 
     ``java -Ddw.database.properties.hibernate.hbm2ddl.auto=none server my-config.json``
-    
+
     If you need to use the '.' character in one of the values, you can escape it by using '\\.' instead.
 
     You can also override a configuration setting that is an array of strings by using the ',' character
@@ -490,7 +489,7 @@ For example, given a theoretical Riak__ client which needs to be started and sto
 
     public class MyApplication extends Application<MyConfiguration>{
         @Override
-        public void run(MyApplicationConfiguration configuration, Environment environment) {
+        public void run(MyConfiguration configuration, Environment environment) {
             RiakClient client = ...;
             RiakClientManager riakClientManager = new RiakClientManager(client);
             environment.lifecycle().manage(riakClientManager);
@@ -502,8 +501,25 @@ application will not start and a full exception will be logged. If ``RiakClientM
 an exception, the exception will be logged but your application will still be able to shut down.
 
 It should be noted that ``Environment`` has built-in factory methods for ``ExecutorService`` and
-``ScheduledExecutorService`` instances which are managed. See ``LifecycleEnvironment#executorService``
-and ``LifecycleEnvironment#scheduledExecutorService`` for details.
+``ScheduledExecutorService`` instances which are managed. These managed instances use ``InstrumentedThreadFactory``
+that monitors the number of threads created, running and terminated
+
+.. code-block:: java
+
+    public class MyApplication extends Application<MyConfiguration> {
+        @Override
+        public void run(MyConfiguration configuration, Environment environment) {
+
+            ExecutorService executorService = environment.lifecycle()
+                .executorService(nameFormat)
+                .maxThreads(maxThreads)
+                .build();
+
+            ScheduledExecutorService scheduledExecutorService = environment.lifecycle()
+                .scheduledExecutorService(nameFormat)
+                .build();
+        }
+    }
 
 .. _man-core-bundles:
 
@@ -511,24 +527,18 @@ Bundles
 =======
 
 A Dropwizard bundle is a reusable group of functionality, used to define blocks of an application's
-behavior. For example, ``AssetBundle`` from the ``dropwizard-assets`` module provides a simple way
+behavior by implementing the ``ConfiguredBundle`` interface.
+
+For example, ``AssetBundle`` from the ``dropwizard-assets`` module provides a simple way
 to serve static assets from your application's ``src/main/resources/assets`` directory as files
 available from ``/assets/*`` (or any other path) in your application.
 
-Configured Bundles
-------------------
-
-Some bundles require configuration parameters. These bundles implement ``ConfiguredBundle`` and will
-require your application's ``Configuration`` subclass to implement a specific interface.
-
-
-For example: given the configured bundle ``MyConfiguredBundle`` and the interface ``MyConfiguredBundleConfig`` below.
-Your application's ``Configuration`` subclass would need to implement ``MyConfiguredBundleConfig``.
+Given the bundle ``MyConfiguredBundle`` and the interface ``MyConfiguredBundleConfig`` below,
+your application's ``Configuration`` subclass would need to implement ``MyConfiguredBundleConfig``.
 
 .. code-block:: java
 
-    public class MyConfiguredBundle implements ConfiguredBundle<MyConfiguredBundleConfig>{
-
+    public class MyConfiguredBundle implements ConfiguredBundle<MyConfiguredBundleConfig> {
         @Override
         public void run(MyConfiguredBundleConfig applicationConfig, Environment environment) {
             applicationConfig.getBundleSpecificConfig();
@@ -540,10 +550,8 @@ Your application's ``Configuration`` subclass would need to implement ``MyConfig
         }
     }
 
-    public interface MyConfiguredBundleConfig{
-
+    public interface MyConfiguredBundleConfig {
         String getBundleSpecificConfig();
-
     }
 
 
@@ -917,6 +925,33 @@ acceptable.
               currentLogFilename: ./logs/example-sql.log
               archivedLogFilenamePattern: ./logs/example-sql-%d.log.gz
               archivedFileCount: 5
+
+.. _man-core-logging-asynchronous-logging:
+
+Asynchronous Logging
+--------------------
+
+By default, all logging in Dropwizard is asynchronous, even to typically
+synchronous sinks such as files and the console. When a slow logger (like file
+logger on an overloaded disk) is coupled with a high load, Dropwizard will
+seemlessly drop events of lower importance (``TRACE``, ``DEBUG``, ``INFO``) in
+an attempt to maintain reasonable latency. 
+
+.. TIP::
+   Instead of logging business critical statements under ``INFO``, insert them
+   into a database, durable message queue, or another mechanism that gives
+   confidence that the request has satisfied business requirements before
+   returning the response to the client.
+
+This logging behavior :ref:`can be configured <man-configuration-logging>`:
+
+* Set ``discardingThreshold`` to 0 so that no events are dropped
+* At the opposite end, set ``neverBlock`` to ``true`` so that even ``WARN`` and ``ERROR`` levels will be discarded from logging under heavy load
+
+Request access logging has the same logging behavior, and since all request
+logging is done under ``INFO``, each log statement has an equal chance of being
+dropped if the log queue is nearing full.
+
 .. _man-core-logging-console:
 
 Console Logging
@@ -924,8 +959,6 @@ Console Logging
 
 By default, Dropwizard applications log ``INFO`` and higher to ``STDOUT``. You can configure this by
 editing the ``logging`` section of your YAML configuration file:
-
-
 
 .. code-block:: yaml
 
@@ -1161,7 +1194,7 @@ tests:
         private final MyApplication application = new MyApplication();
         private final MyConfiguration config = new MyConfiguration();
 
-        @Before
+        @BeforeEach
         public void setup() throws Exception {
             config.setMyParam("yay");
             when(environment.jersey()).thenReturn(jersey);
@@ -1238,8 +1271,8 @@ mapping various aspects of POJOs to outgoing HTTP responses. Here's a basic reso
         }
 
         @GET
-        public NotificationList fetch(@PathParam("user") LongParam userId,
-                                      @QueryParam("count") @DefaultValue("20") IntParam count) {
+        public NotificationList fetch(@PathParam("user") OptionalLong userId,
+                                      @QueryParam("count") @DefaultValue("20") OptionalInt count) {
             final List<Notification> notifications = store.fetch(userId.get(), count.get());
             if (notifications != null) {
                 return new NotificationList(userId, notifications);
@@ -1248,7 +1281,7 @@ mapping various aspects of POJOs to outgoing HTTP responses. Here's a basic reso
         }
 
         @POST
-        public Response add(@PathParam("user") LongParam userId,
+        public Response add(@PathParam("user") OptionalLong userId,
                             @NotNull @Valid Notification notification) {
             final long id = store.add(userId.get(), notification);
             return Response.created(UriBuilder.fromResource(NotificationResource.class)
@@ -1308,11 +1341,63 @@ JSON, and so the ``NotificationList`` is serialized to JSON using Jackson.
 Metrics
 -------
 
-Every resource method can be annotated with ``@Timed``, ``@Metered``, and ``@ExceptionMetered``.
+Every resource method or the class itself can be annotated with @Timed, @Metered, @ResponseMetered
+and @ExceptionMetered. If the annotation is placed on the class, it will apply to all its resource methods.
 Dropwizard augments Jersey to automatically record runtime information about your resource methods.
+
+.. code-block:: java
+
+    public class ExampleApplication extends ResourceConfig {
+        .
+        .
+        .
+        register(new InstrumentedResourceMethodApplicationListener (new MetricRegistry()));
+        config = config.register(ExampleResource.class);
+        .
+        .
+        .
+    }
+
+    @Path("/example")
+    @Produces(MediaType.TEXT_PLAIN)
+    public class ExampleResource {
+        @GET
+        @Timed
+        public String show() {
+            return "yay";
+        }
+
+        @GET
+        @Metered(name = "fancyName") // If name isn't specified, the meter will given the name of the method it decorates.
+        @Path("/metered")
+        public String metered() {
+            return "woo";
+        }
+
+        @GET
+        @ExceptionMetered(cause = IOException.class) // Default cause is Exception.class
+        @Path("/exception-metered")
+        public String exceptionMetered(@QueryParam("splode") @DefaultValue("false") boolean splode) throws IOException {
+            if (splode) {
+                throw new IOException("AUGH");
+            }
+            return "fuh";
+        }
+
+        @GET
+        @ResponseMetered
+        @Path("/response-metered")
+        public Response responseMetered(@QueryParam("invalid") @DefaultValue("false") boolean invalid) {
+            if (invalid) {
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+            }
+            return Response.ok().build();
+        }
+    }
 
 * ``@Timed`` measures the duration of requests to a resource
 * ``@Metered`` measures the rate at which the resource is accessed
+* ``@ResponseMetered`` measures rate for each class of response codes (1xx/2xx/3xx/4xx/5xx)
 * ``@ExceptionMetered`` measures how often exceptions occur processing the resource
 
 .. important::
@@ -1327,17 +1412,16 @@ Parameters
 ----------
 
 The annotated methods on a resource class can accept parameters which are mapped to from aspects of
-the incoming request. The ``*Param`` annotations determine which part of the request the data is
-mapped, and the parameter *type* determines how the data is mapped.
+the incoming request.
 
 For example:
 
 * A ``@PathParam("user")``-annotated ``String`` takes the raw value from the ``user`` variable in
   the matched URI template and passes it into the method as a ``String``.
-* A ``@QueryParam("count")``-annotated ``IntParam`` parameter takes the first ``count`` value from
-  the request's query string and passes it as a ``String`` to ``IntParam``'s constructor.
-  ``IntParam`` (and all other ``io.dropwizard.jersey.params.*`` classes) parses the string
-  as an ``Integer``, returning a ``400 Bad Request`` if the value is malformed.
+* A ``@QueryParam("count")``-annotated ``OptionalInt`` parameter takes the first ``count`` value from
+  the request's query string and passes it as a ``String`` to ``OptionalInt``'s constructor.
+  ``OptionalInt`` parses the string as an ``Integer``, returning a ``400 Bad Request`` if the value
+  is malformed.
 * A ``@FormParam("name")``-annotated ``Set<String>`` parameter takes all the ``name`` values from a
   posted form and passes them to the method as a set of strings.
 * A ``*Param``--annotated ``NonEmptyStringParam`` will interpret empty strings as absent strings,
@@ -1361,7 +1445,7 @@ this:
     :emphasize-lines: 3
 
     @POST
-    public Response add(@PathParam("user") LongParam userId,
+    public Response add(@PathParam("user") OptionalLong userId,
                         @NotNull @Valid Notification notification) {
         final long id = store.add(userId.get(), notification);
         return Response.created(UriBuilder.fromResource(NotificationResource.class)
@@ -1689,6 +1773,26 @@ This gets converted into this JSON:
 
 .. _man-core-representations-streaming:
 
+Unknown properties
+~~~~~~~~~~~~~~~~~~
+
+If the name of a JSON property cannot be mapped to a Java property (or otherwise handled), that
+JSON property will simply be ignored.
+
+You can change this behavior by configuring Dropwizard's object mapper:
+
+.. code-block:: java
+
+    public void initialize(Bootstrap<ExampleConfiguration> bootstrap) {
+        bootstrap.getObjectMapper().enable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+    }
+
+.. note::
+
+    The YAML configuration parser will fail on unknown properties regardless of the object mapper
+    configuration.
+
+
 Streaming Output
 ----------------
 
@@ -1835,6 +1939,6 @@ your application resources are served from one ``Servlet``
 enable the following functionality:
 
     * Resource method requests with ``@Timed``, ``@Metered``, ``@ExceptionMetered`` are delegated to special dispatchers which decorate the metric telemetry
-    * Resources that return Guava Optional are unboxed. Present returns underlying type, and non-present 404s
+    * Resources that return Optional are unboxed. Present returns underlying type, and non-present 404s
     * Resource methods that are annotated with ``@CacheControl`` are delegated to a special dispatcher that decorates on the cache control headers
     * Enables using Jackson to parse request entities into objects and generate response entities from objects, all while performing validation

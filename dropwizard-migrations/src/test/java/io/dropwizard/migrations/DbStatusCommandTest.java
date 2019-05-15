@@ -4,8 +4,8 @@ import io.dropwizard.util.Resources;
 import net.jcip.annotations.NotThreadSafe;
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -24,7 +24,7 @@ public class DbStatusCommandTest extends AbstractMigrationTest {
     private final ByteArrayOutputStream baos = new ByteArrayOutputStream();
     private TestMigrationConfiguration conf;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         conf = createConfiguration(getDatabaseUrl());
 

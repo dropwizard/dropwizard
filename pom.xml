@@ -4,7 +4,7 @@
 
     <groupId>io.dropwizard</groupId>
     <artifactId>dropwizard-parent</artifactId>
-    <version>1.4.0-SNAPSHOT</version>
+    <version>2.0.0-rc2-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Dropwizard Project</name>
@@ -25,7 +25,6 @@
         <module>dropwizard-migrations</module>
         <module>dropwizard-hibernate</module>
         <module>dropwizard-auth</module>
-        <module>dropwizard-example</module>
         <module>dropwizard-forms</module>
         <module>dropwizard-views</module>
         <module>dropwizard-views-freemarker</module>
@@ -44,10 +43,8 @@
         <module>dropwizard-lifecycle</module>
         <module>dropwizard-assets</module>
         <module>dropwizard-archetypes</module>
-        <module>dropwizard-benchmarks</module>
         <module>dropwizard-http2</module>
         <module>dropwizard-request-logging</module>
-        <module>dropwizard-e2e</module>
         <module>dropwizard-json-logging</module>
     </modules>
 
@@ -66,9 +63,9 @@
         <argLine>-Duser.language=en -Duser.region=US</argLine>
 
         <junit.version>4.12</junit.version>
-        <junit5.version>5.2.0</junit5.version>
-        <assertj.version>3.10.0</assertj.version>
-        <mockito.version>2.20.1</mockito.version>
+        <junit5.version>5.4.2</junit5.version>
+        <assertj.version>3.12.2</assertj.version>
+        <mockito.version>2.27.0</mockito.version>
     </properties>
 
     <developers>
@@ -222,9 +219,9 @@
 
     <repositories>
         <repository>
-            <id>sonatype-nexus-snapshots</id>
+            <id>ossrh</id>
             <name>Sonatype Nexus Snapshots</name>
-            <url>http://oss.sonatype.org/content/repositories/snapshots</url>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
             <releases>
                 <enabled>false</enabled>
             </releases>
@@ -236,12 +233,12 @@
 
     <distributionManagement>
         <snapshotRepository>
-            <id>sonatype-nexus-snapshots</id>
+            <id>ossrh</id>
             <name>Sonatype Nexus Snapshots</name>
-            <url>http://oss.sonatype.org/content/repositories/snapshots</url>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </snapshotRepository>
         <repository>
-            <id>sonatype-nexus-staging</id>
+            <id>ossrh</id>
             <name>Nexus Release Repository</name>
             <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
@@ -254,7 +251,20 @@
 
     <profiles>
         <profile>
-            <id>release-sign-artifacts</id>
+            <id>all-modules</id>
+            <activation>
+                <property>
+                    <name>!performRelease</name>
+                </property>
+            </activation>
+            <modules>
+                <module>dropwizard-benchmarks</module>
+                <module>dropwizard-example</module>
+                <module>dropwizard-e2e</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>release</id>
             <activation>
                 <property>
                     <name>performRelease</name>
@@ -263,19 +273,72 @@
             </activation>
             <properties>
                 <maven.compiler.optimize>true</maven.compiler.optimize>
+                <gpg.keyname>EDA86E9FB607B5FC9223FB767D4868B53E31E7AD</gpg.keyname>
             </properties>
             <build>
                 <plugins>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <configuration>
+                            <doclint>none</doclint>
+                            <quiet>true</quiet>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>attach-aggregate-javadocs</id>
+                                <inherited>false</inherited>
+                                <goals>
+                                    <goal>aggregate-jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <version>1.6</version>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
                                 <phase>verify</phase>
                                 <goals>
                                     <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                        <configuration>
+                            <serverId>ossrh</serverId>
+                            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>nexus-deploy</id>
+                                <phase>deploy</phase>
+                                <goals>
+                                    <goal>deploy</goal>
                                 </goals>
                             </execution>
                         </executions>
@@ -288,6 +351,9 @@
             <properties>
                 <maven.javadoc.skip>true</maven.javadoc.skip>
                 <maven.source.skip>true</maven.source.skip>
+                <dependency-check.skip>true</dependency-check.skip>
+                <pgpverify.skip>true</pgpverify.skip>
+                <jacoco.skip>true</jacoco.skip>
             </properties>
             <build>
                 <plugins>
@@ -299,13 +365,6 @@
                             <parallel>classes</parallel>
                             <threadCount>2</threadCount>
                             <perCoreThreadCount>true</perCoreThreadCount>
-                        </configuration>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.owasp</groupId>
-                        <artifactId>dependency-check-maven</artifactId>
-                        <configuration>
-                            <skip>true</skip>
                         </configuration>
                     </plugin>
                 </plugins>
@@ -353,13 +412,16 @@
                                 <path>
                                     <groupId>com.uber.nullaway</groupId>
                                     <artifactId>nullaway</artifactId>
-                                    <version>0.5.4</version>
+                                    <version>0.6.5</version>
                                 </path>
                             </annotationProcessorPaths>
                             <compilerArgs>
                                 <arg>-XepDisableWarningsInGeneratedCode</arg>
+                                <!-- Disable EqualsGetClass. Further discussion: https://github.com/dropwizard/dropwizard/pull/2647 -->
+                                <arg>-Xep:EqualsGetClass:OFF</arg>
                                 <arg>-Xep:NullAway:ERROR</arg>
                                 <arg>-XepOpt:NullAway:AnnotatedPackages=io.dropwizard</arg>
+                                <arg>-XepOpt:NullAway:ExcludedFieldAnnotations=org.mockito.Mock</arg>
                                 <arg>-XepOpt:NullAway:UnannotatedSubPackages=io.dropwizard.benchmarks</arg>
                             </compilerArgs>
                         </configuration>
@@ -367,50 +429,14 @@
                             <dependency>
                                 <groupId>org.codehaus.plexus</groupId>
                                 <artifactId>plexus-compiler-javac-errorprone</artifactId>
-                                <version>2.8.4</version>
+                                <version>2.8.5</version>
                             </dependency>
                             <dependency>
                                 <groupId>com.google.errorprone</groupId>
                                 <artifactId>error_prone_core</artifactId>
-                                <version>2.3.1</version>
+                                <version>2.3.3</version>
                             </dependency>
                         </dependencies>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>jdk11</id>
-            <activation>
-                <jdk>11</jdk>
-            </activation>
-            <properties>
-                <!-- https://github.com/jacoco/jacoco/issues/663 -->
-                <jacoco.skip>true</jacoco.skip>
-            </properties>
-        </profile>
-        <profile>
-            <id>code-coverage</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.jacoco</groupId>
-                        <artifactId>jacoco-maven-plugin</artifactId>
-                        <version>0.8.2</version>
-                        <executions>
-                            <execution>
-                                <id>prepare-agent</id>
-                                <goals>
-                                    <goal>prepare-agent</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                        <configuration>
-                            <excludes>
-                                <exclude>io/dropwizard/benchmarks/**/*.class</exclude>
-                                <exclude>org/openjdk/jmh/**/*.class</exclude>
-                            </excludes>
-                        </configuration>
                     </plugin>
                 </plugins>
             </build>
@@ -426,8 +452,21 @@
                 <scope>test</scope>
             </dependency>
             <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>${junit5.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
+                <version>${mockito.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-junit-jupiter</artifactId>
                 <version>${mockito.version}</version>
                 <scope>test</scope>
             </dependency>
@@ -442,13 +481,18 @@
 
     <dependencies>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -469,12 +513,12 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.8.0</version>
+                    <version>3.8.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.22.0</version>
+                    <version>2.22.2</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -486,6 +530,10 @@
                     <artifactId>maven-source-plugin</artifactId>
                     <version>3.0.1</version>
                 </plugin>
+                <!--
+                javadoc:aggregate-jar fails with maven-javadoc-plugin:3.1.0
+                https://issues.apache.org/jira/browse/MJAVADOC-599
+                -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
@@ -521,7 +569,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
-                    <version>3.1.0</version>
+                    <version>3.1.2</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -529,14 +577,9 @@
                     <version>3.7.1</version>
                 </plugin>
                 <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-checkstyle-plugin</artifactId>
-                    <version>3.0.0</version>
-                </plugin>
-                <plugin>
                     <groupId>org.owasp</groupId>
                     <artifactId>dependency-check-maven</artifactId>
-                    <version>3.3.1</version>
+                    <version>4.0.2</version>
                 </plugin>
                 <plugin>
                     <groupId>org.eluder.coveralls</groupId>
@@ -549,9 +592,30 @@
                     <version>3.0.0</version>
                 </plugin>
                 <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-help-plugin</artifactId>
+                    <version>3.2.0</version>
+                </plugin>
+                <plugin>
                     <groupId>kr.motd.maven</groupId>
                     <artifactId>sphinx-maven-plugin</artifactId>
-                    <version>2.2.2</version>
+                    <version>2.4.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.simplify4u.plugins</groupId>
+                    <artifactId>pgpverify-maven-plugin</artifactId>
+                    <version>1.4.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-gpg-plugin</artifactId>
+                    <version>1.6</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.sonatype.plugins</groupId>
+                    <artifactId>nexus-staging-maven-plugin</artifactId>
+                    <version>1.6.8</version>
+                    <extensions>true</extensions>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -588,39 +652,12 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <configuration>
-                    <doclint>none</doclint>
-                    <quiet>true</quiet>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
                 <configuration>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
                     <mavenExecutorId>forked-path</mavenExecutorId>
                     <tagNameFormat>v@{project.version}</tagNameFormat>
+                    <useReleaseProfile>false</useReleaseProfile>
                     <preparationGoals>clean test</preparationGoals>
                 </configuration>
             </plugin>
@@ -636,6 +673,31 @@
                 </configuration>
             </plugin>
             <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.4</version>
+                <executions>
+                    <execution>
+                        <id>prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <excludes>
+                        <exclude>io/dropwizard/benchmarks/**/*.class</exclude>
+                        <exclude>org/openjdk/jmh/**/*.class</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.eluder.coveralls</groupId>
                 <artifactId>coveralls-maven-plugin</artifactId>
             </plugin>
@@ -643,26 +705,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-project-info-reports-plugin</artifactId>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-checkstyle-plugin</artifactId>
-                <configuration>
-                    <configLocation>checkstyle.xml</configLocation>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>checkstyle</id>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                        <configuration>
-                            <failOnViolation>true</failOnViolation>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
             <plugin>
                 <groupId>org.owasp</groupId>
                 <artifactId>dependency-check-maven</artifactId>
@@ -674,6 +716,21 @@
                 <executions>
                     <execution>
                         <id>security-check</id>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.simplify4u.plugins</groupId>
+                <artifactId>pgpverify-maven-plugin</artifactId>
+                <configuration>
+                    <quiet>true</quiet>
+                    <pgpKeyServer>hkps://keyserver.ubuntu.com</pgpKeyServer>
+                </configuration>
+                <executions>
+                    <execution>
                         <goals>
                             <goal>check</goal>
                         </goals>

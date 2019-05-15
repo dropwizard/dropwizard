@@ -1,8 +1,9 @@
 package io.dropwizard.server;
 
 import com.codahale.metrics.MetricRegistry;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.io.CharStreams;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.DiscoverableSubtypeResolver;
 import io.dropwizard.jackson.Jackson;
@@ -14,14 +15,15 @@ import io.dropwizard.logging.FileAppenderFactory;
 import io.dropwizard.logging.SyslogAppenderFactory;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.setup.ExceptionMapperBinder;
+import io.dropwizard.util.CharStreams;
 import io.dropwizard.util.Resources;
 import io.dropwizard.validation.BaseValidator;
 import org.eclipse.jetty.server.AbstractNetworkConnector;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.NetworkConnector;
 import org.eclipse.jetty.server.Server;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -39,7 +41,8 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DefaultServerFactoryTest {
     private Environment environment = new Environment("test", Jackson.newObjectMapper(),
@@ -47,7 +50,7 @@ public class DefaultServerFactoryTest {
             ClassLoader.getSystemClassLoader());
     private DefaultServerFactory http;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
 
         final ObjectMapper objectMapper = Jackson.newObjectMapper();
@@ -123,6 +126,30 @@ public class DefaultServerFactoryTest {
         http.build(environment);
         assertThat(environment.jersey().getResourceConfig().getSingletons())
             .filteredOn(x -> x instanceof ExceptionMapperBinder).isEmpty();
+    }
+
+    @Test
+    public void defaultsDumpAfterStartFalse() throws Exception {
+        assertThat(http.getDumpAfterStart()).isFalse();
+        assertThat(http.build(environment).isDumpAfterStart()).isFalse();
+    }
+
+    @Test
+    public void defaultsDumpBeforeStopFalse() throws Exception {
+        assertThat(http.getDumpBeforeStop()).isFalse();
+        assertThat(http.build(environment).isDumpBeforeStop()).isFalse();
+    }
+
+    @Test
+    public void configuresDumpAfterStart() throws Exception {
+        http.setDumpAfterStart(true);
+        assertThat(http.build(environment).isDumpAfterStart()).isTrue();
+    }
+
+    @Test
+    public void configuresDumpBeforeExit() throws Exception {
+        http.setDumpBeforeStop(true);
+        assertThat(http.build(environment).isDumpBeforeStop()).isTrue();
     }
 
     @Test
@@ -217,6 +244,20 @@ public class DefaultServerFactoryTest {
 
         assertEquals(http.getAdminContextPath(), environment.getAdminContext().getContextPath());
         assertEquals(http.getApplicationContextPath(), environment.getApplicationContext().getContextPath());
+    }
+
+    @Test
+    public void testDeserializeWithoutJsonAutoDetect() {
+        final ObjectMapper objectMapper = Jackson.newObjectMapper()
+            .setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE);
+
+        assertThatCode(() -> new YamlConfigurationFactory<>(
+            DefaultServerFactory.class,
+            BaseValidator.newValidator(),
+            objectMapper,
+            "dw"
+            ).build(new File(Resources.getResource("yaml/server.yml").toURI()))
+        ).doesNotThrowAnyException();
     }
 
     @Path("/test")

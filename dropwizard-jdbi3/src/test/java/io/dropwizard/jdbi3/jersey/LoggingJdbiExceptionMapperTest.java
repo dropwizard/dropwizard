@@ -4,8 +4,8 @@ import org.jdbi.v3.core.JdbiException;
 import org.jdbi.v3.core.result.NoResultsException;
 import org.jdbi.v3.core.statement.StatementContext;
 import org.jdbi.v3.core.transaction.TransactionException;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 
 import java.sql.SQLException;
@@ -18,7 +18,7 @@ public class LoggingJdbiExceptionMapperTest {
     private LoggingJdbiExceptionMapper jdbiExceptionMapper;
     private Logger logger;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         logger = mock(Logger.class);
         jdbiExceptionMapper = new LoggingJdbiExceptionMapper(logger);

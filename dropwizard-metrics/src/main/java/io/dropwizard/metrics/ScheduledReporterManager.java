@@ -10,16 +10,30 @@ import io.dropwizard.util.Duration;
 public class ScheduledReporterManager implements Managed {
     private final ScheduledReporter reporter;
     private final Duration period;
+    private final boolean reportOnStop;
 
     /**
      * Manages the given {@code reporter} by reporting with the given {@code period}.
      *
      * @param reporter the reporter to manage.
-     * @param period the frequency to report metrics at.
+     * @param period   the frequency to report metrics at.
+     * @see #ScheduledReporterManager(ScheduledReporter, Duration, boolean)
      */
     public ScheduledReporterManager(ScheduledReporter reporter, Duration period) {
+        this(reporter, period, false);
+    }
+
+    /**
+     * Manages the given {@code reporter} by reporting with the given {@code period}.
+     *
+     * @param reporter     the reporter to manage.
+     * @param period       the frequency to report metrics at.
+     * @param reportOnStop whether the reporter should send one last report upon stopping
+     */
+    public ScheduledReporterManager(ScheduledReporter reporter, Duration period, boolean reportOnStop) {
         this.reporter = reporter;
         this.period = period;
+        this.reportOnStop = reportOnStop;
     }
 
     /**
@@ -39,6 +53,12 @@ public class ScheduledReporterManager implements Managed {
      */
     @Override
     public void stop() throws Exception {
-        reporter.stop();
+        try {
+            if (reportOnStop) {
+                reporter.report();
+            }
+        } finally {
+            reporter.stop();
+        }
     }
 }

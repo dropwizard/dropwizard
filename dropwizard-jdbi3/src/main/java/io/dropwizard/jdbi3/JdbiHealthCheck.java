@@ -7,20 +7,23 @@ import io.dropwizard.util.Duration;
 import org.jdbi.v3.core.Handle;
 import org.jdbi.v3.core.Jdbi;
 
+import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 
 public class JdbiHealthCheck extends HealthCheck {
     private final Jdbi jdbi;
-    private final String validationQuery;
+    private final Optional<String> validationQuery;
+    private final int validationQueryTimeout;
     private final TimeBoundHealthCheck timeBoundHealthCheck;
 
-    public JdbiHealthCheck(ExecutorService executorService, Duration duration, Jdbi jdbi, String validationQuery) {
+    public JdbiHealthCheck(ExecutorService executorService, Duration duration, Jdbi jdbi, Optional<String> validationQuery) {
         this.jdbi = jdbi;
         this.validationQuery = validationQuery;
+        this.validationQueryTimeout = (int) duration.toSeconds();
         this.timeBoundHealthCheck = new TimeBoundHealthCheck(executorService, duration);
     }
 
-    public JdbiHealthCheck(Jdbi jdbi, String validationQuery) {
+    public JdbiHealthCheck(Jdbi jdbi, Optional<String> validationQuery) {
         this(new DirectExecutorService(), Duration.seconds(0), jdbi, validationQuery);
     }
 
@@ -28,7 +31,11 @@ public class JdbiHealthCheck extends HealthCheck {
     protected Result check() throws Exception {
         return timeBoundHealthCheck.check(() -> {
                 try (Handle handle = jdbi.open()) {
-                    handle.execute(validationQuery);
+                    if (validationQuery.isPresent()) {
+                        handle.execute(validationQuery.get());
+                    } else if (!handle.getConnection().isValid(validationQueryTimeout)) {
+                        return Result.unhealthy("Connection::isValid returned false.");
+                    }
                     return Result.healthy();
                 }
             }

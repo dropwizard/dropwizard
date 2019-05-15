@@ -22,6 +22,7 @@ import static org.assertj.core.api.Assertions.entry;
 
 public class DropwizardAppRuleWithExplicitTest {
 
+    @SuppressWarnings("deprecation")
     @ClassRule
     public static final DropwizardAppRule<TestConfiguration> RULE;
 

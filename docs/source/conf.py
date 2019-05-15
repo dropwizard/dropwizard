@@ -45,6 +45,9 @@ def get_version():
     version = os.environ.get('DROPWIZARD_VERSION', '').strip()
     return version or maven_version('../../pom.xml')
 
+def setup(app):
+   app.add_css_file("dropwizard.css")
+
 # -- General configuration -----------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
@@ -52,7 +55,7 @@ def get_version():
 
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
-extensions = ['sphinx.ext.todo', 'sphinx.ext.extlinks']
+extensions = ['sphinx.ext.extlinks']
 
 # Add any paths that contain templates here, relative to this directory.
 #templates_path = ['ytemplates']
@@ -68,7 +71,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Dropwizard'
-copyright = u'2010-2013, Coda Hale, Yammer Inc., 2014-2018 Dropwizard Team'
+copyright = u'2010-2013, Coda Hale, Yammer Inc., 2014-2019 Dropwizard Team'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -120,24 +123,28 @@ exclude_patterns = []
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = 'dropwizard'
+html_theme = 'sphinx_rtd_theme'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
 html_theme_options = {
-    'tagline': u'Production-ready, out of the box.',
-    'gradient_start': u'#545d63',
-    'gradient_end': u'#182127',
-    'gradient_text': u'#ffffff',
-    'gradient_bg': u'#363F45',
-    'landing_logo': u'dropwizard-hat.png',
-    'landing_logo_width': u'150px',
-    'github_page': u'https://github.com/dropwizard/dropwizard',
-    'maven_site': u'https://dropwizard.github.io/dropwizard/' + release,
-    'mailing_list_user': u'https://groups.google.com/forum/#!forum/dropwizard-user',
-    'mailing_list_dev': u'https://groups.google.com/forum/#!forum/dropwizard-dev'
+    # 'canonical_url': 'https://www.dropwizard.io/',
+    'analytics_id': 'UA-137863369-1',
+    'logo_only': True,
+    'prev_next_buttons_location': 'both',
+    'style_nav_header_background': 'white',
+    'navigation_depth': -1,
 }
+
+html_context = {
+    "display_github": True,
+    "github_user": "dropwizard",
+    "github_repo": "dropwizard",
+    "github_version": "master",
+    "conf_py_path": "/docs/source/",
+}
+github_url = u'https://github.com/dropwizard/dropwizard'
 
 # Add any paths that contain custom themes here, relative to this directory.
 html_theme_path = ["./_themes"]
@@ -151,7 +158,7 @@ html_title = u'Dropwizard'
 
 # The name of an image file (relative to this directory) to place at the top
 # of the sidebar.
-html_logo = u'dropwizard-logo.png'
+html_logo = u'dropwizard-logo.svg'
 
 # The name of an image file (within the static path) to use as favicon of the
 # docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32

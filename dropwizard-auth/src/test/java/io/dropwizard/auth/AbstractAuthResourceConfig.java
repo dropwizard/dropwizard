@@ -1,7 +1,7 @@
 package io.dropwizard.auth;
 
 import io.dropwizard.jersey.DropwizardResourceConfig;
-import org.glassfish.hk2.utilities.binding.AbstractBinder;
+import org.glassfish.jersey.internal.inject.AbstractBinder;
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 import org.glassfish.jersey.test.TestProperties;
 

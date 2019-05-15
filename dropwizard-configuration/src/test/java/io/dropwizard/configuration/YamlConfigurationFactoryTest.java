@@ -1,12 +1,13 @@
 package io.dropwizard.configuration;
 
 import io.dropwizard.jackson.Jackson;
+import org.junit.jupiter.api.BeforeEach;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class YamlConfigurationFactoryTest extends BaseConfigurationFactoryTest {
 
-    @Override
+    @BeforeEach
     public void setUp() throws Exception {
         this.factory = new YamlConfigurationFactory<>(Example.class, validator, Jackson.newObjectMapper(), "dw");
         this.malformedFile = resourceFileName("factory-test-malformed.yml");
@@ -30,12 +31,6 @@ public class YamlConfigurationFactoryTest extends BaseConfigurationFactoryTest {
             .hasMessageContaining(String.format(
                 "%s has an error:%n" +
                 "  * Malformed YAML at line: 3, column: 22; while parsing a flow sequence\n" +
-                " in 'reader', line 2, column 7:\n" +
-                "    type: [ coder,wizard\n" +
-                "          ^\n" +
-                "expected ',' or ']', but got StreamEnd\n" +
-                " in 'reader', line 2, column 21:\n" +
-                "    wizard\n" +
-                "          ^", malformedAdvancedFile.getName()));
+                " in 'reader'", malformedAdvancedFile.getName()));
     }
 }

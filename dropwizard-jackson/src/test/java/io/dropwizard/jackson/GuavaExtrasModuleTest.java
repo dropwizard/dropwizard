@@ -5,15 +5,15 @@ import com.fasterxml.jackson.datatype.guava.GuavaModule;
 import com.google.common.base.Optional;
 import com.google.common.cache.CacheBuilderSpec;
 import com.google.common.net.HostAndPort;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class GuavaExtrasModuleTest {
     private final ObjectMapper mapper = new ObjectMapper();
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         mapper.registerModule(new GuavaModule());
         mapper.registerModule(new GuavaExtrasModule());

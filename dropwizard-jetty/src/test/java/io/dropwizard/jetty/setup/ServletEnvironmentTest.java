@@ -10,10 +10,9 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.servlets.WelcomeFilter;
 import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.util.resource.ResourceCollection;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.ArgumentCaptor;
 
 import javax.servlet.Filter;
@@ -22,6 +21,8 @@ import javax.servlet.GenericServlet;
 import javax.servlet.Servlet;
 import javax.servlet.ServletContextListener;
 import javax.servlet.ServletRegistration;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -33,10 +34,7 @@ public class ServletEnvironmentTest {
     private final MutableServletContextHandler handler = mock(MutableServletContextHandler.class);
     private final ServletEnvironment environment = new ServletEnvironment(handler);
 
-    @Rule
-    public TemporaryFolder tempDir = new TemporaryFolder();
-
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         when(handler.getServletHandler()).thenReturn(servletHandler);
     }
@@ -127,17 +125,17 @@ public class ServletEnvironmentTest {
     }
 
     @Test
-    public void setsBaseResource() throws Exception {
-        final Resource testResource = Resource.newResource(tempDir.newFolder());
+    public void setsBaseResource(@TempDir Path tempDir) throws Exception {
+        final Resource testResource = Resource.newResource(tempDir.resolve("dir").toUri());
         environment.setBaseResource(testResource);
 
         verify(handler).setBaseResource(testResource);
     }
 
     @Test
-    public void setsBaseResourceList() throws Exception {
-        Resource wooResource = Resource.newResource(tempDir.newFolder());
-        Resource fooResource = Resource.newResource(tempDir.newFolder());
+    public void setsBaseResourceList(@TempDir Path tempDir) throws Exception {
+        Resource wooResource = Resource.newResource(Files.createDirectory(tempDir.resolve("dir-1")));
+        Resource fooResource = Resource.newResource(Files.createDirectory(tempDir.resolve("dir-2")));
 
         final Resource[] testResources = new Resource[]{wooResource, fooResource};
         environment.setBaseResource(testResources);
@@ -161,9 +159,9 @@ public class ServletEnvironmentTest {
     }
 
     @Test
-    public void setsBaseResourceStringList() throws Exception {
-        String wooResource = tempDir.newFolder().getAbsolutePath();
-        String fooResource = tempDir.newFolder().getAbsolutePath();
+    public void setsBaseResourceStringList(@TempDir Path tempDir) throws Exception {
+        String wooResource = Files.createDirectory(tempDir.resolve("dir-1")).toString();
+        String fooResource = Files.createDirectory(tempDir.resolve("dir-2")).toString();
 
         final String[] testResources = new String[]{wooResource, fooResource};
         environment.setBaseResource(testResources);

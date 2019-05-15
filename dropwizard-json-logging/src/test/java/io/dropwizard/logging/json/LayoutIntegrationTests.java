@@ -12,6 +12,7 @@ import io.dropwizard.jackson.Jackson;
 import io.dropwizard.logging.BootstrapLogging;
 import io.dropwizard.logging.ConsoleAppenderFactory;
 import io.dropwizard.logging.DefaultLoggingFactory;
+import io.dropwizard.logging.json.layout.ExceptionFormat;
 import io.dropwizard.logging.layout.DiscoverableLayoutFactory;
 import io.dropwizard.request.logging.LogbackAccessRequestLogFactory;
 import io.dropwizard.util.Resources;
@@ -20,8 +21,8 @@ import org.eclipse.jetty.http.HttpFields;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.RequestLog;
 import org.eclipse.jetty.server.Response;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
@@ -49,7 +50,7 @@ public class LayoutIntegrationTests {
     private final YamlConfigurationFactory<ConsoleAppenderFactory> yamlFactory = new YamlConfigurationFactory<>(
         ConsoleAppenderFactory.class, BaseValidator.newValidator(), objectMapper, "dw-json-log");
 
-    @Before
+    @BeforeEach
     public void setUp() {
         objectMapper.getSubtypeResolver().registerSubtypes(AccessJsonLayoutBaseFactory.class, EventJsonLayoutBaseFactory.class);
     }
@@ -75,12 +76,18 @@ public class LayoutIntegrationTests {
             EventAttribute.MESSAGE,
             EventAttribute.LOGGER_NAME,
             EventAttribute.EXCEPTION,
-            EventAttribute.TIMESTAMP);
+            EventAttribute.TIMESTAMP,
+            EventAttribute.CALLER_DATA);
         assertThat(factory.isFlattenMdc()).isTrue();
         assertThat(factory.getCustomFieldNames()).containsOnly(entry("timestamp", "@timestamp"));
         assertThat(factory.getAdditionalFields()).containsOnly(entry("service-name", "user-service"),
             entry("service-build", 218));
         assertThat(factory.getIncludesMdcKeys()).containsOnly("userId");
+
+        ExceptionFormat exceptionFormat = requireNonNull(factory.getExceptionFormat());
+        assertThat(exceptionFormat.getDepth()).isEqualTo("10");
+        assertThat(exceptionFormat.isRootFirst()).isFalse();
+        assertThat(exceptionFormat.getEvaluators()).contains("io.dropwizard");
     }
 
     @Test
@@ -101,7 +108,8 @@ public class LayoutIntegrationTests {
             AccessAttribute.REQUEST_PARAMETERS,
             AccessAttribute.REQUEST_CONTENT,
             AccessAttribute.TIMESTAMP,
-            AccessAttribute.USER_AGENT);
+            AccessAttribute.USER_AGENT,
+            AccessAttribute.PATH_QUERY);
         assertThat(factory.getResponseHeaders()).containsOnly("X-Request-Id");
         assertThat(factory.getRequestHeaders()).containsOnly("User-Agent", "X-Request-Id");
         assertThat(factory.getCustomFieldNames()).containsOnly(entry("statusCode", "status_code"),
@@ -115,6 +123,21 @@ public class LayoutIntegrationTests {
         ConsoleAppenderFactory<ILoggingEvent> consoleAppenderFactory = getAppenderFactory("yaml/json-log-default.yml");
         DefaultLoggingFactory defaultLoggingFactory = new DefaultLoggingFactory();
         defaultLoggingFactory.setAppenders(Collections.singletonList(consoleAppenderFactory));
+
+        DiscoverableLayoutFactory<?> layout = requireNonNull(consoleAppenderFactory.getLayout());
+        assertThat(layout).isInstanceOf(EventJsonLayoutBaseFactory.class);
+        EventJsonLayoutBaseFactory factory = (EventJsonLayoutBaseFactory) layout;
+        assertThat(factory).isNotNull();
+        assertThat(factory.getIncludes()).contains(EventAttribute.LEVEL,
+            EventAttribute.THREAD_NAME,
+            EventAttribute.MDC,
+            EventAttribute.LOGGER_NAME,
+            EventAttribute.MESSAGE,
+            EventAttribute.EXCEPTION,
+            EventAttribute.TIMESTAMP);
+        assertThat(factory.isFlattenMdc()).isFalse();
+        assertThat(factory.getIncludesMdcKeys()).isEmpty();
+        assertThat(factory.getExceptionFormat()).isNull();
 
         PrintStream old = System.out;
         ByteArrayOutputStream redirectedStream = new ByteArrayOutputStream();
@@ -154,7 +177,7 @@ public class LayoutIntegrationTests {
             when(request.getRemoteAddr()).thenReturn("10.0.0.1");
             when(request.getTimeStamp()).thenReturn(TimeUnit.SECONDS.toMillis(1353042047));
             when(request.getMethod()).thenReturn("GET");
-            when(request.getRequestURI()).thenReturn("/test/users?age=22&city=LA");
+            when(request.getRequestURI()).thenReturn("/test/users");
             when(request.getProtocol()).thenReturn("HTTP/1.1");
             when(request.getParameterNames()).thenReturn(Collections.enumeration(Arrays.asList("age", "city")));
             when(request.getParameterValues("age")).thenReturn(new String[]{"22"});
@@ -185,7 +208,7 @@ public class LayoutIntegrationTests {
             assertThat(jsonNode.get("remoteAddress").asText()).isEqualTo("10.0.0.1");
             assertThat(jsonNode.get("status").asInt()).isEqualTo(200);
             assertThat(jsonNode.get("method").asText()).isEqualTo("GET");
-            assertThat(jsonNode.get("uri").asText()).isEqualTo("/test/users?age=22&city=LA");
+            assertThat(jsonNode.get("uri").asText()).isEqualTo("/test/users");
             assertThat(jsonNode.get("protocol").asText()).isEqualTo("HTTP/1.1");
             assertThat(jsonNode.get("userAgent").asText()).isEqualTo("Mozilla/5.0");
             assertThat(jsonNode.get("contentLength").asInt()).isEqualTo(8290);

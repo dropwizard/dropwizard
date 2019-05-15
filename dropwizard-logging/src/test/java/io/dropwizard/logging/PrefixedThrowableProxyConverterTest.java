@@ -1,8 +1,8 @@
 package io.dropwizard.logging;
 
 import ch.qos.logback.classic.spi.ThrowableProxy;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -13,7 +13,7 @@ public class PrefixedThrowableProxyConverterTest {
     private final PrefixedThrowableProxyConverter converter = new PrefixedThrowableProxyConverter();
     private final ThrowableProxy proxy = new ThrowableProxy(new IOException("noo"));
 
-    @Before
+    @BeforeEach
     public void setup() {
         converter.setOptionList(Collections.singletonList("full"));
         converter.start();

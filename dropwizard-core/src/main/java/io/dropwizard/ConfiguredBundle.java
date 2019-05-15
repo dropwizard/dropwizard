@@ -17,12 +17,16 @@ public interface ConfiguredBundle<T> {
      * @param environment      the application's {@link Environment}
      * @throws Exception if something goes wrong
      */
-    void run(T configuration, Environment environment) throws Exception;
+    default void run(T configuration, Environment environment) throws Exception {
+        // Do nothing
+    }
 
     /**
      * Initializes the application bootstrap.
      *
      * @param bootstrap the application bootstrap
      */
-    void initialize(Bootstrap<?> bootstrap);
+    default void initialize(Bootstrap<?> bootstrap) {
+        // Do nothing
+    }
 }

@@ -7,6 +7,7 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.CaffeineSpec;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.github.benmanes.caffeine.cache.stats.CacheStats;
+import com.google.common.annotations.VisibleForTesting;
 import io.dropwizard.util.Sets;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
@@ -41,7 +42,10 @@ public class CachingAuthorizer<P extends Principal> implements Authorizer<P> {
     //
     // `null` cache values are interpreted as cache misses, and will
     // thus result in read through to the underlying `Authorizer`.
-    private final LoadingCache<ImmutablePair<P, String>, Boolean> cache;
+    //
+    // Field is package-private to be visible for unit tests
+    @VisibleForTesting
+    final LoadingCache<ImmutablePair<P, String>, Boolean> cache;
 
     /**
      * Creates a new cached authorizer.

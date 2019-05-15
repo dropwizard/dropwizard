@@ -1,6 +1,6 @@
 package io.dropwizard.logging.json.layout;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.time.ZoneId;
 import java.util.Collections;
@@ -34,7 +34,7 @@ public class MapBuilderTest {
 
     @Test
     public void testIncludeNumberValue() {
-        assertThat(mapBuilder.add("status", true, 200)
+        assertThat(mapBuilder.addNumber("status", true, 200)
             .build()).containsOnly(entry("status", 200));
     }
 
@@ -52,7 +52,7 @@ public class MapBuilderTest {
     @Test
     public void testDoNotIncludeNullNumberValue() {
         Double value = null;
-        assertThat(mapBuilder.add("status", true, value).build()).isEmpty();
+        assertThat(mapBuilder.addNumber("status", true, value).build()).isEmpty();
     }
 
     @Test
@@ -79,7 +79,7 @@ public class MapBuilderTest {
     @Test
     public void testReplaceNumberFieldName() {
         assertThat(new MapBuilder(timestampFormatter, Collections.singletonMap("status", "@status"), Collections.emptyMap(), size)
-            .add("status", true, 200)
+            .addNumber("status", true, 200)
             .build()).containsOnly(entry("@status", 200));
     }
 
@@ -88,5 +88,34 @@ public class MapBuilderTest {
         assertThat(new MapBuilder(timestampFormatter, Collections.emptyMap(), Collections.singletonMap("version", "1.8.3"), size)
             .add("message", true, message).build())
             .containsOnly(entry("message", message), entry("version", "1.8.3"));
+    }
+
+    @Test
+    public void testAddSupplier() {
+        assertThat(mapBuilder.add("message", true, () -> message).build())
+            .containsOnly(entry("message", message));
+    }
+    @Test
+    public void testAddNumberSupplier() {
+        assertThat(mapBuilder.addNumber("status", true, () -> 200)
+            .build()).containsOnly(entry("status", 200));
+    }
+    @Test
+    public void testAddMapSupplier() {
+        assertThat(mapBuilder.addMap("headers", true, () -> Collections.singletonMap("userAgent", "Lynx/2.8.7"))
+            .build()).containsOnly(entry("headers", Collections.singletonMap("userAgent", "Lynx/2.8.7")));
+    }
+
+    @Test
+    public void testAddSupplierNotInvoked() {
+        assertThat(mapBuilder.add("status", false, () -> {throw new RuntimeException();}).build()).isEmpty();
+    }
+    @Test
+    public void testAddNumberSupplierNotInvoked() {
+        assertThat(mapBuilder.addNumber("status", false, () -> {throw new RuntimeException();}).build()).isEmpty();
+    }
+    @Test
+    public void testAddMapSupplierNotInvoked() {
+        assertThat(mapBuilder.addMap("status", false, () -> {throw new RuntimeException();}).build()).isEmpty();
     }
 }

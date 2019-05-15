@@ -5,10 +5,10 @@ import org.eclipse.jetty.http.HttpTester;
 import org.eclipse.jetty.http.HttpVersion;
 import org.eclipse.jetty.http.MimeTypes;
 import org.eclipse.jetty.servlet.ServletTester;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.annotation.Nullable;
 import java.nio.charset.StandardCharsets;
@@ -61,7 +61,7 @@ public class AssetServletTest {
     @Nullable
     private HttpTester.Response response;
 
-    @BeforeClass
+    @BeforeAll
     public static void startServletTester() throws Exception {
         SERVLET_TESTER.addServlet(DummyAssetServlet.class, DUMMY_SERVLET + '*');
         SERVLET_TESTER.addServlet(NoIndexAssetServlet.class, NOINDEX_SERVLET + '*');
@@ -73,12 +73,12 @@ public class AssetServletTest {
         SERVLET_TESTER.getContext().getMimeTypes().addMimeMapping("m4a", "audio/mp4");
     }
 
-    @AfterClass
+    @AfterAll
     public static void stopServletTester() throws Exception {
         SERVLET_TESTER.stop();
     }
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         request.setMethod("GET");
         request.setURI(DUMMY_SERVLET + "example.txt");

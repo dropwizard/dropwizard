@@ -3,7 +3,7 @@ package io.dropwizard.jersey.caching;
 import io.dropwizard.jersey.AbstractJerseyTest;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import org.glassfish.jersey.server.ResourceConfig;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.HttpHeaders;

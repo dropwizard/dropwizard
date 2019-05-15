@@ -14,7 +14,7 @@ import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class DropwizardAppRuleTest {
-
+    @SuppressWarnings("deprecation")
     @ClassRule
     public static final DropwizardAppRule<TestConfiguration> RULE =
         new DropwizardAppRule<>(DropwizardTestApplication.class, resourceFilePath("test-config.yaml"));

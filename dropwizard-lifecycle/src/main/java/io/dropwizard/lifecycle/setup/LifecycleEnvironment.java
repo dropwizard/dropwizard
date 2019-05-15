@@ -1,5 +1,6 @@
 package io.dropwizard.lifecycle.setup;
 
+import com.codahale.metrics.MetricRegistry;
 import io.dropwizard.lifecycle.JettyManaged;
 import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.lifecycle.ServerLifecycleListener;
@@ -21,10 +22,12 @@ public class LifecycleEnvironment {
 
     private final List<LifeCycle> managedObjects;
     private final List<LifeCycle.Listener> lifecycleListeners;
+    private final MetricRegistry metricRegistry;
 
-    public LifecycleEnvironment() {
+    public LifecycleEnvironment(MetricRegistry metricRegistry) {
         this.managedObjects = new ArrayList<>();
         this.lifecycleListeners = new ArrayList<>();
+        this.metricRegistry = metricRegistry;
     }
 
     public List<LifeCycle> getManagedObjects() {
@@ -54,7 +57,7 @@ public class LifecycleEnvironment {
     public ExecutorServiceBuilder executorService(String nameFormat) {
         return new ExecutorServiceBuilder(this, nameFormat);
     }
-    
+
     public ExecutorServiceBuilder executorService(String nameFormat, ThreadFactory factory) {
         return new ExecutorServiceBuilder(this, nameFormat, factory);
     }
@@ -62,7 +65,7 @@ public class LifecycleEnvironment {
     public ScheduledExecutorServiceBuilder scheduledExecutorService(String nameFormat) {
         return scheduledExecutorService(nameFormat, false);
     }
-    
+
     public ScheduledExecutorServiceBuilder scheduledExecutorService(String nameFormat, ThreadFactory factory) {
         return new ScheduledExecutorServiceBuilder(this, nameFormat, factory);
     }
@@ -92,6 +95,10 @@ public class LifecycleEnvironment {
         for (LifeCycle.Listener listener : lifecycleListeners) {
             container.addLifeCycleListener(listener);
         }
+    }
+
+    public MetricRegistry getMetricRegistry() {
+        return metricRegistry;
     }
 
     private static class ServerListener extends AbstractLifeCycle.AbstractLifeCycleListener {

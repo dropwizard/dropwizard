@@ -5,6 +5,8 @@ import ch.qos.logback.classic.Logger;
 import com.codahale.metrics.jdbi.InstrumentedTimingCollector;
 import com.codahale.metrics.jdbi.strategies.DelegatingStatementNameStrategy;
 import com.codahale.metrics.jdbi.strategies.NameStrategies;
+
+import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.db.ManagedDataSource;
 import io.dropwizard.db.PooledDataSourceFactory;
 import io.dropwizard.jdbi.args.GuavaOptionalArgumentFactory;
@@ -134,7 +136,7 @@ public class DBIFactory {
         environment.lifecycle().manage(dataSource);
 
         // Setup the required health checks.
-        final String validationQuery = configuration.getValidationQuery();
+        final Optional<String> validationQuery = configuration.getValidationQuery();
         environment.healthChecks().register(name, new DBIHealthCheck(
             environment.getHealthCheckExecutorService(),
             configuration.getValidationQueryTimeout().orElseGet(() -> Duration.seconds(5)),

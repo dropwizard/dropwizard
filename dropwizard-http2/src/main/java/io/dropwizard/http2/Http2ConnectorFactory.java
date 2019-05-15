@@ -111,7 +111,7 @@ public class Http2ConnectorFactory extends HttpsConnectorFactory {
         final NegotiatingServerConnectionFactory alpn = new ALPNServerConnectionFactory(H2, H2_17);
         alpn.setDefaultProtocol(HTTP_1_1); // Speak HTTP 1.1 over TLS if negotiation fails
 
-        final SslContextFactory sslContextFactory = configureSslContextFactory(new SslContextFactory());
+        final SslContextFactory sslContextFactory = configureSslContextFactory(new SslContextFactory.Server());
         sslContextFactory.addLifeCycleListener(logSslInfoOnStart(sslContextFactory));
         server.addBean(sslContextFactory);
         server.addBean(new SslReload(sslContextFactory, this::configureSslContextFactory));

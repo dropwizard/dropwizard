@@ -1,14 +1,14 @@
 package io.dropwizard.validation.valuehandling;
 
 import org.hibernate.validator.HibernateValidator;
-import org.hibernate.validator.valuehandling.UnwrapValidatedValue;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.validation.valueextraction.Unwrapping;
 import java.util.Optional;
 import java.util.Set;
 
@@ -21,13 +21,11 @@ public class OptionalValidatedValueUnwrapperTest {
 
     public static class Example {
 
-        @Min(3)
-        @UnwrapValidatedValue
-        public Optional<Integer> three = Optional.empty();
+        @Min(value = 3, payload = Unwrapping.Unwrap.class)
+        Optional<Integer> three = Optional.empty();
 
-        @NotNull
-        @UnwrapValidatedValue
-        public Optional<Integer> notNull = Optional.of(123);
+        @NotNull(payload = Unwrapping.Unwrap.class)
+        Optional<Integer> notNull = Optional.of(123);
     }
 
     private final Validator validator = Validation

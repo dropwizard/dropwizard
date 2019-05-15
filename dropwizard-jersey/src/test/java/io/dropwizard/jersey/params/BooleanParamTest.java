@@ -1,7 +1,7 @@
 package io.dropwizard.jersey.params;
 
 import io.dropwizard.jersey.errors.ErrorMessage;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.annotation.Nullable;
 import javax.ws.rs.WebApplicationException;

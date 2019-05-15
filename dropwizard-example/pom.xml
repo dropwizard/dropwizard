@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>dropwizard-example</artifactId>
-    <version>1.4.0-SNAPSHOT</version>
+    <version>2.0.0-rc2-SNAPSHOT</version>
     <groupId>io.dropwizard</groupId>
     <name>Dropwizard Example Application</name>
 
@@ -16,19 +16,14 @@
         <!-- You'll probably want to remove this for your project. We're just using it here
              so that dropwizard-example doesn't get deployed as a library. -->
         <maven.deploy.skip>true</maven.deploy.skip>
-        <!-- You'll probably want to remove this for your project. We'Re just using it here
+        <!-- You'll probably want to remove this for your project. We're just using it here
              so that dropwizard-example site doesn't get staged and deployed. -->
         <maven.site.skip>true</maven.site.skip>
         <maven.site.deploy.skip>true</maven.site.deploy.skip>
-    </properties>
+        <skipNexusStagingDeployMojo>true</skipNexusStagingDeployMojo>
 
-    <repositories>
-        <repository>
-            <id>sonatype-nexus-snapshots</id>
-            <name>Sonatype Nexus Snapshots</name>
-            <url>http://oss.sonatype.org/content/repositories/snapshots</url>
-        </repository>
-    </repositories>
+        <junit5.version>5.4.2</junit5.version>
+    </properties>
 
     <dependencyManagement>
         <dependencies>
@@ -87,6 +82,18 @@
             <groupId>io.dropwizard</groupId>
             <artifactId>dropwizard-testing</artifactId>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>junit</groupId>
+                    <artifactId>junit</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${junit5.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
@@ -141,7 +148,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.22.0</version>
+                    <version>2.22.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -166,12 +173,12 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
-                    <version>3.1.0</version>
+                    <version>3.1.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-shade-plugin</artifactId>
-                    <version>3.1.1</version>
+                    <version>3.2.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -258,29 +265,9 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>3.0.0</version>
-                <configuration>
-                    <configLocation>../checkstyle.xml</configLocation>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>checkstyle</id>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                        <configuration>
-                            <failOnViolation>true</failOnViolation>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.1</version>
+                <version>0.8.3</version>
                 <executions>
                     <execution>
                         <id>prepare-agent</id>
@@ -310,28 +297,6 @@
                 </plugins>
             </build>
         </profile>
-        <profile>
-            <id>jdk9</id>
-            <activation>
-                <jdk>9</jdk>
-            </activation>
-            <properties>
-                <maven.compiler.release>9</maven.compiler.release>
-                <maven.compiler.source>1.9</maven.compiler.source>
-                <maven.compiler.target>1.9</maven.compiler.target>
-            </properties>
-        </profile>
-         <profile>
-            <id>jdk10</id>
-            <activation>
-                <jdk>10</jdk>
-            </activation>
-            <properties>
-                <maven.compiler.release>10</maven.compiler.release>
-                <maven.compiler.source>1.10</maven.compiler.source>
-                <maven.compiler.target>1.10</maven.compiler.target>
-            </properties>
-        </profile>
          <profile>
             <id>jdk11</id>
             <activation>
@@ -341,8 +306,6 @@
                 <maven.compiler.release>11</maven.compiler.release>
                 <maven.compiler.source>11</maven.compiler.source>
                 <maven.compiler.target>11</maven.compiler.target>
-                <!-- https://github.com/jacoco/jacoco/issues/663 -->
-                <jacoco.skip>true</jacoco.skip>
             </properties>
         </profile>
     </profiles>

@@ -5,8 +5,8 @@ import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.db.ManagedPooledDataSource;
 import net.jcip.annotations.NotThreadSafe;
 import org.apache.tomcat.jdbc.pool.ConnectionPool;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -16,7 +16,7 @@ public class CloseableLiquibaseTest {
     CloseableLiquibase liquibase;
     ManagedPooledDataSource dataSource;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         DataSourceFactory factory = new DataSourceFactory();
 

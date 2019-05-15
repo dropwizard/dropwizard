@@ -23,6 +23,7 @@ User Manual
     views
     scala
     testing
+    upgrade-notes
     example
     configuration
     internals

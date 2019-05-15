@@ -10,16 +10,9 @@ import io.dropwizard.Configuration;
 import io.dropwizard.configuration.DefaultConfigurationFactoryFactory;
 import io.dropwizard.configuration.FileConfigurationSourceProvider;
 import io.dropwizard.jackson.Jackson;
-import io.dropwizard.jersey.validation.NonEmptyStringParamUnwrapper;
-import io.dropwizard.jersey.validation.ParamValidatorUnwrapper;
-import io.dropwizard.validation.valuehandling.GuavaOptionalValidatedValueUnwrapper;
-import io.dropwizard.validation.valuehandling.OptionalDoubleValidatedValueUnwrapper;
-import io.dropwizard.validation.valuehandling.OptionalIntValidatedValueUnwrapper;
-import io.dropwizard.validation.valuehandling.OptionalLongValidatedValueUnwrapper;
 import org.hibernate.validator.HibernateValidator;
-import org.hibernate.validator.internal.engine.ValidatorFactoryImpl;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.validation.Validation;
 import javax.validation.ValidatorFactory;
@@ -34,7 +27,7 @@ public class BootstrapTest {
     };
     private Bootstrap<Configuration> bootstrap;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         bootstrap = new Bootstrap<>(application);
     }
@@ -98,26 +91,6 @@ public class BootstrapTest {
         assertThat(newRegistry.getNames())
                 .contains("jvm.buffers.mapped.capacity", "jvm.threads.count", "jvm.memory.heap.usage",
                         "jvm.attribute.vendor", "jvm.classloader.loaded", "jvm.filedescriptor");
-    }
-
-    @Test
-    public void defaultsToDefaultValidatorFactory() throws Exception {
-        assertThat(bootstrap.getValidatorFactory()).isInstanceOf(ValidatorFactoryImpl.class);
-
-        ValidatorFactoryImpl validatorFactory = (ValidatorFactoryImpl) bootstrap.getValidatorFactory();
-
-        // It's imperative that the NonEmptyString validator come before the general param validator
-        // because a NonEmptyString is a param that wraps an optional and the Hibernate Validator
-        // can't unwrap nested classes it knows how to unwrap.
-        // https://hibernate.atlassian.net/browse/HV-904
-        assertThat(validatorFactory.getValidatedValueHandlers())
-                .extractingResultOf("getClass")
-                .containsSubsequence(GuavaOptionalValidatedValueUnwrapper.class,
-                                     OptionalDoubleValidatedValueUnwrapper.class,
-                                     OptionalIntValidatedValueUnwrapper.class,
-                                     OptionalLongValidatedValueUnwrapper.class,
-                                     NonEmptyStringParamUnwrapper.class,
-                                     ParamValidatorUnwrapper.class);
     }
 
     @Test

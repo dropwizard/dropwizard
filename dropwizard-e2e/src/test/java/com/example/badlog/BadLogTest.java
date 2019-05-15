@@ -4,11 +4,10 @@ import io.dropwizard.Configuration;
 import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.DropwizardTestSupport;
 import io.dropwizard.testing.ResourceHelpers;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,10 +27,7 @@ public class BadLogTest {
     private static PrintStream oldOut = System.out;
     private static PrintStream oldErr = System.err;
 
-    @Rule
-    public TemporaryFolder folder = new TemporaryFolder();
-
-    @Before
+    @BeforeEach
     public void setup() throws Exception {
         out = new ByteArrayOutputStream();
         err = new ByteArrayOutputStream();
@@ -39,7 +35,7 @@ public class BadLogTest {
         System.setErr(new PrintStream(err));
     }
 
-    @After
+    @AfterEach
     public void teardown() {
         System.setOut(oldOut);
         System.setErr(oldErr);
@@ -60,16 +56,22 @@ public class BadLogTest {
     }
 
     @Test
-    public void testSupportShouldResetLogging() throws Exception {
-        final Path logFile = folder.newFile("example.log").toPath();
+    public void testSupportShouldResetLogging(@TempDir Path tempDir) throws Exception {
+        final Path logFile = tempDir.resolve("example.log");
 
         // Clear out the log file
         Files.write(logFile, new byte[]{});
 
+        final ConfigOverride logOverride = ConfigOverride.config("logging.appenders[0].currentLogFilename", logFile.toString());
         final String configPath = ResourceHelpers.resourceFilePath("badlog/config.yaml");
-        final DropwizardTestSupport<Configuration> app = new DropwizardTestSupport<>(BadLogApp.class, configPath,
-            ConfigOverride.config("logging.appenders[0].currentLogFilename", logFile.toString()));
+        final DropwizardTestSupport<Configuration> app = new DropwizardTestSupport<>(BadLogApp.class, configPath, logOverride);
         assertThatThrownBy(app::before).hasMessage("I'm a bad app");
+
+        // Dropwizard test support resets configuration overrides if `before` throws an exception
+        // which is fine, as that would normally signal the end of the test, but since we're
+        // testing logging behavior that is setup in the application `run` method, we need
+        // to ensure our log override is still present (it's removed again in `after`)
+        logOverride.addToSystemProperties();
 
         // Explicitly run the command so that the fatal error function runs
         app.getApplication().run("server", configPath);
@@ -109,9 +111,11 @@ public class BadLogTest {
         // Clear out the log file
         Files.write(logFile, new byte[]{});
 
-        final DropwizardTestSupport<Configuration> app3 = new DropwizardTestSupport<>(BadLogApp.class, configPath,
-            ConfigOverride.config("logging.appenders[0].currentLogFilename", logFile.toString()));
+        final DropwizardTestSupport<Configuration> app3 = new DropwizardTestSupport<>(BadLogApp.class, configPath, logOverride);
         assertThatThrownBy(app3::before).hasMessage("I'm a bad app");
+
+        // See comment above about manually adding config to system properties
+        logOverride.addToSystemProperties();
 
         // Explicitly run the command so that the fatal error function runs
         app3.getApplication().run("server", configPath);

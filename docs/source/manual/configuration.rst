@@ -63,8 +63,11 @@ rootPath                            ``/*``                                      
 registerDefaultExceptionMappers     true                                             Whether or not the default Jersey ExceptionMappers should be registered.
                                                                                      Set this to false if you want to register your own.
 enableThreadNameFilter              true                                             Whether or not to apply the ``ThreadNameFilter`` that adjusts thread names to include the request method and request URI.
+dumpAfterStart                      false                                            Whether or not to dump `Jetty Diagnostics`_ after start.
+dumpBeforeStop                      false                                            Whether or not to dump `Jetty Diagnostics`_ before stop.
 =================================== ===============================================  =============================================================================
 
+.. _Jetty Diagnostics: https://www.eclipse.org/jetty/documentation/9.4.x/jetty-dump-tool.html
 
 .. _man-configuration-gzip:
 
@@ -81,8 +84,8 @@ GZip
 +---------------------------+---------------------+------------------------------------------------------------------------------------------------------+
 |     Name                  | Default             | Description                                                                                          |
 +===========================+=====================+======================================================================================================+
-| enabled                   | true                | If true, all requests with ``gzip`` or ``deflate`` in the ``Accept-Encoding`` header will have their |
-|                           |                     | response entities compressed and requests with ``gzip`` or ``deflate`` in the ``Content-Encoding``   |
+| enabled                   | true                | If true, all requests with ``gzip`` in the ``Accept-Encoding`` header will have their                |
+|                           |                     | response entities compressed and requests with ``gzip`` in the ``Content-Encoding``                  |
 |                           |                     | header will have their request entities decompressed.                                                |
 +---------------------------+---------------------+------------------------------------------------------------------------------------------------------+
 | minimumEntitySize         | 256 bytes           | All response entities under this size are not compressed.                                            |
@@ -96,9 +99,9 @@ GZip
 +---------------------------+---------------------+------------------------------------------------------------------------------------------------------+
 | includedMethods           | Jetty's default     | The list of HTTP methods to compress. The default is to compress only GET responses.                 |
 +---------------------------+---------------------+------------------------------------------------------------------------------------------------------+
-| deflateCompressionLevel   | -1                  | The compression level used for ZLIB deflation(compression).                                          |
+| deflateCompressionLevel   | -1                  | The compression level used for deflation(compression).                                               |
 +---------------------------+---------------------+------------------------------------------------------------------------------------------------------+
-| gzipCompatibleInflation   | true                | If true, then ZLIB inflation(decompression) will be performed in the GZIP-compatible mode.           |
+| gzipCompatibleInflation   | true                | This option is unused and deprecated as compressed requests without header info are unsupported      |
 +---------------------------+---------------------+------------------------------------------------------------------------------------------------------+
 | syncFlush                 | false               | The flush mode. Set to true if the application wishes to stream (e.g. SSE) the data,                 |
 |                           |                     | but this may hurt compression performance (as all pending output is flushed).                        |
@@ -310,7 +313,7 @@ HTTP
           reuseAddress: true
           useServerHeader: false
           useDateHeader: true
-          useForwardedHeaders: true
+          useForwardedHeaders: false
           httpCompliance: RFC7230
 
 
@@ -354,7 +357,7 @@ acceptQueueSize          (OS default)        The size of the TCP/IP accept queue
 reuseAddress             true                Whether or not ``SO_REUSEADDR`` is enabled on the listening socket.
 useServerHeader          false               Whether or not to add the ``Server`` header to each response.
 useDateHeader            true                Whether or not to add the ``Date`` header to each response.
-useForwardedHeaders      true                Whether or not to look at ``X-Forwarded-*`` headers added by proxies. See
+useForwardedHeaders      false               Whether or not to look at ``X-Forwarded-*`` headers added by proxies. See
                                              `ForwardedRequestCustomizer`_ for details.
 httpCompliance           RFC7230             This sets the http compliance level used by Jetty when parsing http, this
                                              can be useful when using a non-RFC7230 compliant front end, such as nginx,
@@ -367,8 +370,8 @@ httpCompliance           RFC7230             This sets the http compliance level
                                              * RFC2616: Allow header folding.
 ======================== ==================  ======================================================================================
 
-.. _`java.net.Socket#setSoTimeout(int)`: http://docs.oracle.com/javase/7/docs/api/java/net/Socket.html#setSoTimeout(int)
-.. _`ForwardedRequestCustomizer`: http://download.eclipse.org/jetty/stable-9/apidocs/org/eclipse/jetty/server/ForwardedRequestCustomizer.html
+.. _`java.net.Socket#setSoTimeout(int)`: https://docs.oracle.com/javase/8/docs/api/java/net/Socket.html#setSoTimeout-int-
+.. _`ForwardedRequestCustomizer`: https://www.eclipse.org/jetty/javadoc/9.4.12.v20180830/org/eclipse/jetty/server/ForwardedRequestCustomizer.html
 
 .. _`Server::Starter`:  https://github.com/kazuho/p5-Server-Starter
 
@@ -619,10 +622,11 @@ Name                   Default                                  Description
 type                   REQUIRED                                 The appender type. Must be ``console``.
 threshold              ALL                                      The lowest level of events to print to the console.
 queueSize              256                                      The maximum capacity of the blocking queue.
-discardingThreshold    51                                       When the blocking queue has only the capacity mentioned in
+discardingThreshold    -1                                       When the blocking queue has only the capacity mentioned in
                                                                 discardingThreshold remaining, it will drop events of level TRACE,
                                                                 DEBUG and INFO, keeping only events of level WARN and ERROR.
-                                                                If no discarding threshold is specified, then a default of queueSize / 5 is used.
+                                                                If no discarding threshold is specified (-1), then a default of 
+                                                                queueSize / 5 (logback's default ratio) is used.
                                                                 To keep all events, set discardingThreshold to 0.
 timeZone               UTC                                      The time zone to which event timestamps will be converted.
                                                                 To use the system/default time zone, set it to ``system``.
@@ -630,6 +634,7 @@ target                 stdout                                   The name of the 
                                                                 Can be ``stdout`` or ``stderr``.
 logFormat              %-5p [%d{ISO8601,UTC}] %c: %m%n%rEx      The Logback pattern with which events will be formatted. See
                                                                 the Logback_ documentation for details.
+                                                                The default log pattern is ```%h %l %u [%t{dd/MMM/yyyy:HH:mm:ss Z,UTC}] "%r" %s %b "%i{Referer}" "%i{User-Agent}" %D```.
 filterFactories        (none)                                   The list of filters to apply to the appender, in order, after
                                                                 the threshold.
 neverBlock             false                                    Prevent the wrapping asynchronous appender from blocking when its underlying queue is full.
@@ -659,7 +664,7 @@ File
           archivedFileCount: 5
           timeZone: UTC
           logFormat: "%-5p [%d{ISO8601,UTC}] %c: %m%n%rEx"
-          bufferSize: 8KB
+          bufferSize: 8KiB
           immediateFlush: true
           filterFactories:
             - type: URI
@@ -672,10 +677,11 @@ type                         REQUIRED                                   The appe
 currentLogFilename           REQUIRED                                   The filename where current events are logged.
 threshold                    ALL                                        The lowest level of events to write to the file.
 queueSize                    256                                        The maximum capacity of the blocking queue.
-discardingThreshold          51                                         When the blocking queue has only the capacity mentioned in discardingThreshold
+discardingThreshold          -1                                         When the blocking queue has only the capacity mentioned in discardingThreshold
                                                                         remaining, it will drop events of level TRACE, DEBUG and INFO, keeping only events
-                                                                        of level WARN and ERROR. If no discarding threshold is specified, then a default
-                                                                        of queueSize / 5 is used. To keep all events, set discardingThreshold to 0.
+                                                                        of level WARN and ERROR. If no discarding threshold is specified (-1), then a default
+                                                                        of queueSize / 5 (logback's default ratio) is used. To keep all events, set 
+                                                                        discardingThreshold to 0.
 archive                      true                                       Whether or not to archive old events in separate files.
 archivedLogFilenamePattern   (none)                                     Required if ``archive`` is ``true``.
                                                                         The filename pattern for archived files.
@@ -687,18 +693,22 @@ archivedLogFilenamePattern   (none)                                     Required
 archivedFileCount            5                                          The number of archived files to keep. Must be greater than or equal to ``0``. Zero is a
                                                                         special value signifying to keep infinite logs (use with caution)
 maxFileSize                  (unlimited)                                The maximum size of the currently active file before a rollover is triggered. The value can be
-                                                                        expressed in bytes, kilobytes, megabytes, gigabytes, and terabytes by appending B, K, MB, GB, or
-                                                                        TB to the numeric value.  Examples include 100MB, 1GB, 1TB.  Sizes can also be spelled out, such
-                                                                        as 100 megabytes, 1 gigabyte, 1 terabyte.
+                                                                        expressed in bytes, kibibytes, kilobytes, mebibytes, megabytes, gibibytes, gigabytes, tebibytes,
+                                                                        terabytes, pebibytes, and petabytes by appending B, KiB, KB, MiB, MB, GiB, GB, TiB, TB, PiB, or PB
+                                                                        to the numeric value.  Examples include 5KiB, 100MiB, 1GiB, 1TB.  Sizes can also be spelled out, such
+                                                                        as 5 kibibytes, 100 mebibytes, 1 gibibyte, 1 terabyte.
+totalSizeCap                 (unlimited)                                Controls the total size of all files.
+                                                                        Oldest archives are deleted asynchronously when the total size cap is exceeded.
 timeZone                     UTC                                        The time zone to which event timestamps will be converted.
 logFormat                    %-5p [%d{ISO8601,UTC}] %c: %m%n%rEx        The Logback pattern with which events will be formatted. See
                                                                         the Logback_ documentation for details.
+                                                                        The default log pattern is ```%h %l %u [%t{dd/MMM/yyyy:HH:mm:ss Z,UTC}] "%r" %s %b "%i{Referer}" "%i{User-Agent}" %D```.
 filterFactories              (none)                                     The list of filters to apply to the appender, in order, after
                                                                         the threshold.
 neverBlock                   false                                      Prevent the wrapping asynchronous appender from blocking when its underlying queue is full.
                                                                         Set to true to disable blocking.
-bufferSize                   8KB                                        The buffer size of the underlying FileAppender (setting added in logback 1.1.10). Increasing this
-                                                                        from the default of 8KB to 256KB is reported to significantly reduce thread contention.
+bufferSize                   8KiB                                       The buffer size of the underlying FileAppender (setting added in logback 1.1.10). Increasing this
+                                                                        from the default of 8KiB to 256KiB is reported to significantly reduce thread contention.
 immediateFlush               true                                       If set to true, log events will be immediately flushed to disk. Immediate flushing is safer, but
                                                                         it degrades logging throughput.
 ============================ =========================================  ==================================================================================================
@@ -738,6 +748,7 @@ facility                     local0                                 The syslog f
 threshold                    ALL                                    The lowest level of events to write to the file.
 logFormat                    %-5p [%d{ISO8601,UTC}] %c: %m%n%rEx    The Logback pattern with which events will be formatted. See
                                                                     the Logback_ documentation for details.
+                                                                    The default log pattern is ```%h %l %u [%t{dd/MMM/yyyy:HH:mm:ss Z,UTC}] "%r" %s %b "%i{Referer}" "%i{User-Agent}" %D```.
 stackTracePrefix             \t                                     The prefix to use when writing stack trace lines (these are sent
                                                                     to the syslog server separately from the main message)
 filterFactories              (none)                                 The list of filters to apply to the appender, in order, after
@@ -762,7 +773,7 @@ TCP
           port: 4560
           connectionTimeout: 500ms
           immediateFlush: true
-          sendBufferSize: 8KB
+          sendBufferSize: 8KiB
 
 
 ============================ =============  ==================================================================
@@ -773,7 +784,7 @@ port                         4560           The port on which the TCP server is 
 connectionTimeout            500ms          The timeout to connect to the TCP server.
 immediateFlush               true           If set to true, log events will be immediately send to the server
                                             Immediate flushing is safer, but it degrades logging throughput.
-sendBufferSize               8KB            The buffer size of the underlying SocketAppender.
+sendBufferSize               8KiB           The buffer size of the underlying SocketAppender.
                                             Takes into effect if immediateFlush is disabled.
 ============================ =============  ==================================================================
 
@@ -840,6 +851,11 @@ JSON layout
       additionalFields:
         service-name: "user-service"
       includesMdcKeys: [userId]
+      flattenMDC: true
+      exception:
+        rootFirst: true
+        depth: full
+        evaluators: [org.apache]
 
 
 =======================  =====================  ================
@@ -866,9 +882,37 @@ includes                 (timestamp, level,
 customFieldNames         (empty)                Map of field name replacements . For example ``(requestTime:request_time, userAgent:user_agent)``.
 additionalFields         (empty)                Map of fields to add in the JSON map.
 includesMdcKeys          (empty)                Set of MDC keys which should be included in the JSON map. By default includes everything.
+flattenMdc               false                  Flatten the MDC to the root of the JSON object instead of nested in the ``mdc`` field.
+exception                (empty)                The :ref:`exception <man-configuration-json-layout-exception>` configuration for the ``exception`` field.
 =======================  =====================  ================
 
 .. _DateTimeFormatter:  https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html
+
+.. _man-configuration-json-layout-exception:
+
+Exception
+.........
+
+.. code-block:: yaml
+
+    layout:
+      type: json
+      exception:
+        rootFirst: false
+        depth: 25
+        evaluators: [org.apache]
+
+
+====================== ===========  ================================
+Name                   Default      Description
+====================== ===========  ================================
+rootFirst              true         Whether the root cause should be displayed first.
+depth                  full         The stack trace depth_.
+evaluators             (empty)      The packages to filter_ from the stacktrace.
+====================== ===========  ================================
+
+.. _depth:  https://logback.qos.ch/manual/layouts.html#ex
+.. _filter:  https://github.com/qos-ch/logback/pull/244
 
 .. _man-configuration-json-access-layout:
 
@@ -917,10 +961,11 @@ includes                 (timestamp, remoteAddress,
                                                       - ``timestamp``         *true*     Whether to include the timestamp of the event the ``timestamp`` field.
                                                       - ``userAgent``         *true*     Whether to include the user agent of the request as the ``userAgent`` field.
                                                       - ``requestParameters`` *false*    Whether to include the request parameters as the ``params`` field.
-                                                      - ``requestContent``    *false*    Whether to include the body of the request as the ``requestContent`` field.
-                                                      - ``requestUrl``        *false*    Whether to include the request URL (method, URI, query parameters, protocol) as the ``contentLength`` field.
+                                                      - ``requestContent``    *false*    Whether to include the body of the request as the ``requestContent`` field. Must register_ the TeeFilter_ to be effective.
+                                                      - ``requestUrl``        *false*    Whether to include the request URL (method, URI, query parameters, protocol) as the ``url`` field.
+                                                      - ``pathQuery``         *false*    Whether to include the URI and query parameters of the request as the ``pathQuery`` field.
                                                       - ``remoteHost``        *false*    Whether to include the fully qualified name of the client or the last proxy that sent the request as the ``remoteHost`` field.
-                                                      - ``responseContent``   *false*    Whether to include the response body as the ``responseContent`` field.
+                                                      - ``responseContent``   *false*    Whether to include the response body as the ``responseContent`` field. Must register_ the TeeFilter_ to be effective.
                                                       - ``serverName``        *false*    Whether to include the name of the server to which the request was sent as the ``serverName`` field.
 requestHeaders           (empty)                      Set of request headers included in the JSON map as the ``headers`` field.
 responseHeaders          (empty)                      Set of response headers included in the JSON map as the ``responseHeaders`` field.
@@ -930,12 +975,16 @@ additionalFields         (empty)                      Map of fields to add in th
 
 .. _DateTimeFormatter:  https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html
 
+.. _TeeFilter: https://logback.qos.ch/access.html#teeFilter           
+
+.. _register: https://github.com/dropwizard/dropwizard/issues/2045#issuecomment-299149563
+
 .. _man-configuration-metrics:
 
 Metrics
 =======
 
-The metrics configuration has two fields; frequency and reporters.
+The metrics configuration has three fields; frequency, reporters and reportOnStop.
 
 .. code-block:: yaml
 
@@ -943,6 +992,7 @@ The metrics configuration has two fields; frequency and reporters.
       frequency: 1 minute
       reporters:
         - type: <type>
+      reportOnStop: false
 
 
 ====================== ===========  ===========
@@ -950,6 +1000,7 @@ Name                   Default      Description
 ====================== ===========  ===========
 frequency              1 minute     The frequency to report metrics. Overridable per-reporter.
 reporters              (none)       A list of reporters to report metrics.
+reportOnStop           false        To report metrics one last time when stopping Dropwizard.
 ====================== ===========  ===========
 
 

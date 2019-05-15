@@ -4,9 +4,9 @@ import io.dropwizard.util.Resources;
 import net.jcip.annotations.NotThreadSafe;
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -43,12 +43,12 @@ public class DbDumpCommandTest extends AbstractMigrationTest {
     private final ByteArrayOutputStream baos = new ByteArrayOutputStream();
     private TestMigrationConfiguration existedDbConf;
 
-    @BeforeClass
+    @BeforeAll
     public static void initXmlParser() throws Exception {
         xmlParser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
     }
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         final String existedDbPath = new File(Resources.getResource("test-db.mv.db").toURI()).getAbsolutePath();
         final String existedDbUrl = "jdbc:h2:" + StringUtils.removeEnd(existedDbPath, ".mv.db");

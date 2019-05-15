@@ -7,7 +7,7 @@ import io.dropwizard.jersey.MyMessage;
 import io.dropwizard.jersey.MyMessageParamConverterProvider;
 import io.dropwizard.jersey.params.UUIDParam;
 import org.glassfish.jersey.internal.util.collection.MultivaluedStringMap;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;

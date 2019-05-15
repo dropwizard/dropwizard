@@ -1,14 +1,14 @@
 package io.dropwizard.util;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class SizeUnitTest {
+@SuppressWarnings("deprecation")
+class SizeUnitTest {
     // BYTES
-
     @Test
-    public void oneByteInBytes() throws Exception {
+    void oneByteInBytes() {
         assertThat(SizeUnit.BYTES.convert(1, SizeUnit.BYTES))
                 .isEqualTo(1);
 
@@ -16,9 +16,8 @@ public class SizeUnitTest {
                 .isEqualTo(1);
     }
 
-
     @Test
-    public void oneByteInKilobytes() throws Exception {
+    void oneByteInKilobytes() {
         assertThat(SizeUnit.KILOBYTES.convert(1, SizeUnit.BYTES))
                 .isZero();
 
@@ -27,7 +26,7 @@ public class SizeUnitTest {
     }
 
     @Test
-    public void oneByteInMegabytes() throws Exception {
+    void oneByteInMegabytes() {
         assertThat(SizeUnit.MEGABYTES.convert(1, SizeUnit.BYTES))
                 .isZero();
 
@@ -36,7 +35,7 @@ public class SizeUnitTest {
     }
 
     @Test
-    public void oneByteInGigabytes() throws Exception {
+    void oneByteInGigabytes() {
         assertThat(SizeUnit.GIGABYTES.convert(1, SizeUnit.BYTES))
                 .isZero();
 
@@ -45,7 +44,7 @@ public class SizeUnitTest {
     }
 
     @Test
-    public void oneByteInTerabytes() throws Exception {
+    void oneByteInTerabytes() {
         assertThat(SizeUnit.TERABYTES.convert(1, SizeUnit.BYTES))
                 .isZero();
 
@@ -56,7 +55,7 @@ public class SizeUnitTest {
     // KILOBYTES
 
     @Test
-    public void oneKilobyteInBytes() throws Exception {
+    void oneKilobyteInBytes() {
         assertThat(SizeUnit.BYTES.convert(1, SizeUnit.KILOBYTES))
                 .isEqualTo(1024);
 
@@ -65,7 +64,7 @@ public class SizeUnitTest {
     }
 
     @Test
-    public void oneKilobyteInKilobytes() throws Exception {
+    void oneKilobyteInKilobytes() {
         assertThat(SizeUnit.KILOBYTES.convert(1, SizeUnit.KILOBYTES))
                 .isEqualTo(1);
 
@@ -74,7 +73,7 @@ public class SizeUnitTest {
     }
 
     @Test
-    public void oneKilobyteInMegabytes() throws Exception {
+    void oneKilobyteInMegabytes() {
         assertThat(SizeUnit.MEGABYTES.convert(1, SizeUnit.KILOBYTES))
                 .isZero();
 
@@ -83,7 +82,7 @@ public class SizeUnitTest {
     }
 
     @Test
-    public void oneKilobyteInGigabytes() throws Exception {
+    void oneKilobyteInGigabytes() {
         assertThat(SizeUnit.GIGABYTES.convert(1, SizeUnit.KILOBYTES))
                 .isZero();
 
@@ -92,7 +91,7 @@ public class SizeUnitTest {
     }
 
     @Test
-    public void oneKilobyteInTerabytes() throws Exception {
+    void oneKilobyteInTerabytes() {
         assertThat(SizeUnit.TERABYTES.convert(1, SizeUnit.KILOBYTES))
                 .isZero();
 
@@ -103,7 +102,7 @@ public class SizeUnitTest {
     // MEGABYTES
 
     @Test
-    public void oneMegabyteInBytes() throws Exception {
+    void oneMegabyteInBytes() {
         assertThat(SizeUnit.BYTES.convert(1, SizeUnit.MEGABYTES))
                 .isEqualTo(1048576);
 
@@ -112,7 +111,7 @@ public class SizeUnitTest {
     }
 
     @Test
-    public void oneMegabyteInKilobytes() throws Exception {
+    void oneMegabyteInKilobytes() {
         assertThat(SizeUnit.KILOBYTES.convert(1, SizeUnit.MEGABYTES))
                 .isEqualTo(1024);
 
@@ -121,7 +120,7 @@ public class SizeUnitTest {
     }
 
     @Test
-    public void oneMegabyteInMegabytes() throws Exception {
+    void oneMegabyteInMegabytes() {
         assertThat(SizeUnit.MEGABYTES.convert(1, SizeUnit.MEGABYTES))
                 .isEqualTo(1);
 
@@ -130,7 +129,7 @@ public class SizeUnitTest {
     }
 
     @Test
-    public void oneMegabyteInGigabytes() throws Exception {
+    void oneMegabyteInGigabytes() {
         assertThat(SizeUnit.GIGABYTES.convert(1, SizeUnit.MEGABYTES))
                 .isZero();
 
@@ -139,7 +138,7 @@ public class SizeUnitTest {
     }
 
     @Test
-    public void oneMegabyteInTerabytes() throws Exception {
+    void oneMegabyteInTerabytes() {
         assertThat(SizeUnit.TERABYTES.convert(1, SizeUnit.MEGABYTES))
                 .isZero();
 
@@ -150,7 +149,7 @@ public class SizeUnitTest {
     // GIGABYTES
 
     @Test
-    public void oneGigabyteInBytes() throws Exception {
+    void oneGigabyteInBytes() {
         assertThat(SizeUnit.BYTES.convert(1, SizeUnit.GIGABYTES))
                 .isEqualTo(1073741824);
 
@@ -159,7 +158,7 @@ public class SizeUnitTest {
     }
 
     @Test
-    public void oneGigabyteInKilobytes() throws Exception {
+    void oneGigabyteInKilobytes() {
         assertThat(SizeUnit.KILOBYTES.convert(1, SizeUnit.GIGABYTES))
                 .isEqualTo(1048576);
 
@@ -168,7 +167,7 @@ public class SizeUnitTest {
     }
 
     @Test
-    public void oneGigabyteInMegabytes() throws Exception {
+    void oneGigabyteInMegabytes() {
         assertThat(SizeUnit.MEGABYTES.convert(1, SizeUnit.GIGABYTES))
                 .isEqualTo(1024);
 
@@ -177,7 +176,7 @@ public class SizeUnitTest {
     }
 
     @Test
-    public void oneGigabyteInGigabytes() throws Exception {
+    void oneGigabyteInGigabytes() {
         assertThat(SizeUnit.GIGABYTES.convert(1, SizeUnit.GIGABYTES))
                 .isEqualTo(1L);
 
@@ -186,7 +185,7 @@ public class SizeUnitTest {
     }
 
     @Test
-    public void oneGigabyteInTerabytes() throws Exception {
+    void oneGigabyteInTerabytes() {
         assertThat(SizeUnit.TERABYTES.convert(1, SizeUnit.GIGABYTES))
                 .isZero();
 
@@ -197,7 +196,7 @@ public class SizeUnitTest {
     // TERABYTES
 
     @Test
-    public void oneTerabyteInBytes() throws Exception {
+    void oneTerabyteInBytes() {
         assertThat(SizeUnit.BYTES.convert(1, SizeUnit.TERABYTES))
                 .isEqualTo(1099511627776L);
 
@@ -206,7 +205,7 @@ public class SizeUnitTest {
     }
 
     @Test
-    public void oneTerabyteInKilobytes() throws Exception {
+    void oneTerabyteInKilobytes() {
         assertThat(SizeUnit.KILOBYTES.convert(1, SizeUnit.TERABYTES))
                 .isEqualTo(1073741824L);
 
@@ -215,7 +214,7 @@ public class SizeUnitTest {
     }
 
     @Test
-    public void oneTerabyteInMegabytes() throws Exception {
+    void oneTerabyteInMegabytes() {
         assertThat(SizeUnit.MEGABYTES.convert(1, SizeUnit.TERABYTES))
                 .isEqualTo(1048576);
 
@@ -224,7 +223,7 @@ public class SizeUnitTest {
     }
 
     @Test
-    public void oneTerabyteInGigabytes() throws Exception {
+    void oneTerabyteInGigabytes() {
         assertThat(SizeUnit.GIGABYTES.convert(1, SizeUnit.TERABYTES))
                 .isEqualTo(1024);
 
@@ -233,11 +232,20 @@ public class SizeUnitTest {
     }
 
     @Test
-    public void oneTerabyteInTerabytes() throws Exception {
+    void oneTerabyteInTerabytes() {
         assertThat(SizeUnit.TERABYTES.convert(1, SizeUnit.TERABYTES))
                 .isEqualTo(1);
 
         assertThat(SizeUnit.TERABYTES.toTerabytes(1))
                 .isEqualTo(1);
+    }
+
+    @Test
+    void testToDataSizeUnit() {
+        assertThat(SizeUnit.BYTES.toDataSizeUnit()).isEqualTo(DataSizeUnit.BYTES);
+        assertThat(SizeUnit.KILOBYTES.toDataSizeUnit()).isEqualTo(DataSizeUnit.KIBIBYTES);
+        assertThat(SizeUnit.MEGABYTES.toDataSizeUnit()).isEqualTo(DataSizeUnit.MEBIBYTES);
+        assertThat(SizeUnit.GIGABYTES.toDataSizeUnit()).isEqualTo(DataSizeUnit.GIBIBYTES);
+        assertThat(SizeUnit.TERABYTES.toDataSizeUnit()).isEqualTo(DataSizeUnit.TEBIBYTES);
     }
 }

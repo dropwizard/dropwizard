@@ -10,9 +10,9 @@ import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import io.dropwizard.logging.BootstrapLogging;
 import io.dropwizard.setup.Environment;
 import org.joda.time.DateTime;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
@@ -50,7 +50,7 @@ public class GuavaJDBITest {
     private final MetricRegistry metricRegistry = new MetricRegistry();
     private DBI dbi = mock(DBI.class);
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         when(environment.healthChecks()).thenReturn(healthChecks);
         when(environment.lifecycle()).thenReturn(lifecycleEnvironment);
@@ -97,7 +97,7 @@ public class GuavaJDBITest {
         }
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         for (Managed obj : managed) {
             obj.stop();

@@ -3,8 +3,8 @@ package io.dropwizard.auth;
 import com.codahale.metrics.MetricRegistry;
 import com.github.benmanes.caffeine.cache.CaffeineSpec;
 import io.dropwizard.util.Sets;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 
 import java.security.Principal;
@@ -32,7 +32,7 @@ public class CachingAuthorizerTest {
     private final Principal principal2 = new PrincipalImpl("principal2");
     private final String role = "popular_kids";
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         when(underlying.authorize(any(), anyString())).thenReturn(true);
     }
@@ -48,11 +48,11 @@ public class CachingAuthorizerTest {
     @Test
     public void respectsTheCacheConfiguration() throws Exception {
         cached.authorize(principal, role);
-        Thread.sleep(10L);
+        // We need to make sure that background cache invalidation is done before other requests
+        cached.cache.cleanUp();
         cached.authorize(principal2, role);
-        Thread.sleep(10L);
+        cached.cache.cleanUp();
         cached.authorize(principal, role);
-        Thread.sleep(10L);
 
         final InOrder inOrder = inOrder(underlying);
         inOrder.verify(underlying, times(1)).authorize(principal, role);

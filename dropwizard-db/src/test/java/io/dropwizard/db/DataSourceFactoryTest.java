@@ -10,9 +10,9 @@ import io.dropwizard.util.Duration;
 import io.dropwizard.validation.BaseValidator;
 import org.apache.tomcat.jdbc.pool.interceptor.ConnectionState;
 import org.apache.tomcat.jdbc.pool.interceptor.StatementFinalizer;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.annotation.Nullable;
 import java.sql.Connection;
@@ -33,7 +33,7 @@ public class DataSourceFactoryTest {
     @Nullable
     private ManagedDataSource dataSource;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         factory = new DataSourceFactory();
         factory.setUrl("jdbc:h2:mem:DbTest-" + System.currentTimeMillis() + ";user=sa");
@@ -41,7 +41,7 @@ public class DataSourceFactoryTest {
         factory.setValidationQuery("SELECT 1");
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         if (null != dataSource) {
             dataSource.stop();
@@ -138,7 +138,7 @@ public class DataSourceFactoryTest {
         assertThat(factory.getUser()).isEqualTo("pg-user");
         assertThat(factory.getPassword()).isEqualTo("iAMs00perSecrEET");
         assertThat(factory.getUrl()).isEqualTo("jdbc:postgresql://db.example.com/db-prod");
-        assertThat(factory.getValidationQuery()).isEqualTo("/* Health Check */ SELECT 1");
+        assertThat(factory.getValidationQuery()).isEqualTo(Optional.of("/* Health Check */ SELECT 1"));
         assertThat(factory.getValidationQueryTimeout()).isEqualTo(Optional.empty());
     }
 

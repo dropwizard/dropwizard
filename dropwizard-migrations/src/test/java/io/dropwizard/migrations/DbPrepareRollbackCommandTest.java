@@ -2,8 +2,8 @@ package io.dropwizard.migrations;
 
 import net.jcip.annotations.NotThreadSafe;
 import net.sourceforge.argparse4j.inf.Namespace;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
@@ -21,7 +21,7 @@ public class DbPrepareRollbackCommandTest extends AbstractMigrationTest {
             "migrations-ddl.xml");
     private TestMigrationConfiguration conf;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         final String databaseUrl = getDatabaseUrl();
         conf = createConfiguration(databaseUrl);

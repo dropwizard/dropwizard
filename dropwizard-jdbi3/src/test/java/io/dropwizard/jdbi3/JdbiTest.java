@@ -11,9 +11,9 @@ import io.dropwizard.util.Resources;
 import org.eclipse.jetty.util.component.LifeCycle;
 import org.jdbi.v3.core.Jdbi;
 import org.joda.time.DateTime;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
@@ -33,7 +33,7 @@ public class JdbiTest {
     private GameDao dao;
     private MetricRegistry metricRegistry = new MetricRegistry();
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         environment = new Environment("test", new ObjectMapper(), Validators.newValidator(),
             metricRegistry, ClassLoader.getSystemClassLoader());
@@ -55,7 +55,7 @@ public class JdbiTest {
         }
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         for (LifeCycle lc : environment.lifecycle().getManagedObjects()) {
             lc.stop();

@@ -3,11 +3,11 @@ package io.dropwizard.jetty;
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import io.dropwizard.util.DataSize;
+import io.dropwizard.util.DataSizeUnit;
 import io.dropwizard.util.Duration;
-import io.dropwizard.util.Size;
-import io.dropwizard.util.SizeUnit;
+import io.dropwizard.validation.MinDataSize;
 import io.dropwizard.validation.MinDuration;
-import io.dropwizard.validation.MinSize;
 import io.dropwizard.validation.PortRange;
 import org.eclipse.jetty.http.HttpCompliance;
 import org.eclipse.jetty.io.ArrayByteBufferPool;
@@ -17,16 +17,18 @@ import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.ForwardedRequestCustomizer;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
+import org.eclipse.jetty.server.ProxyConnectionFactory;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.util.ArrayUtil;
 import org.eclipse.jetty.util.thread.ScheduledExecutorScheduler;
 import org.eclipse.jetty.util.thread.Scheduler;
 import org.eclipse.jetty.util.thread.ThreadPool;
-import org.hibernate.validator.valuehandling.UnwrapValidatedValue;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.validation.valueextraction.Unwrapping;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -182,10 +184,17 @@ import static com.codahale.metrics.MetricRegistry.name;
  *     </tr>
  *     <tr>
  *         <td>{@code useForwardedHeaders}</td>
- *         <td>true</td>
+ *         <td>false</td>
  *         <td>
  *             Whether or not to look at {@code X-Forwarded-*} headers added by proxies. See
  *             {@link ForwardedRequestCustomizer} for details.
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code useProxyProtocol}</td>
+ *         <td>false</td>
+ *         <td>
+ *             Enable jetty proxy protocol header support.
  *         </td>
  *     </tr>
  *     <tr>
@@ -228,55 +237,53 @@ public class HttpConnectorFactory implements ConnectorFactory {
     private boolean inheritChannel = false;
 
     @NotNull
-    @MinSize(128)
-    private Size headerCacheSize = Size.bytes(512);
+    @MinDataSize(128)
+    private DataSize headerCacheSize = DataSize.bytes(512);
 
     @NotNull
-    @MinSize(value = 8, unit = SizeUnit.KILOBYTES)
-    private Size outputBufferSize = Size.kilobytes(32);
+    @MinDataSize(value = 8, unit = DataSizeUnit.KIBIBYTES)
+    private DataSize outputBufferSize = DataSize.kibibytes(32);
 
     @NotNull
-    @MinSize(value = 1, unit = SizeUnit.KILOBYTES)
-    private Size maxRequestHeaderSize = Size.kilobytes(8);
+    @MinDataSize(value = 1, unit = DataSizeUnit.KIBIBYTES)
+    private DataSize maxRequestHeaderSize = DataSize.kibibytes(8);
 
     @NotNull
-    @MinSize(value = 1, unit = SizeUnit.KILOBYTES)
-    private Size maxResponseHeaderSize = Size.kilobytes(8);
+    @MinDataSize(value = 1, unit = DataSizeUnit.KIBIBYTES)
+    private DataSize maxResponseHeaderSize = DataSize.kibibytes(8);
 
     @NotNull
-    @MinSize(value = 1, unit = SizeUnit.KILOBYTES)
-    private Size inputBufferSize = Size.kilobytes(8);
+    @MinDataSize(value = 1, unit = DataSizeUnit.KIBIBYTES)
+    private DataSize inputBufferSize = DataSize.kibibytes(8);
 
     @NotNull
     @MinDuration(value = 1, unit = TimeUnit.MILLISECONDS)
     private Duration idleTimeout = Duration.seconds(30);
 
     @NotNull
-    @MinSize(0)
-    private Size minResponseDataPerSecond = Size.bytes(0);
+    @MinDataSize(0)
+    private DataSize minResponseDataPerSecond = DataSize.bytes(0);
 
     @NotNull
-    @MinSize(0)
-    private Size minRequestDataPerSecond = Size.bytes(0);
+    @MinDataSize(0)
+    private DataSize minRequestDataPerSecond = DataSize.bytes(0);
 
     @NotNull
-    @MinSize(value = 1, unit = SizeUnit.BYTES)
-    private Size minBufferPoolSize = Size.bytes(64);
+    @MinDataSize(value = 1, unit = DataSizeUnit.BYTES)
+    private DataSize minBufferPoolSize = DataSize.bytes(64);
 
     @NotNull
-    @MinSize(value = 1, unit = SizeUnit.BYTES)
-    private Size bufferPoolIncrement = Size.bytes(1024);
+    @MinDataSize(value = 1, unit = DataSizeUnit.BYTES)
+    private DataSize bufferPoolIncrement = DataSize.bytes(1024);
 
     @NotNull
-    @MinSize(value = 1, unit = SizeUnit.BYTES)
-    private Size maxBufferPoolSize = Size.kilobytes(64);
+    @MinDataSize(value = 1, unit = DataSizeUnit.BYTES)
+    private DataSize maxBufferPoolSize = DataSize.kibibytes(64);
 
-    @Min(1)
-    @UnwrapValidatedValue
+    @Min(value = 1, payload = Unwrapping.Unwrap.class)
     private Optional<Integer> acceptorThreads = Optional.empty();
 
-    @Min(1)
-    @UnwrapValidatedValue
+    @Min(value = 1, payload = Unwrapping.Unwrap.class)
     private Optional<Integer> selectorThreads = Optional.empty();
 
     @Min(0)
@@ -287,7 +294,8 @@ public class HttpConnectorFactory implements ConnectorFactory {
 
     private boolean useServerHeader = false;
     private boolean useDateHeader = true;
-    private boolean useForwardedHeaders = true;
+    private boolean useForwardedHeaders = false;
+    private boolean useProxyProtocol = false;
     private HttpCompliance httpCompliance = HttpCompliance.RFC7230;
 
     @JsonProperty
@@ -322,52 +330,52 @@ public class HttpConnectorFactory implements ConnectorFactory {
     }
 
     @JsonProperty
-    public Size getHeaderCacheSize() {
+    public DataSize getHeaderCacheSize() {
         return headerCacheSize;
     }
 
     @JsonProperty
-    public void setHeaderCacheSize(Size headerCacheSize) {
+    public void setHeaderCacheSize(DataSize headerCacheSize) {
         this.headerCacheSize = headerCacheSize;
     }
 
     @JsonProperty
-    public Size getOutputBufferSize() {
+    public DataSize getOutputBufferSize() {
         return outputBufferSize;
     }
 
     @JsonProperty
-    public void setOutputBufferSize(Size outputBufferSize) {
+    public void setOutputBufferSize(DataSize outputBufferSize) {
         this.outputBufferSize = outputBufferSize;
     }
 
     @JsonProperty
-    public Size getMaxRequestHeaderSize() {
+    public DataSize getMaxRequestHeaderSize() {
         return maxRequestHeaderSize;
     }
 
     @JsonProperty
-    public void setMaxRequestHeaderSize(Size maxRequestHeaderSize) {
+    public void setMaxRequestHeaderSize(DataSize maxRequestHeaderSize) {
         this.maxRequestHeaderSize = maxRequestHeaderSize;
     }
 
     @JsonProperty
-    public Size getMaxResponseHeaderSize() {
+    public DataSize getMaxResponseHeaderSize() {
         return maxResponseHeaderSize;
     }
 
     @JsonProperty
-    public void setMaxResponseHeaderSize(Size maxResponseHeaderSize) {
+    public void setMaxResponseHeaderSize(DataSize maxResponseHeaderSize) {
         this.maxResponseHeaderSize = maxResponseHeaderSize;
     }
 
     @JsonProperty
-    public Size getInputBufferSize() {
+    public DataSize getInputBufferSize() {
         return inputBufferSize;
     }
 
     @JsonProperty
-    public void setInputBufferSize(Size inputBufferSize) {
+    public void setInputBufferSize(DataSize inputBufferSize) {
         this.inputBufferSize = inputBufferSize;
     }
 
@@ -382,52 +390,52 @@ public class HttpConnectorFactory implements ConnectorFactory {
     }
 
     @JsonProperty
-    public Size getMinBufferPoolSize() {
+    public DataSize getMinBufferPoolSize() {
         return minBufferPoolSize;
     }
 
     @JsonProperty
-    public void setMinBufferPoolSize(Size minBufferPoolSize) {
+    public void setMinBufferPoolSize(DataSize minBufferPoolSize) {
         this.minBufferPoolSize = minBufferPoolSize;
     }
 
     @JsonProperty
-    public Size getBufferPoolIncrement() {
+    public DataSize getBufferPoolIncrement() {
         return bufferPoolIncrement;
     }
 
     @JsonProperty
-    public void setBufferPoolIncrement(Size bufferPoolIncrement) {
+    public void setBufferPoolIncrement(DataSize bufferPoolIncrement) {
         this.bufferPoolIncrement = bufferPoolIncrement;
     }
 
     @JsonProperty
-    public Size getMaxBufferPoolSize() {
+    public DataSize getMaxBufferPoolSize() {
         return maxBufferPoolSize;
     }
 
     @JsonProperty
-    public void setMaxBufferPoolSize(Size maxBufferPoolSize) {
+    public void setMaxBufferPoolSize(DataSize maxBufferPoolSize) {
         this.maxBufferPoolSize = maxBufferPoolSize;
     }
 
     @JsonProperty
-    public Size getMinResponseDataPerSecond() {
+    public DataSize getMinResponseDataPerSecond() {
         return minResponseDataPerSecond;
     }
 
     @JsonProperty
-    public void setMinResponseDataPerSecond(Size minResponseDataPerSecond) {
+    public void setMinResponseDataPerSecond(DataSize minResponseDataPerSecond) {
         this.minResponseDataPerSecond = minResponseDataPerSecond;
     }
 
     @JsonProperty
-    public Size getMinRequestDataPerSecond() {
+    public DataSize getMinRequestDataPerSecond() {
         return minRequestDataPerSecond;
     }
 
     @JsonProperty
-    public void setMinRequestDataPerSecond(Size minRequestDataPerSecond) {
+    public void setMinRequestDataPerSecond(DataSize minRequestDataPerSecond) {
         this.minRequestDataPerSecond = minRequestDataPerSecond;
     }
 
@@ -503,6 +511,16 @@ public class HttpConnectorFactory implements ConnectorFactory {
     }
 
     @JsonProperty
+    public boolean isUseProxyProtocol() {
+        return useProxyProtocol;
+    }
+
+    @JsonProperty
+    public void setUseProxyProtocol(boolean useProxyProtocol) {
+        this.useProxyProtocol = useProxyProtocol;
+    }
+
+    @JsonProperty
     public HttpCompliance getHttpCompliance() {
         return httpCompliance;
     }
@@ -544,6 +562,10 @@ public class HttpConnectorFactory implements ConnectorFactory {
                                              String name,
                                              @Nullable ThreadPool threadPool,
                                              ConnectionFactory... factories) {
+        if (useProxyProtocol) {
+            factories = ArrayUtil.prependToArray(new ProxyConnectionFactory(), factories, ConnectorFactory.class);
+        }
+
         final ServerConnector connector = new ServerConnector(server,
                                                               threadPool,
                                                               scheduler,

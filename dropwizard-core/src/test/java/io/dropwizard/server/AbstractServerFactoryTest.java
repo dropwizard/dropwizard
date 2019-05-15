@@ -8,8 +8,8 @@ import io.dropwizard.jetty.MutableServletContextHandler;
 import io.dropwizard.setup.Environment;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.thread.ThreadPool;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
@@ -36,7 +36,7 @@ public class AbstractServerFactoryTest {
     private static final String RUN_SET_PATTERN = "/set/from/run/*";
     private static final String YAML_SET_PATTERN = "/set/from/yaml/*";
 
-    @Before
+    @BeforeEach
     public void before() {
         when(environment.jersey()).thenReturn(jerseyEnvironment);
         when(environment.getApplicationContext()).thenReturn(new MutableServletContextHandler());

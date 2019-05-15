@@ -1,7 +1,7 @@
 package io.dropwizard.configuration;
 
 import io.dropwizard.util.CharStreams;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;

@@ -7,10 +7,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.dropwizard.logging.socket.DropwizardSocketAppender;
 import io.dropwizard.util.Duration;
-import io.dropwizard.util.Size;
-import io.dropwizard.validation.MinSize;
+import io.dropwizard.util.DataSize;
+import io.dropwizard.validation.MinDataSize;
 import io.dropwizard.validation.PortRange;
-import org.hibernate.validator.constraints.NotEmpty;
+import javax.validation.constraints.NotEmpty;
 
 import javax.net.SocketFactory;
 import javax.validation.constraints.NotNull;
@@ -48,7 +48,7 @@ import javax.validation.constraints.NotNull;
  * </tr>
  * <tr>
  * <td>{@code sendBufferSize}</td>
- * <td>8KB</td>
+ * <td>8KiB</td>
  * <td>The buffer size of the underlying SocketAppender. Takes into effect if immediateFlush is disabled.</td>
  * </tr>
  * </table>
@@ -67,8 +67,8 @@ public class TcpSocketAppenderFactory<E extends DeferredProcessingAware> extends
 
     private boolean immediateFlush = true;
 
-    @MinSize(1)
-    private Size sendBufferSize = Size.kilobytes(8);
+    @MinDataSize(1)
+    private DataSize sendBufferSize = DataSize.kibibytes(8);
 
     @JsonProperty
     public String getHost() {
@@ -111,12 +111,12 @@ public class TcpSocketAppenderFactory<E extends DeferredProcessingAware> extends
     }
 
     @JsonProperty
-    public Size getSendBufferSize() {
+    public DataSize getSendBufferSize() {
         return sendBufferSize;
     }
 
     @JsonProperty
-    public void setSendBufferSize(Size sendBufferSize) {
+    public void setSendBufferSize(DataSize sendBufferSize) {
         this.sendBufferSize = sendBufferSize;
     }
 

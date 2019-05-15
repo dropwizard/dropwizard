@@ -48,14 +48,15 @@ public class OffsetDateTimeMapper implements ResultColumnMapper<OffsetDateTime> 
      *
      * @return a clone of calendar, representing a database time zone
      */
-    private Calendar cloneCalendar() {
-        return (Calendar) calendar.get().clone();
+    private Optional<Calendar> cloneCalendar() {
+        return calendar.map(Calendar::clone).map(x -> (Calendar) x);
     }
 
     @Override
     @Nullable
     public OffsetDateTime mapColumn(ResultSet r, int columnNumber, StatementContext ctx) throws SQLException {
-        final Timestamp timestamp = calendar.isPresent() ? r.getTimestamp(columnNumber, cloneCalendar()) :
+        final Optional<Calendar> instance = cloneCalendar();
+        final Timestamp timestamp = instance.isPresent() ? r.getTimestamp(columnNumber, instance.get()) :
             r.getTimestamp(columnNumber);
         return convertToOffsetDateTime(timestamp);
     }
@@ -63,7 +64,8 @@ public class OffsetDateTimeMapper implements ResultColumnMapper<OffsetDateTime> 
     @Override
     @Nullable
     public OffsetDateTime mapColumn(ResultSet r, String columnLabel, StatementContext ctx) throws SQLException {
-        final Timestamp timestamp = calendar.isPresent() ? r.getTimestamp(columnLabel, cloneCalendar()) :
+        final Optional<Calendar> instance = cloneCalendar();
+        final Timestamp timestamp = instance.isPresent() ? r.getTimestamp(columnLabel, instance.get()) :
             r.getTimestamp(columnLabel);
         return convertToOffsetDateTime(timestamp);
     }

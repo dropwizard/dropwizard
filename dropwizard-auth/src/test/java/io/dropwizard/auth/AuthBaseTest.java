@@ -10,7 +10,9 @@ import org.glassfish.jersey.test.TestProperties;
 import org.glassfish.jersey.test.grizzly.GrizzlyWebTestContainerFactory;
 import org.glassfish.jersey.test.spi.TestContainerException;
 import org.glassfish.jersey.test.spi.TestContainerFactory;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.HttpHeaders;
@@ -46,6 +48,18 @@ public abstract class AuthBaseTest<T extends DropwizardResourceConfig> extends J
     protected abstract String getOrdinaryGuyValidToken();
     protected abstract String getGoodGuyValidToken();
     protected abstract String getBadGuyToken();
+
+    @Override
+    @BeforeEach
+    public void setUp() throws Exception {
+        super.setUp();
+    }
+
+    @Override
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
+    }
 
     @Override
     protected DeploymentContext configureDeployment() {

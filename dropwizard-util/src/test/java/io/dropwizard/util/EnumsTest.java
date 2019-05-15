@@ -1,14 +1,13 @@
 package io.dropwizard.util;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
-import java.util.Arrays;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@RunWith(Parameterized.class)
 public class EnumsTest {
 
     enum VideoFormat {
@@ -29,31 +28,24 @@ public class EnumsTest {
         }
     }
 
-    @Parameterized.Parameters(name = "Source:{0}, Guess:{1}")
-    public static Iterable<Object[]> data() {
-        return Arrays.asList(new Object[][]{
-                {"OGG", VideoFormat.OGG},
-                {"ogg", VideoFormat.OGG},
-                {"FFmpeg", VideoFormat.FFMPEG},
-                {" FFmpeg ", VideoFormat.FFMPEG},
-                {"MPEG-DASH", VideoFormat.MPEG_DASH},
-                {"h.264", VideoFormat.H_264},
-                {"QuickTime", VideoFormat.HDMOV},
-                {"[OGG]", null},
-                {"FLV", null},
-        });
+    public static Stream<Arguments> data() {
+        return Stream.of(
+                Arguments.of("OGG", VideoFormat.OGG),
+                Arguments.of("ogg", VideoFormat.OGG),
+                Arguments.of("FFmpeg", VideoFormat.FFMPEG),
+                Arguments.of(" FFmpeg ", VideoFormat.FFMPEG),
+                Arguments.of("MPEG-DASH", VideoFormat.MPEG_DASH),
+                Arguments.of("h.264", VideoFormat.H_264),
+                Arguments.of("QuickTime", VideoFormat.HDMOV),
+                Arguments.of("[OGG]", null),
+                Arguments.of("FLV", null)
+        );
     }
 
-    private final String sourceText;
-    private final VideoFormat guessedFormat;
 
-    public EnumsTest(String text, VideoFormat result) {
-        this.sourceText = text;
-        this.guessedFormat = result;
-    }
-
-    @Test
-    public void canGuess() {
-        assertThat(Enums.fromStringFuzzy(sourceText, VideoFormat.values())).isEqualTo(guessedFormat);
+    @ParameterizedTest
+    @MethodSource("data")
+    public void canGuess(String text, VideoFormat result) {
+        assertThat(Enums.fromStringFuzzy(text, VideoFormat.values())).isEqualTo(result);
     }
 }

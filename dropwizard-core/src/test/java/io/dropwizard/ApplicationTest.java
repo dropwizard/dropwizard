@@ -2,7 +2,7 @@ package io.dropwizard;
 
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 

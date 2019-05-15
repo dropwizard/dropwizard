@@ -7,13 +7,14 @@ import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 import io.dropwizard.jackson.Jackson;
+import io.dropwizard.util.Duration;
 import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.protocol.HttpContext;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.glassfish.jersey.logging.LoggingFeature;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
@@ -57,12 +58,12 @@ public class JerseyClientIntegrationTest {
 
     private HttpServer httpServer;
 
-    @Before
+    @BeforeEach
     public void setup() throws Exception {
         httpServer = HttpServer.create(new InetSocketAddress(0), 0);
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         httpServer.stop(0);
     }
@@ -192,6 +193,10 @@ public class JerseyClientIntegrationTest {
     }
 
     private void postRequest(JerseyClientConfiguration configuration) {
+        // Avoid flakiness with CI by increasing timeouts
+        configuration.setTimeout(Duration.seconds(10));
+        configuration.setConnectionTimeout(Duration.seconds(10));
+
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Client jersey = new JerseyClientBuilder(new MetricRegistry())
                 .using(executor, JSON_MAPPER)

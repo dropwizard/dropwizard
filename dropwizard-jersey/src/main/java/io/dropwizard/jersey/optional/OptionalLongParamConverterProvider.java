@@ -26,14 +26,11 @@ public class OptionalLongParamConverterProvider implements ParamConverterProvide
     public static class OptionalLongParamConverter implements ParamConverter<OptionalLong> {
         @Override
         public OptionalLong fromString(final String value) {
-            if (value == null) {
-                return OptionalLong.empty();
-            }
-
             try {
-                return OptionalLong.of(Long.parseLong(value));
+                final long l = Long.parseLong(value);
+                return OptionalLong.of(l);
             } catch (NumberFormatException e) {
-                throw new IllegalArgumentException(e);
+                return OptionalLong.empty();
             }
         }
 

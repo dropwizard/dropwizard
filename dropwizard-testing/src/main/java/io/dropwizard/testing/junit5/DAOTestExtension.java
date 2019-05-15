@@ -1,7 +1,6 @@
 package io.dropwizard.testing.junit5;
 
 import io.dropwizard.testing.common.DAOTest;
-import io.dropwizard.testing.junit.DAOTestRule;
 import org.hibernate.SessionFactory;
 
 import java.util.concurrent.Callable;
@@ -45,17 +44,17 @@ public class DAOTestExtension implements DropwizardExtension {
     }
 
     /**
-     * Creates a new builder for {@link DAOTestRule}, which allows to customize a {@link SessionFactory}
+     * Creates a new builder for {@link DAOTestExtension}, which allows to customize a {@link SessionFactory}
      * by different parameters. By default uses the H2 database in the memory mode.
      *
-     * @return a new {@link DAOTestRule.Builder}
+     * @return a new {@link DAOTestExtension.Builder}
      */
     public static Builder newBuilder() {
         return new Builder();
     }
 
     /**
-     * Use {@link DAOTestRule#newBuilder()}
+     * Use {@link DAOTestExtension#newBuilder()}
      */
     private DAOTestExtension(DAOTest daoTest) {
         this.daoTest = daoTest;

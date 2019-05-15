@@ -5,8 +5,8 @@ import net.jcip.annotations.NotThreadSafe;
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 
@@ -28,7 +28,7 @@ public class DbMigrateCommandTest extends AbstractMigrationTest {
     private TestMigrationConfiguration conf;
     private String databaseUrl;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         databaseUrl = getDatabaseUrl();
         conf = createConfiguration(databaseUrl);

@@ -140,18 +140,19 @@ public abstract class AuthFilter<C, P extends Principal> implements ContainerReq
                 return false;
             }
 
+            final P prince = principal.get();
             final SecurityContext securityContext = requestContext.getSecurityContext();
             final boolean secure = securityContext != null && securityContext.isSecure();
 
             requestContext.setSecurityContext(new SecurityContext() {
                 @Override
                 public Principal getUserPrincipal() {
-                    return principal.get();
+                    return prince;
                 }
 
                 @Override
                 public boolean isUserInRole(String role) {
-                    return authorizer.authorize(principal.get(), role);
+                    return authorizer.authorize(prince, role);
                 }
 
                 @Override

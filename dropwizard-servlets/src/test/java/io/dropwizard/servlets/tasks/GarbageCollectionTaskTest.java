@@ -1,6 +1,6 @@
 package io.dropwizard.servlets.tasks;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.PrintWriter;
 import java.util.Arrays;

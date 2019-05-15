@@ -91,7 +91,7 @@ Next, write a test for serializing a ``Person`` instance to JSON:
     import static io.dropwizard.testing.FixtureHelpers.*;
     import static org.assertj.core.api.Assertions.assertThat;
     import io.dropwizard.jackson.Jackson;
-    import org.junit.Test;
+    import org.junit.jupiter.api.Test;
     import com.fasterxml.jackson.databind.ObjectMapper;
 
     public class PersonTest {
@@ -128,7 +128,7 @@ Next, write a test for deserializing a ``Person`` instance from JSON:
     import static io.dropwizard.testing.FixtureHelpers.*;
     import static org.assertj.core.api.Assertions.assertThat;
     import io.dropwizard.jackson.Jackson;
-    import org.junit.Test;
+    import org.junit.jupiter.api.Test;
     import com.fasterxml.jackson.databind.ObjectMapper;
 
     public class PersonTest {
@@ -174,12 +174,12 @@ loads a given resource instance in an in-memory Jersey server:
 
         private final Person person = new Person("blah", "blah@example.com");
 
-        @Before
+        @BeforeEach
         public void setup() {
             when(dao.fetchPerson(eq("blah"))).thenReturn(person);
         }
 
-        @After
+        @AfterEach
         public void tearDown(){
             // we have to reset the mock after each test because of the
             // @ClassRule, or use a @Rule as mentioned below.
@@ -240,18 +240,7 @@ dependency for the Jersey Test Framework providers to your Maven POM and set ``G
     <dependency>
         <groupId>org.glassfish.jersey.test-framework.providers</groupId>
         <artifactId>jersey-test-framework-provider-grizzly2</artifactId>
-        <version>${jersey.version}</version>
         <scope>test</scope>
-        <exclusions>
-            <exclusion>
-                <groupId>javax.servlet</groupId>
-                <artifactId>javax.servlet-api</artifactId>
-            </exclusion>
-            <exclusion>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-            </exclusion>
-        </exclusions>
     </dependency>
 
 
@@ -358,7 +347,7 @@ which is aware of your application's environment.
 JUnit
 -----
 Adding ``DropwizardAppRule`` to your JUnit test class will start the app prior to any tests
-running and stop it again when they've completed (roughly equivalent to having used ``@BeforeClass`` and ``@AfterClass``).
+running and stop it again when they've completed (roughly equivalent to having used ``@BeforeAll`` and ``@AfterAll``).
 ``DropwizardAppRule`` also exposes the app's ``Configuration``,
 ``Environment`` and the app object itself so that these can be queried by the tests.
 
@@ -401,12 +390,12 @@ By creating a DropwizardTestSupport instance in your test you can manually start
                     ConfigOverride.config("server.applicationConnectors[0].port", "0") // Optional, if not using a separate testing-specific configuration file, use a randomly selected port
                 );
 
-        @BeforeClass
+        @BeforeAll
         public void beforeClass() {
             SUPPORT.before();
         }
 
-        @AfterClass
+        @AfterAll
         public void afterClass() {
             SUPPORT.after();
         }
@@ -447,7 +436,7 @@ before the command is ran.
         private final ByteArrayOutputStream stdErr = new ByteArrayOutputStream();
         private Cli cli;
 
-        @Before
+        @BeforeEach
         public void setUp() throws Exception {
             // Setup necessary mock
             final JarLocation location = mock(JarLocation.class);
@@ -465,7 +454,7 @@ before the command is ran.
             cli = new Cli(location, bootstrap, stdOut, stdErr);
         }
 
-        @After
+        @AfterEach
         public void teardown() {
             System.setOut(originalOut);
             System.setErr(originalErr);
@@ -504,7 +493,7 @@ which setups a Hibernate ``SessionFactory``.
 
         private FooDAO fooDAO;
 
-        @Before
+        @BeforeEach
         public void setUp() {
             fooDAO = new FooDAO(database.getSessionFactory());
         }

@@ -2,8 +2,8 @@ package io.dropwizard.logging;
 
 import ch.qos.logback.classic.spi.ThrowableProxy;
 import io.dropwizard.util.Strings;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
@@ -57,7 +57,7 @@ public class PrefixedRootCauseFirstThrowableProxyConverterTest {
         }
     }
 
-    @Before
+    @BeforeEach
     public void setup() {
         converter.setOptionList(Collections.singletonList("full"));
         converter.start();

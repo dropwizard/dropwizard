@@ -39,6 +39,6 @@ public class OptionalOffsetDateTimeArgumentFactory implements ArgumentFactory<Op
     @Override
     public Argument build(Class<?> expectedType, Optional<OffsetDateTime> value, StatementContext ctx) {
         // accepts guarantees that the value is present
-        return new OffsetDateTimeArgument(value.get(), calendar);
+        return new OffsetDateTimeArgument(value.orElse(null), calendar);
     }
 }

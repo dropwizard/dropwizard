@@ -7,8 +7,8 @@ import io.dropwizard.jackson.Jackson;
 import io.dropwizard.logging.json.AccessAttribute;
 import io.dropwizard.util.Maps;
 import io.dropwizard.util.Sets;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.time.ZoneId;
@@ -26,7 +26,9 @@ public class AccessJsonLayoutTest {
     private String remoteHost = "nw-4.us.crawl.io";
     private String serverName = "sw-2.us.api.example.io";
     private String timestamp = "2018-01-01T14:35:21.000+0000";
-    private String uri = "/test/users?age=22&city=LA";
+    private String uri = "/test/users";
+    private String query = "?age=22&city=LA";
+    private String pathQuery = uri + query;
     private String url = "GET /test/users?age=22&city=LA HTTP/1.1";
     private String userAgent = "Mozilla/5.0";
     private Map<String, String> requestHeaders;
@@ -45,7 +47,7 @@ public class AccessJsonLayoutTest {
     private AccessJsonLayout accessJsonLayout = new AccessJsonLayout(jsonFormatter, timestampFormatter,
         includes, Collections.emptyMap(), Collections.emptyMap());
 
-    @Before
+    @BeforeEach
     public void setUp() {
         requestHeaders = Maps.of(
                 "Host", "api.example.io",
@@ -65,6 +67,7 @@ public class AccessJsonLayoutTest {
         when(event.getRequestParameterMap()).thenReturn(Collections.emptyMap());
         when(event.getElapsedTime()).thenReturn(100L);
         when(event.getRequestURI()).thenReturn(uri);
+        when(event.getQueryString()).thenReturn(query);
         when(event.getRequestURL()).thenReturn(url);
         when(event.getRemoteHost()).thenReturn(remoteHost);
         when(event.getResponseContent()).thenReturn(responseContent);
@@ -154,7 +157,8 @@ public class AccessJsonLayoutTest {
             entry("port", 8080), entry("requestContent", ""),
             entry("headers", this.requestHeaders),
             entry("remoteHost", remoteHost), entry("url", url),
-            entry("serverName", serverName));
+            entry("serverName", serverName),
+            entry("pathQuery", pathQuery));
     }
 
     @Test

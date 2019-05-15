@@ -1,7 +1,7 @@
 package io.dropwizard.auth;
 
 import io.dropwizard.auth.principal.NullPrincipal;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Cookie;
@@ -22,7 +22,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 

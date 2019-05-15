@@ -8,7 +8,8 @@ import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.validation.Validators;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.testing.ResourceHelpers;
-import io.dropwizard.testing.junit.DropwizardAppRule;
+import io.dropwizard.testing.junit5.DropwizardAppExtension;
+import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import io.dropwizard.util.Duration;
 import org.apache.http.Header;
 import org.apache.http.HttpStatus;
@@ -25,13 +26,11 @@ import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.client.ClientRequest;
 import org.glassfish.jersey.client.ClientResponse;
 import org.glassfish.jersey.client.JerseyClient;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 
 import javax.ws.rs.GET;
@@ -50,6 +49,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(DropwizardExtensionsSupport.class)
 public class DropwizardApacheConnectorTest {
 
     private static final int SLEEP_TIME_IN_MILLIS = 1000;
@@ -58,20 +58,17 @@ public class DropwizardApacheConnectorTest {
     private static final int INCREASE_IN_MILLIS = 100;
     private static final URI NON_ROUTABLE_ADDRESS = URI.create("http://10.255.255.1");
 
-    @ClassRule
-    public static final DropwizardAppRule<Configuration> APP_RULE = new DropwizardAppRule<>(
+    public static final DropwizardAppExtension<Configuration> APP_RULE = new DropwizardAppExtension<>(
             TestApplication.class,
             ResourceHelpers.resourceFilePath("yaml/dropwizardApacheConnectorTest.yml"));
 
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
 
     private final URI testUri = URI.create("http://localhost:" + APP_RULE.getLocalPort());
 
     private JerseyClient client;
     private Environment environment;
 
-    @Before
+    @BeforeEach
     public void setup() throws Exception {
         JerseyClientConfiguration clientConfiguration = new JerseyClientConfiguration();
         clientConfiguration.setConnectionTimeout(Duration.milliseconds(SLEEP_TIME_IN_MILLIS / 2));
@@ -88,7 +85,7 @@ public class DropwizardApacheConnectorTest {
         }
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         for (LifeCycle lifeCycle : environment.lifecycle().getManagedObjects()) {
             lifeCycle.stop();
@@ -122,9 +119,9 @@ public class DropwizardApacheConnectorTest {
      * <p>Now, (1) and (2) can hold at the same time if then connect_timeout update was successful.</p>
      */
     @Test
-    @Ignore("Flaky, timeout jumps over the treshold")
+    @Disabled("Flaky, timeout jumps over the threshold")
     public void connect_timeout_override_changes_how_long_it_takes_for_a_connection_to_timeout() {
-        // before override
+        // setUp override
         WebTarget target = client.target(NON_ROUTABLE_ADDRESS);
 
         //This can't be tested without a real connection
@@ -138,7 +135,7 @@ public class DropwizardApacheConnectorTest {
 
         assertThatConnectionTimeoutFor(target).isLessThan(DEFAULT_CONNECT_TIMEOUT_IN_MILLIS + ERROR_MARGIN_IN_MILLIS);
 
-        // after override
+        // tearDown override
         final int newTimeout = DEFAULT_CONNECT_TIMEOUT_IN_MILLIS + INCREASE_IN_MILLIS + ERROR_MARGIN_IN_MILLIS;
         final WebTarget newTarget = target.property(ClientProperties.CONNECT_TIMEOUT, newTimeout);
         assertThatConnectionTimeoutFor(newTarget).isGreaterThan(newTimeout);
