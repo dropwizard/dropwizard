@@ -1,0 +1,481 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Dropwizard Authentication | Dropwizard</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="../_static/dropwizard.css" type="text/css"/>
+    <link rel="top" title="Dropwizard" href="../index.html"/>
+    <link rel="up" title="User Manual" href="index.html"/>
+    <link rel="next" title="Dropwizard Forms" href="forms.html"/>
+    <link rel="prev" title="Dropwizard Hibernate" href="hibernate.html"/>
+    <style lang="text/css">
+        #top-bar, #top-bar small, #top-bar a {
+            text-shadow: 0px -1px 0px #182127;
+            color: #ffffff;
+        }
+
+        #top-bar {
+            background-color: #363F45;
+            background-image: -moz-linear-gradient(top, #545d63, #182127);
+            background-image: -ms-linear-gradient(top, #545d63, #182127);
+            background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#545d63), to(#182127));
+            background-image: -webkit-linear-gradient(top, #545d63, #182127);
+            background-image: -o-linear-gradient(top, #545d63, #182127);
+            background-image: linear-gradient(top, #545d63, #182127);
+            filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#545d63', endColorstr = '#182127', GradientType = 0);
+            -webkit-border-radius: 0;
+            -moz-border-radius: 0;
+            border-radius: 0;
+        }
+
+
+        .hero-unit {
+            background-image: url("../_static/dropwizard-hat.png") !important;
+            background-repeat: no-repeat !important;
+            background-position: 30px 50px;
+        }
+
+        .hero-unit div.section {
+            padding-left: 150px !important;
+        }
+    </style>
+</head>
+<body>
+    <a href="https://github.com/dropwizard/dropwizard">
+        <img style="position: absolute; top: 0; right: 0; border: 0;"
+             src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png"
+             alt="Fork me on GitHub"></a>
+    <div class="navbar">
+        <div class="navbar-inner container-fluid" id="top-bar">
+            <header class="row-fluid">
+                <h1 class="span12" id="title"><img class="logo" src="../_static/dropwizard-logo.png" alt="Logo"/>
+                    <a href="../index.html">Dropwizard</a>
+                    <small>Production-ready, out of the box.</small>
+                </h1>
+            </header>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div class="span3" id="sidebar">
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../getting-started.html">Getting Started</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">User Manual</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="core.html">Dropwizard Core</a></li>
+<li class="toctree-l2"><a class="reference internal" href="client.html">Dropwizard Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jdbi.html">Dropwizard JDBI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jdbi3.html">Dropwizard JDBI3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migrations.html">Dropwizard Migrations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hibernate.html">Dropwizard Hibernate</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Dropwizard Authentication</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#authenticators">Authenticators</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#caching">Caching</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#authorizer">Authorizer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#basic-authentication">Basic Authentication</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#oauth2">OAuth2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#chained-factories">Chained Factories</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#protecting-resources">Protecting Resources</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#optional-protection">Optional protection</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#testing-protected-resources">Testing Protected Resources</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#multiple-principals-and-authenticators">Multiple Principals and Authenticators</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="forms.html">Dropwizard Forms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="validation.html">Dropwizard Validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="views.html">Dropwizard Views</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scala.html">Dropwizard &amp; Scala</a></li>
+<li class="toctree-l2"><a class="reference internal" href="testing.html">Testing Dropwizard</a></li>
+<li class="toctree-l2"><a class="reference internal" href="example.html">Dropwizard Example, Step by Step</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html">Dropwizard Configuration Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="internals.html">Dropwizard Internals</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../about/javadoc.html">Javadoc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../about/index.html">About Dropwizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../about/docs-index.html">Other Versions</a></li>
+</ul>
+
+                <hr/>
+                <ul>
+                    <li><a href="https://dropwizard.github.io/dropwizard/1.3.10">Maven Site</a></li>
+                    <li><a href="https://groups.google.com/forum/#!forum/dropwizard-user">User Mailing List</a></li>
+                    <li><a href="https://groups.google.com/forum/#!forum/dropwizard-dev">Developer Mailing List</a></li>
+                    <li><a href="https://twitter.com/dropwizardio">Twitter</a></li>
+                    <li><a rel="me" href="https://fosstodon.org/@dropwizard">Mastodon</a></li>
+                </ul>
+            </div>
+            <div class="span9" id="body">
+                
+  <div class="section" id="dropwizard-authentication">
+<span id="man-auth"></span><h1>Dropwizard Authentication</h1>
+<p class="rubric">The <code class="docutils literal"><span class="pre">dropwizard-auth</span></code> client provides authentication using either HTTP Basic
+Authentication or OAuth2 bearer tokens.</p>
+<div class="section" id="authenticators">
+<span id="man-auth-authenticators"></span><h2>Authenticators</h2>
+<p>An authenticator is a strategy class which, given a set of client-provided credentials, possibly
+returns a principal (i.e., the person or entity on behalf of whom your service will do something).</p>
+<p>Authenticators implement the <code class="docutils literal"><span class="pre">Authenticator&lt;C,</span> <span class="pre">P</span> <span class="pre">extends</span> <span class="pre">Principal&gt;</span></code> interface, which has a single method:</p>
+<div class="highlight-java"><div class="highlight"><pre><span></span><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ExampleAuthenticator</span> <span class="kd">implements</span> <span class="n">Authenticator</span><span class="o">&lt;</span><span class="n">BasicCredentials</span><span class="o">,</span> <span class="n">User</span><span class="o">&gt;</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="n">Optional</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span> <span class="nf">authenticate</span><span class="o">(</span><span class="n">BasicCredentials</span> <span class="n">credentials</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">AuthenticationException</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="s">&quot;secret&quot;</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">credentials</span><span class="o">.</span><span class="na">getPassword</span><span class="o">()))</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="n">Optional</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="k">new</span> <span class="n">User</span><span class="o">(</span><span class="n">credentials</span><span class="o">.</span><span class="na">getUsername</span><span class="o">()));</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="n">Optional</span><span class="o">.</span><span class="na">empty</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>This authenticator takes <a class="reference internal" href="#man-auth-basic"><span class="std std-ref">basic auth credentials</span></a> and if the client-provided
+password is <code class="docutils literal"><span class="pre">secret</span></code>, authenticates the client as a <code class="docutils literal"><span class="pre">User</span></code> with the client-provided username.</p>
+<p>If the password doesn’t match, an absent <code class="docutils literal"><span class="pre">Optional</span></code> is returned instead, indicating that the
+credentials are invalid.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">It’s important for authentication services not to provide too much information in their
+errors. The fact that a username or email has an account may be meaningful to an
+attacker, so the <code class="docutils literal"><span class="pre">Authenticator</span></code> interface doesn’t allow you to distinguish between
+a bad username and a bad password. You should only throw an <code class="docutils literal"><span class="pre">AuthenticationException</span></code>
+if the authenticator is <strong>unable</strong> to check the credentials (e.g., your database is
+down).</p>
+</div>
+<div class="section" id="caching">
+<span id="man-auth-authenticators-caching"></span><h3>Caching</h3>
+<p>Because the backing data stores for authenticators may not handle high throughput (an RDBMS or LDAP
+server, for example), Dropwizard provides a decorator class which provides caching:</p>
+<div class="highlight-java"><div class="highlight"><pre><span></span><span class="n">SimpleAuthenticator</span> <span class="n">simpleAuthenticator</span> <span class="o">=</span> <span class="k">new</span> <span class="n">SimpleAuthenticator</span><span class="o">();</span>
+<span class="n">CachingAuthenticator</span><span class="o">&lt;</span><span class="n">BasicCredentials</span><span class="o">,</span> <span class="n">User</span><span class="o">&gt;</span> <span class="n">cachingAuthenticator</span> <span class="o">=</span> <span class="k">new</span> <span class="n">CachingAuthenticator</span><span class="o">&lt;&gt;(</span>
+                           <span class="n">metricRegistry</span><span class="o">,</span> <span class="n">simpleAuthenticator</span><span class="o">,</span>
+                           <span class="n">config</span><span class="o">.</span><span class="na">getAuthenticationCachePolicy</span><span class="o">());</span>
+</pre></div>
+</div>
+<p>Dropwizard can parse Guava’s <code class="docutils literal"><span class="pre">CacheBuilderSpec</span></code> from the configuration policy, allowing your
+configuration file to look like this:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">authenticationCachePolicy</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">maximumSize=10000, expireAfterAccess=10m</span>
+</pre></div>
+</div>
+<p>This caches up to 10,000 principals with an LRU policy, evicting stale entries after 10 minutes.</p>
+</div>
+</div>
+<div class="section" id="authorizer">
+<span id="man-auth-authorizer"></span><h2>Authorizer</h2>
+<p>An authorizer is a strategy class which, given a principal and a role, decides if access is granted to the
+principal.</p>
+<p>The authorizer implements the <code class="docutils literal"><span class="pre">Authorizer&lt;P</span> <span class="pre">extends</span> <span class="pre">Principal&gt;</span></code> interface, which has a single method:</p>
+<div class="highlight-java"><div class="highlight"><pre><span></span><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ExampleAuthorizer</span> <span class="kd">implements</span> <span class="n">Authorizer</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">authorize</span><span class="o">(</span><span class="n">User</span> <span class="n">user</span><span class="o">,</span> <span class="n">String</span> <span class="n">role</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">user</span><span class="o">.</span><span class="na">getName</span><span class="o">().</span><span class="na">equals</span><span class="o">(</span><span class="s">&quot;good-guy&quot;</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="n">role</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="s">&quot;ADMIN&quot;</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="basic-authentication">
+<span id="man-auth-basic"></span><h2>Basic Authentication</h2>
+<p>The <code class="docutils literal"><span class="pre">AuthDynamicFeature</span></code> with the <code class="docutils literal"><span class="pre">BasicCredentialAuthFilter</span></code> and <code class="docutils literal"><span class="pre">RolesAllowedDynamicFeature</span></code>
+enables HTTP Basic authentication and authorization; requires an authenticator which
+takes instances of <code class="docutils literal"><span class="pre">BasicCredentials</span></code>. If you don’t use authorization, then <code class="docutils literal"><span class="pre">RolesAllowedDynamicFeature</span></code>
+is not required.</p>
+<div class="highlight-java"><div class="highlight"><pre><span></span><span class="nd">@Override</span>
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">run</span><span class="o">(</span><span class="n">ExampleConfiguration</span> <span class="n">configuration</span><span class="o">,</span>
+                <span class="n">Environment</span> <span class="n">environment</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">environment</span><span class="o">.</span><span class="na">jersey</span><span class="o">().</span><span class="na">register</span><span class="o">(</span><span class="k">new</span> <span class="n">AuthDynamicFeature</span><span class="o">(</span>
+            <span class="k">new</span> <span class="n">BasicCredentialAuthFilter</span><span class="o">.</span><span class="na">Builder</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;()</span>
+                <span class="o">.</span><span class="na">setAuthenticator</span><span class="o">(</span><span class="k">new</span> <span class="n">ExampleAuthenticator</span><span class="o">())</span>
+                <span class="o">.</span><span class="na">setAuthorizer</span><span class="o">(</span><span class="k">new</span> <span class="n">ExampleAuthorizer</span><span class="o">())</span>
+                <span class="o">.</span><span class="na">setRealm</span><span class="o">(</span><span class="s">&quot;SUPER SECRET STUFF&quot;</span><span class="o">)</span>
+                <span class="o">.</span><span class="na">buildAuthFilter</span><span class="o">()));</span>
+    <span class="n">environment</span><span class="o">.</span><span class="na">jersey</span><span class="o">().</span><span class="na">register</span><span class="o">(</span><span class="n">RolesAllowedDynamicFeature</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+    <span class="c1">//If you want to use @Auth to inject a custom Principal type into your resource</span>
+    <span class="n">environment</span><span class="o">.</span><span class="na">jersey</span><span class="o">().</span><span class="na">register</span><span class="o">(</span><span class="k">new</span> <span class="n">AuthValueFactoryProvider</span><span class="o">.</span><span class="na">Binder</span><span class="o">&lt;&gt;(</span><span class="n">User</span><span class="o">.</span><span class="na">class</span><span class="o">));</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="oauth2">
+<span id="man-auth-oauth2"></span><h2>OAuth2</h2>
+<p>The <code class="docutils literal"><span class="pre">AuthDynamicFeature</span></code> with <code class="docutils literal"><span class="pre">OAuthCredentialAuthFilter</span></code> and <code class="docutils literal"><span class="pre">RolesAllowedDynamicFeature</span></code>
+enables OAuth2 bearer-token authentication and authorization; requires an authenticator which
+takes instances of <code class="docutils literal"><span class="pre">String</span></code>. If you don’t use authorization, then <code class="docutils literal"><span class="pre">RolesAllowedDynamicFeature</span></code>
+is not required.</p>
+<div class="highlight-java"><div class="highlight"><pre><span></span><span class="nd">@Override</span>
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">run</span><span class="o">(</span><span class="n">ExampleConfiguration</span> <span class="n">configuration</span><span class="o">,</span>
+                <span class="n">Environment</span> <span class="n">environment</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">environment</span><span class="o">.</span><span class="na">jersey</span><span class="o">().</span><span class="na">register</span><span class="o">(</span><span class="k">new</span> <span class="n">AuthDynamicFeature</span><span class="o">(</span>
+        <span class="k">new</span> <span class="n">OAuthCredentialAuthFilter</span><span class="o">.</span><span class="na">Builder</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;()</span>
+            <span class="o">.</span><span class="na">setAuthenticator</span><span class="o">(</span><span class="k">new</span> <span class="n">ExampleOAuthAuthenticator</span><span class="o">())</span>
+            <span class="o">.</span><span class="na">setAuthorizer</span><span class="o">(</span><span class="k">new</span> <span class="n">ExampleAuthorizer</span><span class="o">())</span>
+            <span class="o">.</span><span class="na">setPrefix</span><span class="o">(</span><span class="s">&quot;Bearer&quot;</span><span class="o">)</span>
+            <span class="o">.</span><span class="na">buildAuthFilter</span><span class="o">()));</span>
+    <span class="n">environment</span><span class="o">.</span><span class="na">jersey</span><span class="o">().</span><span class="na">register</span><span class="o">(</span><span class="n">RolesAllowedDynamicFeature</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+    <span class="c1">//If you want to use @Auth to inject a custom Principal type into your resource</span>
+    <span class="n">environment</span><span class="o">.</span><span class="na">jersey</span><span class="o">().</span><span class="na">register</span><span class="o">(</span><span class="k">new</span> <span class="n">AuthValueFactoryProvider</span><span class="o">.</span><span class="na">Binder</span><span class="o">&lt;&gt;(</span><span class="n">User</span><span class="o">.</span><span class="na">class</span><span class="o">));</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="chained-factories">
+<span id="man-auth-chained"></span><h2>Chained Factories</h2>
+<p>The <code class="docutils literal"><span class="pre">ChainedAuthFilter</span></code> enables usage of various authentication factories at the same time.</p>
+<div class="highlight-java"><div class="highlight"><pre><span></span><span class="nd">@Override</span>
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">run</span><span class="o">(</span><span class="n">ExampleConfiguration</span> <span class="n">configuration</span><span class="o">,</span>
+                <span class="n">Environment</span> <span class="n">environment</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">AuthFilter</span> <span class="n">basicCredentialAuthFilter</span> <span class="o">=</span> <span class="k">new</span> <span class="n">BasicCredentialAuthFilter</span><span class="o">.</span><span class="na">Builder</span><span class="o">&lt;&gt;()</span>
+            <span class="o">.</span><span class="na">setAuthenticator</span><span class="o">(</span><span class="k">new</span> <span class="n">ExampleBasicAuthenticator</span><span class="o">())</span>
+            <span class="o">.</span><span class="na">setAuthorizer</span><span class="o">(</span><span class="k">new</span> <span class="n">ExampleAuthorizer</span><span class="o">())</span>
+            <span class="o">.</span><span class="na">setPrefix</span><span class="o">(</span><span class="s">&quot;Basic&quot;</span><span class="o">)</span>
+            <span class="o">.</span><span class="na">buildAuthFilter</span><span class="o">();</span>
+
+    <span class="n">AuthFilter</span> <span class="n">oauthCredentialAuthFilter</span> <span class="o">=</span> <span class="k">new</span> <span class="n">OAuthCredentialAuthFilter</span><span class="o">.</span><span class="na">Builder</span><span class="o">&lt;&gt;()</span>
+            <span class="o">.</span><span class="na">setAuthenticator</span><span class="o">(</span><span class="k">new</span> <span class="n">ExampleOAuthAuthenticator</span><span class="o">())</span>
+            <span class="o">.</span><span class="na">setAuthorizer</span><span class="o">(</span><span class="k">new</span> <span class="n">ExampleAuthorizer</span><span class="o">())</span>
+            <span class="o">.</span><span class="na">setPrefix</span><span class="o">(</span><span class="s">&quot;Bearer&quot;</span><span class="o">)</span>
+            <span class="o">.</span><span class="na">buildAuthFilter</span><span class="o">();</span>
+
+    <span class="n">List</span><span class="o">&lt;</span><span class="n">AuthFilter</span><span class="o">&gt;</span> <span class="n">filters</span> <span class="o">=</span> <span class="n">Lists</span><span class="o">.</span><span class="na">newArrayList</span><span class="o">(</span><span class="n">basicCredentialAuthFilter</span><span class="o">,</span> <span class="n">oauthCredentialAuthFilter</span><span class="o">);</span>
+    <span class="n">environment</span><span class="o">.</span><span class="na">jersey</span><span class="o">().</span><span class="na">register</span><span class="o">(</span><span class="k">new</span> <span class="n">AuthDynamicFeature</span><span class="o">(</span><span class="k">new</span> <span class="n">ChainedAuthFilter</span><span class="o">(</span><span class="n">filters</span><span class="o">)));</span>
+    <span class="n">environment</span><span class="o">.</span><span class="na">jersey</span><span class="o">().</span><span class="na">register</span><span class="o">(</span><span class="n">RolesAllowedDynamicFeature</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+    <span class="c1">//If you want to use @Auth to inject a custom Principal type into your resource</span>
+    <span class="n">environment</span><span class="o">.</span><span class="na">jersey</span><span class="o">().</span><span class="na">register</span><span class="o">(</span><span class="k">new</span> <span class="n">AuthValueFactoryProvider</span><span class="o">.</span><span class="na">Binder</span><span class="o">&lt;&gt;(</span><span class="n">User</span><span class="o">.</span><span class="na">class</span><span class="o">));</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>For this to work properly, all chained factories must produce the same type of principal, here <code class="docutils literal"><span class="pre">User</span></code>.</p>
+</div>
+<div class="section" id="protecting-resources">
+<span id="man-auth-resources"></span><h2>Protecting Resources</h2>
+<p>There are two ways to protect a resource.  You can mark your resource method with one of the following annotations:</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">&#64;PermitAll</span></code>. All authenticated users will have access to the method.</li>
+<li><code class="docutils literal"><span class="pre">&#64;RolesAllowed</span></code>. Access will be granted to the users with the specified roles.</li>
+<li><code class="docutils literal"><span class="pre">&#64;DenyAll</span></code>. No access will be granted to anyone.</li>
+</ul>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">You can use <code class="docutils literal"><span class="pre">&#64;RolesAllowed</span></code>, <code class="docutils literal"><span class="pre">&#64;PermitAll</span></code> on the class level. Method annotations take precedence over the class ones.</p>
+</div>
+<p>Alternatively, you can annotate the parameter representing your principal with <code class="docutils literal"><span class="pre">&#64;Auth</span></code>. Note you must register a
+jersey provider to make this work.</p>
+<div class="highlight-java"><div class="highlight"><pre><span></span><span class="n">environment</span><span class="o">.</span><span class="na">jersey</span><span class="o">().</span><span class="na">register</span><span class="o">(</span><span class="k">new</span> <span class="n">AuthValueFactoryProvider</span><span class="o">.</span><span class="na">Binder</span><span class="o">&lt;&gt;(</span><span class="n">User</span><span class="o">.</span><span class="na">class</span><span class="o">));</span>
+
+<span class="nd">@RolesAllowed</span><span class="o">(</span><span class="s">&quot;ADMIN&quot;</span><span class="o">)</span>
+<span class="nd">@GET</span>
+<span class="kd">public</span> <span class="n">SecretPlan</span> <span class="nf">getSecretPlan</span><span class="o">(</span><span class="nd">@Auth</span> <span class="n">User</span> <span class="n">user</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="n">dao</span><span class="o">.</span><span class="na">findPlanForUser</span><span class="o">(</span><span class="n">user</span><span class="o">);</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>You can also access the Principal by adding a parameter to your method <code class="docutils literal"><span class="pre">&#64;Context</span> <span class="pre">SecurityContext</span> <span class="pre">context</span></code>. Note this
+will not automatically register the servlet filter which performs authentication. You will still need to add one of
+<code class="docutils literal"><span class="pre">&#64;PermitAll</span></code>, <code class="docutils literal"><span class="pre">&#64;RolesAllowed</span></code>, or <code class="docutils literal"><span class="pre">&#64;DenyAll</span></code>. This is not the case with <code class="docutils literal"><span class="pre">&#64;Auth</span></code>. When that is present, the auth
+filter is automatically registered to facilitate users upgrading from older versions of Dropwizard</p>
+<div class="highlight-java"><div class="highlight"><pre><span></span><span class="nd">@RolesAllowed</span><span class="o">(</span><span class="s">&quot;ADMIN&quot;</span><span class="o">)</span>
+<span class="nd">@GET</span>
+<span class="kd">public</span> <span class="n">SecretPlan</span> <span class="nf">getSecretPlan</span><span class="o">(</span><span class="nd">@Context</span> <span class="n">SecurityContext</span> <span class="n">context</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">User</span> <span class="n">userPrincipal</span> <span class="o">=</span> <span class="o">(</span><span class="n">User</span><span class="o">)</span> <span class="n">context</span><span class="o">.</span><span class="na">getUserPrincipal</span><span class="o">();</span>
+    <span class="k">return</span> <span class="n">dao</span><span class="o">.</span><span class="na">findPlanForUser</span><span class="o">(</span><span class="n">user</span><span class="o">);</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>If there are no provided credentials for the request, or if the credentials are invalid, the
+provider will return a scheme-appropriate <code class="docutils literal"><span class="pre">401</span> <span class="pre">Unauthorized</span></code> response without calling your
+resource method.</p>
+<div class="section" id="optional-protection">
+<h3>Optional protection</h3>
+<p>Resource methods can be _optionally_ protected by representing the
+principal as an <code class="docutils literal"><span class="pre">Optional</span></code>. In such cases, the <code class="docutils literal"><span class="pre">Optional</span></code> resource
+method argument will be populated with the principal, if
+present. Otherwise, the argument will be <code class="docutils literal"><span class="pre">Optional.empty</span></code>.</p>
+<p>For instance, say you have an endpoint that should display a logged-in
+user’s name, but return an anonymous reply for unauthenticated
+requests. You need to implement a custom filter which injects a
+security context containing the principal if it exists, without
+performing authentication.</p>
+<div class="highlight-java"><div class="highlight"><pre><span></span><span class="nd">@GET</span>
+<span class="kd">public</span> <span class="n">String</span> <span class="nf">getGreeting</span><span class="o">(</span><span class="nd">@Auth</span> <span class="n">Optional</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span> <span class="n">userOpt</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">userOpt</span><span class="o">.</span><span class="na">isPresent</span><span class="o">())</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="s">&quot;Hello, &quot;</span> <span class="o">+</span> <span class="n">userOpt</span><span class="o">.</span><span class="na">get</span><span class="o">().</span><span class="na">getName</span><span class="o">()</span> <span class="o">+</span> <span class="s">&quot;!&quot;</span><span class="o">;</span>
+    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="s">&quot;Greetings, anonymous visitor!&quot;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>For optionally-protected resources, requests with invalid auth will be
+treated the same as those with no provided auth credentials. That is
+to say, requests that _fail_ to meet an authenticator or authorizer’s
+requirements result in an empty principal being passed to the resource
+method.</p>
+</div>
+</div>
+<div class="section" id="testing-protected-resources">
+<h2>Testing Protected Resources</h2>
+<p>Add this dependency into your <code class="docutils literal"><span class="pre">pom.xml</span></code> file:</p>
+<div class="highlight-xml"><div class="highlight"><pre><span></span><span class="nt">&lt;dependencies&gt;</span>
+  <span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>io.dropwizard<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>dropwizard-testing<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>${dropwizard.version}<span class="nt">&lt;/version&gt;</span>
+  <span class="nt">&lt;/dependency&gt;</span>
+  <span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.glassfish.jersey.test-framework.providers<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>jersey-test-framework-provider-grizzly2<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>${jersey.version}<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;exclusions&gt;</span>
+      <span class="nt">&lt;exclusion&gt;</span>
+        <span class="nt">&lt;groupId&gt;</span>javax.servlet<span class="nt">&lt;/groupId&gt;</span>
+        <span class="nt">&lt;artifactId&gt;</span>javax.servlet-api<span class="nt">&lt;/artifactId&gt;</span>
+      <span class="nt">&lt;/exclusion&gt;</span>
+      <span class="nt">&lt;exclusion&gt;</span>
+        <span class="nt">&lt;groupId&gt;</span>junit<span class="nt">&lt;/groupId&gt;</span>
+        <span class="nt">&lt;artifactId&gt;</span>junit<span class="nt">&lt;/artifactId&gt;</span>
+      <span class="nt">&lt;/exclusion&gt;</span>
+    <span class="nt">&lt;/exclusions&gt;</span>
+  <span class="nt">&lt;/dependency&gt;</span>
+<span class="nt">&lt;/dependencies&gt;</span>
+</pre></div>
+</div>
+<p>When you build your <code class="docutils literal"><span class="pre">ResourceTestRule</span></code>, add the <code class="docutils literal"><span class="pre">GrizzlyWebTestContainerFactory</span></code> line.</p>
+<div class="highlight-java"><div class="highlight"><pre><span></span><span class="nd">@Rule</span>
+<span class="kd">public</span> <span class="n">ResourceTestRule</span> <span class="n">rule</span> <span class="o">=</span> <span class="n">ResourceTestRule</span>
+        <span class="o">.</span><span class="na">builder</span><span class="o">()</span>
+        <span class="o">.</span><span class="na">setTestContainerFactory</span><span class="o">(</span><span class="k">new</span> <span class="n">GrizzlyWebTestContainerFactory</span><span class="o">())</span>
+        <span class="o">.</span><span class="na">addProvider</span><span class="o">(</span><span class="k">new</span> <span class="n">AuthDynamicFeature</span><span class="o">(</span><span class="k">new</span> <span class="n">OAuthCredentialAuthFilter</span><span class="o">.</span><span class="na">Builder</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;()</span>
+                <span class="o">.</span><span class="na">setAuthenticator</span><span class="o">(</span><span class="k">new</span> <span class="n">MyOAuthAuthenticator</span><span class="o">())</span>
+                <span class="o">.</span><span class="na">setAuthorizer</span><span class="o">(</span><span class="k">new</span> <span class="n">MyAuthorizer</span><span class="o">())</span>
+                <span class="o">.</span><span class="na">setRealm</span><span class="o">(</span><span class="s">&quot;SUPER SECRET STUFF&quot;</span><span class="o">)</span>
+                <span class="o">.</span><span class="na">setPrefix</span><span class="o">(</span><span class="s">&quot;Bearer&quot;</span><span class="o">)</span>
+                <span class="o">.</span><span class="na">buildAuthFilter</span><span class="o">()))</span>
+        <span class="o">.</span><span class="na">addProvider</span><span class="o">(</span><span class="n">RolesAllowedDynamicFeature</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+        <span class="o">.</span><span class="na">addProvider</span><span class="o">(</span><span class="k">new</span> <span class="n">AuthValueFactoryProvider</span><span class="o">.</span><span class="na">Binder</span><span class="o">&lt;&gt;(</span><span class="n">User</span><span class="o">.</span><span class="na">class</span><span class="o">))</span>
+        <span class="o">.</span><span class="na">addResource</span><span class="o">(</span><span class="k">new</span> <span class="n">ProtectedResource</span><span class="o">())</span>
+        <span class="o">.</span><span class="na">build</span><span class="o">();</span>
+</pre></div>
+</div>
+<p>In this example, we are testing the oauth authentication, so we need to set the header manually.</p>
+<div class="highlight-java"><div class="highlight"><pre><span></span><span class="nd">@Test</span>
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">testProtected</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+    <span class="kd">final</span> <span class="n">Response</span> <span class="n">response</span> <span class="o">=</span> <span class="n">rule</span><span class="o">.</span><span class="na">target</span><span class="o">(</span><span class="s">&quot;/protected&quot;</span><span class="o">)</span>
+            <span class="o">.</span><span class="na">request</span><span class="o">(</span><span class="n">MediaType</span><span class="o">.</span><span class="na">APPLICATION_JSON_TYPE</span><span class="o">)</span>
+            <span class="o">.</span><span class="na">header</span><span class="o">(</span><span class="s">&quot;Authorization&quot;</span><span class="o">,</span> <span class="s">&quot;Bearer TOKEN&quot;</span><span class="o">)</span>
+            <span class="o">.</span><span class="na">get</span><span class="o">();</span>
+
+    <span class="n">assertThat</span><span class="o">(</span><span class="n">response</span><span class="o">.</span><span class="na">getStatus</span><span class="o">()).</span><span class="na">isEqualTo</span><span class="o">(</span><span class="mi">200</span><span class="o">);</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="multiple-principals-and-authenticators">
+<h2>Multiple Principals and Authenticators</h2>
+<p>In some cases you may want to use different authenticators/authentication schemes for different
+resources. For example you may want Basic authentication for one resource and OAuth
+for another resource, at the same time using a different <cite>Principal</cite> for each
+authentication scheme.</p>
+<p>For this use case, there is the <code class="docutils literal"><span class="pre">PolymorphicAuthDynamicFeature</span></code> and the
+<code class="docutils literal"><span class="pre">PolymorphicAuthValueFactoryProvider</span></code>. With these two components, we can use different
+combinations of authentication schemes/authenticators/authorizers/principals. To use this
+feature, we need to do a few things:</p>
+<ul class="simple">
+<li>Register the <code class="docutils literal"><span class="pre">PolymorphicAuthDynamicFeature</span></code> with a map that maps principal types to
+authentication filters.</li>
+<li>Register the <code class="docutils literal"><span class="pre">PolymorphicAuthValueFactoryProvider</span></code> with a set of principal classes
+that you will be using.</li>
+<li>Annotate your resource method <code class="docutils literal"><span class="pre">Principal</span></code> parameters with <code class="docutils literal"><span class="pre">&#64;Auth</span></code>.</li>
+</ul>
+<p>As an example, the following code configures both OAuth and Basic authentication, using
+a different principal for each.</p>
+<div class="highlight-java"><div class="highlight"><pre><span></span><span class="kd">final</span> <span class="n">AuthFilter</span><span class="o">&lt;</span><span class="n">BasicCredentials</span><span class="o">,</span> <span class="n">BasicPrincipal</span><span class="o">&gt;</span> <span class="n">basicFilter</span>
+        <span class="o">=</span> <span class="k">new</span> <span class="n">BasicCredentialAuthFilter</span><span class="o">.</span><span class="na">Builder</span><span class="o">&lt;</span><span class="n">BasicPrincipal</span><span class="o">&gt;()</span>
+                <span class="o">.</span><span class="na">setAuthenticator</span><span class="o">(</span><span class="k">new</span> <span class="n">ExampleAuthenticator</span><span class="o">())</span>
+                <span class="o">.</span><span class="na">setRealm</span><span class="o">(</span><span class="s">&quot;SUPER SECRET STUFF&quot;</span><span class="o">)</span>
+                <span class="o">.</span><span class="na">buildAuthFilter</span><span class="o">());</span>
+<span class="kd">final</span> <span class="n">AuthFilter</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">OAuthPrincipal</span><span class="o">&gt;</span> <span class="n">oauthFilter</span>
+        <span class="o">=</span> <span class="k">new</span> <span class="n">OAuthCredentialAuthFilter</span><span class="o">.</span><span class="na">Builder</span><span class="o">&lt;</span><span class="n">OAuthPrincipal</span><span class="o">&gt;()</span>
+                <span class="o">.</span><span class="na">setAuthenticator</span><span class="o">(</span><span class="k">new</span> <span class="n">ExampleOAuthAuthenticator</span><span class="o">())</span>
+                <span class="o">.</span><span class="na">setPrefix</span><span class="o">(</span><span class="s">&quot;Bearer&quot;</span><span class="o">)</span>
+                <span class="o">.</span><span class="na">buildAuthFilter</span><span class="o">());</span>
+
+<span class="kd">final</span> <span class="n">PolymorphicAuthDynamicFeature</span> <span class="n">feature</span> <span class="o">=</span> <span class="k">new</span> <span class="n">PolymorphicAuthDynamicFeature</span><span class="o">&lt;&gt;(</span>
+    <span class="n">ImmutableMap</span><span class="o">.</span><span class="na">of</span><span class="o">(</span>
+        <span class="n">BasicPrincipal</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="n">basicFilter</span><span class="o">,</span>
+        <span class="n">OAuthPrincipal</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="n">oauthFilter</span><span class="o">));</span>
+<span class="kd">final</span> <span class="n">AbstractBinder</span> <span class="n">binder</span> <span class="o">=</span> <span class="k">new</span> <span class="n">PolymorphicAuthValueFactoryProvider</span><span class="o">.</span><span class="na">Binder</span><span class="o">&lt;&gt;(</span>
+    <span class="n">ImmutableSet</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="n">BasicPrincipal</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="n">OAuthPrincipal</span><span class="o">.</span><span class="na">class</span><span class="o">));</span>
+
+<span class="n">environment</span><span class="o">.</span><span class="na">jersey</span><span class="o">().</span><span class="na">register</span><span class="o">(</span><span class="n">feature</span><span class="o">);</span>
+<span class="n">environment</span><span class="o">.</span><span class="na">jersey</span><span class="o">().</span><span class="na">register</span><span class="o">(</span><span class="n">binder</span><span class="o">);</span>
+</pre></div>
+</div>
+<p>Now we are able to do something like the following</p>
+<div class="highlight-java"><div class="highlight"><pre><span></span><span class="nd">@GET</span>
+<span class="kd">public</span> <span class="n">Response</span> <span class="nf">basicAuthResource</span><span class="o">(</span><span class="nd">@Auth</span> <span class="n">BasicPrincipal</span> <span class="n">principal</span><span class="o">)</span> <span class="o">{}</span>
+
+<span class="nd">@GET</span>
+<span class="kd">public</span> <span class="n">Response</span> <span class="nf">oauthResource</span><span class="o">(</span><span class="nd">@Auth</span> <span class="n">OAuthPrincipal</span> <span class="n">principal</span><span class="o">)</span> <span class="o">{}</span>
+</pre></div>
+</div>
+<p>The first resource method will use Basic authentication while the second one will use OAuth.</p>
+<p>Note that with the above example, only <em>authentication</em> is configured. If you also want
+<em>authorization</em>, the following steps will need to be taken.</p>
+<ul class="simple">
+<li>Register the <code class="docutils literal"><span class="pre">RolesAllowedDynamicFeature</span></code> with the application.</li>
+<li>Make sure you add <code class="docutils literal"><span class="pre">Authorizers</span></code> when you build your <code class="docutils literal"><span class="pre">AuthFilters</span></code>.</li>
+<li>Make sure any custom <code class="docutils literal"><span class="pre">AuthFilter</span></code> you add has the <code class="docutils literal"><span class="pre">&#64;Priority(Priorities.AUTHENTICATION)</span></code> annotation set
+(otherwise authorization will be tested before the request’s security context is properly set and will fail).</li>
+<li>Annotate the resource <em>method</em> with the authorization annotation. Unlike the note earlier in
+this document that says authorization annotations are allowed on classes, with this
+poly feature, currently that is not supported. The annotation MUST go on the resource <em>method</em></li>
+</ul>
+<p>So continuing with the previous example you should add the following configurations</p>
+<div class="highlight-java"><div class="highlight"><pre><span></span><span class="o">...</span> <span class="o">=</span> <span class="k">new</span> <span class="n">BasicCredentialAuthFilter</span><span class="o">.</span><span class="na">Builder</span><span class="o">&lt;</span><span class="n">BasicPrincipal</span><span class="o">&gt;()</span>
+        <span class="o">.</span><span class="na">setAuthorizer</span><span class="o">(</span><span class="k">new</span> <span class="n">ExampleAuthorizer</span><span class="o">())..</span>  <span class="c1">// set authorizer</span>
+
+<span class="o">...</span> <span class="o">=</span> <span class="k">new</span> <span class="n">OAuthCredentialAuthFilter</span><span class="o">.</span><span class="na">Builder</span><span class="o">&lt;</span><span class="n">OAuthPrincipal</span><span class="o">&gt;()</span>
+        <span class="o">.</span><span class="na">setAuthorizer</span><span class="o">(</span><span class="k">new</span> <span class="n">ExampleAuthorizer</span><span class="o">())..</span>  <span class="c1">// set authorizer</span>
+
+<span class="n">environment</span><span class="o">.</span><span class="na">jersey</span><span class="o">().</span><span class="na">register</span><span class="o">(</span><span class="n">RolesAllowedDynamicFeature</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+</pre></div>
+</div>
+<p>Now we can do</p>
+<div class="highlight-java"><div class="highlight"><pre><span></span><span class="nd">@GET</span>
+<span class="nd">@RolesAllowed</span><span class="o">({</span> <span class="s">&quot;ADMIN&quot;</span> <span class="o">})</span>
+<span class="kd">public</span> <span class="n">Response</span> <span class="nf">baseAuthResource</span><span class="o">(</span><span class="nd">@Auth</span> <span class="n">BasicPrincipal</span> <span class="n">principal</span><span class="o">)</span> <span class="o">{}</span>
+
+<span class="nd">@GET</span>
+<span class="nd">@RolesAllowed</span><span class="o">({</span> <span class="s">&quot;ADMIN&quot;</span> <span class="o">})</span>
+<span class="kd">public</span> <span class="n">Response</span> <span class="nf">oauthResource</span><span class="o">(</span><span class="nd">@Auth</span> <span class="n">OAuthPrincipal</span> <span class="n">principal</span><span class="o">)</span> <span class="o">{}</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The polymorphic auth feature <em>SHOULD NOT</em> be used with any other <code class="docutils literal"><span class="pre">AuthDynamicFeature</span></code>. Doing so may have undesired effects.</p>
+</div>
+</div>
+</div>
+
+
+            </div>
+        </div>
+        <hr/>
+        <footer>
+            <p style="float: left">
+            &copy; Copyright 2010-2013, Coda Hale, Yammer Inc., 2014-2017 Dropwizard Team.
+            Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>
+            1.6.5.
+            </p>
+            <p style="float: right">Dropwizard v1.3.10</p>
+        </footer>
+    </div>
+</body>
+</html>
+
+
