@@ -6,6 +6,14 @@ Release Notes
 
 Please refer to `GitHub releases <https://github.com/dropwizard/dropwizard/releases>`__ for the most up-to-date release notes.
 
+.. _rel-1.3.11:
+
+v1.3.11: May 9, 2019
+====================
+
+* Upgrade Jetty to 9.4.18.v20190429
+
+
 .. _rel-1.3.10:
 
 v1.3.10: Apr 29, 2019
