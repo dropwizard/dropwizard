@@ -60,6 +60,7 @@ team to ship a *production-quality* web service in the shortest time possible.
    User mailing list <https://groups.google.com/forum/#!forum/dropwizard-user>
    Developer mailing list <https://groups.google.com/forum/#!forum/dropwizard-dev>
    Twitter <https://twitter.com/dropwizardio>
+   Mastodon <https://fosstodon.org/@dropwizard>
 
 .. toctree::
    :maxdepth: 1
