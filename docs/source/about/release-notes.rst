@@ -6,6 +6,15 @@ Release Notes
 
 Please refer to `GitHub releases <https://github.com/dropwizard/dropwizard/releases>`__ for the most up-to-date release notes.
 
+.. _rel-1.3.10:
+
+v1.3.10: Apr 29, 2019
+=====================
+
+* Upgrade Jetty to 9.4.17.v20190418
+* Upgrade commons-lang3 to 3.8.1 to make BOM compatible with Java 11 (`#2679 <https://github.com/dropwizard/dropwizard/pull/2679>`_)
+
+
 .. _rel-1.3.9:
 
 v1.3.9: Feb 24, 2019
