@@ -6,6 +6,14 @@ Release Notes
 
 Please refer to `GitHub releases <https://github.com/dropwizard/dropwizard/releases>`__ for the most up-to-date release notes.
 
+.. _rel-1.3.12:
+
+v1.3.12: May 25, 2019
+=====================
+
+* Upgrade to Jackson 2.9.9 to address `CVE-2019-12086 <https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2019-12086>`_ (`#2779 <https://github.com/dropwizard/dropwizard/pull/2779>`_)
+
+
 .. _rel-1.3.11:
 
 v1.3.11: May 9, 2019
