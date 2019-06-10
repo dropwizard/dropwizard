@@ -1178,6 +1178,24 @@ Reference ``SecretFilterFactory`` type in our configuration.
 
 The last step is to add our class (in this case ``com.example.SecretFilterFactory``) to ``META-INF/services/io.dropwizard.logging.filter.FilterFactory`` in our resources folder.
 
+.. _man-core-request-log-url-filtering:
+
+Filtering Request Logs for a Specific URI
+-----------------------------------------
+
+Reference ``UriFilterFactory`` type in your configuration.
+
+.. code-block:: yaml
+
+    server:
+      requestLog:
+        appenders:
+          - type: console
+            filterFactories:
+              - type: uri
+                uris:
+                  - "/health-check"
+
 .. _man-core-testing-applications:
 
 Testing Applications
