@@ -40,4 +40,13 @@
         <notes><![CDATA[false positive, mimepull]]></notes>
         <cve>CVE-2008-7271</cve>
     </suppress>
+    <suppress>
+        <notes><![CDATA[False positive: Liquibase (CVE-2015-9251, CVE-2018-14040, CVE-2018-14041, CVE-2018-14042, CVE-2019-11358, CVE-2019-8331)]]></notes>
+        <cve>CVE-2015-9251</cve>
+        <cve>CVE-2018-14040</cve>
+        <cve>CVE-2018-14041</cve>
+        <cve>CVE-2018-14042</cve>
+        <cve>CVE-2019-11358</cve>
+        <cve>CVE-2019-8331</cve>
+    </suppress>
 </suppressions>
