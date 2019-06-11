@@ -13,6 +13,7 @@ import io.dropwizard.jersey.validation.FuzzyEnumParamConverterProvider;
 import io.dropwizard.util.Strings;
 import javassist.ClassPool;
 import javassist.CtClass;
+import javassist.LoaderClassPath;
 import org.glassfish.jersey.internal.inject.AbstractBinder;
 import org.glassfish.jersey.internal.inject.Binder;
 import org.glassfish.jersey.internal.inject.Providers;
@@ -148,6 +149,7 @@ public class DropwizardResourceConfig extends ResourceConfig {
                 // Need to create a new subclass dynamically here because Jersey
                 // doesn't add new bindings for the same class
                 ClassPool pool = ClassPool.getDefault();
+                pool.insertClassPath(new LoaderClassPath(this.getClass().getClassLoader()));
                 CtClass cc = pool.makeClass(SpecificBinder.class.getName() + UUID.randomUUID());
                 cc.setSuperclass(pool.get(SpecificBinder.class.getName()));
                 Object binderProxy = cc.toClass().getConstructor(Object.class, Class.class).newInstance(object, clazz);
