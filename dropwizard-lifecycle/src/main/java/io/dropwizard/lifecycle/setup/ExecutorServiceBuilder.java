@@ -10,8 +10,8 @@ import java.util.Locale;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionHandler;
+import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.atomic.AtomicLong;
@@ -39,7 +39,7 @@ public class ExecutorServiceBuilder {
         this.allowCoreThreadTimeOut = false;
         this.keepAliveTime = Duration.seconds(60);
         this.shutdownTime = Duration.seconds(5);
-        this.workQueue = new LinkedBlockingQueue<>();
+        this.workQueue = new SynchronousQueue<>();
         this.threadFactory = factory;
         this.handler = new ThreadPoolExecutor.AbortPolicy();
     }

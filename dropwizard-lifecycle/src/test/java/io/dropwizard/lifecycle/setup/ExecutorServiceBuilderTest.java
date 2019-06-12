@@ -42,6 +42,7 @@ public class ExecutorServiceBuilderTest {
         executorServiceBuilder
             .minThreads(4)
             .maxThreads(8)
+            .workQueue(new LinkedBlockingQueue<>())
             .build();
 
         verify(log).warn(WARNING);
