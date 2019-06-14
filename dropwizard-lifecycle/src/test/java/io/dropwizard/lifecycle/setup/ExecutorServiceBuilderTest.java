@@ -99,22 +99,14 @@ public class ExecutorServiceBuilderTest {
         verify(log, never()).warn(anyString());
     }
 
-    /**
-     * Setting large max threads without large min threads is misleading on the default queue implementation
-     * It should warn or work
-     */
     @Test
-    public void shouldBeAbleToExecute2TasksAtOnceWithLargeMaxThreadsOrBeWarnedOtherwise() {
+    public void shouldBeAbleToExecute2TasksAtOnceWithLargeMaxThreadsAndDefaultMinThreads() {
         ExecutorService exe = executorServiceBuilder
             .maxThreads(Integer.MAX_VALUE)
             .build();
 
-        try {
-            verify(log).warn(anyString());
-        } catch (WantedButNotInvoked error) {
-            // no warning has been given so we should be able to execute at least 2 things at once
+            verify(log, never()).warn(anyString());
             assertCanExecuteAtLeast2ConcurrentTasks(exe);
-        }
     }
 
     @Test
