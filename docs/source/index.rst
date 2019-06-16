@@ -17,10 +17,18 @@ team to ship a *production-quality* web service in the shortest time possible.
 
 .. toctree::
    :maxdepth: 1
+   :caption: General
+
+   Javadoc <https://javadoc.io/doc/io.dropwizard/dropwizard-parent>
+   Release Notes <https://github.com/dropwizard/dropwizard/releases>
+   about/security
+   about/faq
+
+.. toctree::
+   :maxdepth: 1
    :caption: Getting Started
 
    getting-started
-   about/faq
 
 .. toctree::
    :maxdepth: 1
@@ -43,16 +51,6 @@ team to ship a *production-quality* web service in the shortest time possible.
    manual/configuration
    manual/internals
 
-
-.. toctree::
-   :maxdepth: 1
-   :caption: Misc
-
-   about/javadoc.rst
-   about/release-notes
-   about/security
-   about/docs-index.rst
-
 .. toctree::
    :maxdepth: 1
    :caption: Support
@@ -68,3 +66,4 @@ team to ship a *production-quality* web service in the shortest time possible.
 
    about/contributors
    about/sponsors
+   about/docs-index.rst
