@@ -4,6 +4,15 @@
 Javadoc
 #######
 
+All-in-one Javadoc
+******************
+
+- :javadoc:`dropwizard-parent`
+
+
+Individual Javadoc
+******************
+
 - :javadoc:`dropwizard-assets`
 - :javadoc:`dropwizard-auth`
 - :javadoc:`dropwizard-client`
