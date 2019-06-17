@@ -338,7 +338,7 @@ in your app:
 .. code-block:: java
 
     static {
-        Security.addProvider(new OpenSSLProvider());
+        Security.insertProviderAt(new OpenSSLProvider(), 1);
     }
 
 and setting the JCE provider in the configuration:
@@ -359,6 +359,11 @@ For HTTP/2 servers you need to add an ALPN Conscrypt provider as a dependency.
         <groupId>org.eclipse.jetty</groupId>
         <artifactId>jetty-alpn-conscrypt-server</artifactId>
     </dependency>
+
+.. note::
+
+    If you are using Conscrypt with Java 8, you must exclude TLSv1.3 protocol as it is now enabled per default with
+    Conscrypt 2.0.0 but not supported by Java 8.
 
 .. _`Conscrypt`: https://github.com/google/conscrypt
 .. _`BoringSSL`: https://github.com/google/boringssl
