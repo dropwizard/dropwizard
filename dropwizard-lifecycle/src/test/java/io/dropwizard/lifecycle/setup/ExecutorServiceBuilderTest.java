@@ -105,8 +105,8 @@ public class ExecutorServiceBuilderTest {
             .maxThreads(Integer.MAX_VALUE)
             .build();
 
-            verify(log, never()).warn(anyString());
-            assertCanExecuteAtLeast2ConcurrentTasks(exe);
+        verify(log, never()).warn(anyString());
+        assertCanExecuteAtLeast2ConcurrentTasks(exe);
     }
 
     @Test
