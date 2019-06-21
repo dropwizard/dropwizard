@@ -333,6 +333,7 @@ public class HttpClientBuilder {
         final Integer timeout = (int) configuration.getTimeout().toMilliseconds();
         final Integer connectionTimeout = (int) configuration.getConnectionTimeout().toMilliseconds();
         final Integer connectionRequestTimeout = (int) configuration.getConnectionRequestTimeout().toMilliseconds();
+        final boolean normalizeUri = configuration.isNormalizeUriEnabled();
         final long keepAlive = configuration.getKeepAlive().toMilliseconds();
         final ConnectionReuseStrategy reuseStrategy = keepAlive == 0
                 ? new NoConnectionReuseStrategy()
@@ -347,6 +348,7 @@ public class HttpClientBuilder {
                 .setSocketTimeout(timeout)
                 .setConnectTimeout(connectionTimeout)
                 .setConnectionRequestTimeout(connectionRequestTimeout)
+                .setNormalizeUri(normalizeUri)
                 .build();
         final SocketConfig socketConfig = SocketConfig.custom()
                 .setTcpNoDelay(true)

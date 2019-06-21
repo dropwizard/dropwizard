@@ -340,6 +340,23 @@ public class HttpClientBuilderTest {
     }
 
     @Test
+    public void normalizeUriByDefault() throws Exception {
+        assertThat(builder.using(configuration).createClient(apacheBuilder, connectionManager, "test")).isNotNull();
+
+        assertThat(((RequestConfig) spyHttpClientBuilderField("defaultRequestConfig", apacheBuilder)).isNormalizeUri())
+            .isEqualTo(true);
+    }
+
+    @Test
+    public void disableNormalizeUriWhenDisabled() throws Exception {
+        configuration.setNormalizeUriEnabled(false);
+        assertThat(builder.using(configuration).createClient(apacheBuilder, connectionManager, "test")).isNotNull();
+
+        assertThat(((RequestConfig) spyHttpClientBuilderField("defaultRequestConfig", apacheBuilder)).isNormalizeUri())
+            .isEqualTo(false);
+    }
+
+    @Test
     public void setsTheSocketTimeout() throws Exception {
         configuration.setTimeout(Duration.milliseconds(500));
         assertThat(builder.using(configuration).createClient(apacheBuilder, connectionManager, "test")).isNotNull();
