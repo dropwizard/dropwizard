@@ -39,6 +39,7 @@ v2.0.0: Unreleased
 * Disable using ``X-Forwarded-*`` headers by default (`#2748 <https://github.com/dropwizard/dropwizard/pull/2748>`_)
 * Fix typo by renaming ``ResilentSocketOutputStream`` to ``ResilientSocketOutputStream`` (`#2766 <https://github.com/dropwizard/dropwizard/pull/2766>`_)
 * Adds an opt-in URI request logging filter factory (`UriFilterFactory`)  (`#2794 <https://github.com/dropwizard/dropwizard/pull/2795>`_)`
+* Add support for configuring Jetty's cookie compliance (`#2812 <https://github.com/dropwizard/dropwizard/pull/2812>`_)
 
 .. _rel-1.3.9:
 

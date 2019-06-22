@@ -368,6 +368,26 @@ httpCompliance           RFC7230             This sets the http compliance level
 
                                              * RFC7230: Disallow header folding.
                                              * RFC2616: Allow header folding.
+requestCookieCompliance  RFC6265             This sets the cookie compliance level used by Jetty when parsing request ``Cookie``
+                                             headers, this can be useful when needing to support Version=1 cookies defined in
+                                             RFC2109 (and continued in RFC2965) which allows for special/reserved characters
+                                             (control, separator, et al) to be enclosed within double quotes when used in a
+                                             cookie value;
+                                             Possible values are set forth in the ``org.eclipse.jetty.http.CookieCompliance``
+                                             enum:
+
+                                             * RFC6265: Special characters in cookie values must be encoded.
+                                             * RFC2965: Allows for special characters enclosed within double quotes.
+responseCookieCompliance RFC6265             This sets the cookie compliance level used by Jetty when generating response
+                                             ``Set-Cookie`` headers, this can be useful when needing to support Version=1 cookies
+                                             defined in RFC2109 (and continued in RFC2965) which allows for special/reserved
+                                             characters (control, separator, et al) to be enclosed within double quotes when used
+                                             in a cookie value;
+                                             Possible values are set forth in the ``org.eclipse.jetty.http.CookieCompliance``
+                                             enum:
+
+                                             * RFC6265: Special characters in cookie values must be encoded.
+                                             * RFC2965: Allows for special characters enclosed within double quotes.
 ======================== ==================  ======================================================================================
 
 .. _`java.net.Socket#setSoTimeout(int)`: https://docs.oracle.com/javase/8/docs/api/java/net/Socket.html#setSoTimeout-int-
