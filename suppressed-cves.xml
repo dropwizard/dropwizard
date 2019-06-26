@@ -49,4 +49,8 @@
         <cve>CVE-2019-11358</cve>
         <cve>CVE-2019-8331</cve>
     </suppress>
+    <suppress>
+        <notes><![CDATA[Ignore CVE-2019-12814 until Jackson 2.9.9.1 or 2.9.10 has been released]]></notes>
+        <cve>CVE-2019-12814</cve>
+    </suppress>
 </suppressions>
