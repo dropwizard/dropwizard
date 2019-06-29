@@ -12,6 +12,7 @@ import io.dropwizard.util.DataSize;
 import io.dropwizard.util.Duration;
 import io.dropwizard.util.Resources;
 import io.dropwizard.validation.BaseValidator;
+import org.eclipse.jetty.http.CookieCompliance;
 import org.eclipse.jetty.http.HttpCompliance;
 import org.eclipse.jetty.io.ArrayByteBufferPool;
 import org.eclipse.jetty.io.ByteBufferPool;
@@ -79,6 +80,8 @@ class HttpConnectorFactoryTest {
         assertThat(http.isUseDateHeader()).isTrue();
         assertThat(http.isUseForwardedHeaders()).isFalse();
         assertThat(http.getHttpCompliance()).isEqualTo(HttpCompliance.RFC7230);
+        assertThat(http.getRequestCookieCompliance()).isEqualTo(CookieCompliance.RFC6265);
+        assertThat(http.getResponseCookieCompliance()).isEqualTo(CookieCompliance.RFC6265);
     }
 
     @Test
@@ -111,6 +114,8 @@ class HttpConnectorFactoryTest {
         HttpConfiguration httpConfiguration = http.buildHttpConfiguration();
         assertThat(httpConfiguration.getCustomizers()).hasAtLeastOneElementOfType(ForwardedRequestCustomizer.class);
         assertThat(http.getHttpCompliance()).isEqualTo(HttpCompliance.RFC2616);
+        assertThat(http.getRequestCookieCompliance()).isEqualTo(CookieCompliance.RFC2965);
+        assertThat(http.getResponseCookieCompliance()).isEqualTo(CookieCompliance.RFC6265);
     }
 
     @Test
@@ -122,6 +127,8 @@ class HttpConnectorFactoryTest {
         http.setAcceptQueueSize(1024);
         http.setMinResponseDataPerSecond(DataSize.bytes(200));
         http.setMinRequestDataPerSecond(DataSize.bytes(42));
+        http.setRequestCookieCompliance(CookieCompliance.RFC6265);
+        http.setResponseCookieCompliance(CookieCompliance.RFC6265);
 
         Server server = new Server();
         MetricRegistry metrics = new MetricRegistry();
@@ -170,6 +177,8 @@ class HttpConnectorFactoryTest {
         assertThat(httpConfiguration.getCustomizers()).noneMatch(customizer -> customizer.getClass().equals(ForwardedRequestCustomizer.class));
         assertThat(httpConfiguration.getMinRequestDataRate()).isEqualTo(42);
         assertThat(httpConfiguration.getMinResponseDataRate()).isEqualTo(200);
+        assertThat(httpConfiguration.getRequestCookieCompliance()).isEqualTo(CookieCompliance.RFC6265);
+        assertThat(httpConfiguration.getResponseCookieCompliance()).isEqualTo(CookieCompliance.RFC6265);
 
         connector.stop();
         server.stop();

@@ -20,3 +20,5 @@ nb-configuration.xml
 atlassian-ide-plugin.xml
 
 logs
+
+.DS_Store
