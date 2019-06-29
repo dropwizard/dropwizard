@@ -291,9 +291,9 @@ public class DefaultLoggingFactory implements LoggingFactory {
         for (Map.Entry<String, JsonNode> entry : loggers.entrySet()) {
             final Logger logger = loggerContext.getLogger(entry.getKey());
             final JsonNode jsonNode = entry.getValue();
-            if (jsonNode.isTextual()) {
+            if (jsonNode.isTextual() || jsonNode.isBoolean()) {
                 // Just a level as a string
-                logger.setLevel(Level.valueOf(jsonNode.asText()));
+                logger.setLevel(toLevel(jsonNode.asText()));
             } else if (jsonNode.isObject()) {
                 // A level and an appender
                 final LoggerConfiguration configuration;
@@ -317,7 +317,6 @@ public class DefaultLoggingFactory implements LoggingFactory {
     }
 
     static Level toLevel(@Nullable String text) {
-        // required because YAML maps "off" to a boolean false
         if ("false".equalsIgnoreCase(text)) {
             // required because YAML maps "off" to a boolean false
             return Level.OFF;
