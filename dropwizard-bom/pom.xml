@@ -189,7 +189,7 @@
             <dependency>
                 <groupId>net.bytebuddy</groupId>
                 <artifactId>byte-buddy</artifactId>
-                <version>1.9.13</version>
+                <version>1.9.14</version>
             </dependency>
             <dependency>
                 <groupId>org.hsqldb</groupId>
