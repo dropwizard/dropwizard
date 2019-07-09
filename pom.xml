@@ -65,7 +65,7 @@
         <junit.version>4.12</junit.version>
         <junit5.version>5.5.0</junit5.version>
         <assertj.version>3.12.2</assertj.version>
-        <mockito.version>2.28.2</mockito.version>
+        <mockito.version>3.0.0</mockito.version>
     </properties>
 
     <developers>
