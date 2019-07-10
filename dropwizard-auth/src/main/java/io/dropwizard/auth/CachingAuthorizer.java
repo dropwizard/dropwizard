@@ -9,8 +9,10 @@ import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.github.benmanes.caffeine.cache.stats.CacheStats;
 import com.google.common.annotations.VisibleForTesting;
 import io.dropwizard.util.Sets;
-import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.ImmutableTriple;
 
+import javax.annotation.Nullable;
+import javax.ws.rs.core.UriInfo;
 import java.security.Principal;
 import java.util.Set;
 import java.util.concurrent.CompletionException;
@@ -45,7 +47,7 @@ public class CachingAuthorizer<P extends Principal> implements Authorizer<P> {
     //
     // Field is package-private to be visible for unit tests
     @VisibleForTesting
-    final LoadingCache<ImmutablePair<P, String>, Boolean> cache;
+    final LoadingCache<ImmutableTriple<P, String, UriInfo>, Boolean> cache;
 
     /**
      * Creates a new cached authorizer.
@@ -77,14 +79,19 @@ public class CachingAuthorizer<P extends Principal> implements Authorizer<P> {
         this.getsTimer = metricRegistry.timer(name(authorizer.getClass(), "gets"));
         this.cache = builder.recordStats().build(key -> {
             cacheMisses.mark();
-            return underlying.authorize(key.left, key.right);
+            return underlying.authorize(key.left, key.middle, key.right);
         });
     }
 
     @Override
     public boolean authorize(P principal, String role) {
+        return authorize(principal, role, null);
+    }
+
+    @Override
+    public boolean authorize(P principal, String role, @Nullable UriInfo uriInfo) {
         try (Timer.Context context = getsTimer.time()) {
-            final ImmutablePair<P, String> cacheKey = ImmutablePair.of(principal, role);
+            final ImmutableTriple<P, String, UriInfo> cacheKey = ImmutableTriple.of(principal, role, uriInfo);
             final Boolean result = cache.get(cacheKey);
             return result == null ? false : result;
         } catch (CompletionException e) {
@@ -104,9 +111,10 @@ public class CachingAuthorizer<P extends Principal> implements Authorizer<P> {
      *
      * @param principal
      * @param role
+     * @param uriInfo
      */
-    public void invalidate(P principal, String role) {
-        cache.invalidate(ImmutablePair.of(principal, role));
+    public void invalidate(P principal, String role, UriInfo uriInfo) {
+        cache.invalidate(ImmutableTriple.of(principal, role, uriInfo));
     }
 
     /**
@@ -115,8 +123,7 @@ public class CachingAuthorizer<P extends Principal> implements Authorizer<P> {
      * @param principal
      */
     public void invalidate(P principal) {
-
-        final Set<ImmutablePair<P, String>> keys = cache.asMap().keySet().stream()
+        final Set<ImmutableTriple<P, String, UriInfo>> keys = cache.asMap().keySet().stream()
                 .filter(cacheKey -> cacheKey.getLeft().equals(principal))
                 .collect(Collectors.toSet());
         cache.invalidateAll(keys);
@@ -130,7 +137,7 @@ public class CachingAuthorizer<P extends Principal> implements Authorizer<P> {
      */
     public void invalidateAll(Iterable<P> principals) {
         final Set<P> principalSet = Sets.of(principals);
-        final Set<ImmutablePair<P, String>> keys = cache.asMap().keySet().stream()
+        final Set<ImmutableTriple<P, String, UriInfo>> keys = cache.asMap().keySet().stream()
                 .filter(cacheKey -> principalSet.contains(cacheKey.getLeft()))
                 .collect(Collectors.toSet());
         cache.invalidateAll(keys);
@@ -143,7 +150,7 @@ public class CachingAuthorizer<P extends Principal> implements Authorizer<P> {
      * @param predicate a predicate to filter credentials
      */
     public void invalidateAll(Predicate<? super P> predicate) {
-        final Set<ImmutablePair<P, String>> keys = cache.asMap().keySet().stream()
+        final Set<ImmutableTriple<P, String, UriInfo>> keys = cache.asMap().keySet().stream()
                 .filter(cacheKey -> predicate.test(cacheKey.getLeft()))
                 .collect(Collectors.toSet());
 
