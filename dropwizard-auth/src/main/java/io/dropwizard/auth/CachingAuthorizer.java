@@ -11,7 +11,7 @@ import com.google.common.annotations.VisibleForTesting;
 import io.dropwizard.util.Sets;
 
 import javax.annotation.Nullable;
-import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.container.ContainerRequestContext;
 import java.security.Principal;
 import java.util.Objects;
 import java.util.Set;
@@ -24,12 +24,12 @@ import static com.codahale.metrics.MetricRegistry.name;
 class AuthorizationContext<P extends Principal> {
     private final P principal;
     private final String role;
-    private final @Nullable UriInfo uriInfo;
+    private final @Nullable ContainerRequestContext requestContext;
 
-    AuthorizationContext(P principal, String role, @Nullable UriInfo uriInfo) {
+    AuthorizationContext(P principal, String role, @Nullable ContainerRequestContext requestContext) {
         this.principal = principal;
         this.role = role;
-        this.uriInfo = uriInfo;
+        this.requestContext = requestContext;
     }
 
     P getPrincipal() {
@@ -40,8 +40,8 @@ class AuthorizationContext<P extends Principal> {
         return role;
     }
 
-    @Nullable UriInfo getUriInfo() {
-        return uriInfo;
+    @Nullable ContainerRequestContext getRequestContext() {
+        return requestContext;
     }
 
     @Override
@@ -51,12 +51,12 @@ class AuthorizationContext<P extends Principal> {
         AuthorizationContext<?> that = (AuthorizationContext<?>) o;
         return Objects.equals(principal, that.principal) &&
             Objects.equals(role, that.role) &&
-            Objects.equals(uriInfo, that.uriInfo);
+            Objects.equals(requestContext, that.requestContext);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(principal, role, uriInfo);
+        return Objects.hash(principal, role, requestContext);
     }
 }
 
@@ -118,7 +118,7 @@ public class CachingAuthorizer<P extends Principal> implements Authorizer<P> {
         this.getsTimer = metricRegistry.timer(name(authorizer.getClass(), "gets"));
         this.cache = builder.recordStats().build(key -> {
             cacheMisses.mark();
-            return underlying.authorize(key.getPrincipal(), key.getRole(), key.getUriInfo());
+            return underlying.authorize(key.getPrincipal(), key.getRole(), key.getRequestContext());
         });
     }
 
@@ -128,9 +128,9 @@ public class CachingAuthorizer<P extends Principal> implements Authorizer<P> {
     }
 
     @Override
-    public boolean authorize(P principal, String role, @Nullable UriInfo uriInfo) {
+    public boolean authorize(P principal, String role, @Nullable ContainerRequestContext requestContext) {
         try (Timer.Context context = getsTimer.time()) {
-            final AuthorizationContext<P> cacheKey = new AuthorizationContext<>(principal, role, uriInfo);
+            final AuthorizationContext<P> cacheKey = new AuthorizationContext<>(principal, role, requestContext);
             final Boolean result = cache.get(cacheKey);
             return result == null ? false : result;
         } catch (CompletionException e) {
@@ -150,10 +150,10 @@ public class CachingAuthorizer<P extends Principal> implements Authorizer<P> {
      *
      * @param principal
      * @param role
-     * @param uriInfo
+     * @param requestContext
      */
-    public void invalidate(P principal, String role, UriInfo uriInfo) {
-        cache.invalidate(new AuthorizationContext<>(principal, role, uriInfo));
+    public void invalidate(P principal, String role, ContainerRequestContext requestContext) {
+        cache.invalidate(new AuthorizationContext<>(principal, role, requestContext));
     }
 
     /**

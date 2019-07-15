@@ -1,7 +1,7 @@
 package io.dropwizard.auth;
 
 import javax.annotation.Nullable;
-import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.container.ContainerRequestContext;
 import java.security.Principal;
 
 /**
@@ -24,10 +24,10 @@ public interface Authorizer<P extends Principal> {
      *
      * @param principal a {@link Principal} object, representing a user
      * @param role a user role
-     * @param uriInfo a request URI information
+     * @param requestContext a request context.
      * @return {@code true}, if the access is granted, {@code false otherwise}
      */
-    default boolean authorize(P principal, String role, @Nullable UriInfo uriInfo) {
+    default boolean authorize(P principal, String role, @Nullable ContainerRequestContext requestContext) {
         return authorize(principal, role);
     }
 }
