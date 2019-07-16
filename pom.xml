@@ -612,6 +612,33 @@
                     <version>1.6.8</version>
                     <extensions>true</extensions>
                 </plugin>
+                <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+                <plugin>
+                  <groupId>org.eclipse.m2e</groupId>
+                  <artifactId>lifecycle-mapping</artifactId>
+                  <version>1.0.0</version>
+                  <configuration>
+                    <lifecycleMappingMetadata>
+                      <pluginExecutions>
+                        <pluginExecution>
+                          <pluginExecutionFilter>
+                            <groupId>org.simplify4u.plugins</groupId>
+                            <artifactId>
+                              pgpverify-maven-plugin
+                            </artifactId>
+                            <versionRange>[1.4.0,)</versionRange>
+                            <goals>
+                              <goal>check</goal>
+                            </goals>
+                          </pluginExecutionFilter>
+                          <action>
+                            <ignore></ignore>
+                          </action>
+                        </pluginExecution>
+                      </pluginExecutions>
+                    </lifecycleMappingMetadata>
+                  </configuration>
+                </plugin>
             </plugins>
         </pluginManagement>
 
