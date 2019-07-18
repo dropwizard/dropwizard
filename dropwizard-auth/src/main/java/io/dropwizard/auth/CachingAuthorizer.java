@@ -9,15 +9,56 @@ import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.github.benmanes.caffeine.cache.stats.CacheStats;
 import com.google.common.annotations.VisibleForTesting;
 import io.dropwizard.util.Sets;
-import org.apache.commons.lang3.tuple.ImmutablePair;
 
+import javax.annotation.Nullable;
+import javax.ws.rs.container.ContainerRequestContext;
 import java.security.Principal;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CompletionException;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.codahale.metrics.MetricRegistry.name;
+
+class AuthorizationContext<P extends Principal> {
+    private final P principal;
+    private final String role;
+    private final @Nullable ContainerRequestContext requestContext;
+
+    AuthorizationContext(P principal, String role, @Nullable ContainerRequestContext requestContext) {
+        this.principal = principal;
+        this.role = role;
+        this.requestContext = requestContext;
+    }
+
+    P getPrincipal() {
+        return principal;
+    }
+
+    String getRole() {
+        return role;
+    }
+
+    @Nullable ContainerRequestContext getRequestContext() {
+        return requestContext;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AuthorizationContext<?> that = (AuthorizationContext<?>) o;
+        return Objects.equals(principal, that.principal) &&
+            Objects.equals(role, that.role) &&
+            Objects.equals(requestContext, that.requestContext);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(principal, role, requestContext);
+    }
+}
 
 /**
  * An {@link Authorizer} decorator which uses a {@link Caffeine} cache to
@@ -33,7 +74,7 @@ public class CachingAuthorizer<P extends Principal> implements Authorizer<P> {
     private final Meter cacheMisses;
     private final Timer getsTimer;
 
-    // A cache which maps (principal, role) tuples to boolean
+    // A cache which maps (principal, role, uriInfo) to boolean
     // authorization states.
     //
     // A cached value of `true` indicates that the key's principal is
@@ -45,7 +86,7 @@ public class CachingAuthorizer<P extends Principal> implements Authorizer<P> {
     //
     // Field is package-private to be visible for unit tests
     @VisibleForTesting
-    final LoadingCache<ImmutablePair<P, String>, Boolean> cache;
+    final LoadingCache<AuthorizationContext<P>, Boolean> cache;
 
     /**
      * Creates a new cached authorizer.
@@ -77,14 +118,19 @@ public class CachingAuthorizer<P extends Principal> implements Authorizer<P> {
         this.getsTimer = metricRegistry.timer(name(authorizer.getClass(), "gets"));
         this.cache = builder.recordStats().build(key -> {
             cacheMisses.mark();
-            return underlying.authorize(key.left, key.right);
+            return underlying.authorize(key.getPrincipal(), key.getRole(), key.getRequestContext());
         });
     }
 
     @Override
     public boolean authorize(P principal, String role) {
+        return authorize(principal, role, null);
+    }
+
+    @Override
+    public boolean authorize(P principal, String role, @Nullable ContainerRequestContext requestContext) {
         try (Timer.Context context = getsTimer.time()) {
-            final ImmutablePair<P, String> cacheKey = ImmutablePair.of(principal, role);
+            final AuthorizationContext<P> cacheKey = new AuthorizationContext<>(principal, role, requestContext);
             final Boolean result = cache.get(cacheKey);
             return result == null ? false : result;
         } catch (CompletionException e) {
@@ -104,9 +150,10 @@ public class CachingAuthorizer<P extends Principal> implements Authorizer<P> {
      *
      * @param principal
      * @param role
+     * @param requestContext
      */
-    public void invalidate(P principal, String role) {
-        cache.invalidate(ImmutablePair.of(principal, role));
+    public void invalidate(P principal, String role, ContainerRequestContext requestContext) {
+        cache.invalidate(new AuthorizationContext<>(principal, role, requestContext));
     }
 
     /**
@@ -115,9 +162,8 @@ public class CachingAuthorizer<P extends Principal> implements Authorizer<P> {
      * @param principal
      */
     public void invalidate(P principal) {
-
-        final Set<ImmutablePair<P, String>> keys = cache.asMap().keySet().stream()
-                .filter(cacheKey -> cacheKey.getLeft().equals(principal))
+        final Set<AuthorizationContext<P>> keys = cache.asMap().keySet().stream()
+                .filter(cacheKey -> cacheKey.getPrincipal().equals(principal))
                 .collect(Collectors.toSet());
         cache.invalidateAll(keys);
     }
@@ -130,8 +176,8 @@ public class CachingAuthorizer<P extends Principal> implements Authorizer<P> {
      */
     public void invalidateAll(Iterable<P> principals) {
         final Set<P> principalSet = Sets.of(principals);
-        final Set<ImmutablePair<P, String>> keys = cache.asMap().keySet().stream()
-                .filter(cacheKey -> principalSet.contains(cacheKey.getLeft()))
+        final Set<AuthorizationContext<P>> keys = cache.asMap().keySet().stream()
+                .filter(cacheKey -> principalSet.contains(cacheKey.getPrincipal()))
                 .collect(Collectors.toSet());
         cache.invalidateAll(keys);
     }
@@ -143,8 +189,8 @@ public class CachingAuthorizer<P extends Principal> implements Authorizer<P> {
      * @param predicate a predicate to filter credentials
      */
     public void invalidateAll(Predicate<? super P> predicate) {
-        final Set<ImmutablePair<P, String>> keys = cache.asMap().keySet().stream()
-                .filter(cacheKey -> predicate.test(cacheKey.getLeft()))
+        final Set<AuthorizationContext<P>> keys = cache.asMap().keySet().stream()
+                .filter(cacheKey -> predicate.test(cacheKey.getPrincipal()))
                 .collect(Collectors.toSet());
 
         cache.invalidateAll(keys);
