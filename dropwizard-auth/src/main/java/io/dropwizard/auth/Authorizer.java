@@ -17,6 +17,7 @@ public interface Authorizer<P extends Principal> {
      * @param role a user role
      * @return {@code true}, if the access is granted, {@code false otherwise}
      */
+    @Deprecated
     boolean authorize(P principal, String role);
 
     /**
@@ -27,6 +28,7 @@ public interface Authorizer<P extends Principal> {
      * @param requestContext a request context.
      * @return {@code true}, if the access is granted, {@code false otherwise}
      */
+    @SuppressWarnings("deprecation")
     default boolean authorize(P principal, String role, @Nullable ContainerRequestContext requestContext) {
         return authorize(principal, role);
     }
