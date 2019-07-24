@@ -1,6 +1,8 @@
 package io.dropwizard.logging;
 
+import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.ConsoleAppender;
@@ -24,6 +26,7 @@ import org.assertj.core.data.MapEntry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.slf4j.ILoggerFactory;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
@@ -54,6 +57,30 @@ public class DefaultLoggingFactoryTest {
     @Test
     public void hasADefaultLevel() throws Exception {
         assertThat(config.getLevel()).isEqualTo("INFO");
+    }
+
+    @Test
+    public void loggerLevelsCanBeOff() throws Exception {
+        DefaultLoggingFactory config = null;
+        try {
+            config = factory.build(new File(Resources.getResource("yaml/logging_level_off.yml").toURI()));
+            config.configure(new MetricRegistry(), "test-logger");
+
+            final ILoggerFactory loggerContext = LoggerFactory.getILoggerFactory();
+            final Logger rootLogger = ((LoggerContext) loggerContext).getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
+            final Logger appLogger = ((LoggerContext) loggerContext).getLogger("com.example.app");
+            final Logger newAppLogger = ((LoggerContext) loggerContext).getLogger("com.example.newApp");
+            final Logger legacyAppLogger = ((LoggerContext) loggerContext).getLogger("com.example.legacyApp");
+
+            assertThat(rootLogger.getLevel()).isEqualTo(Level.OFF);
+            assertThat(appLogger.getLevel()).isEqualTo(Level.OFF);
+            assertThat(newAppLogger.getLevel()).isEqualTo(Level.OFF);
+            assertThat(legacyAppLogger.getLevel()).isEqualTo(Level.OFF);
+        } finally {
+            if (config != null) {
+                config.reset();
+            }
+        }
     }
 
     @Test
@@ -156,7 +183,7 @@ public class DefaultLoggingFactoryTest {
     }
 
     @Test
-    public void testToStringIsImplented() {
+    public void testToStringIsImplemented() {
         assertThat(config.toString()).startsWith(
                 "DefaultLoggingFactory{level=INFO, loggers={com.example.app=\"DEBUG\"}, appenders=");
     }

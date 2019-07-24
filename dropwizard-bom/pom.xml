@@ -5,7 +5,7 @@
     <parent>
         <groupId>io.dropwizard</groupId>
         <artifactId>dropwizard-parent</artifactId>
-        <version>2.0.0-rc2-SNAPSHOT</version>
+        <version>2.0.0-rc5-SNAPSHOT</version>
     </parent>
 
     <artifactId>dropwizard-bom</artifactId>
@@ -19,10 +19,11 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <dropwizard.version>${project.version}</dropwizard.version>
-        <guava.version>27.1-jre</guava.version>
-        <jersey.version>2.28</jersey.version>
-        <jackson.version>2.9.8</jackson.version>
-        <jetty.version>9.4.18.v20190429</jetty.version>
+        <guava.version>28.0-jre</guava.version>
+        <jersey.version>2.29</jersey.version>
+        <jackson.version>2.9.9</jackson.version>
+        <jackson-databind.version>2.9.9.1</jackson-databind.version>
+        <jetty.version>9.4.19.v20190610</jetty.version>
         <servlet.version>3.0.0.v201112011016</servlet.version>
         <metrics4.version>4.1.0</metrics4.version>
         <slf4j.version>1.7.26</slf4j.version>
@@ -33,6 +34,20 @@
 
     <dependencyManagement>
         <dependencies>
+            <!-- Jackson -->
+            <dependency>
+                <groupId>com.fasterxml.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
+                <version>${jackson.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackson-databind.version}</version>
+            </dependency>
+
             <dependency>
                 <groupId>org.objenesis</groupId>
                 <artifactId>objenesis</artifactId>
@@ -46,7 +61,7 @@
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-text</artifactId>
-                <version>1.6</version>
+                <version>1.7</version>
             </dependency>
             <dependency>
                 <groupId>com.google.guava</groupId>
@@ -72,7 +87,7 @@
             <dependency>
                 <groupId>org.checkerframework</groupId>
                 <artifactId>checker-qual</artifactId>
-                <version>2.8.1</version>
+                <version>2.9.0</version>
             </dependency>
             <dependency>
                 <groupId>net.sourceforge.argparse4j</groupId>
@@ -87,12 +102,12 @@
             <dependency>
                 <groupId>joda-time</groupId>
                 <artifactId>joda-time</artifactId>
-                <version>2.10.2</version>
+                <version>2.10.3</version>
             </dependency>
             <dependency>
                 <groupId>org.hibernate.validator</groupId>
                 <artifactId>hibernate-validator</artifactId>
-                <version>6.0.16.Final</version>
+                <version>6.0.17.Final</version>
             </dependency>
             <dependency>
                 <groupId>org.glassfish</groupId>
@@ -119,7 +134,7 @@
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpclient</artifactId>
-                <version>4.5.8</version>
+                <version>4.5.9</version>
                 <exclusions>
                     <exclusion>
                         <groupId>commons-logging</groupId>
@@ -130,7 +145,7 @@
             <dependency>
                 <groupId>org.apache.tomcat</groupId>
                 <artifactId>tomcat-jdbc</artifactId>
-                <version>9.0.20</version>
+                <version>9.0.22</version>
             </dependency>
             <dependency>
                 <groupId>com.h2database</groupId>
@@ -159,7 +174,7 @@
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-core</artifactId>
-                <version>5.4.2.Final</version>
+                <version>5.4.3.Final</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.jboss.logging</groupId>
@@ -180,17 +195,17 @@
             <dependency>
                 <groupId>net.bytebuddy</groupId>
                 <artifactId>byte-buddy</artifactId>
-                <version>1.9.12</version>
+                <version>1.9.15</version>
             </dependency>
             <dependency>
                 <groupId>org.hsqldb</groupId>
                 <artifactId>hsqldb</artifactId>
-                <version>2.4.1</version>
+                <version>2.5.0</version>
             </dependency>
             <dependency>
                 <groupId>org.liquibase</groupId>
                 <artifactId>liquibase-core</artifactId>
-                <version>3.6.3</version>
+                <version>3.7.0</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.yaml</groupId>
@@ -354,15 +369,6 @@
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-alpn-java-client</artifactId>
                 <version>${jetty.version}</version>
-            </dependency>
-
-            <!-- Jackson -->
-            <dependency>
-                <groupId>com.fasterxml.jackson</groupId>
-                <artifactId>jackson-bom</artifactId>
-                <version>${jackson.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
             </dependency>
 
             <!-- Jersey -->

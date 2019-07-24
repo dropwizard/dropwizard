@@ -9,6 +9,7 @@ import io.dropwizard.util.Duration;
 import io.dropwizard.validation.MinDataSize;
 import io.dropwizard.validation.MinDuration;
 import io.dropwizard.validation.PortRange;
+import org.eclipse.jetty.http.CookieCompliance;
 import org.eclipse.jetty.http.HttpCompliance;
 import org.eclipse.jetty.io.ArrayByteBufferPool;
 import org.eclipse.jetty.io.ByteBufferPool;
@@ -212,6 +213,38 @@ import static com.codahale.metrics.MetricRegistry.name;
  *             </ul>
  *         </td>
  *     </tr>
+ *     <tr>
+ *         <td>{@code requestCookieCompliance}</td>
+ *         <td>RFC6265</td>
+ *         <td>
+ *             This sets the cookie compliance level used by Jetty when parsing request {@code Cookie} headers,
+ *             this can be useful when needing to support Version=1 cookies defined in RFC2109 (and continued in
+ *             RFC2965) which allows for special/reserved characters (control, separator, et al) to be enclosed within
+ *             double quotes when used in a cookie value;
+ *
+ *             Possible values are set forth in the org.eclipse.jetty.http.CookieCompliance enum:
+ *             <ul>
+ *                 <li>RFC6265: Special characters in cookie values must be encoded.</li>
+ *                 <li>RFC2965: Allows for special characters enclosed within double quotes.</li>
+ *             </ul>
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code responseCookieCompliance}</td>
+ *         <td>RFC6265</td>
+ *         <td>
+ *             This sets the cookie compliance level used by Jetty when generating response {@code Set-Cookie} headers,
+ *             this can be useful when needing to support Version=1 cookies defined in RFC2109 (and continued in
+ *             RFC2965) which allows for special/reserved characters (control, separator, et al) to be enclosed within
+ *             double quotes when used in a cookie value;
+ *
+ *             Possible values are set forth in the org.eclipse.jetty.http.CookieCompliance enum:
+ *             <ul>
+ *                 <li>RFC6265: Special characters in cookie values must be encoded.</li>
+ *                 <li>RFC2965: Allows for special characters enclosed within double quotes.</li>
+ *             </ul>
+ *         </td>
+ *     </tr>
  * </table>
  */
 @JsonTypeName("http")
@@ -297,6 +330,8 @@ public class HttpConnectorFactory implements ConnectorFactory {
     private boolean useForwardedHeaders = false;
     private boolean useProxyProtocol = false;
     private HttpCompliance httpCompliance = HttpCompliance.RFC7230;
+    private CookieCompliance requestCookieCompliance = CookieCompliance.RFC6265;
+    private CookieCompliance responseCookieCompliance = CookieCompliance.RFC6265;
 
     @JsonProperty
     public int getPort() {
@@ -530,6 +565,26 @@ public class HttpConnectorFactory implements ConnectorFactory {
         this.httpCompliance = httpCompliance;
     }
 
+    @JsonProperty
+    public CookieCompliance getRequestCookieCompliance() {
+        return requestCookieCompliance;
+    }
+
+    @JsonProperty
+    public void setRequestCookieCompliance(CookieCompliance requestCookieCompliance) {
+        this.requestCookieCompliance = requestCookieCompliance;
+    }
+
+    @JsonProperty
+    public CookieCompliance getResponseCookieCompliance() {
+        return responseCookieCompliance;
+    }
+
+    @JsonProperty
+    public void setResponseCookieCompliance(CookieCompliance responseCookieCompliance) {
+        this.responseCookieCompliance = responseCookieCompliance;
+    }
+
 
     @Override
     public Connector build(Server server,
@@ -610,6 +665,8 @@ public class HttpConnectorFactory implements ConnectorFactory {
         httpConfig.setSendServerVersion(useServerHeader);
         httpConfig.setMinResponseDataRate(minResponseDataPerSecond.toBytes());
         httpConfig.setMinRequestDataRate(minRequestDataPerSecond.toBytes());
+        httpConfig.setRequestCookieCompliance(requestCookieCompliance);
+        httpConfig.setResponseCookieCompliance(responseCookieCompliance);
 
         if (useForwardedHeaders) {
             httpConfig.addCustomizer(new ForwardedRequestCustomizer());

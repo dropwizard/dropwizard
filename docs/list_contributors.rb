@@ -15,9 +15,20 @@ Octokit.configure do |c|
   c.auto_paginate = true
 end
 
+excluded_contributors = [
+  'dependabot-bot',
+  'dependabot-preview[bot]',
+  'dependabot[bot]',
+  'codetriage-readme-bot'
+]
+
 contributors = []
 repo_contributors = Octokit.contributors('dropwizard/dropwizard')
 repo_contributors.each do |c|
+  if excluded_contributors.include?(c.login)
+    next
+  end
+
   user = Octokit.user(c.login)
   contributor = {}
   contributor['login'] = user.login

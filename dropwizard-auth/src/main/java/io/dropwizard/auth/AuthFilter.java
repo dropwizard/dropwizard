@@ -152,7 +152,7 @@ public abstract class AuthFilter<C, P extends Principal> implements ContainerReq
 
                 @Override
                 public boolean isUserInRole(String role) {
-                    return authorizer.authorize(prince, role);
+                    return authorizer.authorize(prince, role, requestContext);
                 }
 
                 @Override

@@ -21,3 +21,5 @@ useServerHeader: true
 useDateHeader: false
 useForwardedHeaders: true
 httpCompliance: RFC2616
+requestCookieCompliance: RFC2965
+responseCookieCompliance: RFC6265

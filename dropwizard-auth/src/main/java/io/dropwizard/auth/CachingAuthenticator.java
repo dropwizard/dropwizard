@@ -19,8 +19,8 @@ import java.util.stream.Collectors;
 import static com.codahale.metrics.MetricRegistry.name;
 
 /**
- * An {@link Authenticator} decorator which uses a Guava cache to temporarily cache credentials and
- * their corresponding principals.
+ * An {@link Authenticator} decorator which uses a Caffeine cache to temporarily
+ * cache credentials and their corresponding principals.
  *
  * @param <C> the type of credentials the authenticator can authenticate
  * @param <P> the type of principals the authenticator returns
