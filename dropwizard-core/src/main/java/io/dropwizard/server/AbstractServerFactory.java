@@ -238,7 +238,7 @@ public abstract class AbstractServerFactory implements ServerFactory {
     @NotNull
     private ServerPushFilterFactory serverPush = new ServerPushFilterFactory();
 
-    @Min(2)
+    @Min(4)
     private int maxThreads = 1024;
 
     @Min(1)

@@ -78,7 +78,7 @@ public class DefaultServerFactory extends AbstractServerFactory {
     @NotNull
     private List<ConnectorFactory> adminConnectors = Collections.singletonList(HttpConnectorFactory.admin());
 
-    @Min(2)
+    @Min(4)
     private int adminMaxThreads = 64;
 
     @Min(1)
