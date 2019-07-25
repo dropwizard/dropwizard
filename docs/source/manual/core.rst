@@ -1898,7 +1898,7 @@ You typically register the feature in your Application class, like so:
 
 .. code-block:: java
 
-    environment.jersey().register(DateRequiredFeature.class);
+    environment.jersey().register(new DateRequiredFeature());
 
 
 .. _man-core-servlet-filters:
