@@ -195,7 +195,7 @@
             <dependency>
                 <groupId>net.bytebuddy</groupId>
                 <artifactId>byte-buddy</artifactId>
-                <version>1.9.15</version>
+                <version>1.9.16</version>
             </dependency>
             <dependency>
                 <groupId>org.hsqldb</groupId>
