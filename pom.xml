@@ -594,7 +594,7 @@
                 <plugin>
                     <groupId>kr.motd.maven</groupId>
                     <artifactId>sphinx-maven-plugin</artifactId>
-                    <version>2.5.0</version>
+                    <version>2.6.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.simplify4u.plugins</groupId>
