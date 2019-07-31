@@ -355,14 +355,13 @@ public class HttpClientBuilder {
                 .setSoTimeout(timeout)
                 .build();
 
-        customizeBuilder(builder)
-                .setRequestExecutor(new InstrumentedHttpRequestExecutor(metricRegistry, metricNameStrategy, name))
-                .setConnectionManager(manager)
-                .setDefaultRequestConfig(requestConfig)
-                .setDefaultSocketConfig(socketConfig)
-                .setConnectionReuseStrategy(reuseStrategy)
-                .setRetryHandler(retryHandler)
-                .setUserAgent(createUserAgent(name));
+        builder.setRequestExecutor(new InstrumentedHttpRequestExecutor(metricRegistry, metricNameStrategy, name))
+            .setConnectionManager(manager)
+            .setDefaultRequestConfig(requestConfig)
+            .setDefaultSocketConfig(socketConfig)
+            .setConnectionReuseStrategy(reuseStrategy)
+            .setRetryHandler(retryHandler)
+            .setUserAgent(createUserAgent(name));
 
         if (keepAlive != 0) {
             // either keep alive based on response header Keep-Alive,
@@ -397,7 +396,6 @@ public class HttpClientBuilder {
             }
         }
 
-
         if (credentialsProvider != null) {
             builder.setDefaultCredentialsProvider(credentialsProvider);
         }
@@ -429,6 +427,8 @@ public class HttpClientBuilder {
         if (serviceUnavailableRetryStrategy != null) {
             builder.setServiceUnavailableRetryStrategy(serviceUnavailableRetryStrategy);
         }
+
+        customizeBuilder(builder);
 
         return new ConfiguredCloseableHttpClient(builder.build(), requestConfig);
     }
