@@ -50,10 +50,7 @@ import org.apache.http.impl.conn.SystemDefaultDnsResolver;
 import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicListHeaderIterator;
-import org.apache.http.protocol.BasicHttpContext;
-import org.apache.http.protocol.HTTP;
-import org.apache.http.protocol.HttpContext;
-import org.apache.http.protocol.HttpProcessor;
+import org.apache.http.protocol.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -82,6 +79,10 @@ import static org.mockito.MockitoAnnotations.initMocks;
 
 
 public class HttpClientBuilderTest {
+    class CustomRequestExecutor extends HttpRequestExecutor {
+
+    }
+
     static class CustomBuilder extends HttpClientBuilder {
         public boolean customized;
 
@@ -95,6 +96,7 @@ public class HttpClientBuilderTest {
             org.apache.http.impl.client.HttpClientBuilder builder
         ) {
             customized = true;
+            builder.setRequestExecutor(mock(CustomRequestExecutor.class));
             return builder;
         }
     }
@@ -715,6 +717,10 @@ public class HttpClientBuilderTest {
         assertThat(builder.customized).isFalse();
         builder.createClient(apacheBuilder, connectionManager, "test");
         assertThat(builder.customized).isTrue();
+        assertThat(FieldUtils.getField(httpClientBuilderClass,
+            "requestExec", true)
+            .get(apacheBuilder))
+            .isInstanceOf(CustomRequestExecutor.class);
     }
 
     @Test
