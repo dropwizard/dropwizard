@@ -108,7 +108,7 @@ public abstract class BaseConfigurationFactory<T> implements ConfigurationFactor
             return build(node, "default configuration");
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | SecurityException
                 | NoSuchMethodException | InvocationTargetException e) {
-            throw new IllegalArgumentException("Unable create an instance " +
+            throw new IllegalArgumentException("Unable to create an instance " +
                 "of the configuration class: '" + klass.getCanonicalName() + "'", e);
         }
     }

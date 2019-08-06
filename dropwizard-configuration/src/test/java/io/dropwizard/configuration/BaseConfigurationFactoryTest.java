@@ -420,7 +420,7 @@ public abstract class BaseConfigurationFactoryTest {
             new YamlConfigurationFactory<>(NonInsatiableExample.class, validator, Jackson.newObjectMapper(), "dw");
         assertThatThrownBy(factory::build)
             .isInstanceOf(IllegalArgumentException.class)
-            .hasMessage("Unable create an instance of the configuration class: " +
+            .hasMessage("Unable to create an instance of the configuration class: " +
                 "'io.dropwizard.configuration.BaseConfigurationFactoryTest.NonInsatiableExample'");
     }
 
