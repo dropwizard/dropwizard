@@ -6,6 +6,14 @@ Release Notes
 
 Please refer to `GitHub releases <https://github.com/dropwizard/dropwizard/releases>`__ for the most up-to-date release notes.
 
+.. _rel-1.3.14:
+
+v1.3.14: Aug 7, 2019
+====================
+
+*  Upgrade to Jackson 2.9.9.20190807 to address multiple security issues (`#2871 <https://github.com/dropwizard/dropwizard/pull/2871>`_)
+
+
 .. _rel-1.3.13:
 
 v1.3.13: July 16, 2019
