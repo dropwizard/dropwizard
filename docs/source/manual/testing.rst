@@ -296,7 +296,7 @@ application containing your test doubles.
             assertEquals("pong", response);
         }
     }
-    
+
 Or, for JUnit 5:
 
 .. code-block:: java
@@ -310,9 +310,9 @@ Or, for JUnit 5:
                 return "pong";
             }
         }
-        
+
         private static final DropwizardClientExtension dropwizard = new DropwizardClientExtension(new PingResource());
-        
+
         @Test
         void shouldPing() throws IOException {
             final URL url = new URL(dropwizard.baseUri() + "/ping");
@@ -538,6 +538,7 @@ assert the expected widget is deserialized based on the ``type`` field.
 .. code-block:: java
 
     public class WidgetFactoryTest {
+
         private final ObjectMapper objectMapper = Jackson.newObjectMapper();
         private final Validator validator = Validators.newValidator();
         private final YamlConfigurationFactory<WidgetFactory> factory =
@@ -557,6 +558,46 @@ assert the expected widget is deserialized based on the ``type`` field.
             final WidgetFactory wid = factory.build(yml);
             assertThat(wid).isInstanceOf(HammerFactory.class);
             assertThat(((HammerFactory) wid).createWidget().getWeight()).isEqualTo(10);
+        }
+
+        // test for the chisel factory
+    }
+
+If your configuration file contains environment variables or parameters, some additional
+config is required. As an example, we will use ``EnvironmentVariableSubstitutor`` on top of
+a simplified version of the above test.
+
+If we have a configuration similar to the following:
+
+.. code-block:: yaml
+
+    widgets:
+      - type: hammer
+        weight: ${HAMMER_WEIGHT:-20}
+      - type: chisel
+        radius: 0.4
+
+In order to test this, we would require the following in our test class:
+
+.. code-block:: java
+
+    public class WidgetFactoryTest {
+
+        private final ObjectMapper objectMapper = Jackson.newObjectMapper();
+        private final Validator validator = Validators.newValidator();
+        private final YamlConfigurationFactory<WidgetFactory> factory =
+                new YamlConfigurationFactory<>(WidgetFactory.class, validator, objectMapper, "dw");
+
+        // test for discoverability
+
+        @Test
+        public void testBuildAHammer() throws Exception {
+            final WidgetFactory wid = factory.build(new SubstitutingSourceProvider(
+                    new ResourceConfigurationSourceProvider(),
+                    new EnvironmentVariableSubstitutor(false)
+                ), "yaml/hammer.yaml");
+            assertThat(wid).isInstanceOf(HammerFactory.class);
+            assertThat(((HammerFactory) wid).createWidget().getWeight()).isEqualTo(20);
         }
 
         // test for the chisel factory
