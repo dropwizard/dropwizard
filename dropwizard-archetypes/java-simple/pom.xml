@@ -25,13 +25,6 @@
     </dependencies>
   </dependencyManagement>
 
-  <dependencies>
-    <dependency>
-      <groupId>io.dropwizard</groupId>
-      <artifactId>dropwizard-core</artifactId>
-    </dependency>
-  </dependencies>
-
   <build>
     <!-- verify the archetype with invoker -->
     <plugins>
