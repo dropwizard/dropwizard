@@ -5,29 +5,28 @@ import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Request;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.InOrder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.openMocks;
 
 public class ContextRoutingHandlerTest {
-    private final Request baseRequest = mock(Request.class);
-    private final HttpServletRequest request = mock(HttpServletRequest.class);
-    private final HttpServletResponse response = mock(HttpServletResponse.class);
-
-    private final Handler handler1 = mock(Handler.class);
-    private final Handler handler2 = mock(Handler.class);
+    private Request baseRequest = mock(Request.class);
+    private HttpServletRequest request = mock(HttpServletRequest.class);
+    private HttpServletResponse response = mock(HttpServletResponse.class);
+    private Handler handler1 = mock(Handler.class);
+    private Handler handler2 = mock(Handler.class);
 
     private ContextRoutingHandler handler;
 
     @Before
     public void setUp() throws Exception {
+        openMocks(this);
         this.handler = new ContextRoutingHandler(ImmutableMap.of(
                 "/", handler1,
                 "/admin", handler2
@@ -67,10 +66,11 @@ public class ContextRoutingHandlerTest {
     @Test
     public void startsAndStopsAllHandlers() throws Exception {
         handler.start();
-        handler.stop();
+        verify(handler1).start();
+        verify(handler2).start();
 
-        final InOrder inOrder = inOrder(handler1, handler2);
-        inOrder.verify(handler1).start();
-        inOrder.verify(handler2).start();
+        handler.stop();
+        verify(handler1).stop();
+        verify(handler2).stop();
     }
 }

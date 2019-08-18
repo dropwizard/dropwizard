@@ -102,13 +102,11 @@
             <dependencies>
                 <dependency>
                     <groupId>org.eclipse.jetty</groupId>
-                    <artifactId>jetty-alpn-openjdk8-client</artifactId>
-                    <scope>test</scope>
+                    <artifactId>jetty-alpn-openjdk8-server</artifactId>
                 </dependency>
                 <dependency>
                     <groupId>org.eclipse.jetty</groupId>
-                    <artifactId>jetty-alpn-openjdk8-server</artifactId>
-                    <scope>runtime</scope>
+                    <artifactId>jetty-alpn-openjdk8-client</artifactId>
                 </dependency>
             </dependencies>
         </profile>
