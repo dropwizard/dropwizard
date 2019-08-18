@@ -1,0 +1,25 @@
+name: Java CI
+on:
+  push:
+    branches:
+    - master
+    - release/*
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        java_version: [1.8, 11]
+        os: [ubuntu-latest, macOS-latest]
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up JDK ${{ matrix.java_version }}
+      uses: actions/setup-java@v1
+      with:
+        java-version: ${{ matrix.java_version }}
+    - name: Print Java and Maven versions
+      run: ./mvnw -B -v
+    - name: Build with Maven
+      run: ./mvnw -B install -Dmaven.test.skip=true -Dmaven.javadoc.skip=true
+    - name: Run tests
+      run: ./mvnw -B verify
