@@ -5,29 +5,35 @@ import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Request;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InOrder;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import static org.mockito.Mockito.inOrder;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class ContextRoutingHandlerTest {
-    private final Request baseRequest = mock(Request.class);
-    private final HttpServletRequest request = mock(HttpServletRequest.class);
-    private final HttpServletResponse response = mock(HttpServletResponse.class);
+@ExtendWith(MockitoExtension.class)
+class ContextRoutingHandlerTest {
+    @Mock
+    private Request baseRequest;
+    @Mock
+    private HttpServletRequest request;
+    @Mock
+    private HttpServletResponse response;
 
-    private final Handler handler1 = mock(Handler.class);
-    private final Handler handler2 = mock(Handler.class);
+    @Mock
+    private Handler handler1;
+    @Mock
+    private Handler handler2;
 
     private ContextRoutingHandler handler;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() {
         this.handler = new ContextRoutingHandler(Maps.of(
                 "/", handler1,
                 "/admin", handler2
@@ -35,7 +41,7 @@ public class ContextRoutingHandlerTest {
     }
 
     @Test
-    public void routesToTheBestPrefixMatch() throws Exception {
+    void routesToTheBestPrefixMatch() throws Exception {
         when(baseRequest.getRequestURI()).thenReturn("/hello-world");
 
         handler.handle("/hello-world", baseRequest, request, response);
@@ -45,7 +51,7 @@ public class ContextRoutingHandlerTest {
     }
 
     @Test
-    public void routesToTheLongestPrefixMatch() throws Exception {
+    void routesToTheLongestPrefixMatch() throws Exception {
         when(baseRequest.getRequestURI()).thenReturn("/admin/woo");
 
         handler.handle("/admin/woo", baseRequest, request, response);
@@ -55,7 +61,7 @@ public class ContextRoutingHandlerTest {
     }
 
     @Test
-    public void passesHandlingNonMatchingRequests() throws Exception {
+    void passesHandlingNonMatchingRequests() throws Exception {
         when(baseRequest.getRequestURI()).thenReturn("WAT");
 
         handler.handle("WAT", baseRequest, request, response);
@@ -65,12 +71,13 @@ public class ContextRoutingHandlerTest {
     }
 
     @Test
-    public void startsAndStopsAllHandlers() throws Exception {
+    void startsAndStopsAllHandlers() throws Exception {
         handler.start();
-        handler.stop();
+        verify(handler1).start();
+        verify(handler2).start();
 
-        final InOrder inOrder = inOrder(handler1, handler2);
-        inOrder.verify(handler1).start();
-        inOrder.verify(handler2).start();
+        handler.stop();
+        verify(handler1).stop();
+        verify(handler2).stop();
     }
 }
