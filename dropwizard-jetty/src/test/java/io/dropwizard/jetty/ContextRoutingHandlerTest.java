@@ -67,10 +67,11 @@ public class ContextRoutingHandlerTest {
     @Test
     public void startsAndStopsAllHandlers() throws Exception {
         handler.start();
-        handler.stop();
+        verify(handler1).start();
+        verify(handler2).start();
 
-        final InOrder inOrder = inOrder(handler1, handler2);
-        inOrder.verify(handler1).start();
-        inOrder.verify(handler2).start();
+        handler.stop();
+        verify(handler1).stop();
+        verify(handler2).stop();
     }
 }
