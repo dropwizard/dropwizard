@@ -51,7 +51,7 @@ Startup Sequence
 	  this.healthCheckRegistry = new HealthCheckRegistry();
 	}
 
-``Environment`` is a longer-lived object, holding Dropwizard’s Environment (not env. Such as dev or prod). It holds a similar, but somewhat different set of properties than the Bootsrap object - here is a simplified code snippet to illustrate that:
+``Environment`` is a longer-lived object, holding Dropwizard’s Environment (not env. Such as dev or prod). It holds a similar, but somewhat different set of properties than the Bootstrap object - here is a simplified code snippet to illustrate that:
 
 .. code-block:: java
 
