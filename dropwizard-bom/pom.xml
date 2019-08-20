@@ -202,7 +202,7 @@
             <dependency>
                 <groupId>org.liquibase</groupId>
                 <artifactId>liquibase-core</artifactId>
-                <version>3.7.0</version>
+                <version>3.8.0</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.yaml</groupId>
