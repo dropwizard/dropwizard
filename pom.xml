@@ -564,7 +564,7 @@
                             <artifactId>
                               pgpverify-maven-plugin
                             </artifactId>
-                            <versionRange>[1.4.0,)</versionRange>
+                            <version>1.4.0</version>
                             <goals>
                               <goal>check</goal>
                             </goals>

@@ -19,19 +19,52 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <dropwizard.version>${project.version}</dropwizard.version>
+
+        <!-- External dependencies -->
+        <argparse4j.version>0.8.1</argparse4j.version>
+        <byte-buddy.version>1.10.1</byte-buddy.version>
+        <caffeine.version>2.8.0</caffeine.version>
+        <checker-qual.version>2.10.1</checker-qual.version>
+        <classmate.version>1.5.0</classmate.version>
+        <commons-lang3.version>3.9</commons-lang3.version>
+        <commons-text.version>1.7</commons-text.version>
+        <compiler.version>0.9.6</compiler.version>
+        <error_prone_annotations.version>2.3.3</error_prone_annotations.version>
+        <freemarker.version>2.3.29</freemarker.version>
         <guava.version>28.0-jre</guava.version>
-        <jersey.version>2.29</jersey.version>
+        <hibernate-core.version>5.4.4.Final</hibernate-core.version>
+        <hibernate-validator.version>6.0.17.Final</hibernate-validator.version>
+        <httpclient.version>4.5.9</httpclient.version>
         <jackson.version>2.9.9.20190807</jackson.version>
-        <jetty.version>9.4.20.v20190813</jetty.version>
-        <servlet.version>3.0.0.v201112011016</servlet.version>
-        <metrics4.version>4.1.0</metrics4.version>
-        <slf4j.version>1.7.28</slf4j.version>
-        <logback.version>1.2.3</logback.version>
-        <h2.version>1.4.199</h2.version>
+        <jakarta.el.version>3.0.2</jakarta.el.version>
+        <javassist.version>3.25.0-GA</javassist.version>
+        <javax.servlet-api.version>4.0.1</javax.servlet-api.version>
+        <jaxb-api.version>2.3.1</jaxb-api.version>
+        <jcip-annotations.version>1.0</jcip-annotations.version>
+        <jdbi.version>2.78</jdbi.version>
         <jdbi3.version>3.9.1</jdbi3.version>
-        <junit.version>4.12</junit.version>
-        <assertj.version>3.13.2</assertj.version>
+        <jersey.version>2.29</jersey.version>
+        <jetty-setuid-java.version>1.0.3</jetty-setuid-java.version>
+        <jetty.version>9.4.20.v20190813</jetty.version>
+        <joda-time.version>2.10.3</joda-time.version>
+        <jsr305.version>3.0.2</jsr305.version>
+        <liquibase-core.version>3.8.0</liquibase-core.version>
+        <liquibase-slf4j.version>2.0.0</liquibase-slf4j.version>
+        <logback-throttling-appender.version>1.0.1</logback-throttling-appender.version>
+        <logback.version>1.2.3</logback.version>
+        <metrics4.version>4.1.0</metrics4.version>
         <mockito.version>3.0.0</mockito.version>
+        <objenesis.version>3.0.1</objenesis.version>
+        <servlet.version>3.0.0.v201112011016</servlet.version>
+        <slf4j.version>1.7.28</slf4j.version>
+        <tomcat-jdbc.version>9.0.24</tomcat-jdbc.version>
+        <usertype.core.version>7.0.0.CR1</usertype.core.version>
+
+        <!-- Test dependencies -->
+        <assertj.version>3.13.2</assertj.version>
+        <h2.version>1.4.199</h2.version>
+        <hsqldb.version>2.5.0</hsqldb.version>
+        <junit.version>4.12</junit.version>
     </properties>
 
     <dependencyManagement>
@@ -48,17 +81,17 @@
             <dependency>
                 <groupId>org.objenesis</groupId>
                 <artifactId>objenesis</artifactId>
-                <version>3.0.1</version>
+                <version>${objenesis.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
-                <version>3.9</version>
+                <version>${commons-lang3.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-text</artifactId>
-                <version>1.7</version>
+                <version>${commons-text.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.google.guava</groupId>
@@ -74,52 +107,52 @@
             <dependency>
                 <groupId>com.github.ben-manes.caffeine</groupId>
                 <artifactId>caffeine</artifactId>
-                <version>2.8.0</version>
+                <version>${caffeine.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.google.errorprone</groupId>
                 <artifactId>error_prone_annotations</artifactId>
-                <version>2.3.3</version>
+                <version>${error_prone_annotations.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.checkerframework</groupId>
                 <artifactId>checker-qual</artifactId>
-                <version>2.10.1</version>
+                <version>${checker-qual.version}</version>
             </dependency>
             <dependency>
                 <groupId>net.sourceforge.argparse4j</groupId>
                 <artifactId>argparse4j</artifactId>
-                <version>0.8.1</version>
+                <version>${argparse4j.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.google.code.findbugs</groupId>
                 <artifactId>jsr305</artifactId>
-                <version>3.0.2</version>
+                <version>${jsr305.version}</version>
             </dependency>
             <dependency>
                 <groupId>joda-time</groupId>
                 <artifactId>joda-time</artifactId>
-                <version>2.10.3</version>
+                <version>${joda-time.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.hibernate.validator</groupId>
                 <artifactId>hibernate-validator</artifactId>
-                <version>6.0.17.Final</version>
+                <version>${hibernate-validator.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.glassfish</groupId>
                 <artifactId>jakarta.el</artifactId>
-                <version>3.0.2</version>
+                <version>${jakarta.el.version}</version>
             </dependency>
             <dependency>
                 <groupId>javax.servlet</groupId>
                 <artifactId>javax.servlet-api</artifactId>
-                <version>4.0.1</version>
+                <version>${javax.servlet-api.version}</version>
             </dependency>
             <dependency>
                 <groupId>javax.xml.bind</groupId>
                 <artifactId>jaxb-api</artifactId>
-                <version>2.3.1</version>
+                <version>${jaxb-api.version}</version>
                 <scope>runtime</scope>
             </dependency>
             <dependency>
@@ -131,7 +164,7 @@
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpclient</artifactId>
-                <version>4.5.9</version>
+                <version>${httpclient.version}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>commons-logging</groupId>
@@ -142,7 +175,7 @@
             <dependency>
                 <groupId>org.apache.tomcat</groupId>
                 <artifactId>tomcat-jdbc</artifactId>
-                <version>9.0.24</version>
+                <version>${tomcat-jdbc.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.h2database</groupId>
@@ -152,7 +185,7 @@
             <dependency>
                 <groupId>org.jadira.usertype</groupId>
                 <artifactId>usertype.core</artifactId>
-                <version>7.0.0.CR1</version>
+                <version>${usertype.core.version}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.slf4j</groupId>
@@ -171,7 +204,7 @@
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-core</artifactId>
-                <version>5.4.4.Final</version>
+                <version>${hibernate-core.version}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.jboss.logging</groupId>
@@ -182,27 +215,27 @@
             <dependency>
                 <groupId>org.javassist</groupId>
                 <artifactId>javassist</artifactId>
-                <version>3.25.0-GA</version>
+                <version>${javassist.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml</groupId>
                 <artifactId>classmate</artifactId>
-                <version>1.5.0</version>
+                <version>${classmate.version}</version>
             </dependency>
             <dependency>
                 <groupId>net.bytebuddy</groupId>
                 <artifactId>byte-buddy</artifactId>
-                <version>1.10.1</version>
+                <version>${byte-buddy.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.hsqldb</groupId>
                 <artifactId>hsqldb</artifactId>
-                <version>2.5.0</version>
+                <version>${hsqldb.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.liquibase</groupId>
                 <artifactId>liquibase-core</artifactId>
-                <version>3.8.0</version>
+                <version>${liquibase-core.version}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.yaml</groupId>
@@ -213,7 +246,7 @@
             <dependency>
                 <groupId>com.mattbertolini</groupId>
                 <artifactId>liquibase-slf4j</artifactId>
-                <version>2.0.0</version>
+                <version>${liquibase-slf4j.version}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.slf4j</groupId>
@@ -228,12 +261,12 @@
             <dependency>
                 <groupId>net.jcip</groupId>
                 <artifactId>jcip-annotations</artifactId>
-                <version>1.0</version>
+                <version>${jcip-annotations.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.github.spullara.mustache.java</groupId>
                 <artifactId>compiler</artifactId>
-                <version>0.9.6</version>
+                <version>${compiler.version}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>com.google.guava</groupId>
@@ -244,12 +277,12 @@
             <dependency>
                 <groupId>org.freemarker</groupId>
                 <artifactId>freemarker</artifactId>
-                <version>2.3.29</version>
+                <version>${freemarker.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.jdbi</groupId>
                 <artifactId>jdbi</artifactId>
-                <version>2.78</version>
+                <version>${jdbi.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.jdbi</groupId>
@@ -262,90 +295,29 @@
             <!-- Jetty -->
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-server</artifactId>
+                <artifactId>jetty-bom</artifactId>
                 <version>${jetty.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-util</artifactId>
-                <version>${jetty.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-webapp</artifactId>
-                <version>${jetty.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-continuation</artifactId>
-                <version>${jetty.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-servlet</artifactId>
-                <version>${jetty.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-servlet</artifactId>
                 <classifier>tests</classifier>
                 <version>${jetty.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-servlets</artifactId>
-                <version>${jetty.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-http</artifactId>
-                <version>${jetty.version}</version>
+                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-http</artifactId>
                 <classifier>tests</classifier>
                 <version>${jetty.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-alpn-openjdk8-server</artifactId>
-                <version>${jetty.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.eclipse.jetty.http2</groupId>
-                <artifactId>http2-server</artifactId>
-                <version>${jetty.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.eclipse.jetty.http2</groupId>
-                <artifactId>http2-client</artifactId>
-                <version>${jetty.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-client</artifactId>
-                <version>${jetty.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.eclipse.jetty.http2</groupId>
-                <artifactId>http2-http-client-transport</artifactId>
-                <version>${jetty.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-alpn-openjdk8-client</artifactId>
-                <version>${jetty.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-alpn-conscrypt-server</artifactId>
-                <version>${jetty.version}</version>
+                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.eclipse.jetty.toolchain.setuid</groupId>
                 <artifactId>jetty-setuid-java</artifactId>
-                <version>1.0.3</version>
+                <version>${jetty-setuid-java.version}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.eclipse.jetty</groupId>
@@ -357,16 +329,6 @@
                     </exclusion>
                 </exclusions>
             </dependency>
-            <dependency>
-                <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-alpn-java-server</artifactId>
-                <version>${jetty.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-alpn-java-client</artifactId>
-                <version>${jetty.version}</version>
-            </dependency>
 
             <!-- Jersey -->
             <dependency>
@@ -377,181 +339,13 @@
                 <scope>import</scope>
             </dependency>
 
-            <dependency>
-                <groupId>org.glassfish.jersey.inject</groupId>
-                <artifactId>jersey-hk2</artifactId>
-                <version>${jersey.version}</version>
-            </dependency>
-
             <!-- Metrics -->
             <dependency>
                 <groupId>io.dropwizard.metrics</groupId>
-                <artifactId>metrics-annotation</artifactId>
-                <version>${metrics4.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.dropwizard.metrics</groupId>
-                <artifactId>metrics-core</artifactId>
-                <version>${metrics4.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.slf4j</groupId>
-                        <artifactId>slf4j-api</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>io.dropwizard.metrics</groupId>
-                <artifactId>metrics-jvm</artifactId>
-                <version>${metrics4.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.slf4j</groupId>
-                        <artifactId>slf4j-api</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>io.dropwizard.metrics</groupId>
-                <artifactId>metrics-jmx</artifactId>
-                <version>${metrics4.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.slf4j</groupId>
-                        <artifactId>slf4j-api</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>io.dropwizard.metrics</groupId>
-                <artifactId>metrics-servlets</artifactId>
-                <version>${metrics4.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>com.fasterxml.jackson.core</groupId>
-                        <artifactId>jackson-databind</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.slf4j</groupId>
-                        <artifactId>slf4j-api</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>io.dropwizard.metrics</groupId>
-                <artifactId>metrics-healthchecks</artifactId>
-                <version>${metrics4.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.slf4j</groupId>
-                        <artifactId>slf4j-api</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>io.dropwizard.metrics</groupId>
-                <artifactId>metrics-logback</artifactId>
-                <version>${metrics4.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>ch.qos.logback</groupId>
-                        <artifactId>logback-classic</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.slf4j</groupId>
-                        <artifactId>slf4j-api</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>io.dropwizard.metrics</groupId>
-                <artifactId>metrics-jersey2</artifactId>
-                <version>${metrics4.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.glassfish.jersey.core</groupId>
-                        <artifactId>jersey-server</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.slf4j</groupId>
-                        <artifactId>slf4j-api</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>io.dropwizard.metrics</groupId>
-                <artifactId>metrics-jetty9</artifactId>
-                <version>${metrics4.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.eclipse.jetty</groupId>
-                        <artifactId>jetty-server</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.slf4j</groupId>
-                        <artifactId>slf4j-api</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>io.dropwizard.metrics</groupId>
-                <artifactId>metrics-httpclient</artifactId>
-                <version>${metrics4.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>commons-logging</groupId>
-                        <artifactId>commons-logging</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.slf4j</groupId>
-                        <artifactId>slf4j-api</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.apache.httpcomponents</groupId>
-                        <artifactId>httpclient</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>io.dropwizard.metrics</groupId>
-                <artifactId>metrics-jdbi</artifactId>
-                <version>${metrics4.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.jdbi</groupId>
-                        <artifactId>jdbi</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.slf4j</groupId>
-                        <artifactId>slf4j-api</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>io.dropwizard.metrics</groupId>
-                <artifactId>metrics-jdbi3</artifactId>
-                <version>${metrics4.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.jdbi</groupId>
-                        <artifactId>jdbi3-core</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.slf4j</groupId>
-                        <artifactId>slf4j-api</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>io.dropwizard.metrics</groupId>
-                <artifactId>metrics-graphite</artifactId>
-                <version>${metrics4.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.slf4j</groupId>
-                        <artifactId>slf4j-api</artifactId>
-                    </exclusion>
-                </exclusions>
+                <artifactId>metrics-bom</artifactId>
+                <version>4.1.0</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
 
             <!-- Logging dependencies -->
@@ -599,7 +393,7 @@
             <dependency>
                 <groupId>io.dropwizard.logback</groupId>
                 <artifactId>logback-throttling-appender</artifactId>
-                <version>1.0.1</version>
+                <version>${logback-throttling-appender.version}</version>
             </dependency>
 
             <!-- Test dependencies -->
@@ -632,39 +426,6 @@
                 <artifactId>assertj-core</artifactId>
                 <version>${assertj.version}</version>
                 <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.glassfish.jersey.test-framework</groupId>
-                <artifactId>jersey-test-framework-core</artifactId>
-                <version>${jersey.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>javax.servlet</groupId>
-                        <artifactId>javax.servlet-api</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.glassfish.jersey.test-framework.providers</groupId>
-                <artifactId>jersey-test-framework-provider-grizzly2</artifactId>
-                <version>${jersey.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>javax.servlet</groupId>
-                        <artifactId>javax.servlet-api</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.glassfish.jersey.test-framework.providers</groupId>
-                <artifactId>jersey-test-framework-provider-inmemory</artifactId>
-                <version>${jersey.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>javax.servlet</groupId>
-                        <artifactId>javax.servlet-api</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
 
             <!-- Dropwizard modules -->
