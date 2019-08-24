@@ -27,7 +27,7 @@
         <dependencies>
             <dependency>
                 <groupId>io.dropwizard</groupId>
-                <artifactId>dropwizard-bom</artifactId>
+                <artifactId>dropwizard-dependencies</artifactId>
                 <version>\${dropwizard.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
