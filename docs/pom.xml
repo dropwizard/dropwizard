@@ -4,7 +4,7 @@
 
     <parent>
         <groupId>io.dropwizard</groupId>
-        <artifactId>dropwizard-parent</artifactId>
+        <artifactId>dropwizard-project</artifactId>
         <version>2.0.0-rc6-SNAPSHOT</version>
     </parent>
 
@@ -12,16 +12,29 @@
     <name>Dropwizard Documentation</name>
 
     <properties>
-        <jar.skipIfEmpty>true</jar.skipIfEmpty>
         <mpir.skip>true</mpir.skip>
+        <maven.install.skip>true</maven.install.skip>
         <maven.deploy.skip>true</maven.deploy.skip>
     </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <skipIfEmpty>true</skipIfEmpty>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
     <reporting>
         <plugins>
             <plugin>
                 <groupId>kr.motd.maven</groupId>
                 <artifactId>sphinx-maven-plugin</artifactId>
+                <version>2.6.0</version>
                 <configuration>
                     <sourceDirectory>${project.basedir}/source</sourceDirectory>
                 </configuration>
