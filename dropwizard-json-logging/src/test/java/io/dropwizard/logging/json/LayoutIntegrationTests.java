@@ -24,6 +24,8 @@ import org.eclipse.jetty.server.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -131,6 +133,7 @@ public class LayoutIntegrationTests {
         assertThat(factory.getIncludes()).contains(EventAttribute.LEVEL,
             EventAttribute.THREAD_NAME,
             EventAttribute.MDC,
+            EventAttribute.MARKER,
             EventAttribute.LOGGER_NAME,
             EventAttribute.MESSAGE,
             EventAttribute.EXCEPTION,
@@ -144,7 +147,8 @@ public class LayoutIntegrationTests {
         try {
             System.setOut(new PrintStream(redirectedStream));
             defaultLoggingFactory.configure(new MetricRegistry(), "json-log-test");
-            LoggerFactory.getLogger("com.example.app").info("Application log");
+            Marker marker = MarkerFactory.getMarker("marker");
+            LoggerFactory.getLogger("com.example.app").info(marker, "Application log");
             Thread.sleep(100); // Need to wait, because the logger is async
 
             JsonNode jsonNode = objectMapper.readTree(redirectedStream.toString());
@@ -152,6 +156,7 @@ public class LayoutIntegrationTests {
             assertThat(jsonNode.get("timestamp").isTextual()).isTrue();
             assertThat(jsonNode.get("level").asText()).isEqualTo("INFO");
             assertThat(jsonNode.get("logger").asText()).isEqualTo("com.example.app");
+            assertThat(jsonNode.get("marker").asText()).isEqualTo("marker");
             assertThat(jsonNode.get("message").asText()).isEqualTo("Application log");
         } finally {
             System.setOut(old);
