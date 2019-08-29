@@ -15,7 +15,7 @@
         <mpir.skip>true</mpir.skip>
         <maven.install.skip>true</maven.install.skip>
         <maven.deploy.skip>true</maven.deploy.skip>
-        <skipNexusStagingDeployMojo>true</true>
+        <skipNexusStagingDeployMojo>true</skipNexusStagingDeployMojo>
         <gpg.skip>true</gpg.skip>
     </properties>
 
