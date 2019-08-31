@@ -19,7 +19,7 @@ team to ship a *production-quality* web service in the shortest time possible.
    :maxdepth: 1
    :caption: General
 
-   Javadoc <https://javadoc.io/doc/io.dropwizard/dropwizard-parent>
+   Javadoc <https://javadoc.io/doc/io.dropwizard/dropwizard-project>
    Release Notes <https://github.com/dropwizard/dropwizard/releases>
    about/security
    about/faq
