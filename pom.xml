@@ -60,6 +60,7 @@
         <maven.site.deploy.skip>true</maven.site.deploy.skip>
 
         <!-- Plugin versions, see also dropwizard-dependencies -->
+        <coveralls-maven-plugin.version>4.3.0</coveralls-maven-plugin.version>
         <maven-archetype-plugin.version>3.1.2</maven-archetype-plugin.version>
         <maven-clean-plugin.version>3.1.0</maven-clean-plugin.version>
         <maven-deploy-plugin.version>2.8.2</maven-deploy-plugin.version>
@@ -426,6 +427,11 @@
                     <artifactId>maven-invoker-plugin</artifactId>
                     <version>${maven-invoker-plugin.version}</version>
                 </plugin>
+                <plugin>
+                    <groupId>org.eluder.coveralls</groupId>
+                    <artifactId>coveralls-maven-plugin</artifactId>
+                    <version>${coveralls-maven-plugin.version}</version>
+                </plugin>
             </plugins>
         </pluginManagement>
 
@@ -440,6 +446,10 @@
                     <useReleaseProfile>false</useReleaseProfile>
                     <preparationGoals>clean test</preparationGoals>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.eluder.coveralls</groupId>
+                <artifactId>coveralls-maven-plugin</artifactId>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
