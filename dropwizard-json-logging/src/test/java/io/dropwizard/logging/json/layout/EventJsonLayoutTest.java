@@ -13,6 +13,7 @@ import io.dropwizard.util.Sets;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.slf4j.Marker;
 
 import java.time.ZoneId;
 import java.util.Collections;
@@ -38,6 +39,7 @@ public class EventJsonLayoutTest {
             EventAttribute.LEVEL,
             EventAttribute.THREAD_NAME,
             EventAttribute.MDC,
+            EventAttribute.MARKER,
             EventAttribute.LOGGER_NAME,
             EventAttribute.MESSAGE,
             EventAttribute.EXCEPTION,
@@ -48,6 +50,7 @@ public class EventJsonLayoutTest {
     private final JsonFormatter jsonFormatter = new JsonFormatter(Jackson.newObjectMapper(), false, true);
     private ThrowableProxyConverter throwableProxyConverter = Mockito.mock(ThrowableProxyConverter.class);
     private ILoggingEvent event = Mockito.mock(ILoggingEvent.class);
+    private Marker marker = Mockito.mock(Marker.class);
     private Map<String, Object> defaultExpectedFields;
 
     private EventJsonLayout eventJsonLayout;
@@ -58,6 +61,7 @@ public class EventJsonLayoutTest {
         when(event.getLevel()).thenReturn(Level.INFO);
         when(event.getThreadName()).thenReturn("main");
         when(event.getMDCPropertyMap()).thenReturn(mdc);
+        when(event.getMarker()).thenReturn(marker);
         when(event.getLoggerName()).thenReturn(logger);
         when(event.getFormattedMessage()).thenReturn(message);
         when(event.getLoggerContextVO()).thenReturn(new LoggerContextVO("test", Collections.emptyMap(), 0));
@@ -65,12 +69,15 @@ public class EventJsonLayoutTest {
                 new StackTraceElement("declaringClass", "methodName", "fileName", 42)
         });
 
+        when(marker.getName()).thenReturn("marker");
+
         eventJsonLayout = new EventJsonLayout(jsonFormatter, timestampFormatter, throwableProxyConverter,
                 DEFAULT_EVENT_ATTRIBUTES, Collections.emptyMap(), Collections.emptyMap(), Collections.emptySet(), false);
 
         defaultExpectedFields = new HashMap<>();
         defaultExpectedFields.put("timestamp", timestamp);
         defaultExpectedFields.put("logger", logger);
+        defaultExpectedFields.put("marker", "marker");
         defaultExpectedFields.put("message", message);
         defaultExpectedFields.put("thread", "main");
         defaultExpectedFields.put("level", "INFO");

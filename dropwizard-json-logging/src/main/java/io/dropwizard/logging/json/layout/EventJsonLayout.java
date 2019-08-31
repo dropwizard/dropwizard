@@ -62,6 +62,7 @@ public class EventJsonLayout extends AbstractJsonLayout<ILoggingEvent> {
             .addTimestamp("timestamp", isIncluded(EventAttribute.TIMESTAMP), event.getTimeStamp())
             .add("level", isIncluded(EventAttribute.LEVEL), () -> String.valueOf(event.getLevel()))
             .add("thread", isIncluded(EventAttribute.THREAD_NAME), event::getThreadName)
+            .add("marker", isIncluded(EventAttribute.MARKER) && event.getMarker() != null, () -> event.getMarker().getName())
             .add("logger", isIncluded(EventAttribute.LOGGER_NAME), event::getLoggerName)
             .add("message", isIncluded(EventAttribute.MESSAGE), event::getFormattedMessage)
             .add("context", isIncluded(EventAttribute.CONTEXT_NAME), () -> event.getLoggerContextVO().getName())
@@ -99,8 +100,8 @@ public class EventJsonLayout extends AbstractJsonLayout<ILoggingEvent> {
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
-    private boolean isIncluded(EventAttribute exception) {
-        return includes.contains(exception);
+    private boolean isIncluded(EventAttribute include) {
+        return includes.contains(include);
     }
 
     public Set<EventAttribute> getIncludes() {
