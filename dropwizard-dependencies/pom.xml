@@ -24,7 +24,7 @@
         <checker-qual.version>2.11.0</checker-qual.version>
         <classmate.version>1.5.0</classmate.version>
         <commons-lang3.version>3.9</commons-lang3.version>
-        <commons-text.version>1.7</commons-text.version>
+        <commons-text.version>1.8</commons-text.version>
         <error_prone.version>2.3.3</error_prone.version>
         <error_prone_annotations.version>2.3.3</error_prone_annotations.version>
         <freemarker.version>2.3.29</freemarker.version>
