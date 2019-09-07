@@ -52,6 +52,11 @@ public class UnitOfWorkAspect {
     @Nullable
     private SessionFactory sessionFactory;
 
+    // was the session created by this aspect?
+    private boolean sessionCreated;
+    // do we manage the transaction or did we join an existing one?
+    private boolean transactionStarted;
+
     public void beforeStart(@Nullable UnitOfWork unitOfWork) {
         if (unitOfWork == null) {
             return;
@@ -68,16 +73,29 @@ public class UnitOfWorkAspect {
                 throw new IllegalArgumentException("Unregistered Hibernate bundle: '" + unitOfWork.value() + "'");
             }
         }
-        session = sessionFactory.openSession();
-        try {
-            configureSession();
-            ManagedSessionContext.bind(session);
-            beginTransaction(unitOfWork, session);
-        } catch (Throwable th) {
-            session.close();
-            session = null;
-            ManagedSessionContext.unbind(sessionFactory);
-            throw th;
+
+        Session existingSession = null;
+        if(ManagedSessionContext.hasBind(sessionFactory)) {
+            existingSession = sessionFactory.getCurrentSession();
+        }
+
+        if(existingSession != null) {
+            sessionCreated = false;
+            session = existingSession;
+            validateSession();
+        } else {
+            sessionCreated = true;
+            session = sessionFactory.openSession();
+            try {
+                configureSession();
+                ManagedSessionContext.bind(session);
+                beginTransaction(unitOfWork, session);
+            } catch (Throwable th) {
+                session.close();
+                session = null;
+                ManagedSessionContext.unbind(sessionFactory);
+                throw th;
+            }
         }
     }
 
@@ -110,12 +128,14 @@ public class UnitOfWorkAspect {
 
     public void onFinish() {
         try {
-            if (session != null) {
+            if (sessionCreated && session != null) {
                 session.close();
             }
         } finally {
             session = null;
-            ManagedSessionContext.unbind(sessionFactory);
+            if(sessionCreated) {
+                ManagedSessionContext.unbind(sessionFactory);
+            }
         }
     }
 
@@ -128,11 +148,52 @@ public class UnitOfWorkAspect {
         session.setHibernateFlushMode(unitOfWork.flushMode());
     }
 
+    protected void validateSession() {
+        if (unitOfWork == null || session == null) {
+            throw new NullPointerException("unitOfWork or session is null. This is a bug!");
+        }
+        if(unitOfWork.readOnly() != session.isDefaultReadOnly()) {
+            throw new IllegalStateException(String.format(
+                "Existing session readOnly state (%b) does not match requested state (%b)",
+                session.isDefaultReadOnly(),
+                unitOfWork.readOnly()
+            ));
+        }
+        if(unitOfWork.cacheMode() != session.getCacheMode()) {
+            throw new IllegalStateException(String.format(
+                "Existing session cache mode (%s) does not match requested mode (%s)",
+                session.getCacheMode(),
+                unitOfWork.cacheMode()
+            ));
+        }
+        if(unitOfWork.flushMode() != session.getHibernateFlushMode()) {
+            throw new IllegalStateException(String.format(
+                "Existing session flush mode (%s) does not match requested mode (%s)",
+                session.getHibernateFlushMode(),
+                unitOfWork.flushMode()
+            ));
+        }
+        final Transaction txn = session.getTransaction();
+        if(unitOfWork.transactional() != (txn != null && txn.isActive())) {
+            throw new IllegalStateException(String.format(
+                "Existing session transaction state (%s) does not match requested (%b)",
+                txn == null ? "NULL" : Boolean.valueOf(txn.isActive()),
+                unitOfWork.transactional()
+            ));
+        }
+    }
+
     private void beginTransaction(UnitOfWork unitOfWork, Session session) {
         if (!unitOfWork.transactional()) {
             return;
         }
-        session.beginTransaction();
+        final Transaction txn = session.getTransaction();
+        if(txn != null && txn.isActive()) {
+            transactionStarted = false;
+        } else {
+            session.beginTransaction();
+            transactionStarted = true;
+        }
     }
 
     private void rollbackTransaction(UnitOfWork unitOfWork, Session session) {
@@ -140,7 +201,7 @@ public class UnitOfWorkAspect {
             return;
         }
         final Transaction txn = session.getTransaction();
-        if (txn != null && txn.getStatus().canRollback()) {
+        if (transactionStarted && txn != null && txn.getStatus().canRollback()) {
             txn.rollback();
         }
     }
@@ -150,7 +211,7 @@ public class UnitOfWorkAspect {
             return;
         }
         final Transaction txn = session.getTransaction();
-        if (txn != null && txn.getStatus().canRollback()) {
+        if (transactionStarted && txn != null && txn.getStatus().canRollback()) {
             txn.commit();
         }
     }
