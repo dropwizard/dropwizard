@@ -33,7 +33,7 @@
         <hibernate-validator.version>6.0.17.Final</hibernate-validator.version>
         <httpclient.version>4.5.9</httpclient.version>
         <jackson.version>2.9.9.20190807</jackson.version>
-        <jakarta.el.version>3.0.2</jakarta.el.version>
+        <jakarta.el.version>3.0.3</jakarta.el.version>
         <javassist.version>3.25.0-GA</javassist.version>
         <javax.servlet-api.version>4.0.1</javax.servlet-api.version>
         <jaxb-api.version>2.3.1</jaxb-api.version>
