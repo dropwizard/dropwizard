@@ -1,2 +1,1 @@
-io.dropwizard.logging.filter.FilterFactory
 io.dropwizard.request.logging.RequestLogFactory
