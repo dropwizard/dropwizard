@@ -49,7 +49,7 @@
 
         <dependency>
             <groupId>io.dropwizard</groupId>
-            <artifactId>dropwizard-jdbi</artifactId>
+            <artifactId>dropwizard-jdbi3</artifactId>
             <scope>test</scope>
         </dependency>
 

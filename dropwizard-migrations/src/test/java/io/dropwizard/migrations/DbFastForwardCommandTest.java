@@ -3,10 +3,10 @@ package io.dropwizard.migrations;
 import io.dropwizard.util.Maps;
 import net.jcip.annotations.NotThreadSafe;
 import net.sourceforge.argparse4j.inf.Namespace;
+import org.jdbi.v3.core.Handle;
+import org.jdbi.v3.core.Jdbi;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.skife.jdbi.v2.DBI;
-import org.skife.jdbi.v2.Handle;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
@@ -18,24 +18,24 @@ import java.util.regex.Pattern;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @NotThreadSafe
-public class DbFastForwardCommandTest extends AbstractMigrationTest {
+class DbFastForwardCommandTest extends AbstractMigrationTest {
 
     private static final Pattern NEWLINE_PATTERN = Pattern.compile(System.lineSeparator());
     private DbFastForwardCommand<TestMigrationConfiguration> fastForwardCommand = new DbFastForwardCommand<>(
         TestMigrationConfiguration::getDataSource, TestMigrationConfiguration.class, "migrations.xml");
     private TestMigrationConfiguration conf;
 
-    private DBI dbi;
+    private Jdbi dbi;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() {
         final String databaseUrl = getDatabaseUrl();
         conf = createConfiguration(databaseUrl);
-        dbi = new DBI(databaseUrl, "sa", "");
+        dbi = Jdbi.create(databaseUrl, "sa", "");
     }
 
     @Test
-    public void testFastForwardFirst() throws Exception {
+    void testFastForwardFirst() throws Exception {
         // Create the "persons" table manually
         try (Handle handle = dbi.open()) {
             handle.execute("create table persons(id int, name varchar(255))");
@@ -59,7 +59,7 @@ public class DbFastForwardCommandTest extends AbstractMigrationTest {
     }
 
     @Test
-    public void testFastForwardAll() throws Exception {
+    void testFastForwardAll() throws Exception {
         // Create the "persons" table manually and add some data
         try (Handle handle = dbi.open()) {
             handle.execute("create table persons(id int, name varchar(255))");
@@ -84,7 +84,7 @@ public class DbFastForwardCommandTest extends AbstractMigrationTest {
     }
 
     @Test
-    public void testFastForwardFirstDryRun() throws Exception {
+    void testFastForwardFirstDryRun() throws Exception {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         fastForwardCommand.setPrintStream(new PrintStream(baos));
 
@@ -97,7 +97,7 @@ public class DbFastForwardCommandTest extends AbstractMigrationTest {
     }
 
     @Test
-    public void testFastForwardAllDryRun() throws Exception {
+    void testFastForwardAllDryRun() throws Exception {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         fastForwardCommand.setPrintStream(new PrintStream(baos));
 
@@ -110,7 +110,7 @@ public class DbFastForwardCommandTest extends AbstractMigrationTest {
     }
 
     @Test
-    public void testPrintHelp() throws Exception {
+    void testPrintHelp() throws Exception {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         createSubparser(fastForwardCommand).printHelp(new PrintWriter(new OutputStreamWriter(baos, UTF_8), true));
         assertThat(baos.toString(UTF_8)).isEqualTo(String.format(

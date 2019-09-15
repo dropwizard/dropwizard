@@ -36,7 +36,6 @@ team to ship a *production-quality* web service in the shortest time possible.
 
    manual/core
    manual/client
-   manual/jdbi
    manual/jdbi3
    manual/migrations
    manual/hibernate

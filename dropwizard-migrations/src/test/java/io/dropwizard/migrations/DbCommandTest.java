@@ -2,9 +2,9 @@ package io.dropwizard.migrations;
 
 import net.jcip.annotations.NotThreadSafe;
 import net.sourceforge.argparse4j.inf.Namespace;
+import org.jdbi.v3.core.Handle;
+import org.jdbi.v3.core.Jdbi;
 import org.junit.jupiter.api.Test;
-import org.skife.jdbi.v2.DBI;
-import org.skife.jdbi.v2.Handle;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
@@ -14,18 +14,18 @@ import java.util.Collections;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @NotThreadSafe
-public class DbCommandTest extends AbstractMigrationTest {
+class DbCommandTest extends AbstractMigrationTest {
 
     private final DbCommand<TestMigrationConfiguration> dbCommand = new DbCommand<>("db",
         new TestMigrationDatabaseConfiguration(), TestMigrationConfiguration.class, "migrations.xml");
 
     @Test
-    public void testRunSubCommand() throws Exception {
+    void testRunSubCommand() throws Exception {
         final String databaseUrl = getDatabaseUrl();
         final TestMigrationConfiguration conf = createConfiguration(databaseUrl);
         dbCommand.run(null, new Namespace(Collections.singletonMap("subcommand", "migrate")), conf);
 
-        try (Handle handle = new DBI(databaseUrl, "sa", "").open()) {
+        try (Handle handle = Jdbi.create(databaseUrl, "sa", "").open()) {
             assertThat(handle.createQuery("select count(*) from persons")
                 .mapTo(Integer.class)
                 .first()).isEqualTo(1);
@@ -33,7 +33,7 @@ public class DbCommandTest extends AbstractMigrationTest {
     }
 
     @Test
-    public void testPrintHelp() throws Exception {
+    void testPrintHelp() throws Exception {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         createSubparser(dbCommand).printHelp(new PrintWriter(new OutputStreamWriter(baos, UTF_8), true));
         assertThat(baos.toString(UTF_8)).isEqualTo(String.format(

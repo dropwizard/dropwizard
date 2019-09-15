@@ -3,9 +3,9 @@ package io.dropwizard.migrations;
 import io.dropwizard.util.Maps;
 import net.jcip.annotations.NotThreadSafe;
 import net.sourceforge.argparse4j.inf.Namespace;
+import org.jdbi.v3.core.Jdbi;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.skife.jdbi.v2.DBI;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
@@ -17,7 +17,7 @@ import java.util.Date;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @NotThreadSafe
-public class DbRollbackCommandTest extends AbstractMigrationTest {
+class DbRollbackCommandTest extends AbstractMigrationTest {
 
     private final String migrationsFileName = "migrations-ddl.xml";
     private final DbRollbackCommand<TestMigrationConfiguration> rollbackCommand = new DbRollbackCommand<>(
@@ -26,17 +26,17 @@ public class DbRollbackCommandTest extends AbstractMigrationTest {
         new TestMigrationDatabaseConfiguration(), TestMigrationConfiguration.class, migrationsFileName);
     private final ByteArrayOutputStream baos = new ByteArrayOutputStream();
     private TestMigrationConfiguration conf;
-    private DBI dbi;
+    private Jdbi dbi;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() {
         final String databaseUrl = getDatabaseUrl();
         conf = createConfiguration(databaseUrl);
-        dbi = new DBI(databaseUrl, "sa", "");
+        dbi = Jdbi.create(databaseUrl, "sa", "");
     }
 
     @Test
-    public void testRollbackNChanges() throws Exception {
+    void testRollbackNChanges() throws Exception {
         // Migrate some DDL changes to the database
         migrateCommand.run(null, new Namespace(Collections.emptyMap()), conf);
 
@@ -48,7 +48,7 @@ public class DbRollbackCommandTest extends AbstractMigrationTest {
     }
 
     @Test
-    public void testRollbackNChangesAsDryRun() throws Exception {
+    void testRollbackNChangesAsDryRun() throws Exception {
         // Migrate some DDL changes to the database
         migrateCommand.run(null, new Namespace(Collections.emptyMap()), conf);
 
@@ -60,7 +60,7 @@ public class DbRollbackCommandTest extends AbstractMigrationTest {
     }
 
     @Test
-    public void testRollbackToDate() throws Exception {
+    void testRollbackToDate() throws Exception {
         // Migrate some DDL changes to the database
         long migrationDate = System.currentTimeMillis();
         migrateCommand.run(null, new Namespace(Collections.emptyMap()), conf);
@@ -74,7 +74,7 @@ public class DbRollbackCommandTest extends AbstractMigrationTest {
     }
 
     @Test
-    public void testRollbackToDateAsDryRun() throws Exception {
+    void testRollbackToDateAsDryRun() throws Exception {
         // Migrate some DDL changes to the database
         long migrationDate = System.currentTimeMillis();
         migrateCommand.run(null, new Namespace(Collections.emptyMap()), conf);
@@ -91,7 +91,7 @@ public class DbRollbackCommandTest extends AbstractMigrationTest {
     }
 
     @Test
-    public void testRollbackToTag() throws Exception {
+    void testRollbackToTag() throws Exception {
         // Migrate the first DDL change to the database
         migrateCommand.run(null, new Namespace(Collections.singletonMap("count", 1)), conf);
 
@@ -111,7 +111,7 @@ public class DbRollbackCommandTest extends AbstractMigrationTest {
     }
 
     @Test
-    public void testRollbackToTagAsDryRun() throws Exception {
+    void testRollbackToTagAsDryRun() throws Exception {
         // Migrate the first DDL change to the database
         migrateCommand.run(null, new Namespace(Collections.singletonMap("count", 1)), conf);
 
@@ -131,7 +131,7 @@ public class DbRollbackCommandTest extends AbstractMigrationTest {
     }
 
     @Test
-    public void testPrintHelp() throws Exception {
+    void testPrintHelp() throws Exception {
         createSubparser(rollbackCommand).printHelp(new PrintWriter(new OutputStreamWriter(baos, UTF_8), true));
         assertThat(baos.toString(UTF_8)).isEqualTo(String.format(
             "usage: db rollback [-h] [--migrations MIGRATIONS-FILE] [--catalog CATALOG]%n" +
