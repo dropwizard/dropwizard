@@ -2,9 +2,9 @@ package io.dropwizard.migrations;
 
 import net.jcip.annotations.NotThreadSafe;
 import net.sourceforge.argparse4j.inf.Namespace;
+import org.jdbi.v3.core.Handle;
+import org.jdbi.v3.core.Jdbi;
 import org.junit.jupiter.api.Test;
-import org.skife.jdbi.v2.DBI;
-import org.skife.jdbi.v2.Handle;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
@@ -14,13 +14,13 @@ import java.util.Collections;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @NotThreadSafe
-public class DbDropAllCommandTest extends AbstractMigrationTest {
+class DbDropAllCommandTest extends AbstractMigrationTest {
 
     private DbDropAllCommand<TestMigrationConfiguration> dropAllCommand = new DbDropAllCommand<>(
         TestMigrationConfiguration::getDataSource, TestMigrationConfiguration.class, "migrations.xml");
 
     @Test
-    public void testRun() throws Exception {
+    void testRun() throws Exception {
         final String databaseUrl = getDatabaseUrl();
         final TestMigrationConfiguration conf = createConfiguration(databaseUrl);
 
@@ -33,13 +33,13 @@ public class DbDropAllCommandTest extends AbstractMigrationTest {
         dropAllCommand.run(null, new Namespace(Collections.emptyMap()), conf);
 
         // After we dropped data and schema, we should be able to create the "persons" table again
-        try (Handle handle = new DBI(databaseUrl, "sa", "").open()) {
+        try (Handle handle = Jdbi.create(databaseUrl, "sa", "").open()) {
             handle.execute("create table persons(id int, name varchar(255))");
         }
     }
 
     @Test
-    public void testHelpPage() throws Exception {
+    void testHelpPage() throws Exception {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         createSubparser(dropAllCommand).printHelp(new PrintWriter(new OutputStreamWriter(out, UTF_8), true));
         assertThat(out.toString(UTF_8)).isEqualTo(String.format(

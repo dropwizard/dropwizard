@@ -38,7 +38,6 @@
         <javax.servlet-api.version>4.0.1</javax.servlet-api.version>
         <jaxb-api.version>2.3.1</jaxb-api.version>
         <jcip-annotations.version>1.0</jcip-annotations.version>
-        <jdbi.version>2.78</jdbi.version>
         <jdbi3.version>3.10.0</jdbi3.version>
         <jersey.version>2.29</jersey.version>
         <jetty-setuid-java.version>1.0.3</jetty-setuid-java.version>
@@ -288,11 +287,6 @@
                 <groupId>org.freemarker</groupId>
                 <artifactId>freemarker</artifactId>
                 <version>${freemarker.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jdbi</groupId>
-                <artifactId>jdbi</artifactId>
-                <version>${jdbi.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.jdbi</groupId>

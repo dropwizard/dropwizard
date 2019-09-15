@@ -42,6 +42,7 @@ v2.0.0: Unreleased
 * Add support for configuring Jetty's cookie compliance (`#2812 <https://github.com/dropwizard/dropwizard/pull/2812>`_)
 * Deprecate ``Authorizer.authorize(principal, role)`` in favor of ``Authorizer.authorize(principal, role, context)`` (`#2837 <https://github.com/dropwizard/dropwizard/pull/2837>`_)
 * Fix undefined config environment variables with a default value causing an exception in strict mode (`#2801 <https://github.com/dropwizard/dropwizard/pull/2801>`_)
+* Removed ``dropwizard-jdbi`` as official module and moved it into it's own project
 
 .. _rel-1.3.9:
 
