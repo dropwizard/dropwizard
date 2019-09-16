@@ -23,6 +23,13 @@ import ch.qos.logback.core.status.StatusManager;
 import java.io.IOException;
 import java.io.OutputStream;
 
+/**
+ * Imported from Logback 1.2.3.
+ *
+ * @see ch.qos.logback.core.recovery.ResilientOutputStreamBase
+ * @see <a href="https://github.com/qos-ch/logback/blob/v_1.2.3/logback-core/src/main/java/ch/qos/logback/core/recovery/ResilientOutputStreamBase.java">ResilientOutputStreamBase</a>
+ */
+@SuppressWarnings("NullAway")
 abstract class ResilientOutputStreamBase extends OutputStream {
 
     private final static int STATUS_COUNT_LIMIT = 2 * 4;
