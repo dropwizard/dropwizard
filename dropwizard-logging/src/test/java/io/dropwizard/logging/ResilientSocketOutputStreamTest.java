@@ -1,4 +1,4 @@
-package ch.qos.logback.core.recovery;
+package io.dropwizard.logging;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 
-public class ResilientSocketOutputStreamTest {
+class ResilientSocketOutputStreamTest {
 
     private ResilientSocketOutputStream resilientSocketOutputStream;
 
@@ -24,7 +24,7 @@ public class ResilientSocketOutputStreamTest {
     private CountDownLatch latch = new CountDownLatch(1);
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         ss = new ServerSocket(0);
         thread = new Thread(() -> {
             while (!Thread.currentThread().isInterrupted()) {
@@ -46,27 +46,27 @@ public class ResilientSocketOutputStreamTest {
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    void tearDown() throws Exception {
         ss.close();
         thread.interrupt();
         resilientSocketOutputStream.close();
     }
 
     @Test
-    public void testCreatesCleanOutputStream() throws Exception {
+    void testCreatesCleanOutputStream() {
         assertThat(resilientSocketOutputStream.presumedClean).isTrue();
         assertThat(resilientSocketOutputStream.os).isNotNull();
     }
 
     @Test
-    public void testThrowsExceptionIfCantCreateOutputStream() throws Exception {
+    void testThrowsExceptionIfCantCreateOutputStream() {
         assertThatIllegalStateException().isThrownBy(() -> new ResilientSocketOutputStream("256.256.256.256", 1024,
             100, 1024, SocketFactory.getDefault()))
             .withMessage("Unable to create a TCP connection to 256.256.256.256:1024");
     }
 
     @Test
-    public void testWriteMessage() throws Exception {
+    void testWriteMessage() throws Exception {
         resilientSocketOutputStream.write("Test message".getBytes(StandardCharsets.UTF_8));
         resilientSocketOutputStream.flush();
 
@@ -75,7 +75,7 @@ public class ResilientSocketOutputStreamTest {
     }
 
     @Test
-    public void testGetDescription() {
+    void testGetDescription() {
         assertThat(resilientSocketOutputStream.getDescription()).isEqualTo(String.format("tcp [localhost:%d]",
             ss.getLocalPort()));
     }

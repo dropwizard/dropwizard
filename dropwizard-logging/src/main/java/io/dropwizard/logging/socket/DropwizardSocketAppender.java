@@ -1,7 +1,7 @@
 package io.dropwizard.logging.socket;
 
 import ch.qos.logback.core.OutputStreamAppender;
-import ch.qos.logback.core.recovery.ResilientSocketOutputStream;
+import io.dropwizard.logging.ResilientSocketOutputStream;
 import ch.qos.logback.core.spi.DeferredProcessingAware;
 
 import javax.net.SocketFactory;

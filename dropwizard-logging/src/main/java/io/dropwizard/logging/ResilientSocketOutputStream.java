@@ -1,4 +1,4 @@
-package ch.qos.logback.core.recovery;
+package io.dropwizard.logging;
 
 import javax.net.SocketFactory;
 import java.io.BufferedOutputStream;
