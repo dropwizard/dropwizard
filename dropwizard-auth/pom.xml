@@ -12,6 +12,10 @@
     <artifactId>dropwizard-auth</artifactId>
     <name>Dropwizard Authentication</name>
 
+    <properties>
+        <module.name>io.dropwizard.auth</module.name>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>io.dropwizard</groupId>
