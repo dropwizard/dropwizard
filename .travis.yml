@@ -16,6 +16,7 @@ cache:
     - $HOME/.m2
 deploy:
   - provider: script
+    skip_cleanup: true
     script: bash ci/deploy-snapshot.sh
     on:
       repo: dropwizard/dropwizard
@@ -23,6 +24,7 @@ deploy:
       branch: master
       jdk: openjdk8
   - provider: script
+    skip_cleanup: true
     script: bash ci/deploy-release.sh
     on:
       repo: dropwizard/dropwizard
