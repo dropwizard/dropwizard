@@ -91,3 +91,13 @@ if inclusive is false:
 ::
 
    messageRate must be less than 1 MINUTES
+
+Changed the Jackson's object mapper configuration
+-------------------------------------------------
+
+Note that the Afterburner module is now configured with ``setUseValueClassLoader(false)``
+by default which causes bytecode generation only for public getters/setter and fields to avoid
+Java 9+ complains of ``Illegal reflective access``.
+This might slightly affect performance of your application. See
+` this Jackson issue <https://github.com/FasterXML/jackson-modules-base/issues/37>`_ for more
+information.

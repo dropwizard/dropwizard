@@ -60,7 +60,13 @@ public class Jackson {
         mapper.registerModule(new GuavaExtrasModule());
         mapper.registerModule(new CaffeineModule());
         mapper.registerModule(new JodaModule());
-        mapper.registerModule(new AfterburnerModule());
+
+        // make Afterburner generate bytecode only for public getters/setter and fields
+        // without this, Java 9+ complains of "Illegal reflective access"
+        final AfterburnerModule afterburnerModule = new AfterburnerModule();
+        afterburnerModule.setUseValueClassLoader(false);
+        mapper.registerModule(afterburnerModule);
+
         mapper.registerModule(new FuzzyEnumModule());
         mapper.registerModule(new ParameterNamesModule());
         mapper.registerModule(new Jdk8Module());
