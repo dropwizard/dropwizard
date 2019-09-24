@@ -951,6 +951,8 @@ JSON access log layout
         - X-Request-Id
       responseHeaders:
         - X-Request-Id
+      requestAttributes:
+        - SomeAttributeName
       customFieldNames:
         timestamp: "@timestamp"
       additionalFields:
@@ -989,6 +991,7 @@ includes                 (timestamp, remoteAddress,
                                                       - ``serverName``        *false*    Whether to include the name of the server to which the request was sent as the ``serverName`` field.
 requestHeaders           (empty)                      Set of request headers included in the JSON map as the ``headers`` field.
 responseHeaders          (empty)                      Set of response headers included in the JSON map as the ``responseHeaders`` field.
+requestAttributes        (empty)                      Set of ServletRequest attributes included in the JSON map as the ``requestAttributes`` field.
 customFieldNames         (empty)                      Map of field name replacements in the JSON map. For example ``requestTime:request_time, userAgent:user_agent)``.
 additionalFields         (empty)                      Map of fields to add in the JSON map.
 =======================  ===========================  ================

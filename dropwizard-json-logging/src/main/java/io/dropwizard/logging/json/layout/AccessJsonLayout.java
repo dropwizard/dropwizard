@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -23,6 +24,7 @@ public class AccessJsonLayout extends AbstractJsonLayout<IAccessEvent> {
 
     private SortedSet<String> requestHeaders = Collections.emptySortedSet();
     private SortedSet<String> responseHeaders = Collections.emptySortedSet();
+    private SortedSet<String> requestAttributes = Collections.emptySortedSet();
 
     @Nullable
     private String jsonProtocolVersion;
@@ -67,11 +69,19 @@ public class AccessJsonLayout extends AbstractJsonLayout<IAccessEvent> {
             .addNumber("status", isIncluded(AccessAttribute.STATUS_CODE), event::getStatusCode)
             .add("userAgent", isIncluded(AccessAttribute.USER_AGENT), () -> event.getRequestHeader(USER_AGENT))
             .add("version", jsonProtocolVersion != null, jsonProtocolVersion)
+            .addMap("requestAttributes", !requestAttributes.isEmpty(),
+                () -> filterRequestAttributes(requestAttributes, event))
             .build();
     }
 
     private boolean isIncluded(AccessAttribute attribute) {
         return includes.contains(attribute);
+    }
+
+    private Map<String, String> filterRequestAttributes(Set<String> requestAttributeNames, IAccessEvent event) {
+        return requestAttributeNames.stream()
+            .filter(name -> event.getAttribute(name) != null)
+            .collect(Collectors.toMap(Function.identity(), event::getAttribute));
     }
 
     private Map<String, String> filterHeaders(Map<String, String> headers, Set<String> filteredHeaderNames) {
@@ -118,5 +128,15 @@ public class AccessJsonLayout extends AbstractJsonLayout<IAccessEvent> {
         final TreeSet<String> headers = new TreeSet<>(String::compareToIgnoreCase);
         headers.addAll(responseHeaders);
         this.responseHeaders = headers;
+    }
+
+    public Set<String> getRequestAttributes() {
+        return requestAttributes;
+    }
+
+    public void setRequestAttributes(Set<String> requestAttributes) {
+        final TreeSet<String> attributes = new TreeSet<>(String::compareToIgnoreCase);
+        attributes.addAll(requestAttributes);
+        this.requestAttributes = attributes;
     }
 }
