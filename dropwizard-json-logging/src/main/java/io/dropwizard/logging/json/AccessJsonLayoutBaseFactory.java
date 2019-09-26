@@ -52,6 +52,7 @@ public class AccessJsonLayoutBaseFactory extends AbstractJsonLayoutBaseFactory<I
 
     private Set<String> responseHeaders = Collections.emptySet();
     private Set<String> requestHeaders = Collections.emptySet();
+    private Set<String> requestAttributes = Collections.emptySet();
 
     @JsonProperty
     public Set<String> getResponseHeaders() {
@@ -71,6 +72,16 @@ public class AccessJsonLayoutBaseFactory extends AbstractJsonLayoutBaseFactory<I
     @JsonProperty
     public void setRequestHeaders(Set<String> requestHeaders) {
         this.requestHeaders = requestHeaders;
+    }
+
+    @JsonProperty
+    public Set<String> getRequestAttributes() {
+        return requestAttributes;
+    }
+
+    @JsonProperty
+    public void setRequestAttributes(Set<String> requestAttributes) {
+        this.requestAttributes = requestAttributes;
     }
 
     @JsonProperty
@@ -94,6 +105,7 @@ public class AccessJsonLayoutBaseFactory extends AbstractJsonLayoutBaseFactory<I
         jsonLayout.setContext(context);
         jsonLayout.setRequestHeaders(requestHeaders);
         jsonLayout.setResponseHeaders(responseHeaders);
+        jsonLayout.setRequestAttributes(requestAttributes);
         return jsonLayout;
     }
 }
