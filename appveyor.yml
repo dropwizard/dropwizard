@@ -5,16 +5,25 @@ clone_depth: 2
 branches:
   except:
     - gh-pages
-image: 'Visual Studio 2017'
+image:
+- 'Visual Studio 2017'
+- 'Visual Studio 2019'
 environment:
-  #JAVA_HOME: 'C:\Program Files\Java\jdk11'
   JAVA_OPTS: '-Xms512m -Xmx2g'
+  MAVEN_OPTS: ''
+  matrix:
+  - JAVA_HOME: 'C:\Program Files\Java\jdk1.8.0'
+    PATH: '%JAVA_HOME%\bin;%PATH%'
+  - JAVA_HOME: 'C:\Program Files\Java\jdk11'
+    PATH: '%JAVA_HOME%\bin;%PATH%'
 cache:
-- 'C:\Users\appveyor\.m2\repository'
+- '%USERPROFILE%\.m2\repository'
 install:
-#- cmd: SET PATH=%JAVA_HOME%\bin;%PATH%
-- cmd: java -version
+- cmd: 'java -version'
 build_script:
 - mvnw.cmd -V -B -ff install -Dmaven.test.skip=true -Dmaven.javadoc.skip=true -Dmaven.source.skip=true -Dmaven.deploy.skip=true
 test_script:
 - mvnw.cmd -V -B -ff verify -Dmaven.javadoc.skip=true -Dmaven.source.skip=true -Dmaven.deploy.skip=true
+matrix:
+  fast_finish: true
+
