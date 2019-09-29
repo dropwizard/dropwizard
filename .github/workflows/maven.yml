@@ -4,6 +4,10 @@ on:
     branches:
     - master
     - release/*
+  pull_request:
+    branches:
+    - master
+    - release/*
 jobs:
   build:
     runs-on: ${{ matrix.os }}
