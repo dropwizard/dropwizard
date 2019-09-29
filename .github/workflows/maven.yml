@@ -9,12 +9,12 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        java_version: [1.8, 11, 13]
+        java_version: ['openjdk8', 'openjdk11', 'openjdk13']
         os: [ubuntu-latest, macOS-latest]
     steps:
     - uses: actions/checkout@v1
     - name: Set up JDK
-      uses: actions/setup-java@v1
+      uses: joschi/setup-jdk@v1
       with:
         java-version: ${{ matrix.java_version }}
     - name: Print Java and Maven versions
