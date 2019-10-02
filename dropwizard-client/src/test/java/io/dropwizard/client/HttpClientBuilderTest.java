@@ -95,6 +95,7 @@ public class HttpClientBuilderTest {
 
     static class CustomBuilder extends HttpClientBuilder {
         public boolean customized;
+        @Nullable
         public org.apache.http.impl.client.HttpClientBuilder builder;
 
         public CustomBuilder(MetricRegistry metricRegistry) {
