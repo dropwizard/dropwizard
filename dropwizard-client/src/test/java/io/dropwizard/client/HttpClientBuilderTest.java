@@ -95,11 +95,10 @@ public class HttpClientBuilderTest {
 
     static class CustomBuilder extends HttpClientBuilder {
         public boolean customized;
-        @Nullable
         public org.apache.http.impl.client.HttpClientBuilder builder;
 
         public CustomBuilder(MetricRegistry metricRegistry) {
-            this(metricRegistry, null);
+            this(metricRegistry, org.apache.http.impl.client.HttpClientBuilder.create());
         }
 
         public CustomBuilder(MetricRegistry metricRegistry, org.apache.http.impl.client.HttpClientBuilder builder) {
