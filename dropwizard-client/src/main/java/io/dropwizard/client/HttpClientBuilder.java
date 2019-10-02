@@ -299,12 +299,24 @@ public class HttpClientBuilder {
      * @return an {@link io.dropwizard.client.ConfiguredCloseableHttpClient}
      */
     ConfiguredCloseableHttpClient buildWithDefaultRequestConfiguration(String name) {
-        return createClient(org.apache.http.impl.client.HttpClientBuilder.create(),
+        return createClient(createBuilder(),
                 createConnectionManager(createConfiguredRegistry(), name), name);
     }
 
     /**
-     * Configures an Apache {@link org.apache.http.impl.client.HttpClientBuilder HttpClientBuilder}.
+     * Creates an Apache {@link org.apache.http.impl.client.HttpClientBuilder}.
+     *
+     * Intended for use by subclasses to create builder instance from subclass of
+     * {@link org.apache.http.impl.client.HttpClientBuilder}
+     *
+     * @return an {@link org.apache.http.impl.client.HttpClientBuilder}
+     */
+    protected org.apache.http.impl.client.HttpClientBuilder createBuilder() {
+        return org.apache.http.impl.client.HttpClientBuilder.create();
+    }
+
+    /**
+     * Configures an Apache {@link org.apache.http.impl.client.HttpClientBuilder}.
      *
      * Intended for use by subclasses to inject HttpClientBuilder
      * configuration. The default implementation is an identity

@@ -50,7 +50,6 @@ import org.apache.http.impl.conn.SystemDefaultDnsResolver;
 import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicListHeaderIterator;
-import org.apache.http.message.BasicListHeaderIterator;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
@@ -83,6 +82,12 @@ import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 
+class AnotherHttpClientBuilder extends org.apache.http.impl.client.HttpClientBuilder {
+    public static AnotherHttpClientBuilder create() {
+        return new AnotherHttpClientBuilder();
+    }
+}
+
 public class HttpClientBuilderTest {
     class CustomRequestExecutor extends HttpRequestExecutor {
 
@@ -90,10 +95,21 @@ public class HttpClientBuilderTest {
 
     static class CustomBuilder extends HttpClientBuilder {
         public boolean customized;
+        public org.apache.http.impl.client.HttpClientBuilder builder;
 
         public CustomBuilder(MetricRegistry metricRegistry) {
+            this(metricRegistry, null);
+        }
+
+        public CustomBuilder(MetricRegistry metricRegistry, org.apache.http.impl.client.HttpClientBuilder builder) {
             super(metricRegistry);
             customized = false;
+            this.builder = builder;
+        }
+
+        @Override
+        protected org.apache.http.impl.client.HttpClientBuilder createBuilder() {
+            return builder;
         }
 
         @Override
@@ -116,6 +132,7 @@ public class HttpClientBuilderTest {
     private HttpClientBuilder builder;
     private InstrumentedHttpClientConnectionManager connectionManager;
     private org.apache.http.impl.client.HttpClientBuilder apacheBuilder;
+    private AnotherHttpClientBuilder anotherApacheBuilder;
 
     public HttpClientBuilderTest() throws ClassNotFoundException {
         this.httpClientBuilderClass = Class.forName("org.apache.http.impl.client.HttpClientBuilder");
@@ -129,6 +146,7 @@ public class HttpClientBuilderTest {
         builder = new HttpClientBuilder(metricRegistry);
         connectionManager = spy(new InstrumentedHttpClientConnectionManager(metricRegistry, registry));
         apacheBuilder = org.apache.http.impl.client.HttpClientBuilder.create();
+        anotherApacheBuilder = spy(AnotherHttpClientBuilder.create());
         initMocks(this);
     }
 
@@ -725,6 +743,16 @@ public class HttpClientBuilderTest {
         assertThat(FieldUtils.getField(httpClientBuilderClass,
             "requestExec", true)
             .get(apacheBuilder))
+            .isInstanceOf(CustomRequestExecutor.class);
+    }
+
+    @Test
+    public void buildWithAnotherBuilder() throws Exception {
+        CustomBuilder builder = new CustomBuilder(new MetricRegistry(), anotherApacheBuilder);
+        builder.build("test");
+        assertThat(FieldUtils.getField(httpClientBuilderClass,
+            "requestExec", true)
+            .get(anotherApacheBuilder))
             .isInstanceOf(CustomRequestExecutor.class);
     }
 
