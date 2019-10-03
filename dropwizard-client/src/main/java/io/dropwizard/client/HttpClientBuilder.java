@@ -44,6 +44,7 @@ import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
 import org.apache.http.impl.conn.SystemDefaultDnsResolver;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpProcessor;
+import org.apache.http.protocol.HttpRequestExecutor;
 
 import javax.annotation.Nullable;
 import javax.net.ssl.HostnameVerifier;
@@ -304,6 +305,19 @@ public class HttpClientBuilder {
     }
 
     /**
+     * Creates a {@link org.apache.http.protocol.HttpRequestExecutor}.
+     *
+     * Intended for use by subclasses to provide a customized request executor.
+     * The default implementation is an {@link com.codahale.metrics.httpclient.InstrumentedHttpRequestExecutor}
+     *
+     * @param name
+     * @return a {@link org.apache.http.protocol.HttpRequestExecutor}
+     */
+    protected HttpRequestExecutor createRequestExecutor(String name) {
+        return new InstrumentedHttpRequestExecutor(metricRegistry, metricNameStrategy, name);
+    }
+
+    /**
      * Creates an Apache {@link org.apache.http.impl.client.HttpClientBuilder}.
      *
      * Intended for use by subclasses to create builder instance from subclass of
@@ -367,7 +381,7 @@ public class HttpClientBuilder {
                 .setSoTimeout(timeout)
                 .build();
 
-        builder.setRequestExecutor(new InstrumentedHttpRequestExecutor(metricRegistry, metricNameStrategy, name))
+        builder.setRequestExecutor(createRequestExecutor(name))
             .setConnectionManager(manager)
             .setDefaultRequestConfig(requestConfig)
             .setDefaultSocketConfig(socketConfig)
