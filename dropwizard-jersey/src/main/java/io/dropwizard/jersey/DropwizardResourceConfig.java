@@ -153,7 +153,8 @@ public class DropwizardResourceConfig extends ResourceConfig {
                 pool.insertClassPath(new LoaderClassPath(this.getClass().getClassLoader()));
                 CtClass cc = pool.makeClass(SpecificBinder.class.getName() + UUID.randomUUID());
                 cc.setSuperclass(pool.get(SpecificBinder.class.getName()));
-                Object binderProxy = cc.toClass().getConstructor(Object.class, Class.class).newInstance(object, clazz);
+                Object binderProxy = cc.toClass(SpecificBinder.class)
+                    .getConstructor(Object.class, Class.class).newInstance(object, clazz);
                 super.register(binderProxy);
                 return super.register(clazz);
             } catch (Exception e) {

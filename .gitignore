@@ -19,6 +19,8 @@ release.properties
 nb-configuration.xml
 atlassian-ide-plugin.xml
 
+.java-version
+
 logs
 
 .DS_Store
