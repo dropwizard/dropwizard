@@ -76,7 +76,7 @@ public class ServletEnvironmentTest {
 
     @Test
     public void addsFilterInstances() throws Exception {
-        final Filter filter = mock(Filter.class);
+        final Filter filter = new WelcomeFilter();
 
         final FilterRegistration.Dynamic builder = environment.addFilter("filter", filter);
         assertThat(builder)
@@ -88,8 +88,7 @@ public class ServletEnvironmentTest {
         assertThat(holder.getValue().getName())
                 .isEqualTo("filter");
 
-        assertThat(holder.getValue().getFilter())
-                .isEqualTo(filter);
+        assertThat(holder.getValue()).hasFieldOrPropertyWithValue("_instance", filter);
     }
 
     @Test
