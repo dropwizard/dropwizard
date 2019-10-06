@@ -25,7 +25,8 @@
         <maven.compiler.optimize>false</maven.compiler.optimize>
         <maven.compiler.forceJavacCompilerUse>true</maven.compiler.forceJavacCompilerUse>
 
-        <argLine>-Duser.language=en -Duser.region=US</argLine>
+        <surefire.argLine>-Duser.language=en -Duser.region=US</surefire.argLine>
+        <argLine>${surefire.argLine}</argLine>
     </properties>
 
     <profiles>
@@ -38,6 +39,7 @@
                 <maven.compiler.release>8</maven.compiler.release>
                 <maven.compiler.source>8</maven.compiler.source>
                 <maven.compiler.target>8</maven.compiler.target>
+                <argLine>${surefire.argLine} --illegal-access=deny --add-opens java.base/java.net=ALL-UNNAMED</argLine>
             </properties>
         </profile>
         <profile>
