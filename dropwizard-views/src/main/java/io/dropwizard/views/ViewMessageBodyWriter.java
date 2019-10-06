@@ -88,7 +88,7 @@ public class ViewMessageBodyWriter implements MessageBodyWriter<View> {
         }
     }
 
-    Locale detectLocale(HttpHeaders headers) {
+    protected Locale detectLocale(HttpHeaders headers) {
         final List<Locale> languages;
         try {
             languages = headers.getAcceptableLanguages();
