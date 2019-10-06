@@ -44,6 +44,57 @@ v2.0.0: Unreleased
 * Fix undefined config environment variables with a default value causing an exception in strict mode (`#2801 <https://github.com/dropwizard/dropwizard/pull/2801>`_)
 * Removed ``dropwizard-jdbi`` as official module and moved it into it's own project
 
+
+.. _rel-1.3.15:
+
+v1.3.15: Sep 25, 2019
+=====================
+
+* Upgrade to Jackson 2.9.10 to address multiple security issues (`#2939 <https://github.com/dropwizard/dropwizard/pull/2939>`_)
+
+
+.. _rel-1.3.14:
+
+v1.3.14: Aug 7, 2019
+====================
+
+* Upgrade to Jackson 2.9.9.20190807 to address multiple security issues (`#2871 <https://github.com/dropwizard/dropwizard/pull/2871>`_)
+
+
+.. _rel-1.3.13:
+
+v1.3.13: July 16, 2019
+======================
+
+* Upgrade to Jackson Databind 2.9.9.1 to address `CVE-2019-12086 <https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2019-12086>`_ (`#2825 <https://github.com/dropwizard/dropwizard/pull/2825>`_)
+* Add a ``JSONUnauthorizedHandler`` (`#2841 <https://github.com/dropwizard/dropwizard/pull/2841>`_)
+
+
+.. _rel-1.3.12:
+
+v1.3.12: May 25, 2019
+=====================
+
+* Upgrade to Jackson 2.9.9 to address `CVE-2019-12086 <https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2019-12086>`_ (`#2779 <https://github.com/dropwizard/dropwizard/pull/2779>`_)
+
+
+.. _rel-1.3.11:
+
+v1.3.11: May 9, 2019
+====================
+
+* Upgrade Jetty to 9.4.18.v20190429
+
+
+.. _rel-1.3.10:
+
+v1.3.10: Apr 29, 2019
+=====================
+
+* Upgrade Jetty to 9.4.17.v20190418
+* Upgrade commons-lang3 to 3.8.1 to make BOM compatible with Java 11 (`#2679 <https://github.com/dropwizard/dropwizard/pull/2679>`_)
+
+
 .. _rel-1.3.9:
 
 v1.3.9: Feb 24, 2019
