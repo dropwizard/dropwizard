@@ -3,6 +3,7 @@ package io.dropwizard.util;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.Locale;
 import java.util.SortedMap;
@@ -16,9 +17,10 @@ import static java.util.Objects.requireNonNull;
  * @deprecated Use {@link DataSize} for correct SI and IEC prefixes.
  */
 @Deprecated
-public class Size implements Comparable<Size> {
-    private static final Pattern SIZE_PATTERN = Pattern.compile("(\\d+)\\s*(\\S+)");
+public class Size implements Comparable<Size>, Serializable {
+    private static final long serialVersionUID = 6790991929249604526L;
 
+    private static final Pattern SIZE_PATTERN = Pattern.compile("(\\d+)\\s*(\\S+)");
     private static final SortedMap<String, SizeUnit> SUFFIXES;
 
     static {
