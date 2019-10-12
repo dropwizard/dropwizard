@@ -3,6 +3,7 @@ package io.dropwizard.util;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
@@ -13,9 +14,10 @@ import java.util.regex.Pattern;
 
 import static java.util.Objects.requireNonNull;
 
-public class Duration implements Comparable<Duration> {
-    private static final Pattern DURATION_PATTERN = Pattern.compile("(\\d+)\\s*(\\S+)");
+public class Duration implements Comparable<Duration>, Serializable {
+    private static final long serialVersionUID = 1445611723318059801L;
 
+    private static final Pattern DURATION_PATTERN = Pattern.compile("(\\d+)\\s*(\\S+)");
     private static final Map<String, TimeUnit> SUFFIXES;
 
     static {

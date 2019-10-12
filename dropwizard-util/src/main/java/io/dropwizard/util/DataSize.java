@@ -3,6 +3,7 @@ package io.dropwizard.util;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.Locale;
 import java.util.SortedMap;
@@ -19,9 +20,10 @@ import static java.util.Objects.requireNonNull;
  * @see DataSizeUnit
  * @since 2.0
  */
-public class DataSize implements Comparable<DataSize> {
-    private static final Pattern SIZE_PATTERN = Pattern.compile("(\\d+)\\s*(\\S*)");
+public class DataSize implements Comparable<DataSize>, Serializable {
+    private static final long serialVersionUID = 8517642678733072800L;
 
+    private static final Pattern SIZE_PATTERN = Pattern.compile("(\\d+)\\s*(\\S*)");
     private static final SortedMap<String, DataSizeUnit> SUFFIXES;
 
     static {

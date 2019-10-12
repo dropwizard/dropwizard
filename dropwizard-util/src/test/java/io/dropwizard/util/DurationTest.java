@@ -3,7 +3,11 @@ package io.dropwizard.util;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -863,5 +867,24 @@ public class DurationTest {
         assertThat(mapper.readValue("\"0 days\"", Duration.class)).isEqualTo(Duration.days(0L));
         assertThat(mapper.readValue("\"1 day\"", Duration.class)).isEqualTo(Duration.days(1L));
         assertThat(mapper.readValue("\"2 days\"", Duration.class)).isEqualTo(Duration.days(2L));
+    }
+
+    @Test
+    void testSerialization() throws IOException, ClassNotFoundException {
+        final Duration duration = Duration.minutes(42L);
+        final byte[] bytes;
+        try (final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+             final ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream)) {
+            objectOutputStream.writeObject(duration);
+            bytes = outputStream.toByteArray();
+        }
+
+        try (final ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
+             final ObjectInputStream objectInputStream = new ObjectInputStream(inputStream)) {
+            final Object o = objectInputStream.readObject();
+            assertThat(o)
+                    .isInstanceOf(Duration.class)
+                    .isEqualTo(duration);
+        }
     }
 }

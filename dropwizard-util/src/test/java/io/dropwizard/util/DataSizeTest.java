@@ -3,7 +3,11 @@ package io.dropwizard.util;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -692,5 +696,24 @@ class DataSizeTest {
         assertThat(DataSize.fromSize(Size.megabytes(5L))).isEqualTo(DataSize.mebibytes(5L));
         assertThat(DataSize.fromSize(Size.gigabytes(5L))).isEqualTo(DataSize.gibibytes(5L));
         assertThat(DataSize.fromSize(Size.terabytes(5L))).isEqualTo(DataSize.tebibytes(5L));
+    }
+
+    @Test
+    void testSerialization() throws IOException, ClassNotFoundException {
+        final DataSize size = DataSize.kibibytes(42L);
+        final byte[] bytes;
+        try (final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+             final ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream)) {
+            objectOutputStream.writeObject(size);
+            bytes = outputStream.toByteArray();
+        }
+
+        try (final ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
+             final ObjectInputStream objectInputStream = new ObjectInputStream(inputStream)) {
+            final Object o = objectInputStream.readObject();
+            assertThat(o)
+                    .isInstanceOf(DataSize.class)
+                    .isEqualTo(size);
+        }
     }
 }
