@@ -15,15 +15,15 @@ jobs:
       matrix:
         java_version: ['openjdk8', 'openjdk11', 'openjdk13']
         os: ['ubuntu-latest', 'macOS-latest', 'windows-latest']
+    env:
+      JAVA_OPTS: "-XX:+TieredCompilation -XX:TieredStopAtLevel=1"
     steps:
     - uses: actions/checkout@v1
     - name: Set up JDK
       uses: joschi/setup-jdk@v1
       with:
         java-version: ${{ matrix.java_version }}
-    - name: Print Java and Maven versions
-      run: ./mvnw -B -s .github/settings.xml -v
     - name: Build with Maven
-      run: ./mvnw -B -s .github/settings.xml install -Dmaven.test.skip=true -Dmaven.javadoc.skip=true
+      run: ./mvnw -V -B -ff -s .github/settings.xml install -Dmaven.test.skip=true -Dmaven.javadoc.skip=true
     - name: Run tests
-      run: ./mvnw -B -s .github/settings.xml verify
+      run: ./mvnw -V -B -ff -s .github/settings.xml verify
