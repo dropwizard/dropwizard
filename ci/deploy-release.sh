@@ -6,4 +6,4 @@ set -uxo pipefail
 openssl aes-256-cbc -K $encrypted_ec79e61fc360_key -iv $encrypted_ec79e61fc360_iv -in ci/dropwizard.asc.enc -out ci/dropwizard.asc -d
 gpg --armor --import ci/dropwizard.asc
 
-./mvnw -V -B -ff -XX:+TieredCompilation -XX:TieredStopAtLevel=1 deploy --settings 'ci/settings.xml' -DperformRelease=true -Dmaven.test.skip=true
+./mvnw -V -B -ff deploy --settings 'ci/settings.xml' -DperformRelease=true -Dmaven.test.skip=true
