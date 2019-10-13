@@ -8,8 +8,8 @@ before_install:
   - rm ~/.m2/settings.xml || true
   - ulimit -c unlimited -S
 script:
-  - ./mvnw verify -B
-  - ./mvnw site -pl docs -B -q
+  - ./mvnw -V -B -ff verify
+  - ./mvnw -V -B -ff -q -pl docs site
 after_success:
   - bash ci/after_success.sh
 cache:
@@ -39,7 +39,7 @@ deploy:
 # accordingly (http://docs.travis-ci.com/user/encryption-keys/)
 env:
   global:
-    - JAVA_OPTS: "'-Xms512m -Xmx2g'"
+    - JAVA_OPTS: "-Xms512m -Xmx2g -XX:+TieredCompilation -XX:TieredStopAtLevel=1"
     - secure: "MPnKTiK+9rmqu4R1f2Wozj/DuC8M74THepmvXZKCB6ysCkXPjf7FuWxd29uVdk3Mwb4X90KdzyafOY/GVkVze+/AEorFjIF8FFqBpgGmOG5D9PMKZbF7DNisOShPsITz6+RmYzRTT5xLeRGntAAy6aDWtWTh06CSCypEMT5lD10="
     - secure: "WY1zEZD8nwGQXaYDrItkBWmYHhbQ3Ekseq82cTIJedG7zb8KbwpVDUo+6yRf1EPmpnDbRE9N0wgtzQq8B3+X87ZnO6RrEuv6ulkLJJlrwcRmRjfDY9rwRTUUbFZYrHP0fiLedPE6xpokPiO7Y+tRpofVfv2YnxW69GWwQG224KY="
     - secure: "W4rGYMaNKW2K1oSJFEr1Q+InQxvW4cdXk6Z1wE+U3CeZd8YeZ8RaaRUVObTMeeUvIzYlbU/stb9dghQMyYKjgaOZE3zWzDV9NP1e83sX7LyCd3q9wufEzI2dwenfXDnVHehG110wXWjUQSAwYyUTXn5bzMvyHSCqwN4X5mGSFzw="

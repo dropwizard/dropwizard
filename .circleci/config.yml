@@ -3,14 +3,14 @@ jobs:
   build:
     working_directory: ~/dropwizard
     environment:
-      JAVA_TOOL_OPTIONS: -Xms512m -Xmx2g
+      JAVA_OPTS: -Xms512m -Xmx2g -XX:+TieredCompilation -XX:TieredStopAtLevel=1
     docker:
       - image: circleci/openjdk:11-jdk
     steps:
       - checkout
       - restore_cache:
           key: dropwizard-{{ checksum "pom.xml" }}
-      - run: ./mvnw -B install
+      - run: ./mvnw -V -B -ff install
       - save_cache:
           paths:
             - ~/.m2
