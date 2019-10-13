@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>dropwizard-example</artifactId>
-    <version>2.0.0-rc11</version>
+    <version>2.0.0-rc12-SNAPSHOT</version>
     <groupId>io.dropwizard</groupId>
     <name>Dropwizard Example Application</name>
 
