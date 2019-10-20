@@ -9,12 +9,11 @@ Please refer to `GitHub releases <https://github.com/dropwizard/dropwizard/relea
 
 .. _rel-2.0.0:
 
-v2.0.0: Unreleased
-==================
+v2.0.0: Oct XX, 2019
+====================
 
-`2.0.x Upgrade Notes <https://www.dropwizard.io/2.0.0/docs/manual/upgrade-notes/upgrade-notes-2_0_x.html>`_
-`GitHub Milestone 2.0.0 Merged PRs <https://github.com/dropwizard/dropwizard/pulls?page=1&q=is%3Apr+is%3Aclosed+milestone%3A2.0.0>`_
-
+* :ref:`upgrade-notes-dropwizard-2_0_x`
+* `GitHub 2.0.0 milestone <https://github.com/dropwizard/dropwizard/pulls?page=1&q=is%3Apr+is%3Aclosed+milestone%3A2.0.0>`_
 * Add TLS socket logging appender (`#2317 <https://github.com/dropwizard/dropwizard/pull/2317>`_)
 * Add opt-in ``EmptyOptionalNoContentExceptionMapper`` for returning 204 responses on empty ``Optional`` responses (`#2350 <https://github.com/dropwizard/dropwizard/pull/2350>`_)
 * Add configuration for excluding mime types and paths to gzip (`#2356 <https://github.com/dropwizard/dropwizard/pull/2356>`_)
@@ -42,7 +41,7 @@ v2.0.0: Unreleased
 * Add support for configuring Jetty's cookie compliance (`#2812 <https://github.com/dropwizard/dropwizard/pull/2812>`_)
 * Deprecate ``Authorizer.authorize(principal, role)`` in favor of ``Authorizer.authorize(principal, role, context)`` (`#2837 <https://github.com/dropwizard/dropwizard/pull/2837>`_)
 * Fix undefined config environment variables with a default value causing an exception in strict mode (`#2801 <https://github.com/dropwizard/dropwizard/pull/2801>`_)
-* Removed ``dropwizard-jdbi`` as official module and moved it into it's own project
+* Removed ``dropwizard-jdbi`` as official module and moved it into it's own project: `dropwizard-jdbi <https://github.com/dropwizard/dropwizard-jdbi>`_
 
 
 .. _rel-1.3.16:
