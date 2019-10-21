@@ -67,8 +67,6 @@ public class DiscoverableSubtypeResolver extends StdSubtypeResolver {
                             if (loadedClass != null) {
                                 serviceClasses.add(loadedClass);
                             }
-                        } else {
-                            LOGGER.debug("Line began with a comment. Ignoring");
                         }
                     }
                 }
