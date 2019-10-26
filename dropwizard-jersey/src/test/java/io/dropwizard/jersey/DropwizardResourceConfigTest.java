@@ -6,6 +6,7 @@ import org.glassfish.jersey.server.model.Resource;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
+import javax.inject.Inject;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -216,6 +217,23 @@ public class DropwizardResourceConfigTest {
     }
 
     @Test
+    void logResourceWithHK2Binder() {
+        rc.register(ResourceWithInjectedDependency.class);
+        rc.register(new org.glassfish.hk2.utilities.binding.AbstractBinder() {
+            @Override
+            protected void configure() {
+                bindAsContract(Dependency.class);
+            }
+        });
+
+        runJersey();
+        final String expectedLog = String.format("The following paths were found for the configured resources:%n" + "%n"
+            + "    GET     /another (io.dropwizard.jersey.DropwizardResourceConfigTest.ResourceWithInjectedDependency)");
+
+        assertThat(rc.getEndpointsInfo()).contains(expectedLog);
+    }
+
+    @Test
     void logsEndpointsContextPathUrlPattern() {
         rc.setContextPath("/context");
         rc.setUrlPattern("/pattern");
@@ -416,5 +434,22 @@ public class DropwizardResourceConfigTest {
         @Path("/address")
         public String getAddress() {return "B";}
 
+    }
+
+    public static class ResourceWithInjectedDependency implements ResourceInterface {
+        private Dependency dependency;
+
+        @Inject
+        public ResourceWithInjectedDependency(Dependency dependency) {
+            this.dependency = dependency;
+        }
+
+        public String bar() {
+            return dependency.get();
+        }
+    }
+
+    public static class Dependency {
+        public String get() {return "A";}
     }
 }

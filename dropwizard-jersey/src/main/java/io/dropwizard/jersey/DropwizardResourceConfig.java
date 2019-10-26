@@ -142,7 +142,7 @@ public class DropwizardResourceConfig extends ResourceConfig {
         // If a class gets passed through as an object, cast to Class and register directly
         if (component instanceof Class<?>) {
             return super.register((Class<?>) component);
-        } else if (Providers.isProvider(clazz) || Binder.class.isAssignableFrom(clazz)) {
+        } else if (Providers.isProvider(clazz) || org.glassfish.hk2.utilities.Binder.class.isAssignableFrom(clazz)) {
             // If Jersey supports this component's class (including Binders), register directly
             return super.register(object);
         } else {
