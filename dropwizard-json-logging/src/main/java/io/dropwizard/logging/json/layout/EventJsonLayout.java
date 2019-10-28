@@ -63,6 +63,7 @@ public class EventJsonLayout extends AbstractJsonLayout<ILoggingEvent> {
             .add("level", isIncluded(EventAttribute.LEVEL), String.valueOf(event.getLevel()))
             .add("thread", isIncluded(EventAttribute.THREAD_NAME), event.getThreadName())
             .add("logger", isIncluded(EventAttribute.LOGGER_NAME), event.getLoggerName())
+            .add("marker", isIncluded(EventAttribute.MARKER) && event.getMarker() != null, () -> event.getMarker().getName())
             .add("message", isIncluded(EventAttribute.MESSAGE), event.getFormattedMessage())
             .add("context", isIncluded(EventAttribute.CONTEXT_NAME), event.getLoggerContextVO().getName())
             .add("version", jsonProtocolVersion != null, jsonProtocolVersion)
@@ -87,8 +88,8 @@ public class EventJsonLayout extends AbstractJsonLayout<ILoggingEvent> {
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
-    private boolean isIncluded(EventAttribute exception) {
-        return includes.contains(exception);
+    private boolean isIncluded(EventAttribute include) {
+        return includes.contains(include);
     }
 
     public ImmutableSet<EventAttribute> getIncludes() {

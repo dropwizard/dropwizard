@@ -42,8 +42,8 @@ import java.util.TimeZone;
 public class EventJsonLayoutBaseFactory extends AbstractJsonLayoutBaseFactory<ILoggingEvent> {
 
     private EnumSet<EventAttribute> includes = EnumSet.of(EventAttribute.LEVEL,
-        EventAttribute.THREAD_NAME, EventAttribute.MDC, EventAttribute.LOGGER_NAME, EventAttribute.MESSAGE,
-        EventAttribute.EXCEPTION, EventAttribute.TIMESTAMP);
+        EventAttribute.THREAD_NAME, EventAttribute.MDC, EventAttribute.MARKER, EventAttribute.LOGGER_NAME,
+        EventAttribute.MESSAGE, EventAttribute.EXCEPTION, EventAttribute.TIMESTAMP);
 
     private Set<String> includesMdcKeys = ImmutableSet.of();
     private boolean flattenMdc = false;

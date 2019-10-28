@@ -2,6 +2,7 @@ package io.dropwizard.logging.json.layout;
 
 import com.google.common.collect.Maps;
 
+import java.util.function.Supplier;
 import javax.annotation.Nullable;
 import java.util.Map;
 
@@ -61,6 +62,20 @@ public class MapBuilder {
     public MapBuilder add(String fieldName, boolean include, @Nullable Map<String, ?> mapValue) {
         if (include && mapValue != null && !mapValue.isEmpty()) {
             map.put(getFieldName(fieldName), mapValue);
+        }
+        return this;
+    }
+
+    /**
+     * Adds the string value to the provided map under the provided field name,
+     * if it should be included. The supplier is only invoked if the field is to be included.
+     */
+    public MapBuilder add(String fieldName, boolean include, Supplier<String> supplier) {
+        if (include) {
+            String value = supplier.get();
+            if (value != null) {
+                map.put(getFieldName(fieldName), value);
+            }
         }
         return this;
     }

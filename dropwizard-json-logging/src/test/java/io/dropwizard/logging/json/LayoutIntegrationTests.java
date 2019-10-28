@@ -30,6 +30,8 @@ import java.io.File;
 import java.io.PrintStream;
 import java.util.Collections;
 import java.util.concurrent.TimeUnit;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -119,7 +121,8 @@ public class LayoutIntegrationTests {
         try {
             System.setOut(new PrintStream(redirectedStream));
             defaultLoggingFactory.configure(new MetricRegistry(), "json-log-test");
-            LoggerFactory.getLogger("com.example.app").info("Application log");
+            Marker marker = MarkerFactory.getMarker("marker");
+            LoggerFactory.getLogger("com.example.app").info(marker, "Application log");
             Thread.sleep(100); // Need to wait, because the logger is async
 
             JsonNode jsonNode = objectMapper.readTree(redirectedStream.toString());
@@ -127,6 +130,7 @@ public class LayoutIntegrationTests {
             assertThat(jsonNode.get("timestamp").isTextual()).isTrue();
             assertThat(jsonNode.get("level").asText()).isEqualTo("INFO");
             assertThat(jsonNode.get("logger").asText()).isEqualTo("com.example.app");
+            assertThat(jsonNode.get("marker").asText()).isEqualTo("marker");
             assertThat(jsonNode.get("message").asText()).isEqualTo("Application log");
         } finally {
             System.setOut(old);
