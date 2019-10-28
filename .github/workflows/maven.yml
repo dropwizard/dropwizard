@@ -24,6 +24,6 @@ jobs:
       with:
         java-version: ${{ matrix.java_version }}
     - name: Build with Maven
-      run: ./mvnw -V -B -ff -s .github/settings.xml install -Dmaven.test.skip=true -Dmaven.javadoc.skip=true
+      run: ./mvnw -V -B -ff -s .github/settings.xml install '-Dmaven.test.skip=true' '-Dmaven.javadoc.skip=true'
     - name: Run tests
       run: ./mvnw -V -B -ff -s .github/settings.xml verify
