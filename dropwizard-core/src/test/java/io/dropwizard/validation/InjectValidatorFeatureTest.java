@@ -5,6 +5,7 @@ import io.dropwizard.Configuration;
 import io.dropwizard.jersey.validation.MutableValidatorFactory;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import org.hibernate.validator.internal.constraintvalidators.bv.number.bound.MinValidatorForInteger;
 import org.hibernate.validator.internal.constraintvalidators.bv.number.bound.MinValidatorForNumber;
 import org.hibernate.validator.internal.engine.constraintvalidation.ConstraintValidatorFactoryImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -85,7 +86,7 @@ public class InjectValidatorFeatureTest {
         Validator validator = validatorFactory.getValidator();
         validator.validate(new Bean(1));
 
-        verify(mockedFactory).getInstance(eq(MinValidatorForNumber.class));
+        verify(mockedFactory).getInstance(eq(MinValidatorForInteger.class));
     }
 
     static class Bean {
