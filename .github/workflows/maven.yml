@@ -24,9 +24,17 @@ jobs:
       with:
         java-version: ${{ matrix.java_version }}
     - uses: actions/cache@v1
+      if: runner.os != 'Windows'
       with:
         path: ~/.m2/repository
         key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
+    - uses: actions/cache@v1
+      if: runner.os == 'Windows'
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**\pom.xml') }}
         restore-keys: |
           ${{ runner.os }}-maven-
     - name: Build with Maven
