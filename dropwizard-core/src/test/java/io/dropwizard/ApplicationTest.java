@@ -7,24 +7,15 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class ApplicationTest {
     private static class FakeConfiguration extends Configuration {
     }
 
-    private static class FakeApplication extends Application<FakeConfiguration> {
-        boolean fatalError = false;
-
+    private static class PoserApplication extends Application<FakeConfiguration> {
         @Override
         public void run(FakeConfiguration configuration, Environment environment) {}
-
-        @Override
-        protected void onFatalError() {
-            fatalError = true;
-        }
-    }
-
-    private static class PoserApplication extends FakeApplication {
     }
 
     private static class WrapperApplication<C extends FakeConfiguration> extends Application<C> {
@@ -47,7 +38,7 @@ public class ApplicationTest {
 
     @Test
     public void hasAReferenceToItsTypeParameter() throws Exception {
-        assertThat(new FakeApplication().getConfigurationClass())
+        assertThat(new PoserApplication().getConfigurationClass())
                 .isSameAs(FakeConfiguration.class);
     }
 
@@ -68,9 +59,10 @@ public class ApplicationTest {
     public void exitWithFatalErrorWhenCommandFails() throws Exception {
         final File configFile = File.createTempFile("dropwizard-invalid-config", ".yml");
         try {
-            final FakeApplication application = new FakeApplication();
-            application.run("server", configFile.getAbsolutePath());
-            assertThat(application.fatalError).isTrue();
+            final PoserApplication application = new PoserApplication();
+            assertThatThrownBy(() -> {
+                application.run("server", configFile.getAbsolutePath());
+            }).isInstanceOf(Exception.class);
         } finally {
             configFile.delete();
         }

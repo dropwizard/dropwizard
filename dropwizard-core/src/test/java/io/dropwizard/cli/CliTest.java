@@ -19,6 +19,7 @@ import java.util.Locale;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
@@ -116,8 +117,7 @@ public class CliTest {
 
     @Test
     public void handlesShortVersionCommands() throws Exception {
-        assertThat(cli.run("-v"))
-                .isTrue();
+        cli.run("-v");
 
         assertThat(stdOut.toString())
                 .isEqualTo(String.format("1.0.0%n"));
@@ -128,8 +128,7 @@ public class CliTest {
 
     @Test
     public void handlesLongVersionCommands() throws Exception {
-        assertThat(cli.run("--version"))
-                .isTrue();
+        cli.run("--version");
 
         assertThat(stdOut.toString())
                 .isEqualTo(String.format("1.0.0%n"));
@@ -143,8 +142,7 @@ public class CliTest {
         when(location.getVersion()).thenReturn(Optional.empty());
         final Cli newCli = new Cli(location, bootstrap, stdOut, stdErr);
 
-        assertThat(newCli.run("--version"))
-                .isTrue();
+        newCli.run("--version");
 
         assertThat(stdOut.toString())
                 .isEqualTo(String.format("No application version detected. Add a Implementation-Version entry to your JAR's manifest to enable this.%n"));
@@ -155,8 +153,7 @@ public class CliTest {
 
     @Test
     public void handlesZeroArgumentsAsHelpCommand() throws Exception {
-        assertThat(cli.run())
-                .isTrue();
+        cli.run();
 
         assertThat(stdOut.toString())
                 .isEqualTo(String.format(
@@ -176,8 +173,7 @@ public class CliTest {
 
     @Test
     public void handlesShortHelpCommands() throws Exception {
-        assertThat(cli.run("-h"))
-                .isTrue();
+        cli.run("-h");
 
         assertThat(stdOut.toString())
                 .isEqualTo(String.format(
@@ -197,8 +193,7 @@ public class CliTest {
 
     @Test
     public void handlesLongHelpCommands() throws Exception {
-        assertThat(cli.run("--help"))
-                .isTrue();
+        cli.run("--help");
 
         assertThat(stdOut.toString())
                 .isEqualTo(String.format(
@@ -219,8 +214,7 @@ public class CliTest {
     @Test
     @SuppressWarnings("unchecked")
     public void handlesShortHelpSubcommands() throws Exception {
-        assertThat(cli.run("check", "-h"))
-                .isTrue();
+        cli.run("check", "-h");
 
         assertThat(stdOut.toString())
                 .isEqualTo(String.format(
@@ -244,8 +238,7 @@ public class CliTest {
     @Test
     @SuppressWarnings("unchecked")
     public void handlesLongHelpSubcommands() throws Exception {
-        assertThat(cli.run("check", "--help"))
-                .isTrue();
+        cli.run("check", "--help");
 
         assertThat(stdOut.toString())
                 .isEqualTo(String.format(
@@ -268,8 +261,8 @@ public class CliTest {
 
     @Test
     public void rejectsBadCommandFlags() throws Exception {
-        assertThat(cli.run("--yes"))
-                .isFalse();
+        assertThatThrownBy(() -> { cli.run("--yes"); })
+            .isInstanceOf(Exception.class);
 
         assertThat(stdOut.toString())
                 .isEmpty();
@@ -290,8 +283,8 @@ public class CliTest {
 
     @Test
     public void rejectsBadSubcommandFlags() throws Exception {
-        assertThat(cli.run("check", "--yes"))
-                .isFalse();
+        assertThatThrownBy(() -> { cli.run("check", "--yes"); })
+            .isInstanceOf(Exception.class);
 
         assertThat(stdOut.toString())
                 .isEmpty();
@@ -313,8 +306,8 @@ public class CliTest {
 
     @Test
     public void rejectsBadSubcommands() throws Exception {
-        assertThat(cli.run("plop"))
-                .isFalse();
+        assertThatThrownBy(() -> { cli.run("plop"); })
+            .isInstanceOf(Exception.class);
 
         assertThat(stdOut.toString())
                 .isEmpty();
@@ -335,8 +328,7 @@ public class CliTest {
 
     @Test
     public void runsCommands() throws Exception {
-        assertThat(cli.run("check"))
-                .isTrue();
+        cli.run("check");
 
         assertThat(stdOut.toString())
                 .isEmpty();
@@ -352,8 +344,8 @@ public class CliTest {
     public void unhandledExceptionsMessagesArePrintedForCheck() throws Exception {
         doThrow(new BadAppException()).when(command).run(any(Bootstrap.class), any(Namespace.class), any(Configuration.class));
 
-        assertThat(cli.run("check"))
-                .isFalse();
+        assertThatThrownBy(() -> { cli.run("check"); })
+            .isInstanceOf(Exception.class);
 
         assertThat(stdOut.toString())
                 .isEmpty();
@@ -367,8 +359,8 @@ public class CliTest {
     public void unhandledExceptionsCustomCommand() throws Exception {
         doThrow(new BadAppException()).when(command).run(any(Bootstrap.class), any(Namespace.class), any(Configuration.class));
 
-        assertThat(cli.run("custom"))
-            .isFalse();
+        assertThatThrownBy(() -> { cli.run("custom"); })
+            .isInstanceOf(Exception.class);
 
         assertThat(stdOut.toString())
             .isEqualTo(String.format("I did not expect this!%n"));
@@ -382,8 +374,8 @@ public class CliTest {
     public void unhandledExceptionsCustomCommandDebug() throws Exception {
         doThrow(new BadAppException()).when(command).run(any(Bootstrap.class), any(Namespace.class), any(Configuration.class));
 
-        assertThat(cli.run("custom", "--debug"))
-            .isFalse();
+        assertThatThrownBy(() -> { cli.run("custom", "--debug"); })
+            .isInstanceOf(Exception.class);
 
         assertThat(stdOut.toString())
             .isEmpty();

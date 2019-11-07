@@ -89,11 +89,8 @@ public abstract class Application<T extends Configuration> {
         // Should be called after initialize to give an opportunity to set a custom metric registry
         bootstrap.registerMetrics();
 
-        final Cli cli = new Cli(new JarLocation(getClass()), bootstrap, System.out, System.err);
-        if (!cli.run(arguments)) {
-            // only exit if there's an error running the command
-            onFatalError();
-        }
+        new Cli(new JarLocation(getClass()), bootstrap, System.out, System.err)
+            .run(arguments);
     }
 
     /**
@@ -104,15 +101,5 @@ public abstract class Application<T extends Configuration> {
     protected void addDefaultCommands(Bootstrap<T> bootstrap) {
         bootstrap.addCommand(new ServerCommand<>(this));
         bootstrap.addCommand(new CheckCommand<>(this));
-    }
-
-    /**
-     * Called by {@link #run(String...)} to indicate there was a fatal error running the requested command.
-     *
-     * The default implementation calls {@link System#exit(int)} with a non-zero status code to terminate the
-     * application.
-     */
-    protected void onFatalError() {
-        System.exit(1);
     }
 }

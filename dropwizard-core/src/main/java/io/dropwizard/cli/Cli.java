@@ -64,7 +64,7 @@ public class Cli {
      * @return whether or not the command successfully executed
      * @throws Exception if something goes wrong
      */
-    public boolean run(String... arguments) throws Exception {
+    public void run(String... arguments) throws Exception {
         try {
             if (isFlag(HELP, arguments)) {
                 parser.printHelp(stdOut);
@@ -80,18 +80,16 @@ public class Cli {
                     // The command failed to run, and the command knows
                     // best how to cleanup / debug exception
                     command.onError(this, namespace, e);
-                    return false;
+                    throw e;
                 }
             }
-            return true;
         } catch (HelpScreenException ignored) {
             // This exception is triggered when the user passes in a help flag.
             // Return true to signal that the process executed normally.
-            return true;
         } catch (ArgumentParserException e) {
             stdErr.println(e.getMessage());
             e.getParser().printHelp(stdErr);
-            return false;
+            throw e;
         }
     }
 

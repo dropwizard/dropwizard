@@ -57,8 +57,7 @@ public class CommandTest {
 
     @Test
     public void listHelpOnceOnArgumentOmission() throws Exception {
-        assertThat(cli.run("test", "-h"))
-            .isTrue();
+        cli.run("test", "-h");
 
         assertThat(stdOut.toString())
             .isEqualTo(String.format(
