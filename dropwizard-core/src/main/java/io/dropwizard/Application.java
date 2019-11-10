@@ -113,7 +113,6 @@ public abstract class Application<T extends Configuration> {
      * @param t The {@link Throwable} instance which caused the command to fail.
      * @since 2.0
      */
-    @SuppressWarnings("deprecated")
     protected void onFatalError(Throwable t) {
         onFatalError();
     }
