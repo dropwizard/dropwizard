@@ -74,11 +74,17 @@ public class AccessJsonLayoutBaseFactory extends AbstractJsonLayoutBaseFactory<I
         this.requestHeaders = requestHeaders;
     }
 
+    /**
+     * @since 2.0
+     */
     @JsonProperty
     public Set<String> getRequestAttributes() {
         return requestAttributes;
     }
 
+    /**
+     * @since 2.0
+     */
     @JsonProperty
     public void setRequestAttributes(Set<String> requestAttributes) {
         this.requestAttributes = requestAttributes;

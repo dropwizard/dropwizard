@@ -1,10 +1,9 @@
 package io.dropwizard.logging.json.layout;
 
 import javax.annotation.Nullable;
-
-import java.util.function.Supplier;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import static java.util.Objects.requireNonNull;
 
@@ -49,6 +48,8 @@ public class MapBuilder {
     /**
      * Adds the string value to the provided map under the provided field name,
      * if it should be included. The supplier is only invoked if the field is to be included.
+     *
+     * @since 2.0
      */
     public MapBuilder add(String fieldName, boolean include, Supplier<String> supplier) {
         if (include) {
@@ -73,6 +74,8 @@ public class MapBuilder {
     /**
      * Adds the number value to the provided map under the provided field name,
      * if it should be included. The supplier is only invoked if the field is to be included.
+     *
+     * @since 2.0
      */
     public MapBuilder addNumber(String fieldName, boolean include, Supplier<Number> supplier) {
         if (include) {
@@ -95,9 +98,11 @@ public class MapBuilder {
     }
 
     /**
-    * Adds the map value to the provided map under the provided field name, if it should be
-    * included. The supplier is only invoked if the field is to be included.
-    */
+     * Adds the map value to the provided map under the provided field name, if it should be
+     * included. The supplier is only invoked if the field is to be included.
+     *
+     * @since 2.0
+     */
     public MapBuilder addMap(String fieldName, boolean include, Supplier<Map<String, ?>> supplier) {
         if (include) {
             Map<String, ?> value = supplier.get();

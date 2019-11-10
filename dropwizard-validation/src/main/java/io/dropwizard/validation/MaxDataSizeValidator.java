@@ -9,6 +9,8 @@ import javax.validation.ConstraintValidatorContext;
 /**
  * Check that a {@link DataSize} being validated is less than or equal to the
  * minimum value specified.
+ *
+ * @since 2.0
  */
 public class MaxDataSizeValidator implements ConstraintValidator<MaxDataSize, DataSize> {
 

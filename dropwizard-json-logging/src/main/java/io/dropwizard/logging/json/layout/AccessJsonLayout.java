@@ -130,10 +130,16 @@ public class AccessJsonLayout extends AbstractJsonLayout<IAccessEvent> {
         this.responseHeaders = headers;
     }
 
+    /**
+     * @since 2.0
+     */
     public Set<String> getRequestAttributes() {
         return requestAttributes;
     }
 
+    /**
+     * @since 2.0
+     */
     public void setRequestAttributes(Set<String> requestAttributes) {
         final TreeSet<String> attributes = new TreeSet<>(String::compareToIgnoreCase);
         attributes.addAll(requestAttributes);

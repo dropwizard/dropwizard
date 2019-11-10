@@ -13,10 +13,16 @@ import java.sql.SQLException;
  */
 @Provider
 public class LoggingJdbiExceptionMapper extends LoggingExceptionMapper<JdbiException> {
+    /**
+     * @since 2.0
+     */
     public LoggingJdbiExceptionMapper() {
         this(LoggerFactory.getLogger(LoggingJdbiExceptionMapper.class));
     }
 
+    /**
+     * @since 2.0
+     */
     LoggingJdbiExceptionMapper(Logger logger) {
         super(logger);
     }

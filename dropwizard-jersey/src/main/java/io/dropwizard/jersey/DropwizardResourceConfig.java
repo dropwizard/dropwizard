@@ -85,6 +85,8 @@ public class DropwizardResourceConfig extends ResourceConfig {
     /**
      * Build a {@link DropwizardResourceConfig} which makes Jersey Test run on a random port,
      * also see {@code org.glassfish.jersey.test.TestProperties#CONTAINER_PORT}.
+     *
+     * @since 2.0
      */
     public static DropwizardResourceConfig forTesting() {
         return forTesting(null);
@@ -93,6 +95,8 @@ public class DropwizardResourceConfig extends ResourceConfig {
     /**
      * Build a {@link DropwizardResourceConfig} which makes Jersey Test run on a random port,
      * also see {@code org.glassfish.jersey.test.TestProperties#CONTAINER_PORT}.
+     *
+     * @since 2.0
      */
     public static DropwizardResourceConfig forTesting(@Nullable MetricRegistry metricRegistry) {
         final DropwizardResourceConfig config = new DropwizardResourceConfig(metricRegistry);
@@ -109,6 +113,9 @@ public class DropwizardResourceConfig extends ResourceConfig {
         this.urlPattern = urlPattern;
     }
 
+    /**
+     * @since 2.0
+     */
     public String getContextPath() {
         return contextPath;
     }
@@ -117,6 +124,9 @@ public class DropwizardResourceConfig extends ResourceConfig {
         this.contextPath = contextPath;
     }
 
+    /**
+     * @since 2.0
+     */
     public String getEndpointsInfo() {
         return loggingListener.getEndpointsInfo();
     }
@@ -154,7 +164,7 @@ public class DropwizardResourceConfig extends ResourceConfig {
                 final CtClass cc = pool.makeClass(SpecificBinder.class.getName() + UUID.randomUUID());
                 cc.setSuperclass(pool.get(SpecificBinder.class.getName()));
                 final Object binderProxy;
-                if (JavaVersion.isJava8()){
+                if (JavaVersion.isJava8()) {
                     binderProxy = cc.toClass().getConstructor(Object.class, Class.class).newInstance(object, clazz);
                 } else {
                     binderProxy = cc.toClass(SpecificBinder.class).getConstructor(Object.class, Class.class).newInstance(object, clazz);
@@ -199,6 +209,9 @@ public class DropwizardResourceConfig extends ResourceConfig {
         return cleanUpPath(path.toString());
     }
 
+    /**
+     * @since 2.0
+     */
     public static class SpecificBinder extends AbstractBinder {
         private Object object;
         private Class<?> clazz;

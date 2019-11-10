@@ -5,6 +5,7 @@ package io.dropwizard.util;
  *
  * @see <a href="https://en.wikipedia.org/wiki/Units_of_information#Systematic_multiples">Units of information on Wikipedia</a>
  * @see <a href="https://en.wikipedia.org/wiki/Binary_prefix">Binary prefix on Wikipedia</a>
+ * @since 2.0
  */
 public enum DataSizeUnit {
     /**

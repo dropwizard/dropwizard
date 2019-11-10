@@ -24,6 +24,8 @@ import java.util.stream.Collectors;
  * provides converters for all enum types used as resource parameters that provide better error handling. If an
  * invalid value is provided for the parameter a {@code 400 Bad Request} is returned and the error message will
  * include the parameter name and a list of valid values.</p>
+ *
+ * @since 2.0
  */
 @Provider
 public class FuzzyEnumParamConverter<T> implements ParamConverter<T> {

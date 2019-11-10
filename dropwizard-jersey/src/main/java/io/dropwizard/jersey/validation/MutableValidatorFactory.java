@@ -5,6 +5,9 @@ import org.hibernate.validator.internal.engine.constraintvalidation.ConstraintVa
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorFactory;
 
+/**
+ * @since 2.0
+ */
 public class MutableValidatorFactory implements ConstraintValidatorFactory {
 
     private ConstraintValidatorFactory validatorFactory = new ConstraintValidatorFactoryImpl();

@@ -5,6 +5,9 @@ import org.glassfish.jersey.server.internal.inject.ConfiguredValidator;
 
 import javax.validation.Validator;
 
+/**
+ * @since 2.0
+ */
 public class HibernateValidationBinder extends AbstractBinder {
     private final Validator validator;
 

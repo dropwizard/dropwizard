@@ -1,5 +1,8 @@
 package io.dropwizard.util;
 
+/**
+ * @since 2.0
+ */
 public final class Throwables {
     private Throwables() {
     }

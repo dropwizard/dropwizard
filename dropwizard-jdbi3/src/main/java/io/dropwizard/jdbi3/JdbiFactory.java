@@ -1,7 +1,5 @@
 package io.dropwizard.jdbi3;
 
-import java.util.Optional;
-
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.jdbi3.InstrumentedSqlLogger;
 import com.codahale.metrics.jdbi3.strategies.SmartNameStrategy;
@@ -16,6 +14,8 @@ import org.jdbi.v3.core.statement.TemplateEngine;
 import org.jdbi.v3.guava.GuavaPlugin;
 import org.jdbi.v3.jodatime2.JodaTimePlugin;
 import org.jdbi.v3.sqlobject.SqlObjectPlugin;
+
+import java.util.Optional;
 
 public class JdbiFactory {
     private final StatementNameStrategy nameStrategy;
@@ -98,8 +98,9 @@ public class JdbiFactory {
      * {@link MetricRegistry} and {@link #nameStrategy}. This can be overridden if required.
      *
      * @param metricRegistry The {@link MetricRegistry} to send to the {@link InstrumentedSqlLogger}.
-     * @param nameStrategy  The {@link StatementNameStrategy} to send to the {@link InstrumentedSqlLogger}.
+     * @param nameStrategy   The {@link StatementNameStrategy} to send to the {@link InstrumentedSqlLogger}.
      * @return The created {@link InstrumentedSqlLogger}.
+     * @since 2.0
      */
     protected InstrumentedSqlLogger buildSQLLogger(MetricRegistry metricRegistry, StatementNameStrategy nameStrategy) {
         return new InstrumentedSqlLogger(metricRegistry, nameStrategy);

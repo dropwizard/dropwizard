@@ -168,12 +168,18 @@ public class GzipHandlerFactory {
         this.compressedMimeTypes = mimeTypes;
     }
 
+    /**
+     * @since 2.0
+     */
     @JsonProperty
     @Nullable
     public Set<String> getExcludedMimeTypes() {
         return excludedMimeTypes;
     }
 
+    /**
+     * @since 2.0
+     */
     @JsonProperty
     public void setExcludedMimeTypes(Set<String> mimeTypes) {
         this.excludedMimeTypes = mimeTypes;
@@ -225,23 +231,35 @@ public class GzipHandlerFactory {
         this.includedMethods = methods;
     }
 
+    /**
+     * @since 2.0
+     */
     @JsonProperty
     @Nullable
     public Set<String> getExcludedPaths() {
         return excludedPaths;
     }
 
+    /**
+     * @since 2.0
+     */
     @JsonProperty
     public void setExcludedPaths(Set<String> paths) {
         this.excludedPaths = paths;
     }
 
+    /**
+     * @since 2.0
+     */
     @JsonProperty
     @Nullable
     public Set<String> getIncludedPaths() {
         return includedPaths;
     }
 
+    /**
+     * @since 2.0
+     */
     @JsonProperty
     public void setIncludedPaths(Set<String> paths) {
         this.includedPaths = paths;

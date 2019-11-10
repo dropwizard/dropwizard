@@ -139,6 +139,7 @@ import java.util.List;
  * For more configuration parameters, see {@link TcpSocketAppenderFactory}.
  *
  * @see TcpSocketAppenderFactory
+ * @since 2.0
  */
 @JsonTypeName("tls")
 public class TlsSocketAppenderFactory<E extends DeferredProcessingAware> extends TcpSocketAppenderFactory<E> {

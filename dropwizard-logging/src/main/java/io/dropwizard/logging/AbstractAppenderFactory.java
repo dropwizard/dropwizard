@@ -152,12 +152,18 @@ public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware>
         this.discardingThreshold = discardingThreshold;
     }
 
+    /**
+     * @since 2.0
+     */
     @JsonProperty
     @Nullable
     public Duration getMessageRate() {
         return messageRate;
     }
 
+    /**
+     * @since 2.0
+     */
     @JsonProperty
     public void setMessageRate(Duration messageRate) {
         this.messageRate = messageRate;

@@ -28,6 +28,7 @@ import java.io.OutputStream;
  *
  * @see ch.qos.logback.core.recovery.ResilientOutputStreamBase
  * @see <a href="https://github.com/qos-ch/logback/blob/v_1.2.3/logback-core/src/main/java/ch/qos/logback/core/recovery/ResilientOutputStreamBase.java">ResilientOutputStreamBase</a>
+ * @since 2.0
  */
 @SuppressWarnings("NullAway")
 abstract class ResilientOutputStreamBase extends OutputStream {

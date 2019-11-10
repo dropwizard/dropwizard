@@ -10,6 +10,8 @@ import javax.validation.valueextraction.ValueExtractor;
 /**
  * Let's the validator know that when validating a class that is an {@link AbstractParam} to
  * validate the underlying value.
+ *
+ * @since 2.0
  */
 @UnwrapByDefault
 public class ParamValueExtractor implements ValueExtractor<AbstractParam<@ExtractedValue ?>> {

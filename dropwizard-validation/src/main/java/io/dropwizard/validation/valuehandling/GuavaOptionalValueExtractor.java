@@ -10,6 +10,8 @@ import javax.validation.valueextraction.ValueExtractor;
  * A {@link ValueExtractor} for Guava's {@link Optional}.
  *
  * Extracts the value contained by the {@link Optional} for validation, or produces {@code null}.
+ *
+ * @since 2.0
  */
 public class GuavaOptionalValueExtractor implements ValueExtractor<Optional<@ExtractedValue ?>> {
     public static final ValueExtractorDescriptor DESCRIPTOR = new ValueExtractorDescriptor(new GuavaOptionalValueExtractor());

@@ -3,6 +3,9 @@ package io.dropwizard.util;
 import java.io.IOException;
 import java.io.Reader;
 
+/**
+ * @since 2.0
+ */
 public final class CharStreams {
 
     private CharStreams() {

@@ -4,6 +4,9 @@ import javax.annotation.Nullable;
 
 import static java.util.Objects.requireNonNull;
 
+/**
+ * @since 2.0
+ */
 public final class Strings {
     private Strings() {
     }

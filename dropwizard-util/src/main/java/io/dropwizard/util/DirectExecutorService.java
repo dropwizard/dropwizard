@@ -6,6 +6,9 @@ import java.util.concurrent.AbstractExecutorService;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * @since 2.0
+ */
 public class DirectExecutorService extends AbstractExecutorService {
     /**
      * Lock used whenever accessing the state variables (runningTasks, shutdown) of the executor

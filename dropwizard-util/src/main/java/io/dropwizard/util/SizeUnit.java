@@ -104,6 +104,7 @@ public enum SizeUnit {
      *
      * @return the {@link DataSizeUnit} corresponding to this size unit
      * @see DataSizeUnit
+     * @since 2.0
      */
     public DataSizeUnit toDataSizeUnit() {
         switch (this) {

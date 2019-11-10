@@ -3,6 +3,9 @@ package io.dropwizard.util;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * @since 2.0
+ */
 public final class Maps {
     private Maps() {
     }

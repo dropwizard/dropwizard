@@ -518,21 +518,33 @@ public abstract class AbstractServerFactory implements ServerFactory {
         this.enableThreadNameFilter = enableThreadNameFilter;
     }
 
+    /**
+     * @since 2.0
+     */
     @JsonProperty
     public boolean getDumpAfterStart() {
         return dumpAfterStart;
     }
 
+    /**
+     * @since 2.0
+     */
     @JsonProperty
     public void setDumpAfterStart(boolean dumpAfterStart) {
         this.dumpAfterStart = dumpAfterStart;
     }
 
+    /**
+     * @since 2.0
+     */
     @JsonProperty
     public boolean getDumpBeforeStop() {
         return dumpBeforeStop;
     }
 
+    /**
+     * @since 2.0
+     */
     @JsonProperty
     public void setDumpBeforeStop(boolean dumpBeforeStop) {
         this.dumpBeforeStop = dumpBeforeStop;

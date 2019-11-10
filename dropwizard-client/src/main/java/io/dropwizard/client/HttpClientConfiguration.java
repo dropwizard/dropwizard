@@ -132,11 +132,17 @@ public class HttpClientConfiguration {
         this.cookiesEnabled = enabled;
     }
 
+    /**
+     * @since 2.0
+     */
     @JsonProperty
     public boolean isNormalizeUriEnabled() {
         return normalizeUriEnabled;
     }
 
+    /**
+     * @since 2.0
+     */
     @JsonProperty
     public void setNormalizeUriEnabled(final boolean normalizeUriEnabled) {
         this.normalizeUriEnabled = normalizeUriEnabled;

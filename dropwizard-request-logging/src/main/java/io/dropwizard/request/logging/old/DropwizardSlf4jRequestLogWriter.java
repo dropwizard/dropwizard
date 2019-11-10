@@ -11,6 +11,8 @@ import java.io.IOException;
 
 /**
  * A SLF4J-backed {@link RequestLog.Writer}.
+ *
+ * @since 2.0
  */
 public class DropwizardSlf4jRequestLogWriter extends AbstractLifeCycle implements RequestLog.Writer {
     private AppenderAttachableImpl<ILoggingEvent> appenders;

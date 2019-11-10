@@ -12,6 +12,9 @@ import java.util.Set;
 
 import javax.validation.constraints.NotNull;
 
+/**
+ * @since 2.0
+ */
 @JsonTypeName("uri")
 public class UriFilterFactory implements FilterFactory<IAccessEvent> {
     @NotNull

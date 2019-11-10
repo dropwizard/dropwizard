@@ -6,6 +6,9 @@ import java.util.List;
 
 import static java.util.Collections.unmodifiableList;
 
+/**
+ * @since 2.0
+ */
 public final class Lists {
     private Lists() {
     }

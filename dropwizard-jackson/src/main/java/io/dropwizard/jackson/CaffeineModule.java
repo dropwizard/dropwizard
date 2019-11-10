@@ -19,6 +19,9 @@ import com.github.benmanes.caffeine.cache.CaffeineSpec;
 
 import java.io.IOException;
 
+/**
+ * @since 2.0
+ */
 public class CaffeineModule extends Module {
     private static class CaffeineSpecDeserializer extends JsonDeserializer<CaffeineSpec> {
         @Override

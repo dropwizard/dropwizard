@@ -54,6 +54,8 @@ public class MetricsFactory {
     @NotNull
     private List<ReporterFactory> reporters = Collections.emptyList();
 
+    private boolean reportOnStop = false;
+
     @JsonProperty
     public List<ReporterFactory> getReporters() {
         return reporters;
@@ -74,8 +76,27 @@ public class MetricsFactory {
         this.frequency = frequency;
     }
 
+    /**
+     * @since 2.0
+     */
     @JsonProperty
-    public boolean reportOnStop = false;
+    public boolean isReportOnStop() {
+        return reportOnStop;
+    }
+
+    /**
+     * @since 2.0
+     */
+    @JsonProperty
+    public void setReportOnStop(boolean reportOnStop) {
+        this.reportOnStop = reportOnStop;
+    }
+
+    /**
+     * @since 2.0
+     */
+    @JsonProperty
+
 
     /**
      * Configures the given lifecycle with the {@link com.codahale.metrics.ScheduledReporter
@@ -95,7 +116,7 @@ public class MetricsFactory {
                 final ScheduledReporterManager manager =
                         new ScheduledReporterManager(reporter.build(registry),
                                                      reporter.getFrequency().orElseGet(this::getFrequency),
-                                                     reportOnStop);
+                                                     isReportOnStop());
                 environment.manage(manager);
             } catch (Exception e) {
                 LOGGER.warn("Failed to create reporter, metrics may not be properly reported.", e);

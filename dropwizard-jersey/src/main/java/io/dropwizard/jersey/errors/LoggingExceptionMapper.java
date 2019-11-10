@@ -16,10 +16,16 @@ import static java.util.Objects.requireNonNull;
 public abstract class LoggingExceptionMapper<E extends Throwable> implements ExceptionMapper<E> {
     protected final Logger logger;
 
+    /**
+     * @since 2.0
+     */
     protected LoggingExceptionMapper(Logger logger) {
         this.logger = requireNonNull(logger, "logger");
     }
 
+    /**
+     * @since 2.0
+     */
     public LoggingExceptionMapper() {
         this(LoggerFactory.getLogger(LoggingExceptionMapper.class));
     }

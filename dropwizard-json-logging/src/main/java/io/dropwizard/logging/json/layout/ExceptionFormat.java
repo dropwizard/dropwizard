@@ -1,9 +1,13 @@
 package io.dropwizard.logging.json.layout;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * @since 2.0
+ */
 public class ExceptionFormat {
     private boolean rootFirst = true;
     private String depth = "full";

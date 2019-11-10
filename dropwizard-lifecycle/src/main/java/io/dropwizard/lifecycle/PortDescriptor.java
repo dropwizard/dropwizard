@@ -2,6 +2,9 @@ package io.dropwizard.lifecycle;
 
 import java.util.StringJoiner;
 
+/**
+ * @since 2.0
+ */
 public final class PortDescriptor {
 
     private static final String UNKNOWN = "UNKNOWN";

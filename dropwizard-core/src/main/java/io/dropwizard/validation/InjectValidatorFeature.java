@@ -10,6 +10,9 @@ import javax.ws.rs.container.ResourceContext;
 import javax.ws.rs.core.Feature;
 import javax.ws.rs.core.FeatureContext;
 
+/**
+ * @since 2.0
+ */
 public class InjectValidatorFeature implements Feature {
 
     private final ValidatorFactory validatorFactory;

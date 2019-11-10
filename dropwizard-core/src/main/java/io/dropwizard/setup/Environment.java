@@ -113,6 +113,8 @@ public class Environment {
 
     /**
      * Creates an environment and enables injecting validator feature.
+     *
+     * @since 2.0
      */
     public Environment(String name,
                        ObjectMapper objectMapper,

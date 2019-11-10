@@ -7,6 +7,9 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.nio.charset.Charset;
 
+/**
+ * @since 2.0
+ */
 public final class Resources {
     private Resources() {
     }

@@ -17,6 +17,8 @@ import java.lang.reflect.InvocationTargetException;
  * value provided and the name of the parameter, so if value parsing fails the parameter name can be used in the error
  * message. If the param class does not have a two-string constructor this provider will return null, causing jersey
  * to use the single-string constructor for the parameter type as it normally would.</p>
+ *
+ * @since 2.0
  */
 public class AbstractParamConverter<T> implements ParamConverter<T> {
     private final Constructor<T> constructor;

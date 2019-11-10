@@ -207,12 +207,18 @@ public class FileAppenderFactory<E extends DeferredProcessingAware> extends Abst
         this.maxFileSize = maxFileSize;
     }
 
+    /**
+     * @since 2.0
+     */
     @JsonProperty
     @Nullable
     public DataSize getTotalSizeCap() {
         return totalSizeCap;
     }
 
+    /**
+     * @since 2.0
+     */
     @JsonProperty
     public void setTotalSizeCap(@Nullable DataSize totalSizeCap) {
         this.totalSizeCap = totalSizeCap;
@@ -237,6 +243,9 @@ public class FileAppenderFactory<E extends DeferredProcessingAware> extends Abst
         this.immediateFlush = immediateFlush;
     }
 
+    /**
+     * @since 2.0
+     */
     @JsonIgnore
     @ValidationMethod(message = "totalSizeCap has no effect when using maxFileSize and an archivedLogFilenamePattern without %d, as archivedFileCount implicitly controls the total size cap")
     public boolean isTotalSizeCapValid() {

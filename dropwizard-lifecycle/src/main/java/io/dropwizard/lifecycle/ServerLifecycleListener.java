@@ -43,6 +43,7 @@ public interface ServerLifecycleListener extends EventListener {
      *
      * @param server Server instance to use
      * @return Map of local ports to protocols for the server instance
+     * @since 2.0
      */
     default List<PortDescriptor> getPortDescriptorList(Server server) {
         final Connector[] connectors = server.getConnectors();

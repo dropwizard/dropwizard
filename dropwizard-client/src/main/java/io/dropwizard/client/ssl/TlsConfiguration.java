@@ -3,10 +3,9 @@ package io.dropwizard.client.ssl;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.util.Strings;
 import io.dropwizard.validation.ValidationMethod;
-import javax.validation.constraints.NotEmpty;
 
 import javax.annotation.Nullable;
-
+import javax.validation.constraints.NotEmpty;
 import java.io.File;
 import java.util.List;
 
@@ -96,6 +95,7 @@ public class TlsConfiguration {
     public void setKeyStoreType(String keyStoreType) {
         this.keyStoreType = keyStoreType;
     }
+
     @JsonProperty
     public String getTrustStoreType() {
         return trustStoreType;
@@ -202,20 +202,32 @@ public class TlsConfiguration {
         return trustStorePath == null || trustStoreType.startsWith("Windows-") || !Strings.isNullOrEmpty(trustStorePassword);
     }
 
+    /**
+     * @since 2.0
+     */
     @Nullable
     public String getKeyStoreProvider() {
         return keyStoreProvider;
     }
 
+    /**
+     * @since 2.0
+     */
     public void setKeyStoreProvider(@Nullable String keyStoreProvider) {
         this.keyStoreProvider = keyStoreProvider;
     }
 
+    /**
+     * @since 2.0
+     */
     @Nullable
     public String getTrustStoreProvider() {
         return trustStoreProvider;
     }
 
+    /**
+     * @since 2.0
+     */
     public void setTrustStoreProvider(@Nullable String trustStoreProvider) {
         this.trustStoreProvider = trustStoreProvider;
     }

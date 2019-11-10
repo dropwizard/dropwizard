@@ -9,6 +9,8 @@ import javax.ws.rs.ext.MessageBodyWriter;
 
 /**
  * A binder that registers the Jackson JSON provider while allowing users to override.
+ *
+ * @since 2.0
  */
 public class JacksonFeature implements Feature {
     private final ObjectMapper mapper;

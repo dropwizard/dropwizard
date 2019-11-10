@@ -312,6 +312,7 @@ public class HttpClientBuilder {
      *
      * @param name
      * @return a {@link org.apache.http.protocol.HttpRequestExecutor}
+     * @since 2.0
      */
     protected HttpRequestExecutor createRequestExecutor(String name) {
         return new InstrumentedHttpRequestExecutor(metricRegistry, metricNameStrategy, name);
@@ -324,6 +325,7 @@ public class HttpClientBuilder {
      * {@link org.apache.http.impl.client.HttpClientBuilder}
      *
      * @return an {@link org.apache.http.impl.client.HttpClientBuilder}
+     * @since 2.0
      */
     protected org.apache.http.impl.client.HttpClientBuilder createBuilder() {
         return org.apache.http.impl.client.HttpClientBuilder.create();

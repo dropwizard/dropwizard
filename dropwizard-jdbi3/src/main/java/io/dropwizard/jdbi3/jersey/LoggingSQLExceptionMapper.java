@@ -12,10 +12,16 @@ import java.sql.SQLException;
  */
 @Provider
 public class LoggingSQLExceptionMapper extends LoggingExceptionMapper<SQLException> {
+    /**
+     * @since 2.0
+     */
     LoggingSQLExceptionMapper(Logger logger) {
         super(logger);
     }
 
+    /**
+     * @since 2.0
+     */
     public LoggingSQLExceptionMapper() {
         this(LoggerFactory.getLogger(LoggingSQLExceptionMapper.class));
     }

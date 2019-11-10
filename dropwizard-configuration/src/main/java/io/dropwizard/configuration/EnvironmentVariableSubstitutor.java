@@ -27,6 +27,7 @@ public class EnvironmentVariableSubstitutor extends StringSubstitutor {
         this.setEnableSubstitutionInVariables(substitutionInVariables);
     }
 
+
     @Override
     protected boolean substitute(TextStringBuilder buf, int offset, int length) {
         try {

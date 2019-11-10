@@ -545,11 +545,17 @@ public class HttpConnectorFactory implements ConnectorFactory {
         this.useForwardedHeaders = useForwardedHeaders;
     }
 
+    /**
+     * @since 2.0
+     */
     @JsonProperty
     public boolean isUseProxyProtocol() {
         return useProxyProtocol;
     }
 
+    /**
+     * @since 2.0
+     */
     @JsonProperty
     public void setUseProxyProtocol(boolean useProxyProtocol) {
         this.useProxyProtocol = useProxyProtocol;
@@ -565,21 +571,33 @@ public class HttpConnectorFactory implements ConnectorFactory {
         this.httpCompliance = httpCompliance;
     }
 
+    /**
+     * @since 2.0
+     */
     @JsonProperty
     public CookieCompliance getRequestCookieCompliance() {
         return requestCookieCompliance;
     }
 
+    /**
+     * @since 2.0
+     */
     @JsonProperty
     public void setRequestCookieCompliance(CookieCompliance requestCookieCompliance) {
         this.requestCookieCompliance = requestCookieCompliance;
     }
 
+    /**
+     * @since 2.0
+     */
     @JsonProperty
     public CookieCompliance getResponseCookieCompliance() {
         return responseCookieCompliance;
     }
 
+    /**
+     * @since 2.0
+     */
     @JsonProperty
     public void setResponseCookieCompliance(CookieCompliance responseCookieCompliance) {
         this.responseCookieCompliance = responseCookieCompliance;

@@ -21,6 +21,8 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 /**
  * The annotated element has to be in the appropriate range.
  * Apply on {@link io.dropwizard.util.DataSize} instances.
+ *
+ * @since 2.0
  */
 @Documented
 @Constraint(validatedBy = { })

@@ -5,6 +5,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+/**
+ * @since 2.0
+ */
 public final class ByteStreams {
 
     private ByteStreams() {

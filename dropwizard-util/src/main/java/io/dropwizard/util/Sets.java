@@ -6,6 +6,9 @@ import java.util.Set;
 
 import static java.util.Collections.unmodifiableSet;
 
+/**
+ * @since 2.0
+ */
 public final class Sets {
     private Sets() {
     }

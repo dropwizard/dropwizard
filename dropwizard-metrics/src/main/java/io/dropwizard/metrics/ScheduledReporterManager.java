@@ -29,6 +29,7 @@ public class ScheduledReporterManager implements Managed {
      * @param reporter     the reporter to manage.
      * @param period       the frequency to report metrics at.
      * @param reportOnStop whether the reporter should send one last report upon stopping
+     * @since 2.0
      */
     public ScheduledReporterManager(ScheduledReporter reporter, Duration period, boolean reportOnStop) {
         this.reporter = reporter;

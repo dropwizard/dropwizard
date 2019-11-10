@@ -97,6 +97,9 @@ public class LifecycleEnvironment {
         }
     }
 
+    /**
+     * @since 2.0
+     */
     public MetricRegistry getMetricRegistry() {
         return metricRegistry;
     }

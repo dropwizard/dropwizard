@@ -86,11 +86,17 @@ public class EventJsonLayoutBaseFactory extends AbstractJsonLayoutBaseFactory<IL
         this.flattenMdc = flattenMdc;
     }
 
+    /**
+     * @since 2.0
+     */
     @JsonProperty("exception")
     public void setExceptionFormat(ExceptionFormat exceptionFormat) {
         this.exceptionFormat = exceptionFormat;
     }
 
+    /**
+     * @since 2.0
+     */
     @JsonProperty("exception")
     @Nullable
     public ExceptionFormat getExceptionFormat() {

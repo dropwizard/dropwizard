@@ -2,6 +2,9 @@ package io.dropwizard.request.logging.old;
 
 import java.util.TimeZone;
 
+/**
+ * @since 2.0
+ */
 public class ClassicLogFormat {
     public static String pattern() {
         return pattern(TimeZone.getTimeZone("UTC"));
