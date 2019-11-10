@@ -77,7 +77,7 @@ Startup Sequence
 A Dropwizard ``Bundle`` is a reusable group of functionality (sometimes provided by the Dropwizard project itself), used to define blocks of an application’s behavior. 
 For example, ``AssetBundle`` from the dropwizard-assets module provides a simple way to serve static assets from your application’s src/main/resources/assets directory as files available from /assets/* (or any other path) in your application.
 
-A ``ConfiguredBundle`` is a bundle that require a configuration provided by the ``Configuration`` object (implementing a relevant interface)
+A ``ConfiguredBundle`` is a bundle that requires a configuration provided by the ``Configuration`` object (implementing a relevant interface)
 
 Properties such as database connection details should not be stored on the Environment; that is what your Configuration .yml file is for. 
 Each logical environment (dev/test/staging/prod) - would have its own Configuration .yml - reflecting the differences between different “server environments”.
