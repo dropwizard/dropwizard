@@ -14,7 +14,6 @@ import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.LoaderClassPath;
 import org.glassfish.jersey.internal.inject.AbstractBinder;
-import org.glassfish.jersey.internal.inject.Binder;
 import org.glassfish.jersey.internal.inject.Providers;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.ServerProperties;
@@ -142,7 +141,7 @@ public class DropwizardResourceConfig extends ResourceConfig {
         // If a class gets passed through as an object, cast to Class and register directly
         if (component instanceof Class<?>) {
             return super.register((Class<?>) component);
-        } else if (Providers.isProvider(clazz) || Binder.class.isAssignableFrom(clazz)) {
+        } else if (Providers.isProvider(clazz) || org.glassfish.hk2.utilities.Binder.class.isAssignableFrom(clazz)) {
             // If Jersey supports this component's class (including Binders), register directly
             return super.register(object);
         } else {
