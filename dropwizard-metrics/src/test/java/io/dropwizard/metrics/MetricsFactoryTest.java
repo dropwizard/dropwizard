@@ -69,13 +69,13 @@ public class MetricsFactoryTest {
 
     @Test
     public void reportOnStopFalseByDefault() {
-        assertThat(config.reportOnStop).isFalse();
+        assertThat(config.isReportOnStop()).isFalse();
     }
 
     @Test
     public void reportOnStopCanBeTrue() throws Exception {
         config = factory.build(new File(Resources.getResource("yaml/metrics-report-on-stop.yml").toURI()));
-        assertThat(config.reportOnStop).isTrue();
+        assertThat(config.isReportOnStop()).isTrue();
     }
 
 }
