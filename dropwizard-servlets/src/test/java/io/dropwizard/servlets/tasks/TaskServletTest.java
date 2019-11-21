@@ -228,7 +228,7 @@ public class TaskServletTest {
         final Task timedTask = new Task("timed-task") {
             @Override
             @Timed(name = "vacuum-cleaning")
-            public void execute(Map<String, List<String>> parameters, PrintWriter output) throws Exception {
+            public void execute(Map<String, List<String>> parameters, PrintWriter output) {
                 output.println("Vacuum cleaning");
             }
         };
@@ -278,7 +278,7 @@ public class TaskServletTest {
         final Task exceptionMeteredTask = new Task("exception-metered-task") {
             @Override
             @ExceptionMetered(name = "vacuum-cleaning-exceptions")
-            public void execute(Map<String, List<String>> parameters, PrintWriter output) throws Exception {
+            public void execute(Map<String, List<String>> parameters, PrintWriter output) {
                 throw new RuntimeException("The engine has died");
             }
         };
