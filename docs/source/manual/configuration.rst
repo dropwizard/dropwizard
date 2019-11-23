@@ -581,6 +581,45 @@ initialStreamRecvWindow   65535     The initial flow control window size for a n
                                     triggered.
 ========================  ========  ===================================================================================
 
+.. _man-configuration-tasks:
+
+Tasks
+=====
+
+.. code-block:: yaml
+
+    admin:
+      tasks:
+        printStackTraceOnError: true
+
+
+====================== ======= ===============================================================
+Name                   Default Description
+====================== ======= ===============================================================
+printStackTraceOnError false   Print the full stack trace when the execution of a task failed.
+====================== ======= ===============================================================
+
+.. _man-configuration-healthchecks:
+
+Health checks
+=============
+
+.. code-block:: yaml
+
+    admin:
+      healthChecks:
+        minThreads: 1
+        maxThreads: 4
+        workQueueSize: 1
+
+
+============= ======= ==========================================================
+Name                   Default Description
+============= ======= ==========================================================
+minThreads    1       The minimum number of threads for executing health checks.
+maxThreads    4       The maximum number of threads for executing health checks.
+workQueueSize 1       The length of the work queue for health check executions.
+============= ======= ==========================================================
 
 .. _man-configuration-logging:
 

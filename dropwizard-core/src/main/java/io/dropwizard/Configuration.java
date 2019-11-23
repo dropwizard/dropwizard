@@ -6,6 +6,7 @@ import io.dropwizard.logging.LoggingFactory;
 import io.dropwizard.metrics.MetricsFactory;
 import io.dropwizard.server.DefaultServerFactory;
 import io.dropwizard.server.ServerFactory;
+import io.dropwizard.setup.AdminFactory;
 
 import javax.annotation.Nullable;
 import javax.validation.Valid;
@@ -72,6 +73,10 @@ public class Configuration {
     @NotNull
     private MetricsFactory metrics = new MetricsFactory();
 
+    @Valid
+    @NotNull
+    private AdminFactory admin = new AdminFactory();
+
     /**
      * Returns the server-specific section of the configuration file.
      *
@@ -122,8 +127,29 @@ public class Configuration {
         this.metrics = metrics;
     }
 
+    /**
+     * Returns the admin interface-specific section of the configuration file.
+     *
+     * @return admin interface-specific configuration parameters
+     * @since 2.0
+     */
+    @JsonProperty("admin")
+    public AdminFactory getAdminFactory() {
+        return admin;
+    }
+
+    /**
+     * Sets the admin interface-specific section of the configuration file.
+     *
+     * @since 2.0
+     */
+    @JsonProperty("admin")
+    public void setAdminFactory(AdminFactory admin) {
+        this.admin = admin;
+    }
+
     @Override
     public String toString() {
-        return "Configuration{server=" + server + ", logging=" + logging + ", metrics=" + metrics + "}";
+        return "Configuration{server=" + server + ", logging=" + logging + ", metrics=" + metrics + ", admin=" + admin + "}";
     }
 }

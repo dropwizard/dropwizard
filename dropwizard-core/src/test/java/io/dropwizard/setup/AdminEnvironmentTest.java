@@ -15,7 +15,7 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class AdminEnvironmentTest {
+class AdminEnvironmentTest {
     static {
         BootstrapLogging.bootstrap();
     }
@@ -23,10 +23,11 @@ public class AdminEnvironmentTest {
     private final MutableServletContextHandler handler = new MutableServletContextHandler();
     private final HealthCheckRegistry healthCheckRegistry = new HealthCheckRegistry();
     private final MetricRegistry metricRegistry = new MetricRegistry();
-    private final AdminEnvironment env = new AdminEnvironment(handler, healthCheckRegistry, metricRegistry);
+    private final AdminFactory adminFactory = new AdminFactory();
+    private final AdminEnvironment env = new AdminEnvironment(handler, healthCheckRegistry, metricRegistry, adminFactory);
 
     @Test
-    public void addsATaskServlet() throws Exception {
+    void addsATaskServlet() throws Exception {
         final Task task = new Task("thing") {
             @Override
             public void execute(Map<String, List<String>> parameters, PrintWriter output) throws Exception {
