@@ -328,7 +328,7 @@ class TaskServletTest {
 
         servlet.service(request, response);
 
-        assertThat(stringWriter.toString().trim()).startsWith("whoops\njava.lang.RuntimeException: whoops");
+        assertThat(stringWriter.toString().trim()).contains("java.lang.RuntimeException: whoops");
     }
 
     @Test
