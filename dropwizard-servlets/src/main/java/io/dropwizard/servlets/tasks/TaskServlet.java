@@ -129,7 +129,6 @@ public class TaskServlet extends HttpServlet {
                 resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 output.println();
                 output.println(e.getMessage());
-                e.printStackTrace(output);
             } finally {
                 output.close();
             }
