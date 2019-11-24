@@ -6,6 +6,16 @@ Release Notes
 
 Please refer to `GitHub releases <https://github.com/dropwizard/dropwizard/releases>`__ for the most up-to-date release notes.
 
+.. _rel-1.3.17:
+
+v1.3.17: Nov 24, 2019
+=====================
+
+* Add SLF4J marker to dropwizard-json-logging (`#3005 <https://github.com/dropwizard/dropwizard/pull/3005>`_)
+* Enable Jackson Afterburner only on Java 8 (backport) (`#3028 <https://github.com/dropwizard/dropwizard/pull/3028>`_)
+* Upgrade Apache HttpClient to 4.5.10 to fix URI rewriting (`#3029 <https://github.com/dropwizard/dropwizard/pull/3029>`_)
+
+
 .. _rel-1.3.16:
 
 v1.3.16: Oct 20, 2019
