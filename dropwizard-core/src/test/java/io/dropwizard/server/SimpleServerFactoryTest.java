@@ -1,6 +1,5 @@
 package io.dropwizard.server;
 
-import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -43,13 +42,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class SimpleServerFactoryTest {
 
     private SimpleServerFactory http;
-    private final ObjectMapper objectMapper = Jackson.newObjectMapper();
-    private Validator validator = BaseValidator.newValidator();
-    private Environment environment = new Environment("testEnvironment", objectMapper, validator, new MetricRegistry(),
-            ClassLoader.getSystemClassLoader());
+    private Environment environment = new Environment("testEnvironment");
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
+        final ObjectMapper objectMapper = environment.getObjectMapper();
+        final Validator validator = environment.getValidator();
         objectMapper.getSubtypeResolver().registerSubtypes(ConsoleAppenderFactory.class,
                 FileAppenderFactory.class, SyslogAppenderFactory.class, HttpConnectorFactory.class);
         http = (SimpleServerFactory) new YamlConfigurationFactory<>(ServerFactory.class, validator, objectMapper, "dw")
@@ -57,29 +55,29 @@ public class SimpleServerFactoryTest {
     }
 
     @Test
-    public void isDiscoverable() throws Exception {
+    void isDiscoverable() throws Exception {
         assertThat(new DiscoverableSubtypeResolver().getDiscoveredSubtypes())
                 .contains(SimpleServerFactory.class);
     }
 
     @Test
-    public void testGetAdminContext() {
+    void testGetAdminContext() {
         assertThat(http.getAdminContextPath()).isEqualTo("/secret");
     }
 
     @Test
-    public void testGetApplicationContext() {
+    void testGetApplicationContext() {
         assertThat(http.getApplicationContextPath()).isEqualTo("/service");
     }
 
     @Test
-    public void testGetPort() {
+    void testGetPort() {
         final HttpConnectorFactory connector = (HttpConnectorFactory) http.getConnector();
         assertThat(connector.getPort()).isEqualTo(0);
     }
 
     @Test
-    public void testBuild() throws Exception {
+    void testBuild() throws Exception {
         environment.jersey().register(new TestResource());
         environment.admin().addTask(new TestTask());
 
@@ -96,7 +94,7 @@ public class SimpleServerFactoryTest {
     }
 
     @Test
-    public void testConfiguredEnvironment() {
+    void testConfiguredEnvironment() {
         http.configure(environment);
 
         assertEquals(http.getAdminContextPath(), environment.getAdminContext().getContextPath());
@@ -104,7 +102,7 @@ public class SimpleServerFactoryTest {
     }
 
     @Test
-    public void testDeserializeWithoutJsonAutoDetect() {
+    void testDeserializeWithoutJsonAutoDetect() {
         final ObjectMapper objectMapper = Jackson.newObjectMapper()
             .setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE);
 

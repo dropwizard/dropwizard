@@ -1,11 +1,8 @@
 package io.dropwizard.client;
 
-import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheck;
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
-import io.dropwizard.jackson.Jackson;
-import io.dropwizard.jersey.validation.Validators;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
@@ -58,7 +55,7 @@ public class DropwizardApacheConnectorTest {
     private static final int INCREASE_IN_MILLIS = 100;
     private static final URI NON_ROUTABLE_ADDRESS = URI.create("http://10.255.255.1");
 
-    public static final DropwizardAppExtension<Configuration> APP_RULE = new DropwizardAppExtension<>(
+    private static final DropwizardAppExtension<Configuration> APP_RULE = new DropwizardAppExtension<>(
             TestApplication.class,
             ResourceHelpers.resourceFilePath("yaml/dropwizardApacheConnectorTest.yml"));
 
@@ -69,14 +66,12 @@ public class DropwizardApacheConnectorTest {
     private Environment environment;
 
     @BeforeEach
-    public void setup() throws Exception {
+    void setup() throws Exception {
         JerseyClientConfiguration clientConfiguration = new JerseyClientConfiguration();
         clientConfiguration.setConnectionTimeout(Duration.milliseconds(SLEEP_TIME_IN_MILLIS / 2));
         clientConfiguration.setTimeout(Duration.milliseconds(DEFAULT_CONNECT_TIMEOUT_IN_MILLIS));
 
-        environment = new Environment("test-dropwizard-apache-connector", Jackson.newObjectMapper(),
-                Validators.newValidator(), new MetricRegistry(),
-                getClass().getClassLoader());
+        environment = new Environment("test-dropwizard-apache-connector");
         client = (JerseyClient) new JerseyClientBuilder(environment)
                 .using(clientConfiguration)
                 .build("test");
@@ -86,7 +81,7 @@ public class DropwizardApacheConnectorTest {
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    void tearDown() throws Exception {
         for (LifeCycle lifeCycle : environment.lifecycle().getManagedObjects()) {
             lifeCycle.stop();
         }
@@ -94,14 +89,14 @@ public class DropwizardApacheConnectorTest {
     }
 
     @Test
-    public void when_no_read_timeout_override_then_client_request_times_out() {
+    void when_no_read_timeout_override_then_client_request_times_out() {
         assertThatThrownBy(() ->client.target(testUri + "/long_running").request().get())
                 .isInstanceOf(ProcessingException.class)
                 .hasCauseInstanceOf(SocketTimeoutException.class);
     }
 
     @Test
-    public void when_read_timeout_override_created_then_client_requests_completes_successfully() {
+    void when_read_timeout_override_created_then_client_requests_completes_successfully() {
         client.target(testUri + "/long_running")
                 .property(ClientProperties.READ_TIMEOUT, SLEEP_TIME_IN_MILLIS * 2)
                 .request()
@@ -120,7 +115,7 @@ public class DropwizardApacheConnectorTest {
      */
     @Test
     @Disabled("Flaky, timeout jumps over the threshold")
-    public void connect_timeout_override_changes_how_long_it_takes_for_a_connection_to_timeout() {
+    void connect_timeout_override_changes_how_long_it_takes_for_a_connection_to_timeout() {
         // setUp override
         WebTarget target = client.target(NON_ROUTABLE_ADDRESS);
 
@@ -142,7 +137,7 @@ public class DropwizardApacheConnectorTest {
     }
 
     @Test
-    public void when_no_override_then_redirected_request_successfully_redirected() {
+    void when_no_override_then_redirected_request_successfully_redirected() {
         assertThat(client.target(testUri + "/redirect")
                         .request()
                         .get(String.class)
@@ -150,7 +145,7 @@ public class DropwizardApacheConnectorTest {
     }
 
     @Test
-    public void when_configuration_overridden_to_disallow_redirects_temporary_redirect_status_returned() {
+    void when_configuration_overridden_to_disallow_redirects_temporary_redirect_status_returned() {
         assertThat(client.target(testUri + "/redirect")
                         .property(ClientProperties.FOLLOW_REDIRECTS, false)
                         .request()
@@ -160,7 +155,7 @@ public class DropwizardApacheConnectorTest {
     }
 
     @Test
-    public void when_jersey_client_runtime_is_garbage_collected_apache_client_is_not_closed() {
+    void when_jersey_client_runtime_is_garbage_collected_apache_client_is_not_closed() {
         for (int j = 0; j < 5; j++) {
             System.gc(); // We actually want GC here
             final String response = client.target(testUri + "/long_running")
@@ -172,7 +167,7 @@ public class DropwizardApacheConnectorTest {
     }
 
     @Test
-    public void multiple_headers_with_the_same_name_are_processed_successfully() throws Exception {
+    void multiple_headers_with_the_same_name_are_processed_successfully() throws Exception {
 
         final CloseableHttpClient client = mock(CloseableHttpClient.class);
         final DropwizardApacheConnector dropwizardApacheConnector = new DropwizardApacheConnector(client, null, false);
@@ -245,7 +240,6 @@ public class DropwizardApacheConnectorTest {
         } catch (ProcessingException e) {
             final long endTime = System.nanoTime();
             assertThat(e).isNotNull();
-            //noinspection ConstantConditions
             assertThat(e.getCause()).isNotNull();
             assertThat(e.getCause()).isInstanceOfAny(ConnectTimeoutException.class, NoRouteToHostException.class);
             return assertThat(TimeUnit.MILLISECONDS.convert(endTime - startTime, TimeUnit.NANOSECONDS));

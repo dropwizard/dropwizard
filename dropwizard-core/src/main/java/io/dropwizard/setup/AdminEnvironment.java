@@ -32,11 +32,13 @@ public class AdminEnvironment extends ServletEnvironment {
      * @param healthChecks a health check registry
      */
     public AdminEnvironment(MutableServletContextHandler handler,
-                            HealthCheckRegistry healthChecks, MetricRegistry metricRegistry) {
+                            HealthCheckRegistry healthChecks,
+                            MetricRegistry metricRegistry,
+                            AdminFactory adminFactory) {
         super(handler);
         this.healthChecks = healthChecks;
         this.healthChecks.register("deadlocks", new ThreadDeadlockHealthCheck());
-        this.tasks = new TaskServlet(metricRegistry);
+        this.tasks = new TaskServlet(metricRegistry, adminFactory.getTasks());
         tasks.add(new GarbageCollectionTask());
         tasks.add(new LogConfigurationTask());
         addServlet("tasks", tasks).addMapping("/tasks/*");

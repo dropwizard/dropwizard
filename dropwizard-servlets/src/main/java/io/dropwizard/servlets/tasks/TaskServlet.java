@@ -47,12 +47,23 @@ public class TaskServlet extends HttpServlet {
     private final ConcurrentMap<Task, TaskExecutor> taskExecutors;
 
     private final MetricRegistry metricRegistry;
+    private final TaskConfiguration taskConfiguration;
 
     /**
      * Creates a new TaskServlet.
      */
     public TaskServlet(MetricRegistry metricRegistry) {
+        this(metricRegistry, new TaskConfiguration());
+    }
+
+    /**
+     * Creates a new TaskServlet.
+     *
+     * @since 2.0
+     */
+    public TaskServlet(MetricRegistry metricRegistry, TaskConfiguration taskConfiguration) {
         this.metricRegistry = metricRegistry;
+        this.taskConfiguration = taskConfiguration;
         this.tasks = new ConcurrentHashMap<>();
         this.taskExecutors = new ConcurrentHashMap<>();
     }
@@ -129,7 +140,9 @@ public class TaskServlet extends HttpServlet {
                 resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 output.println();
                 output.println(e.getMessage());
-                e.printStackTrace(output);
+                if (taskConfiguration.isPrintStackTraceOnError()) {
+                    e.printStackTrace(output);
+                }
             } finally {
                 output.close();
             }
