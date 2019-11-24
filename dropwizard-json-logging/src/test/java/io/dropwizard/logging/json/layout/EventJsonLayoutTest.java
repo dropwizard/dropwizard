@@ -18,6 +18,7 @@ import java.time.ZoneId;
 import java.util.EnumSet;
 import java.util.Map;
 import java.util.Set;
+import org.slf4j.Marker;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
@@ -36,9 +37,10 @@ public class EventJsonLayoutTest {
     private ObjectMapper objectMapper = Jackson.newObjectMapper();
     private JsonFormatter jsonFormatter = new JsonFormatter(objectMapper, false, true);
     private ILoggingEvent event = Mockito.mock(ILoggingEvent.class);
+    private Marker marker = Mockito.mock(Marker.class);
 
     private Set<EventAttribute> includes = EnumSet.of(EventAttribute.LEVEL,
-        EventAttribute.THREAD_NAME, EventAttribute.MDC, EventAttribute.LOGGER_NAME, EventAttribute.MESSAGE,
+        EventAttribute.THREAD_NAME, EventAttribute.MDC, EventAttribute.LOGGER_NAME, EventAttribute.MARKER, EventAttribute.MESSAGE,
         EventAttribute.EXCEPTION, EventAttribute.TIMESTAMP);
     private EventJsonLayout eventJsonLayout = new EventJsonLayout(jsonFormatter, timestampFormatter, throwableProxyConverter,
         includes, ImmutableMap.of(), ImmutableMap.of(), ImmutableSet.of(), false);
@@ -49,6 +51,8 @@ public class EventJsonLayoutTest {
         when(event.getLevel()).thenReturn(Level.INFO);
         when(event.getThreadName()).thenReturn("main");
         when(event.getMDCPropertyMap()).thenReturn(mdc);
+        when(event.getMarker()).thenReturn(marker);
+        when(marker.getName()).thenReturn("marker");
         when(event.getLoggerName()).thenReturn(logger);
         when(event.getFormattedMessage()).thenReturn(message);
         when(event.getLoggerContextVO()).thenReturn(new LoggerContextVO("test", ImmutableMap.of(), 0));
@@ -61,6 +65,7 @@ public class EventJsonLayoutTest {
             entry("thread", "main"),
             entry("level", "INFO"),
             entry("logger", logger),
+            entry("marker", "marker"),
             entry("message", message),
             entry("mdc", mdc));
     }
@@ -74,6 +79,7 @@ public class EventJsonLayoutTest {
             entry("thread", "main"),
             entry("level", "INFO"),
             entry("logger", logger),
+            entry("marker", "marker"),
             entry("message", message),
             entry("mdc", mdc),
             entry("exception", "Boom!"));
@@ -88,6 +94,7 @@ public class EventJsonLayoutTest {
             entry("thread", "main"),
             entry("level", "INFO"),
             entry("logger", logger),
+            entry("marker", "marker"),
             entry("message", message),
             entry("mdc", mdc));
     }
@@ -100,6 +107,7 @@ public class EventJsonLayoutTest {
             entry("thread", "main"),
             entry("level", "INFO"),
             entry("logger", logger),
+            entry("marker", "marker"),
             entry("message", message),
             entry("mdc", mdc),
             entry("version", "1.2"));
@@ -115,6 +123,7 @@ public class EventJsonLayoutTest {
             entry("thread", "main"),
             entry("level", "INFO"),
             entry("logger", logger),
+            entry("marker", "marker"),
             entry("@message", message),
             entry("mdc", mdc));
     }
@@ -129,6 +138,7 @@ public class EventJsonLayoutTest {
             entry("thread", "main"),
             entry("level", "INFO"),
             entry("logger", logger),
+            entry("marker", "marker"),
             entry("message", message),
             entry("mdc", mdc),
             entry("serviceName", "userService"),
@@ -144,6 +154,7 @@ public class EventJsonLayoutTest {
             entry("thread", "main"),
             entry("level", "INFO"),
             entry("logger", logger),
+            entry("marker", "marker"),
             entry("message", message),
             entry("mdc", ImmutableMap.of("userId", "18", "orderId", "24")));
     }
@@ -156,10 +167,38 @@ public class EventJsonLayoutTest {
                                      entry("thread", "main"),
                                      entry("level", "INFO"),
                                      entry("logger", logger),
+                                     entry("marker", "marker"),
                                      entry("message", message),
                                      entry("userId", "18"),
                                      entry("serviceId", "19"),
                                      entry("orderId", "24"));
+    }
+
+    @Test
+    public void testDisabledMarker() {
+        final EnumSet<EventAttribute> limitedIncludes = EnumSet.of(EventAttribute.LEVEL,
+            EventAttribute.THREAD_NAME, EventAttribute.MDC, EventAttribute.LOGGER_NAME, EventAttribute.MESSAGE,
+            EventAttribute.EXCEPTION, EventAttribute.TIMESTAMP);
+        Map<String, Object> map = new EventJsonLayout(jsonFormatter, timestampFormatter, throwableProxyConverter, limitedIncludes,
+            ImmutableMap.of(), ImmutableMap.of(), ImmutableSet.of(), false).toJsonMap(event);
+        assertThat(map).containsOnly(entry("timestamp", timestamp),
+            entry("thread", "main"),
+            entry("level", "INFO"),
+            entry("logger", logger),
+            entry("message", message),
+            entry("mdc", mdc));
+    }
+
+    @Test
+    public void testNoMarker() {
+        when(event.getMarker()).thenReturn(null);
+        Map<String, Object> map = eventJsonLayout.toJsonMap(event);
+        assertThat(map).containsOnly(entry("timestamp", timestamp),
+            entry("thread", "main"),
+            entry("level", "INFO"),
+            entry("logger", logger),
+            entry("message", message),
+            entry("mdc", mdc));
     }
 
     @Test
