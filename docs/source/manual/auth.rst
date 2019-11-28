@@ -277,6 +277,9 @@ Add this dependency into your ``pom.xml`` file:
       </dependency>
     </dependencies>
 
+OAuth Example
+-------------
+
 When you build your ``ResourceTestRule``, add the ``GrizzlyWebTestContainerFactory`` line.
 
 .. code-block:: java
@@ -296,8 +299,7 @@ When you build your ``ResourceTestRule``, add the ``GrizzlyWebTestContainerFacto
             .addResource(new ProtectedResource())
             .build();
 
-
-In this example, we are testing the oauth authentication, so we need to set the header manually.
+Note that you need to set the token header manually.
 
 .. code-block:: java
 
@@ -309,6 +311,44 @@ In this example, we are testing the oauth authentication, so we need to set the 
                 .get();
 
         assertThat(response.getStatus()).isEqualTo(200);
+    }
+
+BasicAuth Example
+-----------------
+
+When you build your ``ResourceTestRule``, add the ``GrizzlyWebTestContainerFactory`` line.
+
+.. code-block:: java
+
+    @Rule
+    public ResourceTestRule resources = ResourceTestRule
+            .builder()
+            .setTestContainerFactory(new GrizzlyWebTestContainerFactory())
+            .addProvider(new AuthDynamicFeature(new BasicCredentialAuthFilter.Builder<User>()
+                    .setAuthenticator(new MyBasicAuthenticator())
+                    .setAuthorizer(new MyBasicAuthorizer())
+                    .buildAuthFilter()))
+            .addProvider(RolesAllowedDynamicFeature.class)
+            .addProvider(new AuthValueFactoryProvider.Binder<>(User.class))
+    		.addResource(new ProtectedResource())
+            .build()
+
+Note that you need to set the authorization header manually.
+
+.. code-block:: java
+
+    @Test
+    public void testProtectedResource(){
+
+        String credential = "Basic " + Base64.getEncoder().encodeToString("test@gmail.com:secret".getBytes())
+
+        Response response = resources
+                .target("/protected")
+                .request()
+                .header(HttpHeaders.AUTHORIZATION, credential)
+                .get();
+
+        Assert.assertEquals(200, response.getStatus());
     }
 
 Multiple Principals and Authenticators
