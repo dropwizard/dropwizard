@@ -8,9 +8,11 @@ import io.dropwizard.views.View;
 import io.dropwizard.views.ViewMessageBodyWriter;
 import io.dropwizard.views.ViewRenderer;
 import org.glassfish.jersey.test.JerseyTest;
+import org.json.JSONException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -56,12 +58,20 @@ public class MultipleContentTypeTest extends JerseyTest {
                 .register(new ExampleResource());
     }
 
+    public void assertJsonEqualsNonStrict(String json1, String json2) {
+        try {
+            JSONAssert.assertEquals(json1, json2, false);
+        } catch (JSONException jse) {
+            throw new IllegalArgumentException(jse.getMessage());
+        }
+    }
+
     @Test
     public void testJsonContentType() {
         final Response response = target("/").request().accept(MediaType.APPLICATION_JSON_TYPE).get();
 
         assertThat(response.getStatus()).isEqualTo(200);
-        assertThat(response.readEntity(String.class)).isEqualTo("{\"title\":\"Title#TEST\",\"content\":\"Content#TEST\"}");
+        assertJsonEqualsNonStrict(response.readEntity(String.class), "{\"title\":\"Title#TEST\",\"content\":\"Content#TEST\"}");
     }
 
     @Test
@@ -80,7 +90,7 @@ public class MultipleContentTypeTest extends JerseyTest {
         final Response response = target("/json").request().accept(MediaType.APPLICATION_JSON_TYPE).get();
 
         assertThat(response.getStatus()).isEqualTo(200);
-        assertThat(response.readEntity(String.class)).isEqualTo("{\"title\":\"Title#TEST\",\"content\":\"Content#TEST\"}");
+        assertJsonEqualsNonStrict(response.readEntity(String.class), "{\"title\":\"Title#TEST\",\"content\":\"Content#TEST\"}");
     }
 
     @Test
