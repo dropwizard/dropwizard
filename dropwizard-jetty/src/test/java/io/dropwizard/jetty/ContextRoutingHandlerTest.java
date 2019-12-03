@@ -66,6 +66,9 @@ public class ContextRoutingHandlerTest {
 
     @Test
     public void startsAndStopsAllHandlers() throws Exception {
+        when(handler1.isStopped()).thenReturn(true);
+        when(handler2.isStopped()).thenReturn(true);
+
         handler.start();
         handler.stop();
 

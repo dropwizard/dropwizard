@@ -90,8 +90,7 @@ public class ServletEnvironmentTest {
         assertThat(holder.getValue().getName())
                 .isEqualTo("filter");
 
-        assertThat(holder.getValue().getFilter())
-                .isEqualTo(filter);
+        assertThat(holder.getValue()).hasFieldOrPropertyWithValue("_instance", filter);
     }
 
     @Test
