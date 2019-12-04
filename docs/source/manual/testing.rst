@@ -8,7 +8,7 @@ Testing Dropwizard
 
 .. rubric:: The ``dropwizard-testing`` module provides you with some handy classes for testing
             your :ref:`representation classes <man-core-representations>`
-            and :ref:`resource classes <man-core-resources>`. It also provides a JUnit rule
+            and :ref:`resource classes <man-core-resources>`. It also provides an extension (JUnit5) and a rule (JUnit4)
             for full-stack testing of your entire app.
 
 .. _man-testing-representations:
@@ -153,56 +153,68 @@ Testing Resources
 =================
 
 While many resource classes can be tested just by calling the methods on the class in a test, some
-resources lend themselves to a more full-stack approach. For these, use ``ResourceTestRule``, which
+resources lend themselves to a more full-stack approach. For these, use ``ResourceExtension``, which
 loads a given resource instance in an in-memory Jersey server:
 
 .. _man-testing-resources-example:
 
 .. code-block:: java
 
+    import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
+    import io.dropwizard.testing.junit5.ResourceExtension;
+    import org.junit.jupiter.api.*;
+    import javax.ws.rs.core.Response;
+    import java.util.Optional;
     import static org.assertj.core.api.Assertions.assertThat;
     import static org.mockito.Mockito.*;
 
-    public class PersonResourceTest {
-
-        private static final PeopleStore dao = mock(PeopleStore.class);
-
-        @ClassRule
-        public static final ResourceTestRule resources = ResourceTestRule.builder()
-                .addResource(new PersonResource(dao))
+    @ExtendWith(DropwizardExtensionsSupport.class)
+    class PersonResourceTest {
+        private static final PersonDAO DAO = mock(PersonDAO.class);
+        private static final ResourceExtension RULE = ResourceExtension.builder()
+                .addResource(new PersonResource(DAO))
                 .build();
-
-        private final Person person = new Person("blah", "blah@example.com");
+        private Person person;
 
         @BeforeEach
-        public void setup() {
-            when(dao.fetchPerson(eq("blah"))).thenReturn(person);
+        void setup() {
+            person = new Person();
+            person.setId(1L);
         }
 
         @AfterEach
-        public void tearDown(){
-            // we have to reset the mock after each test because of the
-            // @ClassRule, or use a @Rule as mentioned below.
-            reset(dao);
+        void tearDown() {
+            reset(DAO);
         }
 
         @Test
-        public void testGetPerson() {
-            assertThat(resources.target("/person/blah").request().get(Person.class))
-                    .isEqualTo(person);
-            verify(dao).fetchPerson("blah");
+        void getPersonSuccess() {
+            when(DAO.findById(1L)).thenReturn(Optional.of(person));
+
+            Person found = RULE.target("/people/1").request().get(Person.class);
+
+            assertThat(found.getId()).isEqualTo(person.getId());
+            verify(DAO).findById(1L);
+        }
+
+        @Test
+        void getPersonNotFound() {
+            when(DAO.findById(2L)).thenReturn(Optional.empty());
+            final Response response = RULE.target("/people/2").request().get();
+
+            assertThat(response.getStatusInfo().getStatusCode()).isEqualTo(Response.Status.NOT_FOUND.getStatusCode());
+            verify(DAO).findById(2L);
         }
     }
 
-Instantiate a ``ResourceTestRule`` using its ``Builder`` and add the various resource instances you
-want to test via ``ResourceTestRule.Builder#addResource(Object)``. Use a ``@ClassRule`` annotation
-to have the rule wrap the entire test class or the ``@Rule`` annotation to have the rule wrap
-each test individually (make sure to remove static final modifier from ``resources``).
+
+Instantiate a ``ResourceExtension`` using its ``Builder`` and add the various resource instances you
+want to test via ``ResourceExtension.Builder#addResource(Object)``. Use the ``@ExtendWith(DropwizardExtensionsSupport.class)`` annotation on the class to tell Dropwizard to find any field of type ``ResourceExtension``.
 
 In your tests, use ``#target(String path)``, which initializes a request to talk to and test
 your instances.
 
-This doesn't require opening a port, but ``ResourceTestRule`` tests will perform all the serialization,
+This doesn't require opening a port, but ``ResourceExtension`` tests will perform all the serialization,
 deserialization, and validation that happens inside of the HTTP process.
 
 This also doesn't require a full integration test. In the above
@@ -218,9 +230,9 @@ easily.
 Default Exception Mappers
 -------------------------
 
-By default, a ``ResourceTestRule`` will register all the default exception mappers (this behavior is new in 1.0). If
+By default, a ``ResourceExtension`` will register all the default exception mappers (this behavior is new in 1.0). If
 ``registerDefaultExceptionMappers`` in the configuration yaml is planned to be set to ``false``,
-``ResourceTestRule.Builder#setRegisterDefaultExceptionMappers(boolean)`` will also need to be set to ``false``. Then,
+``ResourceExtension.Builder#setRegisterDefaultExceptionMappers(boolean)`` will also need to be set to ``false``. Then,
 all custom exception mappers will need to be registered on the builder, similarly to how they are registered in an
 ``Application`` class.
 
@@ -229,7 +241,7 @@ Test Containers
 
 Note that the in-memory Jersey test container does not support all features, such as the ``@Context`` injection.
 A different `test container`__ can be used via
-``ResourceTestRule.Builder#setTestContainerFactory(TestContainerFactory)``.
+``ResourceExtension.Builder#setTestContainerFactory(TestContainerFactory)``.
 
 For example, if you want to use the `Grizzly`_ HTTP server (which supports ``@Context`` injections) you need to add the
 dependency for the Jersey Test Framework providers to your Maven POM and set ``GrizzlyWebTestContainerFactory`` as
@@ -246,15 +258,15 @@ dependency for the Jersey Test Framework providers to your Maven POM and set ``G
 
 .. code-block:: java
 
-    public class ResourceTestWithGrizzly {
-        @ClassRule
-        public static final ResourceTestRule RULE = ResourceTestRule.builder()
-            .setTestContainerFactory(new GrizzlyWebTestContainerFactory())
-            .addResource(new ExampleResource())
-            .build();
+    @ExtendWith(DropwizardExtensionsSupport.class)
+    class ResourceTestWithGrizzly {
+        private static final ResourceExtension RULE = ResourceExtension.builder()
+                .setTestContainerFactory(new GrizzlyWebTestContainerFactory())
+                .addResource(new ExampleResource())
+                .build();
 
         @Test
-        public void testResource() {
+        void testResource() {
             assertThat(RULE.target("/example").request()
                 .get(String.class))
                 .isEqualTo("example");
@@ -270,41 +282,17 @@ Testing Client Implementations
 ==============================
 
 To avoid circular dependencies in your projects or to speed up test runs, you can test your HTTP client code
-by writing a JAX-RS resource as test double and let the ``DropwizardClientRule`` start and stop a simple Dropwizard
+by writing a JAX-RS resource as test double and let the ``DropwizardClientExtension`` start and stop a simple Dropwizard
 application containing your test doubles.
 
 .. _man-testing-clients-example:
 
 .. code-block:: java
 
-    public class CustomClientTest {
-        @Path("/ping")
-        public static class PingResource {
-            @GET
-            public String ping() {
-                return "pong";
-            }
-        }
-
-        @ClassRule
-        public static final DropwizardClientRule dropwizard = new DropwizardClientRule(new PingResource());
-
-        @Test
-        public void shouldPing() throws IOException {
-            final URL url = new URL(dropwizard.baseUri() + "/ping");
-            final String response = new BufferedReader(new InputStreamReader(url.openStream())).readLine();
-            assertEquals("pong", response);
-        }
-    }
-
-Or, for JUnit 5:
-
-.. code-block:: java
-
     @ExtendWith(DropwizardExtensionsSupport.class)
     class CustomClientTest {
         @Path("/ping")
-        public static final class PingResource {
+        public static class PingResource {
             @GET
             public String ping() {
                 return "pong";
@@ -325,7 +313,7 @@ Or, for JUnit 5:
 
     Of course you would use your HTTP client in the ``@Test`` method and not ``java.net.URL#openStream()``.
 
-The ``DropwizardClientRule`` takes care of:
+The ``DropwizardClientExtension`` takes care of:
 
 * Creating a simple default configuration.
 * Creating a simplistic application.
@@ -344,10 +332,44 @@ The ``dropwizard-testing`` module offers helper classes for your easily doing so
 The optional ``dropwizard-client`` module offers more helpers, e.g. a custom JerseyClientBuilder,
 which is aware of your application's environment.
 
-JUnit
+JUnit 5
 -----
-Adding ``DropwizardAppRule`` to your JUnit test class will start the app prior to any tests
+Adding ``DropwizardExtensionsSupport`` annotation and ``DropwizardAppExtension`` extension to your JUnit5 test class will start the app prior to any tests
 running and stop it again when they've completed (roughly equivalent to having used ``@BeforeAll`` and ``@AfterAll``).
+``DropwizardAppExtension`` also exposes the app's ``Configuration``,
+``Environment`` and the app object itself so that these can be queried by the tests.
+
+If you don't want to use the ``dropwizard-client`` module or find it excessive for testing, you can get access to
+a Jersey HTTP client by calling the `client` method on the extension. The returned client is managed by the extension
+and can be reused across tests.
+
+.. code-block:: java
+
+    @ExtendWith(DropwizardExtensionsSupport.class)
+    class LoginAcceptanceTest {
+
+        private static DropwizardAppExtension<TestConfiguration> dropwizard = new DropwizardAppExtension<>(
+                MyApp.class,
+                ResourceHelpers.resourceFilePath("my-app-config.yaml")
+            );
+
+        @Test
+        void loginHandlerRedirectsAfterPost() {
+            Client client = dropwizard.client();
+
+            Response response = client.target(
+                     String.format("http://localhost:%d/login", RULE.getLocalPort()))
+                    .request()
+                    .post(Entity.json(loginForm()));
+
+            assertThat(response.getStatus()).isEqualTo(302);
+        }
+    }
+
+JUnit 4
+-----
+Adding ``DropwizardAppRule`` to your JUnit4 test class will start the app prior to any tests
+running and stop it again when they've completed (roughly equivalent to having used ``@BeforeClass`` and ``@AfterClass``).
 ``DropwizardAppRule`` also exposes the app's ``Configuration``,
 ``Environment`` and the app object itself so that these can be queried by the tests.
 
@@ -375,6 +397,12 @@ and can be reused across tests.
             assertThat(response.getStatus()).isEqualTo(302);
         }
     }
+
+.. warning::
+
+    Resource classes are used by multiple threads concurrently. In general, we recommend that
+    resources be stateless/immutable, but it's important to keep the context in mind.
+
 
 Non-JUnit
 ---------
@@ -427,7 +455,7 @@ before the command is ran.
 
 .. code-block:: java
 
-    public class CommandTest {
+    class CommandTest {
         private final PrintStream originalOut = System.out;
         private final PrintStream originalErr = System.err;
         private final InputStream originalIn = System.in;
@@ -437,7 +465,7 @@ before the command is ran.
         private Cli cli;
 
         @BeforeEach
-        public void setUp() throws Exception {
+        void setUp() throws Exception {
             // Setup necessary mock
             final JarLocation location = mock(JarLocation.class);
             when(location.getVersion()).thenReturn(Optional.of("1.0.0"));
@@ -455,14 +483,14 @@ before the command is ran.
         }
 
         @AfterEach
-        public void teardown() {
+        void teardown() {
             System.setOut(originalOut);
             System.setErr(originalErr);
             System.setIn(originalIn);
         }
 
         @Test
-        public void myAddCanAddThreeNumbersCorrectly() {
+        void myAddCanAddThreeNumbersCorrectly() {
             final boolean success = cli.run("add", "2", "3", "6");
 
             SoftAssertions softly = new SoftAssertions();
@@ -481,15 +509,15 @@ Testing Database Interactions
 =============================
 
 In Dropwizard, the database access is managed via the ``@UnitOfWork`` annotation used on resource
-methods. In case you want to test database-layer code independently, a ``DAOTestRule`` is provided
+methods. In case you want to test database-layer code independently, a ``DAOTestExtension`` is provided
 which setups a Hibernate ``SessionFactory``.
 
 .. code-block:: java
 
+    @ExtendWith(DropwizardExtensionsSupport.class)
     public class DatabaseTest {
 
-        @Rule
-        public DAOTestRule database = DAOTestRule.newBuilder().addEntityClass(FooEntity.class).build();
+        public DAOTestExtension database = DAOTestExtension.newBuilder().addEntityClass(FooEntity.class).build();
 
         private FooDAO fooDAO;
 
@@ -520,7 +548,7 @@ which setups a Hibernate ``SessionFactory``.
         }
     }
 
-The ``DAOTestRule``
+The ``DAOTestExtension``
 
 * Creates a simple default Hibernate configuration using an H2 in-memory database
 * Provides a ``SessionFactory`` instance which can be passed to, e.g., a subclass of ``AbstractDAO``
