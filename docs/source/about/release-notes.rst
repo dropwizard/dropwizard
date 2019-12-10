@@ -9,7 +9,7 @@ Please refer to `GitHub releases <https://github.com/dropwizard/dropwizard/relea
 
 .. _rel-2.0.0:
 
-v2.0.0: Dec XX, 2019
+v2.0.0: Dec 10, 2019
 ====================
 
 * :ref:`upgrade-notes-dropwizard-2_0_x`
