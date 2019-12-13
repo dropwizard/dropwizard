@@ -14,25 +14,25 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
 
 @ExtendWith(DropwizardExtensionsSupport.class)
-public class DAOTestExtensionTest {
-    public final DAOTestExtension daoTestExtension = DAOTestExtension.newBuilder().addEntityClass(TestEntity.class).build();
+class DAOTestExtensionTest {
+    private final DAOTestExtension daoTestExtension = DAOTestExtension.newBuilder().addEntityClass(TestEntity.class).build();
 
     @Test
-    public void extensionCreatedSessionFactory() {
+    void extensionCreatedSessionFactory() {
         final SessionFactory sessionFactory = daoTestExtension.getSessionFactory();
 
         assertThat(sessionFactory).isNotNull();
     }
 
     @Test
-    public void extensionCanOpenTransaction() {
+    void extensionCanOpenTransaction() {
         final Long id = daoTestExtension.inTransaction(() -> persist(new TestEntity("junit 5 description")).getId());
 
         assertThat(id).isNotNull();
     }
 
     @Test
-    public void extensionCanRoundtrip() {
+    void extensionCanRoundtrip() {
         final Long id = daoTestExtension.inTransaction(() -> persist(new TestEntity("junit 5 description")).getId());
 
         final TestEntity testEntity = get(id);
@@ -42,13 +42,13 @@ public class DAOTestExtensionTest {
     }
 
     @Test()
-    public void transactionThrowsExceptionAsExpected() {
+    void transactionThrowsExceptionAsExpected() {
         Throwable throwable = Assertions.assertThrows(ConstraintViolationException.class, () -> daoTestExtension.inTransaction(() -> persist(new TestEntity(null))));
         Assertions.assertEquals(ConstraintViolationException.class, throwable.getClass());
     }
 
     @Test
-    public void rollsBackTransaction() {
+    void rollsBackTransaction() {
         // given a successfully persisted entity
         final TestEntity testEntity = new TestEntity("junit 5 description");
         daoTestExtension.inTransaction(() -> persist(testEntity));

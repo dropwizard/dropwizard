@@ -27,7 +27,7 @@ import static org.mockito.Mockito.when;
  * Tests {@link ResourceTestRule}.
  */
 @ExtendWith(DropwizardExtensionsSupport.class)
-public class PersonResourceTest {
+class PersonResourceTest {
     private static class DummyExceptionMapper implements ExceptionMapper<WebApplicationException> {
         @Override
         public Response toResponse(WebApplicationException e) {
@@ -48,12 +48,12 @@ public class PersonResourceTest {
     private Person person = new Person("blah", "blah@example.com");
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         when(peopleStore.fetchPerson("blah")).thenReturn(person);
     }
 
     @Test
-    public void testGetPerson() {
+    void testGetPerson() {
         assertThat(resources.target("/person/blah").request()
             .get(Person.class))
             .isEqualTo(person);
@@ -61,13 +61,13 @@ public class PersonResourceTest {
     }
 
     @Test
-    public void testGetImmutableListOfPersons() {
+    void testGetImmutableListOfPersons() {
         assertThat(resources.target("/person/blah/list").request().get(new GenericType<List<Person>>() {
             })).containsOnly(person);
     }
 
     @Test
-    public void testGetPersonWithQueryParam() {
+    void testGetPersonWithQueryParam() {
         // Test to ensure that the dropwizard validator is registered so that
         // it can validate the "ind" IntParam.
         assertThat(resources.target("/person/blah/index")
@@ -78,7 +78,7 @@ public class PersonResourceTest {
     }
 
     @Test
-    public void testDefaultConstraintViolation() {
+    void testDefaultConstraintViolation() {
         assertThat(resources.target("/person/blah/index")
             .queryParam("ind", -1).request()
             .get().readEntity(String.class))
@@ -86,7 +86,7 @@ public class PersonResourceTest {
     }
 
     @Test
-    public void testDefaultJsonProcessingMapper() {
+    void testDefaultJsonProcessingMapper() {
         assertThat(resources.target("/person/blah/runtime-exception")
             .request()
             .post(Entity.json("{ \"he: \"ho\"}"))
@@ -95,7 +95,7 @@ public class PersonResourceTest {
     }
 
     @Test
-    public void testDefaultExceptionMapper() {
+    void testDefaultExceptionMapper() {
         assertThat(resources.target("/person/blah/runtime-exception")
             .request()
             .post(Entity.json("{}"))
@@ -104,7 +104,7 @@ public class PersonResourceTest {
     }
 
     @Test
-    public void testDefaultEofExceptionMapper() {
+    void testDefaultEofExceptionMapper() {
         assertThat(resources.target("/person/blah/eof-exception")
             .request()
             .get().getStatus())
@@ -112,7 +112,7 @@ public class PersonResourceTest {
     }
 
     @Test
-    public void testValidationGroupsException() {
+    void testValidationGroupsException() {
         final Response resp = resources.target("/person/blah/validation-groups-exception")
             .request()
             .post(Entity.json("{}"));
@@ -123,7 +123,7 @@ public class PersonResourceTest {
     }
 
     @Test
-    public void testCustomClientConfiguration() {
+    void testCustomClientConfiguration() {
         assertThat(resources.client().getConfiguration().isRegistered(DummyExceptionMapper.class)).isTrue();
     }
 }

@@ -11,7 +11,7 @@ import static io.dropwizard.testing.ConfigOverride.config;
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class DropwizardAppExtensionResetConfigOverrideTest {
+class DropwizardAppExtensionResetConfigOverrideTest {
     private final DropwizardAppExtension<TestConfiguration> dropwizardAppExtension = new DropwizardAppExtension<>(
             TestApplication.class,
             resourceFilePath("test-config.yaml"),
@@ -19,7 +19,7 @@ public class DropwizardAppExtensionResetConfigOverrideTest {
             config("app-rule-reset", "message", "A new way to say Hooray!"));
 
     @Test
-    public void test2() throws Exception {
+    void test2() throws Exception {
         dropwizardAppExtension.before();
         assertThat(System.getProperty("app-rule-reset.message")).isEqualTo("A new way to say Hooray!");
         assertThat(System.getProperty("app-rule-reset.extra")).isNull();
