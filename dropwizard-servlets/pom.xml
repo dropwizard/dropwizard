@@ -34,14 +34,8 @@
             <artifactId>logback-classic</artifactId>
         </dependency>
         <dependency>
-            <!-- this is required because jetty-server pom
-            put servlet-api into default scope when it should
-            always be provided scope so it doesn't get compiled.
-            without this there are security exceptions because
-            javax.servlet-api jar is not signed -->
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <scope>provided</scope>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
         </dependency>
 
         <dependency>
@@ -63,6 +57,12 @@
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-servlet</artifactId>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.servlet</groupId>
+                    <artifactId>javax.servlet-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
