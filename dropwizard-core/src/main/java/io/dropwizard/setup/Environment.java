@@ -51,7 +51,8 @@ public class Environment {
     private final AdminEnvironment adminEnvironment;
 
     private final ExecutorService healthCheckExecutorService;
-
+    private final String test;
+	
     /**
      * Creates a new environment.
      *
