@@ -1,0 +1,18 @@
+version: 1
+update_configs:
+  - package_manager: "java:maven"
+    directory: "/"
+    update_schedule: "daily"
+  - package_manager: "python"
+    directory: "/docs"
+    update_schedule: "live"
+  - package_manager: "ruby:bundler"
+    directory: "/docs"
+    update_schedule: "live"
+  - package_manager: "java:maven"
+    directory: "/"
+    update_schedule: "daily"
+    target_branch: "release/2.0.x"
+    allowed_updates:
+      - match:
+          update_type: "security"
