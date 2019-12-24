@@ -9,12 +9,7 @@ import io.dropwizard.jersey.params.DateTimeParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.validation.Valid;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -42,7 +37,7 @@ public class HelloWorldResource {
     }
 
     @POST
-    public void receiveHello(@Valid Saying saying) {
+    public void receiveHello(Saying saying) {
         LOGGER.info("Received a saying: {}", saying);
     }
 
