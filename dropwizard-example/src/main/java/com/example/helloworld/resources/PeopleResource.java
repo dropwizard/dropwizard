@@ -4,6 +4,7 @@ import com.example.helloworld.core.Person;
 import com.example.helloworld.db.PersonDAO;
 import io.dropwizard.hibernate.UnitOfWork;
 
+import javax.validation.Valid;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -23,7 +24,7 @@ public class PeopleResource {
 
     @POST
     @UnitOfWork
-    public Person createPerson(Person person) {
+    public Person createPerson(@Valid Person person) {
         return peopleDAO.create(person);
     }
 
