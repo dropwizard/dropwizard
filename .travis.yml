@@ -8,8 +8,8 @@ before_install:
   - rm ~/.m2/settings.xml || true
   - ulimit -c unlimited -S
 script:
-  - ./mvnw -V -B -ff verify
-  - ./mvnw -V -B -ff -q -pl docs site
+  - ./mvnw -Pjakarta-apis -V -B -ff verify
+  - ./mvnw -Pjakarta-apis -V -B -ff -q -pl docs site
 after_success:
   - bash ci/after_success.sh
 cache:

@@ -2,10 +2,13 @@ package com.example.app1;
 
 import io.dropwizard.Configuration;
 import io.dropwizard.client.JerseyClientBuilder;
+import io.dropwizard.client.JerseyClientConfiguration;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
+import io.dropwizard.util.Duration;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,8 +36,12 @@ public class App1Test {
 
     @BeforeAll
     public static void setup() {
+        final JerseyClientConfiguration config = new JerseyClientConfiguration();
+        // Avoid flakiness with default timeouts in CI builds
+        config.setTimeout(Duration.seconds(5));
         client = new JerseyClientBuilder(RULE.getEnvironment())
             .withProvider(new CustomJsonProvider(Jackson.newObjectMapper()))
+            .using(config)
             .build("test client");
     }
 
