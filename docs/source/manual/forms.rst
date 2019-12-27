@@ -29,13 +29,13 @@ Testing
 =======
 
 To test resources that utilize multi-part form features, one must add ``MultiPartFeature.class`` to
-the ``ResourceTestRule`` as a provider, and register it on the client like the following:
+the ``ResourceExtension`` as a provider, and register it on the client like the following:
 
 .. code-block:: java
 
     public class MultiPartTest {
         @ClassRule
-        public static final ResourceTestRule resource = ResourceTestRule.builder()
+        public static final ResourceExtension resource = ResourceExtension.builder()
                 .addProvider(MultiPartFeature.class)
                 .addResource(new TestResource())
                 .build();

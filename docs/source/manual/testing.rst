@@ -153,60 +153,63 @@ Testing Resources
 =================
 
 While many resource classes can be tested just by calling the methods on the class in a test, some
-resources lend themselves to a more full-stack approach. For these, use ``ResourceTestRule``, which
+resources lend themselves to a more full-stack approach. For these, use ``ResourceExtension``, which
 loads a given resource instance in an in-memory Jersey server:
 
 .. _man-testing-resources-example:
 
 .. code-block:: java
 
+    //some imports omitted
+    import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
+    import io.dropwizard.testing.junit5.ResourceExtension;
+    import org.junit.jupiter.api.extension.ExtendWith;
+
     import static org.assertj.core.api.Assertions.assertThat;
     import static org.mockito.Mockito.*;
 
+    @ExtendWith(DropwizardExtensionsSupport.class)
     public class PersonResourceTest {
-
-        private static final PeopleStore dao = mock(PeopleStore.class);
-
-        @ClassRule
-        public static final ResourceTestRule resources = ResourceTestRule.builder()
-                .addResource(new PersonResource(dao))
+        private static final PersonDAO DAO = mock(PersonDAO.class);
+        public static final ResourceExtension RULE = ResourceExtension.builder()
+                .addResource(new PersonResource(DAO))
                 .build();
-
-        private final Person person = new Person("blah", "blah@example.com");
+        private Person person;
 
         @BeforeEach
         public void setup() {
-            when(dao.fetchPerson(eq("blah"))).thenReturn(person);
+            person = new Person();
+            person.setId(1L);
         }
 
         @AfterEach
-        public void tearDown(){
-            // we have to reset the mock after each test because of the
-            // @ClassRule, or use a @Rule as mentioned below.
-            reset(dao);
+        public void tearDown() {
+            reset(DAO);
         }
 
         @Test
-        public void testGetPerson() {
-            assertThat(resources.target("/person/blah").request().get(Person.class))
-                    .isEqualTo(person);
-            verify(dao).fetchPerson("blah");
+        public void getPersonSuccess() {
+            when(DAO.findById(1L)).thenReturn(Optional.of(person));
+
+            Person found = RULE.target("/people/1").request().get(Person.class);
+
+            assertThat(found.getId()).isEqualTo(person.getId());
+            verify(DAO).findById(1L);
         }
     }
 
-Instantiate a ``ResourceTestRule`` using its ``Builder`` and add the various resource instances you
-want to test via ``ResourceTestRule.Builder#addResource(Object)``. Use a ``@ClassRule`` annotation
-to have the rule wrap the entire test class or the ``@Rule`` annotation to have the rule wrap
-each test individually (make sure to remove static final modifier from ``resources``).
+Instantiate a ``ResourceExtension`` using its ``Builder`` and add the various resource instances you
+want to test via ``ResourceExtension.Builder#addResource(Object)``.  You must annotate the class with
+``@ExtendWith(DropwizardExtensionsSupport.class)``.
 
 In your tests, use ``#target(String path)``, which initializes a request to talk to and test
 your instances.
 
-This doesn't require opening a port, but ``ResourceTestRule`` tests will perform all the serialization,
+This doesn't require opening a port, but ``ResourceExtension`` tests will perform all the serialization,
 deserialization, and validation that happens inside of the HTTP process.
 
 This also doesn't require a full integration test. In the above
-:ref:`example <man-testing-resources-example>`, a mocked ``PeopleStore`` is passed to the
+:ref:`example <man-testing-resources-example>`, a mocked ``PersonDAO`` is passed to the
 ``PersonResource`` instance to isolate it from the database. Not only does this make the test much
 faster, but it allows your resource unit tests to test error conditions and edge cases much more
 easily.
@@ -218,9 +221,9 @@ easily.
 Default Exception Mappers
 -------------------------
 
-By default, a ``ResourceTestRule`` will register all the default exception mappers (this behavior is new in 1.0). If
+By default, a ``ResourceExtension`` will register all the default exception mappers (since 1.0). If
 ``registerDefaultExceptionMappers`` in the configuration yaml is planned to be set to ``false``,
-``ResourceTestRule.Builder#setRegisterDefaultExceptionMappers(boolean)`` will also need to be set to ``false``. Then,
+``ResourceExtension.Builder#setRegisterDefaultExceptionMappers(boolean)`` will also need to be set to ``false``. Then,
 all custom exception mappers will need to be registered on the builder, similarly to how they are registered in an
 ``Application`` class.
 
@@ -229,7 +232,7 @@ Test Containers
 
 Note that the in-memory Jersey test container does not support all features, such as the ``@Context`` injection.
 A different `test container`__ can be used via
-``ResourceTestRule.Builder#setTestContainerFactory(TestContainerFactory)``.
+``ResourceExtension.Builder#setTestContainerFactory(TestContainerFactory)``.
 
 For example, if you want to use the `Grizzly`_ HTTP server (which supports ``@Context`` injections) you need to add the
 dependency for the Jersey Test Framework providers to your Maven POM and set ``GrizzlyWebTestContainerFactory`` as
@@ -248,7 +251,7 @@ dependency for the Jersey Test Framework providers to your Maven POM and set ``G
 
     public class ResourceTestWithGrizzly {
         @ClassRule
-        public static final ResourceTestRule RULE = ResourceTestRule.builder()
+        public static final ResourceExtension RULE = ResourceExtension.builder()
             .setTestContainerFactory(new GrizzlyWebTestContainerFactory())
             .addResource(new ExampleResource())
             .build();
