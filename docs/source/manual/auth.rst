@@ -280,12 +280,12 @@ Add this dependency into your ``pom.xml`` file:
 OAuth Example
 -------------
 
-When you build your ``ResourceTestRule``, add the ``GrizzlyWebTestContainerFactory`` line.
+When you build your ``ResourceExtension``, add the ``GrizzlyWebTestContainerFactory`` line.
 
 .. code-block:: java
 
     @Rule
-    public ResourceTestRule rule = ResourceTestRule
+    public ResourceExtension rule = ResourceExtension
             .builder()
             .setTestContainerFactory(new GrizzlyWebTestContainerFactory())
             .addProvider(new AuthDynamicFeature(new OAuthCredentialAuthFilter.Builder<User>()
@@ -316,12 +316,12 @@ Note that you need to set the token header manually.
 BasicAuth Example
 -----------------
 
-When you build your ``ResourceTestRule``, add the ``GrizzlyWebTestContainerFactory`` line.
+When you build your ``ResourceExtension``, add the ``GrizzlyWebTestContainerFactory`` line.
 
 .. code-block:: java
 
     @Rule
-    public ResourceTestRule resources = ResourceTestRule
+    public ResourceExtension resources = ResourceExtension
             .builder()
             .setTestContainerFactory(new GrizzlyWebTestContainerFactory())
             .addProvider(new AuthDynamicFeature(new BasicCredentialAuthFilter.Builder<User>()
