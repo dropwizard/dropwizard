@@ -35,7 +35,7 @@ the ``ResourceExtension`` as a provider, and register it on the client like the 
 
     public class MultiPartTest {
         @ClassRule
-        public static final ResourceExtension resource = ResourceExtension.builder()
+        public static final ResourceExtension resourceExtension = ResourceExtension.builder()
                 .addProvider(MultiPartFeature.class)
                 .addResource(new TestResource())
                 .build();
@@ -44,7 +44,7 @@ the ``ResourceExtension`` as a provider, and register it on the client like the 
         public void testClientMultipart() {
             final FormDataMultiPart multiPart = new FormDataMultiPart()
                     .field("test-data", "Hello Multipart");
-            final String response = resource.target("/test")
+            final String response = resourceExtension.target("/test")
                     .register(MultiPartFeature.class)
                     .request()
                     .post(Entity.entity(multiPart, multiPart.getMediaType()), String.class);

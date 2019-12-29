@@ -285,7 +285,7 @@ When you build your ``ResourceExtension``, add the ``GrizzlyWebTestContainerFact
 .. code-block:: java
 
     @Rule
-    public ResourceExtension rule = ResourceExtension
+    public ResourceExtension resourceExtension = ResourceExtension
             .builder()
             .setTestContainerFactory(new GrizzlyWebTestContainerFactory())
             .addProvider(new AuthDynamicFeature(new OAuthCredentialAuthFilter.Builder<User>()
@@ -305,7 +305,7 @@ Note that you need to set the token header manually.
 
     @Test
     public void testProtected() throws Exception {
-        final Response response = rule.target("/protected")
+        final Response response = resourceExtension.target("/protected")
                 .request(MediaType.APPLICATION_JSON_TYPE)
                 .header("Authorization", "Bearer TOKEN")
                 .get();
@@ -321,7 +321,7 @@ When you build your ``ResourceExtension``, add the ``GrizzlyWebTestContainerFact
 .. code-block:: java
 
     @Rule
-    public ResourceExtension resources = ResourceExtension
+    public ResourceExtension resourceExtension = ResourceExtension
             .builder()
             .setTestContainerFactory(new GrizzlyWebTestContainerFactory())
             .addProvider(new AuthDynamicFeature(new BasicCredentialAuthFilter.Builder<User>()
@@ -342,7 +342,7 @@ Note that you need to set the authorization header manually.
 
         String credential = "Basic " + Base64.getEncoder().encodeToString("test@gmail.com:secret".getBytes())
 
-        Response response = resources
+        Response response = resourceExtension
                 .target("/protected")
                 .request()
                 .header(HttpHeaders.AUTHORIZATION, credential)
