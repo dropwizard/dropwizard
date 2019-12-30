@@ -41,6 +41,7 @@ public class PeopleResourceTest {
         person = new Person();
         person.setFullName("Full Name");
         person.setJobTitle("Job Title");
+        person.setYearBorn(1995);
     }
 
     @AfterEach
