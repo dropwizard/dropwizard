@@ -61,15 +61,27 @@ public class PeopleResourceTest {
     }
 
     @Test
-    public void createPersonFailure() {
-        person.setAge(-1);
+    public void createPersonFailureMinYearBorn() {
+        person.setYearBorn(-1);
 
         final Response response = RESOURCES.target("/people")
                 .request(MediaType.APPLICATION_JSON_TYPE)
                 .post(Entity.entity(person, MediaType.APPLICATION_JSON_TYPE));
 
         assertThat(response.getStatusInfo()).isNotEqualTo(Response.Status.OK);
-        assertThat(response.readEntity(String.class)).contains("age must be greater than or equal to 0");
+        assertThat(response.readEntity(String.class)).contains("yearBorn must be greater than or equal to 0");
+    }
+
+    @Test
+    public void createPersonFailureMaxYearBorn() {
+        person.setYearBorn(10000);
+
+        final Response response = RESOURCES.target("/people")
+                .request(MediaType.APPLICATION_JSON_TYPE)
+                .post(Entity.entity(person, MediaType.APPLICATION_JSON_TYPE));
+
+        assertThat(response.getStatusInfo()).isNotEqualTo(Response.Status.OK);
+        assertThat(response.readEntity(String.class)).contains("yearBorn must be less than or equal to 9999");
     }
 
     @Test

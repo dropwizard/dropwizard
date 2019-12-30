@@ -15,7 +15,7 @@
                 <constraints nullable="false"/>
             </column>
             <column name="jobTitle" type="varchar(255)"/>
-            <column name="age" type="int"/>
+            <column name="yearBorn" type="int"/>
         </createTable>
     </changeSet>
 </databaseChangeLog>

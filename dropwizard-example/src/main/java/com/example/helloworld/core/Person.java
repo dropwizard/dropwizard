@@ -8,6 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import java.util.Objects;
 
@@ -31,17 +32,18 @@ public class Person {
     @Column(name = "jobTitle", nullable = false)
     private String jobTitle;
 
-    @Column(name = "age")
+    @Column(name = "yearBorn")
     @Min(value = 0)
-    private int age;
+    @Max(value = 9999)
+    private int yearBorn;
 
     public Person() {
     }
 
-    public Person(String fullName, String jobTitle, int age) {
+    public Person(String fullName, String jobTitle, int yearBorn) {
         this.fullName = fullName;
         this.jobTitle = jobTitle;
-        this.age = age;
+        this.yearBorn = yearBorn;
     }
 
     public long getId() {
@@ -68,12 +70,12 @@ public class Person {
         this.jobTitle = jobTitle;
     }
 
-    public int getAge() {
-        return age;
+    public int getYearBorn() {
+        return yearBorn;
     }
 
-    public void setAge(int age) {
-        this.age = age;
+    public void setYearBorn(int yearBorn) {
+        this.yearBorn = yearBorn;
     }
 
     @Override
@@ -89,13 +91,13 @@ public class Person {
         Person person = (Person) o;
 
         return id == person.id &&
-                age == person.age &&
+                yearBorn == person.yearBorn &&
                 Objects.equals(fullName, person.fullName) &&
                 Objects.equals(jobTitle, person.jobTitle);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, fullName, jobTitle, age);
+        return Objects.hash(id, fullName, jobTitle, yearBorn);
     }
 }

@@ -30,26 +30,26 @@ public class PersonDAOTest {
 
     @Test
     public void createPerson() {
-        final Person jeff = daoTestRule.inTransaction(() -> personDAO.create(new Person("Jeff", "The plumber", 25)));
+        final Person jeff = daoTestRule.inTransaction(() -> personDAO.create(new Person("Jeff", "The plumber", 1995)));
         assertThat(jeff.getId()).isGreaterThan(0);
         assertThat(jeff.getFullName()).isEqualTo("Jeff");
         assertThat(jeff.getJobTitle()).isEqualTo("The plumber");
-        assertThat(jeff.getAge()).isEqualTo(25);
+        assertThat(jeff.getYearBorn()).isEqualTo(1995);
         assertThat(personDAO.findById(jeff.getId())).isEqualTo(Optional.of(jeff));
     }
 
     @Test
     public void findAll() {
         daoTestRule.inTransaction(() -> {
-            personDAO.create(new Person("Jeff", "The plumber", 25));
-            personDAO.create(new Person("Jim", "The cook", 35));
-            personDAO.create(new Person("Randy", "The watchman", 45));
+            personDAO.create(new Person("Jeff", "The plumber", 1975));
+            personDAO.create(new Person("Jim", "The cook", 1985));
+            personDAO.create(new Person("Randy", "The watchman", 1995));
         });
 
         final List<Person> persons = personDAO.findAll();
         assertThat(persons).extracting("fullName").containsOnly("Jeff", "Jim", "Randy");
         assertThat(persons).extracting("jobTitle").containsOnly("The plumber", "The cook", "The watchman");
-        assertThat(persons).extracting("age").containsOnly(25, 35, 45);
+        assertThat(persons).extracting("yearBorn").containsOnly(1975, 1985, 1995);
     }
 
     @Test
