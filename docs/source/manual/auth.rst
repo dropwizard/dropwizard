@@ -284,20 +284,22 @@ When you build your ``ResourceExtension``, add the ``GrizzlyWebTestContainerFact
 
 .. code-block:: java
 
-    @Rule
-    public ResourceExtension resourceExtension = ResourceExtension
-            .builder()
-            .setTestContainerFactory(new GrizzlyWebTestContainerFactory())
-            .addProvider(new AuthDynamicFeature(new OAuthCredentialAuthFilter.Builder<User>()
-                    .setAuthenticator(new MyOAuthAuthenticator())
-                    .setAuthorizer(new MyAuthorizer())
-                    .setRealm("SUPER SECRET STUFF")
-                    .setPrefix("Bearer")
-                    .buildAuthFilter()))
-            .addProvider(RolesAllowedDynamicFeature.class)
-            .addProvider(new AuthValueFactoryProvider.Binder<>(User.class))
-            .addResource(new ProtectedResource())
-            .build();
+    @ExtendWith(DropwizardExtensionsSupport.class)
+    public class OAuthResourceTest {
+
+        public ResourceExtension resourceExtension = ResourceExtension
+                .builder()
+                .setTestContainerFactory(new GrizzlyWebTestContainerFactory())
+                .addProvider(new AuthDynamicFeature(new OAuthCredentialAuthFilter.Builder<User>()
+                        .setAuthenticator(new MyOAuthAuthenticator())
+                        .setAuthorizer(new MyAuthorizer())
+                        .setRealm("SUPER SECRET STUFF")
+                        .setPrefix("Bearer")
+                        .buildAuthFilter()))
+                .addProvider(RolesAllowedDynamicFeature.class)
+                .addProvider(new AuthValueFactoryProvider.Binder<>(User.class))
+                .addResource(new ProtectedResource())
+                .build();
 
 Note that you need to set the token header manually.
 
@@ -320,18 +322,19 @@ When you build your ``ResourceExtension``, add the ``GrizzlyWebTestContainerFact
 
 .. code-block:: java
 
-    @Rule
-    public ResourceExtension resourceExtension = ResourceExtension
-            .builder()
-            .setTestContainerFactory(new GrizzlyWebTestContainerFactory())
-            .addProvider(new AuthDynamicFeature(new BasicCredentialAuthFilter.Builder<User>()
-                    .setAuthenticator(new MyBasicAuthenticator())
-                    .setAuthorizer(new MyBasicAuthorizer())
-                    .buildAuthFilter()))
-            .addProvider(RolesAllowedDynamicFeature.class)
-            .addProvider(new AuthValueFactoryProvider.Binder<>(User.class))
-    		.addResource(new ProtectedResource())
-            .build()
+    @ExtendWith(DropwizardExtensionsSupport.class)
+    public class OAuthResourceTest {
+        public ResourceExtension resourceExtension = ResourceExtension
+                .builder()
+                .setTestContainerFactory(new GrizzlyWebTestContainerFactory())
+                .addProvider(new AuthDynamicFeature(new BasicCredentialAuthFilter.Builder<User>()
+                        .setAuthenticator(new MyBasicAuthenticator())
+                        .setAuthorizer(new MyBasicAuthorizer())
+                        .buildAuthFilter()))
+                .addProvider(RolesAllowedDynamicFeature.class)
+                .addProvider(new AuthValueFactoryProvider.Binder<>(User.class))
+                .addResource(new ProtectedResource())
+                .build()
 
 Note that you need to set the authorization header manually.
 

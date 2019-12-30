@@ -33,8 +33,9 @@ the ``ResourceExtension`` as a provider, and register it on the client like the 
 
 .. code-block:: java
 
+    @ExtendWith(DropwizardExtensionsSupport.class)
     public class MultiPartTest {
-        @ClassRule
+
         public static final ResourceExtension resourceExtension = ResourceExtension.builder()
                 .addProvider(MultiPartFeature.class)
                 .addResource(new TestResource())
