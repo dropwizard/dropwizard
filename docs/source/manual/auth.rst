@@ -300,6 +300,7 @@ When you build your ``ResourceExtension``, add the ``GrizzlyWebTestContainerFact
                 .addProvider(new AuthValueFactoryProvider.Binder<>(User.class))
                 .addResource(new ProtectedResource())
                 .build();
+    }
 
 Note that you need to set the token header manually.
 
@@ -335,6 +336,7 @@ When you build your ``ResourceExtension``, add the ``GrizzlyWebTestContainerFact
                 .addProvider(new AuthValueFactoryProvider.Binder<>(User.class))
                 .addResource(new ProtectedResource())
                 .build()
+    }
 
 Note that you need to set the authorization header manually.
 
