@@ -63,7 +63,7 @@
         <bcprov-jdk15on.version>1.64</bcprov-jdk15on.version>
         <h2.version>1.4.200</h2.version>
         <hsqldb.version>2.5.0</hsqldb.version>
-        <junit.version>4.12</junit.version>
+        <junit.version>4.13</junit.version>
         <junit5.version>5.5.2</junit5.version>
         <mockito.version>3.2.4</mockito.version>
 
