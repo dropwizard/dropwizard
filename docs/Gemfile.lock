@@ -1,17 +1,18 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    addressable (2.5.2)
-      public_suffix (>= 2.0.2, < 4.0)
-    faraday (0.15.4)
+    addressable (2.7.0)
+      public_suffix (>= 2.0.2, < 5.0)
+    faraday (1.0.0)
       multipart-post (>= 1.2, < 3)
-    multipart-post (2.0.0)
-    octokit (4.14.0)
+    multipart-post (2.1.1)
+    octokit (4.15.0)
+      faraday (>= 0.9)
       sawyer (~> 0.8.0, >= 0.5.3)
-    public_suffix (3.0.3)
-    sawyer (0.8.1)
-      addressable (>= 2.3.5, < 2.6)
-      faraday (~> 0.8, < 1.0)
+    public_suffix (4.0.2)
+    sawyer (0.8.2)
+      addressable (>= 2.3.5)
+      faraday (> 0.8, < 2.0)
 
 PLATFORMS
   ruby
