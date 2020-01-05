@@ -2,7 +2,6 @@ package com.example.helloworld.resources;
 
 import com.example.helloworld.core.Person;
 import com.example.helloworld.db.PersonDAO;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import io.dropwizard.testing.junit5.ResourceExtension;
 import org.junit.jupiter.api.AfterEach;
@@ -10,8 +9,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.Mockito;
 
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.GenericType;
@@ -44,6 +41,7 @@ public class PeopleResourceTest {
         person = new Person();
         person.setFullName("Full Name");
         person.setJobTitle("Job Title");
+        person.setYearBorn(1995);
     }
 
     @AfterEach
@@ -52,7 +50,7 @@ public class PeopleResourceTest {
     }
 
     @Test
-    public void createPerson() throws JsonProcessingException {
+    public void createPerson() {
         when(PERSON_DAO.create(any(Person.class))).thenReturn(person);
         final Response response = RESOURCES.target("/people")
                 .request(MediaType.APPLICATION_JSON_TYPE)
@@ -61,6 +59,30 @@ public class PeopleResourceTest {
         assertThat(response.getStatusInfo()).isEqualTo(Response.Status.OK);
         verify(PERSON_DAO).create(personCaptor.capture());
         assertThat(personCaptor.getValue()).isEqualTo(person);
+    }
+
+    @Test
+    public void createPersonFailureMinYearBorn() {
+        person.setYearBorn(-1);
+
+        final Response response = RESOURCES.target("/people")
+                .request(MediaType.APPLICATION_JSON_TYPE)
+                .post(Entity.entity(person, MediaType.APPLICATION_JSON_TYPE));
+
+        assertThat(response.getStatusInfo()).isNotEqualTo(Response.Status.OK);
+        assertThat(response.readEntity(String.class)).contains("yearBorn must be greater than or equal to 0");
+    }
+
+    @Test
+    public void createPersonFailureMaxYearBorn() {
+        person.setYearBorn(10000);
+
+        final Response response = RESOURCES.target("/people")
+                .request(MediaType.APPLICATION_JSON_TYPE)
+                .post(Entity.entity(person, MediaType.APPLICATION_JSON_TYPE));
+
+        assertThat(response.getStatusInfo()).isNotEqualTo(Response.Status.OK);
+        assertThat(response.readEntity(String.class)).contains("yearBorn must be less than or equal to 9999");
     }
 
     @Test
