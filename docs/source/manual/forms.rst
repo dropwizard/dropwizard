@@ -29,13 +29,14 @@ Testing
 =======
 
 To test resources that utilize multi-part form features, one must add ``MultiPartFeature.class`` to
-the ``ResourceTestRule`` as a provider, and register it on the client like the following:
+the ``ResourceExtension`` as a provider, and register it on the client like the following:
 
 .. code-block:: java
 
+    @ExtendWith(DropwizardExtensionsSupport.class)
     public class MultiPartTest {
-        @ClassRule
-        public static final ResourceTestRule resource = ResourceTestRule.builder()
+
+        public static final ResourceExtension resourceExtension = ResourceExtension.builder()
                 .addProvider(MultiPartFeature.class)
                 .addResource(new TestResource())
                 .build();
@@ -44,7 +45,7 @@ the ``ResourceTestRule`` as a provider, and register it on the client like the f
         public void testClientMultipart() {
             final FormDataMultiPart multiPart = new FormDataMultiPart()
                     .field("test-data", "Hello Multipart");
-            final String response = resource.target("/test")
+            final String response = resourceExtension.target("/test")
                     .register(MultiPartFeature.class)
                     .request()
                     .post(Entity.entity(multiPart, multiPart.getMediaType()), String.class);

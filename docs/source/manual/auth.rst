@@ -280,24 +280,27 @@ Add this dependency into your ``pom.xml`` file:
 OAuth Example
 -------------
 
-When you build your ``ResourceTestRule``, add the ``GrizzlyWebTestContainerFactory`` line.
+When you build your ``ResourceExtension``, add the ``GrizzlyWebTestContainerFactory`` line.
 
 .. code-block:: java
 
-    @Rule
-    public ResourceTestRule rule = ResourceTestRule
-            .builder()
-            .setTestContainerFactory(new GrizzlyWebTestContainerFactory())
-            .addProvider(new AuthDynamicFeature(new OAuthCredentialAuthFilter.Builder<User>()
-                    .setAuthenticator(new MyOAuthAuthenticator())
-                    .setAuthorizer(new MyAuthorizer())
-                    .setRealm("SUPER SECRET STUFF")
-                    .setPrefix("Bearer")
-                    .buildAuthFilter()))
-            .addProvider(RolesAllowedDynamicFeature.class)
-            .addProvider(new AuthValueFactoryProvider.Binder<>(User.class))
-            .addResource(new ProtectedResource())
-            .build();
+    @ExtendWith(DropwizardExtensionsSupport.class)
+    public class OAuthResourceTest {
+
+        public ResourceExtension resourceExtension = ResourceExtension
+                .builder()
+                .setTestContainerFactory(new GrizzlyWebTestContainerFactory())
+                .addProvider(new AuthDynamicFeature(new OAuthCredentialAuthFilter.Builder<User>()
+                        .setAuthenticator(new MyOAuthAuthenticator())
+                        .setAuthorizer(new MyAuthorizer())
+                        .setRealm("SUPER SECRET STUFF")
+                        .setPrefix("Bearer")
+                        .buildAuthFilter()))
+                .addProvider(RolesAllowedDynamicFeature.class)
+                .addProvider(new AuthValueFactoryProvider.Binder<>(User.class))
+                .addResource(new ProtectedResource())
+                .build();
+    }
 
 Note that you need to set the token header manually.
 
@@ -305,7 +308,7 @@ Note that you need to set the token header manually.
 
     @Test
     public void testProtected() throws Exception {
-        final Response response = rule.target("/protected")
+        final Response response = resourceExtension.target("/protected")
                 .request(MediaType.APPLICATION_JSON_TYPE)
                 .header("Authorization", "Bearer TOKEN")
                 .get();
@@ -316,22 +319,24 @@ Note that you need to set the token header manually.
 BasicAuth Example
 -----------------
 
-When you build your ``ResourceTestRule``, add the ``GrizzlyWebTestContainerFactory`` line.
+When you build your ``ResourceExtension``, add the ``GrizzlyWebTestContainerFactory`` line.
 
 .. code-block:: java
 
-    @Rule
-    public ResourceTestRule resources = ResourceTestRule
-            .builder()
-            .setTestContainerFactory(new GrizzlyWebTestContainerFactory())
-            .addProvider(new AuthDynamicFeature(new BasicCredentialAuthFilter.Builder<User>()
-                    .setAuthenticator(new MyBasicAuthenticator())
-                    .setAuthorizer(new MyBasicAuthorizer())
-                    .buildAuthFilter()))
-            .addProvider(RolesAllowedDynamicFeature.class)
-            .addProvider(new AuthValueFactoryProvider.Binder<>(User.class))
-    		.addResource(new ProtectedResource())
-            .build()
+    @ExtendWith(DropwizardExtensionsSupport.class)
+    public class OAuthResourceTest {
+        public ResourceExtension resourceExtension = ResourceExtension
+                .builder()
+                .setTestContainerFactory(new GrizzlyWebTestContainerFactory())
+                .addProvider(new AuthDynamicFeature(new BasicCredentialAuthFilter.Builder<User>()
+                        .setAuthenticator(new MyBasicAuthenticator())
+                        .setAuthorizer(new MyBasicAuthorizer())
+                        .buildAuthFilter()))
+                .addProvider(RolesAllowedDynamicFeature.class)
+                .addProvider(new AuthValueFactoryProvider.Binder<>(User.class))
+                .addResource(new ProtectedResource())
+                .build()
+    }
 
 Note that you need to set the authorization header manually.
 
@@ -342,7 +347,7 @@ Note that you need to set the authorization header manually.
 
         String credential = "Basic " + Base64.getEncoder().encodeToString("test@gmail.com:secret".getBytes())
 
-        Response response = resources
+        Response response = resourceExtension
                 .target("/protected")
                 .request()
                 .header(HttpHeaders.AUTHORIZATION, credential)
