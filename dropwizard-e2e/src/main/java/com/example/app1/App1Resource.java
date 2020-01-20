@@ -8,6 +8,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import java.util.LinkedHashMap;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.OptionalInt;
@@ -33,7 +34,7 @@ public class App1Resource {
     @POST
     @Path("mapper")
     public Map<String, String> postMapper(Map<String, String> map) {
-        final Map<String, String> resultMap = new HashMap<>(map);
+        final Map<String, String> resultMap = new LinkedHashMap<>(map);
         resultMap.put("hello", "world");
         return resultMap;
     }
