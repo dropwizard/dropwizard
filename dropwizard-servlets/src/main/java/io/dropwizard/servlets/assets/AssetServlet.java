@@ -35,7 +35,6 @@ public class AssetServlet extends HttpServlet {
     private static final String LAST_MODIFIED = "Last-Modified";
 
     private static class CachedAsset {
-        private static final CRC32 CRC_32 = new CRC32();
         private final byte[] resource;
         private final String eTag;
         private final long lastModifiedTime;
@@ -47,9 +46,9 @@ public class AssetServlet extends HttpServlet {
         }
 
         private static String hash(byte[] resource) {
-            CRC_32.reset();
-            CRC_32.update(resource);
-            return Long.toHexString(CRC_32.getValue());
+            final CRC32 crc32 = new CRC32();
+            crc32.update(resource);
+            return Long.toHexString(crc32.getValue());
         }
 
         public byte[] getResource() {

@@ -11,7 +11,16 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.annotation.Nullable;
+
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.Future;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -145,12 +154,28 @@ public class AssetServletTest {
         response = HttpTester.parseResponse(SERVLET_TESTER.getResponses(request.generate()));
         final String firstEtag = response.get(HttpHeader.ETAG);
 
-        response = HttpTester.parseResponse(SERVLET_TESTER.getResponses(request.generate()));
-        final String secondEtag = response.get(HttpHeader.ETAG);
-
+        final int numRequests = 1000;
+        final List<Future<String>> futures = new ArrayList<>(numRequests);
+        final CountDownLatch latch = new CountDownLatch(1);
+        for (int i = 0; i < numRequests; i++) {
+            futures.add(ForkJoinPool.commonPool().submit(() -> {
+                final ByteBuffer req = request.generate();
+                latch.await(); // Attempt to start multiple requests at the same time
+                final HttpTester.Response resp = HttpTester.parseResponse(SERVLET_TESTER.getResponses(req));
+                return resp.get(HttpHeader.ETAG);
+            }));
+        }
+        latch.countDown();
+        final Set<String> eTags = new HashSet<>();
+        for (Future<String> future : futures) {
+            eTags.add(future.get());
+        }
+        assertThat(eTags)
+            .describedAs("eTag generation should be consistent with concurrent requests")
+            .hasSize(1);
         assertThat(firstEtag)
-                .isEqualTo("\"e7bd7e8e\"")
-                .isEqualTo(secondEtag);
+            .isEqualTo("\"e7bd7e8e\"")
+            .isEqualTo(eTags.iterator().next());
     }
 
     @Test
