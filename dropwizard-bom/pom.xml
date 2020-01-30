@@ -16,7 +16,7 @@
     </description>
 
     <properties>
-        <dropwizard.version>2.0.1</dropwizard.version>
+        <dropwizard.version>2.0.2-SNAPSHOT</dropwizard.version>
     </properties>
 
     <dependencyManagement>
