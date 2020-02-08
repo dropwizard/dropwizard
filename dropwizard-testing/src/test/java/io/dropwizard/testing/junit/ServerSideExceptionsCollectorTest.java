@@ -1,8 +1,7 @@
 package io.dropwizard.testing.junit;
 
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
-import static org.junit.Assert.assertThat;
-import static org.hamcrest.CoreMatchers.equalTo;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -78,7 +77,7 @@ public class ServerSideExceptionsCollectorTest
             .request()
             .put(Entity.entity("This is an server side exception", MediaType.TEXT_PLAIN));
 
-        assertThat(response.getStatus(), equalTo(400));
+        assertThat(response.getStatus()).isEqualTo(400);
     }
 
 }
