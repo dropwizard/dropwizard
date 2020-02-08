@@ -1,11 +1,14 @@
 package io.dropwizard.testing.junit5;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.ImmutableList;
+
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.cli.Command;
 import io.dropwizard.cli.ServerCommand;
 import io.dropwizard.configuration.ConfigurationSourceProvider;
+import io.dropwizard.jersey.errors.LoggingExceptionMapper;
 import io.dropwizard.jersey.jackson.JacksonFeature;
 import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.setup.Environment;
@@ -18,6 +21,8 @@ import org.glassfish.jersey.client.JerseyClientBuilder;
 import javax.annotation.Nullable;
 import javax.ws.rs.client.Client;
 import java.util.Optional;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
@@ -41,6 +46,8 @@ public class DropwizardAppExtension<C extends Configuration> implements Dropwiza
     private final DropwizardTestSupport<C> testSupport;
 
     private final AtomicInteger recursiveCallCount = new AtomicInteger(0);
+
+    private volatile List<Throwable> serverSideExceptions;
 
     @Nullable
     private Client client;
@@ -149,6 +156,22 @@ public class DropwizardAppExtension<C extends Configuration> implements Dropwiza
 
     public DropwizardAppExtension(DropwizardTestSupport<C> testSupport) {
         this.testSupport = testSupport;
+        this.serverSideExceptions = new ArrayList<>();
+        this.addListener(new ServiceListener<C>()
+        {
+          @Override
+            public void onRun(C configuration, Environment environment, DropwizardAppExtension<C> rule) throws Exception
+            {
+                  environment.jersey().register(new LoggingExceptionMapper<Throwable>()
+                  {
+                      @Override
+                      protected void logException(long id, Throwable exception)
+                      {
+                          serverSideExceptions.add(exception);
+                      }
+                  });
+            }
+        });
     }
 
     public DropwizardAppExtension<C> addListener(final ServiceListener<C> listener) {
@@ -267,4 +290,11 @@ public class DropwizardAppExtension<C extends Configuration> implements Dropwiza
             .property(ClientProperties.READ_TIMEOUT, DEFAULT_READ_TIMEOUT_MS)
             .property(HttpUrlConnectorProvider.SET_METHOD_WORKAROUND, true);
     }
+
+    public List<Throwable> scrapeServerErrors() {
+        List<Throwable> copy = ImmutableList.copyOf(serverSideExceptions);
+        serverSideExceptions = new ArrayList<>();
+        return copy;
+    }
+
 }

@@ -1,23 +1,23 @@
 package io.dropwizard.testing.junit5;
 
-import org.junit.jupiter.api.extension.AfterAllCallback;
-import org.junit.jupiter.api.extension.AfterEachCallback;
-import org.junit.jupiter.api.extension.BeforeAllCallback;
-import org.junit.jupiter.api.extension.BeforeEachCallback;
-import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.api.extension.*;
 import org.junit.platform.commons.util.ReflectionUtils;
 
 import javax.annotation.Nullable;
+
+import io.dropwizard.testing.DropwizardTestSupport;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
  * An JUnit 5 extension that looks for fields in test class and test class instances and executes before and after actions.
  */
-public class DropwizardExtensionsSupport implements BeforeAllCallback, BeforeEachCallback, AfterAllCallback, AfterEachCallback {
+public class DropwizardExtensionsSupport implements BeforeAllCallback, BeforeEachCallback, AfterAllCallback, AfterEachCallback, TestExecutionExceptionHandler {
 
     private static Set<Field> findAnnotatedFields(Class<?> testClass, boolean isStaticMember) {
         final Set<Field> set = Arrays.stream(testClass.getDeclaredFields()).
@@ -49,6 +49,8 @@ public class DropwizardExtensionsSupport implements BeforeAllCallback, BeforeEac
         for (Field member : findAnnotatedFields(cls, true)) {
             getDropwizardExtension(member, null).after();
         }
+
+        handleTestExecutionException( null, cls, null);
     }
 
     @Override
@@ -75,6 +77,8 @@ public class DropwizardExtensionsSupport implements BeforeAllCallback, BeforeEac
         for (Field member : findAnnotatedFields(cls, false)) {
             getDropwizardExtension(member, testInstance).after();
         }
+
+        handleTestExecutionException(testInstance, cls, null);
     }
 
     @Override
@@ -147,5 +151,55 @@ public class DropwizardExtensionsSupport implements BeforeAllCallback, BeforeEac
 
     private DropwizardExtension getDropwizardExtension(Field member, @Nullable Object o) throws IllegalAccessException {
         return (DropwizardExtension) ReflectionUtils.makeAccessible(member).get(o);
+    }
+
+    @Override
+    public void handleTestExecutionException(ExtensionContext extensionContext, Throwable throwable) throws Throwable
+    {
+        final Object testInstance = extensionContext.getTestInstance()
+            .orElseThrow(() -> new IllegalStateException("Unable to get the current test instance"));
+        try {
+            handleTestExecutionException(testInstance, testInstance.getClass(), throwable);
+        } catch (Exception e) {
+            throw e;
+        } catch (Throwable e) {
+            throw new Exception(e);
+        }
+
+        throw throwable;
+    }
+
+    /**
+     * Invokes {@link DropwizardAppExtension#scrapeServerErrors()} after each test to prevent exceptions from leaking between tests
+     */
+    private void handleTestExecutionException(@Nullable Object testInstance, Class<? extends Object> cls,@Nullable Throwable throwable) throws Throwable
+    {
+        if(testInstance != null) {
+            final Class<?> enclosingClass = testInstance.getClass().getEnclosingClass();
+            if (enclosingClass != null) {
+                final Object enclosing = getEnclosingInstance(testInstance);
+                if (enclosing != null) {
+                    handleTestExecutionException(enclosing, enclosingClass, throwable);
+                }
+            }
+
+            for (Field member : findAnnotatedFields(cls, false)) {
+                attachServerErrors(getDropwizardExtension(member, testInstance), throwable);
+            }
+        }
+
+        for (Field member : findAnnotatedFields(cls, true)) {
+            attachServerErrors(getDropwizardExtension(member, null), throwable);
+        }
+    }
+
+    private void attachServerErrors(DropwizardExtension dropwizardExtension, @Nullable Throwable throwable)
+    {
+       if(dropwizardExtension instanceof DropwizardAppExtension) {
+           List<Throwable> serverSideErrors = ((DropwizardAppExtension)dropwizardExtension).scrapeServerErrors();
+           if(throwable != null) {
+               serverSideErrors.forEach(throwable::addSuppressed);
+           }
+       }
     }
 }
