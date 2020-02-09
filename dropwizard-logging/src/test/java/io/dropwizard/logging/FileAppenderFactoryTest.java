@@ -190,7 +190,7 @@ class FileAppenderFactoryTest {
 
         final String file = rollingAppender.getFile();
         assertThat(file).contains("test-archived-name-")
-                        .endsWith(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + ".log");
+                        .endsWith(LocalDateTime.now(appenderFactory.getTimeZone().toZoneId()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + ".log");
     }
 
     @Test

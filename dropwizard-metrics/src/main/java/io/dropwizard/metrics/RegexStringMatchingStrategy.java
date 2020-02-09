@@ -3,8 +3,8 @@ package io.dropwizard.metrics;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 
+import java.time.Duration;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 class RegexStringMatchingStrategy implements StringMatchingStrategy {
@@ -12,7 +12,7 @@ class RegexStringMatchingStrategy implements StringMatchingStrategy {
 
     RegexStringMatchingStrategy() {
         patternCache = Caffeine.newBuilder()
-            .expireAfterWrite(1, TimeUnit.HOURS)
+            .expireAfterWrite(Duration.ofHours(1))
             .build(Pattern::compile);
     }
 

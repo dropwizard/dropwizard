@@ -36,11 +36,43 @@
                 <jdk>[9,)</jdk>
             </activation>
             <properties>
-                <maven.compiler.release>8</maven.compiler.release>
-                <maven.compiler.source>8</maven.compiler.source>
-                <maven.compiler.target>8</maven.compiler.target>
                 <argLine>${surefire.argLine} --illegal-access=deny --add-opens java.base/java.net=ALL-UNNAMED</argLine>
             </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <configuration>
+                            <annotationProcessorPaths>
+                                <path>
+                                    <groupId>com.google.errorprone</groupId>
+                                    <artifactId>error_prone_core</artifactId>
+                                    <version>${error_prone.version}</version>
+                                </path>
+                                <!-- enable extended nullability checks -->
+                                <path>
+                                    <groupId>com.uber.nullaway</groupId>
+                                    <artifactId>nullaway</artifactId>
+                                    <version>${nullaway.version}</version>
+                                </path>
+                            </annotationProcessorPaths>
+                            <compilerArgs>
+                                <arg>-XDcompilePolicy=simple</arg>
+                                <!-- When run as plugin all args must be passed together -->
+                                <arg>-Xplugin:ErrorProne
+                                    -XepDisableWarningsInGeneratedCode
+                                    -Xep:EqualsGetClass:OFF
+                                    -Xep:NullAway:ERROR
+                                    -XepOpt:NullAway:AnnotatedPackages=io.dropwizard
+                                    -XepOpt:NullAway:ExcludedFieldAnnotations=org.mockito.Mock
+                                    -XepOpt:NullAway:UnannotatedSubPackages=io.dropwizard.benchmarks</arg>
+                            </compilerArgs>
+                            <release>8</release>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
         <profile>
             <id>release</id>

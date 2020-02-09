@@ -62,6 +62,7 @@ import java.util.List;
  * </p>
  */
 public class HttpClientBuilder {
+    @SuppressWarnings("UnnecessaryLambda")
     private static final HttpRequestRetryHandler NO_RETRIES = (exception, executionCount, context) -> false;
 
     private final MetricRegistry metricRegistry;
