@@ -1030,7 +1030,7 @@ public class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
                 .get();
 
         assertThat(response.getStatus()).isEqualTo(200);
-        assertThat(response.readEntity(Integer.class)).isEqualTo(42);
+        assertThat(response.readEntity(Integer.class)).isEqualTo(23);
     }
 
     @Test
