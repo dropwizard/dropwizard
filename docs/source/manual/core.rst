@@ -1356,7 +1356,7 @@ If a request comes in which matches a resource class's path but has a method whi
 support, Jersey will automatically return a ``405 Method Not Allowed`` to the client.
 
 The return value of the method (in this case, a ``NotificationList`` instance) is then mapped to the
-:ref:`negotiated media type <man-core-resources-media-types>` this case, our resource only supports
+:ref:`negotiated media type <man-core-resources-media-types>`. In this case, our resource only supports
 JSON, and so the ``NotificationList`` is serialized to JSON using Jackson.
 
 .. _man-core-resources-metrics:
