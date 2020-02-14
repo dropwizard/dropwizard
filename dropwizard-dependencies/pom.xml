@@ -40,7 +40,7 @@
         <javassist.version>3.26.0-GA</javassist.version>
         <jaxb-api.version>2.3.2</jaxb-api.version>
         <jcip-annotations.version>1.0</jcip-annotations.version>
-        <jdbi3.version>3.12.0</jdbi3.version>
+        <jdbi3.version>3.12.2</jdbi3.version>
         <jersey.version>2.30</jersey.version>
         <jetty-setuid-java.version>1.0.3</jetty-setuid-java.version>
         <jetty.version>9.4.26.v20200117</jetty.version>
