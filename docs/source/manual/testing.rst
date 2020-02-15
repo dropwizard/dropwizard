@@ -138,8 +138,9 @@ Next, write a test for deserializing a ``Person`` instance from JSON:
         @Test
         public void deserializesFromJSON() throws Exception {
             final Person person = new Person("Luther Blissett", "lb@example.com");
-            assertThat(MAPPER.readValue(fixture("fixtures/person.json"), Person.class))
-                    .isEqualTo(person);
+            final Person actual = MAPPER.readValue(fixture("fixtures/person.json"), Person.class);
+            assertThat(actual.getEmail()).isEqualTo(person.getEmail());
+            assertThat(actual.getName()).isEqualTo(person.getName());
         }
     }
 
