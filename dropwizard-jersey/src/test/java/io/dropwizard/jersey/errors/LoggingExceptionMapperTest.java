@@ -62,7 +62,7 @@ public class LoggingExceptionMapperTest extends AbstractJerseyTest {
         assertThat(thrown).isInstanceOf(WebApplicationException.class);
         final Response resp = ((WebApplicationException) thrown).getResponse();
         assertThat(resp.getStatus()).isEqualTo(405);
-        assertThat(resp.getHeaders()).contains(entry("Allow", Collections.singletonList("GET,OPTIONS")));
+        assertThat(resp.getHeaders()).containsAnyOf(entry("Allow", Collections.singletonList("GET,OPTIONS")), entry("Allow", Collections.singletonList("OPTIONS,GET")));
         assertThat(resp.readEntity(String.class)).isEqualTo("{\"code\":405,\"message\":\"HTTP 405 Method Not Allowed\"}");
     }
 
