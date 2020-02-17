@@ -3,7 +3,7 @@ Dropwizard
 [![Build Status](https://travis-ci.org/dropwizard/dropwizard.svg?branch=master)](https://travis-ci.org/dropwizard/dropwizard)
 [![Coverage Status](https://coveralls.io/repos/github/dropwizard/dropwizard/badge.svg?branch=master)](https://coveralls.io/github/dropwizard/dropwizard?branch=master)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.dropwizard/dropwizard-core/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.dropwizard/dropwizard-core/)
-[![Javadocs](https://javadoc.io/badge/io.dropwizard/dropwizard-parent.svg?color=brightgreen)](https://javadoc.io/doc/io.dropwizard/dropwizard-parent)
+[![Javadocs](https://javadoc.io/badge/io.dropwizard/dropwizard-project.svg?color=brightgreen)](https://javadoc.io/doc/io.dropwizard/dropwizard-project)
 [![Documentation Status](https://readthedocs.org/projects/dropwizard/badge/?version=stable)](https://www.dropwizard.io/en/stable/?badge=stable)
 [![Maintainability](https://api.codeclimate.com/v1/badges/11a16ea08c8b5499e2b9/maintainability)](https://codeclimate.com/github/dropwizard/dropwizard/maintainability)
 
