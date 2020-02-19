@@ -25,7 +25,7 @@
         <maven.compiler.optimize>false</maven.compiler.optimize>
         <maven.compiler.forceJavacCompilerUse>true</maven.compiler.forceJavacCompilerUse>
 
-        <surefire.argLine>-Duser.language=en -Duser.region=US</surefire.argLine>
+        <surefire.argLine>-Duser.language=en -Duser.region=US -Duser.timezone=UTC</surefire.argLine>
         <argLine>${surefire.argLine}</argLine>
     </properties>
 
