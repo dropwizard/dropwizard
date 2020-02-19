@@ -214,6 +214,7 @@ htmlhelp_basename = 'Dropwizarddoc'
 
 todo_include_todos = True
 
+html_extra_path = ['extras']
 
 # -- Options for LaTeX output --------------------------------------------------
 
