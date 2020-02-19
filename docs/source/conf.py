@@ -71,7 +71,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Dropwizard'
-copyright = u'2010-2013, Coda Hale, Yammer Inc., 2014-2019 Dropwizard Team'
+copyright = u'2010-2013, Coda Hale, Yammer Inc., 2014-2020 Dropwizard Team'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
