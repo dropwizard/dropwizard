@@ -94,6 +94,15 @@ public class BootstrapTest {
     }
 
     @Test
+    public void allowsAccessToJmxReporter() {
+        final MetricRegistry newRegistry = new MetricRegistry();
+        bootstrap.setMetricRegistry(newRegistry);
+        assertThat(bootstrap.getJmxReporter()).isNull();
+        bootstrap.registerMetrics();
+        assertThat(bootstrap.getJmxReporter()).isNotNull();
+    }
+
+    @Test
     public void canUseCustomValidatorFactory() throws Exception {
         ValidatorFactory factory = Validation
                 .byProvider(HibernateValidator.class)
