@@ -5,8 +5,6 @@ import io.dropwizard.validation.selfvalidating.SelfValidation;
 import io.dropwizard.validation.selfvalidating.ViolationCollector;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 import uk.org.lidalia.slf4jext.Level;
 import uk.org.lidalia.slf4jtest.LoggingEvent;
 import uk.org.lidalia.slf4jtest.TestLoggerFactory;
@@ -17,7 +15,6 @@ import javax.validation.Validator;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @NotThreadSafe
-@Execution(ExecutionMode.SAME_THREAD)
 public class SelfValidationTest {
 
     private static final String FAILED = "failed";
