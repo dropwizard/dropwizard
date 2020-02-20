@@ -99,7 +99,7 @@ public class Bootstrap<T extends Configuration> {
     /**
      * Returns the {@link JmxReporter} registered with the bootstrap's {@link MetricRegistry}.
      *
-     * @since 2.0
+     * @since 2.1
      */
     @Nullable
     public JmxReporter getJmxReporter() {
