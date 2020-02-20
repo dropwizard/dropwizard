@@ -4,6 +4,7 @@ import io.dropwizard.validation.selfvalidating.SelfValidating;
 import io.dropwizard.validation.selfvalidating.SelfValidation;
 import io.dropwizard.validation.selfvalidating.ViolationCollector;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import uk.org.lidalia.slf4jext.Level;
 import uk.org.lidalia.slf4jtest.LoggingEvent;
@@ -21,6 +22,7 @@ public class SelfValidationTest {
     private static final String FAILED_RESULT = " " + FAILED;
 
     @AfterEach
+    @BeforeEach
     public void clearAllLoggers() {
         //this must be a clear all because the validation runs in other threads
         TestLoggerFactory.clearAll();
