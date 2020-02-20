@@ -5,8 +5,7 @@ import io.dropwizard.validation.selfvalidating.SelfValidation;
 import io.dropwizard.validation.selfvalidating.ViolationCollector;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
+import org.junit.jupiter.api.parallel.ResourceLock;
 import uk.org.lidalia.slf4jext.Level;
 import uk.org.lidalia.slf4jtest.LoggingEvent;
 import uk.org.lidalia.slf4jtest.TestLoggerFactory;
@@ -17,7 +16,6 @@ import javax.validation.Validator;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @NotThreadSafe
-@Execution(ExecutionMode.SAME_THREAD)
 public class SelfValidationTest {
 
     private static final String FAILED = "failed";
@@ -156,6 +154,7 @@ public class SelfValidationTest {
     private final Validator validator = BaseValidator.newValidator();
 
     @Test
+    @ResourceLock("logger")
     public void failingExample() {
         assertThat(ConstraintViolations.format(validator.validate(new FailingExample())))
                 .containsExactlyInAnyOrder(FAILED_RESULT);
@@ -164,6 +163,7 @@ public class SelfValidationTest {
     }
 
     @Test
+    @ResourceLock("logger")
     public void subClassExample() {
         assertThat(ConstraintViolations.format(validator.validate(new SubclassExample())))
                 .containsExactlyInAnyOrder(
@@ -175,6 +175,7 @@ public class SelfValidationTest {
     }
 
     @Test
+    @ResourceLock("logger")
     public void annotatedSubClassExample() {
         assertThat(ConstraintViolations.format(validator.validate(new AnnotatedSubclassExample())))
                 .containsExactlyInAnyOrder(
@@ -186,6 +187,7 @@ public class SelfValidationTest {
     }
 
     @Test
+    @ResourceLock("logger")
     public void overridingSubClassExample() {
         assertThat(ConstraintViolations.format(validator.validate(new OverridingExample())))
                 .isEmpty();
@@ -194,6 +196,7 @@ public class SelfValidationTest {
     }
 
     @Test
+    @ResourceLock("logger")
     public void correctExample() {
         assertThat(ConstraintViolations.format(validator.validate(new CorrectExample())))
                 .isEmpty();
@@ -202,6 +205,7 @@ public class SelfValidationTest {
     }
 
     @Test
+    @ResourceLock("logger")
     public void multipleTestingOfSameClass() {
         assertThat(ConstraintViolations.format(validator.validate(new CorrectExample())))
                 .isEmpty();
@@ -212,6 +216,7 @@ public class SelfValidationTest {
     }
 
     @Test
+    @ResourceLock("logger")
     public void testDirectContextUsage() {
         assertThat(ConstraintViolations.format(validator.validate(new DirectContextExample())))
                 .containsExactlyInAnyOrder(FAILED_RESULT);
@@ -220,6 +225,7 @@ public class SelfValidationTest {
     }
 
     @Test
+    @ResourceLock("logger")
     public void complexExample() {
         assertThat(ConstraintViolations.format(validator.validate(new ComplexExample())))
                 .containsExactly(
@@ -232,6 +238,7 @@ public class SelfValidationTest {
     }
 
     @Test
+    @ResourceLock("logger")
     public void invalidExample() throws Exception {
         assertThat(ConstraintViolations.format(validator.validate(new InvalidExample())))
                 .isEmpty();
@@ -257,6 +264,7 @@ public class SelfValidationTest {
     }
 
     @Test
+    @ResourceLock("logger")
     public void giveWarningIfNoValidationMethods() {
         assertThat(ConstraintViolations.format(validator.validate(new NoValidations())))
                 .isEmpty();
@@ -272,6 +280,7 @@ public class SelfValidationTest {
     }
 
     @Test
+    @ResourceLock("logger")
     public void violationMessagesAreEscaped() {
         assertThat(ConstraintViolations.format(validator.validate(new InjectionExample()))).containsExactly(
                 " ${'value'}",
