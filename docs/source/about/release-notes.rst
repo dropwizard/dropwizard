@@ -6,6 +6,14 @@ Release Notes
 
 Please refer to `GitHub releases <https://github.com/dropwizard/dropwizard/releases>`__ for the most up-to-date release notes.
 
+.. _rel-1.3.19:
+
+v1.3.19: Feb 20, 2020
+=====================
+
+* Escape EL expressions in ViolationCollector (`#3153 <https://github.com/dropwizard/dropwizard/issues/3153>`_, `#3160 <https://github.com/dropwizard/dropwizard/pull/3160>`_)
+
+
 .. _rel-1.3.18:
 
 v1.3.18: Jan 30, 2020
