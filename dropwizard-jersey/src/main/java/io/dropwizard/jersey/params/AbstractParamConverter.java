@@ -24,9 +24,10 @@ import java.lang.reflect.InvocationTargetException;
 public class AbstractParamConverter<T> implements ParamConverter<T> {
     private final Constructor<T> constructor;
     private final String parameterName;
+    @Nullable
     private final String defaultValue;
 
-    public AbstractParamConverter(Constructor<T> constructor, String parameterName, String defaultValue) {
+    public AbstractParamConverter(Constructor<T> constructor, String parameterName, @Nullable String defaultValue) {
         this.constructor = constructor;
         this.parameterName = parameterName;
         this.defaultValue = defaultValue;
