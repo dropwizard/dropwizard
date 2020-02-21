@@ -1,5 +1,6 @@
 package io.dropwizard.jersey.params;
 
+import io.dropwizard.jersey.DefaultValueUtils;
 import io.dropwizard.jersey.validation.JerseyParameterNameProvider;
 
 import javax.annotation.Nullable;
@@ -31,7 +32,8 @@ public class AbstractParamConverterProvider implements ParamConverterProvider {
                 // leaving Jersey to handle these parameters as it normally would.
                 return null;
             }
-            return new AbstractParamConverter<>(constructor, parameterName);
+            final String defaultValue = DefaultValueUtils.getDefaultValue(annotations);
+            return new AbstractParamConverter<>(constructor, parameterName, defaultValue);
         }
         return null;
     }
