@@ -1,5 +1,6 @@
 package io.dropwizard.jersey.params;
 
+import io.dropwizard.util.Strings;
 import org.glassfish.jersey.internal.inject.ExtractorException;
 import org.glassfish.jersey.server.internal.LocalizationMessages;
 
@@ -23,17 +24,27 @@ import java.lang.reflect.InvocationTargetException;
 public class AbstractParamConverter<T> implements ParamConverter<T> {
     private final Constructor<T> constructor;
     private final String parameterName;
+    @Nullable
+    private final String defaultValue;
 
-    public AbstractParamConverter(Constructor<T> constructor, String parameterName) {
+    public AbstractParamConverter(Constructor<T> constructor, String parameterName, @Nullable String defaultValue) {
         this.constructor = constructor;
         this.parameterName = parameterName;
+        this.defaultValue = defaultValue;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Nullable
     public T fromString(String value) {
         try {
-            return _fromString(value);
+            if (Strings.isNullOrEmpty(value) && defaultValue != null && !defaultValue.equals(value)) {
+                return _fromString(defaultValue);
+            } else {
+                return _fromString(value);
+            }
         } catch (InvocationTargetException ex) {
             final Throwable cause = ex.getCause();
             if (cause instanceof WebApplicationException) {
@@ -50,6 +61,9 @@ public class AbstractParamConverter<T> implements ParamConverter<T> {
         return constructor.newInstance(value, parameterName);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString(T value) throws IllegalArgumentException {
         if (value == null) {
