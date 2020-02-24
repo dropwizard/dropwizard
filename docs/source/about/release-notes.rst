@@ -6,6 +6,14 @@ Release Notes
 
 Please refer to `GitHub releases <https://github.com/dropwizard/dropwizard/releases>`__ for the most up-to-date release notes.
 
+.. _rel-1.3.20:
+
+v1.3.20: Feb 24, 2020
+=====================
+
+* Upgrade to Jackson 2.9.10.20200223 to address CVE-2020-8840 (`#3168 <https://github.com/dropwizard/dropwizard/pull/3168>`_)
+
+
 .. _rel-1.3.19:
 
 v1.3.19: Feb 20, 2020
