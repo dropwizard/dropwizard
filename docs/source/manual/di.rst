@@ -134,7 +134,7 @@ This allows you to use CDI annotations to control your dependency injection:
         private final String dbUser;
 
         @Inject
-        public HotelResource(@Named("dbUser") String dbUser) {
+        public UserRepository(@Named("dbUser") String dbUser) {
             this.dbUser = dbUser;
         }
     }
