@@ -40,7 +40,7 @@ public class CachingAuthenticator<C, P extends Principal> implements Authenticat
     public CachingAuthenticator(final MetricRegistry metricRegistry,
                                 final Authenticator<C, P> authenticator,
                                 final CaffeineSpec cacheSpec) {
-        this(metricRegistry, authenticator, Caffeine.from(cacheSpec));
+        this(metricRegistry, authenticator, Caffeine.from(cacheSpec), false);
     }
 
     /**
@@ -53,17 +53,41 @@ public class CachingAuthenticator<C, P extends Principal> implements Authenticat
     public CachingAuthenticator(final MetricRegistry metricRegistry,
                                 final Authenticator<C, P> authenticator,
                                 final Caffeine<Object, Object> builder) {
+        this(metricRegistry, authenticator, builder, false);
+    }
+
+    /**
+     * Creates a new cached authenticator.
+     *
+     * @param metricRegistry      the application's registry of metrics
+     * @param authenticator       the underlying authenticator
+     * @param builder             a {@link Caffeine}
+     * @param cacheNegativeResult the boolean to enable negative cache
+     */
+    public CachingAuthenticator(final MetricRegistry metricRegistry,
+                                final Authenticator<C, P> authenticator,
+                                final Caffeine<Object, Object> builder,
+                                final boolean cacheNegativeResult) {
         this.cacheMisses = metricRegistry.meter(name(authenticator.getClass(), "cache-misses"));
         this.gets = metricRegistry.timer(name(authenticator.getClass(), "gets"));
-        this.cache = builder.recordStats().build(key -> {
-            cacheMisses.mark();
-            final Optional<P> optPrincipal = authenticator.authenticate(key);
-            if (!optPrincipal.isPresent()) {
-                // Prevent caching of unknown credentials
-                throw new InvalidCredentialsException();
-            }
-            return optPrincipal;
-        });
+        CacheLoader<C, Optional<P>> loader;
+        if (cacheNegativeResult) {
+            loader = key -> {
+                cacheMisses.mark();
+                return authenticator.authenticate(key);
+            };
+        } else {
+            loader = key -> {
+                cacheMisses.mark();
+                final Optional<P> optPrincipal = authenticator.authenticate(key);
+                if (!optPrincipal.isPresent()) {
+                    // Prevent caching of unknown credentials
+                    throw new InvalidCredentialsException();
+                }
+                return optPrincipal;
+            };
+        }
+        this.cache = builder.recordStats().build(loader);
     }
 
     @Override
