@@ -89,7 +89,6 @@ public class UnitOfWorkAspect {
             try {
                 configureSession();
                 ManagedSessionContext.bind(session);
-                beginTransaction(unitOfWork, session);
             } catch (Throwable th) {
                 session.close();
                 session = null;
@@ -97,6 +96,7 @@ public class UnitOfWorkAspect {
                 throw th;
             }
         }
+        beginTransaction(unitOfWork, session);
     }
 
     public void afterEnd() {
@@ -171,14 +171,6 @@ public class UnitOfWorkAspect {
                 "Existing session flush mode (%s) does not match requested mode (%s)",
                 session.getHibernateFlushMode(),
                 unitOfWork.flushMode()
-            ));
-        }
-        final Transaction txn = session.getTransaction();
-        if(unitOfWork.transactional() != (txn != null && txn.isActive())) {
-            throw new IllegalStateException(String.format(
-                "Existing session transaction state (%s) does not match requested (%b)",
-                txn == null ? "NULL" : Boolean.valueOf(txn.isActive()),
-                unitOfWork.transactional()
             ));
         }
     }
