@@ -1,6 +1,8 @@
 package io.dropwizard.views.freemarker;
 
 import com.codahale.metrics.MetricRegistry;
+
+import freemarker.template.Configuration;
 import io.dropwizard.logging.BootstrapLogging;
 import io.dropwizard.views.ViewMessageBodyWriter;
 import io.dropwizard.views.ViewRenderExceptionMapper;
@@ -82,7 +84,7 @@ public class FreemarkerViewRendererTest extends JerseyTest {
     @Override
     protected Application configure() {
         ResourceConfig config = new ResourceConfig();
-        final ViewRenderer renderer = new FreemarkerViewRenderer();
+        final ViewRenderer renderer = new FreemarkerViewRenderer(Configuration.VERSION_2_3_30);
         config.register(new ViewMessageBodyWriter(new MetricRegistry(), Collections.singletonList(renderer)));
         config.register(new ExampleResource());
         config.register(new ViewRenderExceptionMapper());

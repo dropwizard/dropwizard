@@ -28,15 +28,20 @@ import java.util.regex.Pattern;
  */
 public class FreemarkerViewRenderer implements ViewRenderer {
     private static final Pattern FILE_PATTERN = Pattern.compile("\\.ftl[hx]?");
-    private static final Version FREEMARKER_VERSION = Configuration.getVersion();
     private final TemplateLoader loader;
 
     private static class TemplateLoader implements CacheLoader<Class<?>, Configuration> {
+        private final Version incompatibleImprovementsVersion;
         private Map<String, String> baseConfig = Collections.emptyMap();
+
+        private TemplateLoader(Version incompatibleImprovementsVersion) {
+            this.incompatibleImprovementsVersion = incompatibleImprovementsVersion;
+        }
+
         @Override
         public Configuration load(@Nonnull Class<?> key) throws Exception {
-            final Configuration configuration = new Configuration(FREEMARKER_VERSION);
-            configuration.setObjectWrapper(new DefaultObjectWrapperBuilder(FREEMARKER_VERSION).build());
+            final Configuration configuration = new Configuration(incompatibleImprovementsVersion);
+            configuration.setObjectWrapper(new DefaultObjectWrapperBuilder(incompatibleImprovementsVersion).build());
             configuration.loadBuiltInEncodingMap();
             configuration.setDefaultEncoding(StandardCharsets.UTF_8.name());
             configuration.setClassForTemplateLoading(key, "/");
@@ -55,8 +60,19 @@ public class FreemarkerViewRenderer implements ViewRenderer {
 
     private final LoadingCache<Class<?>, Configuration> configurationCache;
 
+    /**
+     * @deprecated Use {@link #FreemarkerViewRenderer(Version)} instead.
+     */
     public FreemarkerViewRenderer() {
-        this.loader = new TemplateLoader();
+        this(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
+    }
+
+    /**
+     * @param incompatibleImprovementsVersion FreeMarker version number for backward compatible bug fixes and improvements.
+     *                                        See {@link Configuration#Configuration(Version)} for more information.
+     */
+    public FreemarkerViewRenderer(Version incompatibleImprovementsVersion) {
+        this.loader = new TemplateLoader(incompatibleImprovementsVersion);
         this.configurationCache = Caffeine.newBuilder().build(loader);
     }
 
