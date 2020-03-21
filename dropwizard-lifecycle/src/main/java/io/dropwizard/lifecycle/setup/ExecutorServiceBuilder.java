@@ -121,32 +121,32 @@ public class ExecutorServiceBuilder {
 
     static String getNameWithoutFormat(String nameFormat) {
         final String name = String.format(Locale.ROOT, nameFormat, 0);
-        final StringBuilder nameWithoutFormat = new StringBuilder(nameFormat.length());
-        int mismatchIdx = -1;
-        for (int i = 0; i < name.length(); i++) {
-            final char nameFormatCh = nameFormat.charAt(i);
-            final char nameCh = name.charAt(i);
-            if (nameFormatCh != nameCh) {
-                if (nameWithoutFormat.length() > 0 && nameWithoutFormat.charAt(i - 1) == '-') {
-                    // Remove dash before %d if it exists
-                    nameWithoutFormat.setLength(i - 1);
-                }
-                mismatchIdx = i;
+        return commonPrefixWithoutHyphen(name, nameFormat) + commonSuffix(name, nameFormat);
+    }
+
+    static String commonPrefixWithoutHyphen(String name, String nameFormat) {
+        final int minLength = Math.min(name.length(), nameFormat.length());
+        int diffIndex;
+        for (diffIndex = 0; diffIndex < minLength; diffIndex++) {
+            if (name.charAt(diffIndex) != nameFormat.charAt(diffIndex)) {
                 break;
             }
-            nameWithoutFormat.append(nameCh);
         }
-        int commonSuffixNameFormatIdx = nameFormat.length();
-        for (int nameFormatIdx = nameFormat.length() - 1, nameIdx = name.length() - 1; nameFormatIdx > mismatchIdx && nameIdx > mismatchIdx; nameFormatIdx--, nameIdx--) {
-            final char nameFormatCh = nameFormat.charAt(nameFormatIdx);
-            final char nameCh = name.charAt(nameIdx);
-            if (nameFormatCh != nameCh) {
+        if (diffIndex > 0 && name.charAt(diffIndex - 1) == '-') {
+            diffIndex--;
+        }
+        return name.substring(0, diffIndex);
+    }
+
+    static String commonSuffix(String name, String nameFormat) {
+        int nameIndex = name.length();
+        int nameFormatIndex = nameFormat.length();
+        while (--nameIndex >= 0 && --nameFormatIndex >= 0) {
+            if (name.charAt(nameIndex) != nameFormat.charAt(nameFormatIndex)) {
                 break;
             }
-            commonSuffixNameFormatIdx = nameFormatIdx;
         }
-        nameWithoutFormat.append(nameFormat.substring(commonSuffixNameFormatIdx));
-        return nameWithoutFormat.toString();
+        return name.substring(nameIndex + 1);
     }
 
     private boolean isBoundedQueue() {
