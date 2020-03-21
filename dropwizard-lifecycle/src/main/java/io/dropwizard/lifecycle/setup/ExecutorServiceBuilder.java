@@ -6,6 +6,7 @@ import io.dropwizard.util.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import java.util.Locale;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
@@ -21,6 +22,7 @@ public class ExecutorServiceBuilder {
 
     private static final AtomicLong COUNT = new AtomicLong(0);
     private final LifecycleEnvironment environment;
+    @Nonnull
     private final String nameFormat;
     private int corePoolSize;
     private int maximumPoolSize;
@@ -48,12 +50,12 @@ public class ExecutorServiceBuilder {
         this(environment, nameFormat, buildThreadFactory(nameFormat));
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     private static ThreadFactory buildThreadFactory(String nameFormat) {
+        String.format(Locale.ROOT, nameFormat, 0); // Fail fast on invalid name format
         return r -> {
             final Thread thread = Executors.defaultThreadFactory().newThread(r);
-            if (nameFormat != null) {
-                thread.setName(String.format(Locale.ROOT, nameFormat, COUNT.incrementAndGet()));
-            }
+            thread.setName(String.format(Locale.ROOT, nameFormat, COUNT.incrementAndGet()));
             return thread;
         };
     }
@@ -102,8 +104,9 @@ public class ExecutorServiceBuilder {
         if (corePoolSize != maximumPoolSize && maximumPoolSize > 1 && !isBoundedQueue()) {
             log.warn("Parameter 'maximumPoolSize' is conflicting with unbounded work queues");
         }
-        final InstrumentedThreadFactory instrumentedThreadFactory = new InstrumentedThreadFactory(threadFactory,
-            environment.getMetricRegistry(), nameFormat);
+
+        final String nameWithoutFormat = getNameWithoutFormat(nameFormat);
+        final ThreadFactory instrumentedThreadFactory = new InstrumentedThreadFactory(threadFactory, environment.getMetricRegistry(), nameWithoutFormat);
         final ThreadPoolExecutor executor = new ThreadPoolExecutor(corePoolSize,
                                                                    maximumPoolSize,
                                                                    keepAliveTime.getQuantity(),
@@ -114,6 +117,36 @@ public class ExecutorServiceBuilder {
         executor.allowCoreThreadTimeOut(allowCoreThreadTimeOut);
         environment.manage(new ExecutorServiceManager(executor, shutdownTime, nameFormat));
         return executor;
+    }
+
+    static String getNameWithoutFormat(String nameFormat) {
+        final String name = String.format(Locale.ROOT, nameFormat, 0);
+        return commonPrefixWithoutHyphen(name, nameFormat) + commonSuffix(name, nameFormat);
+    }
+
+    static String commonPrefixWithoutHyphen(String name, String nameFormat) {
+        final int minLength = Math.min(name.length(), nameFormat.length());
+        int diffIndex;
+        for (diffIndex = 0; diffIndex < minLength; diffIndex++) {
+            if (name.charAt(diffIndex) != nameFormat.charAt(diffIndex)) {
+                break;
+            }
+        }
+        if (diffIndex > 0 && name.charAt(diffIndex - 1) == '-') {
+            diffIndex--;
+        }
+        return name.substring(0, diffIndex);
+    }
+
+    static String commonSuffix(String name, String nameFormat) {
+        int nameIndex = name.length();
+        int nameFormatIndex = nameFormat.length();
+        while (--nameIndex >= 0 && --nameFormatIndex >= 0) {
+            if (name.charAt(nameIndex) != nameFormat.charAt(nameFormatIndex)) {
+                break;
+            }
+        }
+        return name.substring(nameIndex + 1);
     }
 
     private boolean isBoundedQueue() {
