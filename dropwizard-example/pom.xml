@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>dropwizard-example</artifactId>
-    <version>2.0.2-SNAPSHOT</version>
+    <version>2.0.3-SNAPSHOT</version>
     <groupId>io.dropwizard</groupId>
     <name>Dropwizard Example Application</name>
 
@@ -12,6 +12,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
+        <argLine>-Duser.language=en -Duser.region=US -Duser.timezone=UTC</argLine>
 
         <!-- You'll probably want to remove this for your project. We're just using it here
              so that dropwizard-example doesn't get deployed as a library. -->
@@ -178,7 +179,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-shade-plugin</artifactId>
-                    <version>3.2.1</version>
+                    <version>3.2.2</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -188,7 +189,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-site-plugin</artifactId>
-                    <version>3.8.2</version>
+                    <version>3.9.0</version>
                 </plugin>
             </plugins>
         </pluginManagement>

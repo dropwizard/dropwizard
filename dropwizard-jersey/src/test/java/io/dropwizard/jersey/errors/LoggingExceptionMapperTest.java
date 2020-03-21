@@ -9,11 +9,9 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
-import static org.assertj.core.api.Assertions.entry;
 import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
 
 public class LoggingExceptionMapperTest extends AbstractJerseyTest {
@@ -62,7 +60,7 @@ public class LoggingExceptionMapperTest extends AbstractJerseyTest {
         assertThat(thrown).isInstanceOf(WebApplicationException.class);
         final Response resp = ((WebApplicationException) thrown).getResponse();
         assertThat(resp.getStatus()).isEqualTo(405);
-        assertThat(resp.getHeaders()).contains(entry("Allow", Collections.singletonList("GET,OPTIONS")));
+        assertThat(resp.getAllowedMethods()).containsOnly("GET", "OPTIONS");
         assertThat(resp.readEntity(String.class)).isEqualTo("{\"code\":405,\"message\":\"HTTP 405 Method Not Allowed\"}");
     }
 

@@ -296,6 +296,25 @@ public class ValidatingResource {
     }
 
     @GET
+    @Path("longParam")
+    public Long longParam(@QueryParam("num") @Min(23) LongParam longParam) {
+        return longParam.get();
+    }
+
+    @GET
+    @Path("longParamNotNull")
+    public Long longParamNotNull(@QueryParam("num")
+                                 @NotNull(payload = Unwrapping.Skip.class) @Min(23) LongParam longParam) {
+        return longParam.get();
+    }
+
+    @GET
+    @Path("longParamWithDefault")
+    public Long longParamWithDefault(@QueryParam("num") @DefaultValue("42") @Min(23) LongParam longParam) {
+        return longParam.get();
+    }
+
+    @GET
     @Path("intParam")
     public Integer intParam(@QueryParam("num") @Min(23) IntParam intParam) {
         return intParam.get();

@@ -4,7 +4,7 @@
 
     <groupId>io.dropwizard</groupId>
     <artifactId>dropwizard-project</artifactId>
-    <version>2.0.2-SNAPSHOT</version>
+    <version>2.0.3-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Dropwizard Project</name>
@@ -69,11 +69,11 @@
         <maven-install-plugin.version>2.5.2</maven-install-plugin.version>
         <maven-invoker-plugin.version>3.2.1</maven-invoker-plugin.version>
         <maven-jar-plugin.version>3.2.0</maven-jar-plugin.version>
-        <maven-javadoc-plugin.version>3.1.1</maven-javadoc-plugin.version>
+        <maven-javadoc-plugin.version>3.2.0</maven-javadoc-plugin.version>
         <maven-project-info-reports-plugin.version>3.0.0</maven-project-info-reports-plugin.version>
         <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
         <maven-resources-plugin.version>3.1.0</maven-resources-plugin.version>
-        <maven-site-plugin.version>3.8.2</maven-site-plugin.version>
+        <maven-site-plugin.version>3.9.0</maven-site-plugin.version>
         <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
         <nexus-staging-maven-plugin.version>1.6.8</nexus-staging-maven-plugin.version>
     </properties>
@@ -197,7 +197,8 @@
         <connection>scm:git:https://github.com/dropwizard/dropwizard</connection>
         <developerConnection>scm:git:git@github.com:dropwizard/dropwizard.git</developerConnection>
         <url>https://github.com/dropwizard/dropwizard</url>
-    </scm>
+        <tag>HEAD</tag>
+  </scm>
 
     <issueManagement>
         <system>GitHub</system>

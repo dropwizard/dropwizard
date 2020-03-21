@@ -1855,7 +1855,7 @@ has a rich api for `filters and interceptors`_ that can be used directly in Drop
 You can stop the request from reaching your resources by throwing a ``WebApplicationException``. Alternatively,
 you can use filters to modify inbound requests or outbound responses.
 
-.. _filters and interceptors: http://jersey.github.io/documentation/latest/filters-and-interceptors.html
+.. _filters and interceptors: https://eclipse-ee4j.github.io/jersey.github.io/documentation/latest/filters-and-interceptors.html
 
 .. code-block:: java
 
