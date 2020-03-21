@@ -23,6 +23,7 @@ import io.dropwizard.configuration.FileConfigurationSourceProvider;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.validation.Validators;
 
+import javax.annotation.Nullable;
 import javax.validation.ValidatorFactory;
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
@@ -43,6 +44,8 @@ public class Bootstrap<T extends Configuration> {
 
     private ObjectMapper objectMapper;
     private MetricRegistry metricRegistry;
+    @Nullable
+    private JmxReporter jmxReporter;
     private ConfigurationSourceProvider configurationSourceProvider;
     private ClassLoader classLoader;
     private ConfigurationFactoryFactory<T> configurationFactoryFactory;
@@ -77,6 +80,7 @@ public class Bootstrap<T extends Configuration> {
         if (metricsAreRegistered) {
             return;
         }
+
         getMetricRegistry().register("jvm.attribute", new JvmAttributeGaugeSet());
         getMetricRegistry().register("jvm.buffers", new BufferPoolMetricSet(ManagementFactory
                                                                                .getPlatformMBeanServer()));
@@ -86,8 +90,20 @@ public class Bootstrap<T extends Configuration> {
         getMetricRegistry().register("jvm.memory", new MemoryUsageGaugeSet());
         getMetricRegistry().register("jvm.threads", new ThreadStatesGaugeSet());
 
-        JmxReporter.forRegistry(metricRegistry).build().start();
+        jmxReporter = JmxReporter.forRegistry(metricRegistry).build();
+        jmxReporter.start();
+
         metricsAreRegistered = true;
+    }
+
+    /**
+     * Returns the {@link JmxReporter} registered with the bootstrap's {@link MetricRegistry}.
+     *
+     * @since 2.1
+     */
+    @Nullable
+    public JmxReporter getJmxReporter() {
+        return jmxReporter;
     }
 
     /**
