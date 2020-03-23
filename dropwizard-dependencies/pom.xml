@@ -64,7 +64,7 @@
         <h2.version>1.4.200</h2.version>
         <hsqldb.version>2.5.0</hsqldb.version>
         <junit.version>4.13</junit.version>
-        <junit5.version>5.6.0</junit5.version>
+        <junit5.version>5.6.1</junit5.version>
         <mockito.version>3.3.3</mockito.version>
 
         <!-- Plugin versions -->
