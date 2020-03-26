@@ -26,18 +26,24 @@
         <classmate.version>1.5.1</classmate.version>
         <commons-lang3.version>3.9</commons-lang3.version>
         <commons-text.version>1.8</commons-text.version>
+        <conscrypt-openjdk-uber.version>2.1.0</conscrypt-openjdk-uber.version>
         <error_prone.version>2.3.4</error_prone.version>
         <error_prone_annotations.version>2.3.4</error_prone_annotations.version>
         <freemarker.version>2.3.30</freemarker.version>
         <guava.version>28.2-jre</guava.version>
         <hibernate-core.version>5.4.12.Final</hibernate-core.version>
         <hibernate-validator.version>6.1.2.Final</hibernate-validator.version>
+        <hk2.version>2.6.1</hk2.version>
         <httpclient.version>4.5.12</httpclient.version>
+        <httpcore.version>4.4.13</httpcore.version>
         <jackson.version>2.10.3</jackson.version>
         <jakarta.annotation-api.version>1.3.5</jakarta.annotation-api.version>
         <jakarta.el.version>3.0.3</jakarta.el.version>
         <jakarta.servlet-api.version>4.0.3</jakarta.servlet-api.version>
+        <jakarta.validation-api.version>2.0.2</jakarta.validation-api.version>
+        <jakarta.ws.rs-api.version>2.1.6</jakarta.ws.rs-api.version>
         <javassist.version>3.27.0-GA</javassist.version>
+        <javax.persistence-api.version>2.2</javax.persistence-api.version>
         <jaxb-api.version>2.3.3</jaxb-api.version>
         <jcip-annotations.version>1.0</jcip-annotations.version>
         <jdbi3.version>3.12.2</jdbi3.version>
@@ -86,6 +92,13 @@
                 <version>${jackson.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.glassfish.hk2</groupId>
+                <artifactId>hk2-bom</artifactId>
+                <version>${hk2.version}</version>
+                <scope>import</scope>
+                <type>pom</type>
             </dependency>
 
             <dependency>
@@ -145,6 +158,11 @@
                 <version>${joda-time.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.conscrypt</groupId>
+                <artifactId>conscrypt-openjdk-uber</artifactId>
+                <version>${conscrypt-openjdk-uber.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.hibernate.validator</groupId>
                 <artifactId>hibernate-validator</artifactId>
                 <version>${hibernate-validator.version}</version>
@@ -177,6 +195,21 @@
                 <version>${jakarta.servlet-api.version}</version>
             </dependency>
             <dependency>
+                <groupId>jakarta.validation</groupId>
+                <artifactId>jakarta.validation-api</artifactId>
+                <version>${jakarta.validation-api.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.ws.rs</groupId>
+                <artifactId>jakarta.ws.rs-api</artifactId>
+                <version>${jakarta.ws.rs-api.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.persistence</groupId>
+                <artifactId>javax.persistence-api</artifactId>
+                <version>${javax.persistence-api.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpclient</artifactId>
                 <version>${httpclient.version}</version>
@@ -186,6 +219,11 @@
                         <artifactId>commons-logging</artifactId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpcore</artifactId>
+                <version>${httpcore.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.tomcat</groupId>
