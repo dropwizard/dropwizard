@@ -30,15 +30,17 @@ public class SelfValidatingValidator implements ConstraintValidator<SelfValidati
     private static final Logger log = LoggerFactory.getLogger(SelfValidatingValidator.class);
 
     private final ConcurrentMap<Class<?>, List<ValidationCaller<?>>> methodMap = Maps.newConcurrentMap();
+    private boolean escapeExpressions = true;
 
     @Override
     public void initialize(SelfValidating constraintAnnotation) {
+        escapeExpressions = constraintAnnotation.escapeExpressions();
     }
 
     @SuppressWarnings({"unchecked"})
     @Override
     public boolean isValid(Object value, ConstraintValidatorContext context) {
-        final ViolationCollector collector = new ViolationCollector(context);
+        final ViolationCollector collector = new ViolationCollector(context, escapeExpressions);
         context.disableDefaultConstraintViolation();
         for (ValidationCaller caller : methodMap.computeIfAbsent(value.getClass(), this::findMethods)) {
             caller.setValidationObject(value);
