@@ -13,4 +13,3 @@ Upgrade Notes
    upgrade-notes/upgrade-notes-1_0_x.rst
    upgrade-notes/upgrade-notes-1_1_x.rst
    upgrade-notes/upgrade-notes-2_0_x.rst
-   upgrade-notes/upgrade-notes-2_1_x.rst
