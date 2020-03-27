@@ -6,13 +6,6 @@ Release Notes
 
 Please refer to `GitHub releases <https://github.com/dropwizard/dropwizard/releases>`__ for the most up-to-date release notes.
 
-.. _rel-2.1.0:
-
-v2.1.0: TBD
-====================
-
-* :ref:`upgrade-notes-dropwizard-2_1_x`
-
 .. _rel-2.0.0:
 
 v2.0.0: Dec 10, 2019
