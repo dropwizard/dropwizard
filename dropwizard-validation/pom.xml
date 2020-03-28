@@ -68,6 +68,12 @@
         </dependency>
         <dependency>
             <groupId>uk.org.lidalia</groupId>
+            <artifactId>lidalia-slf4j-ext</artifactId>
+            <version>1.0.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>uk.org.lidalia</groupId>
             <artifactId>slf4j-test</artifactId>
             <version>1.2.0</version>
             <scope>test</scope>
