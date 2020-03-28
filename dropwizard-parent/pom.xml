@@ -244,7 +244,7 @@
             <dependency>
                 <groupId>io.dropwizard</groupId>
                 <artifactId>dropwizard-dependencies</artifactId>
-                <version>${project.version}</version>
+                <version>${dropwizard.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
