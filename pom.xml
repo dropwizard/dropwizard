@@ -58,6 +58,8 @@
 
         <maven.site.deploy.skip>true</maven.site.deploy.skip>
 
+        <dropwizard.version>2.0.5-SNAPSHOT</dropwizard.version>
+
         <!-- Plugin versions, see also dropwizard-dependencies -->
         <coveralls-maven-plugin.version>4.3.0</coveralls-maven-plugin.version>
         <maven-archetype-plugin.version>3.1.2</maven-archetype-plugin.version>

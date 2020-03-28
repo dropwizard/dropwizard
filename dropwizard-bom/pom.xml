@@ -15,10 +15,6 @@
         Bill of materials to make sure a consistent set of versions is used for Dropwizard modules.
     </description>
 
-    <properties>
-        <dropwizard.version>2.0.5-SNAPSHOT</dropwizard.version>
-    </properties>
-
     <dependencyManagement>
         <dependencies>
             <dependency>
