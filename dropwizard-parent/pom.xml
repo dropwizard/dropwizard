@@ -25,6 +25,8 @@
         <maven.compiler.optimize>false</maven.compiler.optimize>
         <maven.compiler.forceJavacCompilerUse>true</maven.compiler.forceJavacCompilerUse>
 
+        <pgpverify.keyserver>hkps://hkps.pool.sks-keyservers.net;hkps://keyserver.ubuntu.com</pgpverify.keyserver>
+
         <surefire.argLine>-Duser.language=en -Duser.region=US -Duser.timezone=UTC</surefire.argLine>
         <argLine>${surefire.argLine}</argLine>
     </properties>
