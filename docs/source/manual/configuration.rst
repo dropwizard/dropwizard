@@ -910,7 +910,7 @@ JSON layout
       additionalFields:
         service-name: "user-service"
       includesMdcKeys: [userId]
-      flattenMDC: true
+      flattenMdc: true
       exception:
         rootFirst: true
         depth: full
