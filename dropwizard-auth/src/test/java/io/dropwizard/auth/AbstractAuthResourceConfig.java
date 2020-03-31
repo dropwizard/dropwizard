@@ -1,9 +1,9 @@
 package io.dropwizard.auth;
 
-import com.codahale.metrics.MetricRegistry;
 import io.dropwizard.jersey.DropwizardResourceConfig;
-import org.glassfish.hk2.utilities.binding.AbstractBinder;
+import org.glassfish.jersey.internal.inject.AbstractBinder;
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
+import org.glassfish.jersey.test.TestProperties;
 
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.DynamicFeature;
@@ -12,7 +12,8 @@ import java.security.Principal;
 public abstract class AbstractAuthResourceConfig extends DropwizardResourceConfig {
 
     public AbstractAuthResourceConfig() {
-        super(true, new MetricRegistry());
+        super();
+        property(TestProperties.CONTAINER_PORT, "0");
         register(getAuthDynamicFeature(getAuthFilter()));
         register(getAuthBinder());
         register(RolesAllowedDynamicFeature.class);

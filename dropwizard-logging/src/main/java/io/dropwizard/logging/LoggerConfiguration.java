@@ -2,10 +2,11 @@ package io.dropwizard.logging;
 
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
-import com.google.common.collect.ImmutableList;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -18,7 +19,7 @@ public class LoggerConfiguration {
 
     @Valid
     @NotNull
-    private ImmutableList<AppenderFactory<ILoggingEvent>> appenders = ImmutableList.of();
+    private List<AppenderFactory<ILoggingEvent>> appenders = Collections.emptyList();
 
     private boolean additive = true;
 
@@ -38,11 +39,11 @@ public class LoggerConfiguration {
         this.level = level;
     }
 
-    public ImmutableList<AppenderFactory<ILoggingEvent>> getAppenders() {
+    public List<AppenderFactory<ILoggingEvent>> getAppenders() {
         return appenders;
     }
 
     public void setAppenders(List<AppenderFactory<ILoggingEvent>> appenders) {
-        this.appenders = ImmutableList.copyOf(appenders);
+        this.appenders = new ArrayList<>(appenders);
     }
 }

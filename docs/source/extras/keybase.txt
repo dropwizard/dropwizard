@@ -1,0 +1,68 @@
+==================================================================
+https://keybase.io/dropwizard
+--------------------------------------------------------------------
+
+I hereby claim:
+
+  * I am an admin of https://www.dropwizard.io
+  * I am dropwizard (https://keybase.io/dropwizard) on keybase.
+  * I have a public key with fingerprint EDA8 6E9F B607 B5FC 9223  FB76 7D48 68B5 3E31 E7AD
+
+To do so, I am signing this object:
+
+{
+  "body": {
+    "key": {
+      "eldest_kid": "0101b8345e162488b40959cd83a6f70b2f9228f6672246c6eecf26d047c171fc40a10a",
+      "fingerprint": "eda86e9fb607b5fc9223fb767d4868b53e31e7ad",
+      "host": "keybase.io",
+      "key_id": "7d4868b53e31e7ad",
+      "kid": "0101b8345e162488b40959cd83a6f70b2f9228f6672246c6eecf26d047c171fc40a10a",
+      "uid": "b89b3b8fbd6b9e796d59fae1f544db19",
+      "username": "dropwizard"
+    },
+    "service": {
+      "hostname": "www.dropwizard.io",
+      "protocol": "https:"
+    },
+    "type": "web_service_binding",
+    "version": 1
+  },
+  "ctime": 1552249261,
+  "expire_in": 157680000,
+  "prev": "e99e58d602422977bb02640e9c6a9d164e71de0d14cfb80a631ea6185d806d0f",
+  "seqno": 2,
+  "tag": "signature"
+}
+
+which yields the signature:
+
+-----BEGIN PGP MESSAGE-----
+Version: Keybase OpenPGP v2.1.0
+Comment: https://keybase.io/crypto
+
+yMIsAnicrVJbSBRRGF7N1CzNhOjuw4keNJGZ2ZkzMxvdERKpoNIlMZY5c864w9rO
+7uyuW4nd0DCM8i6EiBJhJJEGvniJvBBektJqieqpm5aQIBGC3c6Y0UuPnZfD+c/3
+fef/vvMPJS6zJUTdqBisv71wfj5qrL85ZCso998pAcjAp4GjBHjI4kaKMAkEXR4d
+AwdgWIZFkp0XCAs5XpIQz8iCrGLJrkBNZBCnyRwnaRCKHMdDFRKiahzEDC+qrMhq
+Ks8oLKOADKDp3kJi+kzdG6SyBCsSJLKGICMiQVOpiF1DIhQxL0EJCXZiZ4moYEp0
+GwGLQZtDSoBk6gat0YNrsb1/4P9z36FFOSTJyI4kDWGIZCLKEAuyphBWE3geI1a2
+gAFiepWThKKxafjC+hnFxKA0A9B6sa4SK1rLyxImHA5n/sX9tuUzjaChGkX02h0M
++gIOix487VvEE+RaUnIh3YtpnJRRTMyAbniBg6VINahb0qwgUE8yB9kMQE75dJO4
+dAshiFBi6LLeIcXWJ8gyESQMGY7nOFkUEWI4yDNEVqEiYxbyRGQxYTDLqxqSGAXS
+jBXISgKWGBqVBixvfq8BHBxtUymkkgG90KsEQyYBpQMPCmJsUQm22OXR1pjZElYk
+/xk+Z0+8rTFvXv5Y60lMWrM/6ularjr/aHtjz+2FnwdKVnaOVEy87oj7Udey2mHW
+JUb63Ftyj1SeWBHurRl0Xk/xNsVkjadtHp+D7fE5u4aHm1fdK+gK7N7aORL58uhc
+xd62mkthf66/+/6ElFW7uaqtZbT/vRmdNVbzpOIwfhJJPv4u73nTi9HcPbfOVj/G
+O6cfv71QfnllSv/NorhPlXBDa0zH3gvCzX3Z21IHADjo7mw579n0cry1oZe/kp3W
+9iFp5tnF1I3f1+8IHZtMU7cfLXsze2zOORXhGkKxcd/ahqbN9LtnXvfmpV+dXAcO
+zeaM99V/9nydfTXZDfblX+ud6XjonCrrqvoF5FdJxw==
+=KTJD
+-----END PGP MESSAGE-----
+
+And finally, I am proving ownership of this host by posting or
+appending to this document.
+
+View my publicly-auditable identity here: https://keybase.io/dropwizard
+
+==================================================================

@@ -1,16 +1,16 @@
 package io.dropwizard.views.mustache;
 
 import com.codahale.metrics.MetricRegistry;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
+import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.logging.BootstrapLogging;
 import io.dropwizard.views.ViewMessageBodyWriter;
 import io.dropwizard.views.ViewRenderExceptionMapper;
 import io.dropwizard.views.ViewRenderer;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
-import org.glassfish.jersey.test.TestProperties;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -18,6 +18,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
+import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
@@ -56,11 +57,22 @@ public class MustacheViewRendererTest extends JerseyTest {
     }
 
     @Override
+    @BeforeEach
+    public void setUp() throws Exception {
+        super.setUp();
+    }
+
+    @Override
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
+    }
+
+    @Override
     protected Application configure() {
-        forceSet(TestProperties.CONTAINER_PORT, "0");
-        ResourceConfig config = new ResourceConfig();
+        ResourceConfig config = DropwizardResourceConfig.forTesting();
         final ViewRenderer renderer = new MustacheViewRenderer();
-        config.register(new ViewMessageBodyWriter(new MetricRegistry(), ImmutableList.of(renderer)));
+        config.register(new ViewMessageBodyWriter(new MetricRegistry(), Collections.singletonList(renderer)));
         config.register(new ViewRenderExceptionMapper());
         config.register(new ExampleResource());
         return config;
@@ -109,14 +121,14 @@ public class MustacheViewRendererTest extends JerseyTest {
     @Test
     public void cacheByDefault() {
         MustacheViewRenderer mustacheViewRenderer = new MustacheViewRenderer();
-        mustacheViewRenderer.configure(ImmutableMap.of());
+        mustacheViewRenderer.configure(Collections.emptyMap());
         assertThat(mustacheViewRenderer.isUseCache()).isTrue();
     }
 
     @Test
     public void canDisableCache() {
         MustacheViewRenderer mustacheViewRenderer = new MustacheViewRenderer();
-        mustacheViewRenderer.configure(ImmutableMap.of("cache", "false"));
+        mustacheViewRenderer.configure(Collections.singletonMap("cache", "false"));
         assertThat(mustacheViewRenderer.isUseCache()).isFalse();
     }
 }

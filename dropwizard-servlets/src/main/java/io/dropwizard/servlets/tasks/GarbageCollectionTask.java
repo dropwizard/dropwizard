@@ -1,9 +1,8 @@
 package io.dropwizard.servlets.tasks;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMultimap;
-
 import java.io.PrintWriter;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Performs a full JVM garbage collection (probably).
@@ -32,7 +31,7 @@ public class GarbageCollectionTask extends Task {
 
     @Override
     @SuppressWarnings("CallToSystemGC")
-    public void execute(ImmutableMultimap<String, String> parameters, PrintWriter output) {
+    public void execute(Map<String, List<String>> parameters, PrintWriter output) {
         final int count = parseRuns(parameters);
         for (int i = 0; i < count; i++) {
             output.println("Running GC...");
@@ -43,9 +42,9 @@ public class GarbageCollectionTask extends Task {
         output.println("Done!");
     }
 
-    private static int parseRuns(ImmutableMultimap<String, String> parameters) {
-        final ImmutableList<String> runs = parameters.get("runs").asList();
-        if (runs.isEmpty()) {
+    private static int parseRuns(Map<String, List<String>> parameters) {
+        final List<String> runs = parameters.get("runs");
+        if (runs == null || runs.isEmpty()) {
             return 1;
         } else {
             try {

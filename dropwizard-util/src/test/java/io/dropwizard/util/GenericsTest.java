@@ -1,64 +1,55 @@
 package io.dropwizard.util;
 
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 @SuppressWarnings("serial")
-@RunWith(Parameterized.class)
 public class GenericsTest<T> {
 
-    @Parameters(name = "Test {0}")
-    public static Collection<Object[]> data() {
-        return Arrays.asList(new Object[][] {
-            {Object.class, Object.class, Object.class, Object.class, IllegalStateException.class, "Cannot figure out type parameterization for " + Object.class.getName() },
-            {null, null, null, null, NullPointerException.class, null },
-            {IntegerList.class, Integer.class, Number.class, Integer.class, null, null },
-            {IntegerList.class, Integer.class, Integer.class, Integer.class, null, null },
-            {NumberList.class, Number.class, Number.class, Number.class, null, null },
-            {IntegerValueMap.class, Object.class, Number.class, Integer.class, null, null },
-            {ListOfStringSets.class, Set.class, Set.class, Set.class, null, null },
-        });
+    public static Stream<Arguments> data() {
+        return Stream.of(
+                Arguments.of(Object.class, Object.class, Object.class, Object.class, IllegalStateException.class, "Cannot figure out type parameterization for " + Object.class.getName() ),
+            Arguments.of(null, null, null, null, NullPointerException.class, null ),
+            Arguments.of(IntegerList.class, Integer.class, Number.class, Integer.class, null, null),
+            Arguments.of(IntegerList.class, Integer.class, Integer.class, Integer.class, null, null),
+            Arguments.of(NumberList.class, Number.class, Number.class, Number.class, null, null),
+            Arguments.of(IntegerValueMap.class, Object.class, Number.class, Integer.class, null, null ),
+            Arguments.of(ListOfStringSets.class, Set.class, Set.class, Set.class, null, null)
+        );
     }
 
-    private Class<?> klass;
-    private Class<?> typeParameter;
-    private Class<? super T> bound;
-    private Class<?> boundTypeParameter;
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
 
-    public GenericsTest(Class<?> klass, Class<?> typeParameter, Class<? super T> bound, Class<?> boundTypeParameter, Class<? extends Exception> expectedException, String expectedMessage) {
-        this.klass = klass;
-        this.typeParameter = typeParameter;
-        this.bound = bound;
-        this.boundTypeParameter = boundTypeParameter;
-
-        if (expectedException != null) {
-            thrown.expect(expectedException);
-            if (expectedMessage != null)
-                thrown.expectMessage(expectedMessage);
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testTypeParameter(Class<?> klass, Class<?> typeParameter, Class<? super T> bound, Class<?> boundTypeParameter,
+                                  Class<? extends Exception> expectedException, String expectedMessage) {
+        if (expectedException == null) {
+            assertThat(Generics.getTypeParameter(klass)).isEqualTo(typeParameter);
+        } else {
+            assertThatExceptionOfType(expectedException).isThrownBy(() -> Generics.getTypeParameter(klass))
+                .withMessage(expectedMessage);
         }
     }
 
-    @Test
-    public void testTypeParameter() {
-        assertThat(Generics.getTypeParameter(klass)).isEqualTo(typeParameter);
-    }
-
-    @Test
-    public void testBoundTypeParameter() {
-        assertThat(Generics.getTypeParameter(klass, bound)).isEqualTo(boundTypeParameter);
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testBoundTypeParameter(Class<?> klass, Class<?> typeParameter, Class<? super T> bound, Class<?> boundTypeParameter,
+                                       Class<? extends Exception> expectedException, String expectedMessage) {
+        if (expectedException == null) {
+            assertThat(Generics.getTypeParameter(klass, bound)).isEqualTo(boundTypeParameter);
+        } else {
+            assertThatExceptionOfType(expectedException).isThrownBy(() -> Generics.getTypeParameter(klass, bound))
+                .withMessage(expectedMessage);
+        }
     }
 
     public static class IntegerList extends ArrayList<Integer> { }

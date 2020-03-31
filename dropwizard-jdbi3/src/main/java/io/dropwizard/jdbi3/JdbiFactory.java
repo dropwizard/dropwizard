@@ -1,6 +1,7 @@
 package io.dropwizard.jdbi3;
 
-import com.codahale.metrics.jdbi3.InstrumentedTimingCollector;
+import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.jdbi3.InstrumentedSqlLogger;
 import com.codahale.metrics.jdbi3.strategies.SmartNameStrategy;
 import com.codahale.metrics.jdbi3.strategies.StatementNameStrategy;
 import io.dropwizard.db.ManagedDataSource;
@@ -13,6 +14,8 @@ import org.jdbi.v3.core.statement.TemplateEngine;
 import org.jdbi.v3.guava.GuavaPlugin;
 import org.jdbi.v3.jodatime2.JodaTimePlugin;
 import org.jdbi.v3.sqlobject.SqlObjectPlugin;
+
+import java.util.Optional;
 
 public class JdbiFactory {
     private final StatementNameStrategy nameStrategy;
@@ -70,15 +73,15 @@ public class JdbiFactory {
         environment.lifecycle().manage(dataSource);
 
         // Setup the required health checks.
-        final String validationQuery = configuration.getValidationQuery();
+        final Optional<String> validationQuery = configuration.getValidationQuery();
         environment.healthChecks().register(name, new JdbiHealthCheck(
             environment.getHealthCheckExecutorService(),
             configuration.getValidationQueryTimeout().orElseGet(() -> Duration.seconds(5)),
             jdbi,
             validationQuery));
 
-        // Setup the timing collector
-        jdbi.setTimingCollector(new InstrumentedTimingCollector(environment.metrics(), nameStrategy));
+        // Setup the SQL logger
+        jdbi.setSqlLogger(buildSQLLogger(environment.metrics(), nameStrategy));
 
         if (configuration.isAutoCommentsEnabled()) {
             final TemplateEngine original = jdbi.getConfig(SqlStatements.class).getTemplateEngine();
@@ -88,6 +91,19 @@ public class JdbiFactory {
         configure(jdbi);
 
         return jdbi;
+    }
+
+    /**
+     * This creates a default {@link InstrumentedSqlLogger} instance with the specified
+     * {@link MetricRegistry} and {@link #nameStrategy}. This can be overridden if required.
+     *
+     * @param metricRegistry The {@link MetricRegistry} to send to the {@link InstrumentedSqlLogger}.
+     * @param nameStrategy   The {@link StatementNameStrategy} to send to the {@link InstrumentedSqlLogger}.
+     * @return The created {@link InstrumentedSqlLogger}.
+     * @since 2.0
+     */
+    protected InstrumentedSqlLogger buildSQLLogger(MetricRegistry metricRegistry, StatementNameStrategy nameStrategy) {
+        return new InstrumentedSqlLogger(metricRegistry, nameStrategy);
     }
 
     /**

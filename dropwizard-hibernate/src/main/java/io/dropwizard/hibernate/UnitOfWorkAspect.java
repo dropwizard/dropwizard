@@ -41,6 +41,11 @@ public class UnitOfWorkAspect {
         this.sessionFactories = sessionFactories;
     }
 
+    // was the session created by this aspect?
+    private boolean sessionCreated;
+    // do we manage the transaction or did we join an existing one?
+    private boolean transactionStarted;
+
     public void beforeStart(@Nullable UnitOfWork unitOfWork) {
         if (unitOfWork == null) {
             return;
@@ -57,15 +62,26 @@ public class UnitOfWorkAspect {
             }
         }
 
-        Session session = sessionFactory.openSession();
-        try {
-            setContext(unitOfWork, session);
-            configureSession();
-            beginTransaction(unitOfWork, session);
-        } catch (Throwable th) {
-            session.close();
-            clearContext();
-            throw th;
+        Session existingSession = null;
+
+        if (ManagedSessionContext.hasBind(sessionFactory)) {
+            existingSession = sessionFactory.getCurrentSession();
+        }
+
+        if (existingSession != null) {
+            sessionCreated = false;
+        } else {
+            Session session = sessionFactory.openSession();
+            sessionCreated = true;
+            try {
+                setContext(unitOfWork, session);
+                configureSession();
+                beginTransaction(unitOfWork, session);
+            } catch (Throwable th) {
+                session.close();
+                clearContext();
+                throw th;
+            }
         }
     }
 
@@ -103,11 +119,13 @@ public class UnitOfWorkAspect {
     public void onFinish() {
         try {
             SessionFactory sessionFactory = UnitOfWorkContext.getSessionFactory();
-            if (sessionFactory != null) {
+            if (sessionCreated && sessionFactory != null) {
                 sessionFactory.getCurrentSession().close();
             }
         } finally {
-            clearContext();
+            if (sessionCreated) {
+                clearContext();
+            }
         }
     }
 
@@ -123,7 +141,13 @@ public class UnitOfWorkAspect {
         if (!unitOfWork.transactional()) {
             return;
         }
-        session.beginTransaction();
+        final Transaction txn = session.getTransaction();
+        if (txn != null && txn.isActive()) {
+            transactionStarted = false;
+        } else {
+            session.beginTransaction();
+            transactionStarted = true;
+        }
     }
 
     private void rollbackTransaction(UnitOfWork unitOfWork, Session session) {
@@ -131,7 +155,7 @@ public class UnitOfWorkAspect {
             return;
         }
         final Transaction txn = session.getTransaction();
-        if (txn != null && txn.getStatus().canRollback()) {
+        if (transactionStarted && txn != null && txn.getStatus().canRollback()) {
             txn.rollback();
         }
     }
@@ -141,7 +165,7 @@ public class UnitOfWorkAspect {
             return;
         }
         final Transaction txn = session.getTransaction();
-        if (txn != null && txn.getStatus().canRollback()) {
+        if (transactionStarted && txn != null && txn.getStatus().canRollback()) {
             txn.commit();
         }
     }

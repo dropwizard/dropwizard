@@ -1,0 +1,44 @@
+name: Java CI
+on:
+  push:
+    branches:
+    - master
+    - release/*
+  pull_request:
+    branches:
+    - master
+    - release/*
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        java_version: ['8', '11', '14']
+        os: ['ubuntu-latest', 'windows-latest']
+    env:
+      JAVA_OPTS: "-XX:+TieredCompilation -XX:TieredStopAtLevel=1"
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up JDK
+      uses: joschi/setup-jdk@v1
+      with:
+        java-version: ${{ matrix.java_version }}
+    - uses: actions/cache@v1
+      if: runner.os != 'Windows'
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
+    - uses: actions/cache@v1
+      if: runner.os == 'Windows'
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**\pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
+    - name: Build with Maven
+      run: ./mvnw -Pjakarta-apis -V -B -ff -s .github/settings.xml install '-DskipTests=true' '-Dmaven.javadoc.skip=true'
+    - name: Run tests
+      run: ./mvnw -Pjakarta-apis -V -B -ff -s .github/settings.xml verify

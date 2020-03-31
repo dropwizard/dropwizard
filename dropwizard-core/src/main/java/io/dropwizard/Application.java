@@ -66,7 +66,7 @@ public abstract class Application<T extends Configuration> {
     }
 
     /**
-     * When the application runs, this is called after the {@link Bundle}s are run. Override it to add
+     * When the application runs, this is called after the {@link ConfiguredBundle}s are run. Override it to add
      * providers, resources, etc. for your application.
      *
      * @param configuration the parsed {@link Configuration} object
@@ -90,10 +90,8 @@ public abstract class Application<T extends Configuration> {
         bootstrap.registerMetrics();
 
         final Cli cli = new Cli(new JarLocation(getClass()), bootstrap, System.out, System.err);
-        if (!cli.run(arguments)) {
-            // only exit if there's an error running the command
-            onFatalError();
-        }
+        // only exit if there's an error running the command
+        cli.run(arguments).ifPresent(this::onFatalError);
     }
 
     /**
@@ -111,7 +109,23 @@ public abstract class Application<T extends Configuration> {
      *
      * The default implementation calls {@link System#exit(int)} with a non-zero status code to terminate the
      * application.
+     *
+     * @param t The {@link Throwable} instance which caused the command to fail.
+     * @since 2.0
      */
+    protected void onFatalError(Throwable t) {
+        onFatalError();
+    }
+
+    /**
+     * Called by {@link #run(String...)} to indicate there was a fatal error running the requested command.
+     *
+     * The default implementation calls {@link System#exit(int)} with a non-zero status code to terminate the
+     * application.
+     *
+     * @deprecated Use #onFatalError(Throwable) instead.
+     */
+    @Deprecated
     protected void onFatalError() {
         System.exit(1);
     }

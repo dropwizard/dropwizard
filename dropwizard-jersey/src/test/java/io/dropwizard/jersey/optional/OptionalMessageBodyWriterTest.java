@@ -1,9 +1,8 @@
 package io.dropwizard.jersey.optional;
 
-import com.codahale.metrics.MetricRegistry;
 import io.dropwizard.jersey.AbstractJerseyTest;
 import io.dropwizard.jersey.DropwizardResourceConfig;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -24,7 +23,7 @@ public class OptionalMessageBodyWriterTest extends AbstractJerseyTest {
 
     @Override
     protected Application configure() {
-        return DropwizardResourceConfig.forTesting(new MetricRegistry())
+        return DropwizardResourceConfig.forTesting()
                 .register(new EmptyOptionalExceptionMapper())
                 .register(OptionalReturnResource.class);
     }

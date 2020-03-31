@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jetty.ConnectorFactory;
 import io.dropwizard.logging.AppenderFactory;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.ServiceLoader;
 import java.util.stream.Collectors;

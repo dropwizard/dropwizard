@@ -1,9 +1,10 @@
 package io.dropwizard.configuration;
 
-import com.google.common.io.ByteStreams;
-import org.junit.Test;
+import io.dropwizard.util.CharStreams;
+import org.junit.jupiter.api.Test;
 
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -19,12 +20,12 @@ public class ResourceConfigurationSourceProviderTest {
     }
 
     private void assertForWheeContent(String path) throws Exception {
-        assertThat(loadResourceAsString(path)).isEqualTo("whee");
+        assertThat(loadResourceAsString(path)).isEqualToIgnoringWhitespace("whee");
     }
 
     private String loadResourceAsString(String path) throws Exception {
-        try (InputStream input = provider.open(path)) {
-            return new String(ByteStreams.toByteArray(input), StandardCharsets.UTF_8).trim();
+        try (InputStream inputStream = provider.open(path)) {
+            return CharStreams.toString(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
         }
     }
 }

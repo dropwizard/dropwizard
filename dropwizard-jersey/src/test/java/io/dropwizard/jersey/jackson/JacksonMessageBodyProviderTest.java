@@ -3,18 +3,17 @@ package io.dropwizard.jersey.jackson;
 import com.fasterxml.jackson.annotation.JsonIgnoreType;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.ImmutableList;
-import com.google.common.reflect.TypeToken;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.validation.Validated;
-import org.hibernate.validator.constraints.NotEmpty;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.annotation.Nullable;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.groups.Default;
 import javax.ws.rs.WebApplicationException;
@@ -27,6 +26,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -35,14 +35,13 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assume.assumeThat;
+import static org.assertj.core.api.Assumptions.assumeThat;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
-@SuppressWarnings({"serial", "unchecked"})
+@SuppressWarnings("unchecked")
 public class JacksonMessageBodyProviderTest {
     private static final Annotation[] NONE = new Annotation[0];
 
@@ -73,7 +72,7 @@ public class JacksonMessageBodyProviderTest {
         @NotEmpty
         @Valid
         @JsonProperty
-        public List<Example> examples = ImmutableList.of();
+        public List<Example> examples = Collections.emptyList();
     }
 
     public interface Partial1 {
@@ -107,9 +106,9 @@ public class JacksonMessageBodyProviderTest {
     private final JacksonMessageBodyProvider provider =
             new JacksonMessageBodyProvider(mapper);
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
-        assumeThat(Locale.getDefault().getLanguage(), is("en"));
+        assumeThat(Locale.getDefault().getLanguage()).isEqualTo("en");
     }
 
     @Test
@@ -261,21 +260,21 @@ public class JacksonMessageBodyProviderTest {
     @Test
     public void returnsValidatedCollectionRequestEntities() throws Exception {
         testValidatedCollectionType(Collection.class,
-            new TypeToken<Collection<Example>>() {
+            new TypeReference<Collection<Example>>() {
             }.getType());
     }
 
     @Test
     public void returnsValidatedSetRequestEntities() throws Exception {
         testValidatedCollectionType(Set.class,
-            new TypeToken<Set<Example>>() {
+            new TypeReference<Set<Example>>() {
             }.getType());
     }
 
     @Test
     public void returnsValidatedListRequestEntities() throws Exception {
         testValidatedCollectionType(List.class,
-            new TypeToken<List<Example>>() {
+            new TypeReference<List<Example>>() {
             }.getType());
     }
 

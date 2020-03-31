@@ -1,7 +1,5 @@
 package io.dropwizard.auth.principal;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import io.dropwizard.auth.AbstractAuthResourceConfig;
 import io.dropwizard.auth.Authenticator;
 import io.dropwizard.auth.PolymorphicAuthDynamicFeature;
@@ -9,13 +7,17 @@ import io.dropwizard.auth.PolymorphicAuthValueFactoryProvider;
 import io.dropwizard.auth.basic.BasicCredentialAuthFilter;
 import io.dropwizard.auth.basic.BasicCredentials;
 import io.dropwizard.logging.BootstrapLogging;
-import org.glassfish.hk2.utilities.binding.AbstractBinder;
+import io.dropwizard.util.Maps;
+import io.dropwizard.util.Sets;
+import org.glassfish.jersey.internal.inject.AbstractBinder;
 import org.glassfish.jersey.servlet.ServletProperties;
 import org.glassfish.jersey.test.DeploymentContext;
 import org.glassfish.jersey.test.JerseyTest;
 import org.glassfish.jersey.test.ServletDeploymentContext;
 import org.glassfish.jersey.test.TestProperties;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.container.ContainerRequestFilter;
@@ -38,6 +40,18 @@ public class PolymorphicPrincipalEntityTest extends JerseyTest {
 
     static {
         BootstrapLogging.bootstrap();
+    }
+
+    @Override
+    @BeforeEach
+    public void setUp() throws Exception {
+        super.setUp();
+    }
+
+    @Override
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
     }
 
     @Override
@@ -70,7 +84,7 @@ public class PolymorphicPrincipalEntityTest extends JerseyTest {
 
         @Override protected AbstractBinder getAuthBinder() {
             return new PolymorphicAuthValueFactoryProvider.Binder<>(
-                ImmutableSet.of(JsonPrincipal.class, NullPrincipal.class));
+                Sets.of(JsonPrincipal.class, NullPrincipal.class));
         }
 
         @Override protected DynamicFeature getAuthDynamicFeature(ContainerRequestFilter authFilter) {
@@ -90,15 +104,15 @@ public class PolymorphicPrincipalEntityTest extends JerseyTest {
                 }
             };
 
-            final BasicCredentialAuthFilter jsonAuthFilter = new BasicCredentialAuthFilter.Builder<JsonPrincipal>()
+            final BasicCredentialAuthFilter<?> jsonAuthFilter = new BasicCredentialAuthFilter.Builder<JsonPrincipal>()
                 .setAuthenticator(jsonAuthenticator)
                 .buildAuthFilter();
 
-            final BasicCredentialAuthFilter nullAuthFilter = new BasicCredentialAuthFilter.Builder<NullPrincipal>()
+            final BasicCredentialAuthFilter<?> nullAuthFilter = new BasicCredentialAuthFilter.Builder<NullPrincipal>()
                 .setAuthenticator(nullAuthenticator)
                 .buildAuthFilter();
 
-            return new PolymorphicAuthDynamicFeature<Principal>(ImmutableMap.of(
+            return new PolymorphicAuthDynamicFeature<>(Maps.of(
                 JsonPrincipal.class, jsonAuthFilter,
                 NullPrincipal.class, nullAuthFilter
             ));

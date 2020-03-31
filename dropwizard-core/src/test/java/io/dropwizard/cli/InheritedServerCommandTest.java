@@ -14,9 +14,9 @@ import net.sourceforge.argparse4j.inf.Argument;
 import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
 import org.eclipse.jetty.server.Server;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -54,13 +54,13 @@ public class InheritedServerCommandTest {
     private final ServerFactory serverFactory = mock(ServerFactory.class);
     private final Configuration configuration = mock(Configuration.class);
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         when(serverFactory.build(environment)).thenReturn(server);
         when(configuration.getServerFactory()).thenReturn(serverFactory);
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         server.stop();
     }
@@ -88,14 +88,14 @@ public class InheritedServerCommandTest {
     @Test
     public void usesDefaultConfigPath() throws Exception {
 
-        class SingletonConfigurationFactory implements ConfigurationFactory {
+        class SingletonConfigurationFactory implements ConfigurationFactory<Configuration> {
             @Override
-            public Object build(final ConfigurationSourceProvider provider, final String path) throws IOException, ConfigurationException {
+            public Configuration build(final ConfigurationSourceProvider provider, final String path) throws IOException, ConfigurationException {
                 return configuration;
             }
 
             @Override
-            public Object build() throws IOException, ConfigurationException {
+            public Configuration build() throws IOException, ConfigurationException {
                 throw new AssertionError("Didn't use the default config path variable");
             }
         }

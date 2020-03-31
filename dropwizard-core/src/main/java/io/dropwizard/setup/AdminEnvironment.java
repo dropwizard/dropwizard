@@ -14,7 +14,6 @@ import org.eclipse.jetty.util.component.LifeCycle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static com.google.common.base.MoreObjects.firstNonNull;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -33,11 +32,13 @@ public class AdminEnvironment extends ServletEnvironment {
      * @param healthChecks a health check registry
      */
     public AdminEnvironment(MutableServletContextHandler handler,
-                            HealthCheckRegistry healthChecks, MetricRegistry metricRegistry) {
+                            HealthCheckRegistry healthChecks,
+                            MetricRegistry metricRegistry,
+                            AdminFactory adminFactory) {
         super(handler);
         this.healthChecks = healthChecks;
         this.healthChecks.register("deadlocks", new ThreadDeadlockHealthCheck());
-        this.tasks = new TaskServlet(metricRegistry);
+        this.tasks = new TaskServlet(metricRegistry, adminFactory.getTasks());
         tasks.add(new GarbageCollectionTask());
         tasks.add(new LogConfigurationTask());
         addServlet("tasks", tasks).addMapping("/tasks/*");
@@ -71,6 +72,10 @@ public class AdminEnvironment extends ServletEnvironment {
         }
 
         LOGGER.info("tasks = {}", stringBuilder.toString());
+    }
+
+    private static <T> T firstNonNull(T first, T second) {
+        return first == null ? second : first;
     }
 
     private void logHealthChecks() {

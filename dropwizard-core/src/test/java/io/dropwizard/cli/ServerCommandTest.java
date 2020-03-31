@@ -7,9 +7,9 @@ import io.dropwizard.setup.Environment;
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.component.AbstractLifeCycle;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
@@ -44,13 +44,13 @@ public class ServerCommandTest {
     private final Configuration configuration = mock(Configuration.class);
     private boolean throwException = false;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         when(serverFactory.build(environment)).thenReturn(server);
         when(configuration.getServerFactory()).thenReturn(serverFactory);
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         server.stop();
     }

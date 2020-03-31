@@ -9,7 +9,10 @@ import static java.util.Objects.requireNonNull;
 /**
  * A parameter encapsulating duration values. All non-parsable values will return a {@code 400 Bad
  * Request} response. Supports all input formats the {@link Duration} class supports.
+ *
+ * @deprecated As of release 2.0.0, will be removed in 3.0.0. Please use {@link java.util.Optional} instead.
  */
+@Deprecated
 public class DurationParam extends AbstractParam<Duration> {
 
     public DurationParam(@Nullable String input) {

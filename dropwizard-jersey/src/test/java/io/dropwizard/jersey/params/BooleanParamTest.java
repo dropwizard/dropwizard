@@ -1,17 +1,27 @@
 package io.dropwizard.jersey.params;
 
 import io.dropwizard.jersey.errors.ErrorMessage;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
+import javax.annotation.Nullable;
 import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Response;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class BooleanParamTest {
+    private void booleanParamNegativeTest(@Nullable String input) {
+        assertThatThrownBy(() -> new BooleanParam(input))
+            .isInstanceOfSatisfying(WebApplicationException.class, e -> {
+                assertThat(e.getResponse().getStatus()).isEqualTo(400);
+                assertThat(e.getResponse().getEntity()).isEqualTo(
+                    new ErrorMessage(400, "Parameter must be \"true\" or \"false\".")
+                );
+            });
+    }
+
     @Test
-    public void trueReturnsTrue() throws Exception {
+    public void trueReturnsTrue() {
         final BooleanParam param = new BooleanParam("true");
 
         assertThat(param.get())
@@ -19,7 +29,7 @@ public class BooleanParamTest {
     }
 
     @Test
-    public void uppercaseTrueReturnsTrue() throws Exception {
+    public void uppercaseTrueReturnsTrue() {
         final BooleanParam param = new BooleanParam("TRUE");
 
         assertThat(param.get())
@@ -27,7 +37,7 @@ public class BooleanParamTest {
     }
 
     @Test
-    public void falseReturnsFalse() throws Exception {
+    public void falseReturnsFalse() {
         final BooleanParam param = new BooleanParam("false");
 
         assertThat(param.get())
@@ -35,7 +45,7 @@ public class BooleanParamTest {
     }
 
     @Test
-    public void uppercaseFalseReturnsFalse() throws Exception {
+    public void uppercaseFalseReturnsFalse() {
         final BooleanParam param = new BooleanParam("FALSE");
 
         assertThat(param.get())
@@ -43,40 +53,12 @@ public class BooleanParamTest {
     }
 
     @Test
-    @SuppressWarnings("ResultOfObjectAllocationIgnored")
-    public void nullThrowsAnException() throws Exception {
-        try {
-            new BooleanParam(null);
-            failBecauseExceptionWasNotThrown(WebApplicationException.class);
-        } catch (WebApplicationException e) {
-            final Response response = e.getResponse();
-
-            assertThat(response.getStatus())
-                    .isEqualTo(400);
-
-            ErrorMessage entity = (ErrorMessage) response.getEntity();
-            assertThat(entity.getCode()).isEqualTo(400);
-            assertThat(entity.getMessage())
-                    .isEqualTo("Parameter must be \"true\" or \"false\".");
-        }
+    public void nullThrowsAnException() {
+        booleanParamNegativeTest(null);
     }
 
     @Test
-    @SuppressWarnings("ResultOfObjectAllocationIgnored")
-    public void nonBooleanValuesThrowAnException() throws Exception {
-        try {
-            new BooleanParam("foo");
-            failBecauseExceptionWasNotThrown(WebApplicationException.class);
-        } catch (WebApplicationException e) {
-            final Response response = e.getResponse();
-
-            assertThat(response.getStatus())
-                    .isEqualTo(400);
-
-            ErrorMessage entity = (ErrorMessage) response.getEntity();
-            assertThat(entity.getCode()).isEqualTo(400);
-            assertThat(entity.getMessage())
-                    .isEqualTo("Parameter must be \"true\" or \"false\".");
-        }
+    public void nonBooleanValuesThrowAnException() {
+        booleanParamNegativeTest("foo");
     }
 }

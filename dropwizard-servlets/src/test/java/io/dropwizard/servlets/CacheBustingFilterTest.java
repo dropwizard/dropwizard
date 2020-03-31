@@ -1,6 +1,6 @@
 package io.dropwizard.servlets;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 
 import javax.servlet.FilterChain;

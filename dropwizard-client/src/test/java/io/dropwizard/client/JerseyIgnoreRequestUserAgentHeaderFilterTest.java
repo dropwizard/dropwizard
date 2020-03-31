@@ -1,16 +1,17 @@
 package io.dropwizard.client;
 
 import com.codahale.metrics.MetricRegistry;
-import com.google.common.io.Resources;
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.setup.Environment;
-import io.dropwizard.testing.junit.DropwizardAppRule;
+import io.dropwizard.testing.junit5.DropwizardAppExtension;
+import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import io.dropwizard.util.Duration;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
+import io.dropwizard.util.Resources;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -21,16 +22,16 @@ import java.util.concurrent.Executors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@ExtendWith(DropwizardExtensionsSupport.class)
 public class JerseyIgnoreRequestUserAgentHeaderFilterTest {
-    @ClassRule
-    public static final DropwizardAppRule<Configuration> APP_RULE =
-            new DropwizardAppRule<>(TestApplication.class, Resources.getResource("yaml/jerseyIgnoreRequestUserAgentHeaderFilterTest.yml").getPath());
+    public static final DropwizardAppExtension<Configuration> APP_RULE =
+            new DropwizardAppExtension<>(TestApplication.class, Resources.getResource("yaml/jerseyIgnoreRequestUserAgentHeaderFilterTest.yml").getPath());
 
     private final URI testUri = URI.create("http://localhost:" + APP_RULE.getLocalPort());
     private JerseyClientBuilder clientBuilder;
     private JerseyClientConfiguration clientConfiguration;
 
-    @Before
+    @BeforeEach
     public void setup() {
         clientConfiguration = new JerseyClientConfiguration();
         clientConfiguration.setConnectionTimeout(Duration.milliseconds(1000L));

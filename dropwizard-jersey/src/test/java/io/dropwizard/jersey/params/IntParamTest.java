@@ -1,17 +1,16 @@
 package io.dropwizard.jersey.params;
 
 import io.dropwizard.jersey.errors.ErrorMessage;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Response;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class IntParamTest {
     @Test
-    public void anIntegerReturnsAnInteger() throws Exception {
+    public void anIntegerReturnsAnInteger() {
         final IntParam param = new IntParam("200");
 
         assertThat(param.get())
@@ -19,21 +18,46 @@ public class IntParamTest {
     }
 
     @Test
-    @SuppressWarnings("ResultOfObjectAllocationIgnored")
-    public void aNonIntegerThrowsAnException() throws Exception {
-        try {
-            new IntParam("foo");
-            failBecauseExceptionWasNotThrown(WebApplicationException.class);
-        } catch (WebApplicationException e) {
-            final Response response = e.getResponse();
+    public void nullThrowsAnException() {
+        assertThatThrownBy(() -> new IntParam(null))
+                .isInstanceOfSatisfying(WebApplicationException.class, e -> {
+                    assertThat(e.getResponse().getStatus()).isEqualTo(400);
+                    assertThat(e.getResponse().getEntity()).isEqualTo(
+                            new ErrorMessage(400, "Parameter is not a number.")
+                    );
+                });
+    }
 
-            assertThat(response.getStatus())
-                    .isEqualTo(400);
+    @Test
+    public void emptyStringThrowsAnException() {
+        assertThatThrownBy(() -> new IntParam(""))
+                .isInstanceOfSatisfying(WebApplicationException.class, e -> {
+                    assertThat(e.getResponse().getStatus()).isEqualTo(400);
+                    assertThat(e.getResponse().getEntity()).isEqualTo(
+                            new ErrorMessage(400, "Parameter is not a number.")
+                    );
+                });
+    }
 
-            ErrorMessage entity = (ErrorMessage) response.getEntity();
-            assertThat(entity.getCode()).isEqualTo(400);
-            assertThat(entity.getMessage())
-                    .isEqualTo("Parameter is not a number.");
-        }
+    @Test
+    public void aNonIntegerThrowsAnException() {
+        assertThatThrownBy(() -> new IntParam("foo"))
+            .isInstanceOfSatisfying(WebApplicationException.class, e -> {
+                assertThat(e.getResponse().getStatus()).isEqualTo(400);
+                assertThat(e.getResponse().getEntity()).isEqualTo(
+                    new ErrorMessage(400, "Parameter is not a number.")
+                );
+            });
+    }
+
+    @Test
+    public void aNonIntegerThrowsAnExceptionWithCustomName() {
+        assertThatThrownBy(() -> new IntParam("foo", "customName"))
+            .isInstanceOfSatisfying(WebApplicationException.class, e -> {
+                assertThat(e.getResponse().getStatus()).isEqualTo(400);
+                assertThat(e.getResponse().getEntity()).isEqualTo(
+                    new ErrorMessage(400, "customName is not a number.")
+                );
+            });
     }
 }

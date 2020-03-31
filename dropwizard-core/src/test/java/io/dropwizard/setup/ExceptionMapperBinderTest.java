@@ -1,10 +1,7 @@
 package io.dropwizard.setup;
 
-import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.io.Resources;
 import io.dropwizard.configuration.YamlConfigurationFactory;
-import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.validation.JerseyViolationException;
 import io.dropwizard.jetty.HttpConnectorFactory;
 import io.dropwizard.logging.ConsoleAppenderFactory;
@@ -12,14 +9,14 @@ import io.dropwizard.logging.FileAppenderFactory;
 import io.dropwizard.logging.SyslogAppenderFactory;
 import io.dropwizard.server.ServerFactory;
 import io.dropwizard.server.SimpleServerFactory;
-import io.dropwizard.validation.BaseValidator;
+import io.dropwizard.util.Resources;
 import org.eclipse.jetty.server.AbstractNetworkConnector;
 import org.eclipse.jetty.server.Server;
-import org.hibernate.validator.constraints.NotEmpty;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.validation.Validator;
+import javax.validation.constraints.NotEmpty;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -31,15 +28,14 @@ import java.io.File;
 import static io.dropwizard.server.SimpleServerFactoryTest.httpRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ExceptionMapperBinderTest {
+class ExceptionMapperBinderTest {
     private SimpleServerFactory http;
-    private final ObjectMapper objectMapper = Jackson.newObjectMapper();
-    private Validator validator = BaseValidator.newValidator();
-    private Environment environment = new Environment("testEnvironment", objectMapper, validator, new MetricRegistry(),
-        ClassLoader.getSystemClassLoader());
+    private Environment environment = new Environment("testEnvironment");
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
+        final ObjectMapper objectMapper = environment.getObjectMapper();
+        final Validator validator = environment.getValidator();
         objectMapper.getSubtypeResolver().registerSubtypes(ConsoleAppenderFactory.class,
             FileAppenderFactory.class, SyslogAppenderFactory.class, HttpConnectorFactory.class);
         http = (SimpleServerFactory) new YamlConfigurationFactory<>(ServerFactory.class, validator, objectMapper, "dw")

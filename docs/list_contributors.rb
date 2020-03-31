@@ -1,16 +1,46 @@
 #!/usr/bin/env ruby
 require 'octokit'
 
+# Provide an Access Token in the OCTOKIT_ACCESS_TOKEN environemnt variable
+# to prevent running into the hourly rate-limit.
+#
+# See also:
+#   * https://octokit.github.io/octokit.rb/#Authentication and
+#   * https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/
+#
+# Example:
+#   OCTOKIT_ACCESS_TOKEN=11223344556677889900cafebabedeadbeef0000 ruby list_contributors.rb
+
 Octokit.configure do |c|
-  # Provide an Access Token to prevent running into the hourly rate-limit
-  # see https://help.github.com/articles/creating-an-access-token-for-command-line-use
-  c.access_token = ENV['GITHUB_TOKEN'] || ''
   c.auto_paginate = true
 end
 
-contributors = Octokit.contributors('dropwizard/dropwizard')
-contributors.each do |c|
+excluded_contributors = [
+  'dependabot-bot',
+  'dependabot-preview[bot]',
+  'dependabot[bot]',
+  'codetriage-readme-bot'
+]
+
+contributors = []
+repo_contributors = Octokit.contributors('dropwizard/dropwizard')
+repo_contributors.each do |c|
+  if excluded_contributors.include?(c.login)
+    next
+  end
+
   user = Octokit.user(c.login)
-  name = if user.name.nil? then user.login else user.name end
-  puts "* `#{name} <#{user.html_url}>`_"
+  contributor = {}
+  contributor['login'] = user.login
+  if user.name.nil? then
+    contributor['name'] = user.login
+  else
+    contributor['name'] = user.name
+  end
+  contributors << contributor
+end
+
+sorted_contributors = contributors.sort_by{ |contributor| contributor['name'].downcase }
+sorted_contributors.each do |c|
+  puts "* :ghuser:`#{c['name']} <#{c['login']}>`"
 end

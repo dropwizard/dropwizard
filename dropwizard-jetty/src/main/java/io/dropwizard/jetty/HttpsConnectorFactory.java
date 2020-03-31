@@ -3,8 +3,7 @@ package io.dropwizard.jetty;
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import com.google.common.base.Strings;
-import com.google.common.collect.Iterables;
+import io.dropwizard.util.Strings;
 import io.dropwizard.validation.ValidationMethod;
 import org.eclipse.jetty.http.HttpVersion;
 import org.eclipse.jetty.io.ByteBufferPool;
@@ -20,19 +19,22 @@ import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.util.thread.ScheduledExecutorScheduler;
 import org.eclipse.jetty.util.thread.Scheduler;
 import org.eclipse.jetty.util.thread.ThreadPool;
-import org.hibernate.validator.constraints.NotEmpty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.SSLEngine;
+import javax.validation.constraints.NotEmpty;
 import java.io.File;
 import java.net.URI;
 import java.security.KeyStore;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Builds HTTPS connectors (HTTP over TLS/SSL).
@@ -180,7 +182,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  *     </tr>
  *     <tr>
  *         <td>{@code excludedProtocols}</td>
- *         <td>Jetty's default</td>
+ *         <td>["SSL.*", "TLSv1", "TLSv1\.1"]</td>
  *         <td>
  *             A list of protocols (e.g., {@code SSLv3}, {@code TLSv1}) which are excluded. These
  *             protocols will be refused.
@@ -285,7 +287,7 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
     private List<String> supportedProtocols;
 
     @Nullable
-    private List<String> excludedProtocols;
+    private List<String> excludedProtocols = Arrays.asList("SSL.*", "TLSv1", "TLSv1\\.1");
 
     @Nullable
     private List<String> supportedCipherSuites;
@@ -596,7 +598,7 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
 
         final HttpConnectionFactory httpConnectionFactory = buildHttpConnectionFactory(httpConfig);
 
-        final SslContextFactory sslContextFactory = configureSslContextFactory(new SslContextFactory());
+        final SslContextFactory sslContextFactory = configureSslContextFactory(new SslContextFactory.Server());
         sslContextFactory.addLifeCycleListener(logSslInfoOnStart(sslContextFactory));
 
         server.addBean(sslContextFactory);
@@ -632,34 +634,79 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
         return new AbstractLifeCycle.AbstractLifeCycleListener() {
             @Override
             public void lifeCycleStarted(LifeCycle event) {
-                logSupportedParameters(sslContextFactory.getSslContext());
+                logSupportedParameters(sslContextFactory);
             }
         };
     }
 
-    private void logSupportedParameters(SSLContext context) {
+    /**
+     * Given a list of protocols available to the JVM that we can serve up to the client, partition
+     * this list into two groups: a group of protocols we can serve and a group where we can't. This
+     * list takes into account protocols that may have been disabled at the JVM level, and also
+     * protocols that the user explicitly wants to include / exclude. The exclude list (blacklist)
+     * is stronger than include list (whitelist), so a protocol that is in both lists will be
+     * excluded. Other than the initial list of available protocols, the other lists are patterns,
+     * such that one can exclude all SSL protocols with a single exclude entry of "SSL.*". This
+     * function will handle both cipher suites and protocols, but for the sake of conciseness, this
+     * documentation only talks about protocols. This implementation is a slimmed down version from
+     * jetty:
+     * https://github.com/eclipse/jetty.project/blob/93a8afcc6bd1a6e0af7bd9f967c97ae1bc3eb718/jetty-util/src/main/java/org/eclipse/jetty/util/ssl/SslSelectionDump.java
+     *
+     * @param supportedByJVM protocols available to the JVM.
+     * @param enabledByJVM protocols enabled by lib/security/java.security.
+     * @param excludedByConfig protocols the user doesn't want to expose.
+     * @param includedByConfig the only protocols the user wants to expose.
+     * @return two entry map of protocols that are enabled (true) and those that have been disabled (false).
+     */
+    static Map<Boolean, List<String>> partitionSupport(
+        String[] supportedByJVM,
+        String[] enabledByJVM,
+        String[] excludedByConfig,
+        String[] includedByConfig
+    ) {
+        final List<Pattern> enabled = Arrays.stream(enabledByJVM).map(Pattern::compile).collect(Collectors.toList());
+        final List<Pattern> disabled = Arrays.stream(excludedByConfig).map(Pattern::compile).collect(Collectors.toList());
+        final List<Pattern> included = Arrays.stream(includedByConfig).map(Pattern::compile).collect(Collectors.toList());
+
+        return Arrays.stream(supportedByJVM)
+            .sorted(Comparator.naturalOrder())
+            .collect(Collectors.partitioningBy(x ->
+                disabled.stream().noneMatch(pat -> pat.matcher(x).matches()) &&
+                    enabled.stream().anyMatch(pat -> pat.matcher(x).matches()) &&
+                    (included.isEmpty() || included.stream().anyMatch(pat -> pat.matcher(x).matches()))
+            ));
+
+    }
+
+    private void logSupportedParameters(SslContextFactory contextFactory) {
         if (LOGGED.compareAndSet(false, true)) {
-            final String[] protocols = context.getSupportedSSLParameters().getProtocols();
-            final SSLSocketFactory factory = context.getSocketFactory();
-            final String[] cipherSuites = factory.getSupportedCipherSuites();
-            LOGGER.info("Supported protocols: {}", Arrays.toString(protocols));
-            LOGGER.info("Supported cipher suites: {}", Arrays.toString(cipherSuites));
+            // When Jetty logs out which protocols are enabled / disabled they include tracing
+            // information to detect if the protocol was disabled at the
+            // JRE/lib/security/java.security level. Since we don't log this information we take the
+            // SSLEngine from our context instead of a pristine version.
+            //
+            // For more info from Jetty:
+            // https://github.com/eclipse/jetty.project/blob/93a8afcc6bd1a6e0af7bd9f967c97ae1bc3eb718/jetty-util/src/main/java/org/eclipse/jetty/util/ssl/SslContextFactory.java#L356-L360
+            final SSLEngine engine = contextFactory.getSslContext().createSSLEngine();
 
-            if (getSupportedProtocols() != null) {
-                LOGGER.info("Configured protocols: {}", getSupportedProtocols());
-            }
+            final Map<Boolean, List<String>> protocols = partitionSupport(
+                engine.getSupportedProtocols(),
+                engine.getEnabledProtocols(),
+                contextFactory.getExcludeProtocols(),
+                contextFactory.getIncludeProtocols()
+            );
 
-            if (getExcludedProtocols() != null) {
-                LOGGER.info("Excluded protocols: {}", getExcludedProtocols());
-            }
+            final Map<Boolean, List<String>> ciphers = partitionSupport(
+                engine.getSupportedCipherSuites(),
+                engine.getEnabledCipherSuites(),
+                contextFactory.getExcludeCipherSuites(),
+                contextFactory.getIncludeCipherSuites()
+            );
 
-            if (getSupportedCipherSuites() != null) {
-                LOGGER.info("Configured cipher suites: {}", getSupportedCipherSuites());
-            }
-
-            if (getExcludedCipherSuites() != null) {
-                LOGGER.info("Excluded cipher suites: {}", getExcludedCipherSuites());
-            }
+            LOGGER.info("Enabled protocols: {}", protocols.get(true));
+            LOGGER.info("Disabled protocols: {}", protocols.get(false));
+            LOGGER.info("Enabled cipher suites: {}", ciphers.get(true));
+            LOGGER.info("Disabled cipher suites: {}", ciphers.get(false));
         }
     }
 
@@ -758,19 +805,19 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
         factory.setValidatePeerCerts(validatePeers);
 
         if (supportedProtocols != null) {
-            factory.setIncludeProtocols(Iterables.toArray(supportedProtocols, String.class));
+            factory.setIncludeProtocols(supportedProtocols.toArray(new String[0]));
         }
 
         if (excludedProtocols != null) {
-            factory.setExcludeProtocols(Iterables.toArray(excludedProtocols, String.class));
+            factory.setExcludeProtocols(excludedProtocols.toArray(new String[0]));
         }
 
         if (supportedCipherSuites != null) {
-            factory.setIncludeCipherSuites(Iterables.toArray(supportedCipherSuites, String.class));
+            factory.setIncludeCipherSuites(supportedCipherSuites.toArray(new String[0]));
         }
 
         if (excludedCipherSuites != null) {
-            factory.setExcludeCipherSuites(Iterables.toArray(excludedCipherSuites, String.class));
+            factory.setExcludeCipherSuites(excludedCipherSuites.toArray(new String[0]));
         }
 
         return factory;

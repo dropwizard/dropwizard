@@ -1,10 +1,10 @@
 package io.dropwizard.client;
 
-import com.google.common.io.Resources;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.validation.Validators;
-import org.junit.Test;
+import io.dropwizard.util.Resources;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 

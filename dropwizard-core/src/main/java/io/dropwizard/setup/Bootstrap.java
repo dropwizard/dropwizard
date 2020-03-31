@@ -1,19 +1,17 @@
 package io.dropwizard.setup;
 
-import com.codahale.metrics.jmx.JmxReporter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheckRegistry;
+import com.codahale.metrics.jmx.JmxReporter;
 import com.codahale.metrics.jvm.BufferPoolMetricSet;
 import com.codahale.metrics.jvm.ClassLoadingGaugeSet;
 import com.codahale.metrics.jvm.FileDescriptorRatioGauge;
-import com.codahale.metrics.jvm.JvmAttributeGaugeSet;
 import com.codahale.metrics.jvm.GarbageCollectorMetricSet;
+import com.codahale.metrics.jvm.JvmAttributeGaugeSet;
 import com.codahale.metrics.jvm.MemoryUsageGaugeSet;
 import com.codahale.metrics.jvm.ThreadStatesGaugeSet;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.ImmutableList;
 import io.dropwizard.Application;
-import io.dropwizard.Bundle;
 import io.dropwizard.Configuration;
 import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.cli.Command;
@@ -25,6 +23,7 @@ import io.dropwizard.configuration.FileConfigurationSourceProvider;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.validation.Validators;
 
+import javax.annotation.Nullable;
 import javax.validation.ValidatorFactory;
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
@@ -40,12 +39,13 @@ import static java.util.Objects.requireNonNull;
  */
 public class Bootstrap<T extends Configuration> {
     private final Application<T> application;
-    private final List<Bundle> bundles;
     private final List<ConfiguredBundle<? super T>> configuredBundles;
     private final List<Command> commands;
 
     private ObjectMapper objectMapper;
     private MetricRegistry metricRegistry;
+    @Nullable
+    private JmxReporter jmxReporter;
     private ConfigurationSourceProvider configurationSourceProvider;
     private ClassLoader classLoader;
     private ConfigurationFactoryFactory<T> configurationFactoryFactory;
@@ -62,7 +62,6 @@ public class Bootstrap<T extends Configuration> {
     public Bootstrap(Application<T> application) {
         this.application = application;
         this.objectMapper = Jackson.newObjectMapper();
-        this.bundles = new ArrayList<>();
         this.configuredBundles = new ArrayList<>();
         this.commands = new ArrayList<>();
         this.validatorFactory = Validators.newValidatorFactory();
@@ -81,6 +80,7 @@ public class Bootstrap<T extends Configuration> {
         if (metricsAreRegistered) {
             return;
         }
+
         getMetricRegistry().register("jvm.attribute", new JvmAttributeGaugeSet());
         getMetricRegistry().register("jvm.buffers", new BufferPoolMetricSet(ManagementFactory
                                                                                .getPlatformMBeanServer()));
@@ -90,8 +90,20 @@ public class Bootstrap<T extends Configuration> {
         getMetricRegistry().register("jvm.memory", new MemoryUsageGaugeSet());
         getMetricRegistry().register("jvm.threads", new ThreadStatesGaugeSet());
 
-        JmxReporter.forRegistry(metricRegistry).build().start();
+        jmxReporter = JmxReporter.forRegistry(metricRegistry).build();
+        jmxReporter.start();
+
         metricsAreRegistered = true;
+    }
+
+    /**
+     * Returns the {@link JmxReporter} registered with the bootstrap's {@link MetricRegistry}.
+     *
+     * @since 2.1
+     */
+    @Nullable
+    public JmxReporter getJmxReporter() {
+        return jmxReporter;
     }
 
     /**
@@ -127,16 +139,6 @@ public class Bootstrap<T extends Configuration> {
      */
     public void setClassLoader(ClassLoader classLoader) {
         this.classLoader = classLoader;
-    }
-
-    /**
-     * Adds the given bundle to the bootstrap.
-     *
-     * @param bundle a {@link Bundle}
-     */
-    public void addBundle(Bundle bundle) {
-        bundle.initialize(this);
-        bundles.add(bundle);
     }
 
     /**
@@ -193,9 +195,6 @@ public class Bootstrap<T extends Configuration> {
      * @throws Exception if a bundle throws an exception
      */
     public void run(T configuration, Environment environment) throws Exception {
-        for (Bundle bundle : bundles) {
-            bundle.run(environment);
-        }
         for (ConfiguredBundle<? super T> bundle : configuredBundles) {
             bundle.run(configuration, environment);
         }
@@ -204,8 +203,8 @@ public class Bootstrap<T extends Configuration> {
     /**
      * Returns the application's commands.
      */
-    public ImmutableList<Command> getCommands() {
-        return ImmutableList.copyOf(commands);
+    public List<Command> getCommands() {
+        return new ArrayList<>(commands);
     }
 
     /**

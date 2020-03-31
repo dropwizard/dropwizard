@@ -1,10 +1,11 @@
 package io.dropwizard.hibernate;
 
-import com.google.common.collect.ImmutableList;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class ScanningHibernateBundleTest {
 
@@ -13,7 +14,7 @@ public class ScanningHibernateBundleTest {
         //given
         String packageWithEntities = "io.dropwizard.hibernate.fake.entities.pckg";
         //when
-        ImmutableList<Class<?>> findEntityClassesFromDirectory =
+        List<Class<?>> findEntityClassesFromDirectory =
             ScanningHibernateBundle.findEntityClassesFromDirectory(new String[]{packageWithEntities});
 
         //then
@@ -27,7 +28,7 @@ public class ScanningHibernateBundleTest {
         String packageWithEntities = "io.dropwizard.hibernate.fake.entities.pckg";
         String packageWithEntities2 = "io.dropwizard.hibernate.fake2.entities.pckg";
         //when
-        ImmutableList<Class<?>> findEntityClassesFromDirectory =
+        List<Class<?>> findEntityClassesFromDirectory =
             ScanningHibernateBundle.findEntityClassesFromDirectory(new String[]{packageWithEntities, packageWithEntities2});
 
         //then

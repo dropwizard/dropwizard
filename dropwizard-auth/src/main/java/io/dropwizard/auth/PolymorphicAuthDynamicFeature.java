@@ -1,17 +1,17 @@
 package io.dropwizard.auth;
 
-import com.google.common.collect.ImmutableMap;
 import org.glassfish.jersey.server.model.AnnotatedMethod;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.security.Principal;
-import java.util.Optional;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.DynamicFeature;
 import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.FeatureContext;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.security.Principal;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * A {@link DynamicFeature} that registers the provided auth filters
@@ -20,11 +20,9 @@ import javax.ws.rs.core.FeatureContext;
  */
 public class PolymorphicAuthDynamicFeature<T extends Principal> implements DynamicFeature {
 
-    private final ImmutableMap<Class<? extends T>,  ContainerRequestFilter> authFilterMap;
+    private final Map<Class<? extends T>,  ContainerRequestFilter> authFilterMap;
 
-    public PolymorphicAuthDynamicFeature(
-        ImmutableMap<Class<? extends T>,  ContainerRequestFilter> authFilterMap
-    ) {
+    public PolymorphicAuthDynamicFeature(Map<Class<? extends T>,  ContainerRequestFilter> authFilterMap) {
         this.authFilterMap = authFilterMap;
     }
 

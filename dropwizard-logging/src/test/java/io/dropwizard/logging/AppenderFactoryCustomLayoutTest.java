@@ -6,15 +6,15 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.ConsoleAppender;
 import ch.qos.logback.core.encoder.LayoutWrappingEncoder;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.io.Resources;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.logging.async.AsyncLoggingEventAppenderFactory;
 import io.dropwizard.logging.filter.NullLevelFilterFactory;
 import io.dropwizard.logging.layout.DropwizardLayoutFactory;
+import io.dropwizard.util.Resources;
 import io.dropwizard.validation.BaseValidator;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.net.URISyntaxException;
@@ -29,6 +29,7 @@ public class AppenderFactoryCustomLayoutTest {
     }
 
     private final ObjectMapper objectMapper = Jackson.newObjectMapper();
+    @SuppressWarnings("rawtypes")
     private final YamlConfigurationFactory<ConsoleAppenderFactory> factory = new YamlConfigurationFactory<>(
         ConsoleAppenderFactory.class, BaseValidator.newValidator(), objectMapper, "dw-layout");
 
@@ -36,7 +37,7 @@ public class AppenderFactoryCustomLayoutTest {
         return new File(Resources.getResource("yaml/appender_with_custom_layout.yml").toURI());
     }
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         objectMapper.registerSubtypes(TestLayoutFactory.class);
     }
@@ -46,7 +47,7 @@ public class AppenderFactoryCustomLayoutTest {
         final ConsoleAppenderFactory<ILoggingEvent> appender = factory.build(loadResource());
         assertThat(appender.getLayout()).isNotNull().isInstanceOf(TestLayoutFactory.class);
         TestLayoutFactory layoutFactory = (TestLayoutFactory) appender.getLayout();
-        assertThat(layoutFactory).isNotNull().extracting(TestLayoutFactory::isIncludeSeparator).contains(true);
+        assertThat(layoutFactory).isNotNull().extracting(TestLayoutFactory::isIncludeSeparator).isEqualTo(true);
     }
 
     @Test
@@ -55,8 +56,8 @@ public class AppenderFactoryCustomLayoutTest {
             .build(new LoggerContext(), "test-custom-layout", new DropwizardLayoutFactory(),
                 new NullLevelFilterFactory<>(), new AsyncLoggingEventAppenderFactory());
 
-        ConsoleAppender consoleAppender = (ConsoleAppender) appender.getAppender("console-appender");
-        LayoutWrappingEncoder encoder = (LayoutWrappingEncoder) consoleAppender.getEncoder();
+        ConsoleAppender<?> consoleAppender = (ConsoleAppender<?>) appender.getAppender("console-appender");
+        LayoutWrappingEncoder<?> encoder = (LayoutWrappingEncoder<?>) consoleAppender.getEncoder();
         assertThat(encoder.getLayout()).isInstanceOf(TestLayoutFactory.TestLayout.class);
     }
 }

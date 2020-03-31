@@ -1,52 +1,53 @@
 package io.dropwizard.migrations;
 
-import com.google.common.collect.ImmutableMap;
+import io.dropwizard.util.Maps;
 import net.jcip.annotations.NotThreadSafe;
 import net.sourceforge.argparse4j.inf.Namespace;
-import org.junit.Before;
-import org.junit.Test;
-import org.skife.jdbi.v2.DBI;
-import org.skife.jdbi.v2.Handle;
+import org.jdbi.v3.core.Handle;
+import org.jdbi.v3.core.Jdbi;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.io.PrintWriter;
+import java.util.Collections;
 import java.util.regex.Pattern;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @NotThreadSafe
-public class DbFastForwardCommandTest extends AbstractMigrationTest {
+class DbFastForwardCommandTest extends AbstractMigrationTest {
 
     private static final Pattern NEWLINE_PATTERN = Pattern.compile(System.lineSeparator());
     private DbFastForwardCommand<TestMigrationConfiguration> fastForwardCommand = new DbFastForwardCommand<>(
         TestMigrationConfiguration::getDataSource, TestMigrationConfiguration.class, "migrations.xml");
     private TestMigrationConfiguration conf;
 
-    private DBI dbi;
+    private Jdbi dbi;
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeEach
+    void setUp() {
         final String databaseUrl = getDatabaseUrl();
         conf = createConfiguration(databaseUrl);
-        dbi = new DBI(databaseUrl, "sa", "");
+        dbi = Jdbi.create(databaseUrl, "sa", "");
     }
 
     @Test
-    public void testFastForwardFirst() throws Exception {
+    void testFastForwardFirst() throws Exception {
         // Create the "persons" table manually
         try (Handle handle = dbi.open()) {
             handle.execute("create table persons(id int, name varchar(255))");
         }
 
         // Fast-forward one change
-        fastForwardCommand.run(null, new Namespace(ImmutableMap.of("all", false, "dry-run", false)), conf);
+        fastForwardCommand.run(null, new Namespace(Maps.of("all", false, "dry-run", false)), conf);
 
         // 2nd and 3rd migrations is performed
         new DbMigrateCommand<>(
             TestMigrationConfiguration::getDataSource, TestMigrationConfiguration.class, "migrations.xml")
-            .run(null, new Namespace(ImmutableMap.of()), conf);
+            .run(null, new Namespace(Collections.emptyMap()), conf);
 
         // 1 entry has been added to the persons table
         try (Handle handle = dbi.open()) {
@@ -58,7 +59,7 @@ public class DbFastForwardCommandTest extends AbstractMigrationTest {
     }
 
     @Test
-    public void testFastForwardAll() throws Exception {
+    void testFastForwardAll() throws Exception {
         // Create the "persons" table manually and add some data
         try (Handle handle = dbi.open()) {
             handle.execute("create table persons(id int, name varchar(255))");
@@ -66,12 +67,12 @@ public class DbFastForwardCommandTest extends AbstractMigrationTest {
         }
 
         // Fast-forward all the changes
-        fastForwardCommand.run(null, new Namespace(ImmutableMap.of("all", true, "dry-run", false)), conf);
+        fastForwardCommand.run(null, new Namespace(Maps.of("all", true, "dry-run", false)), conf);
 
         // No migrations is performed
         new DbMigrateCommand<>(
             TestMigrationConfiguration::getDataSource, TestMigrationConfiguration.class, "migrations.xml")
-            .run(null, new Namespace(ImmutableMap.of()), conf);
+            .run(null, new Namespace(Collections.emptyMap()), conf);
 
         // Nothing is added to the persons table
         try (Handle handle = dbi.open()) {
@@ -83,12 +84,12 @@ public class DbFastForwardCommandTest extends AbstractMigrationTest {
     }
 
     @Test
-    public void testFastForwardFirstDryRun() throws Exception {
+    void testFastForwardFirstDryRun() throws Exception {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         fastForwardCommand.setPrintStream(new PrintStream(baos));
 
         // Fast-forward one change
-        fastForwardCommand.run(null, new Namespace(ImmutableMap.of("all", false, "dry-run", true)), conf);
+        fastForwardCommand.run(null, new Namespace(Maps.of("all", false, "dry-run", true)), conf);
 
         assertThat(NEWLINE_PATTERN.splitAsStream(baos.toString(UTF_8))
             .filter(s -> s.startsWith("INSERT INTO PUBLIC.DATABASECHANGELOG (")))
@@ -96,12 +97,12 @@ public class DbFastForwardCommandTest extends AbstractMigrationTest {
     }
 
     @Test
-    public void testFastForwardAllDryRun() throws Exception {
+    void testFastForwardAllDryRun() throws Exception {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         fastForwardCommand.setPrintStream(new PrintStream(baos));
 
         // Fast-forward 3 changes
-        fastForwardCommand.run(null, new Namespace(ImmutableMap.of("all", true, "dry-run", true)), conf);
+        fastForwardCommand.run(null, new Namespace(Maps.of("all", true, "dry-run", true)), conf);
 
         assertThat(NEWLINE_PATTERN.splitAsStream(baos.toString(UTF_8))
             .filter(s -> s.startsWith("INSERT INTO PUBLIC.DATABASECHANGELOG (")))
@@ -109,7 +110,7 @@ public class DbFastForwardCommandTest extends AbstractMigrationTest {
     }
 
     @Test
-    public void testPrintHelp() throws Exception {
+    void testPrintHelp() throws Exception {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         createSubparser(fastForwardCommand).printHelp(new PrintWriter(new OutputStreamWriter(baos, UTF_8), true));
         assertThat(baos.toString(UTF_8)).isEqualTo(String.format(
@@ -122,7 +123,7 @@ public class DbFastForwardCommandTest extends AbstractMigrationTest {
                 "positional arguments:%n" +
                 "  file                   application configuration file%n" +
                 "%n" +
-                "optional arguments:%n" +
+                "named arguments:%n" +
                 "  -h, --help             show this help message and exit%n" +
                 "  --migrations MIGRATIONS-FILE%n" +
                 "                         the file containing  the  Liquibase migrations for%n" +

@@ -2,8 +2,7 @@ package io.dropwizard.configuration;
 
 import com.fasterxml.jackson.core.JsonLocation;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.dataformat.yaml.snakeyaml.error.Mark;
-import com.google.common.collect.ImmutableSet;
+import io.dropwizard.util.Strings;
 import org.apache.commons.text.similarity.LevenshteinDistance;
 
 import javax.annotation.Nullable;
@@ -203,8 +202,8 @@ public class ConfigurationParsingException extends ConfigurationException {
             return this;
         }
 
-        Builder setDetail(String detail) {
-            this.detail = detail;
+        Builder setDetail(@Nullable String detail) {
+            this.detail = Strings.nullToEmpty(detail);
             return this;
         }
 
@@ -217,12 +216,6 @@ public class ConfigurationParsingException extends ConfigurationException {
             return location == null
                     ? this
                     : setLocation(location.getLineNr(), location.getColumnNr());
-        }
-
-        Builder setLocation(Mark mark) {
-            return mark == null
-                    ? this
-                    : setLocation(mark.getLine(), mark.getColumn());
         }
 
         Builder setLocation(int line, int column) {
@@ -376,7 +369,7 @@ public class ConfigurationParsingException extends ConfigurationException {
      * @param msg    the full error message
      */
     private ConfigurationParsingException(String path, String msg) {
-        super(path, ImmutableSet.of(msg));
+        super(path, Collections.singleton(msg));
     }
 
     /**
@@ -387,7 +380,7 @@ public class ConfigurationParsingException extends ConfigurationException {
      * @param cause  the cause of the parsing error.
      */
     private ConfigurationParsingException(String path, String msg, Throwable cause) {
-        super(path, ImmutableSet.of(msg), cause);
+        super(path, Collections.singleton(msg), cause);
     }
 
 }

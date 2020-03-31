@@ -42,12 +42,12 @@ help:
 clean:
 	-rm -rf $(BUILDDIR)/*
 
-html: less
+html:
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
 
-dirhtml: less
+dirhtml:
 	$(SPHINXBUILD) -b dirhtml $(ALLSPHINXOPTS) $(BUILDDIR)/dirhtml
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/dirhtml."
@@ -153,14 +153,5 @@ doctest:
 	@echo "Testing of doctests in the sources finished, look at the " \
 	      "results in $(BUILDDIR)/doctest/output.txt."
 
-# And now the target; depends on 'make html', since livereload will only build if things change.
-# We need to make sure the docs are current with any existing changes
-# See http://serialized.net/2013/01/live-sphinx-documentation-preview/ for more details
 livehtml: html
-	livereload -b $(BUILDDIR)/html	      	   
-
-less:
-	lessc --compress source/_themes/dropwizard/less/dropwizard.less > source/_themes/dropwizard/static/dropwizard.css
-
-upload: clean dirhtml
-	rsync -avz --delete --exclude=maven $(BUILDDIR)/dirhtml/ codahale.com:/home/codahale/dropwizard.io/
+	sphinx-autobuild -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html

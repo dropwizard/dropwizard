@@ -1,13 +1,12 @@
 package io.dropwizard.jersey.guava;
 
-import com.codahale.metrics.MetricRegistry;
 import com.google.common.base.Optional;
 import io.dropwizard.jersey.AbstractJerseyTest;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.jersey.MyMessage;
 import io.dropwizard.jersey.MyMessageParamConverterProvider;
 import io.dropwizard.jersey.params.UUIDParam;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.GET;
@@ -16,12 +15,13 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Application;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 public class OptionalQueryParamResourceTest extends AbstractJerseyTest {
 
     @Override
     protected Application configure() {
-        return DropwizardResourceConfig.forTesting(new MetricRegistry())
+        return DropwizardResourceConfig.forTesting()
                 .register(OptionalQueryParamResource.class)
                 .register(MyMessageParamConverterProvider.class);
     }
@@ -68,10 +68,11 @@ public class OptionalQueryParamResourceTest extends AbstractJerseyTest {
         assertThat(response).isEqualTo(myMessage);
     }
 
-    @Test(expected = BadRequestException.class)
+    @Test
     public void shouldThrowBadRequestExceptionWhenInvalidUUIDIsPresent() {
         String invalidUUID = "invalid-uuid";
-        target("/optional/uuid").queryParam("uuid", invalidUUID).request().get(String.class);
+        assertThatExceptionOfType(BadRequestException.class).isThrownBy(() ->
+            target("/optional/uuid").queryParam("uuid", invalidUUID).request().get(String.class));
     }
 
     @Test

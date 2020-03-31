@@ -1,10 +1,11 @@
 package io.dropwizard.client.proxy;
 
-import com.google.common.collect.ImmutableList;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
 import org.apache.http.protocol.HttpContext;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -13,7 +14,7 @@ public class NonProxyListProxyRoutePlannerTest {
 
     private HttpHost proxy = new HttpHost("192.168.52.15");
     private NonProxyListProxyRoutePlanner routePlanner = new NonProxyListProxyRoutePlanner(proxy,
-            ImmutableList.of("localhost", "*.example.com", "192.168.52.*"));
+            Arrays.asList("localhost", "*.example.com", "192.168.52.*"));
     private HttpRequest httpRequest = mock(HttpRequest.class);
     private HttpContext httpContext = mock(HttpContext.class);
 

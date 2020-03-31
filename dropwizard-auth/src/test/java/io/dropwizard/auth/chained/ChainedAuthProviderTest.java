@@ -1,7 +1,5 @@
 package io.dropwizard.auth.chained;
 
-import com.codahale.metrics.MetricRegistry;
-import com.google.common.collect.ImmutableList;
 import io.dropwizard.auth.AuthBaseTest;
 import io.dropwizard.auth.AuthDynamicFeature;
 import io.dropwizard.auth.AuthFilter;
@@ -14,10 +12,12 @@ import io.dropwizard.auth.oauth.OAuthCredentialAuthFilter;
 import io.dropwizard.auth.util.AuthUtil;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
-import org.junit.Test;
+import org.glassfish.jersey.test.TestProperties;
+import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.core.HttpHeaders;
 import java.security.Principal;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -25,13 +25,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class ChainedAuthProviderTest extends AuthBaseTest<ChainedAuthProviderTest.ChainedAuthTestResourceConfig> {
     private static final String BEARER_USER = "A12B3C4D";
     public static class ChainedAuthTestResourceConfig extends DropwizardResourceConfig {
-        @SuppressWarnings("unchecked")
+
         public ChainedAuthTestResourceConfig() {
-            super(true, new MetricRegistry());
+            super();
 
             final Authorizer<Principal> authorizer = AuthUtil.getTestAuthorizer(ADMIN_USER, ADMIN_ROLE);
             final AuthFilter<BasicCredentials, Principal> basicAuthFilter = new BasicCredentialAuthFilter.Builder<>()
-                .setAuthenticator(AuthUtil.getBasicAuthenticator(ImmutableList.of(ADMIN_USER, ORDINARY_USER)))
+                .setAuthenticator(AuthUtil.getBasicAuthenticator(Arrays.asList(ADMIN_USER, ORDINARY_USER)))
                 .setAuthorizer(authorizer)
                 .buildAuthFilter();
 
@@ -41,16 +41,17 @@ public class ChainedAuthProviderTest extends AuthBaseTest<ChainedAuthProviderTes
                 .setAuthorizer(authorizer)
                 .buildAuthFilter();
 
-            register(new AuthValueFactoryProvider.Binder(Principal.class));
+            property(TestProperties.CONTAINER_PORT, "0");
+            register(new AuthValueFactoryProvider.Binder<>(Principal.class));
             register(new AuthDynamicFeature(new ChainedAuthFilter<>(buildHandlerList(basicAuthFilter, oAuthFilter))));
             register(RolesAllowedDynamicFeature.class);
             register(AuthResource.class);
         }
 
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings("rawtypes")
         public List<AuthFilter> buildHandlerList(AuthFilter<BasicCredentials, Principal> basicAuthFilter,
                                                  AuthFilter<String, Principal> oAuthFilter) {
-            return ImmutableList.of(basicAuthFilter, oAuthFilter);
+            return Arrays.asList(basicAuthFilter, oAuthFilter);
         }
     }
 

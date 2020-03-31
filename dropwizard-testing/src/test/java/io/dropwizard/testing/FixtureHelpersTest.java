@@ -1,9 +1,10 @@
 package io.dropwizard.testing;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static io.dropwizard.testing.FixtureHelpers.fixture;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 public class FixtureHelpersTest {
     @Test
@@ -11,8 +12,8 @@ public class FixtureHelpersTest {
         assertThat(fixture("fixtures/fixture.txt")).isEqualTo("YAY FOR ME");
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void throwsIllegalStateExceptionWhenFileDoesNotExist() {
-        fixture("this-does-not-exist.foo");
+        assertThatIllegalArgumentException().isThrownBy(() -> fixture("this-does-not-exist.foo"));
     }
 }

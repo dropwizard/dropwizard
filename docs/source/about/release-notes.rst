@@ -4,10 +4,520 @@
 Release Notes
 #############
 
+Please refer to `GitHub releases <https://github.com/dropwizard/dropwizard/releases>`__ for the most up-to-date release notes.
+
+.. _rel-2.0.0:
+
+v2.0.0: Dec 10, 2019
+====================
+
+* :ref:`upgrade-notes-dropwizard-2_0_x`
+* `GitHub 2.0.0 milestone <https://github.com/dropwizard/dropwizard/pulls?page=1&q=is%3Apr+is%3Aclosed+milestone%3A2.0.0>`_
+* Add TLS socket logging appender (`#2317 <https://github.com/dropwizard/dropwizard/pull/2317>`_)
+* Add opt-in ``EmptyOptionalNoContentExceptionMapper`` for returning 204 responses on empty ``Optional`` responses (`#2350 <https://github.com/dropwizard/dropwizard/pull/2350>`_)
+* Add configuration for excluding mime types and paths to gzip (`#2356 <https://github.com/dropwizard/dropwizard/pull/2356>`_)
+* Support expirable log level configurations (`#2375 <https://github.com/dropwizard/dropwizard/pull/2375>`_)
+* Add additional syslog logging facilities (`#2381 <https://github.com/dropwizard/dropwizard/pull/2381>`_)
+* Add opt-in logging throttling via the ``messageRate`` config property (`#2384 <https://github.com/dropwizard/dropwizard/pull/2384>`_)
+* Fix ``UUIDParams`` accepting input of incorrect length (`#2382 <https://github.com/dropwizard/dropwizard/pull/2382>`_)
+* Fix usage ``@SelfValidating`` with ``@BeanParam`` (`#2334 <https://github.com/dropwizard/dropwizard/pull/2334>`_, `#2335 <https://github.com/dropwizard/dropwizard/issues/2335>`_)
+* Fix resource endpoints injected via DI not being logged on startup (`#2389 <https://github.com/dropwizard/dropwizard/pull/2389>`_)
+* Disable protocols less secure than TLS v1.2 by default (`#2417 <https://github.com/dropwizard/dropwizard/pull/2417>`_)
+* Add ``totalSizeCap`` to file log appender (`#2502 <https://github.com/dropwizard/dropwizard/pull/2502>`_)
+* Gzipped content encoded requests and responses are compatible with Servlet 3.1 and Async IO (`#2566 <https://github.com/dropwizard/dropwizard/pull/2566>`_)
+* Retired use of deprecated Apache ``StrSubstitutor`` and ``StrLookup`` classes and replaced them with Apache's ``StringSubstitutor`` and ``StringLookup`` (`#2462 <https://github.com/dropwizard/dropwizard/pull/2462>`_)
+* Deprecate ``Bundle`` in favor of ``ConfiguredBundle<T>`` (`#2516 <https://github.com/dropwizard/dropwizard/pull/2516>`_)
+* Allow unknown JSON properties (i.e. disable ``DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES``) by default (`#2570 <https://github.com/dropwizard/dropwizard/pull/2570>`_)
+* Deprecate ``*Param`` classes and will be removed in 3.0.0 (`#2637 <https://github.com/dropwizard/dropwizard/pull/2637>`_)
+* Add data size class adhering to the correct SI and IEC prefixes (`#2686 <https://github.com/dropwizard/dropwizard/pull/2686>`_)
+* Added PortDescriptor class and method in ServerLifeCycleListener to provide a list of PortDescriptors, detailing all listening information for the application (`#2711 <https://github.com/dropwizard/dropwizard/pull/2711>`_)
+* Add support for proxy-protocol in http connector configuration (`#2709 <https://github.com/dropwizard/dropwizard/pull/2709>`_)
+* Disable using ``X-Forwarded-*`` headers by default (`#2748 <https://github.com/dropwizard/dropwizard/pull/2748>`_)
+* Fix typo by renaming ``ResilentSocketOutputStream`` to ``ResilientSocketOutputStream`` (`#2766 <https://github.com/dropwizard/dropwizard/pull/2766>`_)
+* Adds an opt-in URI request logging filter factory (`UriFilterFactory`)  (`#2794 <https://github.com/dropwizard/dropwizard/pull/2795>`_)`
+* Add support for configuring Jetty's cookie compliance (`#2812 <https://github.com/dropwizard/dropwizard/pull/2812>`_)
+* Deprecate ``Authorizer.authorize(principal, role)`` in favor of ``Authorizer.authorize(principal, role, context)`` (`#2837 <https://github.com/dropwizard/dropwizard/pull/2837>`_)
+* Fix undefined config environment variables with a default value causing an exception in strict mode (`#2801 <https://github.com/dropwizard/dropwizard/pull/2801>`_)
+* Removed ``dropwizard-jdbi`` as official module and moved it into it's own project: `dropwizard-jdbi <https://github.com/dropwizard/dropwizard-jdbi>`_ (`#2922 <https://github.com/dropwizard/dropwizard/issues/2922>`_)
+* Add ``@JsonProperty`` to AbstractServerFactory setters
+* Add InjectValidatorBundle that enable context injection into validators
+* Add JUnit 5 Example to Testing Clients (`#2367 <https://github.com/dropwizard/dropwizard/issues/2367>`_)
+* Add TLS socket logging appender
+* Add a ``JSONUnauthorizedHandler`` (`#2839 <https://github.com/dropwizard/dropwizard/issues/2839>`_)
+* Add config settings for tasks and health check resources (`#3037 <https://github.com/dropwizard/dropwizard/issues/3037>`_)
+* Add current class loader to javassist ClassPool
+* Add mapping for Jetty alpn-boot to Java versions (`#2948 <https://github.com/dropwizard/dropwizard/issues/2948>`_)
+* Add missing "to" in BaseConfigurationFactory exception messages (`#2869 <https://github.com/dropwizard/dropwizard/issues/2869>`_)
+* Add new constructors to allow specifying a response content type for Task and PostBodyTask, keeping the default as text/plain;charset=UTF-8
+* Add pip requirements file with Sphinx and dependencies
+* Add possibility to disable logging bootstrap for ResourceTestRule (`#2338 <https://github.com/dropwizard/dropwizard/issues/2338>`_)
+* Add safe Jackson deserializers to prevent a DoS attack (`#2511 <https://github.com/dropwizard/dropwizard/issues/2511>`_)
+* Add support for PATCH request to ResourceTestRule client (`#2410 <https://github.com/dropwizard/dropwizard/issues/2410>`_)
+* Add support for SLF4J markers to dropwizard-json-logging (`#2899 <https://github.com/dropwizard/dropwizard/issues/2899>`_)
+* Add support for disabled metric attributes on ConsoleReporterFa… (`#2976 <https://github.com/dropwizard/dropwizard/issues/2976>`_)
+* Add support for logging caller data in dropwizard-json-logging
+* Add support for pathQuery json access log attribute
+* Added support for independently client-specified JCE Providers for both keystore and truststore (`#2390 <https://github.com/dropwizard/dropwizard/issues/2390>`_)
+* Addressed ThrottlingLoggingAppenderTest issues
+* Adds a request logging url filter. Fixes `#2794 <https://github.com/dropwizard/dropwizard/issues/2794>`_
+* Allow full customization of HttpClientBuilder (`#2864 <https://github.com/dropwizard/dropwizard/issues/2864>`_)
+* Allow overriding ``ViewMessageBodyWriter#detectLocale()`` (`#2967 <https://github.com/dropwizard/dropwizard/issues/2967>`_)
+* Allow reporting Metrics on stop (`#2558 <https://github.com/dropwizard/dropwizard/issues/2558>`_)
+* Allow simple logger level config to support "OFF" (`#2819 <https://github.com/dropwizard/dropwizard/issues/2819>`_)
+* Allow to disable logging bootstrap in DAOTest
+* Allow to setNormalizeUri on HTTP client
+* Appropriately log ssl params
+* Avoid error message while signing artifacts
+* Be more precise about use of Metered and Timed annotations
+* Catch EofException at the jetty handler level
+* Checkout all freemarker templates with lf line endings
+* Compiler Warning Cleanup (`#2466 <https://github.com/dropwizard/dropwizard/issues/2466>`_)
+* ConnectorProvider Not Set Silently
+* Convert to lazy evaluation for json event creation (`#2506 <https://github.com/dropwizard/dropwizard/issues/2506>`_)
+* Correctly log resource paths with relative path segments (`#2923 <https://github.com/dropwizard/dropwizard/issues/2923>`_)
+* Default values allowed on strict undefined config env vars
+* Dependency reorganization (`#2897 <https://github.com/dropwizard/dropwizard/issues/2897>`_)
+* Deprecate ``*Param`` classes
+* Disable Errorprone: EqualsGetClass check (`#2718 <https://github.com/dropwizard/dropwizard/issues/2718>`_)
+* Disable ``FAIL_ON_UNKNOWN_PROPERTIES`` by default
+* Document TeeFilter for JSON log format (`#2596 <https://github.com/dropwizard/dropwizard/issues/2596>`_)
+* DropwizardTestSupport sets ConfigurationFactoryFactory too early (`#2551 <https://github.com/dropwizard/dropwizard/issues/2551>`_)
+* Enable Jackson Afterburner only on Java 8 (`#2966 <https://github.com/dropwizard/dropwizard/issues/2966>`_)
+* Ensure ``DropwizardResourceConfig#forTesting()`` is using a random port
+* Exclude javax.el and jakarta.el-api, using glassfish jakarta.el instead (`#2750 <https://github.com/dropwizard/dropwizard/issues/2750>`_)
+* Explicitly create BootstrapServiceRegistry in SessionFactoryFac… (`#2977 <https://github.com/dropwizard/dropwizard/issues/2977>`_)
+* Extend from AbstractHandlerContainer instead of AbstractHandler (`#2460 <https://github.com/dropwizard/dropwizard/issues/2460>`_)
+* Fix Incomplete TaskServletTest Method Stubbing To Avoid NullpointerException In Tests (`#3032 <https://github.com/dropwizard/dropwizard/issues/3032>`_)
+* Fix Integration Testing Example (`#2364 <https://github.com/dropwizard/dropwizard/issues/2364>`_)
+* Fix Jackson (fuzzy) enum handling (`#2599 <https://github.com/dropwizard/dropwizard/issues/2599>`_)
+* Fix date formatting pattern in test (`#2585 <https://github.com/dropwizard/dropwizard/issues/2585>`_)
+* Fix deprecation usage of argparse4j
+* Fix errorpone warnings (`#2399 <https://github.com/dropwizard/dropwizard/issues/2399>`_)
+* Fix escape signs and broken @see section (`#2331 <https://github.com/dropwizard/dropwizard/issues/2331>`_)
+* Fix for InvalidKeyException: Illegal key size (`#2411 <https://github.com/dropwizard/dropwizard/issues/2411>`_, `#2408 <https://github.com/dropwizard/dropwizard/issues/2408>`_)
+* Fix illegal reflection warning in DropwizardResourceConfig (`#2964 <https://github.com/dropwizard/dropwizard/issues/2964>`_)
+* Fix incorrect reading of somaxconn for tcp backlog on linux (`#2430 <https://github.com/dropwizard/dropwizard/issues/2430>`_)
+* Include default requestLog format string in documentation (`#2500 <https://github.com/dropwizard/dropwizard/issues/2500>`_, `#2526 <https://github.com/dropwizard/dropwizard/issues/2526>`_)
+* Fix jersey attempting to resolve auth filter fields
+* Fix shared metrics race with multiple environments
+* Fix tests: Disable FAIL_ON_UNKNOWN_PROPERTIES
+* Fixed flaky test in CachingAuthorizer (`#2683 <https://github.com/dropwizard/dropwizard/issues/2683>`_)
+* Improve Dropwizard test support (`#2673 <https://github.com/dropwizard/dropwizard/issues/2673>`_)
+* Improve validation message for min/max duration
+* Include all Apache Tomcat JDBC ConnectionPool metrics (`#2475 <https://github.com/dropwizard/dropwizard/issues/2475>`_)
+* Increases the values in the hibernate validator annotations to actual minimums
+* Let async logs finish in throttling append test
+* Make Duration, DataSize, and Size serializable (`#2975 <https://github.com/dropwizard/dropwizard/issues/2975>`_)
+* Mark PermissiveEnumDeserializer as cacheable (`#2446 <https://github.com/dropwizard/dropwizard/issues/2446>`_)
+* Merge pull request `#2316 <https://github.com/dropwizard/dropwizard/issues/2316>`_ from dropwizard/move-to-junit5
+* Merge pull request `#2320 <https://github.com/dropwizard/dropwizard/issues/2320>`_ from nickbabcock/remove-prereq-
+* Merge pull request `#2324 <https://github.com/dropwizard/dropwizard/issues/2324>`_ from nickbabcock/jersey-resolv
+* Merge pull request `#2325 <https://github.com/dropwizard/dropwizard/issues/2325>`_ from xiaodong-xie/upgrade-liquibase
+* Merge pull request `#2339 <https://github.com/dropwizard/dropwizard/issues/2339>`_ from nickbabcock/argparse4j
+* Merge pull request `#2341 <https://github.com/dropwizard/dropwizard/issues/2341>`_ from nickbabcock/freemarker-attributes
+* Merge pull request `#2342 <https://github.com/dropwizard/dropwizard/issues/2342>`_ from nickbabcock/env-metric-race
+* Merge pull request `#2344 <https://github.com/dropwizard/dropwizard/issues/2344>`_ from manuel-hegner/feature/improve_self_validation
+* Merge pull request `#2349 <https://github.com/dropwizard/dropwizard/issues/2349>`_ from nickbabcock/fix-javadoc-errors
+* Merge pull request `#2404 <https://github.com/dropwizard/dropwizard/issues/2404>`_ from nickbabcock/cleanup-params-test
+* Merge pull request `#2405 <https://github.com/dropwizard/dropwizard/issues/2405>`_ from nickbabcock/log-ssl
+* Merge pull request `#2409 <https://github.com/dropwizard/dropwizard/issues/2409>`_ from nickbabcock/inclusive
+* Merge pull request `#2414 <https://github.com/dropwizard/dropwizard/issues/2414>`_ from tsundberg/timed-and-meterd-cannot-be-used-at-the-same-time
+* Merge pull request `#2448 <https://github.com/dropwizard/dropwizard/issues/2448>`_ from dropwizard/resource-config-random-port
+* Merge pull request `#2487 <https://github.com/dropwizard/dropwizard/issues/2487>`_ from zmarois/patch-1
+* Merge pull request `#2509 <https://github.com/dropwizard/dropwizard/issues/2509>`_ from mattnelson/json_uri_query
+* Merge pull request `#2514 <https://github.com/dropwizard/dropwizard/issues/2514>`_ from bennyz/redundant-the
+* Merge pull request `#2519 <https://github.com/dropwizard/dropwizard/issues/2519>`_ from dropwizard/dependency-updates
+* Merge pull request `#2522 <https://github.com/dropwizard/dropwizard/issues/2522>`_ from alex-shpak/feature/inject-validator-2
+* Merge pull request `#2541 <https://github.com/dropwizard/dropwizard/issues/2541>`_ from shail/eofExceptionIssue
+* Merge pull request `#2549 <https://github.com/dropwizard/dropwizard/issues/2549>`_ from minisu/patch-3
+* Merge pull request `#2573 <https://github.com/dropwizard/dropwizard/issues/2573>`_ from isaki/throttle_revisit
+* Merge pull request `#2575 <https://github.com/dropwizard/dropwizard/issues/2575>`_ from isaki/cache_auth_test_fix
+* Merge pull request `#2576 <https://github.com/dropwizard/dropwizard/issues/2576>`_ from sergioescala/removing_unnecessary_import
+* Merge pull request `#2578 <https://github.com/dropwizard/dropwizard/issues/2578>`_ from nickbabcock/cve-suppress
+* Merge pull request `#2600 <https://github.com/dropwizard/dropwizard/issues/2600>`_ from dropwizard/issue-2539
+* Merge pull request `#2643 <https://github.com/dropwizard/dropwizard/issues/2643>`_ from nickbabcock/before-after
+* Merge pull request `#2659 <https://github.com/dropwizard/dropwizard/issues/2659>`_ from dropwizard/errorprone-nullaway
+* Merge pull request `#2665 <https://github.com/dropwizard/dropwizard/issues/2665>`_ from nickbabcock/sona-example
+* Merge pull request `#2675 <https://github.com/dropwizard/dropwizard/issues/2675>`_ from dennyac/dropwizard-jersey-metrics-documentation
+* Merge pull request `#2684 <https://github.com/dropwizard/dropwizard/issues/2684>`_ from nickbabcock/logging-docs
+* Merge pull request `#2692 <https://github.com/dropwizard/dropwizard/issues/2692>`_ from FredDeschenes/2.0-release-notes-abstractbinder
+* Merge pull request `#2693 <https://github.com/dropwizard/dropwizard/issues/2693>`_ from dropwizard/remove-checkstyle
+* Merge pull request `#2703 <https://github.com/dropwizard/dropwizard/issues/2703>`_ from slivkamiro/feature/validation-query
+* Merge pull request `#2722 <https://github.com/dropwizard/dropwizard/issues/2722>`_ from dropwizard/issue-2721
+* Merge pull request `#2741 <https://github.com/dropwizard/dropwizard/issues/2741>`_ from davnicwil/specify-task-response-type
+* Merge pull request `#2760 <https://github.com/dropwizard/dropwizard/issues/2760>`_ from dropwizard/issue-2759
+* Merge pull request `#2764 <https://github.com/dropwizard/dropwizard/issues/2764>`_ from tristanbuckner/reset_closed_client
+* Merge pull request `#2767 <https://github.com/dropwizard/dropwizard/issues/2767>`_ from nickbabcock/test-bind
+* Merge pull request `#2775 <https://github.com/dropwizard/dropwizard/issues/2775>`_ from nickbabcock/remove-doc
+* Merge pull request `#2786 <https://github.com/dropwizard/dropwizard/issues/2786>`_ from josephlbarnett/javassist-classpath
+* Merge pull request `#2803 <https://github.com/dropwizard/dropwizard/issues/2803>`_ from koraytugay/patch-1
+* Merge pull request `#2804 <https://github.com/dropwizard/dropwizard/issues/2804>`_ from stevenbenitez/fix/caching-authenticator-doc
+* Merge pull request `#2805 <https://github.com/dropwizard/dropwizard/issues/2805>`_ from mzamani1/fix-conscrypt-docs
+* Merge pull request `#2811 <https://github.com/dropwizard/dropwizard/issues/2811>`_ from cyberdelia/normalize-uri
+* Merge pull request `#2854 <https://github.com/dropwizard/dropwizard/issues/2854>`_ from toadzky/fix-hibernate-validator-values-on-server-factory
+* Merge pull request `#2874 <https://github.com/dropwizard/dropwizard/issues/2874>`_ from jamesalfei/master
+* Merge pull request `#2883 <https://github.com/dropwizard/dropwizard/issues/2883>`_ from dropwizard/dependency-cleanup
+* Merge pull request `#2919 <https://github.com/dropwizard/dropwizard/issues/2919>`_ from alexey-wg2/remove-duplicated-service-entry
+* Merge pull request `#2940 <https://github.com/dropwizard/dropwizard/issues/2940>`_ from msymons/master
+* Merge pull request `#2943 <https://github.com/dropwizard/dropwizard/issues/2943>`_ from gisripa/requestAttrs_json_logging
+* Merge pull request `#3021 <https://github.com/dropwizard/dropwizard/issues/3021>`_ from cjhawley/patch-1
+* Migrate jetty min data rates to Sizes
+* Migrate tests to JUnit 5.4.0 (`#2493 <https://github.com/dropwizard/dropwizard/issues/2493>`_)
+* Migrate to jetty-only gzip handler (`#2566 <https://github.com/dropwizard/dropwizard/issues/2566>`_)
+* Move ResilientSocketOutputStream into io.dropwizard.logging (`#2925 <https://github.com/dropwizard/dropwizard/issues/2925>`_)
+* Nested calls to ``@UnitOfWork`` methods cause inconsistent behaviour (`#2913 <https://github.com/dropwizard/dropwizard/issues/2913>`_)
+* Only override ConfigurationSourceProvider if explicitly provided (`#2720 <https://github.com/dropwizard/dropwizard/issues/2720>`_)
+* Overhaul logging resource endpoints
+* Refactor inject validator bundle to use resourceContext directly
+* Register HK2 AbstractBinder with Jersey (`#3000 <https://github.com/dropwizard/dropwizard/issues/3000>`_)
+* Remove Guava (`#2400 <https://github.com/dropwizard/dropwizard/issues/2400>`_, `#2555 <https://github.com/dropwizard/dropwizard/issues/2555>`_)
+* Remove metrics-ganglia completely (`#2310 <https://github.com/dropwizard/dropwizard/issues/2310>`_)
+* Remove restrictions on generic type for ConfiguredBundle
+* Replace InjectValidatorBundle with feature and register by default
+* Replace JSON string asserts in MultipleContentTypeTest (`#3056 <https://github.com/dropwizard/dropwizard/issues/3056>`_)
+* Replace ThrottlingAppenderWrapper with external version
+* Replace livereload and Guard with sphinx-autobuild
+* Replace remaining use of Hamcrest with AssertJ (`#2444 <https://github.com/dropwizard/dropwizard/issues/2444>`_)
+* Request Uri event should not contain params in tests (`#2504 <https://github.com/dropwizard/dropwizard/issues/2504>`_)
+* Return 404 for POST /admin/tasks (`#2627 <https://github.com/dropwizard/dropwizard/issues/2627>`_)
+* Rework resource config test for resilient CI
+* Rewrite of throttling logging appender testing (`#2458 <https://github.com/dropwizard/dropwizard/issues/2458>`_)
+* Satisfy optional check before unwrap analyses (`#2644 <https://github.com/dropwizard/dropwizard/issues/2644>`_)
+* Simplify SelfValidatingValidator (`#2413 <https://github.com/dropwizard/dropwizard/issues/2413>`_)
+* Support URL encoded entry names in ``ResourceURL#isDirectory()`` (`#2674 <https://github.com/dropwizard/dropwizard/issues/2674>`_)
+* Support configuration of exception details with JSON logging (`#2501 <https://github.com/dropwizard/dropwizard/issues/2501>`_)
+* Support custom request executor in HttpClientBuilder (`#2959 <https://github.com/dropwizard/dropwizard/issues/2959>`_)
+* Support dumping Jetty config on start/stop (`#2743 <https://github.com/dropwizard/dropwizard/issues/2743>`_)
+* Support for requestAttributes in Json access log
+* Support handling failed commands via ``Application#onFatalError(…`` (`#3020 <https://github.com/dropwizard/dropwizard/issues/3020>`_)
+* Support nested JUnit 5 tests with ``DropwizardExtension`` (`#2924 <https://github.com/dropwizard/dropwizard/issues/2924>`_)
+* Surround bootclasspath in quotes for special characters in user home
+* Test deserializing config without JsonAutoDetect
+* Test support cleanup on before exceptions
+* UUID param to length check input
+* Use AtomicReference in LogConfigurationTask for timer
+* Use Dropwizard's CharStreams class in DefaultServerFactoryTest
+* Use Java Stream API in DbDumpCommandTest (`#2326 <https://github.com/dropwizard/dropwizard/issues/2326>`_)
+* Use commons-text native undef var detection (`#2829 <https://github.com/dropwizard/dropwizard/issues/2829>`_)
+* Use correct property for Dropwizard versions in dropwizard-bom
+* Use custom public and secret keyrings when signing
+* Use instrumented thread factory (`#2649 <https://github.com/dropwizard/dropwizard/issues/2649>`_)
+* Use strict illegal-access policy on Java 9 and later (`#2965 <https://github.com/dropwizard/dropwizard/issues/2965>`_)
+* Allowing validation query to be null `#2702 <https://github.com/dropwizard/dropwizard/issues/2702>`_
+* make it possible to created subclass of apache http builder (`#2958 <https://github.com/dropwizard/dropwizard/issues/2958>`_)
+* Update JdbiFactory to use metrics' InstrumentedSqlLogger (`#2682 <https://github.com/dropwizard/dropwizard/issues/2682>`_)
+
+Version updates
+---------------
+
+* Bump bcprov-jdk15on to 1.64 (`#2642 <https://github.com/dropwizard/dropwizard/issues/2642>`_, `#2791 <https://github.com/dropwizard/dropwizard/issues/2791>`_, `#2917 <https://github.com/dropwizard/dropwizard/issues/2917>`_, `#2972 <https://github.com/dropwizard/dropwizard/issues/2972>`_)
+* Bump byte-buddy to 1.10.4 (`#2611 <https://github.com/dropwizard/dropwizard/issues/2611>`_, `#2631 <https://github.com/dropwizard/dropwizard/issues/2631>`_, `#2707 <https://github.com/dropwizard/dropwizard/issues/2707>`_, `#2710 <https://github.com/dropwizard/dropwizard/issues/2710>`_, `#2782 <https://github.com/dropwizard/dropwizard/issues/2782>`_, `#2835 <https://github.com/dropwizard/dropwizard/issues/2835>`_, `#2849 <https://github.com/dropwizard/dropwizard/issues/2849>`_, `#2860 <https://github.com/dropwizard/dropwizard/issues/2860>`_, `#2876 <https://github.com/dropwizard/dropwizard/issues/2876>`_, `#2984 <https://github.com/dropwizard/dropwizard/issues/2984>`_, `#3018 <https://github.com/dropwizard/dropwizard/issues/3018>`_, `#3041 <https://github.com/dropwizard/dropwizard/issues/3041>`_)
+* Bump caffeine to 2.8.0 (`#2661 <https://github.com/dropwizard/dropwizard/issues/2661>`_, `#2868 <https://github.com/dropwizard/dropwizard/issues/2868>`_)
+* Bump checker-qual to 3.0.0 (`#2676 <https://github.com/dropwizard/dropwizard/issues/2676>`_, `#2728 <https://github.com/dropwizard/dropwizard/issues/2728>`_, `#2756 <https://github.com/dropwizard/dropwizard/issues/2756>`_, `#2790 <https://github.com/dropwizard/dropwizard/issues/2790>`_, `#2827 <https://github.com/dropwizard/dropwizard/issues/2827>`_, `#2865 <https://github.com/dropwizard/dropwizard/issues/2865>`_, `#2866 <https://github.com/dropwizard/dropwizard/issues/2866>`_, `#2894 <https://github.com/dropwizard/dropwizard/issues/2894>`_, `#2902 <https://github.com/dropwizard/dropwizard/issues/2902>`_, `#2955 <https://github.com/dropwizard/dropwizard/issues/2955>`_, `#3048 <https://github.com/dropwizard/dropwizard/issues/3048>`_, `#3012 <https://github.com/dropwizard/dropwizard/issues/3012>`_)
+* Bump classmate to 1.5.1 (`#2708 <https://github.com/dropwizard/dropwizard/issues/2708>`_, `#2985 <https://github.com/dropwizard/dropwizard/issues/2985>`_)
+* Bump commons-lang3 to 3.9 (`#2732 <https://github.com/dropwizard/dropwizard/issues/2732>`_)
+* Bump commons-text to 1.8 (`#2828 <https://github.com/dropwizard/dropwizard/issues/2828>`_, `#2905 <https://github.com/dropwizard/dropwizard/issues/2905>`_)
+* Bump Mustache compiler to 0.9.6 (`#2616 <https://github.com/dropwizard/dropwizard/issues/2616>`_)
+* Bump Errorprone to 2.3.4 (`#3046 <https://github.com/dropwizard/dropwizard/issues/3046>`_, `#3047 <https://github.com/dropwizard/dropwizard/issues/3047>`_)
+* Bump Freemarker to 2.3.29 (`#2887 <https://github.com/dropwizard/dropwizard/issues/2887>`_)
+* Bump Guava to 28.1-jre (`#2472 <https://github.com/dropwizard/dropwizard/issues/2472>`_, `#2688 <https://github.com/dropwizard/dropwizard/issues/2688>`_, `#2798 <https://github.com/dropwizard/dropwizard/issues/2798>`_, `#2900 <https://github.com/dropwizard/dropwizard/issues/2900>`_)
+* Bump hibernate-core to 5.4.10.Final (`#2706 <https://github.com/dropwizard/dropwizard/issues/2706>`_, `#2785 <https://github.com/dropwizard/dropwizard/issues/2785>`_, `#2863 <https://github.com/dropwizard/dropwizard/issues/2863>`_, `#2952 <https://github.com/dropwizard/dropwizard/issues/2952>`_, `#2993 <https://github.com/dropwizard/dropwizard/issues/2993>`_, `#3007 <https://github.com/dropwizard/dropwizard/issues/3007>`_, `#3026 <https://github.com/dropwizard/dropwizard/issues/3026>`_, `#3052 <https://github.com/dropwizard/dropwizard/issues/3052>`_)
+* Bump hibernate-validator to 6.1.0.Final (`#2629 <https://github.com/dropwizard/dropwizard/issues/2629>`_, `#2662 <https://github.com/dropwizard/dropwizard/issues/2662>`_, `#2705 <https://github.com/dropwizard/dropwizard/issues/2705>`_, `#2802 <https://github.com/dropwizard/dropwizard/issues/2802>`_, `#3003 <https://github.com/dropwizard/dropwizard/issues/3003>`_)
+* Bump Apache HttpClient to 4.5.10 (`#2615 <https://github.com/dropwizard/dropwizard/issues/2615>`_, `#2715 <https://github.com/dropwizard/dropwizard/issues/2715>`_, `#2799 <https://github.com/dropwizard/dropwizard/issues/2799>`_, `#2914 <https://github.com/dropwizard/dropwizard/issues/2914>`_)
+* Bump Jackson to 2.10.0 (`#2393 <https://github.com/dropwizard/dropwizard/issues/2393>`_, `#2777 <https://github.com/dropwizard/dropwizard/issues/2777>`_, `#2826 <https://github.com/dropwizard/dropwizard/issues/2826>`_, `#2870 <https://github.com/dropwizard/dropwizard/issues/2870>`_, `#3019 <https://github.com/dropwizard/dropwizard/issues/3019>`_, `#2944 <https://github.com/dropwizard/dropwizard/issues/2944>`_)
+* Bump jakarta.el to 3.0.3 (`#2912 <https://github.com/dropwizard/dropwizard/issues/2912>`_)
+* Bump javassist to 3.26.0-GA (`#2738 <https://github.com/dropwizard/dropwizard/issues/2738>`_, `#2961 <https://github.com/dropwizard/dropwizard/issues/2961>`_)
+* Bump JAXB API to 2.3.1 (`#2608 <https://github.com/dropwizard/dropwizard/issues/2608>`_)
+* Bump JDBI3 to 3.11.1 (`#2369 <https://github.com/dropwizard/dropwizard/issues/2369>`_, `#2451 <https://github.com/dropwizard/dropwizard/issues/2451>`_, `#2546 <https://github.com/dropwizard/dropwizard/issues/2546>`_, `#2731 <https://github.com/dropwizard/dropwizard/issues/2731>`_, `#2726 <https://github.com/dropwizard/dropwizard/issues/2726>`_, `#2744 <https://github.com/dropwizard/dropwizard/issues/2744>`_, `#2754 <https://github.com/dropwizard/dropwizard/issues/2754>`_, `#2762 <https://github.com/dropwizard/dropwizard/issues/2762>`_, `#2855 <https://github.com/dropwizard/dropwizard/issues/2855>`_, `#2872 <https://github.com/dropwizard/dropwizard/issues/2872>`_, `#2907 <https://github.com/dropwizard/dropwizard/issues/2907>`_, `#2929 <https://github.com/dropwizard/dropwizard/issues/2929>`_, `#3027 <https://github.com/dropwizard/dropwizard/issues/3027>`_, `#3030 <https://github.com/dropwizard/dropwizard/issues/3030>`_)
+* Bump Jersey to 2.29.1 (`#2395 <https://github.com/dropwizard/dropwizard/issues/2395>`_, `#2613 <https://github.com/dropwizard/dropwizard/issues/2613>`_, `#2813 <https://github.com/dropwizard/dropwizard/issues/2813>`_, `#2916 <https://github.com/dropwizard/dropwizard/issues/2916>`_)
+* Bump Jetty to 9.4.24.v20191120 (`#2346 <https://github.com/dropwizard/dropwizard/issues/2346>`_, `#2657 <https://github.com/dropwizard/dropwizard/issues/2657>`_, `#2734 <https://github.com/dropwizard/dropwizard/issues/2734>`_, `#2740 <https://github.com/dropwizard/dropwizard/issues/2740>`_, `#2752 <https://github.com/dropwizard/dropwizard/issues/2752>`_, `#2800 <https://github.com/dropwizard/dropwizard/issues/2800>`_, `#2879 <https://github.com/dropwizard/dropwizard/issues/2879>`_, `#2956 <https://github.com/dropwizard/dropwizard/issues/2956>`_, `#2997 <https://github.com/dropwizard/dropwizard/issues/2997>`_, `#3031 <https://github.com/dropwizard/dropwizard/issues/3031>`_, `#3033 <https://github.com/dropwizard/dropwizard/issues/3033>`_)
+* Bump alpn-boot to v8.1.13.v20181017 (`#2547 <https://github.com/dropwizard/dropwizard/issues/2547>`_, `#2340 <https://github.com/dropwizard/dropwizard/issues/2340>`_)
+* Bump Joda-Time to 2.10.5 (`#2772 <https://github.com/dropwizard/dropwizard/issues/2772>`_, `#2831 <https://github.com/dropwizard/dropwizard/issues/2831>`_, `#2937 <https://github.com/dropwizard/dropwizard/issues/2937>`_, `#2998 <https://github.com/dropwizard/dropwizard/issues/2998>`_)
+* Bump Liquibase to 3.8.2 (`#2386 <https://github.com/dropwizard/dropwizard/issues/2386>`_, `#2621 <https://github.com/dropwizard/dropwizard/issues/2621>`_, `#2845 <https://github.com/dropwizard/dropwizard/issues/2845>`_, `#2890 <https://github.com/dropwizard/dropwizard/issues/2890>`_, `#3016 <https://github.com/dropwizard/dropwizard/issues/3016>`_, `#3038 <https://github.com/dropwizard/dropwizard/issues/3038>`_)
+* Bump logback-throttling-appender to 1.1.0 (`#2928 <https://github.com/dropwizard/dropwizard/issues/2928>`_)
+* Bump Dropwizard Metrics to 4.1.2 (`#2761 <https://github.com/dropwizard/dropwizard/issues/2761>`_, `#2986 <https://github.com/dropwizard/dropwizard/issues/2986>`_, `#3055 <https://github.com/dropwizard/dropwizard/issues/3055>`_)
+* Bump Objenesis to 3.1 (`#2968 <https://github.com/dropwizard/dropwizard/issues/2968>`_)
+* Bump SLF4J to 1.7.29 (`#2652 <https://github.com/dropwizard/dropwizard/issues/2652>`_, `#2873 <https://github.com/dropwizard/dropwizard/issues/2873>`_, `#2877 <https://github.com/dropwizard/dropwizard/issues/2877>`_, `#3009 <https://github.com/dropwizard/dropwizard/issues/3009>`_)
+* Bump tomcat-jdbc to 9.0.29 (`#2636 <https://github.com/dropwizard/dropwizard/issues/2636>`_, `#2700 <https://github.com/dropwizard/dropwizard/issues/2700>`_, `#2733 <https://github.com/dropwizard/dropwizard/issues/2733>`_, `#2776 <https://github.com/dropwizard/dropwizard/issues/2776>`_, `#2793 <https://github.com/dropwizard/dropwizard/issues/2793>`_, `#2838 <https://github.com/dropwizard/dropwizard/issues/2838>`_, `#2885 <https://github.com/dropwizard/dropwizard/issues/2885>`_, `#2979 <https://github.com/dropwizard/dropwizard/issues/2979>`_, `#2935 <https://github.com/dropwizard/dropwizard/issues/2935>`_, `#3034 <https://github.com/dropwizard/dropwizard/issues/3034>`_)
+* Upgrade dependencies (`#2445 <https://github.com/dropwizard/dropwizard/issues/2445>`_, `#2473 <https://github.com/dropwizard/dropwizard/issues/2473>`_, `#2537 <https://github.com/dropwizard/dropwizard/issues/2537>`_, `#2565 <https://github.com/dropwizard/dropwizard/issues/2565>`_)
+
+* Bump JUnit 5 to 5.5.2 (`#2347 <https://github.com/dropwizard/dropwizard/issues/2347>`_, `#2604 <https://github.com/dropwizard/dropwizard/issues/2604>`_, `#2635 <https://github.com/dropwizard/dropwizard/issues/2635>`_, `#2651 <https://github.com/dropwizard/dropwizard/issues/2651>`_, `#2697 <https://github.com/dropwizard/dropwizard/issues/2697>`_, `#2698 <https://github.com/dropwizard/dropwizard/issues/2698>`_, `#2724 <https://github.com/dropwizard/dropwizard/issues/2724>`_, `#2727 <https://github.com/dropwizard/dropwizard/issues/2727>`_, `#2822 <https://github.com/dropwizard/dropwizard/issues/2822>`_, `#2842 <https://github.com/dropwizard/dropwizard/issues/2842>`_, `#2848 <https://github.com/dropwizard/dropwizard/issues/2848>`_, `#2850 <https://github.com/dropwizard/dropwizard/issues/2850>`_, `#2910 <https://github.com/dropwizard/dropwizard/issues/2910>`_, `#2911 <https://github.com/dropwizard/dropwizard/issues/2911>`_)
+* Bump Mockito to 3.2.0 (`#2630 <https://github.com/dropwizard/dropwizard/issues/2630>`_, `#2654 <https://github.com/dropwizard/dropwizard/issues/2654>`_, `#2680 <https://github.com/dropwizard/dropwizard/issues/2680>`_, `#2695 <https://github.com/dropwizard/dropwizard/issues/2695>`_, `#2725 <https://github.com/dropwizard/dropwizard/issues/2725>`_, `#2730 <https://github.com/dropwizard/dropwizard/issues/2730>`_, `#2784 <https://github.com/dropwizard/dropwizard/issues/2784>`_, `#2834 <https://github.com/dropwizard/dropwizard/issues/2834>`_, `#2957 <https://github.com/dropwizard/dropwizard/issues/2957>`_, `#3044 <https://github.com/dropwizard/dropwizard/issues/3044>`_)
+* Bump assertj-core to 3.14.0 (`#2648 <https://github.com/dropwizard/dropwizard/issues/2648>`_, `#2666 <https://github.com/dropwizard/dropwizard/issues/2666>`_, `#2696 <https://github.com/dropwizard/dropwizard/issues/2696>`_, `#2861 <https://github.com/dropwizard/dropwizard/issues/2861>`_, `#2862 <https://github.com/dropwizard/dropwizard/issues/2862>`_, `#2867 <https://github.com/dropwizard/dropwizard/issues/2867>`_, `#3004 <https://github.com/dropwizard/dropwizard/issues/3004>`_)
+* Bump H2 to 1.4.200 (`#2660 <https://github.com/dropwizard/dropwizard/issues/2660>`_, `#2694 <https://github.com/dropwizard/dropwizard/issues/2694>`_, `#2983 <https://github.com/dropwizard/dropwizard/issues/2983>`_)
+* Bump hsqldb to 2.5.0 (`#2788 <https://github.com/dropwizard/dropwizard/issues/2788>`_)
+
+* Bump Octokit to 4.14.0 (`#2607 <https://github.com/dropwizard/dropwizard/issues/2607>`_, `#2716 <https://github.com/dropwizard/dropwizard/issues/2716>`_)
+* Bump Sphinx to 2.2.2 (`#2328 <https://github.com/dropwizard/dropwizard/issues/2328>`_, `#2606 <https://github.com/dropwizard/dropwizard/issues/2606>`_, `#2632 <https://github.com/dropwizard/dropwizard/issues/2632>`_, `#2689 <https://github.com/dropwizard/dropwizard/issues/2689>`_, `#2712 <https://github.com/dropwizard/dropwizard/issues/2712>`_, `#2729 <https://github.com/dropwizard/dropwizard/issues/2729>`_, `#2789 <https://github.com/dropwizard/dropwizard/issues/2789>`_, `#2796 <https://github.com/dropwizard/dropwizard/issues/2796>`_, `#2810 <https://github.com/dropwizard/dropwizard/issues/2810>`_, `#2886 <https://github.com/dropwizard/dropwizard/issues/2886>`_, `#3002 <https://github.com/dropwizard/dropwizard/issues/3002>`_, `#3049 <https://github.com/dropwizard/dropwizard/issues/3049>`_)
+
+
+.. _rel-1.3.16:
+
+v1.3.16: Oct 20, 2019
+=====================
+
+* Upgrade to Jackson 2.9.10.20191020 to address CVE-2019-16942, CVE-2019-16943, and CVE-2019-17531 (`#2988 <https://github.com/dropwizard/dropwizard/pull/2988>`_)
+
+
+.. _rel-1.3.15:
+
+v1.3.15: Sep 25, 2019
+=====================
+
+* Upgrade to Jackson 2.9.10 to address multiple security issues (`#2939 <https://github.com/dropwizard/dropwizard/pull/2939>`_)
+
+
+.. _rel-1.3.14:
+
+v1.3.14: Aug 7, 2019
+====================
+
+* Upgrade to Jackson 2.9.9.20190807 to address multiple security issues (`#2871 <https://github.com/dropwizard/dropwizard/pull/2871>`_)
+
+
+.. _rel-1.3.13:
+
+v1.3.13: July 16, 2019
+======================
+
+* Upgrade to Jackson Databind 2.9.9.1 to address `CVE-2019-12086 <https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2019-12086>`_ (`#2825 <https://github.com/dropwizard/dropwizard/pull/2825>`_)
+* Add a ``JSONUnauthorizedHandler`` (`#2841 <https://github.com/dropwizard/dropwizard/pull/2841>`_)
+
+
+.. _rel-1.3.12:
+
+v1.3.12: May 25, 2019
+=====================
+
+* Upgrade to Jackson 2.9.9 to address `CVE-2019-12086 <https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2019-12086>`_ (`#2779 <https://github.com/dropwizard/dropwizard/pull/2779>`_)
+
+
+.. _rel-1.3.11:
+
+v1.3.11: May 9, 2019
+====================
+
+* Upgrade Jetty to 9.4.18.v20190429
+
+
+.. _rel-1.3.10:
+
+v1.3.10: Apr 29, 2019
+=====================
+
+* Upgrade Jetty to 9.4.17.v20190418
+* Upgrade commons-lang3 to 3.8.1 to make BOM compatible with Java 11 (`#2679 <https://github.com/dropwizard/dropwizard/pull/2679>`_)
+
+
+.. _rel-1.3.9:
+
+v1.3.9: Feb 24, 2019
+====================
+
+* Fix NPE when requesting /admin/tasks (`#2626 <https://github.com/dropwizard/dropwizard/pull/2626>`_, `#2627 <https://github.com/dropwizard/dropwizard/pull/2627>`_)
+* Remove prerequisites from archetype-generated POM (`#2320 <https://github.com/dropwizard/dropwizard/pull/2320>`_)
+* Upgrade to Jackson 2.9.8, addressing various CVEs (`#2591 <https://github.com/dropwizard/dropwizard/pull/2591>`_)
+* Upgrade JDBI3 to 3.5.1 (`#2593 <https://github.com/dropwizard/dropwizard/pull/2593>`_)
+* Upgrade Dropwizard Metrics to 4.0.5 (`#2594 <https://github.com/dropwizard/dropwizard/pull/2594>`_)
+* Upgrade Jetty to 9.4.14.v20181114 (`#2592 <https://github.com/dropwizard/dropwizard/pull/2592>`_)
+* Update dependencies to latest patch versions (`#2628 <https://github.com/dropwizard/dropwizard/pull/2628>`_)
+  * Joda-Time 2.10.1
+  * Apache HttpClient 4.5.7
+  * Apache Tomcat JDBC Pool: 9.0.14
+  * Hibernate ORM 5.2.18.Final
+  * Liquibase 3.6.3
+  * Freemarker 2.3.28
+  * Mustache 0.9.6
+  * Javassist 3.24.1-GA
+  * Classmate 1.4.0
+  * HSQLDB 2.4.1
+  * Mockito 2.24.0
+* Upgrade to SLF4J 1.7.26 (`CVE-2018-8088 <https://nvd.nist.gov/vuln/detail/CVE-2018-8088>`_)
+* Upgrade to Tomcat JDBC Connection Pool 9.0.16
+* Upgrade to Hibernate Validator 5.4.3.Final
+
+
+.. _rel-1.3.8:
+
+v1.3.8: Jan 2, 2019
+===================
+
+* Fix CVE-2018-10237 by upgrading Guava to 24.1.1 (`#2587 <https://github.com/dropwizard/dropwizard/pull/2587>`_)
+
+
+.. _rel-1.3.7:
+
+v1.3.7: Oct 2, 2018
+===================
+
+* Fix incorrect reading of ``somaxconn`` for TCP backlog on Linux (`#2430 <https://github.com/dropwizard/dropwizard/pull/2430>`_)
+
+.. _rel-1.3.6:
+
+v1.3.6: Oct 1, 2018
+===================
+
+* Fix a DoS attack vulnerability in Jackson: `FasterXML/jackson-databind#2141 <https://github.com/FasterXML/jackson-databind/issues/2141>`_ (`#2511 <https://github.com/dropwizard/dropwizard/pull/2512>`_)
+
+.. _rel-1.3.5:
+
+v1.3.5: Jun 25, 2018
+====================
+
+* Upgrade to Jetty 9.4.11.v20180605 to address `various security issues <http://dev.eclipse.org/mhonarc/lists/jetty-announce/msg00123.html>`__
+
+.. _rel-1.2.8:
+
+v1.2.8: Jun 25, 2018
+====================
+
+* Upgrade to Jetty 9.4.11.v20180605 to address `various security issues <http://dev.eclipse.org/mhonarc/lists/jetty-announce/msg00123.html>`__
+
+.. _rel-1.1.8:
+
+v1.1.8: Jun 25, 2018
+====================
+
+* Upgrade to Jetty 9.4.11.v20180605 to address `various security issues <http://dev.eclipse.org/mhonarc/lists/jetty-announce/msg00123.html>`__
+
+.. _rel-1.3.4:
+
+v1.3.4: Jun 14, 2018
+====================
+
+* Upgrade to Jackson 2.9.6 to fix CVE-2018-12022 and CVE-2018-12023 (`#2392 <https://github.com/dropwizard/dropwizard/issues/2392>`_, `#2393 <https://github.com/dropwizard/dropwizard/pull/2393>`_)
+* Upgrade to Liquibase 3.6.1 (`#2385 <https://github.com/dropwizard/dropwizard/issues/2385>`_, `#2386 <https://github.com/dropwizard/dropwizard/pull/2386>`_)
+
+.. _rel-1.2.7:
+
+v1.2.7: Jun 14, 2018
+====================
+
+* Upgrade to Jackson 2.9.6 to fix CVE-2018-12022 and CVE-2018-12023 (`#2392 <https://github.com/dropwizard/dropwizard/issues/2392>`_, `#2393 <https://github.com/dropwizard/dropwizard/pull/2393>`_)
+
+.. _rel-1.3.3:
+
+v1.3.3: Jun 6, 2018
+===================
+
+* Fix Jersey attempting to resolve auth filter fields `#2324 <https://github.com/dropwizard/dropwizard/pull/2324>`_
+* Upgrade to JUnit5 5.2.0 `#2347 <https://github.com/dropwizard/dropwizard/pull/2347>`_
+* Upgrade to Jdbi3 3.2.1 `#2369 <https://github.com/dropwizard/dropwizard/pull/2369>`_
+* Upgrade Liquibase from 3.5.5 to 3.6.0 `#2325 <https://github.com/dropwizard/dropwizard/pull/2325>`_
+
+.. _rel-1.3.2:
+
+v1.3.2: May 11, 2018
+====================
+
+* Upgrade Jetty to 9.4.10.v20180503 `#2346 <https://github.com/dropwizard/dropwizard/pull/2346>`_
+* Add possibility to disable logging bootstrap for ResourceTestRule `#2333 <https://github.com/dropwizard/dropwizard/pull/2333>`_
+
+.. _rel-1.2.6:
+
+v1.2.6: May 11, 2018
+====================
+
+* Upgrade Jetty to 9.4.10.v20180503 `#2346 <https://github.com/dropwizard/dropwizard/pull/2346>`_
+* Add possibility to disable logging bootstrap for ResourceTestRule `#2333 <https://github.com/dropwizard/dropwizard/pull/2333>`_
+
+.. _rel-1.3.1:
+
+v1.3.1: Apr 4, 2018
+===================
+
+* Upgrade to Jackson 2.9.5 (`CVE-2018-7489 <https://nvd.nist.gov/vuln/detail/CVE-2018-7489>`_)
+
+.. _rel-1.2.5:
+
+v1.2.5: Apr 4, 2018
+===================
+
+* Upgrade to Jackson 2.9.5 (`CVE-2018-7489 <https://nvd.nist.gov/vuln/detail/CVE-2018-7489>`_)
+
+.. _rel-1.3.0:
+
+v1.3.0: Mar 14, 2018
+====================
+
+* Add "dropwizard-jdbi3" module `#2243 <https://github.com/dropwizard/dropwizard/pull/2243>`_, `#2247 <https://github.com/dropwizard/dropwizard/pull/2247>`_
+* Add Dropwizard testing module for JUnit 5 `#2166 <https://github.com/dropwizard/dropwizard/pull/2166>`_
+* Support for building and running Dropwizard on JDK9 `#2197 <https://github.com/dropwizard/dropwizard/pull/2197>`_
+* Support for running Dropwizard with native SSL via Conscrypt `#2230 <https://github.com/dropwizard/dropwizard/pull/2230>`_
+* Add support for JSON logs in Dropwizard `#2232 <https://github.com/dropwizard/dropwizard/pull/2232>`_
+* Add a TCP and UDP log appenders to Dropwizard `#2291 <https://github.com/dropwizard/dropwizard/pull/2291>`_
+* Add support for providing a custom logging layout during logging bootstrap `#2260 <https://github.com/dropwizard/dropwizard/pull/2260>`_
+* Add context path to logged endpoints `#2254 <https://github.com/dropwizard/dropwizard/pull/2254>`_
+* Support multiple extensions for views (breaking change) `#2213 <https://github.com/dropwizard/dropwizard/pull/2213>`_
+* Enable auto escaping of strings in Freemarker templates `#2251 <https://github.com/dropwizard/dropwizard/pull/2251>`_
+* Allow dynamic constraint validation messages `#2246 <https://github.com/dropwizard/dropwizard/pull/2246>`_
+* Add the ``@SelfValidation`` annotation as a powerful alternative to ``@ValidationMethod`` `#2150 <https://github.com/dropwizard/dropwizard/pull/2150>`_
+* Set a minimal duration for ``DatasourceFactory.maxWaitForConnection()`` `#2130 <https://github.com/dropwizard/dropwizard/pull/2130>`_
+* Migrate deprecated classes from commons-lang to commons-text `#2208 <https://github.com/dropwizard/dropwizard/pull/2208>`_
+* Support for setting the ``immediateFlush`` option for file logging `#2193 <https://github.com/dropwizard/dropwizard/pull/2193>`_
+* Use ``InstrumentedQueuedThreadPool`` for admin endpoint `#2186 <https://github.com/dropwizard/dropwizard/pull/2186>`_
+* Add support for configuring ``ServiceUnavailableRetryStrategy`` for HTTP clients `#2185 <https://github.com/dropwizard/dropwizard/pull/2185>`_
+* Add possibility to configure Jetty's ``minRequestDataRate`` `#2184 <https://github.com/dropwizard/dropwizard/pull/2184>`_
+* Add exclusive mode to ``@MinDuration`` and ``@MaxDuration`` annotations `#2167 <https://github.com/dropwizard/dropwizard/pull/2167>`_
+* Strip the ``Content-Length`` header after decompressing HTTP requests `#2271 <https://github.com/dropwizard/dropwizard/pull/2271>`_
+* Add support for providing a custom layout during logging bootstrap `#2260 <https://github.com/dropwizard/dropwizard/pull/2260>`_
+* Add support for PATCH request to Jersey test client `#2288 <https://github.com/dropwizard/dropwizard/pull/2288>`_
+* Add configuration option to ``EventJsonLayoutBaseFactory`` to flatten MDC `#2293 <https://github.com/dropwizard/dropwizard/pull/2293>`_
+* Allow to use custom security provider in HTTP client `#2299 <https://github.com/dropwizard/dropwizard/pull/2299>`_
+* Make ``ignoreExceptionOnPreLoad`` on ``PoolProperties`` configurable `#2300 <https://github.com/dropwizard/dropwizard/pull/2300>`_
+* Allow lazy initialization of resources in ``ResourceTestRule`` `#2304 <https://github.com/dropwizard/dropwizard/pull/2304>`_
+* Make sure Jersey test client uses Dropwizard's ``ObjectMapper`` `#2277 <https://github.com/dropwizard/dropwizard/pull/2277>`_
+* Allow customizing Hibernate Configuration in ``DAOTest`` `#2301 <https://github.com/dropwizard/dropwizard/pull/2301>`_
+* Upgrade to Apache Commons Lang3 3.7
+* Upgrade to Apache Commons Text 1.2
+* Upgrade to Apache HttpClient 4.5.5
+* Upgrade to Apache Tomcat JDBC 9.0.5
+* Upgrade to Argparse4j 0.8.1
+* Upgrade to AssertJ 3.9.1
+* Upgrade to Dropwizard Metrics 4.0.2
+* Upgrade to Error Prone 2.2.0
+* Upgrade to Guava 24.0-jre
+* Upgrade to Hibernate 5.2.15.Final
+* Upgrade to Jackson 2.9.4
+* Upgrade Jadira to 7.0.0-rc1 `#2272 <https://github.com/dropwizard/dropwizard/pull/2272>`_
+* Upgrade to Jdbi 3.1.0 `#2289 <https://github.com/dropwizard/dropwizard/pull/2289>`_
+* Upgrade to JUnit 5.0.3
+* Upgrade to Mockito 2.15.0
+* Upgrade to NullAway 0.3.2
+
+.. _rel-1.2.4:
+
+v1.2.4: Feb 23, 2018
+====================
+
+* Upgrade Jackson to 2.9.4 in 1.2.* to address a CVE `#2269 <https://github.com/dropwizard/dropwizard/pull/2269>`_
+
+.. _rel-1.1.7:
+
+v1.1.7: Feb 23, 2018
+====================
+
+* Upgrade to Jackson 2.8.11 to address `CVE <https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-17485>`_ `#2270 <https://github.com/dropwizard/dropwizard/pull/2270>`_
+
+.. _rel-1.2.3:
+
+v1.2.3: Jan 24, 2018
+====================
+
+* Enable auto escaping of strings in Freemarker templates `#2251 <https://github.com/dropwizard/dropwizard/pull/2251>`_
+
+.. _rel-1.2.2:
+
+v1.2.2: Nov 27, 2017
+====================
+
+* Don't shut down asynchronous executor in Jersey #2221
+* Add possibility to possibility to extend DropwizardApacheConnector #2220
+
 .. _rel-1.2.1:
 
 v1.2.1: Nov 22, 2017
-==================
+====================
 
 * Correctly set up SO_LINGER for the HTTP connector `#2176 <https://github.com/dropwizard/dropwizard/pull/2176>`_
 * Support fromString in FuzzyEnumParamConverter `#2161 <https://github.com/dropwizard/dropwizard/pull/2161>`_
@@ -24,7 +534,7 @@ v1.1.6: Nov 2, 2017
 .. _rel-1.1.5:
 
 v1.1.5: Oct 17, 2017
-===================
+====================
 
 * Correctly set up SO_LINGER for the HTTP connector `#2176 <https://github.com/dropwizard/dropwizard/pull/2176>`_
 
@@ -185,6 +695,7 @@ v1.1.0: Mar 21 2017
 * Upgraded to Joda-Time 2.9.7
 * Upgraded to commons-lang3 3.5
 * Upgraded to Apache HTTP Client 4.5.3
+* Upgraded to Jadira Usertype Core 6.0.1.GA
 
 .. _rel-1.0.7:
 

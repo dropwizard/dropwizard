@@ -1,6 +1,5 @@
 package io.dropwizard.jersey.guava;
 
-import com.codahale.metrics.MetricRegistry;
 import com.google.common.base.Optional;
 import io.dropwizard.jersey.AbstractJerseyTest;
 import io.dropwizard.jersey.DropwizardResourceConfig;
@@ -8,7 +7,7 @@ import io.dropwizard.jersey.MyMessage;
 import io.dropwizard.jersey.MyMessageParamConverterProvider;
 import io.dropwizard.jersey.params.UUIDParam;
 import org.glassfish.jersey.internal.util.collection.MultivaluedStringMap;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
@@ -25,7 +24,7 @@ public class OptionalFormParamResourceTest extends AbstractJerseyTest {
 
     @Override
     protected Application configure() {
-        return DropwizardResourceConfig.forTesting(new MetricRegistry())
+        return DropwizardResourceConfig.forTesting()
                 .register(OptionalFormParamResource.class)
                 .register(MyMessageParamConverterProvider.class);
     }

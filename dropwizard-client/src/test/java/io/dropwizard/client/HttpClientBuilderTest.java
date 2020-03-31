@@ -4,7 +4,6 @@ import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.httpclient.HttpClientMetricNameStrategies;
 import com.codahale.metrics.httpclient.InstrumentedHttpClientConnectionManager;
 import com.codahale.metrics.httpclient.InstrumentedHttpRequestExecutor;
-import com.google.common.collect.ImmutableList;
 import io.dropwizard.client.proxy.AuthConfiguration;
 import io.dropwizard.client.proxy.ProxyConfiguration;
 import io.dropwizard.client.ssl.TlsConfiguration;
@@ -55,9 +54,10 @@ import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpProcessor;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.http.protocol.HttpRequestExecutor;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import javax.annotation.Nullable;
@@ -69,6 +69,7 @@ import java.net.Proxy;
 import java.net.ProxySelector;
 import java.net.SocketAddress;
 import java.net.URI;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -81,13 +82,38 @@ import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 
+class AnotherHttpClientBuilder extends org.apache.http.impl.client.HttpClientBuilder {
+    public static AnotherHttpClientBuilder create() {
+        return new AnotherHttpClientBuilder();
+    }
+}
+
 public class HttpClientBuilderTest {
+    static class CustomRequestExecutor extends HttpRequestExecutor {
+    }
+
     static class CustomBuilder extends HttpClientBuilder {
         public boolean customized;
+        public org.apache.http.impl.client.HttpClientBuilder builder;
 
         public CustomBuilder(MetricRegistry metricRegistry) {
+            this(metricRegistry, org.apache.http.impl.client.HttpClientBuilder.create());
+        }
+
+        public CustomBuilder(MetricRegistry metricRegistry, org.apache.http.impl.client.HttpClientBuilder builder) {
             super(metricRegistry);
             customized = false;
+            this.builder = builder;
+        }
+
+        @Override
+        protected org.apache.http.impl.client.HttpClientBuilder createBuilder() {
+            return builder;
+        }
+
+        @Override
+        protected HttpRequestExecutor createRequestExecutor(String name) {
+            return new CustomRequestExecutor();
         }
 
         @Override
@@ -109,23 +135,25 @@ public class HttpClientBuilderTest {
     private HttpClientBuilder builder;
     private InstrumentedHttpClientConnectionManager connectionManager;
     private org.apache.http.impl.client.HttpClientBuilder apacheBuilder;
+    private AnotherHttpClientBuilder anotherApacheBuilder;
 
     public HttpClientBuilderTest() throws ClassNotFoundException {
         this.httpClientBuilderClass = Class.forName("org.apache.http.impl.client.HttpClientBuilder");
         this.httpClientClass = Class.forName("org.apache.http.impl.client.InternalHttpClient");
     }
 
-    @Before
+    @BeforeEach
     public void setUp() {
         final MetricRegistry metricRegistry = new MetricRegistry();
         configuration = new HttpClientConfiguration();
         builder = new HttpClientBuilder(metricRegistry);
         connectionManager = spy(new InstrumentedHttpClientConnectionManager(metricRegistry, registry));
         apacheBuilder = org.apache.http.impl.client.HttpClientBuilder.create();
+        anotherApacheBuilder = spy(AnotherHttpClientBuilder.create());
         initMocks(this);
     }
 
-    @After
+    @AfterEach
     public void validate() {
         validateMockitoUsage();
     }
@@ -314,7 +342,7 @@ public class HttpClientBuilderTest {
         final HttpContext context = mock(HttpContext.class);
         final HttpResponse response = mock(HttpResponse.class);
         final HeaderIterator iterator = new BasicListHeaderIterator(
-                ImmutableList.of(new BasicHeader(HttpHeaders.CONNECTION, "timeout=50")),
+                Collections.singletonList(new BasicHeader(HttpHeaders.CONNECTION, "timeout=50")),
                 HttpHeaders.CONNECTION
         );
         when(response.headerIterator(HTTP.CONN_KEEP_ALIVE)).thenReturn(iterator);
@@ -337,6 +365,23 @@ public class HttpClientBuilderTest {
 
         assertThat(((RequestConfig) spyHttpClientBuilderField("defaultRequestConfig", apacheBuilder)).getCookieSpec())
                 .isEqualTo(CookieSpecs.DEFAULT);
+    }
+
+    @Test
+    public void normalizeUriByDefault() throws Exception {
+        assertThat(builder.using(configuration).createClient(apacheBuilder, connectionManager, "test")).isNotNull();
+
+        assertThat(((RequestConfig) spyHttpClientBuilderField("defaultRequestConfig", apacheBuilder)).isNormalizeUri())
+            .isEqualTo(true);
+    }
+
+    @Test
+    public void disableNormalizeUriWhenDisabled() throws Exception {
+        configuration.setNormalizeUriEnabled(false);
+        assertThat(builder.using(configuration).createClient(apacheBuilder, connectionManager, "test")).isNotNull();
+
+        assertThat(((RequestConfig) spyHttpClientBuilderField("defaultRequestConfig", apacheBuilder)).isNormalizeUri())
+            .isEqualTo(false);
     }
 
     @Test
@@ -399,7 +444,7 @@ public class HttpClientBuilderTest {
         final HttpRoutePlanner routePlanner = new SystemDefaultRoutePlanner(new ProxySelector() {
             @Override
             public List<Proxy> select(URI uri) {
-                return ImmutableList.of(new Proxy(Proxy.Type.HTTP, new InetSocketAddress("192.168.52.1", 8080)));
+                return Collections.singletonList(new Proxy(Proxy.Type.HTTP, new InetSocketAddress("192.168.52.1", 8080)));
             }
 
             @Override
@@ -509,7 +554,7 @@ public class HttpClientBuilderTest {
     public void usesProxyWithNonProxyHosts() throws Exception {
         HttpClientConfiguration config = new HttpClientConfiguration();
         ProxyConfiguration proxy = new ProxyConfiguration("192.168.52.11", 8080);
-        proxy.setNonProxyHosts(ImmutableList.of("*.example.com"));
+        proxy.setNonProxyHosts(Collections.singletonList("*.example.com"));
         config.setProxyConfiguration(proxy);
 
         checkProxy(config, new HttpHost("host.example.com", 80), null);
@@ -519,7 +564,7 @@ public class HttpClientBuilderTest {
     public void usesProxyWithNonProxyHostsAndTargetDoesNotMatch() throws Exception {
         HttpClientConfiguration config = new HttpClientConfiguration();
         ProxyConfiguration proxy = new ProxyConfiguration("192.168.52.11");
-        proxy.setNonProxyHosts(ImmutableList.of("*.example.com"));
+        proxy.setNonProxyHosts(Collections.singletonList("*.example.com"));
         config.setProxyConfiguration(proxy);
 
         checkProxy(config, new HttpHost("dropwizard.io", 80), new HttpHost("192.168.52.11"));
@@ -651,7 +696,7 @@ public class HttpClientBuilderTest {
     @Test
     public void usesDefaultHeaders() throws Exception {
         final ConfiguredCloseableHttpClient client =
-                builder.using(ImmutableList.of(new BasicHeader(HttpHeaders.ACCEPT_LANGUAGE, "de")))
+                builder.using(Collections.singletonList(new BasicHeader(HttpHeaders.ACCEPT_LANGUAGE, "de")))
                         .createClient(apacheBuilder, connectionManager, "test");
         assertThat(client).isNotNull();
 
@@ -696,8 +741,22 @@ public class HttpClientBuilderTest {
     public void allowsCustomBuilderConfiguration() throws Exception {
         CustomBuilder builder = new CustomBuilder(new MetricRegistry());
         assertThat(builder.customized).isFalse();
-        ConfiguredCloseableHttpClient client = builder.createClient(apacheBuilder, connectionManager, "test");
+        builder.createClient(apacheBuilder, connectionManager, "test");
         assertThat(builder.customized).isTrue();
+        assertThat(FieldUtils.getField(httpClientBuilderClass,
+            "requestExec", true)
+            .get(apacheBuilder))
+            .isInstanceOf(CustomRequestExecutor.class);
+    }
+
+    @Test
+    public void buildWithAnotherBuilder() throws Exception {
+        CustomBuilder builder = new CustomBuilder(new MetricRegistry(), anotherApacheBuilder);
+        builder.build("test");
+        assertThat(FieldUtils.getField(httpClientBuilderClass,
+            "requestExec", true)
+            .get(anotherApacheBuilder))
+            .isInstanceOf(CustomRequestExecutor.class);
     }
 
     @Test

@@ -2,17 +2,17 @@ package io.dropwizard.jdbi3;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheckRegistry;
-import com.codahale.metrics.jdbi3.InstrumentedTimingCollector;
+import com.codahale.metrics.jdbi3.InstrumentedSqlLogger;
+import com.codahale.metrics.jdbi3.strategies.StatementNameStrategy;
 import io.dropwizard.db.ManagedDataSource;
 import io.dropwizard.db.PooledDataSourceFactory;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import io.dropwizard.setup.Environment;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.core.statement.SqlStatements;
-import org.jdbi.v3.core.statement.TemplateEngine;
-import org.junit.Test;
-import org.mockito.Mockito;
+import org.junit.jupiter.api.Test;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -38,7 +38,7 @@ public class JdbiFactoryTest {
         when(environment.healthChecks()).thenReturn(healthChecks);
 
         when(configuration.build(metrics, name)).thenReturn(dataSource);
-        when(configuration.getValidationQuery()).thenReturn(validationQuery);
+        when(configuration.getValidationQuery()).thenReturn(Optional.of(validationQuery));
         when(configuration.isAutoCommentsEnabled()).thenReturn(true);
 
         when(jdbi.getConfig(SqlStatements.class)).thenReturn(sqlStatements);
@@ -52,7 +52,8 @@ public class JdbiFactoryTest {
         assertThat(result).isSameAs(jdbi);
         verify(lifecycle).manage(dataSource);
         verify(healthChecks).register(eq(name), any(JdbiHealthCheck.class));
-        verify(jdbi).setTimingCollector(any(InstrumentedTimingCollector.class));
+        verify(jdbi).setSqlLogger(any(InstrumentedSqlLogger.class));
+        verify(factory).buildSQLLogger(same(metrics), any(StatementNameStrategy.class));
         verify(jdbi).setTemplateEngine(any(NamePrependingTemplateEngine.class));
         verify(factory).configure(jdbi);
     }

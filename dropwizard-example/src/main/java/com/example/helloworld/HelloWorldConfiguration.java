@@ -2,10 +2,9 @@ package com.example.helloworld;
 
 import com.example.helloworld.core.Template;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.collect.ImmutableMap;
 import io.dropwizard.Configuration;
 import io.dropwizard.db.DataSourceFactory;
-import org.hibernate.validator.constraints.NotEmpty;
+import javax.validation.constraints.NotEmpty;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -67,10 +66,6 @@ public class HelloWorldConfiguration extends Configuration {
 
     @JsonProperty("viewRendererConfiguration")
     public void setViewRendererConfiguration(Map<String, Map<String, String>> viewRendererConfiguration) {
-        final ImmutableMap.Builder<String, Map<String, String>> builder = ImmutableMap.builder();
-        for (Map.Entry<String, Map<String, String>> entry : viewRendererConfiguration.entrySet()) {
-            builder.put(entry.getKey(), ImmutableMap.copyOf(entry.getValue()));
-        }
-        this.viewRendererConfiguration = builder.build();
+        this.viewRendererConfiguration = viewRendererConfiguration;
     }
 }

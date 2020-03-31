@@ -2,7 +2,6 @@ package io.dropwizard.logging.json;
 
 import ch.qos.logback.core.spi.DeferredProcessingAware;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.collect.ImmutableMap;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.logging.json.layout.JsonFormatter;
 import io.dropwizard.logging.json.layout.TimestampFormatter;
@@ -10,6 +9,7 @@ import io.dropwizard.logging.layout.DiscoverableLayoutFactory;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
+import java.util.Collections;
 import java.util.Map;
 import java.util.TimeZone;
 
@@ -59,10 +59,10 @@ public abstract class AbstractJsonLayoutBaseFactory<E extends DeferredProcessing
     private boolean appendLineSeparator = true;
 
     @NotNull
-    private Map<String, String> customFieldNames = ImmutableMap.of();
+    private Map<String, String> customFieldNames = Collections.emptyMap();
 
     @NotNull
-    private Map<String, Object> additionalFields = ImmutableMap.of();
+    private Map<String, Object> additionalFields = Collections.emptyMap();
 
     @JsonProperty
     @Nullable

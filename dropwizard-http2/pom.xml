@@ -5,7 +5,8 @@
     <parent>
         <groupId>io.dropwizard</groupId>
         <artifactId>dropwizard-parent</artifactId>
-        <version>1.3.0-rc5-SNAPSHOT</version>
+        <version>2.0.5</version>
+        <relativePath>../dropwizard-parent</relativePath>
     </parent>
 
     <artifactId>dropwizard-http2</artifactId>
@@ -13,43 +14,114 @@
 
     <properties>
         <!-- Default alpn-boot version. See <profiles> for specific profiles. -->
-        <alpn-boot.version>8.1.11.v20170118</alpn-boot.version>
+        <!-- See also: https://github.com/jetty-project/jetty-alpn/blob/99b59b42ce87c74606749eb8d6593d0ecd7ada72/docs/version_mapping.properties -->
+        <alpn-boot.version>8.1.13.v20181017</alpn-boot.version>
+        <argLine>"-Xbootclasspath/p:/${user.home}/.m2/repository/org/mortbay/jetty/alpn/alpn-boot/${alpn-boot.version}/alpn-boot-${alpn-boot.version}.jar" -Duser.language=en -Duser.region=US</argLine>
     </properties>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <argLine>-Xbootclasspath/p:/"${user.home}/.m2/repository/org/mortbay/jetty/alpn/alpn-boot/${alpn-boot.version}/alpn-boot-${alpn-boot.version}.jar"
-                             -Duser.language=en -Duser.region=US</argLine>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>io.dropwizard</groupId>
-                <artifactId>dropwizard-bom</artifactId>
-                <version>${project.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
     <dependencies>
         <dependency>
             <groupId>io.dropwizard</groupId>
+            <artifactId>dropwizard-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.dropwizard</groupId>
+            <artifactId>dropwizard-jersey</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.dropwizard</groupId>
             <artifactId>dropwizard-jetty</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.dropwizard</groupId>
+            <artifactId>dropwizard-logging</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.dropwizard.metrics</groupId>
+            <artifactId>metrics-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.dropwizard.metrics</groupId>
+            <artifactId>metrics-healthchecks</artifactId>
         </dependency>
 
         <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+        </dependency>
+        <!-- Added to match exclusion from jetty-server -->
+        <dependency>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.ws.rs</groupId>
+            <artifactId>jakarta.ws.rs-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-alpn-server</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-http</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-server</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.servlet</groupId>
+                    <artifactId>javax.servlet-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-util</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.eclipse.jetty.http2</groupId>
             <artifactId>http2-server</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.core</groupId>
+            <artifactId>jersey-client</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.conscrypt</groupId>
+            <artifactId>conscrypt-openjdk-uber</artifactId>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -91,6 +163,7 @@
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-alpn-openjdk8-server</artifactId>
+            <scope>runtime</scope>
         </dependency>
 
         <!-- This needs to be on your JVM's bootpath for HTTP2 to work with ALPN protocol
@@ -109,29 +182,23 @@
          see http://www.eclipse.org/jetty/documentation/current/alpn-chapter.html for reference. -->
     <profiles>
         <profile>
-            <id>jdk9</id>
+            <id>jdk9+</id>
             <activation>
-                <jdk>9</jdk>
+                <jdk>[9,)</jdk>
             </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <argLine>-Duser.language=en -Duser.region=US --add-modules java.xml.bind</argLine>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
+            <properties>
+                <argLine>-Duser.language=en -Duser.region=US</argLine>
+            </properties>
             <dependencies>
                 <dependency>
                     <groupId>org.eclipse.jetty</groupId>
                     <artifactId>jetty-alpn-java-server</artifactId>
+                    <scope>runtime</scope>
                 </dependency>
                 <dependency>
                     <groupId>org.eclipse.jetty</groupId>
                     <artifactId>jetty-alpn-java-client</artifactId>
+                    <scope>runtime</scope>
                 </dependency>
             </dependencies>
         </profile>
@@ -457,6 +524,186 @@
             </activation>
             <properties>
                 <alpn-boot.version>8.1.11.v20170118</alpn-boot.version>
+            </properties>
+        </profile>
+        <profile>
+            <id>jdk-1.8.0_151</id>
+            <activation>
+                <property>
+                    <name>java.version</name>
+                    <value>1.8.0_151</value>
+                </property>
+            </activation>
+            <properties>
+                <alpn-boot.version>8.1.11.v20170118</alpn-boot.version>
+            </properties>
+        </profile>
+        <profile>
+            <id>jdk-1.8.0_152</id>
+            <activation>
+                <property>
+                    <name>java.version</name>
+                    <value>1.8.0_152</value>
+                </property>
+            </activation>
+            <properties>
+                <alpn-boot.version>8.1.11.v20170118</alpn-boot.version>
+            </properties>
+        </profile>
+        <profile>
+            <id>jdk-1.8.0_161</id>
+            <activation>
+                <property>
+                    <name>java.version</name>
+                    <value>1.8.0_161</value>
+                </property>
+            </activation>
+            <properties>
+                <alpn-boot.version>8.1.12.v20180117</alpn-boot.version>
+            </properties>
+        </profile>
+        <profile>
+            <id>jdk-1.8.0_162</id>
+            <activation>
+                <property>
+                    <name>java.version</name>
+                    <value>1.8.0_162</value>
+                </property>
+            </activation>
+            <properties>
+                <alpn-boot.version>8.1.12.v20180117</alpn-boot.version>
+            </properties>
+        </profile>
+        <profile>
+            <id>jdk-1.8.0_171</id>
+            <activation>
+                <property>
+                    <name>java.version</name>
+                    <value>1.8.0_171</value>
+                </property>
+            </activation>
+            <properties>
+                <alpn-boot.version>8.1.12.v20180117</alpn-boot.version>
+            </properties>
+        </profile>
+        <profile>
+            <id>jdk-1.8.0_172</id>
+            <activation>
+                <property>
+                    <name>java.version</name>
+                    <value>1.8.0_172</value>
+                </property>
+            </activation>
+            <properties>
+                <alpn-boot.version>8.1.12.v20180117</alpn-boot.version>
+            </properties>
+        </profile>
+        <profile>
+            <id>jdk-1.8.0_181</id>
+            <activation>
+                <property>
+                    <name>java.version</name>
+                    <value>1.8.0_181</value>
+                </property>
+            </activation>
+            <properties>
+                <alpn-boot.version>8.1.12.v20180117</alpn-boot.version>
+            </properties>
+        </profile>
+        <profile>
+            <id>jdk-1.8.0_191</id>
+            <activation>
+                <property>
+                    <name>java.version</name>
+                    <value>1.8.0_191</value>
+                </property>
+            </activation>
+            <properties>
+                <alpn-boot.version>8.1.13.v20181017</alpn-boot.version>
+            </properties>
+        </profile>
+        <profile>
+            <id>jdk-1.8.0_192</id>
+            <activation>
+                <property>
+                    <name>java.version</name>
+                    <value>1.8.0_192</value>
+                </property>
+            </activation>
+            <properties>
+                <alpn-boot.version>8.1.13.v20181017</alpn-boot.version>
+            </properties>
+        </profile>
+        <profile>
+            <id>jdk-1.8.0_201</id>
+            <activation>
+                <property>
+                    <name>java.version</name>
+                    <value>1.8.0_201</value>
+                </property>
+            </activation>
+            <properties>
+                <alpn-boot.version>8.1.13.v20181017</alpn-boot.version>
+            </properties>
+        </profile>
+        <profile>
+            <id>jdk-1.8.0_202</id>
+            <activation>
+                <property>
+                    <name>java.version</name>
+                    <value>1.8.0_202</value>
+                </property>
+            </activation>
+            <properties>
+                <alpn-boot.version>8.1.13.v20181017</alpn-boot.version>
+            </properties>
+        </profile>
+        <profile>
+            <id>jdk-1.8.0_211</id>
+            <activation>
+                <property>
+                    <name>java.version</name>
+                    <value>1.8.0_211</value>
+                </property>
+            </activation>
+            <properties>
+                <alpn-boot.version>8.1.13.v20181017</alpn-boot.version>
+            </properties>
+        </profile>
+        <profile>
+            <id>jdk-1.8.0_212</id>
+            <activation>
+                <property>
+                    <name>java.version</name>
+                    <value>1.8.0_212</value>
+                </property>
+            </activation>
+            <properties>
+                <alpn-boot.version>8.1.13.v20181017</alpn-boot.version>
+            </properties>
+        </profile>
+        <profile>
+            <id>jdk-1.8.0_221</id>
+            <activation>
+                <property>
+                    <name>java.version</name>
+                    <value>1.8.0_221</value>
+                </property>
+            </activation>
+            <properties>
+                <alpn-boot.version>8.1.13.v20181017</alpn-boot.version>
+            </properties>
+        </profile>
+        <profile>
+            <id>jdk-1.8.0_222</id>
+            <activation>
+                <property>
+                    <name>java.version</name>
+                    <value>1.8.0_222</value>
+                </property>
+            </activation>
+            <properties>
+                <alpn-boot.version>8.1.13.v20181017</alpn-boot.version>
             </properties>
         </profile>
     </profiles>

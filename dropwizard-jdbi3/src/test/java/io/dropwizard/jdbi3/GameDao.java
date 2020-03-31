@@ -1,21 +1,21 @@
 package io.dropwizard.jdbi3;
 
 import com.codahale.metrics.annotation.Timed;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 import org.jdbi.v3.sqlobject.customizer.Bind;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Timed(name = "game-dao")
 public interface GameDao {
     @SqlQuery("SELECT id FROM games ORDER BY id")
-    ImmutableList<Integer> findGameIds();
+    List<Integer> findGameIds();
 
     @SqlQuery("SELECT distinct home_team FROM games")
-    ImmutableSet<String> findAllUniqueHomeTeams();
+    Set<String> findAllUniqueHomeTeams();
 
     @SqlQuery("SELECT id FROM games " +
         "WHERE home_team = :home_team " +

@@ -2,7 +2,6 @@ package io.dropwizard.testing.junit5;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.guava.GuavaModule;
-import com.google.common.collect.ImmutableList;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.testing.app.PeopleStore;
 import io.dropwizard.testing.app.Person;
@@ -17,6 +16,7 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -62,9 +62,8 @@ public class PersonResourceTest {
 
     @Test
     public void testGetImmutableListOfPersons() {
-        assertThat(resources.target("/person/blah/list").request()
-            .get(new GenericType<ImmutableList<Person>>() {
-            })).isEqualTo(ImmutableList.of(person));
+        assertThat(resources.target("/person/blah/list").request().get(new GenericType<List<Person>>() {
+            })).containsOnly(person);
     }
 
     @Test

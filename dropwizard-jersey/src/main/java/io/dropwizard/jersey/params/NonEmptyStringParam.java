@@ -1,6 +1,7 @@
 package io.dropwizard.jersey.params;
 
-import com.google.common.base.Strings;
+
+import io.dropwizard.util.Strings;
 
 import javax.annotation.Nullable;
 import java.util.Optional;
@@ -21,7 +22,7 @@ public class NonEmptyStringParam extends AbstractParam<Optional<String>> {
     }
 
     @Override
-    protected Optional<String> parse(@Nullable String input) throws Exception {
+    protected Optional<String> parse(@Nullable String input) {
         return Optional.ofNullable(Strings.emptyToNull(input));
     }
 }

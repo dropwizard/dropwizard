@@ -1,17 +1,15 @@
 package io.dropwizard.jetty;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
 import java.io.File;
 import java.net.InetAddress;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.Collection;
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assume.assumeThat;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assumptions.assumeThat;
 
 public class NetUtilTest {
 
@@ -22,9 +20,9 @@ public class NetUtilTest {
      */
     @Test
     public void testDefaultTcpBacklogForWindows() {
-        assumeThat(System.getProperty(OS_NAME_PROPERTY), containsString("win"));
-        assumeThat(isTcpBacklogSettingReadable(), is(false));
-        assertEquals(NetUtil.DEFAULT_TCP_BACKLOG_WINDOWS, NetUtil.getTcpBacklog());
+        assumeThat(System.getProperty(OS_NAME_PROPERTY)).contains("win");
+        assumeThat(isTcpBacklogSettingReadable()).isFalse();
+        assertThat(NetUtil.getTcpBacklog()).isEqualTo(NetUtil.DEFAULT_TCP_BACKLOG_WINDOWS);
     }
 
     /**
@@ -32,9 +30,9 @@ public class NetUtilTest {
      */
     @Test
     public void testNonWindowsDefaultTcpBacklog() {
-        assumeThat(System.getProperty(OS_NAME_PROPERTY), containsString("Mac OS X"));
-        assumeThat(isTcpBacklogSettingReadable(), is(false));
-        assertEquals(NetUtil.DEFAULT_TCP_BACKLOG_LINUX, NetUtil.getTcpBacklog());
+        assumeThat(System.getProperty(OS_NAME_PROPERTY)).contains("Mac OS X");
+        assumeThat(isTcpBacklogSettingReadable()).isFalse();
+        assertThat(NetUtil.getTcpBacklog()).isEqualTo(NetUtil.DEFAULT_TCP_BACKLOG_LINUX);
     }
 
     /**
@@ -42,9 +40,9 @@ public class NetUtilTest {
      */
     @Test
     public void testNonWindowsSpecifiedTcpBacklog() {
-        assumeThat(System.getProperty(OS_NAME_PROPERTY), containsString("Mac OS X"));
-        assumeThat(isTcpBacklogSettingReadable(), is(false));
-        assertEquals(100, NetUtil.getTcpBacklog(100));
+        assumeThat(System.getProperty(OS_NAME_PROPERTY)).contains("Mac OS X");
+        assumeThat(isTcpBacklogSettingReadable()).isFalse();
+        assertThat(NetUtil.getTcpBacklog(100)).isEqualTo(100);
     }
 
     /**
@@ -52,9 +50,12 @@ public class NetUtilTest {
      */
     @Test
     public void testOsSetting() {
-        assumeThat(System.getProperty(OS_NAME_PROPERTY), containsString("Linux"));
-        assumeThat(isTcpBacklogSettingReadable(), is(true));
-        assertNotEquals(-1, NetUtil.getTcpBacklog(-1));
+        assumeThat(System.getProperty(OS_NAME_PROPERTY)).contains("Linux");
+        assumeThat(isTcpBacklogSettingReadable()).isTrue();
+        assertThat(NetUtil.getTcpBacklog(-1)).isNotEqualTo(-1);
+        assertThat(NetUtil.getTcpBacklog())
+            .as("NetUtil should read more than the first character of somaxconn")
+            .isGreaterThan(2);
     }
 
     @Test
@@ -74,7 +75,7 @@ public class NetUtilTest {
         assertThat(addresses).contains(InetAddress.getLoopbackAddress());
     }
 
-    public boolean isTcpBacklogSettingReadable() {
+    private boolean isTcpBacklogSettingReadable() {
         return AccessController.doPrivileged((PrivilegedAction<Boolean>) () -> {
             try {
                 File f = new File(NetUtil.TCP_BACKLOG_SETTING_LOCATION);

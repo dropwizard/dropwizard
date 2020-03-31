@@ -1,7 +1,5 @@
 package io.dropwizard.servlets;
 
-import com.google.common.net.HttpHeaders;
-
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -23,7 +21,7 @@ public class CacheBustingFilter implements Filter {
                          FilterChain chain) throws IOException, ServletException {
         if (response instanceof HttpServletResponse) {
             final HttpServletResponse resp = (HttpServletResponse) response;
-            resp.setHeader(HttpHeaders.CACHE_CONTROL, CACHE_SETTINGS);
+            resp.setHeader("Cache-Control", CACHE_SETTINGS);
         }
         chain.doFilter(request, response);
     }

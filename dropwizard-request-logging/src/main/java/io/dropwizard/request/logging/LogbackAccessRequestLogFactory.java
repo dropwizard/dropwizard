@@ -6,7 +6,6 @@ import ch.qos.logback.classic.LoggerContext;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import com.google.common.collect.ImmutableList;
 import io.dropwizard.logging.AppenderFactory;
 import io.dropwizard.logging.ConsoleAppenderFactory;
 import io.dropwizard.logging.async.AsyncAppenderFactory;
@@ -20,6 +19,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * A factory for creating {@link LogbackAccessRequestLog} instances.
@@ -39,20 +40,20 @@ import javax.validation.constraints.NotNull;
  * </table>
  */
 @JsonTypeName("logback-access")
-public class LogbackAccessRequestLogFactory implements RequestLogFactory {
+public class LogbackAccessRequestLogFactory implements RequestLogFactory<RequestLog> {
 
     @Valid
     @NotNull
-    private ImmutableList<AppenderFactory<IAccessEvent>> appenders = ImmutableList
-            .of(new ConsoleAppenderFactory<>());
+    private List<AppenderFactory<IAccessEvent>> appenders = Collections.singletonList(
+            new ConsoleAppenderFactory<>());
 
     @JsonProperty
-    public ImmutableList<AppenderFactory<IAccessEvent>> getAppenders() {
+    public List<AppenderFactory<IAccessEvent>> getAppenders() {
         return appenders;
     }
 
     @JsonProperty
-    public void setAppenders(ImmutableList<AppenderFactory<IAccessEvent>> appenders) {
+    public void setAppenders(List<AppenderFactory<IAccessEvent>> appenders) {
         this.appenders = appenders;
     }
 

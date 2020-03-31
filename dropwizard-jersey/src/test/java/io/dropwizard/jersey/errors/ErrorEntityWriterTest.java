@@ -1,16 +1,16 @@
 package io.dropwizard.jersey.errors;
 
-import com.codahale.metrics.MetricRegistry;
 import io.dropwizard.jersey.AbstractJerseyTest;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.servlet.ServletProperties;
 import org.glassfish.jersey.test.DeploymentContext;
 import org.glassfish.jersey.test.ServletDeploymentContext;
+import org.glassfish.jersey.test.TestProperties;
 import org.glassfish.jersey.test.grizzly.GrizzlyWebTestContainerFactory;
 import org.glassfish.jersey.test.spi.TestContainerException;
 import org.glassfish.jersey.test.spi.TestContainerFactory;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
@@ -23,8 +23,9 @@ public class ErrorEntityWriterTest extends AbstractJerseyTest {
 
     public static class ErrorEntityWriterTestResourceConfig extends DropwizardResourceConfig {
         public ErrorEntityWriterTestResourceConfig() {
-            super(true, new MetricRegistry());
+            super();
 
+            property(TestProperties.CONTAINER_PORT, "0");
             register(DefaultLoggingExceptionMapper.class);
             register(DefaultJacksonMessageBodyProvider.class);
             register(ExceptionResource.class);

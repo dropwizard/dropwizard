@@ -1,62 +1,65 @@
 package io.dropwizard.migrations;
 
-import com.google.common.collect.ImmutableMap;
+import io.dropwizard.util.Maps;
 import net.jcip.annotations.NotThreadSafe;
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
-import org.junit.Before;
-import org.junit.Test;
-import org.skife.jdbi.v2.DBI;
-import org.skife.jdbi.v2.Handle;
+import org.jdbi.v3.core.Handle;
+import org.jdbi.v3.core.Jdbi;
+import org.jdbi.v3.core.result.ResultIterable;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.io.PrintWriter;
-import java.util.List;
+import java.util.Collections;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @NotThreadSafe
-public class DbMigrateCommandTest extends AbstractMigrationTest {
+class DbMigrateCommandTest extends AbstractMigrationTest {
 
     private DbMigrateCommand<TestMigrationConfiguration> migrateCommand = new DbMigrateCommand<>(
         TestMigrationConfiguration::getDataSource, TestMigrationConfiguration.class, "migrations.xml");
     private TestMigrationConfiguration conf;
     private String databaseUrl;
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeEach
+    void setUp() {
         databaseUrl = getDatabaseUrl();
         conf = createConfiguration(databaseUrl);
     }
 
     @Test
-    public void testRun() throws Exception {
-        migrateCommand.run(null, new Namespace(ImmutableMap.of()), conf);
-        try (Handle handle = new DBI(databaseUrl, "sa", "").open()) {
-            final List<Map<String, Object>> rows = handle.select("select * from persons");
+    void testRun() throws Exception {
+        migrateCommand.run(null, new Namespace(Collections.emptyMap()), conf);
+        try (Handle handle = Jdbi.create(databaseUrl, "sa", "").open()) {
+            final ResultIterable<Map<String, Object>> rows = handle.select("select * from persons").mapToMap();
             assertThat(rows).hasSize(1);
-            assertThat(rows.get(0)).isEqualTo(
-                    ImmutableMap.of("id", 1, "name", "Bill Smith", "email", "bill@smith.me"));
+            assertThat(rows.first()).isEqualTo(
+                    Maps.of("id", 1,
+                            "name", "Bill Smith",
+                            "email", "bill@smith.me"));
         }
     }
 
     @Test
-    public void testRunFirstTwoMigration() throws Exception {
-        migrateCommand.run(null, new Namespace(ImmutableMap.of("count", (Object) 2)), conf);
-        try (Handle handle = new DBI(databaseUrl, "sa", "").open()) {
-            assertThat(handle.select("select * from persons")).isEmpty();
+    void testRunFirstTwoMigration() throws Exception {
+        migrateCommand.run(null, new Namespace(Collections.singletonMap("count", 2)), conf);
+        try (Handle handle = Jdbi.create(databaseUrl, "sa", "").open()) {
+            assertThat(handle.select("select * from persons").mapToMap()).isEmpty();
         }
     }
 
     @Test
-    public void testDryRun() throws Exception {
+    void testDryRun() throws Exception {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         migrateCommand.setOutputStream(new PrintStream(baos));
-        migrateCommand.run(null, new Namespace(ImmutableMap.of("dry-run", (Object) true)), conf);
+        migrateCommand.run(null, new Namespace(Collections.singletonMap("dry-run", true)), conf);
         assertThat(baos.toString(UTF_8)).startsWith(String.format(
                 "-- *********************************************************************%n" +
                 "-- Update Database Script%n" +
@@ -64,8 +67,10 @@ public class DbMigrateCommandTest extends AbstractMigrationTest {
     }
 
     @Test
-    public void testPrintHelp() throws Exception {
-        final Subparser subparser = ArgumentParsers.newArgumentParser("db")
+    void testPrintHelp() throws Exception {
+        final Subparser subparser = ArgumentParsers.newFor("db")
+                .terminalWidthDetection(false)
+                .build()
                 .addSubparsers()
                 .addParser(migrateCommand.getName())
                 .description(migrateCommand.getDescription());
@@ -82,7 +87,7 @@ public class DbMigrateCommandTest extends AbstractMigrationTest {
                         "positional arguments:%n" +
                         "  file                   application configuration file%n" +
                         "%n" +
-                        "optional arguments:%n" +
+                        "named arguments:%n" +
                         "  -h, --help             show this help message and exit%n" +
                         "  --migrations MIGRATIONS-FILE%n" +
                         "                         the file containing  the  Liquibase migrations for%n" +

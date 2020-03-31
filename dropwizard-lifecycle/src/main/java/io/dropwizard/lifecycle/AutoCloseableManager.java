@@ -35,7 +35,8 @@ public class AutoCloseableManager implements Managed {
     }
 
     /**
-     * Calls {@link AutoCloseable#close()} given in the {@link AutoCloseableManager(AutoCloseable)}
+     * Calls {@link AutoCloseable#close()} on the closable provided in
+     * {@link AutoCloseableManager#AutoCloseableManager(AutoCloseable)}.
      *
      * @throws Exception propagates {@link AutoCloseable#close()} exception
      */

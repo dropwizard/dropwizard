@@ -29,16 +29,17 @@ import java.util.List;
  */
 @Priority(Priorities.AUTHENTICATION)
 public class ChainedAuthFilter<C, P extends Principal> extends AuthFilter<C, P> {
+    @SuppressWarnings("rawtypes")
     private final List<AuthFilter> handlers;
 
-    public ChainedAuthFilter(List<AuthFilter> handlers) {
+    public ChainedAuthFilter(@SuppressWarnings("rawtypes") List<AuthFilter> handlers) {
         this.handlers = handlers;
     }
 
     @Override
     public void filter(ContainerRequestContext containerRequestContext) throws IOException {
         WebApplicationException firstException = null;
-        for (AuthFilter authFilter : handlers) {
+        for (@SuppressWarnings("rawtypes") AuthFilter authFilter : handlers) {
             final SecurityContext securityContext = containerRequestContext.getSecurityContext();
             try {
                 authFilter.filter(containerRequestContext);

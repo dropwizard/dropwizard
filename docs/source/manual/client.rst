@@ -62,7 +62,7 @@ Dropwizard's ``HttpClientBuilder`` actually gives you an instrumented subclass w
 following pieces of data:
 
 ``org.apache.http.conn.ClientConnectionManager.available-connections``
-    The number the number idle connections ready to be used to execute requests.
+    The number of idle connections ready to be used to execute requests.
 
 ``org.apache.http.conn.ClientConnectionManager.leased-connections``
     The number of persistent connections currently being used to execute requests.
@@ -71,7 +71,7 @@ following pieces of data:
     The maximum number of allowed connections.
 
 ``org.apache.http.conn.ClientConnectionManager.pending-connections``
-    The number of connection requests being blocked awaiting a free connection
+    The number of connection requests being blocked awaiting a free connection.
 
 ``org.apache.http.client.HttpClient.get-requests``
     The rate at which ``GET`` requests are being sent.
@@ -124,7 +124,7 @@ If HttpClient_ is too low-level for you, Dropwizard also supports Jersey's `Clie
 Jersey's ``Client`` allows you to use all of the server-side media type support that your service
 uses to, for example, deserialize ``application/json`` request entities as POJOs.
 
-.. _Client API: https://jersey.github.io/documentation/2.24/client.html
+.. _Client API: https://eclipse-ee4j.github.io/jersey.github.io/documentation/2.29.1/client.html
 
 To create a :ref:`managed <man-core-managed>`, instrumented ``JerseyClient`` instance, your
 :ref:`configuration class <man-core-configuration>` needs an :ref:`jersey client configuration <man-configuration-clients-jersey>` instance:
@@ -140,7 +140,7 @@ To create a :ref:`managed <man-core-managed>`, instrumented ``JerseyClient`` ins
         public JerseyClientConfiguration getJerseyClientConfiguration() {
             return jerseyClient;
         }
-        
+
         @JsonProperty("jerseyClient")
         public void setJerseyClientConfiguration(JerseyClientConfiguration jerseyClient) {
             this.jerseyClient = jerseyClient;
@@ -182,8 +182,8 @@ the `Jersey Client Properties`_ can be used.
     method on the ``JerseyClientBuilder``, because by default it's configured by Dropwizard's
     ``HttpClientBuilder``, so the Jersey properties are ignored.
 
-.. _Jersey Client Configuration: https://jersey.github.io/documentation/latest/appendix-properties.html#appendix-properties-client
-.. _Jersey Client Properties: https://jersey.github.io/apidocs/2.24/jersey/org/glassfish/jersey/client/ClientProperties.html
+.. _Jersey Client Configuration: https://eclipse-ee4j.github.io/jersey.github.io/documentation/2.29.1/appendix-properties.html#appendix-properties-client
+.. _Jersey Client Properties: https://eclipse-ee4j.github.io/jersey.github.io/apidocs/2.29.1/jersey/org/glassfish/jersey/client/ClientProperties.html
 
 .. _man-client-jersey-rx-usage:
 
@@ -220,16 +220,16 @@ Alternatively, there are RxJava, Guava, and JSR-166e implementations.
 By allowing Dropwizard to create the rx-client, the same thread pool that is utilized by traditional
 synchronous and asynchronous requests, is used for rx requests.
 
-.. _rx-clients: https://jersey.github.io/documentation/2.24/rx-client.html
+.. _rx-clients: https://eclipse-ee4j.github.io/jersey.github.io/documentation/2.29.1/rx-client.html
 
 Proxy Authentication
 --------------------
 
-The client can utilise a forward proxy, supporting both Basic and NTLM authentication schemes. 
+The client can utilise a forward proxy, supporting both Basic and NTLM authentication schemes.
 Basic Auth against a proxy is simple:
 
 .. code-block:: yaml
- 
+
      proxy:
           host: '192.168.52.11'
           port: 8080
@@ -240,9 +240,9 @@ Basic Auth against a proxy is simple:
           nonProxyHosts:
             - 'localhost'
             - '192.168.52.*'
-            - '*.example.com'   
+            - '*.example.com'
 
-NTLM Auth is configured by setting the the relevant windows properties. 
+NTLM Auth is configured by setting the relevant windows properties.
 
 .. code-block:: yaml
 
@@ -261,6 +261,6 @@ NTLM Auth is configured by setting the the relevant windows properties.
           nonProxyHosts:
             - 'localhost'
             - '192.168.52.*'
-            - '*.example.com'   
+            - '*.example.com'
 
 

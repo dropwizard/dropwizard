@@ -3,6 +3,7 @@ package io.dropwizard.cli;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.util.JarLocation;
 import net.sourceforge.argparse4j.ArgumentParsers;
+import net.sourceforge.argparse4j.helper.HelpScreenException;
 import net.sourceforge.argparse4j.impl.Arguments;
 import net.sourceforge.argparse4j.inf.Argument;
 import net.sourceforge.argparse4j.inf.ArgumentAction;
@@ -10,7 +11,6 @@ import net.sourceforge.argparse4j.inf.ArgumentParser;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
-import net.sourceforge.argparse4j.internal.HelpScreenException;
 
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -18,6 +18,7 @@ import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Optional;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -61,10 +62,9 @@ public class Cli {
      * Runs the command line interface given some arguments.
      *
      * @param arguments the command line arguments
-     * @return whether or not the command successfully executed
-     * @throws Exception if something goes wrong
+     * @return the error or an empty optional if command succeeded
      */
-    public boolean run(String... arguments) throws Exception {
+    public Optional<Throwable> run(String... arguments) {
         try {
             if (isFlag(HELP, arguments)) {
                 parser.printHelp(stdOut);
@@ -80,18 +80,18 @@ public class Cli {
                     // The command failed to run, and the command knows
                     // best how to cleanup / debug exception
                     command.onError(this, namespace, e);
-                    return false;
+                    return Optional.of(e);
                 }
             }
-            return true;
+            return Optional.empty();
         } catch (HelpScreenException ignored) {
             // This exception is triggered when the user passes in a help flag.
             // Return true to signal that the process executed normally.
-            return true;
+            return Optional.empty();
         } catch (ArgumentParserException e) {
             stdErr.println(e.getMessage());
             e.getParser().printHelp(stdErr);
-            return false;
+            return Optional.of(e);
         }
     }
 
@@ -106,7 +106,7 @@ public class Cli {
 
     private ArgumentParser buildParser(JarLocation location) {
         final String usage = "java -jar " + location;
-        final ArgumentParser p = ArgumentParsers.newArgumentParser(usage, false);
+        final ArgumentParser p = ArgumentParsers.newFor(usage).addHelp(false).build();
         p.version(location.getVersion().orElse(
                 "No application version detected. Add a Implementation-Version " +
                         "entry to your JAR's manifest to enable this."));

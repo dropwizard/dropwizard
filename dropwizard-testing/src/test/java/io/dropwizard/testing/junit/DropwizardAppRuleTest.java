@@ -11,12 +11,10 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class DropwizardAppRuleTest {
-
+    @SuppressWarnings("deprecation")
     @ClassRule
     public static final DropwizardAppRule<TestConfiguration> RULE =
         new DropwizardAppRule<>(DropwizardTestApplication.class, resourceFilePath("test-config.yaml"));
@@ -26,25 +24,25 @@ public class DropwizardAppRuleTest {
         final String content = ClientBuilder.newClient().target(
             "http://localhost:" + RULE.getLocalPort() + "/test").request().get(String.class);
 
-        assertThat(content, is("Yes, it's here"));
+        assertThat(content).isEqualTo("Yes, it's here");
     }
 
     @Test
     public void returnsConfiguration() {
         final TestConfiguration config = RULE.getConfiguration();
-        assertThat(config.getMessage(), is("Yes, it's here"));
+        assertThat(config.getMessage()).isEqualTo("Yes, it's here");
     }
 
     @Test
     public void returnsApplication() {
         final DropwizardTestApplication application = RULE.getApplication();
-        assertNotNull(application);
+        assertThat(application).isNotNull();
     }
 
     @Test
     public void returnsEnvironment() {
         final Environment environment = RULE.getEnvironment();
-        assertThat(environment.getName(), is("DropwizardTestApplication"));
+        assertThat(environment.getName()).isEqualTo("DropwizardTestApplication");
     }
 
     @Test
@@ -55,7 +53,7 @@ public class DropwizardAppRuleTest {
             .request()
             .post(Entity.entity("", MediaType.TEXT_PLAIN), String.class);
 
-        assertThat(response, is("Hello has been said to test_user"));
+        assertThat(response).isEqualTo("Hello has been said to test_user");
     }
 
     @Test
@@ -66,6 +64,22 @@ public class DropwizardAppRuleTest {
             .request()
             .post(Entity.entity("Custom message", MediaType.TEXT_PLAIN), String.class);
 
-        assertThat(response, is("Custom message"));
+        assertThat(response).isEqualTo("Custom message");
+    }
+
+    @Test
+    public void clientUsesJacksonMapperFromEnvironment() {
+        assertThat(RULE.client().target("http://localhost:" + RULE.getLocalPort() + "/message")
+            .request()
+            .get(DropwizardTestApplication.MessageView.class).getMessage())
+            .contains("Yes, it's here");
+    }
+
+    @Test
+    public void clientSupportsPatchMethod() {
+        assertThat(RULE.client().target("http://localhost:" + RULE.getLocalPort() + "/echoPatch")
+            .request()
+            .method("PATCH", Entity.text("Patch is working"), String.class))
+            .contains("Patch is working");
     }
 }

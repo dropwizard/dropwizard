@@ -1,65 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <prerequisites>
-    <maven>3.0.0</maven>
-  </prerequisites>
+    <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>io.dropwizard.archetypes</groupId>
-    <artifactId>dropwizard-archetypes</artifactId>
-    <version>1.3.0-rc5-SNAPSHOT</version>
-  </parent>
+    <parent>
+        <groupId>io.dropwizard.archetypes</groupId>
+        <artifactId>dropwizard-archetypes</artifactId>
+        <version>2.0.5</version>
+    </parent>
 
-  <artifactId>java-simple</artifactId>
-  <packaging>maven-archetype</packaging>
+    <artifactId>java-simple</artifactId>
+    <packaging>maven-archetype</packaging>
 
-  <name>Dropwizard Archetype for Simple Java Services</name>
+    <name>Dropwizard Archetype for Simple Java Services</name>
+    <build>
+        <!-- verify the archetype with invoker -->
+        <plugins>
+            <plugin>
+                <artifactId>maven-invoker-plugin</artifactId>
+            </plugin>
+        </plugins>
 
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>io.dropwizard</groupId>
-        <artifactId>dropwizard-bom</artifactId>
-        <version>${project.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
-
-  <dependencies>
-    <dependency>
-      <groupId>io.dropwizard</groupId>
-      <artifactId>dropwizard-core</artifactId>
-    </dependency>
-  </dependencies>
-
-  <build>
-    <!-- verify the archetype with invoker -->
-    <plugins>
-      <plugin>
-        <artifactId>maven-invoker-plugin</artifactId>
-      </plugin>
-    </plugins>
-
-    <!-- enable filtering on the POM so we can inject variables -->
-    <resources>
-      <resource>
-        <directory>src/main/resources</directory>
-        <filtering>true</filtering>
-        <includes>
-          <include>archetype-resources/pom.xml</include>
-        </includes>
-      </resource>
-      <resource>
-        <directory>src/main/resources</directory>
-        <filtering>false</filtering>
-        <excludes>
-          <exclude>archetype-resources/pom.xml</exclude>
-        </excludes>
-      </resource>
-    </resources>
-  </build>
-
+        <!-- enable filtering on the POM so we can inject variables -->
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>archetype-resources/pom.xml</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
+                <excludes>
+                    <exclude>archetype-resources/pom.xml</exclude>
+                </excludes>
+            </resource>
+        </resources>
+    </build>
 </project>

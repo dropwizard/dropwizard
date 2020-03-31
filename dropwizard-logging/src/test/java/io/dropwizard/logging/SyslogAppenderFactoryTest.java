@@ -10,10 +10,13 @@ import io.dropwizard.jackson.DiscoverableSubtypeResolver;
 import io.dropwizard.logging.async.AsyncLoggingEventAppenderFactory;
 import io.dropwizard.logging.filter.NullLevelFilterFactory;
 import io.dropwizard.logging.layout.DropwizardLayoutFactory;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
 
+import java.util.Locale;
+
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 
 public class SyslogAppenderFactoryTest {
 
@@ -75,5 +78,14 @@ public class SyslogAppenderFactoryTest {
             new NullLevelFilterFactory<>(), new AsyncLoggingEventAppenderFactory());
 
         assertThat(appender.getName()).isEqualTo("async-syslog-appender");
+    }
+
+    @Test
+    public void syslogFacilityTest() {
+        for (SyslogAppenderFactory.Facility facility : SyslogAppenderFactory.Facility.values()) {
+            assertThatCode(() ->
+                    SyslogAppender.facilityStringToint(facility.toString().toLowerCase(Locale.ENGLISH)))
+                .doesNotThrowAnyException();
+        }
     }
 }

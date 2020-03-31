@@ -1,6 +1,6 @@
 enabled: false
-minimumEntitySize: 12KB
-bufferSize: 32KB
+minimumEntitySize: 12KiB
+bufferSize: 32KiB
 excludedUserAgentPatterns: ["OLD-2.+"]
 compressedMimeTypes: ["text/plain"]
 includedMethods: ["GET", "POST"]

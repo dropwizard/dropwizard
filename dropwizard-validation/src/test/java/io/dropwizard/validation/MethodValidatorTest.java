@@ -1,10 +1,10 @@
 package io.dropwizard.validation;
 
-import com.google.common.collect.ImmutableList;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.validation.Valid;
 import javax.validation.Validator;
+import java.util.Collection;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -36,7 +36,7 @@ public class MethodValidatorTest {
 
     @Test
     public void complainsAboutMethodsWhichReturnFalse() throws Exception {
-        final ImmutableList<String> errors =
+        final Collection<String> errors =
                 ConstraintViolations.format(validator.validate(new Example()));
 
         assertThat(errors)

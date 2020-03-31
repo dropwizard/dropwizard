@@ -6,11 +6,8 @@ import com.codahale.metrics.Timer;
 import com.codahale.metrics.annotation.ExceptionMetered;
 import com.codahale.metrics.annotation.Metered;
 import com.codahale.metrics.annotation.Timed;
-import com.google.common.base.Charsets;
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.io.CharStreams;
-import com.google.common.net.MediaType;
+import io.dropwizard.util.CharStreams;
+import io.dropwizard.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,8 +19,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.lang.reflect.Method;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -40,16 +42,28 @@ import static java.util.Objects.requireNonNull;
 public class TaskServlet extends HttpServlet {
     private static final long serialVersionUID = 7404713218661358124L;
     private static final Logger LOGGER = LoggerFactory.getLogger(TaskServlet.class);
+    private static final String DEFAULT_CONTENT_TYPE = "text/plain;charset=UTF-8";
     private final ConcurrentMap<String, Task> tasks;
     private final ConcurrentMap<Task, TaskExecutor> taskExecutors;
 
     private final MetricRegistry metricRegistry;
+    private final TaskConfiguration taskConfiguration;
 
     /**
      * Creates a new TaskServlet.
      */
     public TaskServlet(MetricRegistry metricRegistry) {
+        this(metricRegistry, new TaskConfiguration());
+    }
+
+    /**
+     * Creates a new TaskServlet.
+     *
+     * @since 2.0
+     */
+    public TaskServlet(MetricRegistry metricRegistry, TaskConfiguration taskConfiguration) {
         this.metricRegistry = metricRegistry;
+        this.taskConfiguration = taskConfiguration;
         this.tasks = new ConcurrentHashMap<>();
         this.taskExecutors = new ConcurrentHashMap<>();
     }
@@ -60,7 +74,7 @@ public class TaskServlet extends HttpServlet {
         TaskExecutor taskExecutor = new TaskExecutor(task);
         try {
             final Method executeMethod = task.getClass().getMethod("execute",
-                    ImmutableMultimap.class, PrintWriter.class);
+                    Map.class, PrintWriter.class);
 
             if (executeMethod.isAnnotationPresent(Timed.class)) {
                 final Timed annotation = executeMethod.getAnnotation(Timed.class);
@@ -97,7 +111,7 @@ public class TaskServlet extends HttpServlet {
                          HttpServletResponse resp) throws ServletException, IOException {
         if (Strings.isNullOrEmpty(req.getPathInfo())) {
             try (final PrintWriter output = resp.getWriter()) {
-                resp.setContentType(MediaType.PLAIN_TEXT_UTF_8.toString());
+                resp.setContentType(DEFAULT_CONTENT_TYPE);
                 getTasks().stream()
                     .map(Task::getName)
                     .sorted()
@@ -113,19 +127,22 @@ public class TaskServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req,
                           HttpServletResponse resp) throws ServletException, IOException {
-        final Task task = tasks.get(req.getPathInfo());
+        final String pathInfo = req.getPathInfo();
+        final Task task = pathInfo != null ? tasks.get(pathInfo) : null;
         if (task != null) {
-            resp.setContentType(MediaType.PLAIN_TEXT_UTF_8.toString());
+            resp.setContentType(task.getResponseContentType().orElse(DEFAULT_CONTENT_TYPE));
             final PrintWriter output = resp.getWriter();
             try {
                 final TaskExecutor taskExecutor = taskExecutors.get(task);
-                requireNonNull(taskExecutor).executeTask(getParams(req), getBody(req), output);
+                requireNonNull(taskExecutor, "taskExecutor").executeTask(getParams(req), getBody(req), output);
             } catch (Exception e) {
                 LOGGER.error("Error running {}", task.getName(), e);
                 resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 output.println();
                 output.println(e.getMessage());
-                e.printStackTrace(output);
+                if (taskConfiguration.isPrintStackTraceOnError()) {
+                    e.printStackTrace(output);
+                }
             } finally {
                 output.close();
             }
@@ -134,19 +151,20 @@ public class TaskServlet extends HttpServlet {
         }
     }
 
-    private static ImmutableMultimap<String, String> getParams(HttpServletRequest req) {
-        final ImmutableMultimap.Builder<String, String> results = ImmutableMultimap.builder();
+    private static Map<String, List<String>> getParams(HttpServletRequest req) {
+        final Map<String, List<String>> results = new HashMap<>();
+
         final Enumeration<String> names = req.getParameterNames();
         while (names.hasMoreElements()) {
             final String name = names.nextElement();
-            final String[] values = req.getParameterValues(name);
-            results.putAll(name, values);
+            final List<String> values = Arrays.asList(req.getParameterValues(name));
+            results.put(name, values);
         }
-        return results.build();
+        return results;
     }
 
     private String getBody(HttpServletRequest req) throws IOException {
-        return CharStreams.toString(new InputStreamReader(req.getInputStream(), Charsets.UTF_8));
+        return CharStreams.toString(new InputStreamReader(req.getInputStream(), StandardCharsets.UTF_8));
     }
 
     public Collection<Task> getTasks() {
@@ -171,7 +189,7 @@ public class TaskServlet extends HttpServlet {
             this.task = task;
         }
 
-        public void executeTask(ImmutableMultimap<String, String> params, String body, PrintWriter output) throws Exception {
+        public void executeTask(Map<String, List<String>> params, String body, PrintWriter output) throws Exception {
             if (task instanceof PostBodyTask) {
                 PostBodyTask postBodyTask = (PostBodyTask) task;
                 postBodyTask.execute(params, body, output);
@@ -192,7 +210,7 @@ public class TaskServlet extends HttpServlet {
         }
 
         @Override
-        public void executeTask(ImmutableMultimap<String, String> params, String body, PrintWriter output) throws Exception {
+        public void executeTask(Map<String, List<String>> params, String body, PrintWriter output) throws Exception {
             final Timer.Context context = timer.time();
             try {
                 underlying.executeTask(params, body, output);
@@ -213,7 +231,7 @@ public class TaskServlet extends HttpServlet {
         }
 
         @Override
-        public void executeTask(ImmutableMultimap<String, String> params, String body, PrintWriter output) throws Exception {
+        public void executeTask(Map<String, List<String>> params, String body, PrintWriter output) throws Exception {
             meter.mark();
             underlying.executeTask(params, body, output);
         }
@@ -238,7 +256,7 @@ public class TaskServlet extends HttpServlet {
         }
 
         @Override
-        public void executeTask(ImmutableMultimap<String, String> params, String body, PrintWriter output) throws Exception {
+        public void executeTask(Map<String, List<String>> params, String body, PrintWriter output) throws Exception {
             try {
                 underlying.executeTask(params, body, output);
             } catch (Exception e) {

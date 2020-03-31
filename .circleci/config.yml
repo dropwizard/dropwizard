@@ -1,0 +1,27 @@
+version: 2
+jobs:
+  build:
+    working_directory: ~/dropwizard
+    environment:
+      JAVA_OPTS: -Xms512m -Xmx2g -XX:+TieredCompilation -XX:TieredStopAtLevel=1
+    docker:
+      - image: circleci/openjdk:11-jdk
+    steps:
+      - checkout
+      - restore_cache:
+          key: dropwizard-{{ checksum "pom.xml" }}
+      - run: ./mvnw -Pjakarta-apis -V -B -ff install
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: dropwizard-{{ checksum "pom.xml" }}
+      - run:
+          name: Save test results
+          command: |
+            mkdir -p ~/junit/
+            mv ~/dropwizard/*/target/surefire-reports/*.xml ~/junit/
+          when: always
+      - store_test_results:
+          path: ~/junit
+      - store_artifacts:
+          path: ~/junit

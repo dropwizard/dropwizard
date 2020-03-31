@@ -1,20 +1,22 @@
 package io.dropwizard.client.proxy;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.io.Resources;
 import io.dropwizard.client.HttpClientConfiguration;
 import io.dropwizard.configuration.ConfigurationParsingException;
 import io.dropwizard.configuration.ConfigurationValidationException;
+import io.dropwizard.configuration.DefaultConfigurationFactoryFactory;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.validation.Validators;
-import org.junit.Test;
+import io.dropwizard.util.Resources;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.util.List;
 
 import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 
 public class HttpClientConfigurationTest {
@@ -23,10 +25,12 @@ public class HttpClientConfigurationTest {
     private HttpClientConfiguration configuration = new HttpClientConfiguration();
 
     private void load(String configLocation) throws Exception {
-        configuration = new YamlConfigurationFactory<>(HttpClientConfiguration.class,
+        configuration = new DefaultConfigurationFactoryFactory<HttpClientConfiguration>()
+            .create(
+                HttpClientConfiguration.class,
                 Validators.newValidator(),
-                objectMapper, "dw")
-                .build(new File(Resources.getResource(configLocation).toURI()));
+                objectMapper, "dw"
+            ).build(new File(Resources.getResource(configLocation).toURI()));
     }
 
     @Test
@@ -112,38 +116,43 @@ public class HttpClientConfigurationTest {
         assertThat(proxy.getNonProxyHosts()).isNull();
     }
 
-    @Test(expected = ConfigurationValidationException.class)
-    public void testNoHost() throws Exception {
-        load("yaml/bad_host.yml");
+    @Test
+    public void testNoHost() {
+        assertConfigurationValidationException("yaml/bad_host.yml");
     }
 
-    @Test(expected = ConfigurationValidationException.class)
-    public void testBadPort() throws Exception {
-        load("./yaml/bad_port.yml");
+    @Test
+    public void testBadPort() {
+        assertConfigurationValidationException("./yaml/bad_port.yml");
     }
 
-    @Test(expected = ConfigurationParsingException.class)
-    public void testBadScheme() throws Exception {
-        load("./yaml/bad_scheme.yml");
+    @Test
+    public void testBadScheme() {
+        assertThatExceptionOfType(ConfigurationParsingException.class).isThrownBy(() ->
+            load("./yaml/bad_scheme.yml"));
     }
 
-    @Test(expected = ConfigurationValidationException.class)
-    public void testBadAuthUsername() throws Exception {
-        load("./yaml/bad_auth_username.yml");
+    @Test
+    public void testBadAuthUsername() {
+        assertConfigurationValidationException("./yaml/bad_auth_username.yml");
     }
 
-    @Test(expected = ConfigurationValidationException.class)
-    public void testBadPassword() throws Exception {
-        load("./yaml/bad_auth_password.yml");
+    @Test
+    public void testBadPassword() {
+        assertConfigurationValidationException("./yaml/bad_auth_password.yml");
     }
 
-    @Test(expected = ConfigurationValidationException.class)
-    public void testBadAuthScheme() throws Exception {
-        load("./yaml/bad_auth_scheme.yml");
+    @Test
+    public void testBadAuthScheme() {
+        assertConfigurationValidationException("./yaml/bad_auth_scheme.yml");
     }
 
-    @Test(expected = ConfigurationValidationException.class)
-    public void testBadCredentialType() throws Exception {
-        load("./yaml/bad_auth_credential_type.yml");
+    @Test
+    public void testBadCredentialType() {
+        assertConfigurationValidationException("./yaml/bad_auth_credential_type.yml");
+    }
+
+    private void assertConfigurationValidationException(String configLocation){
+        assertThatExceptionOfType(ConfigurationValidationException.class).isThrownBy(()->load(configLocation));
     }
 }

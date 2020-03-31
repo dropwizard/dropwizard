@@ -1,6 +1,5 @@
 package io.dropwizard.jersey.sessions;
 
-import com.codahale.metrics.MetricRegistry;
 import io.dropwizard.jersey.AbstractJerseyTest;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -11,7 +10,7 @@ import org.glassfish.jersey.test.ServletDeploymentContext;
 import org.glassfish.jersey.test.grizzly.GrizzlyWebTestContainerFactory;
 import org.glassfish.jersey.test.spi.TestContainerException;
 import org.glassfish.jersey.test.spi.TestContainerFactory;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.Invocation;
@@ -32,7 +31,7 @@ public class FlashFactoryTest extends AbstractJerseyTest {
 
     @Override
     protected DeploymentContext configureDeployment() {
-        final ResourceConfig rc = DropwizardResourceConfig.forTesting(new MetricRegistry());
+        final ResourceConfig rc = DropwizardResourceConfig.forTesting();
 
         return ServletDeploymentContext.builder(rc)
                 .initParam(ServletProperties.JAXRS_APPLICATION_CLASS, DropwizardResourceConfig.class.getName())

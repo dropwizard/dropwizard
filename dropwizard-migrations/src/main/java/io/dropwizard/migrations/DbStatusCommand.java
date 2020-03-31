@@ -1,8 +1,5 @@
 package io.dropwizard.migrations;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Joiner;
-import com.google.common.base.MoreObjects;
 import io.dropwizard.Configuration;
 import io.dropwizard.db.DatabaseConfiguration;
 import liquibase.Liquibase;
@@ -14,18 +11,18 @@ import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class DbStatusCommand<T extends Configuration> extends AbstractLiquibaseCommand<T> {
 
     private PrintStream outputStream = System.out;
 
-    @VisibleForTesting
-    void setOutputStream(PrintStream outputStream) {
-        this.outputStream = outputStream;
-    }
-
     public DbStatusCommand(DatabaseConfiguration<T> strategy, Class<T> configurationClass, String migrationsFileName) {
         super("status", "Check for pending change sets.", strategy, configurationClass, migrationsFileName);
+    }
+
+    void setOutputStream(PrintStream outputStream) {
+        this.outputStream = outputStream;
     }
 
     @Override
@@ -45,7 +42,8 @@ public class DbStatusCommand<T extends Configuration> extends AbstractLiquibaseC
     @Override
     @SuppressWarnings("UseOfSystemOutOrSystemErr")
     public void run(Namespace namespace, Liquibase liquibase) throws Exception {
-        liquibase.reportStatus(MoreObjects.firstNonNull(namespace.getBoolean("verbose"), false),
+        final Boolean verbose = namespace.getBoolean("verbose");
+        liquibase.reportStatus(verbose == null ? false : verbose,
                                getContext(namespace),
                                new OutputStreamWriter(outputStream, StandardCharsets.UTF_8));
     }
@@ -55,6 +53,8 @@ public class DbStatusCommand<T extends Configuration> extends AbstractLiquibaseC
         if (contexts == null) {
             return "";
         }
-        return Joiner.on(',').join(contexts);
+        return contexts.stream()
+                .map(Object::toString)
+                .collect(Collectors.joining(","));
     }
 }

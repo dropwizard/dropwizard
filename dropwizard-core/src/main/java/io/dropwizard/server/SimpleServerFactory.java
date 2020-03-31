@@ -2,21 +2,22 @@ package io.dropwizard.server;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import com.google.common.collect.ImmutableMap;
 import io.dropwizard.jetty.ConnectorFactory;
 import io.dropwizard.jetty.ContextRoutingHandler;
 import io.dropwizard.jetty.HttpConnectorFactory;
 import io.dropwizard.setup.Environment;
+import io.dropwizard.util.Maps;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.thread.ThreadPool;
-import org.hibernate.validator.constraints.NotEmpty;
+import javax.validation.constraints.NotEmpty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.Map;
 
 /**
  * A single-connector implementation of {@link ServerFactory}, suitable for PaaS deployments
@@ -126,10 +127,10 @@ public class SimpleServerFactory extends AbstractServerFactory {
 
         server.addConnector(conn);
 
-        final ContextRoutingHandler routingHandler = new ContextRoutingHandler(ImmutableMap.of(
+        final Map<String, Handler> handlers = Maps.of(
                 applicationContextPath, applicationHandler,
-                adminContextPath, adminHandler
-        ));
+                adminContextPath, adminHandler);
+        final ContextRoutingHandler routingHandler = new ContextRoutingHandler(handlers);
         final Handler gzipHandler = buildGzipHandler(routingHandler);
         server.setHandler(addStatsHandler(addRequestLog(server, gzipHandler, environment.getName())));
 

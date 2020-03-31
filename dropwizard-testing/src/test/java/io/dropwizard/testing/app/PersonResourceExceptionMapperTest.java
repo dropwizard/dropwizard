@@ -2,10 +2,10 @@ package io.dropwizard.testing.app;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.guava.GuavaModule;
-import com.google.common.base.Strings;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.validation.JerseyViolationException;
 import io.dropwizard.testing.junit.ResourceTestRule;
+import io.dropwizard.util.Strings;
 import org.glassfish.jersey.spi.ExtendedExceptionMapper;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -24,6 +24,7 @@ public class PersonResourceExceptionMapperTest {
     private static final ObjectMapper OBJECT_MAPPER = Jackson.newObjectMapper()
         .registerModule(new GuavaModule());
 
+    @SuppressWarnings("deprecation")
     @ClassRule
     public static final ResourceTestRule RESOURCES = ResourceTestRule.builder()
         .addResource(new PersonResource(PEOPLE_STORE))

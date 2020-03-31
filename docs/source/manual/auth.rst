@@ -57,14 +57,14 @@ server, for example), Dropwizard provides a decorator class which provides cachi
                                metricRegistry, simpleAuthenticator,
                                config.getAuthenticationCachePolicy());
 
-Dropwizard can parse Guava's ``CacheBuilderSpec`` from the configuration policy, allowing your
+Dropwizard can parse Caffeine's ``CaffeineSpec`` from the configuration policy, allowing your
 configuration file to look like this:
 
 .. code-block:: yaml
 
     authenticationCachePolicy: maximumSize=10000, expireAfterAccess=10m
 
-This caches up to 10,000 principals with an LRU policy, evicting stale entries after 10 minutes.
+This caches up to 10,000 principals, evicting stale entries after 10 minutes.
 
 .. _man-auth-authorizer:
 
@@ -277,38 +277,83 @@ Add this dependency into your ``pom.xml`` file:
       </dependency>
     </dependencies>
 
-When you build your ``ResourceTestRule``, add the ``GrizzlyWebTestContainerFactory`` line.
+OAuth Example
+-------------
+
+When you build your ``ResourceExtension``, add the ``GrizzlyWebTestContainerFactory`` line.
 
 .. code-block:: java
 
-    @Rule
-    public ResourceTestRule rule = ResourceTestRule
-            .builder()
-            .setTestContainerFactory(new GrizzlyWebTestContainerFactory())
-            .addProvider(new AuthDynamicFeature(new OAuthCredentialAuthFilter.Builder<User>()
-                    .setAuthenticator(new MyOAuthAuthenticator())
-                    .setAuthorizer(new MyAuthorizer())
-                    .setRealm("SUPER SECRET STUFF")
-                    .setPrefix("Bearer")
-                    .buildAuthFilter()))
-            .addProvider(RolesAllowedDynamicFeature.class)
-            .addProvider(new AuthValueFactoryProvider.Binder<>(User.class))
-            .addResource(new ProtectedResource())
-            .build();
+    @ExtendWith(DropwizardExtensionsSupport.class)
+    public class OAuthResourceTest {
 
+        public ResourceExtension resourceExtension = ResourceExtension
+                .builder()
+                .setTestContainerFactory(new GrizzlyWebTestContainerFactory())
+                .addProvider(new AuthDynamicFeature(new OAuthCredentialAuthFilter.Builder<User>()
+                        .setAuthenticator(new MyOAuthAuthenticator())
+                        .setAuthorizer(new MyAuthorizer())
+                        .setRealm("SUPER SECRET STUFF")
+                        .setPrefix("Bearer")
+                        .buildAuthFilter()))
+                .addProvider(RolesAllowedDynamicFeature.class)
+                .addProvider(new AuthValueFactoryProvider.Binder<>(User.class))
+                .addResource(new ProtectedResource())
+                .build();
+    }
 
-In this example, we are testing the oauth authentication, so we need to set the header manually.
+Note that you need to set the token header manually.
 
 .. code-block:: java
 
     @Test
     public void testProtected() throws Exception {
-        final Response response = rule.target("/protected")
+        final Response response = resourceExtension.target("/protected")
                 .request(MediaType.APPLICATION_JSON_TYPE)
                 .header("Authorization", "Bearer TOKEN")
                 .get();
 
         assertThat(response.getStatus()).isEqualTo(200);
+    }
+
+BasicAuth Example
+-----------------
+
+When you build your ``ResourceExtension``, add the ``GrizzlyWebTestContainerFactory`` line.
+
+.. code-block:: java
+
+    @ExtendWith(DropwizardExtensionsSupport.class)
+    public class OAuthResourceTest {
+        public ResourceExtension resourceExtension = ResourceExtension
+                .builder()
+                .setTestContainerFactory(new GrizzlyWebTestContainerFactory())
+                .addProvider(new AuthDynamicFeature(new BasicCredentialAuthFilter.Builder<User>()
+                        .setAuthenticator(new MyBasicAuthenticator())
+                        .setAuthorizer(new MyBasicAuthorizer())
+                        .buildAuthFilter()))
+                .addProvider(RolesAllowedDynamicFeature.class)
+                .addProvider(new AuthValueFactoryProvider.Binder<>(User.class))
+                .addResource(new ProtectedResource())
+                .build()
+    }
+
+Note that you need to set the authorization header manually.
+
+.. code-block:: java
+
+    @Test
+    public void testProtectedResource(){
+
+        String credential = "Basic " + Base64.getEncoder().encodeToString("test@gmail.com:secret".getBytes())
+
+        Response response = resourceExtension
+                .target("/protected")
+                .request()
+                .header(HttpHeaders.AUTHORIZATION, credential)
+                .get();
+
+        Assert.assertEquals(200, response.getStatus());
     }
 
 Multiple Principals and Authenticators
@@ -378,7 +423,7 @@ Note that with the above example, only *authentication* is configured. If you al
 * Make sure you add ``Authorizers`` when you build your ``AuthFilters``.
 
 * Make sure any custom ``AuthFilter`` you add has the ``@Priority(Priorities.AUTHENTICATION)`` annotation set
-(otherwise authorization will be tested before the request's security context is properly set and will fail).
+  (otherwise authorization will be tested before the request's security context is properly set and will fail).
 
 * Annotate the resource *method* with the authorization annotation. Unlike the note earlier in
   this document that says authorization annotations are allowed on classes, with this

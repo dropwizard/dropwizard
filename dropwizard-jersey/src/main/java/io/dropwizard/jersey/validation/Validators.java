@@ -27,13 +27,13 @@ public class Validators {
     }
 
     /**
-     * Creates a new {@link HibernateValidatorConfiguration} with all the custom {@link
-     * org.hibernate.validator.spi.valuehandling.ValidatedValueUnwrapper} registered.
+     * Creates a new {@link HibernateValidatorConfiguration} with all the custom value extractors registered.
      */
     public static HibernateValidatorConfiguration newConfiguration() {
         return BaseValidator.newConfiguration()
+                .constraintValidatorFactory(new MutableValidatorFactory())
                 .parameterNameProvider(new JerseyParameterNameProvider())
-                .addValidatedValueHandler(new NonEmptyStringParamUnwrapper())
-                .addValidatedValueHandler(new ParamValidatorUnwrapper());
+                .addValueExtractor(NonEmptyStringParamValueExtractor.DESCRIPTOR.getValueExtractor())
+                .addValueExtractor(ParamValueExtractor.DESCRIPTOR.getValueExtractor());
     }
 }

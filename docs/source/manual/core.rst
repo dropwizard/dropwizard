@@ -15,7 +15,6 @@ It includes:
 * Jersey, a full-featured RESTful web framework.
 * Jackson, the best JSON library for the JVM.
 * Metrics, an excellent library for application metrics.
-* Guava, Google's excellent utility library.
 * Logback, the successor to Log4j, Java's most widely-used logging framework.
 * Hibernate Validator, the reference implementation of the Java Bean Validation standard.
 
@@ -56,7 +55,7 @@ which tends to look like this:
   * ``cli``: :ref:`man-core-commands`
   * ``client``: :ref:`Client <man-client>` code that accesses external HTTP services.
   * ``core``: Domain implementation; where objects not used in the API such as POJOs, validations, crypto, etc, reside.
-  * ``jdbi``: :ref:`Database <man-jdbi>` access classes
+  * ``jdbi3``: :ref:`Database <man-jdbi3>` access classes
   * ``health``: :ref:`man-core-healthchecks`
   * ``resources``: :ref:`man-core-resources`
   * ``MyApplication``: The :ref:`application <man-core-application>` class
@@ -219,6 +218,8 @@ Dropwizard then calls your ``Application`` subclass to initialize your applicati
 
     ``java -Ddw.database.properties.hibernate.hbm2ddl.auto=none server my-config.json``
 
+    If you need to use the '.' character in one of the values, you can escape it by using '\\.' instead.
+
     You can also override a configuration setting that is an array of strings by using the ',' character
     as an array element separator. For example, to override a configuration setting myapp.myserver.hosts
     that is an array of strings in the configuration, you could start your service like this:
@@ -259,7 +260,7 @@ value of environment variables using a ``SubstitutingSourceProvider`` and ``Envi
     }
 
 The configuration settings which should be substituted need to be explicitly written in the configuration file and
-follow the substitution rules of StrSubstitutor_ from the Apache Commons Lang library.
+follow the substitution rules of StringSubstitutor_ from the Apache Commons Text library.
 
 .. code-block:: yaml
 
@@ -267,9 +268,9 @@ follow the substitution rules of StrSubstitutor_ from the Apache Commons Lang li
     defaultSetting: ${DW_DEFAULT_SETTING:-default value}
 
 In general ``SubstitutingSourceProvider`` isn't restricted to substitute environment variables but can be used to replace
-variables in the configuration source with arbitrary values by passing a custom ``StrSubstitutor`` implementation.
+variables in the configuration source with arbitrary values by passing a custom ``StringSubstitutor`` implementation.
 
-.. _StrSubstitutor: https://commons.apache.org/proper/commons-lang/javadocs/api-release/org/apache/commons/lang3/text/StrSubstitutor.html
+.. _StringSubstitutor: http://commons.apache.org/proper/commons-text/javadocs/api-release/org/apache/commons/text/StringSubstitutor.html
 
 .. _man-core-ssl:
 
@@ -337,7 +338,7 @@ in your app:
 .. code-block:: java
 
     static {
-        Security.addProvider(new OpenSSLProvider());
+        Security.insertProviderAt(new OpenSSLProvider(), 1);
     }
 
 and setting the JCE provider in the configuration:
@@ -357,9 +358,12 @@ For HTTP/2 servers you need to add an ALPN Conscrypt provider as a dependency.
     <dependency>
         <groupId>org.eclipse.jetty</groupId>
         <artifactId>jetty-alpn-conscrypt-server</artifactId>
-        <version>${jetty.version}</version>
-        <scope>test</scope>
     </dependency>
+
+.. note::
+
+    If you are using Conscrypt with Java 8, you must exclude TLSv1.3 protocol as it is now enabled per default with
+    Conscrypt 2.0.0 but not supported by Java 8.
 
 .. _`Conscrypt`: https://github.com/google/conscrypt
 .. _`BoringSSL`: https://github.com/google/boringssl
@@ -490,7 +494,7 @@ For example, given a theoretical Riak__ client which needs to be started and sto
 
     public class MyApplication extends Application<MyConfiguration>{
         @Override
-        public void run(MyApplicationConfiguration configuration, Environment environment) {
+        public void run(MyConfiguration configuration, Environment environment) {
             RiakClient client = ...;
             RiakClientManager riakClientManager = new RiakClientManager(client);
             environment.lifecycle().manage(riakClientManager);
@@ -502,8 +506,25 @@ application will not start and a full exception will be logged. If ``RiakClientM
 an exception, the exception will be logged but your application will still be able to shut down.
 
 It should be noted that ``Environment`` has built-in factory methods for ``ExecutorService`` and
-``ScheduledExecutorService`` instances which are managed. See ``LifecycleEnvironment#executorService``
-and ``LifecycleEnvironment#scheduledExecutorService`` for details.
+``ScheduledExecutorService`` instances which are managed. These managed instances use ``InstrumentedThreadFactory``
+that monitors the number of threads created, running and terminated
+
+.. code-block:: java
+
+    public class MyApplication extends Application<MyConfiguration> {
+        @Override
+        public void run(MyConfiguration configuration, Environment environment) {
+
+            ExecutorService executorService = environment.lifecycle()
+                .executorService(nameFormat)
+                .maxThreads(maxThreads)
+                .build();
+
+            ScheduledExecutorService scheduledExecutorService = environment.lifecycle()
+                .scheduledExecutorService(nameFormat)
+                .build();
+        }
+    }
 
 .. _man-core-bundles:
 
@@ -511,24 +532,18 @@ Bundles
 =======
 
 A Dropwizard bundle is a reusable group of functionality, used to define blocks of an application's
-behavior. For example, ``AssetBundle`` from the ``dropwizard-assets`` module provides a simple way
+behavior by implementing the ``ConfiguredBundle`` interface.
+
+For example, ``AssetBundle`` from the ``dropwizard-assets`` module provides a simple way
 to serve static assets from your application's ``src/main/resources/assets`` directory as files
 available from ``/assets/*`` (or any other path) in your application.
 
-Configured Bundles
-------------------
-
-Some bundles require configuration parameters. These bundles implement ``ConfiguredBundle`` and will
-require your application's ``Configuration`` subclass to implement a specific interface.
-
-
-For example: given the configured bundle ``MyConfiguredBundle`` and the interface ``MyConfiguredBundleConfig`` below.
-Your application's ``Configuration`` subclass would need to implement ``MyConfiguredBundleConfig``.
+Given the bundle ``MyConfiguredBundle`` and the interface ``MyConfiguredBundleConfig`` below,
+your application's ``Configuration`` subclass would need to implement ``MyConfiguredBundleConfig``.
 
 .. code-block:: java
 
-    public class MyConfiguredBundle implements ConfiguredBundle<MyConfiguredBundleConfig>{
-
+    public class MyConfiguredBundle implements ConfiguredBundle<MyConfiguredBundleConfig> {
         @Override
         public void run(MyConfiguredBundleConfig applicationConfig, Environment environment) {
             applicationConfig.getBundleSpecificConfig();
@@ -540,10 +555,8 @@ Your application's ``Configuration`` subclass would need to implement ``MyConfig
         }
     }
 
-    public interface MyConfiguredBundleConfig{
-
+    public interface MyConfiguredBundleConfig {
         String getBundleSpecificConfig();
-
     }
 
 
@@ -917,6 +930,33 @@ acceptable.
               currentLogFilename: ./logs/example-sql.log
               archivedLogFilenamePattern: ./logs/example-sql-%d.log.gz
               archivedFileCount: 5
+
+.. _man-core-logging-asynchronous-logging:
+
+Asynchronous Logging
+--------------------
+
+By default, all logging in Dropwizard is asynchronous, even to typically
+synchronous sinks such as files and the console. When a slow logger (like file
+logger on an overloaded disk) is coupled with a high load, Dropwizard will
+seemlessly drop events of lower importance (``TRACE``, ``DEBUG``, ``INFO``) in
+an attempt to maintain reasonable latency. 
+
+.. TIP::
+   Instead of logging business critical statements under ``INFO``, insert them
+   into a database, durable message queue, or another mechanism that gives
+   confidence that the request has satisfied business requirements before
+   returning the response to the client.
+
+This logging behavior :ref:`can be configured <man-configuration-logging>`:
+
+* Set ``discardingThreshold`` to 0 so that no events are dropped
+* At the opposite end, set ``neverBlock`` to ``true`` so that even ``WARN`` and ``ERROR`` levels will be discarded from logging under heavy load
+
+Request access logging has the same logging behavior, and since all request
+logging is done under ``INFO``, each log statement has an equal chance of being
+dropped if the log queue is nearing full.
+
 .. _man-core-logging-console:
 
 Console Logging
@@ -924,8 +964,6 @@ Console Logging
 
 By default, Dropwizard applications log ``INFO`` and higher to ``STDOUT``. You can configure this by
 editing the ``logging`` section of your YAML configuration file:
-
-
 
 .. code-block:: yaml
 
@@ -1079,11 +1117,24 @@ Logging Configuration via HTTP
 
 Active log levels can be changed during the runtime of a Dropwizard application via HTTP using
 the ``LogConfigurationTask``. For instance, to configure the log level for a
-single ``Logger``:
+single ``Logger``. The ``logger`` parameter may be repeated. The optional ``duration`` parameter must be an ISO 8601 duration format.
+When the duration elapses the level will revert to the effective level of the parent logger.:
 
 .. code-block:: shell
 
+    # Configure com.example.helloworld to INFO
     curl -X POST -d "logger=com.example.helloworld&level=INFO" http://localhost:8081/tasks/log-level
+    # Configure com.example.helloworld and com.example.helloearth to INFO
+    curl -X POST -d "logger=com.example.helloworld&logger=com.example.helloearth&level=INFO" http://localhost:8081/tasks/log-level
+    # Configure com.example.helloworld to INFO, then revert to default level after 10 minutes
+    curl -X POST -d "logger=com.example.helloworld&level=INFO&duration=PT10M" http://localhost:8081/tasks/log-level
+    # Revert com.example.helloworld to the default level
+    curl -X POST -d "logger=com.example.helloworld" http://localhost:8081/tasks/log-level
+
+.. note::
+
+    Chaining log level changes on the same package may have unexpected consequences due to the naive implementation of a
+    simple FIFO timer.
 
 .. _man-core-logging-filters:
 
@@ -1132,6 +1183,24 @@ Reference ``SecretFilterFactory`` type in our configuration.
 
 The last step is to add our class (in this case ``com.example.SecretFilterFactory``) to ``META-INF/services/io.dropwizard.logging.filter.FilterFactory`` in our resources folder.
 
+.. _man-core-request-log-url-filtering:
+
+Filtering Request Logs for a Specific URI
+-----------------------------------------
+
+Reference ``UriFilterFactory`` type in your configuration.
+
+.. code-block:: yaml
+
+    server:
+      requestLog:
+        appenders:
+          - type: console
+            filterFactories:
+              - type: uri
+                uris:
+                  - "/health-check"
+
 .. _man-core-testing-applications:
 
 Testing Applications
@@ -1148,7 +1217,7 @@ tests:
         private final MyApplication application = new MyApplication();
         private final MyConfiguration config = new MyConfiguration();
 
-        @Before
+        @BeforeEach
         public void setup() throws Exception {
             config.setMyParam("yay");
             when(environment.jersey()).thenReturn(jersey);
@@ -1225,8 +1294,8 @@ mapping various aspects of POJOs to outgoing HTTP responses. Here's a basic reso
         }
 
         @GET
-        public NotificationList fetch(@PathParam("user") LongParam userId,
-                                      @QueryParam("count") @DefaultValue("20") IntParam count) {
+        public NotificationList fetch(@PathParam("user") OptionalLong userId,
+                                      @QueryParam("count") @DefaultValue("20") OptionalInt count) {
             final List<Notification> notifications = store.fetch(userId.get(), count.get());
             if (notifications != null) {
                 return new NotificationList(userId, notifications);
@@ -1235,7 +1304,7 @@ mapping various aspects of POJOs to outgoing HTTP responses. Here's a basic reso
         }
 
         @POST
-        public Response add(@PathParam("user") LongParam userId,
+        public Response add(@PathParam("user") OptionalLong userId,
                             @NotNull @Valid Notification notification) {
             final long id = store.add(userId.get(), notification);
             return Response.created(UriBuilder.fromResource(NotificationResource.class)
@@ -1287,7 +1356,7 @@ If a request comes in which matches a resource class's path but has a method whi
 support, Jersey will automatically return a ``405 Method Not Allowed`` to the client.
 
 The return value of the method (in this case, a ``NotificationList`` instance) is then mapped to the
-:ref:`negotiated media type <man-core-resources-media-types>` this case, our resource only supports
+:ref:`negotiated media type <man-core-resources-media-types>`. In this case, our resource only supports
 JSON, and so the ``NotificationList`` is serialized to JSON using Jackson.
 
 .. _man-core-resources-metrics:
@@ -1295,12 +1364,70 @@ JSON, and so the ``NotificationList`` is serialized to JSON using Jackson.
 Metrics
 -------
 
-Every resource method can be annotated with ``@Timed``, ``@Metered``, and ``@ExceptionMetered``.
+Every resource method or the class itself can be annotated with @Timed, @Metered, @ResponseMetered
+and @ExceptionMetered. If the annotation is placed on the class, it will apply to all its resource methods.
 Dropwizard augments Jersey to automatically record runtime information about your resource methods.
+
+.. code-block:: java
+
+    public class ExampleApplication extends ResourceConfig {
+        .
+        .
+        .
+        register(new InstrumentedResourceMethodApplicationListener (new MetricRegistry()));
+        config = config.register(ExampleResource.class);
+        .
+        .
+        .
+    }
+
+    @Path("/example")
+    @Produces(MediaType.TEXT_PLAIN)
+    public class ExampleResource {
+        @GET
+        @Timed
+        public String show() {
+            return "yay";
+        }
+
+        @GET
+        @Metered(name = "fancyName") // If name isn't specified, the meter will given the name of the method it decorates.
+        @Path("/metered")
+        public String metered() {
+            return "woo";
+        }
+
+        @GET
+        @ExceptionMetered(cause = IOException.class) // Default cause is Exception.class
+        @Path("/exception-metered")
+        public String exceptionMetered(@QueryParam("splode") @DefaultValue("false") boolean splode) throws IOException {
+            if (splode) {
+                throw new IOException("AUGH");
+            }
+            return "fuh";
+        }
+
+        @GET
+        @ResponseMetered
+        @Path("/response-metered")
+        public Response responseMetered(@QueryParam("invalid") @DefaultValue("false") boolean invalid) {
+            if (invalid) {
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+            }
+            return Response.ok().build();
+        }
+    }
 
 * ``@Timed`` measures the duration of requests to a resource
 * ``@Metered`` measures the rate at which the resource is accessed
+* ``@ResponseMetered`` measures rate for each class of response codes (1xx/2xx/3xx/4xx/5xx)
 * ``@ExceptionMetered`` measures how often exceptions occur processing the resource
+
+.. important::
+
+    ``@Timed`` and ``@Metered`` can only be used on the same resource method at the same time, if
+    their name is unique, also see the annotation parameter ``name``.
+    Otherwise, the generated metrics names will be identical which will cause an ``IllegalArgumentException``.
 
 .. _man-core-resources-parameters:
 
@@ -1308,17 +1435,16 @@ Parameters
 ----------
 
 The annotated methods on a resource class can accept parameters which are mapped to from aspects of
-the incoming request. The ``*Param`` annotations determine which part of the request the data is
-mapped, and the parameter *type* determines how the data is mapped.
+the incoming request.
 
 For example:
 
 * A ``@PathParam("user")``-annotated ``String`` takes the raw value from the ``user`` variable in
   the matched URI template and passes it into the method as a ``String``.
-* A ``@QueryParam("count")``-annotated ``IntParam`` parameter takes the first ``count`` value from
-  the request's query string and passes it as a ``String`` to ``IntParam``'s constructor.
-  ``IntParam`` (and all other ``io.dropwizard.jersey.params.*`` classes) parses the string
-  as an ``Integer``, returning a ``400 Bad Request`` if the value is malformed.
+* A ``@QueryParam("count")``-annotated ``OptionalInt`` parameter takes the first ``count`` value from
+  the request's query string and passes it as a ``String`` to ``OptionalInt``'s constructor.
+  ``OptionalInt`` parses the string as an ``Integer``, returning a ``400 Bad Request`` if the value
+  is malformed.
 * A ``@FormParam("name")``-annotated ``Set<String>`` parameter takes all the ``name`` values from a
   posted form and passes them to the method as a set of strings.
 * A ``*Param``--annotated ``NonEmptyStringParam`` will interpret empty strings as absent strings,
@@ -1342,7 +1468,7 @@ this:
     :emphasize-lines: 3
 
     @POST
-    public Response add(@PathParam("user") LongParam userId,
+    public Response add(@PathParam("user") OptionalLong userId,
                         @NotNull @Valid Notification notification) {
         final long id = store.add(userId.get(), notification);
         return Response.created(UriBuilder.fromResource(NotificationResource.class)
@@ -1398,7 +1524,7 @@ Error Handling
 --------------
 
 Almost as important as an application's happy path (receiving expected input and returning expected
-output) is an application behavior when something goes wrong.
+output) is an application's behavior when something goes wrong.
 
 If your resource class unintentionally throws an exception, Dropwizard will log that exception under
 the ``ERROR`` level (including stack traces) and return a terse, safe ``application/json`` ``500
@@ -1410,7 +1536,7 @@ exist), you have two options: throw a subclass of ``Exception`` or restructure y
 return a ``Response``. If at all possible, prefer throwing ``Exception`` instances to returning
 ``Response`` objects, as that will make resource endpoints more self describing and easier to test.
 
-The least instrusive way to map error conditions to a response is to throw a ``WebApplicationException``:
+The least intrusive way to map error conditions to a response is to throw a ``WebApplicationException``:
 
 .. code-block:: java
 
@@ -1670,6 +1796,26 @@ This gets converted into this JSON:
 
 .. _man-core-representations-streaming:
 
+Unknown properties
+~~~~~~~~~~~~~~~~~~
+
+If the name of a JSON property cannot be mapped to a Java property (or otherwise handled), that
+JSON property will simply be ignored.
+
+You can change this behavior by configuring Dropwizard's object mapper:
+
+.. code-block:: java
+
+    public void initialize(Bootstrap<ExampleConfiguration> bootstrap) {
+        bootstrap.getObjectMapper().enable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+    }
+
+.. note::
+
+    The YAML configuration parser will fail on unknown properties regardless of the object mapper
+    configuration.
+
+
 Streaming Output
 ----------------
 
@@ -1709,7 +1855,7 @@ has a rich api for `filters and interceptors`_ that can be used directly in Drop
 You can stop the request from reaching your resources by throwing a ``WebApplicationException``. Alternatively,
 you can use filters to modify inbound requests or outbound responses.
 
-.. _filters and interceptors: http://jersey.github.io/documentation/latest/filters-and-interceptors.html
+.. _filters and interceptors: https://eclipse-ee4j.github.io/jersey.github.io/documentation/latest/filters-and-interceptors.html
 
 .. code-block:: java
 
@@ -1760,7 +1906,7 @@ You typically register the feature in your Application class, like so:
 Servlet filters
 ---------------
 
-Another way to create filters is by creating servlet filters. They offer a way to to register filters that apply both to servlet requests as well as resource requests.
+Another way to create filters is by creating servlet filters. They offer a way to register filters that apply both to servlet requests as well as resource requests.
 Jetty comes with a few `bundled`_  filters which may already suit your needs. If you want to create your own filter,
 this example demonstrates a servlet filter analogous to the previous example:
 
@@ -1789,7 +1935,7 @@ this example demonstrates a servlet filter analogous to the previous example:
 
 
 This servlet filter can then be registered in your Application class by wrapping it in ``FilterHolder`` and adding it to the application context together with a
-specification for which paths this filter should active. Here's an example:
+specification for which paths this filter will be active. Here's an example:
 
 .. code-block:: java
 
@@ -1816,6 +1962,6 @@ your application resources are served from one ``Servlet``
 enable the following functionality:
 
     * Resource method requests with ``@Timed``, ``@Metered``, ``@ExceptionMetered`` are delegated to special dispatchers which decorate the metric telemetry
-    * Resources that return Guava Optional are unboxed. Present returns underlying type, and non-present 404s
+    * Resources that return Optional are unboxed. Present returns underlying type, and non-present 404s
     * Resource methods that are annotated with ``@CacheControl`` are delegated to a special dispatcher that decorates on the cache control headers
     * Enables using Jackson to parse request entities into objects and generate response entities from objects, all while performing validation

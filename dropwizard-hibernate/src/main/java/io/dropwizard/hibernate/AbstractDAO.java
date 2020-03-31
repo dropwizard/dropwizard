@@ -43,7 +43,9 @@ public class AbstractDAO<E> {
      *
      * @return a new {@link Criteria} query
      * @see Session#createCriteria(Class)
+     * @deprecated Use {@link AbstractDAO#criteriaQuery()} instead.
      */
+    @Deprecated
     protected Criteria criteria() {
         return currentSession().createCriteria(entityClass);
     }
@@ -64,7 +66,7 @@ public class AbstractDAO<E> {
      * @return the named query
      * @see Session#getNamedQuery(String)
      */
-    protected Query namedQuery(String queryName) throws HibernateException {
+    protected Query<?> namedQuery(String queryName) throws HibernateException {
         return currentSession().getNamedQuery(requireNonNull(queryName));
     }
 

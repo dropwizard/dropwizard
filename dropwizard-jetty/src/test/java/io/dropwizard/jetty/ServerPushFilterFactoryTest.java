@@ -1,17 +1,17 @@
 package io.dropwizard.jetty;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.io.Resources;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.util.Duration;
+import io.dropwizard.util.Resources;
 import io.dropwizard.validation.BaseValidator;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlets.PushCacheFilter;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.servlet.DispatcherType;
 import java.io.File;
+import java.util.Arrays;
 import java.util.EnumSet;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -59,8 +59,8 @@ public class ServerPushFilterFactoryTest {
     @Test
     public void testAddFilter() {
         final ServerPushFilterFactory serverPush = new ServerPushFilterFactory();
-        serverPush.setRefererHosts(ImmutableList.of("dropwizard.io", "dropwizard.github.io"));
-        serverPush.setRefererPorts(ImmutableList.of(8444, 8445));
+        serverPush.setRefererHosts(Arrays.asList("dropwizard.io", "dropwizard.github.io"));
+        serverPush.setRefererPorts(Arrays.asList(8444, 8445));
         serverPush.setEnabled(true);
 
         ServletContextHandler servletContextHandler = mock(ServletContextHandler.class);

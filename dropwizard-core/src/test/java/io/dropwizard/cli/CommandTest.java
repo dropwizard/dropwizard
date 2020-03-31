@@ -7,8 +7,8 @@ import io.dropwizard.setup.Environment;
 import io.dropwizard.util.JarLocation;
 import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Optional;
@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class CommandTest {
+class CommandTest {
     private static class TestCommand extends Command {
         protected TestCommand() {
             super("test", "test");
@@ -44,8 +44,8 @@ public class CommandTest {
     private final Command command = new TestCommand();
     private Cli cli;
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeEach
+    void setUp() {
         final JarLocation location = mock(JarLocation.class);
         final Bootstrap<Configuration> bootstrap = new Bootstrap<>(app);
         when(location.toString()).thenReturn("dw-thing.jar");
@@ -56,9 +56,9 @@ public class CommandTest {
     }
 
     @Test
-    public void listHelpOnceOnArgumentOmission() throws Exception {
+    void listHelpOnceOnArgumentOmission() throws Exception {
         assertThat(cli.run("test", "-h"))
-            .isTrue();
+            .isEmpty();
 
         assertThat(stdOut.toString())
             .isEqualTo(String.format(
@@ -69,7 +69,7 @@ public class CommandTest {
                     "positional arguments:%n" +
                     "  {a,b,c}                Type to use%n" +
                     "%n" +
-                    "optional arguments:%n" +
+                    "named arguments:%n" +
                     "  -h, --help             show this help message and exit%n"
             ));
 

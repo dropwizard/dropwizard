@@ -1,20 +1,18 @@
 package io.dropwizard.assets;
 
-import io.dropwizard.Bundle;
+import io.dropwizard.Configuration;
+import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.servlets.assets.AssetServlet;
-import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.charset.StandardCharsets;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 /**
  * A bundle for serving static asset files from the classpath.
  */
-public class AssetsBundle implements Bundle {
+public class AssetsBundle implements ConfiguredBundle<Configuration> {
     private static final Logger LOGGER = LoggerFactory.getLogger(AssetsBundle.class);
 
     private static final String DEFAULT_ASSETS_NAME = "assets";
@@ -91,8 +89,14 @@ public class AssetsBundle implements Bundle {
      * @param assetsName          the name of servlet mapping used for this assets bundle
      */
     public AssetsBundle(String resourcePath, String uriPath, String indexFile, String assetsName) {
-        checkArgument(resourcePath.startsWith("/"), "%s is not an absolute path", resourcePath);
-        checkArgument(!"/".equals(resourcePath), "%s is the classpath root", resourcePath);
+        if (!resourcePath.startsWith("/")) {
+            throw new IllegalArgumentException(resourcePath + " is not an absolute path");
+        }
+
+        if ("/".equals(resourcePath)) {
+            throw new IllegalArgumentException(resourcePath + " is the classpath root");
+        }
+
         this.resourcePath = resourcePath.endsWith("/") ? resourcePath : (resourcePath + '/');
         this.uriPath = uriPath.endsWith("/") ? uriPath : (uriPath + '/');
         this.indexFile = indexFile;
@@ -100,12 +104,7 @@ public class AssetsBundle implements Bundle {
     }
 
     @Override
-    public void initialize(Bootstrap<?> bootstrap) {
-        // nothing doing
-    }
-
-    @Override
-    public void run(Environment environment) {
+    public void run(Configuration configuration, Environment environment) {
         LOGGER.info("Registering AssetBundle with name: {} for path {}", assetsName, uriPath + '*');
         environment.servlets().addServlet(assetsName, createServlet()).addMapping(uriPath + '*');
     }

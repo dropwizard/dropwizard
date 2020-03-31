@@ -1,6 +1,5 @@
 package io.dropwizard.testing.junit;
 
-import com.google.common.collect.ImmutableMap;
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.setup.Environment;
@@ -14,13 +13,14 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.Collections;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 
 public class DropwizardAppRuleWithoutConfigTest {
-
+    @SuppressWarnings("deprecation")
     @ClassRule
     public static final DropwizardAppRule<Configuration> RULE = new DropwizardAppRule<>(TestApplication.class, null,
         ConfigOverride.config("server.applicationConnectors[0].port", "0"),
@@ -47,7 +47,7 @@ public class DropwizardAppRuleWithoutConfigTest {
     public static class TestResource {
         @GET
         public Response get() {
-            return Response.ok(ImmutableMap.of("color", "orange")).build();
+            return Response.ok(Collections.singletonMap("color", "orange")).build();
         }
     }
 }

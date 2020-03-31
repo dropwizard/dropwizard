@@ -47,8 +47,11 @@ import java.net.URL;
  * <li>Stopping the application.</li>
  * </ul>
  * </p>
+ *
+ * @deprecated Deprecated since Dropwizard 2.0.0. Please migrate to JUnit 5 and {@link io.dropwizard.testing.junit5.DropwizardClientExtension}.
  */
 //@formatter:off
+@Deprecated
 public class DropwizardClientRule extends ExternalResource {
     private final DropwizardClient client;
 

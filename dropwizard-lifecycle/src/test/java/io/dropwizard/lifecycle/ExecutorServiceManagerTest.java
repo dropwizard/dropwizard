@@ -10,7 +10,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.concurrent.ExecutorService;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import io.dropwizard.util.Duration;
 
@@ -20,7 +20,7 @@ public class ExecutorServiceManagerTest {
     private final ExecutorService exec;
 
     public ExecutorServiceManagerTest() {
-        // This is called before every test
+        // This is called setUp every test
         this.exec = mock(ExecutorService.class);
     }
 

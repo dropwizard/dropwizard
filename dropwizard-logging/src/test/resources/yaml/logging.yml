@@ -11,13 +11,13 @@ appenders:
     archivedFileCount: 5
   - type: file
     threshold: ALL
-    maxFileSize: 100MB
+    maxFileSize: 100MiB
     currentLogFilename: ./logs/max-file-size-example.log
     archivedLogFilenamePattern: ./logs/max-file-size-example-%d-%i.log.gz
     archivedFileCount: 5
   - type: file
     threshold: ALL
-    maxFileSize: 100MB
+    maxFileSize: 100MiB
     currentLogFilename: ./logs/max-file-size-example.log
     archivedLogFilenamePattern: ./logs/max-file-size-example-%i.log.gz
     archivedFileCount: 5

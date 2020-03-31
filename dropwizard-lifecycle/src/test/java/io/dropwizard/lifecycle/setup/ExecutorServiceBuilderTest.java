@@ -1,8 +1,10 @@
 package io.dropwizard.lifecycle.setup;
 
+import com.codahale.metrics.InstrumentedThreadFactory;
+import com.codahale.metrics.MetricRegistry;
 import io.dropwizard.util.Duration;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.exceptions.verification.WantedButNotInvoked;
 import org.slf4j.Logger;
 
@@ -12,6 +14,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -24,12 +27,13 @@ public class ExecutorServiceBuilderTest {
 
     private static final String WARNING = "Parameter 'maximumPoolSize' is conflicting with unbounded work queues";
 
+    private MetricRegistry metricRegistry = new MetricRegistry();
     private ExecutorServiceBuilder executorServiceBuilder;
     private Logger log;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
-        executorServiceBuilder = new ExecutorServiceBuilder(new LifecycleEnvironment(), "test");
+        executorServiceBuilder = new ExecutorServiceBuilder(new LifecycleEnvironment(metricRegistry), "test-%d");
         log = mock(Logger.class);
         ExecutorServiceBuilder.setLog(log);
     }
@@ -42,6 +46,8 @@ public class ExecutorServiceBuilderTest {
             .build();
 
         verify(log).warn(WARNING);
+        assertThat(metricRegistry.getMetrics().keySet())
+            .containsOnly("test.created", "test.terminated", "test.running");
     }
 
     @Test
@@ -110,6 +116,49 @@ public class ExecutorServiceBuilderTest {
         } catch (WantedButNotInvoked error) {
             // no warning has been given so we should be able to execute at least 2 things at once
             assertCanExecuteAtLeast2ConcurrentTasks(exe);
+        }
+    }
+
+    @Test
+    public void shouldUseInstrumentedThreadFactory() {
+        ExecutorService exe = executorServiceBuilder.build();
+        final ThreadPoolExecutor castedExec = (ThreadPoolExecutor) exe;
+
+        assertThat(castedExec.getThreadFactory()).isInstanceOf(InstrumentedThreadFactory.class);
+    }
+
+    @Test
+    public void nameWithoutFormat() {
+        final String[][] tests = new String[][] {
+            { "my-client-%d", "my-client" },
+            { "my-client--%d", "my-client-" },
+            { "my-client-%d-abc", "my-client-abc" },
+            { "my-client%d", "my-client" },
+            { "my-client%d-abc", "my-client-abc" },
+            { "my-client%s", "my-client" },
+            { "my-client%sabc", "my-clientabc" },
+            { "my-client%10d", "my-client" },
+            { "my-client%10d0", "my-client0" },
+            { "my-client%-10d", "my-client" },
+            { "my-client%-10d0", "my-client0" },
+            { "my-client-%10d", "my-client" },
+            { "my-client-%10dabc", "my-clientabc" },
+            { "my-client-%1$d", "my-client" },
+            { "my-client-%1$d-abc", "my-client-abc" },
+            { "-%d", "" },
+            { "%d", "" },
+            { "%d-abc", "-abc" },
+            { "%10d", "" },
+            { "%10dabc", "abc" },
+            { "%-10d", "" },
+            { "%-10dabc", "abc" },
+            { "%10s", "" },
+            { "%10sabc", "abc" },
+        };
+        for (String[] t : tests) {
+            assertThat(ExecutorServiceBuilder.getNameWithoutFormat(t[0]))
+                .describedAs("%s -> %s", t[0], t[1])
+                .isEqualTo(t[1]);
         }
     }
 

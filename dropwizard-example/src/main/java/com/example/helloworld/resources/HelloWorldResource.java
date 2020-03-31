@@ -1,5 +1,6 @@
 package com.example.helloworld.resources;
 
+import com.codahale.metrics.annotation.Metered;
 import com.codahale.metrics.annotation.Timed;
 import com.example.helloworld.api.Saying;
 import com.example.helloworld.core.Template;
@@ -8,7 +9,6 @@ import io.dropwizard.jersey.params.DateTimeParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.validation.Valid;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -33,14 +33,15 @@ public class HelloWorldResource {
     }
 
     @GET
-    @Timed(name = "get-requests")
+    @Timed(name = "get-requests-timed")
+    @Metered(name = "get-requests-metered")
     @CacheControl(maxAge = 1, maxAgeUnit = TimeUnit.DAYS)
     public Saying sayHello(@QueryParam("name") Optional<String> name) {
         return new Saying(counter.incrementAndGet(), template.render(name));
     }
 
     @POST
-    public void receiveHello(@Valid Saying saying) {
+    public void receiveHello(Saying saying) {
         LOGGER.info("Received a saying: {}", saying);
     }
 

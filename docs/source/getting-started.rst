@@ -80,8 +80,6 @@ And Friends
 In addition to Jetty_, Jersey_, and Jackson_, Dropwizard also includes a number of libraries to help
 you ship more quickly and with fewer regrets.
 
-* Guava_, which, in addition to highly optimized immutable data structures, provides a growing
-  number of classes to speed up development in Java.
 * Logback_ and slf4j_ for performant and flexible logging.
 * `Hibernate Validator`_, the `JSR 349`_ reference implementation, provides an easy, declarative
   framework for validating user input and generating helpful and i18n-friendly error messages.
@@ -93,7 +91,6 @@ you ship more quickly and with fewer regrets.
 * Freemarker_ and Mustache_ are simple templating systems for more user-facing applications.
 * `Joda Time`_ is a very complete, sane library for handling dates and times.
 
-.. _Guava: https://github.com/google/guava
 .. _Logback: https://logback.qos.ch/
 .. _slf4j: https://www.slf4j.org/
 .. _Hibernate Validator: http://hibernate.org/validator/
@@ -125,7 +122,7 @@ we go through this example application. If you have any questions about how Mave
 .. _SBT: https://github.com/harrah/xsbt/wiki
 .. _Gant: https://github.com/Gant/Gant
 .. _Leiningen: https://github.com/technomancy/leiningen
-.. __: https://books.sonatype.com/mvnref-book/reference/
+.. __: https://www.sonatype.com/ebooks
 
 
 You have three alternatives from here:
@@ -198,7 +195,7 @@ Here's what our configuration class will look like, full `example conf here`_:
 
     import io.dropwizard.Configuration;
     import com.fasterxml.jackson.annotation.JsonProperty;
-    import org.hibernate.validator.constraints.NotEmpty;
+    import javax.validation.constraints.NotEmpty;
 
     public class HelloWorldConfiguration extends Configuration {
         @NotEmpty
@@ -352,7 +349,6 @@ To model this representation, we'll create a representation class:
     public class Saying {
         private long id;
 
-        @Length(max = 3)
         private String content;
 
         public Saying() {
@@ -381,7 +377,7 @@ First, it's immutable. This makes ``Saying`` instances *very* easy to reason abo
 environments as well as single-threaded environments. Second, it uses the JavaBeans standard for the
 ``id`` and ``content`` properties. This allows Jackson_ to serialize it to the JSON we need. The
 Jackson object mapping code will populate the ``id`` field of the JSON object with the return value
-of ``#getId()``, likewise with ``content`` and ``#getContent()``. Lastly, the bean leverages validation to ensure the content size is no greater than 3.
+of ``#getId()``, likewise with ``content`` and ``#getContent()``.
 
 .. note::
 
@@ -460,7 +456,7 @@ the saying and the ``defaultName`` used when the user declines to tell us their 
 to the ``name`` parameter in the method. If the client sends a request to
 ``/hello-world?name=Dougie``, ``sayHello`` will be called with ``Optional.of("Dougie")``; if there
 is no ``name`` parameter in the query string, ``sayHello`` will be called with
-``Optional.absent()``. (Support for Guava's ``Optional`` is a little extra sauce that Dropwizard
+``Optional.empty()``. (Support for ``Optional`` is a little extra sauce that Dropwizard
 adds to Jersey's existing functionality.)
 
 .. note::

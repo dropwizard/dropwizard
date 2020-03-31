@@ -8,17 +8,18 @@ maxRequestHeaderSize: 4KiB
 maxResponseHeaderSize: 4KiB
 inputBufferSize: 4KiB
 idleTimeout: 10 seconds
-blockingTimeout: 30 seconds
 minBufferPoolSize: 128B
 bufferPoolIncrement: 500B
 maxBufferPoolSize: 32KiB
-minRequestDataRate: 42
+minRequestDataPerSecond: '42 bytes'
+minResponseDataPerSecond: '200 bytes'
 acceptorThreads: 1
 selectorThreads: 4
 acceptQueueSize: 1024
 reuseAddress: false
-soLingerTime: 30s
 useServerHeader: true
 useDateHeader: false
-useForwardedHeaders: false
+useForwardedHeaders: true
 httpCompliance: RFC2616
+requestCookieCompliance: RFC2965
+responseCookieCompliance: RFC6265

@@ -1,7 +1,7 @@
 package io.dropwizard.jersey.filter;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 
@@ -26,7 +26,7 @@ public class RequestIdFilterTest {
     private RequestIdFilter requestIdFilter = new RequestIdFilter();
     private MultivaluedMap<String, Object> headers = new MultivaluedHashMap<>();
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         requestIdFilter.setLogger(logger);
 

@@ -1,7 +1,12 @@
 package io.dropwizard.servlets.assets;
 
+import io.dropwizard.util.Strings;
+
 import javax.annotation.concurrent.Immutable;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Immutable
 public final class ByteRange {
@@ -34,16 +39,19 @@ public final class ByteRange {
             final int start = Integer.parseInt(byteRange);
             return new ByteRange(resourceLength + start, resourceLength - 1);
         }
-        final String[] parts = byteRange.split("-");
-        if (parts.length == 2) {
-            final int start = Integer.parseInt(parts[0]);
-            int end = Integer.parseInt(parts[1]);
+        final List<String> parts = Arrays.stream(byteRange.split("-", -1))
+                .map(String::trim)
+                .filter(s -> !Strings.isNullOrEmpty(s))
+                .collect(Collectors.toList());
+        if (parts.size() == 2) {
+            final int start = Integer.parseInt(parts.get(0));
+            int end = Integer.parseInt(parts.get(1));
             if (end > resourceLength) {
                 end = resourceLength - 1;
             }
             return new ByteRange(start, end);
         } else {
-            final int start = Integer.parseInt(parts[0]);
+            final int start = Integer.parseInt(parts.get(0));
             return new ByteRange(start, resourceLength - 1);
         }
     }

@@ -1,9 +1,8 @@
 package io.dropwizard.logging;
 
 import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.FileAppender;
-import ch.qos.logback.core.encoder.LayoutWrappingEncoder;
+import ch.qos.logback.core.OutputStreamAppender;
 import ch.qos.logback.core.rolling.DefaultTimeBasedFileNamingAndTriggeringPolicy;
 import ch.qos.logback.core.rolling.FixedWindowRollingPolicy;
 import ch.qos.logback.core.rolling.RollingFileAppender;
@@ -16,11 +15,8 @@ import ch.qos.logback.core.util.FileSize;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import io.dropwizard.logging.async.AsyncAppenderFactory;
-import io.dropwizard.logging.filter.LevelFilterFactory;
-import io.dropwizard.logging.layout.LayoutFactory;
-import io.dropwizard.util.Size;
-import io.dropwizard.validation.MinSize;
+import io.dropwizard.util.DataSize;
+import io.dropwizard.validation.MinDataSize;
 import io.dropwizard.validation.ValidationMethod;
 
 import javax.annotation.Nullable;
@@ -84,9 +80,17 @@ import static java.util.Objects.requireNonNull;
  *         <td>(unlimited)</td>
  *         <td>
  *             The maximum size of the currently active file before a rollover is triggered. The value can be expressed
- *             in bytes, kilobytes, megabytes, gigabytes, and terabytes by appending B, K, MB, GB, or TB to the
- *             numeric value.  Examples include 100MB, 1GB, 1TB.  Sizes can also be spelled out, such as 100 megabytes,
- *             1 gigabyte, 1 terabyte.
+ *             with SI and IEC prefixes, see {@link io.dropwizard.util.DataSizeUnit}.
+ *             Examples include 100MiB, 1GiB, 1TiB.  Sizes can also be spelled out, such as 100 mebibytes,
+ *             1 gibibyte, 1 tebibyte.
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code totalSizeCap}</td>
+ *         <td>(unlimited)</td>
+ *         <td>
+ *             Controls the total size of all files. Oldest archives are deleted asynchronously when the total
+ *             size cap is exceeded.
  *         </td>
  *     </tr>
  *     <tr>
@@ -105,10 +109,10 @@ import static java.util.Objects.requireNonNull;
  *     </tr>
  *     <tr>
  *         <td>{@code bufferSize}</td>
- *         <td>8KB</td>
+ *         <td>8KiB</td>
  *         <td>
  *             The buffer size of the underlying FileAppender (setting added in logback 1.1.10). Increasing this from
- *             the default of 8KB to 256KB is reported to significantly reduce thread contention.
+ *             the default of 8KiB to 256KiB is reported to significantly reduce thread contention.
  *         </td>
  *     </tr>
  *      <tr>
@@ -126,7 +130,7 @@ import static java.util.Objects.requireNonNull;
  * @see AbstractAppenderFactory
  */
 @JsonTypeName("file")
-public class FileAppenderFactory<E extends DeferredProcessingAware> extends AbstractAppenderFactory<E> {
+public class FileAppenderFactory<E extends DeferredProcessingAware> extends AbstractOutputStreamAppenderFactory<E> {
 
     @Nullable
     private String currentLogFilename;
@@ -140,10 +144,13 @@ public class FileAppenderFactory<E extends DeferredProcessingAware> extends Abst
     private int archivedFileCount = 5;
 
     @Nullable
-    private Size maxFileSize;
+    private DataSize maxFileSize;
 
-    @MinSize(1)
-    private Size bufferSize = Size.bytes(FileAppender.DEFAULT_BUFFER_SIZE);
+    @Nullable
+    private DataSize totalSizeCap;
+
+    @MinDataSize(1)
+    private DataSize bufferSize = DataSize.bytes(FileAppender.DEFAULT_BUFFER_SIZE);
 
     private boolean immediateFlush = true;
 
@@ -191,22 +198,39 @@ public class FileAppenderFactory<E extends DeferredProcessingAware> extends Abst
 
     @JsonProperty
     @Nullable
-    public Size getMaxFileSize() {
+    public DataSize getMaxFileSize() {
         return maxFileSize;
     }
 
     @JsonProperty
-    public void setMaxFileSize(Size maxFileSize) {
+    public void setMaxFileSize(@Nullable DataSize maxFileSize) {
         this.maxFileSize = maxFileSize;
     }
 
+    /**
+     * @since 2.0
+     */
     @JsonProperty
-    public Size getBufferSize() {
+    @Nullable
+    public DataSize getTotalSizeCap() {
+        return totalSizeCap;
+    }
+
+    /**
+     * @since 2.0
+     */
+    @JsonProperty
+    public void setTotalSizeCap(@Nullable DataSize totalSizeCap) {
+        this.totalSizeCap = totalSizeCap;
+    }
+
+    @JsonProperty
+    public DataSize getBufferSize() {
         return bufferSize;
     }
 
     @JsonProperty
-    public void setBufferSize(Size bufferSize) {
+    public void setBufferSize(DataSize bufferSize) {
         this.bufferSize = bufferSize;
     }
 
@@ -217,6 +241,16 @@ public class FileAppenderFactory<E extends DeferredProcessingAware> extends Abst
     @JsonProperty
     public void setImmediateFlush(boolean immediateFlush) {
         this.immediateFlush = immediateFlush;
+    }
+
+    /**
+     * @since 2.0
+     */
+    @JsonIgnore
+    @ValidationMethod(message = "totalSizeCap has no effect when using maxFileSize and an archivedLogFilenamePattern without %d, as archivedFileCount implicitly controls the total size cap")
+    public boolean isTotalSizeCapValid() {
+        return !archive || totalSizeCap == null ||
+            !(maxFileSize != null && !requireNonNull(archivedLogFilenamePattern).contains("%d"));
     }
 
     @JsonIgnore
@@ -246,25 +280,14 @@ public class FileAppenderFactory<E extends DeferredProcessingAware> extends Abst
     }
 
     @Override
-    public Appender<E> build(LoggerContext context, String applicationName, LayoutFactory<E> layoutFactory,
-                             LevelFilterFactory<E> levelFilterFactory, AsyncAppenderFactory<E> asyncAppenderFactory) {
+    protected OutputStreamAppender<E> appender(LoggerContext context) {
         final FileAppender<E> appender = buildAppender(context);
         appender.setName("file-appender");
-
         appender.setAppend(true);
         appender.setContext(context);
-
-        final LayoutWrappingEncoder<E> layoutEncoder = new LayoutWrappingEncoder<>();
-        layoutEncoder.setLayout(buildLayout(context, layoutFactory));
-        appender.setEncoder(layoutEncoder);
-
         appender.setImmediateFlush(immediateFlush);
         appender.setPrudent(false);
-        appender.addFilter(levelFilterFactory.build(threshold));
-        getFilterFactories().forEach(f -> appender.addFilter(f.build()));
-        appender.start();
-
-        return wrapAsync(appender, asyncAppenderFactory);
+        return appender;
     }
 
     protected FileAppender<E> buildAppender(LoggerContext context) {
@@ -305,6 +328,10 @@ public class FileAppenderFactory<E extends DeferredProcessingAware> extends Abst
                     final SizeAndTimeBasedRollingPolicy<E> sizeAndTimeBasedRollingPolicy = new SizeAndTimeBasedRollingPolicy<>();
                     sizeAndTimeBasedRollingPolicy.setMaxFileSize(new FileSize(maxFileSize.toBytes()));
                     rollingPolicy = sizeAndTimeBasedRollingPolicy;
+                }
+
+                if (totalSizeCap != null) {
+                    rollingPolicy.setTotalSizeCap(new FileSize(totalSizeCap.toBytes()));
                 }
 
                 rollingPolicy.setContext(context);

@@ -1,14 +1,13 @@
 package io.dropwizard.migrations;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import net.jcip.annotations.NotThreadSafe;
 import net.sourceforge.argparse4j.inf.Namespace;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -25,14 +24,14 @@ public class DbTagCommandTest extends AbstractMigrationTest {
         final TestMigrationConfiguration conf = createConfiguration(getDatabaseUrl());
         final DbMigrateCommand<TestMigrationConfiguration> dbMigrateCommand = new DbMigrateCommand<>(
             new TestMigrationDatabaseConfiguration(), TestMigrationConfiguration.class, migrationsFileName);
-        dbMigrateCommand.run(null, new Namespace(ImmutableMap.of()), conf);
+        dbMigrateCommand.run(null, new Namespace(Collections.emptyMap()), conf);
 
         // Tag them
-        dbTagCommand.run(null, new Namespace(ImmutableMap.of("tag-name", ImmutableList.of("v1"))), conf);
+        dbTagCommand.run(null, new Namespace(Collections.singletonMap("tag-name", Collections.singletonList("v1"))), conf);
 
         // Verify that the tag exists
         try (CloseableLiquibase liquibase = dbTagCommand.openLiquibase(conf.getDataSource(),
-            new Namespace(ImmutableMap.of()))) {
+            new Namespace(Collections.emptyMap()))) {
             assertThat(liquibase.tagExists("v1")).isTrue();
         }
     }
@@ -51,7 +50,7 @@ public class DbTagCommandTest extends AbstractMigrationTest {
             "  file                   application configuration file%n" +
             "  tag-name               The tag name%n" +
             "%n" +
-            "optional arguments:%n" +
+            "named arguments:%n" +
             "  -h, --help             show this help message and exit%n" +
             "  --migrations MIGRATIONS-FILE%n" +
             "                         the file containing  the  Liquibase migrations for%n" +

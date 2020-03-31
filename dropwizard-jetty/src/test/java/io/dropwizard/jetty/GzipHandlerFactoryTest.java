@@ -1,62 +1,66 @@
 package io.dropwizard.jetty;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.common.io.Resources;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
-import io.dropwizard.util.Size;
+import io.dropwizard.util.DataSize;
+import io.dropwizard.util.Resources;
+import io.dropwizard.util.Sets;
 import io.dropwizard.validation.BaseValidator;
-import org.junit.Before;
-import org.junit.Test;
+import org.eclipse.jetty.server.Handler;
+import org.eclipse.jetty.server.handler.gzip.GzipHandler;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.zip.Deflater;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 
-public class GzipHandlerFactoryTest {
+class GzipHandlerFactoryTest {
     private GzipHandlerFactory gzip;
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeEach
+    void setUp() throws Exception {
         this.gzip = new YamlConfigurationFactory<>(GzipHandlerFactory.class,
                 BaseValidator.newValidator(), Jackson.newObjectMapper(), "dw")
                 .build(new File(Resources.getResource("yaml/gzip.yml").toURI()));
     }
 
     @Test
-    public void canBeEnabled() throws Exception {
+    void canBeEnabled() {
         assertThat(gzip.isEnabled())
                 .isFalse();
     }
 
     @Test
-    public void hasAMinimumEntitySize() throws Exception {
+    void hasAMinimumEntitySize() {
         assertThat(gzip.getMinimumEntitySize())
-                .isEqualTo(Size.kilobytes(12));
+                .isEqualTo(DataSize.kibibytes(12));
     }
 
     @Test
-    public void hasABufferSize() throws Exception {
+    void hasABufferSize() {
         assertThat(gzip.getBufferSize())
-                .isEqualTo(Size.kilobytes(32));
+                .isEqualTo(DataSize.kibibytes(32));
     }
 
     @Test
-    public void hasExcludedUserAgentPatterns() throws Exception {
+    void hasExcludedUserAgentPatterns() {
         assertThat(gzip.getExcludedUserAgentPatterns())
-                .isEqualTo(ImmutableSet.of("OLD-2.+"));
+                .isEqualTo(Collections.singleton("OLD-2.+"));
     }
 
     @Test
-    public void hasCompressedMimeTypes() throws Exception {
+    void hasCompressedMimeTypes() {
         assertThat(gzip.getCompressedMimeTypes())
-                .isEqualTo(ImmutableSet.of("text/plain"));
+                .isEqualTo(Collections.singleton("text/plain"));
     }
 
     @Test
-    public void testBuild() {
-        final BiDiGzipHandler handler = gzip.build(null);
+    void testBuild() {
+        final GzipHandler handler = gzip.build(null);
 
         assertThat(handler.getMinGzipSize()).isEqualTo((int) gzip.getMinimumEntitySize().toBytes());
         assertThat(handler.getExcludedAgentPatterns()).hasSize(1);
@@ -64,12 +68,11 @@ public class GzipHandlerFactoryTest {
         assertThat(handler.getIncludedMimeTypes()).containsOnly("text/plain");
         assertThat(handler.getIncludedMethods()).containsOnly("GET", "POST");
         assertThat(handler.getCompressionLevel()).isEqualTo(Deflater.DEFAULT_COMPRESSION);
-        assertThat(handler.isInflateNoWrap()).isTrue();
     }
 
     @Test
-    public void testBuildDefault() throws Exception {
-        final BiDiGzipHandler handler = new YamlConfigurationFactory<>(GzipHandlerFactory.class,
+    void testBuildDefault() throws Exception {
+        final GzipHandler handler = new YamlConfigurationFactory<>(GzipHandlerFactory.class,
                 BaseValidator.newValidator(), Jackson.newObjectMapper(), "dw")
                 .build(new File(Resources.getResource("yaml/default_gzip.yml").toURI()))
                 .build(null);
@@ -79,6 +82,27 @@ public class GzipHandlerFactoryTest {
         assertThat(handler.getIncludedMimeTypes()).isEmpty(); // All apart excluded
         assertThat(handler.getIncludedMethods()).containsOnly("GET");
         assertThat(handler.getCompressionLevel()).isEqualTo(Deflater.DEFAULT_COMPRESSION);
-        assertThat(handler.isInflateNoWrap()).isTrue();
+    }
+
+    @Test
+    void testBuilderProperties() {
+        GzipHandlerFactory gzip = new GzipHandlerFactory();
+        gzip.setMinimumEntitySize(DataSize.bytes(4096));
+        gzip.setIncludedMethods(Sets.of("GET", "POST"));
+        gzip.setExcludedUserAgentPatterns(Collections.singleton("MSIE 6.0"));
+        gzip.setCompressedMimeTypes(Sets.of("text/html", "application/json"));
+        gzip.setExcludedMimeTypes(Collections.singleton("application/thrift"));
+        gzip.setIncludedPaths(Collections.singleton("/include/me"));
+        gzip.setExcludedPaths(Collections.singleton("/exclude/me"));
+        Handler handler = mock(Handler.class);
+        GzipHandler biDiGzipHandler = gzip.build(handler);
+
+        assertThat(biDiGzipHandler.getMinGzipSize()).isEqualTo(4096);
+        assertThat(biDiGzipHandler.getIncludedMethods()).containsExactlyInAnyOrder("GET", "POST");
+        assertThat(biDiGzipHandler.getExcludedAgentPatterns()).containsExactly("MSIE 6.0");
+        assertThat(biDiGzipHandler.getIncludedMimeTypes()).containsExactlyInAnyOrder("text/html", "application/json");
+        assertThat(biDiGzipHandler.getExcludedMimeTypes()).containsExactly("application/thrift");
+        assertThat(biDiGzipHandler.getIncludedPaths()).containsExactly("/include/me");
+        assertThat(biDiGzipHandler.getExcludedPaths()).containsExactly("/exclude/me");
     }
 }

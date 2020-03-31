@@ -1,7 +1,6 @@
 package io.dropwizard.jackson;
 
 import com.fasterxml.jackson.databind.jsontype.impl.StdSubtypeResolver;
-import com.google.common.collect.ImmutableList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,24 +23,24 @@ public class DiscoverableSubtypeResolver extends StdSubtypeResolver {
     private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = LoggerFactory.getLogger(DiscoverableSubtypeResolver.class);
 
-    private final ImmutableList<Class<?>> discoveredSubtypes;
+    private final List<Class<?>> discoveredSubtypes;
 
     public DiscoverableSubtypeResolver() {
         this(Discoverable.class);
     }
 
     public DiscoverableSubtypeResolver(Class<?> rootKlass) {
-        final ImmutableList.Builder<Class<?>> subtypes = ImmutableList.builder();
+        final List<Class<?>> subtypes = new ArrayList<>();
         for (Class<?> klass : discoverServices(rootKlass)) {
             for (Class<?> subtype : discoverServices(klass)) {
                 subtypes.add(subtype);
                 registerSubtypes(subtype);
             }
         }
-        this.discoveredSubtypes = subtypes.build();
+        this.discoveredSubtypes = subtypes;
     }
 
-    public ImmutableList<Class<?>> getDiscoveredSubtypes() {
+    public List<Class<?>> getDiscoveredSubtypes() {
         return discoveredSubtypes;
     }
 

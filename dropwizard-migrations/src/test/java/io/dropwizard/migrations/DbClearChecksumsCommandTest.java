@@ -1,15 +1,15 @@
 package io.dropwizard.migrations;
 
-import com.google.common.collect.ImmutableMap;
 import liquibase.Liquibase;
 import net.jcip.annotations.NotThreadSafe;
 import net.sourceforge.argparse4j.inf.Namespace;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -22,7 +22,7 @@ public class DbClearChecksumsCommandTest extends AbstractMigrationTest {
     @Test
     public void testRun() throws Exception {
         final Liquibase liquibase = Mockito.mock(Liquibase.class);
-        clearChecksums.run(new Namespace(ImmutableMap.of()), liquibase);
+        clearChecksums.run(new Namespace(Collections.emptyMap()), liquibase);
         Mockito.verify(liquibase).clearCheckSums();
     }
 
@@ -39,7 +39,7 @@ public class DbClearChecksumsCommandTest extends AbstractMigrationTest {
                 "positional arguments:%n" +
                 "  file                   application configuration file%n" +
                 "%n" +
-                "optional arguments:%n" +
+                "named arguments:%n" +
                 "  -h, --help             show this help message and exit%n" +
                 "  --migrations MIGRATIONS-FILE%n" +
                 "                         the file containing  the  Liquibase migrations for%n" +

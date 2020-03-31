@@ -1,14 +1,17 @@
 package com.example.app1;
 
-import com.google.common.collect.ImmutableMap;
 import io.dropwizard.Configuration;
 import io.dropwizard.client.JerseyClientBuilder;
+import io.dropwizard.client.JerseyClientConfiguration;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.testing.ResourceHelpers;
-import io.dropwizard.testing.junit.DropwizardAppRule;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
-import org.junit.Test;
+import io.dropwizard.testing.junit5.DropwizardAppExtension;
+import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
+import io.dropwizard.util.Duration;
+
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
@@ -18,22 +21,27 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 
+@ExtendWith(DropwizardExtensionsSupport.class)
 public class App1Test {
-    @ClassRule
-    public static final DropwizardAppRule<Configuration> RULE =
-        new DropwizardAppRule<>(App1.class, ResourceHelpers.resourceFilePath("app1/config.yml"));
+    public static final DropwizardAppExtension<Configuration> RULE =
+        new DropwizardAppExtension<>(App1.class, ResourceHelpers.resourceFilePath("app1/config.yml"));
 
     private static Client client;
 
-    @BeforeClass
+    @BeforeAll
     public static void setup() {
+        final JerseyClientConfiguration config = new JerseyClientConfiguration();
+        // Avoid flakiness with default timeouts in CI builds
+        config.setTimeout(Duration.seconds(5));
         client = new JerseyClientBuilder(RULE.getEnvironment())
             .withProvider(new CustomJsonProvider(Jackson.newObjectMapper()))
+            .using(config)
             .build("test client");
     }
 
@@ -98,7 +106,7 @@ public class App1Test {
         final String url = String.format("http://localhost:%d/mapper", RULE.getLocalPort());
         final String response = client.target(url)
             .request()
-            .post(Entity.json(ImmutableMap.of("check", "mate")), String.class);
+            .post(Entity.json(Collections.singletonMap("check", "mate")), String.class);
         assertThat(response).isEqualTo("/** A Dropwizard specialty */\n" +
             "{\"check\":\"mate\",\"hello\":\"world\"}");
     }
@@ -111,7 +119,7 @@ public class App1Test {
 
         final Map<String, String> response = client.target(url)
             .request()
-            .post(Entity.json(ImmutableMap.of("check", "mate")), typ);
+            .post(Entity.json(Collections.singletonMap("check", "mate")), typ);
         assertThat(response).containsExactly(entry("check", "mate"), entry("hello", "world"));
     }
 

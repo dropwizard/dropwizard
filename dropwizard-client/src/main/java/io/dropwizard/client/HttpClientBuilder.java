@@ -5,7 +5,6 @@ import com.codahale.metrics.httpclient.HttpClientMetricNameStrategies;
 import com.codahale.metrics.httpclient.HttpClientMetricNameStrategy;
 import com.codahale.metrics.httpclient.InstrumentedHttpClientConnectionManager;
 import com.codahale.metrics.httpclient.InstrumentedHttpRequestExecutor;
-import com.google.common.annotations.VisibleForTesting;
 import io.dropwizard.client.proxy.AuthConfiguration;
 import io.dropwizard.client.proxy.NonProxyListProxyRoutePlanner;
 import io.dropwizard.client.proxy.ProxyConfiguration;
@@ -45,6 +44,7 @@ import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
 import org.apache.http.impl.conn.SystemDefaultDnsResolver;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpProcessor;
+import org.apache.http.protocol.HttpRequestExecutor;
 
 import javax.annotation.Nullable;
 import javax.net.ssl.HostnameVerifier;
@@ -62,6 +62,7 @@ import java.util.List;
  * </p>
  */
 public class HttpClientBuilder {
+    @SuppressWarnings("UnnecessaryLambda")
     private static final HttpRequestRetryHandler NO_RETRIES = (exception, executionCount, context) -> false;
 
     private final MetricRegistry metricRegistry;
@@ -300,12 +301,39 @@ public class HttpClientBuilder {
      * @return an {@link io.dropwizard.client.ConfiguredCloseableHttpClient}
      */
     ConfiguredCloseableHttpClient buildWithDefaultRequestConfiguration(String name) {
-        return createClient(org.apache.http.impl.client.HttpClientBuilder.create(),
+        return createClient(createBuilder(),
                 createConnectionManager(createConfiguredRegistry(), name), name);
     }
 
     /**
-     * Configures an Apache {@link org.apache.http.impl.client.HttpClientBuilder HttpClientBuilder}.
+     * Creates a {@link org.apache.http.protocol.HttpRequestExecutor}.
+     *
+     * Intended for use by subclasses to provide a customized request executor.
+     * The default implementation is an {@link com.codahale.metrics.httpclient.InstrumentedHttpRequestExecutor}
+     *
+     * @param name
+     * @return a {@link org.apache.http.protocol.HttpRequestExecutor}
+     * @since 2.0
+     */
+    protected HttpRequestExecutor createRequestExecutor(String name) {
+        return new InstrumentedHttpRequestExecutor(metricRegistry, metricNameStrategy, name);
+    }
+
+    /**
+     * Creates an Apache {@link org.apache.http.impl.client.HttpClientBuilder}.
+     *
+     * Intended for use by subclasses to create builder instance from subclass of
+     * {@link org.apache.http.impl.client.HttpClientBuilder}
+     *
+     * @return an {@link org.apache.http.impl.client.HttpClientBuilder}
+     * @since 2.0
+     */
+    protected org.apache.http.impl.client.HttpClientBuilder createBuilder() {
+        return org.apache.http.impl.client.HttpClientBuilder.create();
+    }
+
+    /**
+     * Configures an Apache {@link org.apache.http.impl.client.HttpClientBuilder}.
      *
      * Intended for use by subclasses to inject HttpClientBuilder
      * configuration. The default implementation is an identity
@@ -334,6 +362,7 @@ public class HttpClientBuilder {
         final Integer timeout = (int) configuration.getTimeout().toMilliseconds();
         final Integer connectionTimeout = (int) configuration.getConnectionTimeout().toMilliseconds();
         final Integer connectionRequestTimeout = (int) configuration.getConnectionRequestTimeout().toMilliseconds();
+        final boolean normalizeUri = configuration.isNormalizeUriEnabled();
         final long keepAlive = configuration.getKeepAlive().toMilliseconds();
         final ConnectionReuseStrategy reuseStrategy = keepAlive == 0
                 ? new NoConnectionReuseStrategy()
@@ -348,20 +377,20 @@ public class HttpClientBuilder {
                 .setSocketTimeout(timeout)
                 .setConnectTimeout(connectionTimeout)
                 .setConnectionRequestTimeout(connectionRequestTimeout)
+                .setNormalizeUri(normalizeUri)
                 .build();
         final SocketConfig socketConfig = SocketConfig.custom()
                 .setTcpNoDelay(true)
                 .setSoTimeout(timeout)
                 .build();
 
-        customizeBuilder(builder)
-                .setRequestExecutor(new InstrumentedHttpRequestExecutor(metricRegistry, metricNameStrategy, name))
-                .setConnectionManager(manager)
-                .setDefaultRequestConfig(requestConfig)
-                .setDefaultSocketConfig(socketConfig)
-                .setConnectionReuseStrategy(reuseStrategy)
-                .setRetryHandler(retryHandler)
-                .setUserAgent(createUserAgent(name));
+        builder.setRequestExecutor(createRequestExecutor(name))
+            .setConnectionManager(manager)
+            .setDefaultRequestConfig(requestConfig)
+            .setDefaultSocketConfig(socketConfig)
+            .setConnectionReuseStrategy(reuseStrategy)
+            .setRetryHandler(retryHandler)
+            .setUserAgent(createUserAgent(name));
 
         if (keepAlive != 0) {
             // either keep alive based on response header Keep-Alive,
@@ -396,7 +425,6 @@ public class HttpClientBuilder {
             }
         }
 
-
         if (credentialsProvider != null) {
             builder.setDefaultCredentialsProvider(credentialsProvider);
         }
@@ -428,6 +456,8 @@ public class HttpClientBuilder {
         if (serviceUnavailableRetryStrategy != null) {
             builder.setServiceUnavailableRetryStrategy(serviceUnavailableRetryStrategy);
         }
+
+        customizeBuilder(builder);
 
         return new ConfiguredCloseableHttpClient(builder.build(), requestConfig);
     }
@@ -468,7 +498,6 @@ public class HttpClientBuilder {
         return configureConnectionManager(manager);
     }
 
-    @VisibleForTesting
     Registry<ConnectionSocketFactory> createConfiguredRegistry() {
         if (registry != null) {
             return registry;
@@ -494,7 +523,6 @@ public class HttpClientBuilder {
     }
 
 
-    @VisibleForTesting
     protected InstrumentedHttpClientConnectionManager configureConnectionManager(
             InstrumentedHttpClientConnectionManager connectionManager) {
         connectionManager.setDefaultMaxPerRoute(configuration.getMaxConnectionsPerRoute());

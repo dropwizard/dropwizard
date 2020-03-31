@@ -1,11 +1,11 @@
 package io.dropwizard.db;
 
-import com.google.common.io.Resources;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.validation.Validators;
 import io.dropwizard.util.Duration;
-import org.junit.Test;
+import io.dropwizard.util.Resources;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.util.Optional;
@@ -24,7 +24,7 @@ public class DataSourceConfigurationTest {
         assertThat(ds.getPassword()).isEqualTo("iAMs00perSecrEET");
         assertThat(ds.getProperties()).containsEntry("charSet", "UTF-8");
         assertThat(ds.getMaxWaitForConnection()).isEqualTo(Duration.seconds(1));
-        assertThat(ds.getValidationQuery()).isEqualTo("/* MyService Health Check */ SELECT 1");
+        assertThat(ds.getValidationQuery()).isEqualTo(Optional.of("/* MyService Health Check */ SELECT 1"));
         assertThat(ds.getMinSize()).isEqualTo(8);
         assertThat(ds.getInitialSize()).isEqualTo(15);
         assertThat(ds.getMaxSize()).isEqualTo(32);
@@ -55,6 +55,7 @@ public class DataSourceConfigurationTest {
         assertThat(ds.getValidationQueryTimeout()).isEqualTo(Optional.of(Duration.seconds(3)));
         assertThat(ds.getValidatorClassName()).isEqualTo(Optional.of("io.dropwizard.db.CustomConnectionValidator"));
         assertThat(ds.getJdbcInterceptors()).isEqualTo(Optional.of("StatementFinalizer;SlowQueryReport"));
+        assertThat(ds.isIgnoreExceptionOnPreLoad()).isTrue();
     }
 
     @Test
@@ -67,7 +68,7 @@ public class DataSourceConfigurationTest {
         assertThat(ds.getPassword()).isEqualTo("iAMs00perSecrEET");
         assertThat(ds.getProperties()).isEmpty();
         assertThat(ds.getMaxWaitForConnection()).isEqualTo(Duration.seconds(30));
-        assertThat(ds.getValidationQuery()).isEqualTo("/* Health Check */ SELECT 1");
+        assertThat(ds.getValidationQuery()).isEqualTo(Optional.of("/* Health Check */ SELECT 1"));
         assertThat(ds.getMinSize()).isEqualTo(10);
         assertThat(ds.getInitialSize()).isEqualTo(10);
         assertThat(ds.getMaxSize()).isEqualTo(100);
@@ -96,6 +97,7 @@ public class DataSourceConfigurationTest {
         assertThat(ds.getCheckConnectionOnConnect()).isEqualTo(true);
         assertThat(ds.getCheckConnectionOnReturn()).isEqualTo(false);
         assertThat(ds.getValidationQueryTimeout()).isEqualTo(Optional.empty());
+        assertThat(ds.isIgnoreExceptionOnPreLoad()).isFalse();
     }
 
     @Test

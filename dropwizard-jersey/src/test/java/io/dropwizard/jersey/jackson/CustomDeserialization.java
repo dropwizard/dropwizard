@@ -14,9 +14,10 @@ import java.io.IOException;
  * propagation, but it won't stop someone who'll do anything to get an unexpected null pointer
  * exception somewhere.
  */
+@SuppressWarnings("serial")
 public class CustomDeserialization extends StdDeserializer<CustomRepresentation> {
     public CustomDeserialization() {
-        super((Class) null);
+        super((Class<?>) null);
     }
 
     @Override

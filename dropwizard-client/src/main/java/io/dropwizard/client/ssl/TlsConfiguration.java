@@ -1,12 +1,11 @@
 package io.dropwizard.client.ssl;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.base.Strings;
+import io.dropwizard.util.Strings;
 import io.dropwizard.validation.ValidationMethod;
-import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.annotation.Nullable;
-
+import javax.validation.constraints.NotEmpty;
 import java.io.File;
 import java.util.List;
 
@@ -14,6 +13,9 @@ public class TlsConfiguration {
 
     @NotEmpty
     private String protocol = "TLSv1.2";
+
+    @Nullable
+    private String provider;
 
     @Nullable
     private File keyStorePath;
@@ -25,6 +27,9 @@ public class TlsConfiguration {
     private String keyStoreType = "JKS";
 
     @Nullable
+    private String keyStoreProvider;
+
+    @Nullable
     private File trustStorePath;
 
     @Nullable
@@ -32,6 +37,9 @@ public class TlsConfiguration {
 
     @NotEmpty
     private String trustStoreType = "JKS";
+
+    @Nullable
+    private String trustStoreProvider;
 
     private boolean trustSelfSignedCertificates = false;
 
@@ -87,6 +95,7 @@ public class TlsConfiguration {
     public void setKeyStoreType(String keyStoreType) {
         this.keyStoreType = keyStoreType;
     }
+
     @JsonProperty
     public String getTrustStoreType() {
         return trustStoreType;
@@ -139,6 +148,17 @@ public class TlsConfiguration {
         this.protocol = protocol;
     }
 
+    @JsonProperty
+    @Nullable
+    public String getProvider() {
+        return provider;
+    }
+
+    @JsonProperty
+    public void setProvider(@Nullable String provider) {
+        this.provider = provider;
+    }
+
     @Nullable
     @JsonProperty
     public List<String> getSupportedCiphers() {
@@ -180,5 +200,35 @@ public class TlsConfiguration {
     @ValidationMethod(message = "trustStorePassword should not be null or empty if trustStorePath not null")
     public boolean isValidTrustStorePassword() {
         return trustStorePath == null || trustStoreType.startsWith("Windows-") || !Strings.isNullOrEmpty(trustStorePassword);
+    }
+
+    /**
+     * @since 2.0
+     */
+    @Nullable
+    public String getKeyStoreProvider() {
+        return keyStoreProvider;
+    }
+
+    /**
+     * @since 2.0
+     */
+    public void setKeyStoreProvider(@Nullable String keyStoreProvider) {
+        this.keyStoreProvider = keyStoreProvider;
+    }
+
+    /**
+     * @since 2.0
+     */
+    @Nullable
+    public String getTrustStoreProvider() {
+        return trustStoreProvider;
+    }
+
+    /**
+     * @since 2.0
+     */
+    public void setTrustStoreProvider(@Nullable String trustStoreProvider) {
+        this.trustStoreProvider = trustStoreProvider;
     }
 }

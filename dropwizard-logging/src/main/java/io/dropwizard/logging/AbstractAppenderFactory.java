@@ -10,26 +10,25 @@ import ch.qos.logback.core.LayoutBase;
 import ch.qos.logback.core.pattern.PatternLayoutBase;
 import ch.qos.logback.core.spi.DeferredProcessingAware;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
-import io.dropwizard.jackson.Jackson;
+import io.dropwizard.logback.ThrottlingAppenderWrapper;
 import io.dropwizard.logging.async.AsyncAppenderFactory;
 import io.dropwizard.logging.filter.FilterFactory;
 import io.dropwizard.logging.layout.DiscoverableLayoutFactory;
 import io.dropwizard.logging.layout.LayoutFactory;
+import io.dropwizard.util.Strings;
+import io.dropwizard.util.Duration;
+import io.dropwizard.validation.MaxDuration;
+import io.dropwizard.validation.MinDuration;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.TimeZone;
-
-import static com.google.common.base.Strings.nullToEmpty;
+import java.util.concurrent.TimeUnit;
 
 /**
  * A base implementation of {@link AppenderFactory}.
@@ -82,6 +81,17 @@ import static com.google.common.base.Strings.nullToEmpty;
  *         </td>
  *     </tr>
  *     <tr>
+ *         <td>{@code messageRate}</td>
+ *         <td>
+ *             Maximum message rate: average duration between messages. Extra messages are discarded.
+ *             This setting avoids flooding a paid logging service by accident.
+ *             For example, a duration of 100ms allows for a maximum of 10 messages per second and 30s would mean
+ *             1 message every 30 seconds.
+ *             The maximum acceptable duration is 1 minute.
+ *             By default, this duration is not set and this feature is disabled.
+ *         </td>
+ *     </tr>
+ *     <tr>
  *         <td>{@code filterFactories}</td>
  *         <td>(none)</td>
  *         <td>
@@ -100,7 +110,7 @@ public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware>
     protected String logFormat;
 
     @Nullable
-    protected DiscoverableLayoutFactory layout;
+    protected DiscoverableLayoutFactory<E> layout;
 
     @NotNull
     protected TimeZone timeZone = TimeZone.getTimeZone("UTC");
@@ -111,9 +121,14 @@ public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware>
 
     private int discardingThreshold = -1;
 
+    @Nullable
+    @MinDuration(value = 0, unit = TimeUnit.SECONDS, inclusive = false)
+    @MaxDuration(value = 1, unit = TimeUnit.MINUTES)
+    private Duration messageRate;
+
     private boolean includeCallerData = false;
 
-    private ImmutableList<FilterFactory<E>> filterFactories = ImmutableList.of();
+    private List<FilterFactory<E>> filterFactories = Collections.emptyList();
 
     private boolean neverBlock = false;
 
@@ -137,6 +152,23 @@ public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware>
         this.discardingThreshold = discardingThreshold;
     }
 
+    /**
+     * @since 2.0
+     */
+    @JsonProperty
+    @Nullable
+    public Duration getMessageRate() {
+        return messageRate;
+    }
+
+    /**
+     * @since 2.0
+     */
+    @JsonProperty
+    public void setMessageRate(Duration messageRate) {
+        this.messageRate = messageRate;
+    }
+
     @JsonProperty
     public String getThreshold() {
         return threshold.toString();
@@ -154,7 +186,7 @@ public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware>
     }
 
     @JsonProperty
-    public void setLogFormat(String logFormat) {
+    public void setLogFormat(@Nullable String logFormat) {
         this.logFormat = logFormat;
     }
 
@@ -165,7 +197,7 @@ public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware>
 
     @JsonProperty
     public void setTimeZone(String zoneId) {
-        this.timeZone = nullToEmpty(zoneId).equalsIgnoreCase("system") ? TimeZone.getDefault() :
+        this.timeZone = Strings.nullToEmpty(zoneId).equalsIgnoreCase("system") ? TimeZone.getDefault() :
             TimeZone.getTimeZone(zoneId);
     }
 
@@ -185,13 +217,13 @@ public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware>
     }
 
     @JsonProperty
-    public ImmutableList<FilterFactory<E>> getFilterFactories() {
+    public List<FilterFactory<E>> getFilterFactories() {
         return filterFactories;
     }
 
     @JsonProperty
     public void setFilterFactories(List<FilterFactory<E>> appenders) {
-        this.filterFactories = ImmutableList.copyOf(appenders);
+        this.filterFactories = new ArrayList<>(appenders);
     }
 
     @JsonProperty
@@ -200,11 +232,11 @@ public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware>
     }
 
     @Nullable
-    public DiscoverableLayoutFactory getLayout() {
+    public DiscoverableLayoutFactory<?> getLayout() {
         return layout;
     }
 
-    public void setLayout(@Nullable DiscoverableLayoutFactory layout) {
+    public void setLayout(@Nullable DiscoverableLayoutFactory<E> layout) {
         this.layout = layout;
     }
 
@@ -224,10 +256,13 @@ public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware>
         asyncAppender.addAppender(appender);
         asyncAppender.setNeverBlock(neverBlock);
         asyncAppender.start();
-        return asyncAppender;
+        if (messageRate == null) {
+            return asyncAppender;
+        } else {
+            return new ThrottlingAppenderWrapper<>(asyncAppender, messageRate.getQuantity(), messageRate.getUnit());
+        }
     }
 
-    @SuppressWarnings("unchecked")
     protected LayoutBase<E> buildLayout(LoggerContext context, LayoutFactory<E> defaultLayoutFactory) {
         final LayoutBase<E> layoutBase;
         if (layout == null) {

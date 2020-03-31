@@ -5,7 +5,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.exc.InvalidDefinitionException;
 import io.dropwizard.jersey.errors.ErrorMessage;
 import io.dropwizard.jersey.errors.LoggingExceptionMapper;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.core.MediaType;
@@ -14,7 +13,6 @@ import javax.ws.rs.ext.Provider;
 
 @Provider
 public class JsonProcessingExceptionMapper extends LoggingExceptionMapper<JsonProcessingException> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(JsonProcessingExceptionMapper.class);
     private final boolean showDetails;
 
     public JsonProcessingExceptionMapper() {
@@ -22,6 +20,7 @@ public class JsonProcessingExceptionMapper extends LoggingExceptionMapper<JsonPr
     }
 
     public JsonProcessingExceptionMapper(boolean showDetails) {
+        super(LoggerFactory.getLogger(JsonProcessingExceptionMapper.class));
         this.showDetails = showDetails;
     }
 
@@ -41,7 +40,7 @@ public class JsonProcessingExceptionMapper extends LoggingExceptionMapper<JsonPr
         /*
          * Otherwise, it's those pesky users.
          */
-        LOGGER.debug("Unable to process JSON", exception);
+        logger.debug("Unable to process JSON", exception);
 
         final String message = exception.getOriginalMessage();
         final ErrorMessage errorMessage = new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(),

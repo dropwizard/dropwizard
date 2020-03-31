@@ -1,13 +1,13 @@
 package io.dropwizard.jersey.params;
 
 import org.joda.time.LocalDate;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class LocalDateParamTest {
     @Test
-    public void parsesLocalDates() throws Exception {
+    public void parsesLocalDates() {
         final LocalDateParam param = new LocalDateParam("2012-11-20");
 
         assertThat(param.get())

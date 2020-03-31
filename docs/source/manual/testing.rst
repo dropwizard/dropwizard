@@ -91,7 +91,7 @@ Next, write a test for serializing a ``Person`` instance to JSON:
     import static io.dropwizard.testing.FixtureHelpers.*;
     import static org.assertj.core.api.Assertions.assertThat;
     import io.dropwizard.jackson.Jackson;
-    import org.junit.Test;
+    import org.junit.jupiter.api.Test;
     import com.fasterxml.jackson.databind.ObjectMapper;
 
     public class PersonTest {
@@ -128,7 +128,7 @@ Next, write a test for deserializing a ``Person`` instance from JSON:
     import static io.dropwizard.testing.FixtureHelpers.*;
     import static org.assertj.core.api.Assertions.assertThat;
     import io.dropwizard.jackson.Jackson;
-    import org.junit.Test;
+    import org.junit.jupiter.api.Test;
     import com.fasterxml.jackson.databind.ObjectMapper;
 
     public class PersonTest {
@@ -174,12 +174,12 @@ loads a given resource instance in an in-memory Jersey server:
 
         private final Person person = new Person("blah", "blah@example.com");
 
-        @Before
+        @BeforeEach
         public void setup() {
             when(dao.fetchPerson(eq("blah"))).thenReturn(person);
         }
 
-        @After
+        @AfterEach
         public void tearDown(){
             // we have to reset the mock after each test because of the
             // @ClassRule, or use a @Rule as mentioned below.
@@ -240,18 +240,7 @@ dependency for the Jersey Test Framework providers to your Maven POM and set ``G
     <dependency>
         <groupId>org.glassfish.jersey.test-framework.providers</groupId>
         <artifactId>jersey-test-framework-provider-grizzly2</artifactId>
-        <version>${jersey.version}</version>
         <scope>test</scope>
-        <exclusions>
-            <exclusion>
-                <groupId>javax.servlet</groupId>
-                <artifactId>javax.servlet-api</artifactId>
-            </exclusion>
-            <exclusion>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-            </exclusion>
-        </exclusions>
     </dependency>
 
 
@@ -308,6 +297,30 @@ application containing your test doubles.
         }
     }
 
+Or, for JUnit 5:
+
+.. code-block:: java
+
+    @ExtendWith(DropwizardExtensionsSupport.class)
+    class CustomClientTest {
+        @Path("/ping")
+        public static final class PingResource {
+            @GET
+            public String ping() {
+                return "pong";
+            }
+        }
+
+        private static final DropwizardClientExtension dropwizard = new DropwizardClientExtension(new PingResource());
+
+        @Test
+        void shouldPing() throws IOException {
+            final URL url = new URL(dropwizard.baseUri() + "/ping");
+            final String response = new BufferedReader(new InputStreamReader(url.openStream())).readLine();
+            assertEquals("pong", response);
+        }
+    }
+
 .. hint::
 
     Of course you would use your HTTP client in the ``@Test`` method and not ``java.net.URL#openStream()``.
@@ -334,7 +347,7 @@ which is aware of your application's environment.
 JUnit
 -----
 Adding ``DropwizardAppRule`` to your JUnit test class will start the app prior to any tests
-running and stop it again when they've completed (roughly equivalent to having used ``@BeforeClass`` and ``@AfterClass``).
+running and stop it again when they've completed (roughly equivalent to having used ``@BeforeAll`` and ``@AfterAll``).
 ``DropwizardAppRule`` also exposes the app's ``Configuration``,
 ``Environment`` and the app object itself so that these can be queried by the tests.
 
@@ -348,11 +361,11 @@ and can be reused across tests.
 
         @ClassRule
         public static final DropwizardAppRule<TestConfiguration> RULE =
-                new DropwizardAppRule<TestConfiguration>(MyApp.class, ResourceHelpers.resourceFilePath("my-app-config.yaml"));
+                new DropwizardAppRule<>(MyApp.class, ResourceHelpers.resourceFilePath("my-app-config.yaml"));
 
         @Test
         public void loginHandlerRedirectsAfterPost() {
-            Client client = new JerseyClientBuilder(RULE.getEnvironment()).build("test client");
+            Client client = RULE.client();
 
             Response response = client.target(
                      String.format("http://localhost:%d/login", RULE.getLocalPort()))
@@ -377,12 +390,12 @@ By creating a DropwizardTestSupport instance in your test you can manually start
                     ConfigOverride.config("server.applicationConnectors[0].port", "0") // Optional, if not using a separate testing-specific configuration file, use a randomly selected port
                 );
 
-        @BeforeClass
+        @BeforeAll
         public void beforeClass() {
             SUPPORT.before();
         }
 
-        @AfterClass
+        @AfterAll
         public void afterClass() {
             SUPPORT.after();
         }
@@ -423,7 +436,7 @@ before the command is ran.
         private final ByteArrayOutputStream stdErr = new ByteArrayOutputStream();
         private Cli cli;
 
-        @Before
+        @BeforeEach
         public void setUp() throws Exception {
             // Setup necessary mock
             final JarLocation location = mock(JarLocation.class);
@@ -441,7 +454,7 @@ before the command is ran.
             cli = new Cli(location, bootstrap, stdOut, stdErr);
         }
 
-        @After
+        @AfterEach
         public void teardown() {
             System.setOut(originalOut);
             System.setErr(originalErr);
@@ -480,7 +493,7 @@ which setups a Hibernate ``SessionFactory``.
 
         private FooDAO fooDAO;
 
-        @Before
+        @BeforeEach
         public void setUp() {
             fooDAO = new FooDAO(database.getSessionFactory());
         }
@@ -525,6 +538,7 @@ assert the expected widget is deserialized based on the ``type`` field.
 .. code-block:: java
 
     public class WidgetFactoryTest {
+
         private final ObjectMapper objectMapper = Jackson.newObjectMapper();
         private final Validator validator = Validators.newValidator();
         private final YamlConfigurationFactory<WidgetFactory> factory =
@@ -544,6 +558,46 @@ assert the expected widget is deserialized based on the ``type`` field.
             final WidgetFactory wid = factory.build(yml);
             assertThat(wid).isInstanceOf(HammerFactory.class);
             assertThat(((HammerFactory) wid).createWidget().getWeight()).isEqualTo(10);
+        }
+
+        // test for the chisel factory
+    }
+
+If your configuration file contains environment variables or parameters, some additional
+config is required. As an example, we will use ``EnvironmentVariableSubstitutor`` on top of
+a simplified version of the above test.
+
+If we have a configuration similar to the following:
+
+.. code-block:: yaml
+
+    widgets:
+      - type: hammer
+        weight: ${HAMMER_WEIGHT:-20}
+      - type: chisel
+        radius: 0.4
+
+In order to test this, we would require the following in our test class:
+
+.. code-block:: java
+
+    public class WidgetFactoryTest {
+
+        private final ObjectMapper objectMapper = Jackson.newObjectMapper();
+        private final Validator validator = Validators.newValidator();
+        private final YamlConfigurationFactory<WidgetFactory> factory =
+                new YamlConfigurationFactory<>(WidgetFactory.class, validator, objectMapper, "dw");
+
+        // test for discoverability
+
+        @Test
+        public void testBuildAHammer() throws Exception {
+            final WidgetFactory wid = factory.build(new SubstitutingSourceProvider(
+                    new ResourceConfigurationSourceProvider(),
+                    new EnvironmentVariableSubstitutor(false)
+                ), "yaml/hammer.yaml");
+            assertThat(wid).isInstanceOf(HammerFactory.class);
+            assertThat(((HammerFactory) wid).createWidget().getWeight()).isEqualTo(20);
         }
 
         // test for the chisel factory

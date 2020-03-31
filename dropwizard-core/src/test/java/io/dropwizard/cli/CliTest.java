@@ -8,14 +8,17 @@ import io.dropwizard.util.JarLocation;
 import net.sourceforge.argparse4j.impl.Arguments;
 import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import net.sourceforge.argparse4j.internal.UnrecognizedArgumentException;
+import net.sourceforge.argparse4j.internal.UnrecognizedCommandException;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -29,7 +32,7 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class CliTest {
+class CliTest {
     private static final Locale DEFAULT_LOCALE = Locale.getDefault();
 
     private final JarLocation location = mock(JarLocation.class);
@@ -42,9 +45,10 @@ public class CliTest {
     private static final class BadAppException extends Exception {
         private static final long serialVersionUID = 1L;
 
-        public static final String BAD_APP_EXCEPTION_STACK_TRACE = "BadAppException stack trace";
+        static final String BAD_APP_EXCEPTION_STACK_TRACE = "BadAppException stack trace";
 
-        public BadAppException() {
+        BadAppException() {
+            super("I'm a bad exception");
         }
 
         @Override
@@ -52,9 +56,20 @@ public class CliTest {
             writer.println(BAD_APP_EXCEPTION_STACK_TRACE);
         }
 
+
         @Override
-        public String getMessage() {
-            return "I'm a bad exception";
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            BadAppException that = (BadAppException) o;
+
+            return Objects.equals(this.getMessage(), that.getMessage());
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(getMessage());
         }
     }
 
@@ -90,34 +105,33 @@ public class CliTest {
     private final CheckCommand<Configuration> command = spy(new CheckCommand<>(app));
     private Cli cli;
 
-    @BeforeClass
-    public static void init() {
+    @BeforeAll
+    static void init() {
         // Set default locale to English because some tests assert localized error messages
         Locale.setDefault(Locale.ENGLISH);
     }
 
-    @AfterClass
-    public static void shutdown() {
+    @AfterAll
+    static void shutdown() {
         Locale.setDefault(DEFAULT_LOCALE);
     }
 
-    @Before
-    @SuppressWarnings("unchecked")
-    public void setUp() throws Exception {
+    @BeforeEach
+    void setUp() throws Exception {
         when(location.toString()).thenReturn("dw-thing.jar");
         when(location.getVersion()).thenReturn(Optional.of("1.0.0"));
         bootstrap.addCommand(command);
         bootstrap.addCommand(new CustomCommand());
 
-        doNothing().when(command).run(any(Bootstrap.class), any(Namespace.class), any(Configuration.class));
+        doNothing().when(command).run(any(), any(Namespace.class), any(Configuration.class));
 
         this.cli = new Cli(location, bootstrap, stdOut, stdErr);
     }
 
     @Test
-    public void handlesShortVersionCommands() throws Exception {
+    void handlesShortVersionCommands() throws Exception {
         assertThat(cli.run("-v"))
-                .isTrue();
+                .isEmpty();
 
         assertThat(stdOut.toString())
                 .isEqualTo(String.format("1.0.0%n"));
@@ -127,9 +141,9 @@ public class CliTest {
     }
 
     @Test
-    public void handlesLongVersionCommands() throws Exception {
+    void handlesLongVersionCommands() throws Exception {
         assertThat(cli.run("--version"))
-                .isTrue();
+                .isEmpty();
 
         assertThat(stdOut.toString())
                 .isEqualTo(String.format("1.0.0%n"));
@@ -139,12 +153,12 @@ public class CliTest {
     }
 
     @Test
-    public void handlesMissingVersions() throws Exception {
+    void handlesMissingVersions() throws Exception {
         when(location.getVersion()).thenReturn(Optional.empty());
         final Cli newCli = new Cli(location, bootstrap, stdOut, stdErr);
 
         assertThat(newCli.run("--version"))
-                .isTrue();
+                .isEmpty();
 
         assertThat(stdOut.toString())
                 .isEqualTo(String.format("No application version detected. Add a Implementation-Version entry to your JAR's manifest to enable this.%n"));
@@ -154,9 +168,9 @@ public class CliTest {
     }
 
     @Test
-    public void handlesZeroArgumentsAsHelpCommand() throws Exception {
+    void handlesZeroArgumentsAsHelpCommand() throws Exception {
         assertThat(cli.run())
-                .isTrue();
+                .isEmpty();
 
         assertThat(stdOut.toString())
                 .isEqualTo(String.format(
@@ -165,7 +179,7 @@ public class CliTest {
                                 "positional arguments:%n" +
                                 "  {check,custom}         available commands%n" +
                                 "%n" +
-                                "optional arguments:%n" +
+                                "named arguments:%n" +
                                 "  -h, --help             show this help message and exit%n" +
                                 "  -v, --version          show the application version and exit%n"
                 ));
@@ -175,9 +189,9 @@ public class CliTest {
     }
 
     @Test
-    public void handlesShortHelpCommands() throws Exception {
+    void handlesShortHelpCommands() throws Exception {
         assertThat(cli.run("-h"))
-                .isTrue();
+                .isEmpty();
 
         assertThat(stdOut.toString())
                 .isEqualTo(String.format(
@@ -186,7 +200,7 @@ public class CliTest {
                                 "positional arguments:%n" +
                                 "  {check,custom}         available commands%n" +
                                 "%n" +
-                                "optional arguments:%n" +
+                                "named arguments:%n" +
                                 "  -h, --help             show this help message and exit%n" +
                                 "  -v, --version          show the application version and exit%n"
                 ));
@@ -196,9 +210,9 @@ public class CliTest {
     }
 
     @Test
-    public void handlesLongHelpCommands() throws Exception {
+    void handlesLongHelpCommands() throws Exception {
         assertThat(cli.run("--help"))
-                .isTrue();
+                .isEmpty();
 
         assertThat(stdOut.toString())
                 .isEqualTo(String.format(
@@ -207,7 +221,7 @@ public class CliTest {
                                 "positional arguments:%n" +
                                 "  {check,custom}         available commands%n" +
                                 "%n" +
-                                "optional arguments:%n" +
+                                "named arguments:%n" +
                                 "  -h, --help             show this help message and exit%n" +
                                 "  -v, --version          show the application version and exit%n"
                 ));
@@ -217,10 +231,9 @@ public class CliTest {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
-    public void handlesShortHelpSubcommands() throws Exception {
+    void handlesShortHelpSubcommands() throws Exception {
         assertThat(cli.run("check", "-h"))
-                .isTrue();
+                .isEmpty();
 
         assertThat(stdOut.toString())
                 .isEqualTo(String.format(
@@ -231,21 +244,20 @@ public class CliTest {
                                 "positional arguments:%n" +
                                 "  file                   application configuration file%n" +
                                 "%n" +
-                                "optional arguments:%n" +
+                                "named arguments:%n" +
                                 "  -h, --help             show this help message and exit%n"
                 ));
 
         assertThat(stdErr.toString())
                 .isEmpty();
 
-        verify(command, never()).run(any(Bootstrap.class), any(Namespace.class), any(Configuration.class));
+        verify(command, never()).run(any(), any(Namespace.class), any(Configuration.class));
     }
 
     @Test
-    @SuppressWarnings("unchecked")
-    public void handlesLongHelpSubcommands() throws Exception {
+    void handlesLongHelpSubcommands() throws Exception {
         assertThat(cli.run("check", "--help"))
-                .isTrue();
+                .isEmpty();
 
         assertThat(stdOut.toString())
                 .isEqualTo(String.format(
@@ -256,20 +268,20 @@ public class CliTest {
                                 "positional arguments:%n" +
                                 "  file                   application configuration file%n" +
                                 "%n" +
-                                "optional arguments:%n" +
+                                "named arguments:%n" +
                                 "  -h, --help             show this help message and exit%n"
                 ));
 
         assertThat(stdErr.toString())
                 .isEmpty();
 
-        verify(command, never()).run(any(Bootstrap.class), any(Namespace.class), any(Configuration.class));
+        verify(command, never()).run(any(), any(Namespace.class), any(Configuration.class));
     }
 
     @Test
-    public void rejectsBadCommandFlags() throws Exception {
+    void rejectsBadCommandFlags() throws Exception {
         assertThat(cli.run("--yes"))
-                .isFalse();
+                .hasValueSatisfying(t -> assertThat(t).isInstanceOf(UnrecognizedArgumentException.class));
 
         assertThat(stdOut.toString())
                 .isEmpty();
@@ -282,16 +294,16 @@ public class CliTest {
                                 "positional arguments:%n" +
                                 "  {check,custom}         available commands%n" +
                                 "%n" +
-                                "optional arguments:%n" +
+                                "named arguments:%n" +
                                 "  -h, --help             show this help message and exit%n" +
                                 "  -v, --version          show the application version and exit%n"
                 ));
     }
 
     @Test
-    public void rejectsBadSubcommandFlags() throws Exception {
+    void rejectsBadSubcommandFlags() throws Exception {
         assertThat(cli.run("check", "--yes"))
-                .isFalse();
+                .hasValueSatisfying(t -> assertThat(t).isExactlyInstanceOf(UnrecognizedArgumentException.class));
 
         assertThat(stdOut.toString())
                 .isEmpty();
@@ -306,15 +318,15 @@ public class CliTest {
                                 "positional arguments:%n" +
                                 "  file                   application configuration file%n" +
                                 "%n" +
-                                "optional arguments:%n" +
+                                "named arguments:%n" +
                                 "  -h, --help             show this help message and exit%n"
                 ));
     }
 
     @Test
-    public void rejectsBadSubcommands() throws Exception {
+    void rejectsBadSubcommands() throws Exception {
         assertThat(cli.run("plop"))
-                .isFalse();
+                .hasValueSatisfying(t -> assertThat(t).isInstanceOf(UnrecognizedCommandException.class));
 
         assertThat(stdOut.toString())
                 .isEmpty();
@@ -327,16 +339,16 @@ public class CliTest {
                                 "positional arguments:%n" +
                                 "  {check,custom}         available commands%n" +
                                 "%n" +
-                                "optional arguments:%n" +
+                                "named arguments:%n" +
                                 "  -h, --help             show this help message and exit%n" +
                                 "  -v, --version          show the application version and exit%n"
                 ));
     }
 
     @Test
-    public void runsCommands() throws Exception {
+    void runsCommands() throws Exception {
         assertThat(cli.run("check"))
-                .isTrue();
+                .isEmpty();
 
         assertThat(stdOut.toString())
                 .isEmpty();
@@ -348,12 +360,11 @@ public class CliTest {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
-    public void unhandledExceptionsMessagesArePrintedForCheck() throws Exception {
-        doThrow(new BadAppException()).when(command).run(any(Bootstrap.class), any(Namespace.class), any(Configuration.class));
+    void unhandledExceptionsMessagesArePrintedForCheck() throws Exception {
+        doThrow(new BadAppException()).when(command).run(any(), any(Namespace.class), any(Configuration.class));
 
         assertThat(cli.run("check"))
-                .isFalse();
+                .hasValue(new BadAppException());
 
         assertThat(stdOut.toString())
                 .isEmpty();
@@ -363,12 +374,11 @@ public class CliTest {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
-    public void unhandledExceptionsCustomCommand() throws Exception {
-        doThrow(new BadAppException()).when(command).run(any(Bootstrap.class), any(Namespace.class), any(Configuration.class));
+    void unhandledExceptionsCustomCommand() throws Exception {
+        doThrow(new BadAppException()).when(command).run(any(), any(Namespace.class), any(Configuration.class));
 
         assertThat(cli.run("custom"))
-            .isFalse();
+                .hasValueSatisfying(t -> assertThat(t).isInstanceOf(RuntimeException.class).hasMessage("I did not expect this!"));
 
         assertThat(stdOut.toString())
             .isEqualTo(String.format("I did not expect this!%n"));
@@ -378,12 +388,11 @@ public class CliTest {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
-    public void unhandledExceptionsCustomCommandDebug() throws Exception {
-        doThrow(new BadAppException()).when(command).run(any(Bootstrap.class), any(Namespace.class), any(Configuration.class));
+    void unhandledExceptionsCustomCommandDebug() throws Exception {
+        doThrow(new BadAppException()).when(command).run(any(), any(Namespace.class), any(Configuration.class));
 
         assertThat(cli.run("custom", "--debug"))
-            .isFalse();
+                .hasValueSatisfying(t -> assertThat(t).isInstanceOf(RuntimeException.class).hasMessage("I did not expect this!"));
 
         assertThat(stdOut.toString())
             .isEmpty();

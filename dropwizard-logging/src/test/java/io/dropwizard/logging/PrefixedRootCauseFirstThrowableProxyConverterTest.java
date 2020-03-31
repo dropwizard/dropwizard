@@ -1,16 +1,18 @@
 package io.dropwizard.logging;
 
 import ch.qos.logback.classic.spi.ThrowableProxy;
-import com.google.common.base.Splitter;
-import org.junit.Before;
-import org.junit.Test;
+import io.dropwizard.util.Strings;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -55,7 +57,7 @@ public class PrefixedRootCauseFirstThrowableProxyConverterTest {
         }
     }
 
-    @Before
+    @BeforeEach
     public void setup() {
         converter.setOptionList(Collections.singletonList("full"));
         converter.start();
@@ -63,12 +65,13 @@ public class PrefixedRootCauseFirstThrowableProxyConverterTest {
 
     @Test
     public void prefixesExceptionsWithExclamationMarks()  {
-        final List<String> stackTrace = Splitter.on(System.lineSeparator()).omitEmptyStrings()
-                .splitToList(converter.throwableProxyToString(proxy));
-        assertThat(stackTrace).isNotEmpty();
-        for (String line : stackTrace) {
-            assertThat(line).startsWith("!");
-        }
+        final List<String> stackTrace = Arrays.stream(converter.throwableProxyToString(proxy).split(System.lineSeparator()))
+                .filter(s -> !Strings.isNullOrEmpty(s))
+                .collect(Collectors.toList());
+
+        assertThat(stackTrace)
+                .isNotEmpty()
+                .allSatisfy(line -> assertThat(line).startsWith("!"));
     }
 
     @Test

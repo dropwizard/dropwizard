@@ -1,12 +1,13 @@
 package io.dropwizard.jersey.optional;
 
-import com.codahale.metrics.MetricRegistry;
 import io.dropwizard.jersey.AbstractJerseyTest;
 import io.dropwizard.jersey.DropwizardResourceConfig;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -18,13 +19,14 @@ import javax.ws.rs.core.Response;
 import java.util.OptionalDouble;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
 
 public class OptionalDoubleMessageBodyWriterTest extends AbstractJerseyTest {
 
     @Override
     protected Application configure() {
-        return DropwizardResourceConfig.forTesting(new MetricRegistry())
+        return DropwizardResourceConfig.forTesting()
                     .register(new EmptyOptionalExceptionMapper())
                     .register(OptionalDoubleReturnResource.class);
     }
@@ -55,6 +57,35 @@ public class OptionalDoubleMessageBodyWriterTest extends AbstractJerseyTest {
         }
     }
 
+    @Test
+    public void valueSetIgnoresDefault() {
+        assertThat(target("optional-return/default").queryParam("id", "1").request().get(Double.class))
+            .isEqualTo(target("optional-return/double/default").queryParam("id", "1").request().get(Double.class))
+            .isEqualTo(1);
+    }
+
+    @Test
+    public void valueNotSetReturnsDefault() {
+        assertThat(target("optional-return/default").request().get(Double.class))
+            .isEqualTo(target("optional-return/double/default").request().get(Double.class))
+            .isEqualTo(0);
+    }
+
+    @Test
+    public void valueEmptyReturnsDefault() {
+        assertThat(target("optional-return/default").queryParam("id", "").request().get(Double.class))
+            .isEqualTo(target("optional-return/double/default").queryParam("id", "").request().get(Double.class))
+            .isEqualTo(0);
+    }
+
+    @Test
+    public void valueInvalidReturns404() {
+        assertThatThrownBy(() -> target("optional-return/default").queryParam("id", "invalid").request().get(Double.class))
+            .isInstanceOf(NotFoundException.class);
+        assertThatThrownBy(() -> target("optional-return/double/default").queryParam("id", "invalid").request().get(Double.class))
+            .isInstanceOf(NotFoundException.class);
+    }
+
     @Path("optional-return")
     @Produces(MediaType.TEXT_PLAIN)
     public static class OptionalDoubleReturnResource {
@@ -72,6 +103,18 @@ public class OptionalDoubleMessageBodyWriterTest extends AbstractJerseyTest {
         @GET
         public Response showWithQueryParamResponse(@QueryParam("id") OptionalDouble id) {
             return Response.ok(id).build();
+        }
+
+        @Path("default")
+        @GET
+        public OptionalDouble showWithQueryParamAndDefaultValue(@QueryParam("id") @DefaultValue("0") OptionalDouble id) {
+            return id;
+        }
+
+        @Path("double/default")
+        @GET
+        public Double showWithLongQueryParamAndDefaultValue(@QueryParam("id") @DefaultValue("0") Double id) {
+            return id;
         }
     }
 }

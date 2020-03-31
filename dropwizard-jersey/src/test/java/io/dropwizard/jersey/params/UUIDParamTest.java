@@ -1,19 +1,27 @@
 package io.dropwizard.jersey.params;
 
 import io.dropwizard.jersey.errors.ErrorMessage;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Response;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class UUIDParamTest {
+    private void UuidParamNegativeTest(String input) {
+        assertThatThrownBy(() -> new UUIDParam(input))
+            .isInstanceOfSatisfying(WebApplicationException.class, e -> {
+                assertThat(e.getResponse().getStatus()).isEqualTo(400);
+                assertThat(e.getResponse().getEntity()).isEqualTo(
+                    new ErrorMessage(400, "Parameter is not a UUID.")
+                );
+            });
+    }
 
     @Test
-    public void aUUIDStringReturnsAUUIDObject() throws Exception {
+    public void aUUIDStringReturnsAUUIDObject() {
         final String uuidString = "067e6162-3b6f-4ae2-a171-2470b63dff00";
         final UUID uuid = UUID.fromString(uuidString);
 
@@ -23,21 +31,17 @@ public class UUIDParamTest {
     }
 
     @Test
-    @SuppressWarnings("ResultOfObjectAllocationIgnored")
-    public void aNonUUIDThrowsAnException() throws Exception {
-        try {
-            new UUIDParam("foo");
-            failBecauseExceptionWasNotThrown(WebApplicationException.class);
-        } catch (WebApplicationException e) {
-            final Response response = e.getResponse();
+    public void noSpaceUUID() {
+        UuidParamNegativeTest("067e61623b6f4ae2a1712470b63dff00");
+    }
 
-            assertThat(response.getStatus())
-                    .isEqualTo(400);
+    @Test
+    public void tooLongUUID() {
+        UuidParamNegativeTest("067e6162-3b6f-4ae2-a171-2470b63dff000");
+    }
 
-            ErrorMessage entity = (ErrorMessage) response.getEntity();
-            assertThat(entity.getCode()).isEqualTo(400);
-            assertThat(entity.getMessage())
-                    .isEqualTo("Parameter is not a UUID.");
-        }
+    @Test
+    public void aNonUUIDThrowsAnException() {
+        UuidParamNegativeTest("foo");
     }
 }

@@ -1,31 +1,26 @@
 package io.dropwizard.metrics;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-import com.google.common.collect.ImmutableSet;
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.LoadingCache;
 
-import java.util.concurrent.TimeUnit;
+import java.time.Duration;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 class RegexStringMatchingStrategy implements StringMatchingStrategy {
     private final LoadingCache<String, Pattern> patternCache;
 
     RegexStringMatchingStrategy() {
-        patternCache = CacheBuilder.newBuilder()
-            .expireAfterWrite(1, TimeUnit.HOURS)
-            .build(new CacheLoader<String, Pattern>() {
-                @Override
-                public Pattern load(String regex) throws Exception {
-                    return Pattern.compile(regex);
-                }
-            });
+        patternCache = Caffeine.newBuilder()
+            .expireAfterWrite(Duration.ofHours(1))
+            .build(Pattern::compile);
     }
 
     @Override
-    public boolean containsMatch(ImmutableSet<String> matchExpressions, String metricName) {
+    public boolean containsMatch(Set<String> matchExpressions, String metricName) {
         for (String regexExpression : matchExpressions) {
-            if (patternCache.getUnchecked(regexExpression).matcher(metricName).matches()) {
+            final Pattern pattern = patternCache.get(regexExpression);
+            if (pattern != null && pattern.matcher(metricName).matches()) {
                 // just need to match on a single value - return as soon as we do
                 return true;
             }

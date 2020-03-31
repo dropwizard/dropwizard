@@ -13,7 +13,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 /**
  * When annotating a Jersey resource method, wraps the method in a Hibernate session.
  * <p>To be used outside Jersey, one need to create a proxy of the component with the
- * annotated method.</p.
+ * annotated method.</p>
  *
  * @see UnitOfWorkApplicationListener
  * @see UnitOfWorkAwareProxyFactory

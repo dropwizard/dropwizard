@@ -1,7 +1,6 @@
 package io.dropwizard.jetty;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.base.Joiner;
 import io.dropwizard.util.Duration;
 import io.dropwizard.validation.MinDuration;
 import org.eclipse.jetty.servlet.ServletContextHandler;
@@ -13,6 +12,7 @@ import javax.validation.constraints.Min;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * A factory for building HTTP/2 {@link PushCacheFilter},
@@ -68,8 +68,6 @@ import java.util.concurrent.TimeUnit;
  * </table>
  */
 public class ServerPushFilterFactory {
-
-    private static final Joiner COMMA_JOINER = Joiner.on(",");
 
     private boolean enabled = false;
 
@@ -145,10 +143,15 @@ public class ServerPushFilterFactory {
         handler.setInitParameter("associatePeriod", String.valueOf(associatePeriod.toMilliseconds()));
         handler.setInitParameter("maxAssociations", String.valueOf(maxAssociations));
         if (refererHosts != null) {
-            handler.setInitParameter("hosts", COMMA_JOINER.join(refererHosts));
+            final String hosts = refererHosts.stream()
+                    .collect(Collectors.joining(","));
+            handler.setInitParameter("hosts", hosts);
         }
         if (refererPorts != null) {
-            handler.setInitParameter("ports", COMMA_JOINER.join(refererPorts));
+            final String ports = refererPorts.stream()
+                    .map(Object::toString)
+                    .collect(Collectors.joining(","));
+            handler.setInitParameter("ports", ports);
         }
         handler.addFilter(PushCacheFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST));
     }

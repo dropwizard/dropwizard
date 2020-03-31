@@ -5,9 +5,9 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.core.LayoutBase;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import com.google.common.collect.ImmutableSet;
 import io.dropwizard.logging.json.layout.AccessJsonLayout;
 
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Set;
 import java.util.TimeZone;
@@ -38,14 +38,21 @@ import java.util.TimeZone;
  */
 @JsonTypeName("access-json")
 public class AccessJsonLayoutBaseFactory extends AbstractJsonLayoutBaseFactory<IAccessEvent> {
+    private EnumSet<AccessAttribute> includes = EnumSet.of(
+            AccessAttribute.REMOTE_ADDRESS,
+            AccessAttribute.REMOTE_USER,
+            AccessAttribute.REQUEST_TIME,
+            AccessAttribute.REQUEST_URI,
+            AccessAttribute.STATUS_CODE,
+            AccessAttribute.METHOD,
+            AccessAttribute.PROTOCOL,
+            AccessAttribute.CONTENT_LENGTH,
+            AccessAttribute.USER_AGENT,
+            AccessAttribute.TIMESTAMP);
 
-    private EnumSet<AccessAttribute> includes = EnumSet.of(AccessAttribute.REMOTE_ADDRESS,
-        AccessAttribute.REMOTE_USER, AccessAttribute.REQUEST_TIME, AccessAttribute.REQUEST_URI,
-        AccessAttribute.STATUS_CODE, AccessAttribute.METHOD, AccessAttribute.PROTOCOL, AccessAttribute.CONTENT_LENGTH,
-        AccessAttribute.USER_AGENT, AccessAttribute.TIMESTAMP);
-
-    private Set<String> responseHeaders = ImmutableSet.of();
-    private Set<String> requestHeaders = ImmutableSet.of();
+    private Set<String> responseHeaders = Collections.emptySet();
+    private Set<String> requestHeaders = Collections.emptySet();
+    private Set<String> requestAttributes = Collections.emptySet();
 
     @JsonProperty
     public Set<String> getResponseHeaders() {
@@ -67,6 +74,22 @@ public class AccessJsonLayoutBaseFactory extends AbstractJsonLayoutBaseFactory<I
         this.requestHeaders = requestHeaders;
     }
 
+    /**
+     * @since 2.0
+     */
+    @JsonProperty
+    public Set<String> getRequestAttributes() {
+        return requestAttributes;
+    }
+
+    /**
+     * @since 2.0
+     */
+    @JsonProperty
+    public void setRequestAttributes(Set<String> requestAttributes) {
+        this.requestAttributes = requestAttributes;
+    }
+
     @JsonProperty
     public EnumSet<AccessAttribute> getIncludes() {
         return includes;
@@ -79,11 +102,16 @@ public class AccessJsonLayoutBaseFactory extends AbstractJsonLayoutBaseFactory<I
 
     @Override
     public LayoutBase<IAccessEvent> build(LoggerContext context, TimeZone timeZone) {
-        final AccessJsonLayout jsonLayout = new AccessJsonLayout(createDropwizardJsonFormatter(),
-            createTimestampFormatter(timeZone), includes, getCustomFieldNames(), getAdditionalFields());
+        final AccessJsonLayout jsonLayout = new AccessJsonLayout(
+                createDropwizardJsonFormatter(),
+                createTimestampFormatter(timeZone),
+                includes,
+                getCustomFieldNames(),
+                getAdditionalFields());
         jsonLayout.setContext(context);
         jsonLayout.setRequestHeaders(requestHeaders);
         jsonLayout.setResponseHeaders(responseHeaders);
+        jsonLayout.setRequestAttributes(requestAttributes);
         return jsonLayout;
     }
 }

@@ -20,6 +20,11 @@ public abstract class AbstractParam<T> {
     private final String parameterName;
     private final T value;
 
+    /**
+     * Given an input value from a client, creates a parameter wrapping its parsed value.
+     *
+     * @param input an input value from a client request, might be {@code null}
+     */
     protected AbstractParam(@Nullable String input) {
         this(input, "Parameter");
     }
@@ -27,9 +32,9 @@ public abstract class AbstractParam<T> {
     /**
      * Given an input value from a client, creates a parameter wrapping its parsed value.
      *
-     * @param input an input value from a client request
+     * @param input         an input value from a client request, might be {@code null}
+     * @param parameterName name of the parameter with the provided value
      */
-    @SuppressWarnings({"AbstractMethodCallInConstructor", "OverriddenMethodCallDuringObjectConstruction"})
     protected AbstractParam(@Nullable String input, String parameterName) {
         this.parameterName = parameterName;
         try {

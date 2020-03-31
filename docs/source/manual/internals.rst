@@ -10,7 +10,7 @@ Congrats! Then you are ready to have a look into some nitty-gritty details of Dr
 Startup Sequence
 ================
 
-``Application<T extends Configuration>`` is the “Main” class of a dropwizard Application.
+``Application<T extends Configuration>`` is the “Main” class of a Dropwizard Application.
 
 ``application.run(args)`` is the first method to be called on startup - Here is a simplified code snippet of its implementation:
 
@@ -34,7 +34,7 @@ Startup Sequence
 	  cli.run(arguments); 
 	}
 
-``Bootstrap`` is the the pre-start (temp) application environment, containing everything required to bootstrap a Dropwizard command. Here is a simplified code snippet to illustrate its structure:
+``Bootstrap`` is the pre-start (temp) application environment, containing everything required to bootstrap a Dropwizard command. Here is a simplified code snippet to illustrate its structure:
 
 .. code-block:: java
 
@@ -47,11 +47,11 @@ Startup Sequence
 	  this.validatorFactory = Validators.newValidatorFactory();
 	  this.metricRegistry = new MetricRegistry();
 	  this.classLoader = Thread.currentThread().getContextClassLoader();
-	  this.onfigurationFactory = new DefaultConfigurationFactoryFactory<>();
+	  this.configurationFactory = new DefaultConfigurationFactoryFactory<>();
 	  this.healthCheckRegistry = new HealthCheckRegistry();
 	}
 
-``Environment`` is a longer-lived object, holding Dropwizard’s Environment (not env. Such as dev or prod). It holds a similar, but somewhat different set of properties than the Bootsrap object - here is a simplified code snippet to illustrate that:
+``Environment`` is a longer-lived object, holding Dropwizard’s Environment (not env. Such as dev or prod). It holds a similar, but somewhat different set of properties than the Bootstrap object - here is a simplified code snippet to illustrate that:
 
 .. code-block:: java
 
@@ -77,7 +77,7 @@ Startup Sequence
 A Dropwizard ``Bundle`` is a reusable group of functionality (sometimes provided by the Dropwizard project itself), used to define blocks of an application’s behavior. 
 For example, ``AssetBundle`` from the dropwizard-assets module provides a simple way to serve static assets from your application’s src/main/resources/assets directory as files available from /assets/* (or any other path) in your application.
 
-A ``ConfiguredBundle`` is a bundle that require a configuration provided by the ``Configuration`` object (implementing a relevant interface)
+A ``ConfiguredBundle`` is a bundle that requires a configuration provided by the ``Configuration`` object (implementing a relevant interface)
 
 Properties such as database connection details should not be stored on the Environment; that is what your Configuration .yml file is for. 
 Each logical environment (dev/test/staging/prod) - would have its own Configuration .yml - reflecting the differences between different “server environments”.
@@ -132,7 +132,7 @@ Just note the two basic commands are built of a parent, and a sub-class:
 
 The order of operations is therefore:
 
-1. Parse cmdline args, determine subcommand.
+1. Parse cmdline args, determine sub-command.
 2. Run ``ConfiguredCommand``, which get a parameter with the location of a YAML configuration file - parses and validates it.
 3. ``CheckCommand.run()`` runs next, and does almost nothing: it logs ``"Configuration is OK"``
 4. Run ``EnvironmentCommand``:
@@ -151,7 +151,7 @@ The order of operations is therefore:
 Jetty Lifecycle
 ===============
 If you have a component of your app that needs to know when Jetty is going to start, 
-you can implement Managed as described in the dropwizard docs. 
+you can implement Managed as described in the Dropwizard docs.
 
 If you have a component that needs to be signaled that Jetty has started 
 (this happens after all Managed objects' start() methods are called), 

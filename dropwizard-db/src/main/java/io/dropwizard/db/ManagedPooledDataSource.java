@@ -46,6 +46,27 @@ public class ManagedPooledDataSource extends DataSourceProxy implements ManagedD
 
         metricRegistry.register(name(getClass(), connectionPool.getName(), "size"),
             (Gauge<Integer>) connectionPool::getSize);
+
+        metricRegistry.register(name(getClass(), connectionPool.getName(), "created"),
+            (Gauge<Long>) connectionPool::getCreatedCount);
+
+        metricRegistry.register(name(getClass(), connectionPool.getName(), "borrowed"),
+            (Gauge<Long>) connectionPool::getBorrowedCount);
+
+        metricRegistry.register(name(getClass(), connectionPool.getName(), "reconnected"),
+            (Gauge<Long>) connectionPool::getReconnectedCount);
+
+        metricRegistry.register(name(getClass(), connectionPool.getName(), "released"),
+            (Gauge<Long>) connectionPool::getReleasedCount);
+
+        metricRegistry.register(name(getClass(), connectionPool.getName(), "releasedIdle"),
+            (Gauge<Long>) connectionPool::getReleasedIdleCount);
+
+        metricRegistry.register(name(getClass(), connectionPool.getName(), "returned"),
+            (Gauge<Long>) connectionPool::getReturnedCount);
+
+        metricRegistry.register(name(getClass(), connectionPool.getName(), "removeAbandoned"),
+            (Gauge<Long>) connectionPool::getRemoveAbandonedCount);
     }
 
     @Override

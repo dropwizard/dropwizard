@@ -18,7 +18,6 @@ applicationConnectors:
     acceptorThreads: 2
     acceptQueueSize: 100
     reuseAddress: false
-    soLingerTime: 2s
     useServerHeader: true
     useDateHeader: false
     useForwardedHeaders: false
@@ -26,3 +25,4 @@ minThreads: 89
 maxThreads: 101
 applicationContextPath: /app
 adminContextPath: /admin
+registerDefaultExceptionMappers: true

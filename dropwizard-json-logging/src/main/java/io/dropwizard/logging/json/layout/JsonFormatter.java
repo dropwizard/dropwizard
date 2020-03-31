@@ -38,20 +38,19 @@ public class JsonFormatter {
      * @return the JSON as a string
      */
     @Nullable
-    public String toJson(Map<String, Object> map) {
+    public String toJson(@Nullable Map<String, Object> map) {
         if (map == null || map.isEmpty()) {
             return null;
         }
 
-        final StringWriter writer = new StringWriter(bufferSize);
-        try {
+        try (StringWriter writer = new StringWriter(bufferSize)) {
             objectMapper.writeValue(writer, map);
+            if (doesAppendLineSeparator) {
+                writer.append(CoreConstants.LINE_SEPARATOR);
+            }
+            return writer.toString();
         } catch (IOException e) {
             throw new IllegalArgumentException("Unable to format map as a JSON", e);
         }
-        if (doesAppendLineSeparator) {
-            writer.append(CoreConstants.LINE_SEPARATOR);
-        }
-        return writer.toString();
     }
 }

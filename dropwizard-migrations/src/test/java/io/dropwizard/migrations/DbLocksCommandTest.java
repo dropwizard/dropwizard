@@ -1,10 +1,10 @@
 package io.dropwizard.migrations;
 
-import com.google.common.collect.ImmutableMap;
+import io.dropwizard.util.Maps;
 import liquibase.Liquibase;
 import net.jcip.annotations.NotThreadSafe;
 import net.sourceforge.argparse4j.inf.Namespace;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.io.ByteArrayOutputStream;
@@ -25,7 +25,7 @@ public class DbLocksCommandTest extends AbstractMigrationTest {
     public void testRelease() throws Exception {
         // We can't create locks in the database, so use mocks
         final Liquibase liquibase = Mockito.mock(Liquibase.class);
-        locksCommand.run(new Namespace(ImmutableMap.of("list", false, "release", true)), liquibase);
+        locksCommand.run(new Namespace(Maps.of("list", false, "release", true)), liquibase);
         Mockito.verify(liquibase).forceReleaseLocks();
     }
 
@@ -36,7 +36,7 @@ public class DbLocksCommandTest extends AbstractMigrationTest {
 
         // We can't create locks in the database, so use mocks
         final Liquibase liquibase = Mockito.mock(Liquibase.class);
-        locksCommand.run(new Namespace(ImmutableMap.of("list", true, "release", false)), liquibase);
+        locksCommand.run(new Namespace(Maps.of("list", true, "release", false)), liquibase);
         Mockito.verify(liquibase).reportLocks(printStream);
     }
 
@@ -44,7 +44,7 @@ public class DbLocksCommandTest extends AbstractMigrationTest {
     public void testFailsWhenNoListOrRelease() throws Exception {
         final Liquibase liquibase = Mockito.mock(Liquibase.class);
         assertThatExceptionOfType(IllegalArgumentException.class)
-            .isThrownBy(() -> locksCommand.run(new Namespace(ImmutableMap.of("list", false, "release", false)),
+            .isThrownBy(() -> locksCommand.run(new Namespace(Maps.of("list", false, "release", false)),
                 liquibase))
             .withMessage("Must specify either --list or --force-release");
     }
@@ -53,7 +53,7 @@ public class DbLocksCommandTest extends AbstractMigrationTest {
     public void testFailsWhenBothListAndRelease() throws Exception {
         final Liquibase liquibase = Mockito.mock(Liquibase.class);
         assertThatExceptionOfType(IllegalArgumentException.class)
-            .isThrownBy(() -> locksCommand.run(new Namespace(ImmutableMap.of("list", true, "release", true)),
+            .isThrownBy(() -> locksCommand.run(new Namespace(Maps.of("list", true, "release", true)),
                 liquibase))
             .withMessage("Must specify either --list or --force-release");
     }
@@ -71,7 +71,7 @@ public class DbLocksCommandTest extends AbstractMigrationTest {
                 "positional arguments:%n" +
                 "  file                   application configuration file%n" +
                 "%n" +
-                "optional arguments:%n" +
+                "named arguments:%n" +
                 "  -h, --help             show this help message and exit%n" +
                 "  --migrations MIGRATIONS-FILE%n" +
                 "                         the file containing  the  Liquibase migrations for%n" +

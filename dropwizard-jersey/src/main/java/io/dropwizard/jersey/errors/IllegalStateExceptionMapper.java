@@ -1,7 +1,6 @@
 package io.dropwizard.jersey.errors;
 
 import org.glassfish.jersey.server.internal.LocalizationMessages;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.NotSupportedException;
@@ -16,8 +15,9 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE;
  */
 @Provider
 public class IllegalStateExceptionMapper extends LoggingExceptionMapper<IllegalStateException> {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(IllegalStateExceptionMapper.class);
+    public IllegalStateExceptionMapper() {
+        super(LoggerFactory.getLogger(IllegalStateExceptionMapper.class));
+    }
 
     @Override
     public Response toResponse(final IllegalStateException exception) {
@@ -29,7 +29,7 @@ public class IllegalStateExceptionMapper extends LoggingExceptionMapper<IllegalS
              * IllegalStateException with or without @Consumes. See: https://java.net/jira/browse/JERSEY-2636
              */
             // Logs exception with additional information for developers.
-            LOGGER.debug("If the HTTP method is POST and using @FormParam in a resource method"
+            logger.debug("If the HTTP method is POST and using @FormParam in a resource method"
                 + ", Content-Type should be application/x-www-form-urlencoded.", exception);
             // Returns the same response as if NotSupportedException was thrown.
             return createResponse(new NotSupportedException());

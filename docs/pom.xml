@@ -4,60 +4,29 @@
 
     <parent>
         <groupId>io.dropwizard</groupId>
-        <artifactId>dropwizard-parent</artifactId>
-        <version>1.3.0-rc5-SNAPSHOT</version>
+        <artifactId>dropwizard-project</artifactId>
+        <version>2.0.5</version>
     </parent>
 
     <artifactId>docs</artifactId>
     <name>Dropwizard Documentation</name>
 
     <properties>
-        <jar.skipIfEmpty>true</jar.skipIfEmpty>
         <mpir.skip>true</mpir.skip>
+        <maven.install.skip>true</maven.install.skip>
         <maven.deploy.skip>true</maven.deploy.skip>
+        <skipNexusStagingDeployMojo>true</skipNexusStagingDeployMojo>
+        <gpg.skip>true</gpg.skip>
     </properties>
 
     <build>
-        <resources>
-            <resource>
-                <directory>${basedir}/source</directory>
-                <filtering>true</filtering>
-            </resource>
-        </resources>
         <plugins>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <version>3.0.0</version>
-                <executions>
-                    <execution>
-                        <id>parse-version</id>
-                        <phase>initialize</phase>
-                        <goals>
-                            <goal>parse-version</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>process-resources</id>
-                        <phase>initialize</phase>
-                        <goals>
-                            <goal>resources</goal>
-                        </goals>
-                        <configuration>
-                            <delimiters>
-                                <delimiter>@</delimiter>
-                            </delimiters>
-                            <outputDirectory>${project.build.directory}/source</outputDirectory>
-                            <useDefaultDelimiters>false</useDefaultDelimiters>
-                        </configuration>
-                    </execution>
-                </executions>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <skipIfEmpty>true</skipIfEmpty>
+                </configuration>
             </plugin>
         </plugins>
     </build>
@@ -67,8 +36,9 @@
             <plugin>
                 <groupId>kr.motd.maven</groupId>
                 <artifactId>sphinx-maven-plugin</artifactId>
+                <version>2.6.0</version>
                 <configuration>
-                    <sourceDirectory>${project.build.directory}/source</sourceDirectory>
+                    <sourceDirectory>${project.basedir}/source</sourceDirectory>
                 </configuration>
             </plugin>
         </plugins>

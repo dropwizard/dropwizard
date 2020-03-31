@@ -1,8 +1,6 @@
 package io.dropwizard.testing.common;
 
-import com.google.common.base.Throwables;
 import io.dropwizard.logging.BootstrapLogging;
-import io.dropwizard.testing.junit.DAOTestRule;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -16,12 +14,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.Callable;
+import java.util.function.Consumer;
 
 public class DAOTest {
-    static {
-        BootstrapLogging.bootstrap();
-    }
-
     @SuppressWarnings("unchecked")
     public static abstract class Builder<B extends Builder<B>> {
         private String url = "jdbc:h2:mem:" + UUID.randomUUID();
@@ -31,8 +26,11 @@ public class DAOTest {
         private String hbm2ddlAuto = "create";
         private boolean showSql = false;
         private boolean useSqlComments = false;
+        private boolean bootstrapLogging = true;
         private Set<Class<?>> entityClasses = new LinkedHashSet<>();
         private Map<String, String> properties = new HashMap<>();
+        private Consumer<Configuration> configurationCustomizer = c -> {
+        };
 
         public B setUrl(String url) {
             this.url = url;
@@ -64,6 +62,14 @@ public class DAOTest {
             return (B) this;
         }
 
+        /**
+         * @since 2.0
+         */
+        public B bootstrapLogging(boolean value){
+            bootstrapLogging = value;
+            return (B) this;
+        }
+
         public B addEntityClass(Class<?> entityClass) {
             this.entityClasses.add(entityClass);
             return (B) this;
@@ -74,7 +80,16 @@ public class DAOTest {
             return (B) this;
         }
 
+        public B customizeConfiguration(Consumer<Configuration> configurationCustomizer) {
+            this.configurationCustomizer = configurationCustomizer;
+            return (B) this;
+        }
+
         protected DAOTest buildDAOTest() {
+            if (bootstrapLogging) {
+                BootstrapLogging.bootstrap();
+            }
+
             final Configuration config = new Configuration();
             config.setProperty(AvailableSettings.URL, url);
             config.setProperty(AvailableSettings.USER, username);
@@ -97,6 +112,8 @@ public class DAOTest {
             entityClasses.forEach(config::addAnnotatedClass);
             properties.forEach(config::setProperty);
 
+            configurationCustomizer.accept(config);
+
             return new DAOTest(config.buildSessionFactory());
         }
     }
@@ -104,7 +121,7 @@ public class DAOTest {
     private final SessionFactory sessionFactory;
 
     /**
-     * Use {@link DAOTestRule#newBuilder()}
+     * Use {@link io.dropwizard.testing.junit5.DAOTestExtension#newBuilder()}
      */
     private DAOTest(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
@@ -156,7 +173,9 @@ public class DAOTest {
             return result;
         } catch (final Exception e) {
             transaction.rollback();
-            Throwables.throwIfUnchecked(e);
+            if (e instanceof RuntimeException) {
+              throw (RuntimeException) e;
+            }
             throw new RuntimeException(e);
         }
     }
