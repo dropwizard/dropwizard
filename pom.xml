@@ -4,7 +4,7 @@
 
     <groupId>io.dropwizard</groupId>
     <artifactId>dropwizard-project</artifactId>
-    <version>2.0.5</version>
+    <version>2.0.5-campspot</version>
     <packaging>pom</packaging>
 
     <name>Dropwizard Project</name>
@@ -58,7 +58,7 @@
 
         <maven.site.deploy.skip>true</maven.site.deploy.skip>
 
-        <dropwizard.version>2.0.5</dropwizard.version>
+        <dropwizard.version>2.0.5-campspot</dropwizard.version>
 
         <!-- Plugin versions, see also dropwizard-dependencies -->
         <coveralls-maven-plugin.version>4.3.0</coveralls-maven-plugin.version>
@@ -200,8 +200,8 @@
         <connection>scm:git:https://github.com/dropwizard/dropwizard</connection>
         <developerConnection>scm:git:git@github.com:dropwizard/dropwizard.git</developerConnection>
         <url>https://github.com/dropwizard/dropwizard</url>
-        <tag>v2.0.5</tag>
-  </scm>
+        <tag>v2.0.5-campspot</tag>
+    </scm>
 
     <issueManagement>
         <system>GitHub</system>
@@ -230,36 +230,12 @@
         </mailingList>
     </mailingLists>
 
-    <repositories>
-        <repository>
-            <id>ossrh</id>
-            <name>Sonatype Nexus Snapshots</name>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
-
     <distributionManagement>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <name>Sonatype Nexus Snapshots</name>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
         <repository>
-            <id>ossrh</id>
-            <name>Nexus Release Repository</name>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+            <id>central</id>
+            <name>campspot-releases</name>
+            <url>https://campspot.jfrog.io/campspot/libs-release-local</url>
         </repository>
-        <site>
-            <id>dropwizard-site</id>
-            <name>Dropwizard</name>
-            <url>http://dropwizard.io/${project.version}</url>
-        </site>
     </distributionManagement>
 
     <profiles>
@@ -339,37 +315,6 @@
                                 <inherited>false</inherited>
                                 <goals>
                                     <goal>aggregate-jar</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-gpg-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>sign-artifacts</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>sign</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.sonatype.plugins</groupId>
-                        <artifactId>nexus-staging-maven-plugin</artifactId>
-                        <configuration>
-                            <serverId>ossrh</serverId>
-                            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>nexus-deploy</id>
-                                <phase>deploy</phase>
-                                <goals>
-                                    <goal>deploy</goal>
                                 </goals>
                             </execution>
                         </executions>
@@ -479,22 +424,6 @@
         </pluginManagement>
 
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>analyze</id>
-                        <goals>
-                            <goal>analyze-only</goal>
-                        </goals>
-                        <configuration>
-                            <failOnWarning>true</failOnWarning>
-                            <ignoreNonCompile>true</ignoreNonCompile>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
