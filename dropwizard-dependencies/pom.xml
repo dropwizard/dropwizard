@@ -61,6 +61,7 @@
         <nullaway.version>0.7.8</nullaway.version>
         <objenesis.version>3.1</objenesis.version>
         <slf4j.version>1.7.30</slf4j.version>
+        <snakeyaml.version>1.26</snakeyaml.version>
         <tomcat-jdbc.version>9.0.33</tomcat-jdbc.version>
         <usertype.core.version>7.0.0.CR1</usertype.core.version>
 
@@ -92,6 +93,13 @@
                 <version>${jackson.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <!-- CVE-2017-18640: https://nvd.nist.gov/vuln/detail/CVE-2017-18640 -->
+            <!-- Remove again once there's a Jackson release with SnakeYAML >=1.26 -->
+            <dependency>
+                <groupId>org.yaml</groupId>
+                <artifactId>snakeyaml</artifactId>
+                <version>${snakeyaml.version}</version>
             </dependency>
 
             <dependency>
