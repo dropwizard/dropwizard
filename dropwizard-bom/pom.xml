@@ -341,6 +341,12 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <!-- CVE-2017-18640: https://nvd.nist.gov/vuln/detail/CVE-2017-18640 -->
+            <dependency>
+                <groupId>org.yaml</groupId>
+                <artifactId>snakeyaml</artifactId>
+                <version>1.26</version>
+            </dependency>
 
             <!-- Jersey -->
             <dependency>
