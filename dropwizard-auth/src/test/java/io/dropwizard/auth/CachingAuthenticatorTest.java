@@ -119,4 +119,14 @@ class CachingAuthenticatorTest {
                 .isThrownBy(() -> cached.authenticate("credentials"))
                 .isEqualTo(e);
     }
+
+    @Test
+    void cachesTheNegativeResultIfSpecified() throws Exception {
+        when(underlying.authenticate(anyString())).thenReturn(Optional.empty());
+        Caffeine<Object, Object> caffeine = Caffeine.newBuilder().maximumSize(1L).executor(Runnable::run);
+        cached = new CachingAuthenticator<>(new MetricRegistry(), underlying, caffeine, true);
+        assertThat(cached.authenticate("credentials")).isEqualTo(Optional.empty());
+        verify(underlying).authenticate("credentials");
+        assertThat(cached.size()).isEqualTo(1);
+    }
 }
