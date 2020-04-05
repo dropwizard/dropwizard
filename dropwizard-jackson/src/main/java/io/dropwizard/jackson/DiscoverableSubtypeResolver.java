@@ -62,9 +62,11 @@ public class DiscoverableSubtypeResolver extends StdSubtypeResolver {
                      BufferedReader reader = new BufferedReader(streamReader)) {
                     String line;
                     while ((line = reader.readLine()) != null) {
-                        final Class<?> loadedClass = loadClass(line);
-                        if (loadedClass != null) {
-                            serviceClasses.add(loadedClass);
+                        if (!line.startsWith("#")) {
+                            final Class<?> loadedClass = loadClass(line);
+                            if (loadedClass != null) {
+                                serviceClasses.add(loadedClass);
+                            }
                         }
                     }
                 }
