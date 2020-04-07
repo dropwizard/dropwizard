@@ -1,5 +1,6 @@
 package io.dropwizard.jersey;
 
+import com.codahale.metrics.Clock;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.jersey2.InstrumentedResourceMethodApplicationListener;
 import com.fasterxml.classmate.ResolvedType;
@@ -68,7 +69,7 @@ public class DropwizardResourceConfig extends ResourceConfig {
         property(ServerProperties.WADL_FEATURE_DISABLE, Boolean.TRUE);
         register(loggingListener);
 
-        register(new InstrumentedResourceMethodApplicationListener(metricRegistry));
+        register(new InstrumentedResourceMethodApplicationListener(metricRegistry, Clock.defaultClock(), true));
         register(CacheControlledResponseFeature.class);
         register(io.dropwizard.jersey.guava.OptionalMessageBodyWriter.class);
         register(new io.dropwizard.jersey.guava.OptionalParamBinder());
