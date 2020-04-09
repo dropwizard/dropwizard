@@ -258,7 +258,7 @@
         <site>
             <id>dropwizard-site</id>
             <name>Dropwizard</name>
-            <url>http://dropwizard.io/${project.version}</url>
+            <url>https://dropwizard.io/</url>
         </site>
     </distributionManagement>
 
