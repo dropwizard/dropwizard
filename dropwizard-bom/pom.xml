@@ -20,137 +20,137 @@
             <dependency>
                 <groupId>io.dropwizard</groupId>
                 <artifactId>dropwizard-assets</artifactId>
-                <version>${dropwizard.version}</version>
+                <version>2.1.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>io.dropwizard</groupId>
                 <artifactId>dropwizard-auth</artifactId>
-                <version>${dropwizard.version}</version>
+                <version>2.1.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>io.dropwizard</groupId>
                 <artifactId>dropwizard-client</artifactId>
-                <version>${dropwizard.version}</version>
+                <version>2.1.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>io.dropwizard</groupId>
                 <artifactId>dropwizard-configuration</artifactId>
-                <version>${dropwizard.version}</version>
+                <version>2.1.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>io.dropwizard</groupId>
                 <artifactId>dropwizard-core</artifactId>
-                <version>${dropwizard.version}</version>
+                <version>2.1.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>io.dropwizard</groupId>
                 <artifactId>dropwizard-db</artifactId>
-                <version>${dropwizard.version}</version>
+                <version>2.1.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>io.dropwizard</groupId>
                 <artifactId>dropwizard-forms</artifactId>
-                <version>${dropwizard.version}</version>
+                <version>2.1.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>io.dropwizard</groupId>
                 <artifactId>dropwizard-hibernate</artifactId>
-                <version>${dropwizard.version}</version>
+                <version>2.1.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>io.dropwizard</groupId>
                 <artifactId>dropwizard-jackson</artifactId>
-                <version>${dropwizard.version}</version>
+                <version>2.1.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>io.dropwizard</groupId>
                 <artifactId>dropwizard-jdbi3</artifactId>
-                <version>${dropwizard.version}</version>
+                <version>2.1.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>io.dropwizard</groupId>
                 <artifactId>dropwizard-jersey</artifactId>
-                <version>${dropwizard.version}</version>
+                <version>2.1.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>io.dropwizard</groupId>
                 <artifactId>dropwizard-jetty</artifactId>
-                <version>${dropwizard.version}</version>
+                <version>2.1.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>io.dropwizard</groupId>
                 <artifactId>dropwizard-lifecycle</artifactId>
-                <version>${dropwizard.version}</version>
+                <version>2.1.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>io.dropwizard</groupId>
                 <artifactId>dropwizard-logging</artifactId>
-                <version>${dropwizard.version}</version>
+                <version>2.1.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>io.dropwizard</groupId>
                 <artifactId>dropwizard-metrics</artifactId>
-                <version>${dropwizard.version}</version>
+                <version>2.1.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>io.dropwizard</groupId>
                 <artifactId>dropwizard-metrics-graphite</artifactId>
-                <version>${dropwizard.version}</version>
+                <version>2.1.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>io.dropwizard</groupId>
                 <artifactId>dropwizard-migrations</artifactId>
-                <version>${dropwizard.version}</version>
+                <version>2.1.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>io.dropwizard</groupId>
                 <artifactId>dropwizard-request-logging</artifactId>
-                <version>${dropwizard.version}</version>
+                <version>2.1.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>io.dropwizard</groupId>
                 <artifactId>dropwizard-json-logging</artifactId>
-                <version>${dropwizard.version}</version>
+                <version>2.1.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>io.dropwizard</groupId>
                 <artifactId>dropwizard-servlets</artifactId>
-                <version>${dropwizard.version}</version>
+                <version>2.1.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>io.dropwizard</groupId>
                 <artifactId>dropwizard-testing</artifactId>
-                <version>${dropwizard.version}</version>
+                <version>2.1.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>io.dropwizard</groupId>
                 <artifactId>dropwizard-util</artifactId>
-                <version>${dropwizard.version}</version>
+                <version>2.1.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>io.dropwizard</groupId>
                 <artifactId>dropwizard-validation</artifactId>
-                <version>${dropwizard.version}</version>
+                <version>2.1.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>io.dropwizard</groupId>
                 <artifactId>dropwizard-views</artifactId>
-                <version>${dropwizard.version}</version>
+                <version>2.1.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>io.dropwizard</groupId>
                 <artifactId>dropwizard-views-freemarker</artifactId>
-                <version>${dropwizard.version}</version>
+                <version>2.1.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>io.dropwizard</groupId>
                 <artifactId>dropwizard-views-mustache</artifactId>
-                <version>${dropwizard.version}</version>
+                <version>2.1.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>io.dropwizard</groupId>
                 <artifactId>dropwizard-http2</artifactId>
-                <version>${dropwizard.version}</version>
+                <version>2.1.0-SNAPSHOT</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
