@@ -163,22 +163,6 @@ public class SessionFactoryFactoryTest {
         assertThat(sessionFactory.getSessionFactoryOptions().getInterceptor()).isSameAs(EmptyInterceptor.INSTANCE);
     }
 
-    @Test
-    public void buildBootstrapServiceRegistryRequireNonNull() {
-        final SessionFactoryFactory customFactory = new SessionFactoryFactory() {
-            @Override
-            protected BootstrapServiceRegistryBuilder configureBootstrapServiceRegistryBuilder(BootstrapServiceRegistryBuilder bootstrapServiceRegistryBuilder) {
-                return null;
-            }
-        };
-
-        assertThrows(NullPointerException.class, () ->
-            sessionFactory = customFactory.build(bundle,
-                environment,
-                config,
-                Collections.singletonList(Person.class)));
-    }
-
     private void build() {
         this.sessionFactory = factory.build(bundle,
             environment,

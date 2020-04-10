@@ -68,11 +68,9 @@ public class SessionFactoryFactory {
                                                ConnectionProvider connectionProvider,
                                                Map<String, String> properties,
                                                List<Class<?>> entities) {
-        BootstrapServiceRegistryBuilder builder =
-            configureBootstrapServiceRegistryBuilder(new BootstrapServiceRegistryBuilder());
 
         final BootstrapServiceRegistry bootstrapServiceRegistry =
-            Objects.requireNonNull(builder, "builder can not be null").build();
+            configureBootstrapServiceRegistryBuilder(new BootstrapServiceRegistryBuilder()).build();
 
         final Configuration configuration = new Configuration(bootstrapServiceRegistry);
         configuration.setProperty(AvailableSettings.CURRENT_SESSION_CONTEXT_CLASS, "managed");
