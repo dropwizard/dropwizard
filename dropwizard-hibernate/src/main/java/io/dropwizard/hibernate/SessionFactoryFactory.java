@@ -47,12 +47,12 @@ public class SessionFactoryFactory {
                                 ManagedDataSource dataSource,
                                 List<Class<?>> entities) {
         final ConnectionProvider provider = buildConnectionProvider(dataSource,
-                                                                    dbConfig.getProperties());
+            dbConfig.getProperties());
         final SessionFactory factory = buildSessionFactory(bundle,
-                                                           dbConfig,
-                                                           provider,
-                                                           dbConfig.getProperties(),
-                                                           entities);
+            dbConfig,
+            provider,
+            dbConfig.getProperties(),
+            entities);
         final SessionFactoryManager managedFactory = new SessionFactoryManager(factory, dataSource);
         environment.lifecycle().manage(managedFactory);
         return factory;
@@ -71,7 +71,10 @@ public class SessionFactoryFactory {
                                                ConnectionProvider connectionProvider,
                                                Map<String, String> properties,
                                                List<Class<?>> entities) {
-        final BootstrapServiceRegistry bootstrapServiceRegistry = new BootstrapServiceRegistryBuilder().build();
+
+        final BootstrapServiceRegistry bootstrapServiceRegistry =
+            configureBootstrapServiceRegistryBuilder(new BootstrapServiceRegistryBuilder()).build();
+
         final Configuration configuration = new Configuration(bootstrapServiceRegistry);
         configuration.setProperty(AvailableSettings.CURRENT_SESSION_CONTEXT_CLASS, "managed");
         configuration.setProperty(AvailableSettings.USE_SQL_COMMENTS, Boolean.toString(dbConfig.isAutoCommentsEnabled()));
@@ -90,9 +93,9 @@ public class SessionFactoryFactory {
         bundle.configure(configuration);
 
         final ServiceRegistry registry = new StandardServiceRegistryBuilder(bootstrapServiceRegistry)
-                .addService(ConnectionProvider.class, connectionProvider)
-                .applySettings(configuration.getProperties())
-                .build();
+            .addService(ConnectionProvider.class, connectionProvider)
+            .applySettings(configuration.getProperties())
+            .build();
 
         configure(configuration, registry);
 
@@ -100,6 +103,10 @@ public class SessionFactoryFactory {
     }
 
     protected void configure(Configuration configuration, ServiceRegistry registry) {
+    }
+
+    protected BootstrapServiceRegistryBuilder configureBootstrapServiceRegistryBuilder(BootstrapServiceRegistryBuilder builder) {
+        return builder;
     }
 
     private void addAnnotatedClasses(Configuration configuration,

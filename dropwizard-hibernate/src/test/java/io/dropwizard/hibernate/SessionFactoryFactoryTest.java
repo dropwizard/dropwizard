@@ -11,6 +11,7 @@ import org.hibernate.EmptyInterceptor;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.boot.registry.BootstrapServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
 import org.joda.time.DateTime;
@@ -99,7 +100,7 @@ public class SessionFactoryFactoryTest {
     @Test
     public void setsACustomPoolName() {
         this.sessionFactory = factory.build(bundle, environment, config,
-                Collections.singletonList(Person.class), "custom-hibernate-db");
+            Collections.singletonList(Person.class), "custom-hibernate-db");
 
         ArgumentCaptor<SessionFactoryManager> sessionFactoryManager = ArgumentCaptor.forClass(SessionFactoryManager.class);
         verify(lifecycleEnvironment).manage(sessionFactoryManager.capture());
@@ -141,17 +142,33 @@ public class SessionFactoryFactoryTest {
             }
         };
         sessionFactory = customFactory.build(bundle,
-                                             environment,
-                                             config,
-                                             Collections.singletonList(Person.class));
+            environment,
+            config,
+            Collections.singletonList(Person.class));
+
+        assertThat(sessionFactory.getSessionFactoryOptions().getInterceptor()).isSameAs(EmptyInterceptor.INSTANCE);
+    }
+
+    @Test
+    public void buildBootstrapServiceRegistryRunsBeforeSessionFactoryCreation() {
+        final SessionFactoryFactory customFactory = new SessionFactoryFactory() {
+            @Override
+            protected BootstrapServiceRegistryBuilder configureBootstrapServiceRegistryBuilder(BootstrapServiceRegistryBuilder builder) {
+                return builder;
+            }
+        };
+        sessionFactory = customFactory.build(bundle,
+            environment,
+            config,
+            Collections.singletonList(Person.class));
 
         assertThat(sessionFactory.getSessionFactoryOptions().getInterceptor()).isSameAs(EmptyInterceptor.INSTANCE);
     }
 
     private void build() {
         this.sessionFactory = factory.build(bundle,
-                                            environment,
-                                            config,
-                                            Collections.singletonList(Person.class));
+            environment,
+            config,
+            Collections.singletonList(Person.class));
     }
 }
