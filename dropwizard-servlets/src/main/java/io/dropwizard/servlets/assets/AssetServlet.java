@@ -72,6 +72,8 @@ public class AssetServlet extends HttpServlet {
     @Nullable
     private final String indexFile;
 
+    private final String defaultMediaType;
+
     @Nullable
     private final Charset defaultCharset;
 
@@ -95,11 +97,38 @@ public class AssetServlet extends HttpServlet {
                         String uriPath,
                         @Nullable String indexFile,
                         @Nullable Charset defaultCharset) {
+        this(resourcePath, uriPath, indexFile, DEFAULT_MEDIA_TYPE, defaultCharset);
+    }
+
+    /**
+     * Creates a new {@code AssetServlet} that serves static assets loaded from {@code resourceURL}
+     * (typically a file: or jar: URL). The assets are served at URIs rooted at {@code uriPath}. For
+     * example, given a {@code resourceURL} of {@code "file:/data/assets"} and a {@code uriPath} of
+     * {@code "/js"}, an {@code AssetServlet} would serve the contents of {@code
+     * /data/assets/example.js} in response to a request for {@code /js/example.js}. If a directory
+     * is requested and {@code indexFile} is defined, then {@code AssetServlet} will attempt to
+     * serve a file with that name in that directory. If a directory is requested and {@code
+     * indexFile} is null, it will serve a 404.
+     *
+     * @param resourcePath     the base URL from which assets are loaded
+     * @param uriPath          the URI path fragment in which all requests are rooted
+     * @param indexFile        the filename to use when directories are requested, or null to serve no
+     *                         indexes
+     * @param defaultMediaType the default media type
+     * @param defaultCharset   the default character set
+     * @since 2.0
+     */
+    public AssetServlet(String resourcePath,
+                        String uriPath,
+                        @Nullable String indexFile,
+                        @Nullable String defaultMediaType,
+                        @Nullable Charset defaultCharset) {
         final String trimmedPath = trimSlashes(resourcePath);
         this.resourcePath = trimmedPath.isEmpty() ? trimmedPath : trimmedPath + '/';
         final String trimmedUri = trimTrailingSlashes(uriPath);
         this.uriPath = trimmedUri.isEmpty() ? "/" : trimmedUri;
         this.indexFile = indexFile;
+        this.defaultMediaType = defaultMediaType == null ? DEFAULT_MEDIA_TYPE : defaultMediaType;
         this.defaultCharset = defaultCharset;
     }
 
@@ -132,6 +161,22 @@ public class AssetServlet extends HttpServlet {
     @Nullable
     public String getIndexFile() {
         return indexFile;
+    }
+
+    /**
+     * @since 2.0
+     */
+    public String getDefaultMediaType() {
+        return defaultMediaType;
+    }
+
+
+    /**
+     * @since 2.0
+     */
+    @Nullable
+    public Charset getDefaultCharset() {
+        return defaultCharset;
     }
 
     @Override
@@ -193,7 +238,7 @@ public class AssetServlet extends HttpServlet {
             resp.setHeader(ETAG, cachedAsset.getETag());
 
             final String mediaType = Optional.ofNullable(req.getServletContext().getMimeType(req.getRequestURI()))
-                .orElse(DEFAULT_MEDIA_TYPE);
+                    .orElse(defaultMediaType);
             if (mediaType.startsWith("video") || mediaType.startsWith("audio") || usingRanges) {
                 resp.addHeader(ACCEPT_RANGES, "bytes");
             }
