@@ -25,16 +25,16 @@ public class AssetsBundleTest {
     private final ServletEnvironment servletEnvironment = mock(ServletEnvironment.class);
     private final Environment environment = mock(Environment.class);
 
-    private AssetServlet servlet = new AssetServlet("/", "/", null, null);
+    private AssetServlet servlet = new AssetServlet("/", "/", null, null, null);
     private String servletPath = "";
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         when(environment.servlets()).thenReturn(servletEnvironment);
     }
 
     @Test
-    public void hasADefaultPath() throws Exception {
+    public void hasADefaultPath() {
         runBundle(new AssetsBundle());
 
         assertThat(servletPath)
@@ -51,7 +51,7 @@ public class AssetsBundleTest {
     }
 
     @Test
-    public void canHaveCustomPaths() throws Exception {
+    public void canHaveCustomPaths() {
         runBundle(new AssetsBundle("/json"));
 
         assertThat(servletPath)
@@ -68,7 +68,7 @@ public class AssetsBundleTest {
     }
 
     @Test
-    public void canHaveDifferentUriAndResourcePaths() throws Exception {
+    public void canHaveDifferentUriAndResourcePaths() {
         runBundle(new AssetsBundle("/json", "/what"));
 
         assertThat(servletPath)
@@ -85,7 +85,7 @@ public class AssetsBundleTest {
     }
 
     @Test
-    public void canSupportDiffrentAssetsBundleName() throws Exception {
+    public void canSupportDifferentAssetsBundleName() {
         runBundle(new AssetsBundle("/json", "/what/new", "index.txt", "customAsset1"), "customAsset1");
 
         assertThat(servletPath)
@@ -115,7 +115,7 @@ public class AssetsBundleTest {
     }
 
     @Test
-    public void canHaveDifferentUriAndResourcePathsAndIndexFilename() throws Exception {
+    public void canHaveDifferentUriAndResourcePathsAndIndexFilename() {
         runBundle(new AssetsBundle("/json", "/what", "index.txt"));
 
         assertThat(servletPath)
@@ -129,6 +129,17 @@ public class AssetsBundleTest {
 
         assertThat(servlet.getUriPath())
                 .isEqualTo("/what");
+    }
+
+    @Test
+    public void canHaveDifferentDefaultMediaType() {
+        runBundle(new AssetsBundle("/assets", "/assets", "index.html", "assets", "text/plain"));
+
+        assertThat(servletPath).isEqualTo("/assets/*");
+        assertThat(servlet.getIndexFile()).isEqualTo("index.html");
+        assertThat(servlet.getResourceURL()).isEqualTo(normalize("assets"));
+        assertThat(servlet.getUriPath()).isEqualTo("/assets");
+        assertThat(servlet.getDefaultMediaType()).isEqualTo("text/plain");
     }
 
     private URL normalize(String path) {
