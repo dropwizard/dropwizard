@@ -11,7 +11,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.annotation.Nullable;
-
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -28,6 +27,8 @@ public class AssetServletTest {
     private static final String DUMMY_SERVLET = "/dummy_servlet/";
     private static final String NOINDEX_SERVLET = "/noindex_servlet/";
     private static final String NOCHARSET_SERVLET = "/nocharset_servlet/";
+    private static final String NOMEDIATYPE_SERVLET = "/nomediatype_servlet/";
+    private static final String MEDIATYPE_SERVLET = "/mediatype_servlet/";
     private static final String ROOT_SERVLET = "/";
     private static final String RESOURCE_PATH = "/assets";
 
@@ -65,6 +66,22 @@ public class AssetServletTest {
         }
     }
 
+    public static class NoDefaultMediaTypeAssetServlet extends AssetServlet {
+        private static final long serialVersionUID = 1L;
+
+        public NoDefaultMediaTypeAssetServlet() {
+            super(RESOURCE_PATH, NOMEDIATYPE_SERVLET, null, null, StandardCharsets.UTF_8);
+        }
+    }
+
+    public static class DefaultMediaTypeAssetServlet extends AssetServlet {
+        private static final long serialVersionUID = 1L;
+
+        public DefaultMediaTypeAssetServlet() {
+            super(RESOURCE_PATH, MEDIATYPE_SERVLET, null, "text/plain", StandardCharsets.UTF_8);
+        }
+    }
+
     private static final ServletTester SERVLET_TESTER = new ServletTester();
     private final HttpTester.Request request = HttpTester.newRequest();
     @Nullable
@@ -75,6 +92,8 @@ public class AssetServletTest {
         SERVLET_TESTER.addServlet(DummyAssetServlet.class, DUMMY_SERVLET + '*');
         SERVLET_TESTER.addServlet(NoIndexAssetServlet.class, NOINDEX_SERVLET + '*');
         SERVLET_TESTER.addServlet(NoCharsetAssetServlet.class, NOCHARSET_SERVLET + '*');
+        SERVLET_TESTER.addServlet(NoDefaultMediaTypeAssetServlet.class, NOMEDIATYPE_SERVLET + '*');
+        SERVLET_TESTER.addServlet(DefaultMediaTypeAssetServlet.class, MEDIATYPE_SERVLET + '*');
         SERVLET_TESTER.addServlet(RootAssetServlet.class, ROOT_SERVLET + '*');
         SERVLET_TESTER.start();
 
@@ -171,11 +190,11 @@ public class AssetServletTest {
             eTags.add(future.get());
         }
         assertThat(eTags)
-            .describedAs("eTag generation should be consistent with concurrent requests")
-            .hasSize(1);
+                .describedAs("eTag generation should be consistent with concurrent requests")
+                .hasSize(1);
         assertThat(firstEtag)
-            .isEqualTo("\"e7bd7e8e\"")
-            .isEqualTo(eTags.iterator().next());
+                .isEqualTo("\"e7bd7e8e\"")
+                .isEqualTo(eTags.iterator().next());
     }
 
     @Test
@@ -370,12 +389,12 @@ public class AssetServletTest {
         final int statusWithMatchingLastModifiedTime = response.getStatus();
 
         request.putDateField(HttpHeader.IF_MODIFIED_SINCE,
-                          lastModifiedTime - 100);
+                lastModifiedTime - 100);
         response = HttpTester.parseResponse(SERVLET_TESTER.getResponses(request.generate()));
         final int statusWithStaleLastModifiedTime = response.getStatus();
 
         request.putDateField(HttpHeader.IF_MODIFIED_SINCE,
-                          lastModifiedTime + 100);
+                lastModifiedTime + 100);
         response = HttpTester.parseResponse(SERVLET_TESTER.getResponses(request.generate()));
         final int statusWithRecentLastModifiedTime = response.getStatus();
 
@@ -404,6 +423,26 @@ public class AssetServletTest {
                 .isEqualTo(200);
         assertThat(MimeTypes.CACHE.get(response.get(HttpHeader.CONTENT_TYPE)))
                 .isEqualTo(MimeTypes.Type.TEXT_HTML_UTF_8);
+    }
+
+    @Test
+    public void defaultsToHtmlIfNotOverridden() throws Exception {
+        request.setURI(NOMEDIATYPE_SERVLET + "foo.bar");
+        response = HttpTester.parseResponse(SERVLET_TESTER.getResponses(request.generate()));
+        assertThat(response.getStatus())
+                .isEqualTo(200);
+        assertThat(MimeTypes.CACHE.get(response.get(HttpHeader.CONTENT_TYPE)))
+                .isEqualTo(MimeTypes.Type.TEXT_HTML_UTF_8);
+    }
+
+    @Test
+    public void servesWithDefaultMediaType() throws Exception {
+        request.setURI(MEDIATYPE_SERVLET + "foo.bar");
+        response = HttpTester.parseResponse(SERVLET_TESTER.getResponses(request.generate()));
+        assertThat(response.getStatus())
+                .isEqualTo(200);
+        assertThat(MimeTypes.CACHE.get(response.get(HttpHeader.CONTENT_TYPE)))
+                .isEqualTo(MimeTypes.Type.TEXT_PLAIN_UTF_8);
     }
 
     @Test
