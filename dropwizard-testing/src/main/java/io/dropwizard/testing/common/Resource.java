@@ -12,6 +12,7 @@ import org.glassfish.jersey.servlet.ServletProperties;
 import org.glassfish.jersey.test.DeploymentContext;
 import org.glassfish.jersey.test.JerseyTest;
 import org.glassfish.jersey.test.ServletDeploymentContext;
+import org.glassfish.jersey.test.TestProperties;
 import org.glassfish.jersey.test.inmemory.InMemoryTestContainerFactory;
 import org.glassfish.jersey.test.spi.TestContainerFactory;
 
@@ -19,6 +20,7 @@ import javax.annotation.Nullable;
 import javax.validation.Validator;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -100,7 +102,7 @@ public class Resource {
             return (B) this;
         }
 
-        public B bootstrapLogging(boolean value){
+        public B bootstrapLogging(boolean value) {
             bootstrapLogging = value;
             return (B) this;
         }
@@ -119,8 +121,8 @@ public class Resource {
                 config.property(HttpUrlConnectorProvider.SET_METHOD_WORKAROUND, true);
             };
             return new Resource(new ResourceTestJerseyConfiguration(
-                singletons, providers, properties, mapper, validator,
-                extendedConfigurator, testContainerFactory, registerDefaultExceptionMappers));
+                    singletons, providers, properties, mapper, validator,
+                    extendedConfigurator, testContainerFactory, registerDefaultExceptionMappers));
         }
     }
 
@@ -187,19 +189,21 @@ public class Resource {
     public void before() throws Throwable {
         DropwizardTestResourceConfig.CONFIGURATION_REGISTRY.put(configuration.getId(), configuration);
 
-        test = new JerseyTest() {
+        test = new JerseyTest(configuration.testContainerFactory) {
             @Override
-            protected TestContainerFactory getTestContainerFactory() {
-                return configuration.testContainerFactory;
+            protected URI getBaseUri() {
+                forceSet(TestProperties.CONTAINER_PORT, "0");
+
+                return super.getBaseUri();
             }
 
             @Override
             protected DeploymentContext configureDeployment() {
                 return ServletDeploymentContext.builder(new DropwizardTestResourceConfig(configuration))
-                    .initParam(ServletProperties.JAXRS_APPLICATION_CLASS,
-                        DropwizardTestResourceConfig.class.getName())
-                    .initParam(DropwizardTestResourceConfig.CONFIGURATION_ID, configuration.getId())
-                    .build();
+                        .initParam(ServletProperties.JAXRS_APPLICATION_CLASS,
+                                DropwizardTestResourceConfig.class.getName())
+                        .initParam(DropwizardTestResourceConfig.CONFIGURATION_ID, configuration.getId())
+                        .build();
             }
 
             @Override

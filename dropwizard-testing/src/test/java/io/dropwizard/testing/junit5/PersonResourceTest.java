@@ -22,6 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.initMocks;
 
 /**
  * Tests {@link ResourceTestRule}.
@@ -38,17 +39,18 @@ public class PersonResourceTest {
     private static final ObjectMapper OBJECT_MAPPER = Jackson.newObjectMapper()
         .registerModule(new GuavaModule());
 
-    private PeopleStore peopleStore = mock(PeopleStore.class);
-    private ResourceExtension resources = ResourceExtension.builder()
+    private final PeopleStore peopleStore = mock(PeopleStore.class);
+    private final ResourceExtension resources = ResourceExtension.builder()
         .addResource(new PersonResource(peopleStore))
         .setMapper(OBJECT_MAPPER)
         .setClientConfigurator(clientConfig -> clientConfig.register(DummyExceptionMapper.class))
         .build();
 
-    private Person person = new Person("blah", "blah@example.com");
+    private final Person person = new Person("blah", "blah@example.com");
 
     @BeforeEach
     public void setup() {
+        initMocks(peopleStore);
         when(peopleStore.fetchPerson("blah")).thenReturn(person);
     }
 
