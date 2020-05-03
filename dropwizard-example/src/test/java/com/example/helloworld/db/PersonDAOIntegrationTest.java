@@ -19,7 +19,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-@Testcontainers
+@Testcontainers(disabledWithoutDocker = true)
 @ExtendWith(DropwizardExtensionsSupport.class)
 public class PersonDAOIntegrationTest {
     @Container

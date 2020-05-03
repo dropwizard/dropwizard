@@ -27,7 +27,7 @@ import java.util.Optional;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Testcontainers
+@Testcontainers(disabledWithoutDocker = true)
 @ExtendWith(DropwizardExtensionsSupport.class)
 public class DockerIntegrationTest {
     @Container
