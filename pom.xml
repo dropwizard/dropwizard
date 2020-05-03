@@ -460,7 +460,7 @@
                     <extensions>true</extensions>
                 </plugin>
                 <plugin>
-                    <groupId>org.apache.maven.archetype</groupId>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-archetype-plugin</artifactId>
                     <version>${maven-archetype-plugin.version}</version>
                 </plugin>
