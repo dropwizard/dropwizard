@@ -1,0 +1,31 @@
+template: Hello, %s!
+defaultName: Stranger
+
+database:
+  driverClass: com.mysql.cj.jdbc.Driver
+  properties:
+    hibernate.dialect: org.hibernate.dialect.MySQL57Dialect
+#  user: sa
+#  password: sa
+#  url: jdbc:h2:./target/test-example
+
+server:
+  applicationConnectors:
+    - type: http
+      port: 0
+  adminConnectors:
+    - type: http
+      port: 0
+
+# Logging settings.
+logging:
+  level: INFO
+  appenders:
+    - type: console
+    - type: file
+      currentLogFilename: './logs/application.log'
+      archivedLogFilenamePattern: './logs/application-%d-%i.log.gz'
+      archive: true
+      archivedFileCount: 7
+      maxFileSize: '1MiB'
+
