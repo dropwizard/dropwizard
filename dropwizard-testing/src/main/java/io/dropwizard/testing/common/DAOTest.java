@@ -27,8 +27,8 @@ public class DAOTest {
         private boolean showSql = false;
         private boolean useSqlComments = false;
         private boolean bootstrapLogging = true;
-        private Set<Class<?>> entityClasses = new LinkedHashSet<>();
-        private Map<String, String> properties = new HashMap<>();
+        private final Set<Class<?>> entityClasses = new LinkedHashSet<>();
+        private final Map<String, String> properties = new HashMap<>();
         private Consumer<Configuration> configurationCustomizer = c -> {
         };
 
@@ -42,8 +42,18 @@ public class DAOTest {
             return (B) this;
         }
 
+        public B setPassword(String password) {
+            this.password = password;
+            return (B) this;
+        }
+
         public B setDriver(Class<? extends java.sql.Driver> driver) {
             this.driver = driver.getName();
+            return (B) this;
+        }
+
+        public B setDriver(String driver) {
+            this.driver = driver;
             return (B) this;
         }
 
