@@ -746,7 +746,7 @@ record runtime information about your tasks. Here's a basic task class:
         }
 
         @Override
-        public void execute(ImmutableMultimap<String, String> parameters, PrintWriter output) throws Exception {
+        public void execute(Map<String,List<String>> parameters, PrintWriter output) throws Exception {
             this.database.truncate();
         }
     }
