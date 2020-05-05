@@ -260,3 +260,19 @@ if inclusive is false:
 
    messageRate must be less than 1 MINUTES
 
+Task execute method
+-------------------
+The ``parameters`` argument of the ``Task.execute`` method has a slightly different ``Map`` type.
+Classes extending the abstract class ``Task`` should therefore change
+
+.. code:: java
+
+        @Override
+        public void execute(ImmutableMultimap<String, String> parameters, PrintWriter output) throws Exception {
+        
+into
+
+.. code:: java
+
+        @Override
+        public void execute(Map<String,List<String>> parameters, PrintWriter output) throws Exception {
