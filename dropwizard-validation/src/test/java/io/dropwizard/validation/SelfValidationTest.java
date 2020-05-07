@@ -324,7 +324,7 @@ public class SelfValidationTest {
     @Test
     public void violationMessagesAreInterpolatedIfEscapingDisabled() {
         assertThat(ConstraintViolations.format(validator.validate(new EscapingDisabledExample()))).containsExactly(
-                " A2",
+                " $\\A{1+1}",
                 " TEST",
                 " value",
                 "${'property'} value",
