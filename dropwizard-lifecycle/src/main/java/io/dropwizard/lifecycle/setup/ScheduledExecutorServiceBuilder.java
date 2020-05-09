@@ -39,8 +39,9 @@ public class ScheduledExecutorServiceBuilder {
     }
 
     private static ThreadFactory buildThreadFactory(String nameFormat, boolean daemon) {
+        ThreadFactory defaultThreadFactory = Executors.defaultThreadFactory();
         return r -> {
-            final Thread thread = Executors.defaultThreadFactory().newThread(r);
+            final Thread thread = defaultThreadFactory.newThread(r);
             if (nameFormat != null) {
                 thread.setName(String.format(Locale.ROOT, nameFormat, COUNT.incrementAndGet()));
             }

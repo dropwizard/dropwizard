@@ -52,9 +52,10 @@ public class ExecutorServiceBuilder {
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
     private static ThreadFactory buildThreadFactory(String nameFormat) {
+        ThreadFactory defaultThreadFactory = Executors.defaultThreadFactory();
         String.format(Locale.ROOT, nameFormat, 0); // Fail fast on invalid name format
         return r -> {
-            final Thread thread = Executors.defaultThreadFactory().newThread(r);
+            final Thread thread = defaultThreadFactory.newThread(r);
             thread.setName(String.format(Locale.ROOT, nameFormat, COUNT.incrementAndGet()));
             return thread;
         };
