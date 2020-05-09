@@ -7,23 +7,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
-import java.util.Locale;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.atomic.AtomicLong;
 
 public class ExecutorServiceBuilder {
     private static Logger log = LoggerFactory.getLogger(ExecutorServiceBuilder.class);
 
-    private static final AtomicLong COUNT = new AtomicLong(0);
     private final LifecycleEnvironment environment;
     @Nonnull
-    private final String nameFormat;
+    private final String namePrefix;
     private int corePoolSize;
     private int maximumPoolSize;
     private boolean allowCoreThreadTimeOut;
@@ -33,9 +29,9 @@ public class ExecutorServiceBuilder {
     private ThreadFactory threadFactory;
     private RejectedExecutionHandler handler;
 
-    public ExecutorServiceBuilder(LifecycleEnvironment environment, String nameFormat, ThreadFactory factory) {
+    public ExecutorServiceBuilder(LifecycleEnvironment environment, String namePrefix, ThreadFactory factory) {
         this.environment = environment;
-        this.nameFormat = nameFormat;
+        this.namePrefix = namePrefix;
         this.corePoolSize = 0;
         this.maximumPoolSize = 1;
         this.allowCoreThreadTimeOut = false;
@@ -46,19 +42,8 @@ public class ExecutorServiceBuilder {
         this.handler = new ThreadPoolExecutor.AbortPolicy();
     }
 
-    public ExecutorServiceBuilder(LifecycleEnvironment environment, String nameFormat) {
-        this(environment, nameFormat, buildThreadFactory(nameFormat));
-    }
-
-    @SuppressWarnings("ResultOfMethodCallIgnored")
-    private static ThreadFactory buildThreadFactory(String nameFormat) {
-        ThreadFactory defaultThreadFactory = Executors.defaultThreadFactory();
-        String.format(Locale.ROOT, nameFormat, 0); // Fail fast on invalid name format
-        return r -> {
-            final Thread thread = defaultThreadFactory.newThread(r);
-            thread.setName(String.format(Locale.ROOT, nameFormat, COUNT.incrementAndGet()));
-            return thread;
-        };
+    public ExecutorServiceBuilder(LifecycleEnvironment environment, String namePrefix) {
+        this(environment, namePrefix, new NamedThreadFactory(namePrefix));
     }
 
     public ExecutorServiceBuilder minThreads(int threads) {
@@ -106,8 +91,7 @@ public class ExecutorServiceBuilder {
             log.warn("Parameter 'maximumPoolSize' is conflicting with unbounded work queues");
         }
 
-        final String nameWithoutFormat = getNameWithoutFormat(nameFormat);
-        final ThreadFactory instrumentedThreadFactory = new InstrumentedThreadFactory(threadFactory, environment.getMetricRegistry(), nameWithoutFormat);
+        final ThreadFactory instrumentedThreadFactory = new InstrumentedThreadFactory(threadFactory, environment.getMetricRegistry(), namePrefix);
         final ThreadPoolExecutor executor = new ThreadPoolExecutor(corePoolSize,
                                                                    maximumPoolSize,
                                                                    keepAliveTime.getQuantity(),
@@ -116,38 +100,8 @@ public class ExecutorServiceBuilder {
                                                                    instrumentedThreadFactory,
                                                                    handler);
         executor.allowCoreThreadTimeOut(allowCoreThreadTimeOut);
-        environment.manage(new ExecutorServiceManager(executor, shutdownTime, nameFormat));
+        environment.manage(new ExecutorServiceManager(executor, shutdownTime, namePrefix));
         return executor;
-    }
-
-    static String getNameWithoutFormat(String nameFormat) {
-        final String name = String.format(Locale.ROOT, nameFormat, 0);
-        return commonPrefixWithoutHyphen(name, nameFormat) + commonSuffix(name, nameFormat);
-    }
-
-    static String commonPrefixWithoutHyphen(String name, String nameFormat) {
-        final int minLength = Math.min(name.length(), nameFormat.length());
-        int diffIndex;
-        for (diffIndex = 0; diffIndex < minLength; diffIndex++) {
-            if (name.charAt(diffIndex) != nameFormat.charAt(diffIndex)) {
-                break;
-            }
-        }
-        if (diffIndex > 0 && name.charAt(diffIndex - 1) == '-') {
-            diffIndex--;
-        }
-        return name.substring(0, diffIndex);
-    }
-
-    static String commonSuffix(String name, String nameFormat) {
-        int nameIndex = name.length();
-        int nameFormatIndex = nameFormat.length();
-        while (--nameIndex >= 0 && --nameFormatIndex >= 0) {
-            if (name.charAt(nameIndex) != nameFormat.charAt(nameFormatIndex)) {
-                break;
-            }
-        }
-        return name.substring(nameIndex + 1);
     }
 
     private boolean isBoundedQueue() {

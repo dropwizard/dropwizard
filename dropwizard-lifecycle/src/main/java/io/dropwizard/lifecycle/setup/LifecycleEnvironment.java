@@ -1,9 +1,13 @@
 package io.dropwizard.lifecycle.setup;
 
+import com.codahale.metrics.InstrumentedExecutorService;
+import com.codahale.metrics.InstrumentedScheduledExecutorService;
 import com.codahale.metrics.MetricRegistry;
+import io.dropwizard.lifecycle.ExecutorServiceManager;
 import io.dropwizard.lifecycle.JettyManaged;
 import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.lifecycle.ServerLifecycleListener;
+import io.dropwizard.util.Duration;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.component.AbstractLifeCycle;
 import org.eclipse.jetty.util.component.ContainerLifeCycle;
@@ -13,6 +17,9 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 
 import static java.util.Objects.requireNonNull;
@@ -62,6 +69,46 @@ public class LifecycleEnvironment {
         return new ExecutorServiceBuilder(this, nameFormat, factory);
     }
 
+    public ExecutorService cachedThreadPoolExecutorService(String namePrefix) {
+        ExecutorService executor = Executors.newCachedThreadPool(new NamedThreadFactory(namePrefix));
+        return manage(new InstrumentedExecutorService(executor, metricRegistry, namePrefix), namePrefix);
+    }
+
+    public ExecutorService fixedThreadPoolExecutorService(int numThreads, String namePrefix) {
+        ExecutorService executor = Executors.newFixedThreadPool(numThreads, new NamedThreadFactory(namePrefix));
+        return manage(new InstrumentedExecutorService(executor, metricRegistry, namePrefix), namePrefix);
+    }
+
+    public ExecutorService singleThreadExecutorService(String namePrefix) {
+        ExecutorService executor = Executors.newSingleThreadExecutor(new NamedThreadFactory(namePrefix));
+        return manage(new InstrumentedExecutorService(executor, metricRegistry, namePrefix), namePrefix);
+    }
+
+    public ScheduledExecutorService scheduledThreadPoolExecutorService(int numThreads, String namePrefix) {
+        ScheduledExecutorService executor = Executors.newScheduledThreadPool(numThreads,
+            new NamedThreadFactory(namePrefix));
+        return manage(new InstrumentedScheduledExecutorService(executor, metricRegistry, namePrefix), namePrefix);
+    }
+
+    public ScheduledExecutorService scheduledThreadPoolExecutorService(int numThreads, String namePrefix,
+                                                                       boolean useDaemonThreads) {
+        ScheduledExecutorService executor = Executors.newScheduledThreadPool(numThreads,
+            new NamedThreadFactory(namePrefix, useDaemonThreads));
+        return manage(new InstrumentedScheduledExecutorService(executor, metricRegistry, namePrefix), namePrefix);
+    }
+
+    public ScheduledExecutorService singleThreadedScheduledExecutorService(String namePrefix) {
+        ScheduledExecutorService executor = Executors
+            .newSingleThreadScheduledExecutor(new NamedThreadFactory(namePrefix));
+        return manage(new InstrumentedScheduledExecutorService(executor, metricRegistry, namePrefix), namePrefix);
+    }
+
+    public ScheduledExecutorService singleThreadedScheduledExecutorService(String namePrefix, boolean useDaemonThreads) {
+        ScheduledExecutorService executor = Executors
+            .newSingleThreadScheduledExecutor(new NamedThreadFactory(namePrefix, useDaemonThreads));
+        return manage(new InstrumentedScheduledExecutorService(executor, metricRegistry, namePrefix), namePrefix);
+    }
+
     public ScheduledExecutorServiceBuilder scheduledExecutorService(String nameFormat) {
         return scheduledExecutorService(nameFormat, false);
     }
@@ -95,6 +142,19 @@ public class LifecycleEnvironment {
         for (LifeCycle.Listener listener : lifecycleListeners) {
             container.addLifeCycleListener(listener);
         }
+    }
+
+    private ExecutorService manage(ExecutorService executor, Duration shutdownTime, String namePrefix) {
+        this.manage(new ExecutorServiceManager(executor, shutdownTime, namePrefix));
+        return executor;
+    }
+
+    private ExecutorService manage(ExecutorService executorService, String namePrefix) {
+        return manage(executorService, Duration.seconds(5), namePrefix);
+    }
+
+    private ScheduledExecutorService manage(ScheduledExecutorService executorService, String namePrefix) {
+        return (ScheduledExecutorService) manage(executorService, Duration.seconds(5), namePrefix);
     }
 
     /**

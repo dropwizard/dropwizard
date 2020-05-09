@@ -74,7 +74,7 @@ public class LifecycleEnvironmentTest {
         final String expectedName = "DropWizard ThreadFactory Test";
         final String expectedNamePattern = expectedName + "-%d";
 
-        final ThreadFactory tfactory = buildThreadFactory(expectedNamePattern);
+        final ThreadFactory tfactory = new NamedThreadFactory(expectedNamePattern);
 
         final ScheduledExecutorService executorService = environment.scheduledExecutorService("DropWizard Service", tfactory).build();
         final Future<Boolean> isFactoryInUse = executorService.submit(() -> Thread.currentThread().getName().startsWith(expectedName));
@@ -87,24 +87,11 @@ public class LifecycleEnvironmentTest {
         final String expectedName = "DropWizard ThreadFactory Test";
         final String expectedNamePattern = expectedName + "-%d";
 
-        final ThreadFactory tfactory = buildThreadFactory(expectedNamePattern);
+        final ThreadFactory tfactory = new NamedThreadFactory(expectedNamePattern);
 
         final ExecutorService executorService = environment.executorService("Dropwizard Service", tfactory).build();
         final Future<Boolean> isFactoryInUse = executorService.submit(() -> Thread.currentThread().getName().startsWith(expectedName));
 
         assertThat(isFactoryInUse.get()).isTrue();
-    }
-
-    private ThreadFactory buildThreadFactory(String expectedNamePattern) {
-        return new ThreadFactory() {
-            final AtomicLong counter = new AtomicLong(0L);
-            @Override
-            public Thread newThread(Runnable r) {
-                final Thread thread = Executors.defaultThreadFactory().newThread(r);
-                thread.setDaemon(false);
-                thread.setName(String.format(expectedNamePattern, counter.incrementAndGet()));
-                return thread;
-            }
-        };
     }
 }
