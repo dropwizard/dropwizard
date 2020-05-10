@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
 
+import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class JsonFormatterTest {
@@ -43,7 +44,7 @@ public class JsonFormatterTest {
     @Test
     public void testPrettyPrintWithLineSeparator() {
         JsonFormatter formatter = new JsonFormatter(objectMapper, true, true);
-        assertThat(formatter.toJson(map)).isEqualTo(String.format("{%n" +
+        assertThatJson(formatter.toJson(map)).isEqualTo(String.format("{%n" +
                 "  \"hobbies\" : [ \"Reading\", \"Biking\", \"Snorkeling\" ],%n" +
                 "  \"name\" : \"Jim\"%n" +
                 "}%n"));
@@ -52,7 +53,7 @@ public class JsonFormatterTest {
     @Test
     public void testPrettyPrintNoLineSeparator() {
         JsonFormatter formatter = new JsonFormatter(objectMapper, true, false);
-        assertThat(formatter.toJson(map)).isEqualTo(String.format("{%n" +
+        assertThatJson(formatter.toJson(map)).isEqualTo(String.format("{%n" +
                 "  \"hobbies\" : [ \"Reading\", \"Biking\", \"Snorkeling\" ],%n" +
                 "  \"name\" : \"Jim\"%n" +
                 "}"));

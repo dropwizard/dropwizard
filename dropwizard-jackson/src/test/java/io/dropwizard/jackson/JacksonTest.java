@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatCode;
 
@@ -44,7 +45,7 @@ public class JacksonTest {
         final Issue1627 pojo = new Issue1627(null, null);
         final String json = "{\"string\":null,\"uuid\":null}";
 
-        assertThat(mapper.writeValueAsString(pojo)).isEqualTo(json);
+        assertThatJson(mapper.writeValueAsString(pojo)).isEqualTo(json);
     }
 
     @Test
