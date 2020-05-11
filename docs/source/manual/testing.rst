@@ -139,7 +139,7 @@ Next, write a test for deserializing a ``Person`` instance from JSON:
         public void deserializesFromJSON() throws Exception {
             final Person person = new Person("Luther Blissett", "lb@example.com");
             assertThat(MAPPER.readValue(fixture("fixtures/person.json"), Person.class))
-                    .isEqualTo(person);
+                    .isEqualToComparingFieldByField(person);
         }
     }
 
@@ -189,7 +189,7 @@ loads a given resource instance in an in-memory Jersey server:
         @Test
         public void testGetPerson() {
             assertThat(resources.target("/person/blah").request().get(Person.class))
-                    .isEqualTo(person);
+                    .isEqualToComparingFieldByField(person);
             verify(dao).fetchPerson("blah");
         }
     }
