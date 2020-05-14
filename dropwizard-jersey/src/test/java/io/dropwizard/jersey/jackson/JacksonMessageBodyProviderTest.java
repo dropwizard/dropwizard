@@ -291,12 +291,8 @@ public class JacksonMessageBodyProviderTest {
             new MultivaluedHashMap<>(),
             entity);
 
-        assertThat(obj)
-                .isInstanceOf(klass);
-
-        Iterator<Example> iterator = ((Iterable<Example>) obj).iterator();
-        assertThat(iterator.next().id).isEqualTo(1);
-        assertThat(iterator.next().id).isEqualTo(2);
+        assertThat(obj).isInstanceOf(klass);
+        assertThat((Iterable<Example>) obj).extracting(item -> item.id).contains(1 , 2);
     }
 
 }

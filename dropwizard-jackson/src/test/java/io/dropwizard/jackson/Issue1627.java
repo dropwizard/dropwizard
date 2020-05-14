@@ -1,10 +1,12 @@
 package io.dropwizard.jackson;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import javax.annotation.Nullable;
 import java.util.UUID;
 
+@JsonPropertyOrder(alphabetic = true) // For deterministic serialization
 public class Issue1627 {
 
     @Nullable
