@@ -8,15 +8,16 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class JsonFormatterTest {
 
-    private final Map<String, Object> map = Maps.of(
+    private final SortedMap<String, Object> map = new TreeMap<>(Maps.of(
             "name", "Jim",
-            "hobbies", Arrays.asList("Reading", "Biking", "Snorkeling"));
+            "hobbies", Arrays.asList("Reading", "Biking", "Snorkeling")));
     private final ObjectMapper objectMapper = Jackson.newObjectMapper();
 
     @Test
