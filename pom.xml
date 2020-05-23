@@ -54,6 +54,7 @@
     <properties>
         <dropwizard.url>http://www.dropwizard.io/${project.version}</dropwizard.url>
 
+        <project.build.outputTimestamp>2011-01-18T18:12:03Z</project.build.outputTimestamp>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
@@ -331,6 +332,7 @@
                         <configuration>
                             <doclint>none</doclint>
                             <quiet>true</quiet>
+                            <notimestamp>true</notimestamp>
                         </configuration>
                         <executions>
                             <execution>
