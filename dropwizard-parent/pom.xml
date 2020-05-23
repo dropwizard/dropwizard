@@ -107,6 +107,7 @@
                         <configuration>
                             <doclint>none</doclint>
                             <quiet>true</quiet>
+                            <notimestamp>true</notimestamp>
                         </configuration>
                         <executions>
                             <execution>
