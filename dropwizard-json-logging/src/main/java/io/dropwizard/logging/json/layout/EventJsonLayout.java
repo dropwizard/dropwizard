@@ -61,6 +61,7 @@ public class EventJsonLayout extends AbstractJsonLayout<ILoggingEvent> {
         final MapBuilder mapBuilder = new MapBuilder(timestampFormatter, customFieldNames, additionalFields, includes.size())
             .addTimestamp("timestamp", isIncluded(EventAttribute.TIMESTAMP), event.getTimeStamp())
             .add("level", isIncluded(EventAttribute.LEVEL), () -> String.valueOf(event.getLevel()))
+            .add("severity", isIncluded(EventAttribute.LEVEL), () -> String.valueOf(event.getLevel()))
             .add("thread", isIncluded(EventAttribute.THREAD_NAME), event::getThreadName)
             .add("marker", isIncluded(EventAttribute.MARKER) && event.getMarker() != null, () -> event.getMarker().getName())
             .add("logger", isIncluded(EventAttribute.LOGGER_NAME), event::getLoggerName)
