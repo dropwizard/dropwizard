@@ -66,7 +66,7 @@
 
         <!-- Test dependencies -->
         <assertj.version>3.16.1</assertj.version>
-        <bcprov-jdk15on.version>1.65</bcprov-jdk15on.version>
+        <bcprov-jdk15on.version>1.65.01</bcprov-jdk15on.version>
         <h2.version>1.4.200</h2.version>
         <hsqldb.version>2.5.0</hsqldb.version>
         <junit.version>4.13</junit.version>
