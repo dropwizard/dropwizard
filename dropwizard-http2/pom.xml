@@ -207,7 +207,7 @@
                 </property>
             </activation>
             <properties>
-                <alpn-boot.version>8.1.0.v20141016</alpn-boot.version>
+                <alpn-boot.version>8.1.13.v20181017</alpn-boot.version>
                 <argLine>
                     "-Xbootclasspath/p:/${user.home}/.m2/repository/org/mortbay/jetty/alpn/alpn-boot/${alpn-boot.version}/alpn-boot-${alpn-boot.version}.jar"
                     -Duser.language=en -Duser.region=US
