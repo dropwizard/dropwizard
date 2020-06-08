@@ -12,9 +12,9 @@ import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(DropwizardExtensionsSupport.class)
-public class DropwizardAppExtensionConfigOverrideTest {
+class DropwizardAppExtensionConfigOverrideTest {
 
-    public static final DropwizardAppExtension<TestConfiguration> EXTENSION =
+    private static final DropwizardAppExtension<TestConfiguration> EXTENSION =
         new DropwizardAppExtension<>(TestApplication.class, resourceFilePath("test-config.yaml"),
             Optional.of("app-rule"),
             config("app-rule", "message", "A new way to say Hooray!"),
@@ -22,7 +22,7 @@ public class DropwizardAppExtensionConfigOverrideTest {
             config("extra", () -> "supplied again"));
 
     @Test
-    public void supportsConfigAttributeOverrides() {
+    void supportsConfigAttributeOverrides() {
         final String content = EXTENSION.client().target("http://localhost:" + EXTENSION.getLocalPort() + "/test")
             .request().get(String.class);
 
@@ -30,7 +30,7 @@ public class DropwizardAppExtensionConfigOverrideTest {
     }
 
     @Test
-    public void supportsSuppliedConfigAttributeOverrides() throws Exception {
+    void supportsSuppliedConfigAttributeOverrides() throws Exception {
         assertThat(System.getProperty("app-rule.extra")).isEqualTo("supplied");
         assertThat(System.getProperty("dw.extra")).isEqualTo("supplied again");
     }

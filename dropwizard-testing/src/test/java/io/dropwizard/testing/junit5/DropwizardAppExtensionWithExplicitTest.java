@@ -18,9 +18,9 @@ import java.util.Collections;
 import java.util.Map;
 
 @ExtendWith(DropwizardExtensionsSupport.class)
-public class DropwizardAppExtensionWithExplicitTest {
+class DropwizardAppExtensionWithExplicitTest {
 
-    public static final DropwizardAppExtension<TestConfiguration> EXTENSION;
+    private static final DropwizardAppExtension<TestConfiguration> EXTENSION;
 
     static {
         // Bit complicated, as we want to avoid using the default http port (8080)
@@ -35,7 +35,7 @@ public class DropwizardAppExtensionWithExplicitTest {
 
 
     @Test
-    public void runWithExplicitConfig() {
+    void runWithExplicitConfig() {
         Map<?, ?> response = EXTENSION.client().target("http://localhost:" + EXTENSION.getLocalPort() + "/test")
                 .request()
                 .get(Map.class);
@@ -54,7 +54,7 @@ public class DropwizardAppExtensionWithExplicitTest {
     public static class TestResource {
         private final String message;
 
-        public TestResource(String m) {
+        TestResource(String m) {
             message = m;
         }
 

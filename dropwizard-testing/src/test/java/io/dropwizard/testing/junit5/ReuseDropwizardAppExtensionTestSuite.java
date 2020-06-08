@@ -11,18 +11,18 @@ import javax.ws.rs.core.MediaType;
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ReuseDropwizardAppExtensionTestSuite {
-    public static final DropwizardAppExtension<TestConfiguration> EXTENSION =
+class ReuseDropwizardAppExtensionTestSuite {
+    static final DropwizardAppExtension<TestConfiguration> EXTENSION =
         new DropwizardAppExtension<>(DropwizardTestApplication.class, resourceFilePath("test-config.yaml"));
 
 }
 
 @ExtendWith(DropwizardExtensionsSupport.class)
 class DropwizardAppExtensionTestSuiteFoo {
-    public static final DropwizardAppExtension<TestConfiguration> EXTENSION = ReuseDropwizardAppExtensionTestSuite.EXTENSION;
+    static final DropwizardAppExtension<TestConfiguration> EXTENSION = ReuseDropwizardAppExtensionTestSuite.EXTENSION;
 
     @Test
-    public void clientHasNotBeenClosed() {
+    void clientHasNotBeenClosed() {
         final String response = EXTENSION.client()
                 .target("http://localhost:" + EXTENSION.getAdminPort() + "/tasks/echo")
                 .request()
@@ -34,10 +34,10 @@ class DropwizardAppExtensionTestSuiteFoo {
 
 @ExtendWith(DropwizardExtensionsSupport.class)
 class DropwizardAppExtensionTestSuiteBar {
-    public static final DropwizardAppExtension<TestConfiguration> EXTENSION = ReuseDropwizardAppExtensionTestSuite.EXTENSION;
+    static final DropwizardAppExtension<TestConfiguration> EXTENSION = ReuseDropwizardAppExtensionTestSuite.EXTENSION;
 
     @Test
-    public void clientHasNotBeenClosed() {
+    void clientHasNotBeenClosed() {
         final String response = EXTENSION.client()
                 .target("http://localhost:" + EXTENSION.getAdminPort() + "/tasks/echo")
                 .request()

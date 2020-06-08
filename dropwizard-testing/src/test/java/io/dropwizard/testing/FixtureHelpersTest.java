@@ -6,14 +6,14 @@ import static io.dropwizard.testing.FixtureHelpers.fixture;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
-public class FixtureHelpersTest {
+class FixtureHelpersTest {
     @Test
-    public void readsTheFileAsAString() {
+    void readsTheFileAsAString() {
         assertThat(fixture("fixtures/fixture.txt")).isEqualTo("YAY FOR ME");
     }
 
     @Test
-    public void throwsIllegalStateExceptionWhenFileDoesNotExist() {
+    void throwsIllegalStateExceptionWhenFileDoesNotExist() {
         assertThatIllegalArgumentException().isThrownBy(() -> fixture("this-does-not-exist.foo"));
     }
 }
