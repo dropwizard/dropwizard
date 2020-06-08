@@ -61,7 +61,7 @@
         <nullaway.version>0.7.8</nullaway.version>
         <slf4j.version>1.7.30</slf4j.version>
         <snakeyaml.version>1.26</snakeyaml.version>
-        <tomcat-jdbc.version>9.0.35</tomcat-jdbc.version>
+        <tomcat-jdbc.version>9.0.36</tomcat-jdbc.version>
         <usertype.core.version>7.0.0.CR1</usertype.core.version>
 
         <!-- Test dependencies -->
