@@ -1,5 +1,7 @@
 package io.dropwizard;
 
+import javax.annotation.Nullable;
+
 /**
  * Class that exposes the Dropwizard version. Fetches the "Implementation-Version"
  * manifest attribute from the jar file.
@@ -20,6 +22,7 @@ public class DropwizardVersion {
      * @return the version of Dropwizard or {@code null}
      * @see Package#getImplementationVersion()
      */
+    @Nullable
     public static String getVersion() {
         Package pkg = DropwizardVersion.class.getPackage();
         return (pkg != null) ? pkg.getImplementationVersion() : null;
