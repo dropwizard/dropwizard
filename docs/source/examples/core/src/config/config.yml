@@ -1,0 +1,12 @@
+messageQueue:
+  host: mq.example.com
+  port: 5673
+mySetting: ${DW_MY_SETTING}
+defaultSetting: ${DW_DEFAULT_SETTING:-default value}
+server:
+  applicationConnectors:
+    - type: https
+      port: 8443
+      keyStorePath: example.keystore
+      keyStorePassword: example
+      validateCerts: false

@@ -1,0 +1,7 @@
+server:
+  applicationConnectors:
+    - type: https
+      port: 8443
+      keyStorePath: example.keystore
+      keyStorePassword: example
+      validateCerts: false
