@@ -65,6 +65,16 @@ import java.util.regex.Pattern;
  *             for details.
  *         </td>
  *     </tr>
+ *     <tr>
+ *         <td>{@code includeStackTrace}</td>
+ *         <td>include stack traces in log messages</td>
+ *         <td>
+ *             Setting {@code includeStackTrace} to {@code false} causes no Throwable's stack trace data to be sent to the syslog daemon.
+ *             By default, stack trace data is sent to syslog daemon.
+ *             See <a href="http://logback.qos.ch/apidocs/ch/qos/logback/classic/net/SyslogAppender.html#setThrowableExcluded(boolean)">the Logback documentation</a>
+ *             for details.
+ *         </td>
+ *     </tr>
  * </table>
  *
  * @see AbstractAppenderFactory
