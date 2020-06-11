@@ -813,7 +813,8 @@ stackTracePrefix             \t                                     The prefix t
 filterFactories              (none)                                 The list of filters to apply to the appender, in order, after
                                                                     the threshold.
 neverBlock                   false                                  Prevent the wrapping asynchronous appender from blocking when its underlying queue is full.
-                                                                    Set to true to disable blocking.
+                                                                    Set to ``true`` to disable blocking.
+includeStackTrace            true                                   Set to ``false`` to disable sending stack traces to the syslog service.
 ============================ =====================================  ==================================================================================================
 
 
