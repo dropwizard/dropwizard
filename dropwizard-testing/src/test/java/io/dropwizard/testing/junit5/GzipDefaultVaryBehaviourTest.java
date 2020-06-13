@@ -15,13 +15,13 @@ import static javax.ws.rs.core.HttpHeaders.VARY;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(DropwizardExtensionsSupport.class)
-public class GzipDefaultVaryBehaviourTest {
+class GzipDefaultVaryBehaviourTest {
 
     private DropwizardAppExtension<TestConfiguration> extension = new DropwizardAppExtension<>(TestApplication.class,
         resourceFilePath("gzip-vary-test-config.yaml"));
 
     @Test
-    public void testDefaultVaryHeader() {
+    void testDefaultVaryHeader() {
         final Response clientResponse = extension.client().target(
             "http://localhost:" + extension.getLocalPort() + "/test").request().header(ACCEPT_ENCODING, "gzip").get();
 

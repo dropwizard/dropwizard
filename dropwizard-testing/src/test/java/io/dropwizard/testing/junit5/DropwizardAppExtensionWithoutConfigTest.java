@@ -17,14 +17,14 @@ import java.util.Collections;
 import java.util.Map;
 
 @ExtendWith(DropwizardExtensionsSupport.class)
-public class DropwizardAppExtensionWithoutConfigTest {
+class DropwizardAppExtensionWithoutConfigTest {
 
-    public static final DropwizardAppExtension<Configuration> EXTENSION = new DropwizardAppExtension<>(TestApplication.class, null,
+    private static final DropwizardAppExtension<Configuration> EXTENSION = new DropwizardAppExtension<>(TestApplication.class, null,
         ConfigOverride.config("server.applicationConnectors[0].port", "0"),
         ConfigOverride.config("server.adminConnectors[0].port", "0"));
 
     @Test
-    public void runWithoutConfigFile() {
+    void runWithoutConfigFile() {
         Map<?, ?> response = EXTENSION.client().target("http://localhost:" + EXTENSION.getLocalPort() + "/test")
             .request()
             .get(Map.class);

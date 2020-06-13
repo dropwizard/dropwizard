@@ -4,7 +4,6 @@ import com.example.helloworld.core.Person;
 import com.example.helloworld.db.PersonDAO;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import io.dropwizard.testing.junit5.ResourceExtension;
-import org.glassfish.jersey.test.grizzly.GrizzlyWebTestContainerFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,10 +13,7 @@ import javax.ws.rs.core.Response;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * Unit tests for {@link PersonResource}.
@@ -27,7 +23,6 @@ public class PersonResourceTest {
     private static final PersonDAO DAO = mock(PersonDAO.class);
     public static final ResourceExtension RULE = ResourceExtension.builder()
             .addResource(new PersonResource(DAO))
-            .setTestContainerFactory(new GrizzlyWebTestContainerFactory())
             .build();
     private Person person;
 

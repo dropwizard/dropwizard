@@ -30,7 +30,7 @@ import java.util.Map;
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class DropwizardTestSupportTest {
+class DropwizardTestSupportTest {
     private static final TestServiceListener<TestConfiguration> TEST_SERVICE_LISTENER = new TestServiceListener<>();
     private static final TestManaged TEST_MANAGED = new TestManaged();
     private static final DropwizardTestSupport<TestConfiguration> TEST_SUPPORT =

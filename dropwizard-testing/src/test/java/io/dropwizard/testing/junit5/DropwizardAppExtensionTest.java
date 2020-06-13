@@ -16,12 +16,12 @@ import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(DropwizardExtensionsSupport.class)
-public class DropwizardAppExtensionTest {
-    public static final DropwizardAppExtension<TestConfiguration> EXTENSION =
+class DropwizardAppExtensionTest {
+    private static final DropwizardAppExtension<TestConfiguration> EXTENSION =
             new DropwizardAppExtension<>(DropwizardTestApplication.class, resourceFilePath("test-config.yaml"));
 
     @Test
-    public void canGetExpectedResourceOverHttp() {
+    void canGetExpectedResourceOverHttp() {
         final String content = ClientBuilder.newClient().target(
                 "http://localhost:" + EXTENSION.getLocalPort() + "/test").request().get(String.class);
 
@@ -29,25 +29,25 @@ public class DropwizardAppExtensionTest {
     }
 
     @Test
-    public void returnsConfiguration() {
+    void returnsConfiguration() {
         final TestConfiguration config = EXTENSION.getConfiguration();
         assertThat(config.getMessage()).isEqualTo("Yes, it's here");
     }
 
     @Test
-    public void returnsApplication() {
+    void returnsApplication() {
         final DropwizardTestApplication application = EXTENSION.getApplication();
         Assertions.assertNotNull(application);
     }
 
     @Test
-    public void returnsEnvironment() {
+    void returnsEnvironment() {
         final Environment environment = EXTENSION.getEnvironment();
         assertThat(environment.getName()).isEqualTo("DropwizardTestApplication");
     }
 
     @Test
-    public void canPerformAdminTask() {
+    void canPerformAdminTask() {
         final String response
                 = EXTENSION.client().target("http://localhost:"
                 + EXTENSION.getAdminPort() + "/tasks/hello?name=test_user")
@@ -58,7 +58,7 @@ public class DropwizardAppExtensionTest {
     }
 
     @Test
-    public void canPerformAdminTaskWithPostBody() {
+    void canPerformAdminTaskWithPostBody() {
         final String response = EXTENSION.client()
                 .target("http://localhost:" + EXTENSION.getAdminPort() + "/tasks/echo")
                 .request()
@@ -68,7 +68,7 @@ public class DropwizardAppExtensionTest {
     }
 
     @Test
-    public void clientUsesJacksonMapperFromEnvironment() {
+    void clientUsesJacksonMapperFromEnvironment() {
         final Optional<String> message = EXTENSION.client()
                 .target("http://localhost:" + EXTENSION.getLocalPort() + "/message")
                 .request()
@@ -79,7 +79,7 @@ public class DropwizardAppExtensionTest {
     }
 
     @Test
-    public void clientSupportsPatchMethod() {
+    void clientSupportsPatchMethod() {
         final String method = EXTENSION.client()
                 .target("http://localhost:" + EXTENSION.getLocalPort() + "/echoPatch")
                 .request()
