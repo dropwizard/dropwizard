@@ -33,7 +33,7 @@ import static java.util.Objects.requireNonNull;
  */
 public class Environment {
     private final String name;
-    private  String version;
+    private final  String version;
     private final MetricRegistry metricRegistry;
     private final HealthCheckRegistry healthCheckRegistry;
 
@@ -60,6 +60,7 @@ public class Environment {
      * @param objectMapper the {@link ObjectMapper} for the application
      */
     public Environment(String name,
+                       String version,
                        ObjectMapper objectMapper,
                        ValidatorFactory validatorFactory,
                        MetricRegistry metricRegistry,
@@ -67,6 +68,7 @@ public class Environment {
                        HealthCheckRegistry healthCheckRegistry,
                        Configuration configuration) {
         this.name = name;
+        this.version=version;
         this.objectMapper = objectMapper;
         this.metricRegistry = metricRegistry;
         this.healthCheckRegistry = healthCheckRegistry;
@@ -120,37 +122,15 @@ public class Environment {
         }
     }
 
-    /**
-     * Creates a new environment.
-     * @param name
-     * @param version
-     * @param objectMapper
-     * @param validatorFactory
-     * @param metricRegistry
-     * @param classLoader
-     * @param healthCheckRegistry
-     * @param configuration
-     */
-    public Environment(String name,
-                       String version,
-                       ObjectMapper objectMapper,
-                       ValidatorFactory validatorFactory,
-                       MetricRegistry metricRegistry,
-                       @Nullable ClassLoader classLoader,
-                       HealthCheckRegistry healthCheckRegistry,
-                       Configuration configuration) {
-        this(name,objectMapper,validatorFactory,metricRegistry,classLoader,healthCheckRegistry,configuration);
-        this.version=version;
 
-    }
     /**
      * Creates an environment with the system classloader, default object mapper, default validator factory,
      * default health check registry, and default configuration for tests.
      *
      * @since 2.0
      */
-    public Environment(String name) {
-        this(name, Jackson.newObjectMapper(), Validators.newValidatorFactory(), new MetricRegistry(), ClassLoader.getSystemClassLoader(), new HealthCheckRegistry(), new Configuration());
+    public Environment(String name,String version) {
+        this(name, version,Jackson.newObjectMapper(), Validators.newValidatorFactory(), new MetricRegistry(), ClassLoader.getSystemClassLoader(), new HealthCheckRegistry(), new Configuration());
     }
 
     /**

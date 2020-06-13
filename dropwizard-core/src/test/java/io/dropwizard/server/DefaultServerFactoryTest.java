@@ -43,7 +43,7 @@ import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class DefaultServerFactoryTest {
-    private Environment environment = new Environment("test");
+    private Environment environment = new Environment("test","V1.0.0");
     private DefaultServerFactory http;
 
     @BeforeEach
@@ -116,7 +116,7 @@ class DefaultServerFactoryTest {
     void doesNotDefaultExceptionMappers() throws Exception {
         http.setRegisterDefaultExceptionMappers(false);
         assertThat(http.getRegisterDefaultExceptionMappers()).isFalse();
-        Environment environment = new Environment("test");
+        Environment environment = new Environment("test","V1.0.0");
         http.build(environment);
         assertThat(environment.jersey().getResourceConfig().getSingletons())
             .filteredOn(x -> x instanceof ExceptionMapperBinder).isEmpty();

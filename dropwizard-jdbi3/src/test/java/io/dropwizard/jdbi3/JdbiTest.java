@@ -33,7 +33,7 @@ class JdbiTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        environment = new Environment("test");
+        environment = new Environment("test","V1.0.0");
         metricRegistry = environment.metrics();
 
         DataSourceFactory dataSourceFactory = new DataSourceFactory();

@@ -71,7 +71,7 @@ public class DropwizardApacheConnectorTest {
         clientConfiguration.setConnectionTimeout(Duration.milliseconds(SLEEP_TIME_IN_MILLIS / 2));
         clientConfiguration.setTimeout(Duration.milliseconds(DEFAULT_CONNECT_TIMEOUT_IN_MILLIS));
 
-        environment = new Environment("test-dropwizard-apache-connector");
+        environment = new Environment("test-dropwizard-apache-connector","V1.0.0");
         client = (JerseyClient) new JerseyClientBuilder(environment)
                 .using(clientConfiguration)
                 .build("test");

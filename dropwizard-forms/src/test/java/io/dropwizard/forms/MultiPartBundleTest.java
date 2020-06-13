@@ -15,7 +15,7 @@ class MultiPartBundleTest {
 
     @Test
     void testRun() {
-        final Environment environment = new Environment("multipart-test");
+        final Environment environment = new Environment("multipart-test","V1.0.0");
 
         new MultiPartBundle().run(new Configuration(), environment);
 

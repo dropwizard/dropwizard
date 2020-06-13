@@ -30,7 +30,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class ExceptionMapperBinderTest {
     private SimpleServerFactory http;
-    private Environment environment = new Environment("testEnvironment");
+    private Environment environment = new Environment("testEnvironment","V1.0.0");
 
     @BeforeEach
     public void setUp() throws Exception {
