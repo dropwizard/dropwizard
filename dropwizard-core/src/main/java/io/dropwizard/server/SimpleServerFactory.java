@@ -103,7 +103,7 @@ public class SimpleServerFactory extends AbstractServerFactory {
         // ensures that the environment is configured before the server is built
         configure(environment);
 
-        printBanner(environment.getName());
+        printBanner(environment.getName(),environment.getVersion());
         final ThreadPool threadPool = createThreadPool(environment.metrics());
         final Server server = buildServer(environment.lifecycle(), threadPool);
 

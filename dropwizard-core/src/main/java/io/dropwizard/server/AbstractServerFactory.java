@@ -701,8 +701,8 @@ public abstract class AbstractServerFactory implements ServerFactory {
         return gzip.isEnabled() ? gzip.build(handler) : handler;
     }
 
-    protected void printBanner(String name) {
-        String msg = "Starting " + name;
+    protected void printBanner(String name,String version) {
+        String msg = "Starting " + name+" Version "+version;
         final URL resource = Thread.currentThread().getContextClassLoader().getResource("banner.txt");
         if (resource != null) {
             try (final InputStream resourceStream = resource.openStream();

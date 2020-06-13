@@ -33,6 +33,7 @@ import static java.util.Objects.requireNonNull;
  */
 public class Environment {
     private final String name;
+    private  String version;
     private final MetricRegistry metricRegistry;
     private final HealthCheckRegistry healthCheckRegistry;
 
@@ -120,6 +121,29 @@ public class Environment {
     }
 
     /**
+     * Creates a new environment.
+     * @param name
+     * @param version
+     * @param objectMapper
+     * @param validatorFactory
+     * @param metricRegistry
+     * @param classLoader
+     * @param healthCheckRegistry
+     * @param configuration
+     */
+    public Environment(String name,
+                       String version,
+                       ObjectMapper objectMapper,
+                       ValidatorFactory validatorFactory,
+                       MetricRegistry metricRegistry,
+                       @Nullable ClassLoader classLoader,
+                       HealthCheckRegistry healthCheckRegistry,
+                       Configuration configuration) {
+        this(name,objectMapper,validatorFactory,metricRegistry,classLoader,healthCheckRegistry,configuration);
+        this.version=version;
+
+    }
+    /**
      * Creates an environment with the system classloader, default object mapper, default validator factory,
      * default health check registry, and default configuration for tests.
      *
@@ -176,6 +200,14 @@ public class Environment {
      */
     public String getName() {
         return name;
+    }
+
+    /**
+     *
+     * Returns the application's version.
+     */
+    public String getVersion() {
+        return version;
     }
 
     /**

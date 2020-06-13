@@ -10,6 +10,8 @@ import io.dropwizard.setup.Environment;
 import io.dropwizard.util.Generics;
 import io.dropwizard.util.JarLocation;
 
+import java.util.Optional;
+
 /**
  * The base class for Dropwizard applications.
  *
@@ -56,6 +58,18 @@ public abstract class Application<T extends Configuration> {
     public String getName() {
         return getClass().getSimpleName();
     }
+
+
+    /**
+     * Returns the version of the application.
+     *
+     * @return the application's version
+     */
+    public String getVersion() {
+
+        return Optional.ofNullable(getClass().getPackage()).map(Package::getImplementationVersion).orElse("NO Version");
+    }
+
 
     /**
      * Initializes the application bootstrap.

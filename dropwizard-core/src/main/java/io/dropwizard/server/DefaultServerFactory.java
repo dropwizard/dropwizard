@@ -152,7 +152,7 @@ public class DefaultServerFactory extends AbstractServerFactory {
 
     @Override
     public Server build(Environment environment) {
-        printBanner(environment.getName());
+        printBanner(environment.getName(),environment.getVersion());
         final ThreadPool threadPool = createThreadPool(environment.metrics());
         final Server server = buildServer(environment.lifecycle(), threadPool);
         final Handler applicationHandler = createAppServlet(server,
