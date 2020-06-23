@@ -23,7 +23,6 @@
         <maven.compiler.showWarnings>true</maven.compiler.showWarnings>
         <maven.compiler.showDeprecation>true</maven.compiler.showDeprecation>
         <maven.compiler.optimize>false</maven.compiler.optimize>
-        <maven.compiler.forceJavacCompilerUse>true</maven.compiler.forceJavacCompilerUse>
 
         <pgpverify.keyserver>hkps://hkps.pool.sks-keyservers.net;hkps://keyserver.ubuntu.com</pgpverify.keyserver>
 
@@ -202,9 +201,13 @@
                         <artifactId>maven-compiler-plugin</artifactId>
                         <configuration>
                             <debug>true</debug>
-                            <compilerId>javac-with-errorprone</compilerId>
                             <fork>true</fork>
                             <annotationProcessorPaths>
+                                <path>
+                                    <groupId>com.google.errorprone</groupId>
+                                    <artifactId>error_prone_core</artifactId>
+                                    <version>${error_prone.version}</version>
+                                </path>
                                 <!-- enable extended nullability checks -->
                                 <path>
                                     <groupId>com.uber.nullaway</groupId>
@@ -213,27 +216,11 @@
                                 </path>
                             </annotationProcessorPaths>
                             <compilerArgs>
-                                <arg>-XepDisableWarningsInGeneratedCode</arg>
-                                <!-- Disable EqualsGetClass. Further discussion: https://github.com/dropwizard/dropwizard/pull/2647 -->
-                                <arg>-Xep:EqualsGetClass:OFF</arg>
-                                <arg>-Xep:NullAway:ERROR</arg>
-                                <arg>-XepOpt:NullAway:AnnotatedPackages=io.dropwizard</arg>
-                                <arg>-XepOpt:NullAway:ExcludedFieldAnnotations=org.mockito.Mock</arg>
-                                <arg>-XepOpt:NullAway:UnannotatedSubPackages=io.dropwizard.benchmarks</arg>
+                                <arg>-J-Xbootclasspath/p:${settings.localRepository}/com/google/errorprone/javac/${error_prone.javac.version}/javac-${error_prone.javac.version}.jar</arg>
+                                <arg>-XDcompilePolicy=simple</arg>
+                                <arg>-Xplugin:ErrorProne -XepDisableWarningsInGeneratedCode -Xep:EqualsGetClass:OFF -Xep:NullAway:ERROR -XepOpt:NullAway:AnnotatedPackages=io.dropwizard -XepOpt:NullAway:ExcludedFieldAnnotations=org.mockito.Mock -XepOpt:NullAway:UnannotatedSubPackages=io.dropwizard.benchmarks</arg>
                             </compilerArgs>
                         </configuration>
-                        <dependencies>
-                            <dependency>
-                                <groupId>org.codehaus.plexus</groupId>
-                                <artifactId>plexus-compiler-javac-errorprone</artifactId>
-                                <version>${plexus-compiler-javac-errorprone.version}</version>
-                            </dependency>
-                            <dependency>
-                                <groupId>com.google.errorprone</groupId>
-                                <artifactId>error_prone_core</artifactId>
-                                <version>${error_prone.version}</version>
-                            </dependency>
-                        </dependencies>
                     </plugin>
                 </plugins>
             </build>
