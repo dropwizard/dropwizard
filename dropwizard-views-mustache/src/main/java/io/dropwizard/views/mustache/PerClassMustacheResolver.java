@@ -3,7 +3,7 @@ package io.dropwizard.views.mustache;
 import com.github.mustachejava.MustacheResolver;
 import io.dropwizard.views.View;
 
-import javax.annotation.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
