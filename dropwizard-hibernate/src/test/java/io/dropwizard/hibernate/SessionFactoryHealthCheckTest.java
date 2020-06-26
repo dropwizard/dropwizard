@@ -9,7 +9,7 @@ import org.hibernate.query.NativeQuery;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 
-import javax.annotation.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;

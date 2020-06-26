@@ -11,7 +11,7 @@ import io.dropwizard.setup.Environment;
 import io.dropwizard.util.Duration;
 import org.hibernate.SessionFactory;
 
-import javax.annotation.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
