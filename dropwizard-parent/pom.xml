@@ -260,6 +260,8 @@
                                         <exclude>log4j:log4j</exclude>
                                         <!-- As recommended from the slf4j guide, exclude commons-logging -->
                                         <exclude>commons-logging:commons-logging</exclude>
+                                        <!-- Replaced with com.github.spotbugs:spotbugs-annotations -->
+                                        <exclude>com.google.code.findbugs:jsr305</exclude>
                                     </excludes>
                                 </bannedDependencies>
                             </rules>
