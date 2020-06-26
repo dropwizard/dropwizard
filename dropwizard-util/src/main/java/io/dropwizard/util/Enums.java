@@ -1,6 +1,6 @@
 package io.dropwizard.util;
 
-import javax.annotation.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
  * Helper methods for enum types.
