@@ -4,7 +4,7 @@ import ch.qos.logback.access.pattern.AccessConverter;
 import ch.qos.logback.access.spi.IAccessEvent;
 import ch.qos.logback.core.util.OptionHelper;
 
-import javax.annotation.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import java.util.Arrays;
 
 /**
