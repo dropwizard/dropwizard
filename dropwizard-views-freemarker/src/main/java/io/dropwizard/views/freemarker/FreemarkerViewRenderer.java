@@ -12,7 +12,7 @@ import io.dropwizard.views.View;
 import io.dropwizard.views.ViewRenderException;
 import io.dropwizard.views.ViewRenderer;
 
-import javax.annotation.Nonnull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -39,7 +39,7 @@ public class FreemarkerViewRenderer implements ViewRenderer {
         }
 
         @Override
-        public Configuration load(@Nonnull Class<?> key) throws Exception {
+        public Configuration load(@NonNull Class<?> key) throws Exception {
             final Configuration configuration = new Configuration(incompatibleImprovementsVersion);
             configuration.setObjectWrapper(new DefaultObjectWrapperBuilder(incompatibleImprovementsVersion).build());
             configuration.loadBuiltInEncodingMap();
