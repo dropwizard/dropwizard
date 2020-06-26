@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import io.dropwizard.util.Strings;
 import org.apache.commons.text.similarity.LevenshteinDistance;
 
-import javax.annotation.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;

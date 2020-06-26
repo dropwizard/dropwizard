@@ -1,6 +1,6 @@
 package io.dropwizard.configuration;
 
-import javax.annotation.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javax.validation.Validator;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
