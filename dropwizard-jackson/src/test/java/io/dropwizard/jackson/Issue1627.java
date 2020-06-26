@@ -3,7 +3,7 @@ package io.dropwizard.jackson;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
-import javax.annotation.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import java.util.UUID;
 
 @JsonPropertyOrder(alphabetic = true) // For deterministic serialization
