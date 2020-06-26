@@ -17,7 +17,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TimeZone;
-import javax.annotation.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
  * <table>

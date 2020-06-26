@@ -3,7 +3,7 @@ package io.dropwizard.logging.json.layout;
 import ch.qos.logback.access.spi.IAccessEvent;
 import io.dropwizard.logging.json.AccessAttribute;
 
-import javax.annotation.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;

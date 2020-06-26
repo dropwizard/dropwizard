@@ -1,6 +1,6 @@
 package io.dropwizard.logging.json.layout;
 
-import javax.annotation.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;

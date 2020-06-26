@@ -7,7 +7,7 @@ import io.dropwizard.logging.json.layout.JsonFormatter;
 import io.dropwizard.logging.json.layout.TimestampFormatter;
 import io.dropwizard.logging.layout.DiscoverableLayoutFactory;
 
-import javax.annotation.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javax.validation.constraints.NotNull;
 import java.util.Collections;
 import java.util.Map;

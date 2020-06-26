@@ -4,7 +4,7 @@ import ch.qos.logback.classic.pattern.ThrowableHandlingConverter;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import io.dropwizard.logging.json.EventAttribute;
 
-import javax.annotation.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;

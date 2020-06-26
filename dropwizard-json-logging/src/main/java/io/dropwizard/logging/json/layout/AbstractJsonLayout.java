@@ -2,7 +2,7 @@ package io.dropwizard.logging.json.layout;
 
 import ch.qos.logback.core.LayoutBase;
 
-import javax.annotation.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import java.util.Map;
 
 /**
