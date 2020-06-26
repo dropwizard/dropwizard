@@ -17,7 +17,7 @@ import io.dropwizard.jetty.setup.ServletEnvironment;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import io.dropwizard.validation.InjectValidatorFeature;
 
-import javax.annotation.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javax.servlet.Servlet;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;

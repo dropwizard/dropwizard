@@ -23,7 +23,7 @@ import io.dropwizard.configuration.FileConfigurationSourceProvider;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.validation.Validators;
 
-import javax.annotation.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javax.validation.ValidatorFactory;
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
