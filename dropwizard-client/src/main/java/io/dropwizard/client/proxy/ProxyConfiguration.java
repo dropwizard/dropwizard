@@ -5,7 +5,7 @@ import io.dropwizard.validation.OneOf;
 import io.dropwizard.validation.PortRange;
 import javax.validation.constraints.NotEmpty;
 
-import javax.annotation.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;

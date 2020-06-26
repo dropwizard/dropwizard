@@ -20,7 +20,7 @@ import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.spi.ConnectorProvider;
 
-import javax.annotation.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javax.net.ssl.HostnameVerifier;
 import javax.validation.Validator;
 import javax.ws.rs.client.Client;

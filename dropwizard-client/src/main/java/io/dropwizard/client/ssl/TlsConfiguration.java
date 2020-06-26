@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.util.Strings;
 import io.dropwizard.validation.ValidationMethod;
 
-import javax.annotation.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javax.validation.constraints.NotEmpty;
 import java.io.File;
 import java.util.List;

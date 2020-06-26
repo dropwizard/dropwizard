@@ -20,7 +20,7 @@ import org.glassfish.jersey.client.spi.AsyncConnectorCallback;
 import org.glassfish.jersey.client.spi.Connector;
 import org.glassfish.jersey.message.internal.Statuses;
 
-import javax.annotation.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.core.Response;
 import java.io.ByteArrayInputStream;
