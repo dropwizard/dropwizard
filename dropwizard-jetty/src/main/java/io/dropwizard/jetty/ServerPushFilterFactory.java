@@ -6,7 +6,7 @@ import io.dropwizard.validation.MinDuration;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlets.PushCacheFilter;
 
-import javax.annotation.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javax.servlet.DispatcherType;
 import javax.validation.constraints.Min;
 import java.util.EnumSet;

@@ -22,7 +22,7 @@ import org.eclipse.jetty.util.thread.ThreadPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javax.net.ssl.SSLEngine;
 import javax.validation.constraints.NotEmpty;
 import java.io.File;
