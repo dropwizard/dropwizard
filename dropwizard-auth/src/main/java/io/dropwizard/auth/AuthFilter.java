@@ -3,7 +3,7 @@ package io.dropwizard.auth;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javax.annotation.Priority;
 import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.Priorities;

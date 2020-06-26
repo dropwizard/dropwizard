@@ -1,6 +1,6 @@
 package io.dropwizard.auth;
 
-import javax.annotation.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javax.ws.rs.container.ContainerRequestContext;
 import java.security.Principal;
 

@@ -3,7 +3,7 @@ package io.dropwizard.auth;
 import java.security.Principal;
 import java.util.Objects;
 
-import javax.annotation.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javax.ws.rs.container.ContainerRequestContext;
 
 class AuthorizationContext<P extends Principal> {

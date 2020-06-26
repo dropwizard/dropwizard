@@ -10,7 +10,7 @@ import com.github.benmanes.caffeine.cache.stats.CacheStats;
 import com.google.common.annotations.VisibleForTesting;
 import io.dropwizard.util.Sets;
 
-import javax.annotation.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javax.ws.rs.container.ContainerRequestContext;
 import java.security.Principal;
 import java.util.Objects;

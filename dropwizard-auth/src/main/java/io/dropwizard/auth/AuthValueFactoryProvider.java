@@ -7,7 +7,7 @@ import org.glassfish.jersey.server.internal.inject.MultivaluedParameterExtractor
 import org.glassfish.jersey.server.model.Parameter;
 import org.glassfish.jersey.server.spi.internal.ValueParamProvider;
 
-import javax.annotation.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.lang.reflect.ParameterizedType;
