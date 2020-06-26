@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 
-import javax.annotation.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javax.net.SocketFactory;
 import javax.validation.constraints.NotEmpty;
 import java.io.IOException;

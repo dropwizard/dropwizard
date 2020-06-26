@@ -20,7 +20,7 @@ import io.dropwizard.util.Duration;
 import io.dropwizard.validation.MaxDuration;
 import io.dropwizard.validation.MinDuration;
 
-import javax.annotation.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;

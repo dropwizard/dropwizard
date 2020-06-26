@@ -28,7 +28,7 @@ import io.dropwizard.logging.layout.DropwizardLayoutFactory;
 import io.dropwizard.logging.layout.LayoutFactory;
 import io.dropwizard.util.Lists;
 
-import javax.annotation.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javax.management.InstanceAlreadyExistsException;
 import javax.management.MBeanRegistrationException;
 import javax.management.MBeanServer;

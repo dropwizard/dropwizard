@@ -19,7 +19,7 @@ import io.dropwizard.util.DataSize;
 import io.dropwizard.validation.MinDataSize;
 import io.dropwizard.validation.ValidationMethod;
 
-import javax.annotation.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javax.validation.constraints.Min;
 
 import static java.util.Objects.requireNonNull;

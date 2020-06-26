@@ -9,7 +9,7 @@ import ch.qos.logback.core.Layout;
 import ch.qos.logback.core.encoder.LayoutWrappingEncoder;
 import io.dropwizard.logging.layout.DiscoverableLayoutFactory;
 
-import javax.annotation.concurrent.GuardedBy;
+import net.jcip.annotations.GuardedBy;
 import java.util.TimeZone;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;

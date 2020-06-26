@@ -5,7 +5,7 @@ import io.dropwizard.util.Strings;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import javax.annotation.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.util.Arrays;
