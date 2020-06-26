@@ -9,7 +9,7 @@ import io.dropwizard.validation.ValidationMethod;
 import org.apache.tomcat.jdbc.pool.PoolProperties;
 import javax.validation.constraints.NotEmpty;
 
-import javax.annotation.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
