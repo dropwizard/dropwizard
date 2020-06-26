@@ -15,7 +15,7 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.thread.ScheduledExecutorScheduler;
 import org.eclipse.jetty.util.thread.ThreadPool;
 
-import javax.annotation.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 

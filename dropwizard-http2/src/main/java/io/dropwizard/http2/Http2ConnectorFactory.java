@@ -18,7 +18,7 @@ import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.util.thread.ScheduledExecutorScheduler;
 import org.eclipse.jetty.util.thread.ThreadPool;
 
-import javax.annotation.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import java.util.Collections;

@@ -21,18 +21,42 @@
         <dependency>
             <groupId>io.dropwizard</groupId>
             <artifactId>dropwizard-core</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.code.findbugs</groupId>
+                    <artifactId>jsr305</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>io.dropwizard</groupId>
             <artifactId>dropwizard-jersey</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.code.findbugs</groupId>
+                    <artifactId>jsr305</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>io.dropwizard</groupId>
             <artifactId>dropwizard-jetty</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.code.findbugs</groupId>
+                    <artifactId>jsr305</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>io.dropwizard</groupId>
             <artifactId>dropwizard-logging</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.code.findbugs</groupId>
+                    <artifactId>jsr305</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>io.dropwizard.metrics</groupId>
@@ -48,8 +72,8 @@
             <artifactId>jackson-annotations</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.google.code.findbugs</groupId>
-            <artifactId>jsr305</artifactId>
+            <groupId>com.github.spotbugs</groupId>
+            <artifactId>spotbugs-annotations</artifactId>
         </dependency>
         <!-- Added to match exclusion from jetty-server -->
         <dependency>
@@ -144,6 +168,12 @@
             <groupId>io.dropwizard</groupId>
             <artifactId>dropwizard-testing</artifactId>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.code.findbugs</groupId>
+                    <artifactId>jsr305</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
