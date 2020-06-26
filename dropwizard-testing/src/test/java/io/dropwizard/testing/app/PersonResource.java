@@ -5,7 +5,7 @@ import io.dropwizard.jersey.params.IntParam;
 import io.dropwizard.validation.Validated;
 import org.eclipse.jetty.io.EofException;
 
-import javax.annotation.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.groups.Default;
