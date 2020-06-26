@@ -6,7 +6,7 @@ import io.dropwizard.util.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import java.util.Locale;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
@@ -22,7 +22,7 @@ public class ExecutorServiceBuilder {
 
     private static final AtomicLong COUNT = new AtomicLong(0);
     private final LifecycleEnvironment environment;
-    @Nonnull
+    @NonNull
     private final String nameFormat;
     private int corePoolSize;
     private int maximumPoolSize;
