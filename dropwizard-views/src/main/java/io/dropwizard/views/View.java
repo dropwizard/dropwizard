@@ -2,7 +2,7 @@ package io.dropwizard.views;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import javax.annotation.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import java.nio.charset.Charset;
 import java.util.Optional;
 
