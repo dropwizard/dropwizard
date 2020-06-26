@@ -4,7 +4,7 @@ import com.google.common.base.Optional;
 import io.dropwizard.jersey.optional.EmptyOptionalException;
 import org.glassfish.jersey.message.MessageBodyWorkers;
 
-import javax.annotation.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javax.inject.Inject;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;

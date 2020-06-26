@@ -2,7 +2,7 @@ package io.dropwizard.jersey.errors;
 
 import org.glassfish.jersey.message.MessageBodyWorkers;
 
-import javax.annotation.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;

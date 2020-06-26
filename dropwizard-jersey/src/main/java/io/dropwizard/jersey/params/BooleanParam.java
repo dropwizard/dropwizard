@@ -1,6 +1,6 @@
 package io.dropwizard.jersey.params;
 
-import javax.annotation.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
  * A parameter encapsulating boolean values. If the query parameter value is {@code "true"},

@@ -2,7 +2,7 @@ package io.dropwizard.jersey.optional;
 
 import io.dropwizard.jersey.DefaultValueUtils;
 
-import javax.annotation.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javax.inject.Singleton;
 import javax.ws.rs.ext.ParamConverter;
 import javax.ws.rs.ext.ParamConverterProvider;

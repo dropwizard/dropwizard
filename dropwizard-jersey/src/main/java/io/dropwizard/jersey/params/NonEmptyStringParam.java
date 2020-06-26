@@ -3,7 +3,7 @@ package io.dropwizard.jersey.params;
 
 import io.dropwizard.util.Strings;
 
-import javax.annotation.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import java.util.Optional;
 
 /**

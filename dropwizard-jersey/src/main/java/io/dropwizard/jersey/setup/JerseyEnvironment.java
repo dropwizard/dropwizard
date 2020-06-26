@@ -3,7 +3,7 @@ package io.dropwizard.jersey.setup;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import org.glassfish.jersey.server.ResourceConfig;
 
-import javax.annotation.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javax.servlet.Servlet;
 import java.util.function.Function;
 

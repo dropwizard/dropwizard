@@ -2,7 +2,7 @@ package io.dropwizard.jersey.validation;
 
 import org.glassfish.jersey.internal.util.ReflectionHelper;
 
-import javax.annotation.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javax.ws.rs.ext.ParamConverter;
 import javax.ws.rs.ext.ParamConverterProvider;
 import javax.ws.rs.ext.Provider;

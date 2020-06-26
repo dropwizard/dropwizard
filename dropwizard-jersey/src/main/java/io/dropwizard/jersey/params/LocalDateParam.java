@@ -2,7 +2,7 @@ package io.dropwizard.jersey.params;
 
 import org.joda.time.LocalDate;
 
-import javax.annotation.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
  * A parameter encapsulating local date values. All non-parsable values will return a {@code 400 Bad

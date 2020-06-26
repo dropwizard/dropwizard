@@ -1,6 +1,6 @@
 package io.dropwizard.jersey.params;
 
-import javax.annotation.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import java.util.UUID;
 
 /**

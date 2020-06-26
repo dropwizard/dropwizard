@@ -1,6 +1,6 @@
 package io.dropwizard.jersey.setup;
 
-import javax.annotation.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javax.servlet.Servlet;
 
 public class JerseyContainerHolder {
