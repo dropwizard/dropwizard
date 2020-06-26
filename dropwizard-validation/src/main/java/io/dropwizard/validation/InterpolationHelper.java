@@ -6,7 +6,7 @@
  */
 package io.dropwizard.validation;
 
-import javax.annotation.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

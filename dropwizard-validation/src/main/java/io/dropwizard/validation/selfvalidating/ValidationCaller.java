@@ -1,6 +1,6 @@
 package io.dropwizard.validation.selfvalidating;
 
-import javax.annotation.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
  * This class represents a wrapper for calling validation methods annotated with <code>@SelfValidation</code>.
