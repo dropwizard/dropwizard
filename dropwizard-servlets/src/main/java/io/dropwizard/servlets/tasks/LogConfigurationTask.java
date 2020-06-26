@@ -6,8 +6,8 @@ import ch.qos.logback.classic.LoggerContext;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import java.io.PrintWriter;
 import java.time.Duration;
 import java.util.Collections;
@@ -114,7 +114,7 @@ public class LogConfigurationTask extends Task {
     /**
      * Lazy create the timer to avoid unnecessary thread creation unless an expirable log configuration task is submitted
      */
-    @Nonnull
+    @NonNull
     private Timer getTimer() {
         return timerReference.updateAndGet(timer -> timer == null ? new Timer(LogConfigurationTask.class.getSimpleName(), true) : timer);
     }

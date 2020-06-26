@@ -2,7 +2,7 @@ package io.dropwizard.servlets.assets;
 
 import io.dropwizard.util.Resources;
 
-import javax.annotation.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;

@@ -1,6 +1,6 @@
 package io.dropwizard.servlets.tasks;
 
-import javax.annotation.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import java.io.PrintWriter;
 import java.util.List;
 import java.util.Map;

@@ -2,7 +2,7 @@ package io.dropwizard.servlets.assets;
 
 import io.dropwizard.util.Strings;
 
-import javax.annotation.concurrent.Immutable;
+import net.jcip.annotations.Immutable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
