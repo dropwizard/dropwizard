@@ -10,7 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MarkerFactory;
 
-import javax.annotation.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
  * A {@link ReporterFactory} for {@link Slf4jReporter} instances.

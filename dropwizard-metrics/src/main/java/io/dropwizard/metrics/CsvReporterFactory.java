@@ -6,7 +6,7 @@ import com.codahale.metrics.ScheduledReporter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
-import javax.annotation.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import java.io.File;
 
 import static java.util.Objects.requireNonNull;
