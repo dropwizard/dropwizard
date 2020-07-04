@@ -3,6 +3,7 @@ package io.dropwizard.auth;
 import com.codahale.metrics.Meter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
+import com.codahale.metrics.caffeine.MetricsStatsCounter;
 import com.github.benmanes.caffeine.cache.CacheLoader;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.CaffeineSpec;
@@ -87,7 +88,9 @@ public class CachingAuthenticator<C, P extends Principal> implements Authenticat
                 return optPrincipal;
             };
         }
-        this.cache = builder.recordStats().build(loader);
+        this.cache = builder
+                .recordStats(() -> new MetricsStatsCounter(metricRegistry, name(CachingAuthenticator.class)))
+                .build(loader);
     }
 
     @Override
