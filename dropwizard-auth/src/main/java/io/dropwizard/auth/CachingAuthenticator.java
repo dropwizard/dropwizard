@@ -3,6 +3,7 @@ package io.dropwizard.auth;
 import com.codahale.metrics.Meter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
+import com.codahale.metrics.caffeine.MetricsStatsCounter;
 import com.github.benmanes.caffeine.cache.CacheLoader;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.CaffeineSpec;
@@ -55,15 +56,17 @@ public class CachingAuthenticator<C, P extends Principal> implements Authenticat
                                 final Caffeine<Object, Object> builder) {
         this.cacheMisses = metricRegistry.meter(name(authenticator.getClass(), "cache-misses"));
         this.gets = metricRegistry.timer(name(authenticator.getClass(), "gets"));
-        this.cache = builder.recordStats().build(key -> {
-            cacheMisses.mark();
-            final Optional<P> optPrincipal = authenticator.authenticate(key);
-            if (!optPrincipal.isPresent()) {
-                // Prevent caching of unknown credentials
-                throw new InvalidCredentialsException();
-            }
-            return optPrincipal;
-        });
+        this.cache = builder
+                .recordStats(() -> new MetricsStatsCounter(metricRegistry, name(CachingAuthenticator.class)))
+                .build(key -> {
+                    cacheMisses.mark();
+                    final Optional<P> optPrincipal = authenticator.authenticate(key);
+                    if (!optPrincipal.isPresent()) {
+                        // Prevent caching of unknown credentials
+                        throw new InvalidCredentialsException();
+                    }
+                    return optPrincipal;
+                });
     }
 
     @Override

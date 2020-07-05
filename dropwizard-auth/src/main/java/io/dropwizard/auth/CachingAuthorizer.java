@@ -3,6 +3,7 @@ package io.dropwizard.auth;
 import com.codahale.metrics.Meter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
+import com.codahale.metrics.caffeine.MetricsStatsCounter;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.CaffeineSpec;
 import com.github.benmanes.caffeine.cache.LoadingCache;
@@ -13,7 +14,6 @@ import io.dropwizard.util.Sets;
 import javax.annotation.Nullable;
 import javax.ws.rs.container.ContainerRequestContext;
 import java.security.Principal;
-import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CompletionException;
 import java.util.function.Predicate;
@@ -77,10 +77,12 @@ public class CachingAuthorizer<P extends Principal> implements Authorizer<P> {
         this.underlying = authorizer;
         this.cacheMisses = metricRegistry.meter(name(authorizer.getClass(), "cache-misses"));
         this.getsTimer = metricRegistry.timer(name(authorizer.getClass(), "gets"));
-        this.cache = builder.recordStats().build(key -> {
-            cacheMisses.mark();
-            return underlying.authorize(key.getPrincipal(), key.getRole(), key.getRequestContext());
-        });
+        this.cache = builder
+                .recordStats(() -> new MetricsStatsCounter(metricRegistry, name(CachingAuthorizer.class)))
+                .build(key -> {
+                    cacheMisses.mark();
+                    return underlying.authorize(key.getPrincipal(), key.getRole(), key.getRequestContext());
+                });
     }
 
     @Override
