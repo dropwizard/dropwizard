@@ -4,6 +4,8 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.context.internal.ManagedSessionContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 import java.util.Map;
@@ -35,6 +37,7 @@ import static java.util.Objects.requireNonNull;
  * </pre>
  */
 public class UnitOfWorkAspect {
+    private static final Logger logger = LoggerFactory.getLogger(UnitOfWorkAspect.class);
     private final Map<String, SessionFactory> sessionFactories;
 
     public UnitOfWorkAspect(Map<String, SessionFactory> sessionFactories) {
@@ -68,17 +71,21 @@ public class UnitOfWorkAspect {
             existingSession = sessionFactory.getCurrentSession();
         }
 
-        if (existingSession != null) {
+        if (existingSession != null && existingSession.isOpen() && existingSession.getSessionFactory() != null) {
+            logger.info("Reusing existing session");
             sessionCreated = false;
         } else {
-            Session session = sessionFactory.openSession();
-            sessionCreated = true;
+            Session session = null;
             try {
+                session = sessionFactory.openSession();
+                sessionCreated = true;
                 setContext(unitOfWork, session);
                 configureSession();
                 beginTransaction(unitOfWork, session);
             } catch (Throwable th) {
-                session.close();
+                if (session != null) {
+                    session.close();
+                }
                 clearContext();
                 throw th;
             }
@@ -173,7 +180,12 @@ public class UnitOfWorkAspect {
     private static void setContext(UnitOfWork unitOfWork, Session session) {
         ManagedSessionContext.bind(session);
         UnitOfWorkContext.setUnitOfWork(unitOfWork);
-        UnitOfWorkContext.setSessionFactory(session.getSessionFactory());
+        SessionFactory sessionFactory = session.getSessionFactory();
+        if (sessionFactory == null) {
+            clearContext();
+            throw new IllegalStateException("No session factory on session");
+        }
+        UnitOfWorkContext.setSessionFactory(sessionFactory);
     }
 
     private static void clearContext() {
