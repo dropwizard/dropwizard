@@ -30,6 +30,7 @@ public class UnitOfWorkContext {
     public static Session getCurrentSession() {
         SessionFactory sessionFactory = getSessionFactory();
         if (sessionFactory == null) {
+            clear();
             throw new RuntimeException("No session factory set");
         }
         return sessionFactory.getCurrentSession();

@@ -71,7 +71,7 @@ public class UnitOfWorkAspect {
             existingSession = sessionFactory.getCurrentSession();
         }
 
-        if (existingSession != null && existingSession.isOpen() && existingSession.getSessionFactory() != null) {
+        if (existingSession != null && existingSession.isOpen() && existingSession.getSessionFactory() != null && UnitOfWorkContext.getSessionFactory() != null) {
             logger.info("Reusing existing session");
             sessionCreated = false;
         } else {
@@ -178,6 +178,7 @@ public class UnitOfWorkAspect {
     }
 
     private static void setContext(UnitOfWork unitOfWork, Session session) {
+        clearContext();
         ManagedSessionContext.bind(session);
         UnitOfWorkContext.setUnitOfWork(unitOfWork);
         SessionFactory sessionFactory = session.getSessionFactory();
