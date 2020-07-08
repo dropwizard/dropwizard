@@ -81,7 +81,7 @@ public class UnitOfWorkAspect {
                 sessionCreated = true;
                 setContext(unitOfWork, session);
                 configureSession();
-                beginTransaction(unitOfWork, session);
+                beginTransaction(unitOfWork, session)   ;
             } catch (Throwable th) {
                 if (session != null) {
                     session.close();
