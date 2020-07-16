@@ -38,7 +38,13 @@ jobs:
         key: ${{ runner.os }}-maven-${{ hashFiles('**\pom.xml') }}
         restore-keys: |
           ${{ runner.os }}-maven-
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v1
+      with:
+        languages: java
     - name: Build with Maven
       run: ./mvnw -Pjakarta-apis -V -B -ff -s .github/settings.xml install '-DskipTests=true' '-Dmaven.javadoc.skip=true'
     - name: Run tests
       run: ./mvnw -Pjakarta-apis -V -B -ff -s .github/settings.xml verify
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v1
