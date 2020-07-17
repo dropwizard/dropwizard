@@ -1,10 +1,8 @@
 package io.dropwizard.jersey.errors;
 
-import com.codahale.metrics.MetricRegistry;
 import io.dropwizard.jersey.AbstractJerseyTest;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import org.eclipse.jetty.io.EofException;
-import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.test.jetty.JettyTestContainerFactory;
 import org.glassfish.jersey.test.spi.TestContainerException;
 import org.glassfish.jersey.test.spi.TestContainerFactory;
@@ -34,12 +32,6 @@ public class EofExceptionWriterInterceptorJerseyTest extends AbstractJerseyTest 
     @Override
     protected Application configure() {
         return DropwizardResourceConfig.forTesting()
-            .register(new AbstractBinder() {
-                @Override
-                protected void configure() {
-                    bind(MetricRegistry.class).to(MetricRegistry.class);
-                }
-            })
             .register(EofExceptionWriterInterceptor.class)
             .register(EofExceptionCountingInterceptor.class)
             .register(TestResource.class);
