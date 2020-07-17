@@ -69,6 +69,7 @@ public class DropwizardResourceConfig extends ResourceConfig {
         property(ServerProperties.WADL_FEATURE_DISABLE, Boolean.TRUE);
         register(loggingListener);
 
+        register(new MetricRegistryBinder(metricRegistry));
         register(new InstrumentedResourceMethodApplicationListener(metricRegistry, Clock.defaultClock(), true));
         register(CacheControlledResponseFeature.class);
         register(io.dropwizard.jersey.guava.OptionalMessageBodyWriter.class);
@@ -375,6 +376,19 @@ public class DropwizardResourceConfig extends ResourceConfig {
         @Nullable
         public RequestEventListener onRequest(RequestEvent requestEvent) {
             return null;
+        }
+    }
+
+    static final class MetricRegistryBinder extends AbstractBinder {
+        private final MetricRegistry metricRegistry;
+
+        public MetricRegistryBinder(MetricRegistry metricRegistry) {
+            this.metricRegistry = metricRegistry;
+        }
+
+        @Override
+        protected void configure() {
+                bind(metricRegistry).to(MetricRegistry.class);
         }
     }
 }
