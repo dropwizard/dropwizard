@@ -8,7 +8,6 @@ import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import io.dropwizard.util.Duration;
-
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,9 +22,11 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
+import static org.awaitility.Awaitility.await;
 
 @ExtendWith(DropwizardExtensionsSupport.class)
 public class App1Test {
@@ -77,9 +78,9 @@ public class App1Test {
         conn.getOutputStream().write("{".getBytes(StandardCharsets.UTF_8));
         conn.disconnect();
 
-        // Wait a bit for the app to process the request.
-        Thread.sleep(500);
-        assertThat(((App1)RULE.getApplication()).wasEofExceptionHit).isTrue();
+        await().atMost(5, TimeUnit.SECONDS)
+                .until(() -> ((App1) RULE.getApplication()).wasEofExceptionHit);
+        assertThat(((App1) RULE.getApplication()).wasEofExceptionHit).isTrue();
     }
 
     @Test
