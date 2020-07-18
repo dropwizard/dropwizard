@@ -64,6 +64,7 @@
 
         <!-- Test dependencies -->
         <assertj.version>3.16.1</assertj.version>
+        <awaitility.version>4.0.3</awaitility.version>
         <bcprov-jdk15on.version>1.66</bcprov-jdk15on.version>
         <h2.version>1.4.200</h2.version>
         <hsqldb.version>2.5.1</hsqldb.version>
@@ -492,6 +493,11 @@
                 <artifactId>bcprov-jdk15on</artifactId>
                 <version>${bcprov-jdk15on.version}</version>
                 <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.awaitility</groupId>
+                <artifactId>awaitility</artifactId>
+                <version>${awaitility.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
