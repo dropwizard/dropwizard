@@ -38,7 +38,8 @@ public class OneOfValidatorTest {
 
     @Test
     public void doesNotAllowOtherElements() throws Exception {
-        assumeTrue("en".equals(Locale.getDefault().getLanguage()));
+        assumeTrue("en".equals(Locale.getDefault().getLanguage()),
+                "This test executes when the defined language is English ('en'). If not, it is skipped.");
 
         final Example example = new Example();
         example.basic = "four";
