@@ -1,6 +1,7 @@
 package io.dropwizard.setup;
 
 import io.dropwizard.jersey.errors.EarlyEofExceptionMapper;
+import io.dropwizard.jersey.errors.EofExceptionWriterInterceptor;
 import io.dropwizard.jersey.errors.IllegalStateExceptionMapper;
 import io.dropwizard.jersey.errors.LoggingExceptionMapper;
 import io.dropwizard.jersey.jackson.JsonProcessingExceptionMapper;
@@ -9,6 +10,7 @@ import io.dropwizard.jersey.validation.JerseyViolationExceptionMapper;
 import org.glassfish.jersey.internal.inject.AbstractBinder;
 
 import javax.ws.rs.ext.ExceptionMapper;
+import javax.ws.rs.ext.WriterInterceptor;
 
 /**
  * A binder that registers all the default exception mappers while allowing users to override
@@ -25,11 +27,12 @@ public class ExceptionMapperBinder extends AbstractBinder {
     protected void configure() {
         bind(new LoggingExceptionMapper<Throwable>() {
         }).to(ExceptionMapper.class);
-        bind(new JerseyViolationExceptionMapper()).to(ExceptionMapper.class);
+        bind(JerseyViolationExceptionMapper.class).to(ExceptionMapper.class);
         bind(new JsonProcessingExceptionMapper(isShowDetails())).to(ExceptionMapper.class);
-        bind(new EarlyEofExceptionMapper()).to(ExceptionMapper.class);
-        bind(new EmptyOptionalExceptionMapper()).to(ExceptionMapper.class);
-        bind(new IllegalStateExceptionMapper()).to(ExceptionMapper.class);
+        bind(EarlyEofExceptionMapper.class).to(ExceptionMapper.class);
+        bind(EofExceptionWriterInterceptor.class).to(WriterInterceptor.class);
+        bind(EmptyOptionalExceptionMapper.class).to(ExceptionMapper.class);
+        bind(IllegalStateExceptionMapper.class).to(ExceptionMapper.class);
     }
 
     public boolean isShowDetails() {
