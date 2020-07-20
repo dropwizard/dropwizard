@@ -12,6 +12,7 @@ import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 public class DurationValidatorTest {
     @SuppressWarnings("unused")
@@ -73,12 +74,14 @@ public class DurationValidatorTest {
 
     @Test
     public void returnsASetOfErrorsForAnObject() throws Exception {
-        if ("en".equals(Locale.getDefault().getLanguage())) {
-            final Collection<String> errors =
-                    ConstraintViolations.format(validator.validate(new Example()));
+        assumeTrue("en".equals(Locale.getDefault().getLanguage()),
+                "This test executes when the defined language is English ('en'). If not, it is skipped.");
 
-            assertThat(errors)
-                    .containsOnly(
+        final Collection<String> errors =
+                ConstraintViolations.format(validator.validate(new Example()));
+
+        assertThat(errors)
+                .containsOnly(
                             "outOfRange must be between 10 MINUTES and 30 MINUTES",
                             "tooBig must be less than or equal to 30 SECONDS",
                             "tooBigExclusive must be less than 30 SECONDS",
@@ -87,7 +90,7 @@ public class DurationValidatorTest {
                             "maxDurs[0].<list element> must be less than or equal to 30 SECONDS",
                             "minDurs[0].<list element> must be greater than or equal to 30 SECONDS",
                             "rangeDurs[0].<list element> must be between 10 MINUTES and 30 MINUTES");
-        }
+
     }
 
     @Test

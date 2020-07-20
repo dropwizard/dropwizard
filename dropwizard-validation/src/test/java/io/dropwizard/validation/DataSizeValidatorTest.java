@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Locale;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 class DataSizeValidatorTest {
     @SuppressWarnings("unused")
@@ -65,15 +66,17 @@ class DataSizeValidatorTest {
 
     @Test
     void returnsASetOfErrorsForAnObject() {
-        if ("en".equals(Locale.getDefault().getLanguage())) {
-            assertThat(ConstraintViolations.format(validator.validate(new Example())))
-                    .containsOnly("outOfRange must be between 10 KILOBYTES and 100 KILOBYTES",
-                            "tooBig must be less than or equal to 30 KILOBYTES",
-                            "tooSmall must be greater than or equal to 30 KILOBYTES",
-                            "maxDataSize[0].<list element> must be less than or equal to 30 KILOBYTES",
-                            "minDataSize[0].<list element> must be greater than or equal to 30 KILOBYTES",
-                            "rangeDataSize[0].<list element> must be between 10 KILOBYTES and 100 KILOBYTES");
-        }
+        assumeTrue("en".equals(Locale.getDefault().getLanguage()),
+                "This test executes when the defined language is English ('en'). If not, it is skipped.");
+
+        assertThat(ConstraintViolations.format(validator.validate(new Example())))
+                .containsOnly("outOfRange must be between 10 KILOBYTES and 100 KILOBYTES",
+                        "tooBig must be less than or equal to 30 KILOBYTES",
+                        "tooSmall must be greater than or equal to 30 KILOBYTES",
+                        "maxDataSize[0].<list element> must be less than or equal to 30 KILOBYTES",
+                        "minDataSize[0].<list element> must be greater than or equal to 30 KILOBYTES",
+                        "rangeDataSize[0].<list element> must be between 10 KILOBYTES and 100 KILOBYTES");
+
     }
 
     @Test
