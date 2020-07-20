@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Locale;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 public class SizeValidatorTest {
     @SuppressWarnings("unused")
@@ -60,15 +61,17 @@ public class SizeValidatorTest {
 
     @Test
     public void returnsASetOfErrorsForAnObject() throws Exception {
-        if ("en".equals(Locale.getDefault().getLanguage())) {
-            assertThat(ConstraintViolations.format(validator.validate(new Example())))
+        assumeTrue("en".equals(Locale.getDefault().getLanguage()),
+                "This test executes when the defined language is English ('en'). If not, it is skipped.");
+
+        assertThat(ConstraintViolations.format(validator.validate(new Example())))
                     .containsOnly("outOfRange must be between 10 KILOBYTES and 100 KILOBYTES",
                                   "tooBig must be less than or equal to 30 KILOBYTES",
                                   "tooSmall must be greater than or equal to 30 KILOBYTES",
                                    "maxSize[0].<list element> must be less than or equal to 30 KILOBYTES",
                                    "minSize[0].<list element> must be greater than or equal to 30 KILOBYTES",
                                    "rangeSize[0].<list element> must be between 10 KILOBYTES and 100 KILOBYTES");
-        }
+
     }
 
     @Test
