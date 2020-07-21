@@ -1,5 +1,6 @@
 package io.dropwizard.testing.common;
 
+import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.testing.junit5.ResourceExtension;
 import org.glassfish.jersey.client.ClientConfig;
@@ -22,18 +23,21 @@ class ResourceTestJerseyConfiguration {
     final Set<Class<?>> providers;
     final Map<String, Object> properties;
     final ObjectMapper mapper;
+    final MetricRegistry metricRegistry;
     final Validator validator;
     final Consumer<ClientConfig> clientConfigurator;
     final TestContainerFactory testContainerFactory;
     final boolean registerDefaultExceptionMappers;
 
     ResourceTestJerseyConfiguration(Set<Supplier<?>> singletons, Set<Class<?>> providers, Map<String, Object> properties,
-                                    ObjectMapper mapper, Validator validator, Consumer<ClientConfig> clientConfigurator,
-                                    TestContainerFactory testContainerFactory, boolean registerDefaultExceptionMappers) {
+                                    ObjectMapper mapper, MetricRegistry metricRegistry, Validator validator,
+                                    Consumer<ClientConfig> clientConfigurator, TestContainerFactory testContainerFactory,
+                                    boolean registerDefaultExceptionMappers) {
         this.singletons = singletons;
         this.providers = providers;
         this.properties = properties;
         this.mapper = mapper;
+        this.metricRegistry = metricRegistry;
         this.validator = validator;
         this.clientConfigurator = clientConfigurator;
         this.testContainerFactory = testContainerFactory;

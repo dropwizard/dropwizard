@@ -30,7 +30,7 @@ class DropwizardTestResourceConfig extends DropwizardResourceConfig {
     static final String CONFIGURATION_ID = "io.dropwizard.testing.junit.resourceTestJerseyConfigurationId";
 
     DropwizardTestResourceConfig(ResourceTestJerseyConfiguration configuration) {
-        super(true, new MetricRegistry());
+        super(true, configuration.metricRegistry);
 
         if (configuration.registerDefaultExceptionMappers) {
             register(new ExceptionMapperBinder(false));

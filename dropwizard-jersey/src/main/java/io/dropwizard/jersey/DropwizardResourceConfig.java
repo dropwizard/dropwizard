@@ -11,6 +11,7 @@ import io.dropwizard.jersey.caching.CacheControlledResponseFeature;
 import io.dropwizard.jersey.params.AbstractParamConverterProvider;
 import io.dropwizard.jersey.sessions.SessionFactoryProvider;
 import io.dropwizard.jersey.validation.FuzzyEnumParamConverterProvider;
+import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.ServerProperties;
 import org.glassfish.jersey.server.model.Resource;
@@ -64,6 +65,7 @@ public class DropwizardResourceConfig extends ResourceConfig {
             register(new ComponentLoggingListener(this));
         }
 
+        register(new MetricRegistryBinder(metricRegistry));
         register(new InstrumentedResourceMethodApplicationListener(metricRegistry));
         register(CacheControlledResponseFeature.class);
         register(io.dropwizard.jersey.guava.OptionalMessageBodyWriter.class);
@@ -290,6 +292,19 @@ public class DropwizardResourceConfig extends ResourceConfig {
         @Nullable
         public RequestEventListener onRequest(RequestEvent requestEvent) {
             return null;
+        }
+    }
+
+    static final class MetricRegistryBinder extends AbstractBinder {
+        private final MetricRegistry metricRegistry;
+
+        public MetricRegistryBinder(MetricRegistry metricRegistry) {
+            this.metricRegistry = metricRegistry;
+        }
+
+        @Override
+        protected void configure() {
+                bind(metricRegistry).to(MetricRegistry.class);
         }
     }
 }
