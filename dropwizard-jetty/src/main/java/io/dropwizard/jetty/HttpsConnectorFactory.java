@@ -596,7 +596,7 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
 
         final HttpConnectionFactory httpConnectionFactory = buildHttpConnectionFactory(httpConfig);
 
-        final SslContextFactory sslContextFactory = configureSslContextFactory(new SslContextFactory());
+        final SslContextFactory sslContextFactory = configureSslContextFactory(new SslContextFactory.Server());
         sslContextFactory.addLifeCycleListener(logSslInfoOnStart(sslContextFactory));
 
         server.addBean(sslContextFactory);
