@@ -10,6 +10,8 @@ import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import io.dropwizard.util.Duration;
+import org.apache.commons.lang3.reflect.FieldUtils;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.glassfish.jersey.client.ClientResponse;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -25,14 +27,12 @@ import javax.ws.rs.Path;
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.core.Response;
+import java.io.EOFException;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.net.SocketException;
 import java.util.Collections;
 import java.util.Optional;
-
-import org.apache.commons.lang3.reflect.FieldUtils;
-import org.apache.http.conn.ssl.NoopHostnameVerifier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -147,8 +147,10 @@ public class DropwizardSSLConnectionSocketFactoryTest {
         tlsConfiguration.setKeyStoreType("PKCS12");
         final Client client = new JerseyClientBuilder(TLS_APP_RULE.getEnvironment()).using(jerseyClientConfiguration).build("client_auth_broken");
         final Throwable exn = catchThrowable(() -> client.target(String.format("https://localhost:%d", TLS_APP_RULE.getPort(2))).request().get());
-        assertThat(exn).isInstanceOf(ProcessingException.class);
-        assertThat(exn.getCause()).isInstanceOfAny(SocketException.class, SSLHandshakeException.class);
+        assertThat(exn)
+                .isInstanceOf(ProcessingException.class)
+                .getRootCause()
+                .isInstanceOfAny(SocketException.class, SSLHandshakeException.class, SSLException.class);
     }
 
     @Test
@@ -170,8 +172,10 @@ public class DropwizardSSLConnectionSocketFactoryTest {
         tlsConfiguration.setCertAlias("2");
         final Client client = new JerseyClientBuilder(TLS_APP_RULE.getEnvironment()).using(jerseyClientConfiguration).build("client_auth_using_cert_alias_broken");
         final Throwable exn = catchThrowable(() -> client.target(String.format("https://localhost:%d", TLS_APP_RULE.getPort(2))).request().get());
-        assertThat(exn).isInstanceOf(ProcessingException.class);
-        assertThat(exn.getCause()).isInstanceOfAny(SocketException.class, SSLHandshakeException.class);
+        assertThat(exn)
+                .isInstanceOf(ProcessingException.class)
+                .getRootCause()
+                .isInstanceOfAny(SocketException.class, SSLHandshakeException.class, SSLException.class);
     }
 
     @Test
@@ -182,8 +186,10 @@ public class DropwizardSSLConnectionSocketFactoryTest {
         tlsConfiguration.setCertAlias("unknown");
         final Client client = new JerseyClientBuilder(TLS_APP_RULE.getEnvironment()).using(jerseyClientConfiguration).build("client_auth_using_unknown_cert_alias_broken");
         final Throwable exn = catchThrowable(() -> client.target(String.format("https://localhost:%d", TLS_APP_RULE.getPort(2))).request().get());
-        assertThat(exn).isInstanceOf(ProcessingException.class);
-        assertThat(exn.getCause()).isInstanceOfAny(SocketException.class, SSLHandshakeException.class);
+        assertThat(exn)
+                .isInstanceOf(ProcessingException.class)
+                .getRootCause()
+                .isInstanceOfAny(SocketException.class, SSLHandshakeException.class, SSLException.class);
     }
 
     @Test
@@ -231,7 +237,8 @@ public class DropwizardSSLConnectionSocketFactoryTest {
         final Client client = new JerseyClientBuilder(TLS_APP_RULE.getEnvironment()).using(jerseyClientConfiguration).build("reject_non_supported");
         assertThatThrownBy(() -> client.target(String.format("https://localhost:%d", TLS_APP_RULE.getPort(4))).request().get())
             .isInstanceOf(ProcessingException.class)
-            .hasRootCauseInstanceOf(SSLException.class);
+            .getRootCause()
+            .isInstanceOfAny(SSLException.class, EOFException.class);
     }
 
     private static class FailVerifier implements HostnameVerifier {
