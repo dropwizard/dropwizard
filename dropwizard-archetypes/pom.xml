@@ -32,18 +32,19 @@
       <extension>
         <groupId>org.apache.maven.archetype</groupId>
         <artifactId>archetype-packaging</artifactId>
-        <version>3.0.1</version>
+        <version>3.2.0</version>
       </extension>
     </extensions>
     <pluginManagement>
       <plugins>
         <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-archetype-plugin</artifactId>
-          <version>3.0.1</version>
+          <version>3.2.0</version>
         </plugin>
         <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-resources-plugin</artifactId>
-          <version>3.0.2</version>
           <configuration>
             <escapeString>\</escapeString>
           </configuration>
@@ -56,8 +57,8 @@
            - If any of the above executions fail, the build fails -->
         <plugin>
           <!-- clean any existing integration tests -->
+          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-clean-plugin</artifactId>
-          <version>2.6.1</version>
           <executions>
             <execution>
               <id>prepare-integration-test</id>
@@ -80,8 +81,9 @@
           </executions>
         </plugin>
         <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-invoker-plugin</artifactId>
-          <version>3.0.1</version>
+          <version>3.2.1</version>
           <configuration>
             <!-- custom settings.xml to have invoker use our local M2 repo for artifacts -->
             <settingsFile>${project.parent.basedir}/src/test/resources/settings.xml</settingsFile>
@@ -139,8 +141,8 @@
 
     <plugins>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-resources-plugin</artifactId>
-        <version>3.0.2</version>
         <executions>
           <execution>
             <id>package-tools</id>
