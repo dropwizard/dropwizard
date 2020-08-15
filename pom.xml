@@ -702,6 +702,7 @@
                 <configuration>
                     <doclint>none</doclint>
                     <quiet>true</quiet>
+                    <source>8</source>
                 </configuration>
                 <reportSets>
                     <reportSet>
