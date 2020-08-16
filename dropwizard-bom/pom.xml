@@ -28,7 +28,7 @@
         <slf4j.version>1.7.30</slf4j.version>
         <logback.version>1.2.3</logback.version>
         <h2.version>1.4.197</h2.version>
-        <jdbi3.version>3.5.1</jdbi3.version>
+        <jdbi3.version>3.14.3</jdbi3.version>
     </properties>
 
     <dependencyManagement>
@@ -207,21 +207,6 @@
                 <version>${jdbi3.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.jdbi</groupId>
-                <artifactId>jdbi3-core</artifactId>
-                <version>${jdbi3.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jdbi</groupId>
-                <artifactId>jdbi3-jodatime2</artifactId>
-                <version>${jdbi3.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jdbi</groupId>
-                <artifactId>jdbi3-guava</artifactId>
-                <version>${jdbi3.version}</version>
             </dependency>
 
             <!-- Jetty -->
