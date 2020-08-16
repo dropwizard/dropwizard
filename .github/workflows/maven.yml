@@ -30,6 +30,7 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-maven-
     - name: Initialize CodeQL
+      if: matrix.java_version == '8'
       uses: github/codeql-action/init@v1
       with:
         languages: java
@@ -38,4 +39,5 @@ jobs:
     - name: Run tests
       run: ./mvnw --no-transfer-progress -V -B -ff verify
     - name: Perform CodeQL Analysis
+      if: matrix.java_version == '8'
       uses: github/codeql-action/analyze@v1
