@@ -102,7 +102,7 @@
               </goals>
               <configuration>
                 <goals>
-                  <goal>org.apache.maven.plugins:maven-archetype-plugin:generate</goal>
+                  <goal>-ntp org.apache.maven.plugins:maven-archetype-plugin:generate</goal>
                 </goals>
                 <pomIncludes>
                   <pomInclude>*</pomInclude>
@@ -126,7 +126,7 @@
               </goals>
               <configuration>
                 <goals>
-                  <goal>verify</goal>
+                  <goal>-ntp verify</goal>
                 </goals>
                 <pomIncludes>
                   <pomInclude>*/*/pom.xml</pomInclude>
