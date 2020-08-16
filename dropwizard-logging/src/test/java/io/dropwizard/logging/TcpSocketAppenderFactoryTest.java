@@ -3,12 +3,16 @@ package io.dropwizard.logging;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.io.Resources;
+import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
+import io.dropwizard.configuration.SubstitutingSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.util.Duration;
 import io.dropwizard.util.Size;
 import io.dropwizard.validation.BaseValidator;
+import org.apache.commons.text.StrSubstitutor;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,6 +23,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UncheckedIOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
@@ -30,22 +35,20 @@ import java.util.concurrent.TimeUnit;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class TcpSocketAppenderFactoryTest {
-    private static final int TCP_PORT = 24562;
-
     private Thread thread;
     private ServerSocket ss;
 
-    private int messageCount = 100;
-    private CountDownLatch latch = new CountDownLatch(messageCount);
+    private final int messageCount = 100;
+    private final CountDownLatch latch = new CountDownLatch(messageCount);
 
-    private ObjectMapper objectMapper = Jackson.newObjectMapper();
-    private YamlConfigurationFactory<DefaultLoggingFactory> yamlConfigurationFactory = new YamlConfigurationFactory<>(
-        DefaultLoggingFactory.class, BaseValidator.newValidator(), objectMapper, "dw-tcp");
+    private final ObjectMapper objectMapper = Jackson.newObjectMapper();
+    private final YamlConfigurationFactory<DefaultLoggingFactory> yamlConfigurationFactory =
+            new YamlConfigurationFactory<>(DefaultLoggingFactory.class, BaseValidator.newValidator(), objectMapper, "dw-tcp");
 
     @Before
     public void setUp() throws Exception {
         objectMapper.getSubtypeResolver().registerSubtypes(TcpSocketAppenderFactory.class);
-        ss = new ServerSocket(TCP_PORT);
+        ss = new ServerSocket(0);
         thread = new Thread(() -> {
             while (!Thread.currentThread().isInterrupted()) {
                 Socket socket;
@@ -65,7 +68,7 @@ public class TcpSocketAppenderFactoryTest {
 
     private void readAndVerifyData(Socket socket) {
         try (Socket s = socket; BufferedReader reader = new BufferedReader(new InputStreamReader(
-            s.getInputStream(), StandardCharsets.UTF_8))) {
+                s.getInputStream(), StandardCharsets.UTF_8))) {
             for (int i = 0; i < messageCount; i++) {
                 String line = reader.readLine();
                 if (line == null) {
@@ -75,15 +78,18 @@ public class TcpSocketAppenderFactoryTest {
                 latch.countDown();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new UncheckedIOException(e);
         }
     }
 
-
     @After
     public void tearDown() throws Exception {
-        thread.interrupt();
-        ss.close();
+        if (thread != null) {
+            thread.interrupt();
+        }
+        if (ss != null) {
+            ss.close();
+        }
     }
 
     private static File resourcePath(String path) throws URISyntaxException {
@@ -95,7 +101,7 @@ public class TcpSocketAppenderFactoryTest {
         DefaultLoggingFactory loggingFactory = yamlConfigurationFactory.build(resourcePath("yaml/logging-tcp-custom.yml"));
         assertThat(loggingFactory.getAppenders()).hasSize(1);
         TcpSocketAppenderFactory<ILoggingEvent> tcpAppenderFactory = (TcpSocketAppenderFactory<ILoggingEvent>)
-            loggingFactory.getAppenders().get(0);
+                loggingFactory.getAppenders().get(0);
         assertThat(tcpAppenderFactory.getHost()).isEqualTo("172.16.11.245");
         assertThat(tcpAppenderFactory.getPort()).isEqualTo(17001);
         assertThat(tcpAppenderFactory.getConnectionTimeout()).isEqualTo(Duration.milliseconds(100));
@@ -105,7 +111,10 @@ public class TcpSocketAppenderFactoryTest {
 
     @Test
     public void testTestTcpLogging() throws Exception {
-        DefaultLoggingFactory loggingFactory = yamlConfigurationFactory.build(resourcePath("yaml/logging-tcp.yml"));
+        DefaultLoggingFactory loggingFactory = yamlConfigurationFactory.build(new SubstitutingSourceProvider(
+                        new ResourceConfigurationSourceProvider(),
+                        new StrSubstitutor(ImmutableMap.of("tcp.server.port", ss.getLocalPort()))),
+                "yaml/logging-tcp.yml");
         loggingFactory.configure(new MetricRegistry(), "tcp-test");
 
         Logger logger = LoggerFactory.getLogger("com.example.app");
@@ -120,8 +129,10 @@ public class TcpSocketAppenderFactoryTest {
 
     @Test
     public void testBufferingTcpLogging() throws Exception {
-        DefaultLoggingFactory loggingFactory = yamlConfigurationFactory.build(resourcePath(
-            "yaml/logging-tcp-buffered.yml"));
+        DefaultLoggingFactory loggingFactory = yamlConfigurationFactory.build(new SubstitutingSourceProvider(
+                        new ResourceConfigurationSourceProvider(),
+                        new StrSubstitutor(ImmutableMap.of("tcp.server.port", ss.getLocalPort()))),
+                "yaml/logging-tcp-buffered.yml");
         loggingFactory.configure(new MetricRegistry(), "tcp-test");
 
         Logger logger = LoggerFactory.getLogger("com.example.app");
