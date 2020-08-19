@@ -13,10 +13,13 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
 
-        <!-- You'll probably want to remove this for your project. We're just using it here
-             so that dropwizard-example doesn't get deployed as a library. -->
+        <!-- You'll probably want to remove these properties for your project.
+             We're just using them here so that dropwizard-example doesn't get deployed as a library. -->
+        <maven.javadoc.skip>true</maven.javadoc.skip>
+        <maven.source.skip>true</maven.source.skip>
+        <maven.install.skip>true</maven.install.skip>
         <maven.deploy.skip>true</maven.deploy.skip>
-        <!-- You'll probably want to remove this for your project. We'Re just using it here
+        <!-- You'll probably want to remove this for your project. We're just using it here
              so that dropwizard-example site doesn't get staged and deployed. -->
         <maven.site.skip>true</maven.site.skip>
         <maven.site.deploy.skip>true</maven.site.deploy.skip>
