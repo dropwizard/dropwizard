@@ -1233,7 +1233,7 @@ tests:
 
 We highly recommend Mockito_ for all your mocking needs.
 
-.. _Mockito: http://code.google.com/p/mockito/
+.. _Mockito: https://site.mockito.org/
 
 
 .. _man-core-banners:
