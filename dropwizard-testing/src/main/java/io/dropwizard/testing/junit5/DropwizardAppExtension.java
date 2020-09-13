@@ -165,6 +165,7 @@ public class DropwizardAppExtension<C extends Configuration> implements Dropwiza
             synchronized (this) {
                 if (client != null) {
                     client.close();
+                    client = null;
                 }
             }
         }
