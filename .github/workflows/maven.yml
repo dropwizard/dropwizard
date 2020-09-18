@@ -40,6 +40,7 @@ jobs:
           ${{ runner.os }}-maven-
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v1
+      if: matrix.java_version == '8'
       with:
         languages: java
     - name: Build with Maven
@@ -48,3 +49,4 @@ jobs:
       run: ./mvnw --no-transfer-progress -Pjakarta-apis -V -B -ff -s .github/settings.xml verify
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v1
+      if: matrix.java_version == '8'
