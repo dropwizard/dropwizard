@@ -44,6 +44,7 @@ public abstract class BaseConfigurationFactory<T> implements ConfigurationFactor
     private final Class<T> klass;
     private final String propertyPrefix;
     protected final ObjectMapper mapper;
+    private final ConfigurationMetadata configurationMetadata;
 
     @Nullable
     private final Validator validator;
@@ -72,6 +73,7 @@ public abstract class BaseConfigurationFactory<T> implements ConfigurationFactor
         this.mapper = objectMapper;
         this.parserFactory = parserFactory;
         this.validator = validator;
+        this.configurationMetadata = new ConfigurationMetadata(mapper, klass);
     }
 
     @Override
@@ -219,8 +221,13 @@ public abstract class BaseConfigurationFactory<T> implements ConfigurationFactor
             }
 
             if (!moreParts) {
-                if (node.get(key) != null && node.get(key).isArray()) {
-                    final ArrayNode arrayNode = (ArrayNode) obj.get(key);
+                if ((node.get(key) != null && node.get(key).isArray())
+                    || (node.get(key) == null && configurationMetadata.isCollectionOfStrings(name))) {
+                    ArrayNode arrayNode = (ArrayNode) obj.get(key);
+                    if (arrayNode == null) {
+                        arrayNode = obj.arrayNode();
+                        obj.set(key, arrayNode);
+                    }
                     arrayNode.removeAll();
                     Arrays.stream(ESCAPED_COMMA_SPLIT_PATTERN.split(value))
                             .map(String::trim)

@@ -22,6 +22,7 @@ public class JsonConfigurationFactoryTest extends BaseConfigurationFactoryTest {
         this.emptyFile = resourceFileName("factory-test-empty.json");
         this.invalidFile = resourceFileName("factory-test-invalid.json");
         this.validFile = resourceFileName("factory-test-valid.json");
+        this.validNoTypeFile = resourceFileName("factory-test-valid-no-type.json");
         this.commentFile = resourceFileName("factory-test-comment.json");
         this.typoFile = resourceFileName("factory-test-typo.json");
         this.wrongTypeFile = resourceFileName("factory-test-wrong-type.json");
