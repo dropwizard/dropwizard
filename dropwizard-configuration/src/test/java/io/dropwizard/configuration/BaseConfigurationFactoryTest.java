@@ -152,6 +152,7 @@ public abstract class BaseConfigurationFactoryTest {
     protected File emptyFile = new File("/");
     protected File invalidFile = new File("/");
     protected File validFile = new File("/");
+    protected File validNoTypeFile = new File("/");
     protected File typoFile = new File("/");
     protected File wrongTypeFile = new File("/");
     protected File malformedAdvancedFile = new File("/");
@@ -256,6 +257,16 @@ public abstract class BaseConfigurationFactoryTest {
                 .isEqualTo("overridden");
         assertThat(example.getType().size())
                 .isEqualTo(1);
+    }
+
+    @Test
+    public void handlesArrayOverrideIntoValidNoTypeFile() throws Exception {
+        System.setProperty("dw.type", "coder,wizard,overridden");
+        final Example example = factory.build(validNoTypeFile);
+        assertThat(example.getType().get(2))
+            .isEqualTo("overridden");
+        assertThat(example.getType().size())
+            .isEqualTo(3);
     }
 
     @Test
