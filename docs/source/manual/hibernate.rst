@@ -28,6 +28,11 @@ To create a :ref:`managed <man-core-managed>`, instrumented ``SessionFactory`` i
         public DataSourceFactory getDataSourceFactory() {
             return database;
         }
+
+        @JsonProperty("database")
+        public void setDataSourceFactory(DataSourceFactory dataSourceFactory) {
+            this.database = dataSourceFactory;
+        }
     }
 
 Then, add a ``HibernateBundle`` instance to your application class, specifying your entity classes
@@ -118,8 +123,9 @@ contains type-safe wrappers for most of ``SessionFactory``'s common operations:
             return persist(person).getId();
         }
 
+        @SuppressWarnings("unchecked")
         public List<Person> findAll() {
-            return list(namedQuery("com.example.helloworld.core.Person.findAll"));
+            return list((Query<Person>) namedQuery("com.example.helloworld.core.Person.findAll"));
         }
     }
 
