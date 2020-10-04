@@ -43,7 +43,7 @@ public class DbStatusCommand<T extends Configuration> extends AbstractLiquibaseC
     @SuppressWarnings("UseOfSystemOutOrSystemErr")
     public void run(Namespace namespace, Liquibase liquibase) throws Exception {
         final Boolean verbose = namespace.getBoolean("verbose");
-        liquibase.reportStatus(verbose == null ? false : verbose,
+        liquibase.reportStatus(verbose != null && verbose,
                                getContext(namespace),
                                new OutputStreamWriter(outputStream, StandardCharsets.UTF_8));
     }
