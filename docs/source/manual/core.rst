@@ -939,7 +939,7 @@ Asynchronous Logging
 By default, all logging in Dropwizard is asynchronous, even to typically
 synchronous sinks such as files and the console. When a slow logger (like file
 logger on an overloaded disk) is coupled with a high load, Dropwizard will
-seemlessly drop events of lower importance (``TRACE``, ``DEBUG``, ``INFO``) in
+seamlessly drop events of lower importance (``TRACE``, ``DEBUG``, ``INFO``) in
 an attempt to maintain reasonable latency. 
 
 .. TIP::
