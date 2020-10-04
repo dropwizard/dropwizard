@@ -11,7 +11,7 @@ Upgrade Notes for Dropwizard 0.7.x
 -  If you use ``dropwizard-hibernate``, update Hibernate bundle by overriding ``getDataSourceFactory``;
 -  If you use ``dropwizard-migrations``, update Migrations bundle by overriding ``getDataSourceFactory﻿``;
 -  If you serve static files, add ``dropwizard-assets`` to dependencies;
--  If you use templating, add ``dropwizard-views-freemaker`` or ``dropwizard-views-mustache`` accordingly;
+-  If you use templating, add ``dropwizard-views-freemarker`` or ``dropwizard-views-mustache`` accordingly;
 -  Update the application to override ``getName()`` instead of providing the bundle with the name;
 -  Change how resources are added from ``environment.addResource(resource)`` to ``environment.jersey().register(resource)``;
 -  Once everything is compiling, rename ``*Service`` class to ``*Application``;

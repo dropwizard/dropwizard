@@ -878,11 +878,11 @@ FilterFactories
 ---------------
 
 
-A factory used for request loging appenders should implement ``io.dropwizard.logging.filter.FilterFactory<IAccessEvent>``
+A factory used for request logging appenders should implement ``io.dropwizard.logging.filter.FilterFactory<IAccessEvent>``
 while one used for regular logging should implement ``io.dropwizard.logging.filter.FilterFactory<ILoggingEvent>``.
 To register a factory, its fully qualified classname must be listed in
 ``META-INF/services/io.dropwizard.logging.filter.FilterFactory``. The factory then can be referenced in the configuration 
-either via its simple calssname or via type name, if factory class annotated with ``@JsonTypeName``.
+either via its simple classname or via type name, if factory class annotated with ``@JsonTypeName``.
 
 
 .. code-block:: yaml
@@ -1355,7 +1355,7 @@ authScheme      Basic              The authentication scheme used by the. Allowe
 realm           (none)             The realm, used for NTLM authentication.
 hostname        (none)             The hostname of the windows workstation, used for NTLM authentication.
 domain          (none)             The Windows Domain, used for NTLM authentication.
-credentialType  (none)             The Apache HTTP Client Credentials imeplementation used for proxy authentication.
+credentialType  (none)             The Apache HTTP Client Credentials implementation used for proxy authentication.
                                    Allowed options are: ``UsernamePassword`` or ``NT``
 nonProxyHosts   (none)             List of patterns of hosts that should be reached without proxy.
                                    The patterns may contain symbol '*' as a wildcard.
