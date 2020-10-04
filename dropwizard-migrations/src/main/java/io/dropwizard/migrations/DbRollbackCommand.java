@@ -62,7 +62,7 @@ public class DbRollbackCommand<T extends Configuration> extends AbstractLiquibas
         final String tag = namespace.getString("tag");
         final Integer count = namespace.getInt("count");
         final Date date = namespace.get("date");
-        final boolean dryRun = namespace.getBoolean("dry-run") == null ? false : namespace.getBoolean("dry-run");
+        final boolean dryRun = namespace.getBoolean("dry-run") != null && namespace.getBoolean("dry-run");
         final String context = getContext(namespace);
         if (Stream.of(tag, count, date).filter(Objects::nonNull).count() != 1) {
             throw new IllegalArgumentException("Must specify either a count, a tag, or a date.");
