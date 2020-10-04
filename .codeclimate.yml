@@ -3,7 +3,7 @@ engines:
     enabled: true
     channel: "beta"
   checkstyle:
-    enabled: true
+    enabled: false
     config:
       file: "checkstyle.xml"
     channel: "beta"
