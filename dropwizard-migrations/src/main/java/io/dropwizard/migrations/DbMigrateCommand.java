@@ -51,7 +51,7 @@ public class DbMigrateCommand<T extends Configuration> extends AbstractLiquibase
     public void run(Namespace namespace, Liquibase liquibase) throws Exception {
         final String context = getContext(namespace);
         final Integer count = namespace.getInt("count");
-        final boolean dryRun = namespace.getBoolean("dry-run") == null ? false : namespace.getBoolean("dry-run");
+        final boolean dryRun = namespace.getBoolean("dry-run") != null && namespace.getBoolean("dry-run");
         if (count != null) {
             if (dryRun) {
                 liquibase.update(count, context, new OutputStreamWriter(outputStream, StandardCharsets.UTF_8));
