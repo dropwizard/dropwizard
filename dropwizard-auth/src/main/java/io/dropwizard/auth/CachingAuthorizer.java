@@ -95,7 +95,7 @@ public class CachingAuthorizer<P extends Principal> implements Authorizer<P> {
         try (Timer.Context context = getsTimer.time()) {
             final AuthorizationContext<P> cacheKey = new AuthorizationContext<>(principal, role, requestContext);
             final Boolean result = cache.get(cacheKey);
-            return result == null ? false : result;
+            return result != null && result;
         } catch (CompletionException e) {
             Throwable cause = e.getCause();
             if (cause instanceof RuntimeException) {
