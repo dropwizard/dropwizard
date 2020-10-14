@@ -11,6 +11,7 @@ import io.dropwizard.jersey.params.NonEmptyStringParam;
 import io.dropwizard.validation.Validated;
 import org.hibernate.validator.constraints.Length;
 
+import javax.annotation.Nullable;
 import javax.servlet.ServletContext;
 import javax.validation.Valid;
 import javax.validation.constraints.Email;
@@ -98,6 +99,7 @@ public class ValidatingResource {
 
     @GET
     @Path("barter")
+    @Nullable
     public String isnt(@QueryParam("name") @Length(min = 3) NonEmptyStringParam name) {
         return name.get().orElse(null);
     }
