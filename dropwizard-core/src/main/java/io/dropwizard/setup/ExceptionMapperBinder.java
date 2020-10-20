@@ -1,6 +1,7 @@
 package io.dropwizard.setup;
 
 import io.dropwizard.jersey.errors.EarlyEofExceptionMapper;
+import io.dropwizard.jersey.errors.EofExceptionWriterInterceptor;
 import io.dropwizard.jersey.errors.IllegalStateExceptionMapper;
 import io.dropwizard.jersey.errors.LoggingExceptionMapper;
 import io.dropwizard.jersey.jackson.JsonProcessingExceptionMapper;
@@ -9,6 +10,7 @@ import io.dropwizard.jersey.validation.JerseyViolationExceptionMapper;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 
 import javax.ws.rs.ext.ExceptionMapper;
+import javax.ws.rs.ext.WriterInterceptor;
 
 /**
  * An HK2 binder that registers all the default exception mappers while allowing users to override
@@ -30,6 +32,7 @@ public class ExceptionMapperBinder extends AbstractBinder {
         bind(new EarlyEofExceptionMapper()).to(ExceptionMapper.class);
         bind(new EmptyOptionalExceptionMapper()).to(ExceptionMapper.class);
         bind(new IllegalStateExceptionMapper()).to(ExceptionMapper.class);
+        bind(EofExceptionWriterInterceptor.class).to(WriterInterceptor.class);
     }
 
     public boolean isShowDetails() {

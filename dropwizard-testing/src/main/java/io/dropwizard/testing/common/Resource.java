@@ -1,5 +1,6 @@
 package io.dropwizard.testing.common;
 
+import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 import io.dropwizard.jackson.Jackson;
@@ -38,6 +39,7 @@ public class Resource {
         private final Set<Supplier<?>> singletons = new HashSet<>();
         private final Set<Class<?>> providers = new HashSet<>();
         private final Map<String, Object> properties = new HashMap<>();
+        private MetricRegistry metricRegistry = new MetricRegistry();
         private ObjectMapper mapper = Jackson.newObjectMapper();
         private Validator validator = Validators.newValidator();
         private Consumer<ClientConfig> clientConfigurator = c -> {
@@ -48,6 +50,11 @@ public class Resource {
 
         public B setMapper(ObjectMapper mapper) {
             this.mapper = mapper;
+            return (B) this;
+        }
+
+        public B setMetricRegistry(MetricRegistry metricRegistry) {
+            this.metricRegistry = metricRegistry;
             return (B) this;
         }
 
@@ -114,7 +121,7 @@ public class Resource {
                 BootstrapLogging.bootstrap();
             }
             return new Resource(new ResourceTestJerseyConfiguration(
-                singletons, providers, properties, mapper, validator,
+                singletons, providers, properties, mapper, metricRegistry, validator,
                 clientConfigurator, testContainerFactory, registerDefaultExceptionMappers));
         }
     }
