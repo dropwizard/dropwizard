@@ -1,0 +1,21 @@
+version: 2
+updates:
+- package-ecosystem: maven
+  directory: "/"
+  target-branch: "release/1.3.x"
+  schedule:
+    interval: daily
+  # Disable regular Maven dependency updates
+  open-pull-requests-limit: 0
+- package-ecosystem: pip
+  directory: "/docs"
+  target-branch: "release/1.3.x"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 10
+- package-ecosystem: bundler
+  directory: "/docs"
+  target-branch: "release/1.3.x"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 10

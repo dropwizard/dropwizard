@@ -5,16 +5,22 @@
     <parent>
         <groupId>io.dropwizard</groupId>
         <artifactId>dropwizard-parent</artifactId>
-        <version>1.3.25-SNAPSHOT</version>
+        <version>1.3.26-SNAPSHOT</version>
     </parent>
 
     <artifactId>docs</artifactId>
     <name>Dropwizard Documentation</name>
 
     <properties>
-        <jar.skipIfEmpty>true</jar.skipIfEmpty>
+        <checkstyle.skip>true</checkstyle.skip>
         <mpir.skip>true</mpir.skip>
+        <maven.test.skip>true</maven.test.skip>
+        <maven.source.skip>true</maven.source.skip>
+        <maven.javadoc.skip>true</maven.javadoc.skip>
+        <maven.install.skip>true</maven.install.skip>
         <maven.deploy.skip>true</maven.deploy.skip>
+        <skipNexusStagingDeployMojo>true</skipNexusStagingDeployMojo>
+        <gpg.skip>true</gpg.skip>
     </properties>
 
     <build>
@@ -22,22 +28,25 @@
             <resource>
                 <directory>${basedir}/source</directory>
                 <filtering>true</filtering>
+                <includes>
+                    <include>conf.py</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>${basedir}/source</directory>
+                <filtering>false</filtering>
+                <excludes>
+                    <exclude>conf.py</exclude>
+                </excludes>
             </resource>
         </resources>
         <plugins>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <version>3.0.0</version>
-                <executions>
-                    <execution>
-                        <id>parse-version</id>
-                        <phase>initialize</phase>
-                        <goals>
-                            <goal>parse-version</goal>
-                        </goals>
-                    </execution>
-                </executions>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <skipIfEmpty>true</skipIfEmpty>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

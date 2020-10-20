@@ -3,12 +3,12 @@ jobs:
   build:
     working_directory: ~/dropwizard
     environment:
-      JAVA_TOOL_OPTIONS: -Xms512m -Xmx2g
+      JAVA_TOOL_OPTIONS: -Xms512m -Xmx2g -XX:+TieredCompilation -XX:TieredStopAtLevel=1
     docker:
       - image: circleci/openjdk:8u171-jdk
     steps:
       - checkout
-      - run: mvn test
+      - run: ./mvnw -V -B -ntp test
       - run:
           name: Save test results
           command: |

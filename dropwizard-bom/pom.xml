@@ -5,7 +5,7 @@
     <parent>
         <groupId>io.dropwizard</groupId>
         <artifactId>dropwizard-parent</artifactId>
-        <version>1.3.25-SNAPSHOT</version>
+        <version>1.3.26-SNAPSHOT</version>
     </parent>
 
     <artifactId>dropwizard-bom</artifactId>
@@ -21,14 +21,14 @@
         <dropwizard.version>${project.version}</dropwizard.version>
         <guava.version>24.1.1-jre</guava.version>
         <jersey.version>2.25.1</jersey.version>
-        <jackson.version>2.9.10.20200621</jackson.version>
-        <jetty.version>9.4.18.v20190429</jetty.version>
+        <jackson.version>2.9.10.20200824</jackson.version>
+        <jetty.version>9.4.31.v20200723</jetty.version>
         <servlet.version>3.0.0.v201112011016</servlet.version>
-        <metrics4.version>4.0.5</metrics4.version>
-        <slf4j.version>1.7.26</slf4j.version>
+        <metrics4.version>4.1.12.1</metrics4.version>
+        <slf4j.version>1.7.30</slf4j.version>
         <logback.version>1.2.3</logback.version>
         <h2.version>1.4.197</h2.version>
-        <jdbi3.version>3.5.1</jdbi3.version>
+        <jdbi3.version>3.14.3</jdbi3.version>
     </properties>
 
     <dependencyManagement>
@@ -36,17 +36,17 @@
             <dependency>
                 <groupId>org.objenesis</groupId>
                 <artifactId>objenesis</artifactId>
-                <version>2.6</version>
+                <version>3.1</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
-                <version>3.8.1</version>
+                <version>3.11</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-text</artifactId>
-                <version>1.2</version>
+                <version>1.9</version>
             </dependency>
             <dependency>
                 <groupId>com.google.guava</groupId>
@@ -66,7 +66,7 @@
             <dependency>
                 <groupId>joda-time</groupId>
                 <artifactId>joda-time</artifactId>
-                <version>2.10.1</version>
+                <version>2.10.6</version>
             </dependency>
             <dependency>
                 <groupId>org.hibernate</groupId>
@@ -86,7 +86,7 @@
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpclient</artifactId>
-                <version>4.5.10</version>
+                <version>4.5.13</version>
                 <exclusions>
                     <exclusion>
                         <groupId>commons-logging</groupId>
@@ -97,7 +97,7 @@
             <dependency>
                 <groupId>org.apache.tomcat</groupId>
                 <artifactId>tomcat-jdbc</artifactId>
-                <version>9.0.16</version>
+                <version>9.0.37</version>
             </dependency>
             <dependency>
                 <groupId>com.h2database</groupId>
@@ -137,22 +137,22 @@
             <dependency>
                 <groupId>org.javassist</groupId>
                 <artifactId>javassist</artifactId>
-                <version>3.24.1-GA</version>
+                <version>3.27.0-GA</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml</groupId>
                 <artifactId>classmate</artifactId>
-                <version>1.4.0</version>
+                <version>1.5.1</version>
             </dependency>
             <dependency>
                 <groupId>org.hsqldb</groupId>
                 <artifactId>hsqldb</artifactId>
-                <version>2.4.1</version>
+                <version>2.5.1</version>
             </dependency>
             <dependency>
                 <groupId>org.liquibase</groupId>
                 <artifactId>liquibase-core</artifactId>
-                <version>3.6.3</version>
+                <version>3.10.2</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.yaml</groupId>
@@ -194,7 +194,7 @@
             <dependency>
                 <groupId>org.freemarker</groupId>
                 <artifactId>freemarker</artifactId>
-                <version>2.3.28</version>
+                <version>2.3.30</version>
             </dependency>
             <dependency>
                 <groupId>org.jdbi</groupId>
@@ -207,21 +207,6 @@
                 <version>${jdbi3.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.jdbi</groupId>
-                <artifactId>jdbi3-core</artifactId>
-                <version>${jdbi3.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jdbi</groupId>
-                <artifactId>jdbi3-jodatime2</artifactId>
-                <version>${jdbi3.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jdbi</groupId>
-                <artifactId>jdbi3-guava</artifactId>
-                <version>${jdbi3.version}</version>
             </dependency>
 
             <!-- Jetty -->
@@ -310,7 +295,7 @@
             <dependency>
                 <groupId>org.eclipse.jetty.toolchain.setuid</groupId>
                 <artifactId>jetty-setuid-java</artifactId>
-                <version>1.0.3</version>
+                <version>1.0.4</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.eclipse.jetty</groupId>
@@ -331,6 +316,12 @@
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-alpn-java-client</artifactId>
                 <version>${jetty.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>javax.xml.bind</groupId>
+                <artifactId>jaxb-api</artifactId>
+                <version>2.3.1</version>
             </dependency>
 
             <!-- Jackson -->
@@ -575,7 +566,7 @@
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
-                <version>4.12</version>
+                <version>4.13.1</version>
             </dependency>
             <dependency>
                 <groupId>org.hamcrest</groupId>

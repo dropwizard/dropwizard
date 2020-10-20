@@ -5,16 +5,14 @@
     <parent>
         <groupId>io.dropwizard</groupId>
         <artifactId>dropwizard-parent</artifactId>
-        <version>1.3.25-SNAPSHOT</version>
+        <version>1.3.26-SNAPSHOT</version>
     </parent>
 
     <artifactId>dropwizard-http2</artifactId>
     <name>Dropwizard HTTP/2 Support</name>
 
     <properties>
-        <!-- Default alpn-boot version. See <profiles> for specific profiles. -->
-        <alpn-boot.version>8.1.13.v20181017</alpn-boot.version>
-        <argLine>"-Xbootclasspath/p:/${user.home}/.m2/repository/org/mortbay/jetty/alpn/alpn-boot/${alpn-boot.version}/alpn-boot-${alpn-boot.version}.jar" -Duser.language=en -Duser.region=US</argLine>
+        <argLine>-Duser.language=en -Duser.region=US</argLine>
     </properties>
 
     <dependencyManagement>
@@ -59,12 +57,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-alpn-openjdk8-client</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
             <groupId>io.dropwizard</groupId>
             <artifactId>dropwizard-testing</artifactId>
             <scope>test</scope>
@@ -73,22 +65,6 @@
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-alpn-conscrypt-server</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-alpn-openjdk8-server</artifactId>
-        </dependency>
-
-        <!-- This needs to be on your JVM's bootpath for HTTP2 to work with ALPN protocol
-            -Xbootclasspath/p:/<path_to_alpn_boot_jar>/alpn-boot-${alpn-boot.version}.jar
-             The correct version depends on the specific JVM version.
-             Consult http://www.eclipse.org/jetty/documentation/current/alpn-chapter.html for the reference -->
-        <dependency>
-            <groupId>org.mortbay.jetty.alpn</groupId>
-            <artifactId>alpn-boot</artifactId>
-            <version>${alpn-boot.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -116,6 +92,24 @@
             </dependencies>
         </profile>
         <profile>
+            <id>jdk8</id>
+            <activation>
+                <jdk>[1.8.0,9)</jdk>
+            </activation>
+            <properties>
+            </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>jetty-alpn-openjdk8-server</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>jetty-alpn-openjdk8-client</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
             <id>jdk-1.8.0</id>
             <activation>
                 <property>
@@ -125,7 +119,19 @@
             </activation>
             <properties>
                 <alpn-boot.version>8.1.0.v20141016</alpn-boot.version>
+                <argLine>
+                    "-Xbootclasspath/p:/${user.home}/.m2/repository/org/mortbay/jetty/alpn/alpn-boot/${alpn-boot.version}/alpn-boot-${alpn-boot.version}.jar"
+                    -Duser.language=en -Duser.region=US
+                </argLine>
             </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.mortbay.jetty.alpn</groupId>
+                    <artifactId>alpn-boot</artifactId>
+                    <version>${alpn-boot.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
         </profile>
         <profile>
             <id>jdk-1.8.0_05</id>
@@ -137,7 +143,19 @@
             </activation>
             <properties>
                 <alpn-boot.version>8.1.0.v20141016</alpn-boot.version>
+                <argLine>
+                    "-Xbootclasspath/p:/${user.home}/.m2/repository/org/mortbay/jetty/alpn/alpn-boot/${alpn-boot.version}/alpn-boot-${alpn-boot.version}.jar"
+                    -Duser.language=en -Duser.region=US
+                </argLine>
             </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.mortbay.jetty.alpn</groupId>
+                    <artifactId>alpn-boot</artifactId>
+                    <version>${alpn-boot.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
         </profile>
         <profile>
             <id>jdk-1.8.0_11</id>
@@ -149,7 +167,19 @@
             </activation>
             <properties>
                 <alpn-boot.version>8.1.0.v20141016</alpn-boot.version>
+                <argLine>
+                    "-Xbootclasspath/p:/${user.home}/.m2/repository/org/mortbay/jetty/alpn/alpn-boot/${alpn-boot.version}/alpn-boot-${alpn-boot.version}.jar"
+                    -Duser.language=en -Duser.region=US
+                </argLine>
             </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.mortbay.jetty.alpn</groupId>
+                    <artifactId>alpn-boot</artifactId>
+                    <version>${alpn-boot.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
         </profile>
         <profile>
             <id>jdk-1.8.0_20</id>
@@ -161,7 +191,19 @@
             </activation>
             <properties>
                 <alpn-boot.version>8.1.0.v20141016</alpn-boot.version>
+                <argLine>
+                    "-Xbootclasspath/p:/${user.home}/.m2/repository/org/mortbay/jetty/alpn/alpn-boot/${alpn-boot.version}/alpn-boot-${alpn-boot.version}.jar"
+                    -Duser.language=en -Duser.region=US
+                </argLine>
             </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.mortbay.jetty.alpn</groupId>
+                    <artifactId>alpn-boot</artifactId>
+                    <version>${alpn-boot.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
         </profile>
         <profile>
             <id>jdk-1.8.0_25</id>
@@ -173,7 +215,19 @@
             </activation>
             <properties>
                 <alpn-boot.version>8.1.2.v20141202</alpn-boot.version>
+                <argLine>
+                    "-Xbootclasspath/p:/${user.home}/.m2/repository/org/mortbay/jetty/alpn/alpn-boot/${alpn-boot.version}/alpn-boot-${alpn-boot.version}.jar"
+                    -Duser.language=en -Duser.region=US
+                </argLine>
             </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.mortbay.jetty.alpn</groupId>
+                    <artifactId>alpn-boot</artifactId>
+                    <version>${alpn-boot.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
         </profile>
         <profile>
             <id>jdk-1.8.0_31</id>
@@ -185,7 +239,19 @@
             </activation>
             <properties>
                 <alpn-boot.version>8.1.3.v20150130</alpn-boot.version>
+                <argLine>
+                    "-Xbootclasspath/p:/${user.home}/.m2/repository/org/mortbay/jetty/alpn/alpn-boot/${alpn-boot.version}/alpn-boot-${alpn-boot.version}.jar"
+                    -Duser.language=en -Duser.region=US
+                </argLine>
             </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.mortbay.jetty.alpn</groupId>
+                    <artifactId>alpn-boot</artifactId>
+                    <version>${alpn-boot.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
         </profile>
         <profile>
             <id>jdk-1.8.0_40</id>
@@ -197,7 +263,19 @@
             </activation>
             <properties>
                 <alpn-boot.version>8.1.3.v20150130</alpn-boot.version>
+                <argLine>
+                    "-Xbootclasspath/p:/${user.home}/.m2/repository/org/mortbay/jetty/alpn/alpn-boot/${alpn-boot.version}/alpn-boot-${alpn-boot.version}.jar"
+                    -Duser.language=en -Duser.region=US
+                </argLine>
             </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.mortbay.jetty.alpn</groupId>
+                    <artifactId>alpn-boot</artifactId>
+                    <version>${alpn-boot.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
         </profile>
         <profile>
             <id>jdk-1.8.0_45</id>
@@ -209,7 +287,19 @@
             </activation>
             <properties>
                 <alpn-boot.version>8.1.3.v20150130</alpn-boot.version>
+                <argLine>
+                    "-Xbootclasspath/p:/${user.home}/.m2/repository/org/mortbay/jetty/alpn/alpn-boot/${alpn-boot.version}/alpn-boot-${alpn-boot.version}.jar"
+                    -Duser.language=en -Duser.region=US
+                </argLine>
             </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.mortbay.jetty.alpn</groupId>
+                    <artifactId>alpn-boot</artifactId>
+                    <version>${alpn-boot.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
         </profile>
         <profile>
             <id>jdk-1.8.0_51</id>
@@ -221,7 +311,19 @@
             </activation>
             <properties>
                 <alpn-boot.version>8.1.4.v20150727</alpn-boot.version>
+                <argLine>
+                    "-Xbootclasspath/p:/${user.home}/.m2/repository/org/mortbay/jetty/alpn/alpn-boot/${alpn-boot.version}/alpn-boot-${alpn-boot.version}.jar"
+                    -Duser.language=en -Duser.region=US
+                </argLine>
             </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.mortbay.jetty.alpn</groupId>
+                    <artifactId>alpn-boot</artifactId>
+                    <version>${alpn-boot.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
         </profile>
         <profile>
             <id>jdk-1.8.0_60</id>
@@ -233,7 +335,19 @@
             </activation>
             <properties>
                 <alpn-boot.version>8.1.5.v20150921</alpn-boot.version>
+                <argLine>
+                    "-Xbootclasspath/p:/${user.home}/.m2/repository/org/mortbay/jetty/alpn/alpn-boot/${alpn-boot.version}/alpn-boot-${alpn-boot.version}.jar"
+                    -Duser.language=en -Duser.region=US
+                </argLine>
             </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.mortbay.jetty.alpn</groupId>
+                    <artifactId>alpn-boot</artifactId>
+                    <version>${alpn-boot.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
         </profile>
         <profile>
             <id>jdk-1.8.0_65</id>
@@ -245,7 +359,19 @@
             </activation>
             <properties>
                 <alpn-boot.version>8.1.6.v20151105</alpn-boot.version>
+                <argLine>
+                    "-Xbootclasspath/p:/${user.home}/.m2/repository/org/mortbay/jetty/alpn/alpn-boot/${alpn-boot.version}/alpn-boot-${alpn-boot.version}.jar"
+                    -Duser.language=en -Duser.region=US
+                </argLine>
             </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.mortbay.jetty.alpn</groupId>
+                    <artifactId>alpn-boot</artifactId>
+                    <version>${alpn-boot.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
         </profile>
         <profile>
             <id>jdk-1.8.0_66</id>
@@ -257,7 +383,19 @@
             </activation>
             <properties>
                 <alpn-boot.version>8.1.6.v20151105</alpn-boot.version>
+                <argLine>
+                    "-Xbootclasspath/p:/${user.home}/.m2/repository/org/mortbay/jetty/alpn/alpn-boot/${alpn-boot.version}/alpn-boot-${alpn-boot.version}.jar"
+                    -Duser.language=en -Duser.region=US
+                </argLine>
             </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.mortbay.jetty.alpn</groupId>
+                    <artifactId>alpn-boot</artifactId>
+                    <version>${alpn-boot.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
         </profile>
         <profile>
             <id>jdk-1.8.0_71</id>
@@ -269,7 +407,19 @@
             </activation>
             <properties>
                 <alpn-boot.version>8.1.7.v20160121</alpn-boot.version>
+                <argLine>
+                    "-Xbootclasspath/p:/${user.home}/.m2/repository/org/mortbay/jetty/alpn/alpn-boot/${alpn-boot.version}/alpn-boot-${alpn-boot.version}.jar"
+                    -Duser.language=en -Duser.region=US
+                </argLine>
             </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.mortbay.jetty.alpn</groupId>
+                    <artifactId>alpn-boot</artifactId>
+                    <version>${alpn-boot.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
         </profile>
         <profile>
             <id>jdk-1.8.0_72</id>
@@ -281,7 +431,19 @@
             </activation>
             <properties>
                 <alpn-boot.version>8.1.7.v20160121</alpn-boot.version>
+                <argLine>
+                    "-Xbootclasspath/p:/${user.home}/.m2/repository/org/mortbay/jetty/alpn/alpn-boot/${alpn-boot.version}/alpn-boot-${alpn-boot.version}.jar"
+                    -Duser.language=en -Duser.region=US
+                </argLine>
             </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.mortbay.jetty.alpn</groupId>
+                    <artifactId>alpn-boot</artifactId>
+                    <version>${alpn-boot.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
         </profile>
         <profile>
             <id>jdk-1.8.0_73</id>
@@ -293,7 +455,19 @@
             </activation>
             <properties>
                 <alpn-boot.version>8.1.7.v20160121</alpn-boot.version>
+                <argLine>
+                    "-Xbootclasspath/p:/${user.home}/.m2/repository/org/mortbay/jetty/alpn/alpn-boot/${alpn-boot.version}/alpn-boot-${alpn-boot.version}.jar"
+                    -Duser.language=en -Duser.region=US
+                </argLine>
             </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.mortbay.jetty.alpn</groupId>
+                    <artifactId>alpn-boot</artifactId>
+                    <version>${alpn-boot.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
         </profile>
         <profile>
             <id>jdk-1.8.0_74</id>
@@ -305,7 +479,19 @@
             </activation>
             <properties>
                 <alpn-boot.version>8.1.7.v20160121</alpn-boot.version>
+                <argLine>
+                    "-Xbootclasspath/p:/${user.home}/.m2/repository/org/mortbay/jetty/alpn/alpn-boot/${alpn-boot.version}/alpn-boot-${alpn-boot.version}.jar"
+                    -Duser.language=en -Duser.region=US
+                </argLine>
             </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.mortbay.jetty.alpn</groupId>
+                    <artifactId>alpn-boot</artifactId>
+                    <version>${alpn-boot.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
         </profile>
         <profile>
             <id>jdk-1.8.0_77</id>
@@ -317,7 +503,19 @@
             </activation>
             <properties>
                 <alpn-boot.version>8.1.7.v20160121</alpn-boot.version>
+                <argLine>
+                    "-Xbootclasspath/p:/${user.home}/.m2/repository/org/mortbay/jetty/alpn/alpn-boot/${alpn-boot.version}/alpn-boot-${alpn-boot.version}.jar"
+                    -Duser.language=en -Duser.region=US
+                </argLine>
             </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.mortbay.jetty.alpn</groupId>
+                    <artifactId>alpn-boot</artifactId>
+                    <version>${alpn-boot.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
         </profile>
         <profile>
             <id>jdk-1.8.0_91</id>
@@ -329,7 +527,19 @@
             </activation>
             <properties>
                 <alpn-boot.version>8.1.7.v20160121</alpn-boot.version>
+                <argLine>
+                    "-Xbootclasspath/p:/${user.home}/.m2/repository/org/mortbay/jetty/alpn/alpn-boot/${alpn-boot.version}/alpn-boot-${alpn-boot.version}.jar"
+                    -Duser.language=en -Duser.region=US
+                </argLine>
             </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.mortbay.jetty.alpn</groupId>
+                    <artifactId>alpn-boot</artifactId>
+                    <version>${alpn-boot.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
         </profile>
         <profile>
             <id>jdk-1.8.0_92</id>
@@ -341,7 +551,19 @@
             </activation>
             <properties>
                 <alpn-boot.version>8.1.8.v20160420</alpn-boot.version>
+                <argLine>
+                    "-Xbootclasspath/p:/${user.home}/.m2/repository/org/mortbay/jetty/alpn/alpn-boot/${alpn-boot.version}/alpn-boot-${alpn-boot.version}.jar"
+                    -Duser.language=en -Duser.region=US
+                </argLine>
             </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.mortbay.jetty.alpn</groupId>
+                    <artifactId>alpn-boot</artifactId>
+                    <version>${alpn-boot.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
         </profile>
         <profile>
             <id>jdk-1.8.0_101</id>
@@ -353,7 +575,19 @@
             </activation>
             <properties>
                 <alpn-boot.version>8.1.9.v20160720</alpn-boot.version>
+                <argLine>
+                    "-Xbootclasspath/p:/${user.home}/.m2/repository/org/mortbay/jetty/alpn/alpn-boot/${alpn-boot.version}/alpn-boot-${alpn-boot.version}.jar"
+                    -Duser.language=en -Duser.region=US
+                </argLine>
             </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.mortbay.jetty.alpn</groupId>
+                    <artifactId>alpn-boot</artifactId>
+                    <version>${alpn-boot.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
         </profile>
         <profile>
             <id>jdk-1.8.0_102</id>
@@ -365,7 +599,19 @@
             </activation>
             <properties>
                 <alpn-boot.version>8.1.9.v20160720</alpn-boot.version>
+                <argLine>
+                    "-Xbootclasspath/p:/${user.home}/.m2/repository/org/mortbay/jetty/alpn/alpn-boot/${alpn-boot.version}/alpn-boot-${alpn-boot.version}.jar"
+                    -Duser.language=en -Duser.region=US
+                </argLine>
             </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.mortbay.jetty.alpn</groupId>
+                    <artifactId>alpn-boot</artifactId>
+                    <version>${alpn-boot.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
         </profile>
         <profile>
             <id>jdk-1.8.0_111</id>
@@ -377,7 +623,19 @@
             </activation>
             <properties>
                 <alpn-boot.version>8.1.9.v20160720</alpn-boot.version>
+                <argLine>
+                    "-Xbootclasspath/p:/${user.home}/.m2/repository/org/mortbay/jetty/alpn/alpn-boot/${alpn-boot.version}/alpn-boot-${alpn-boot.version}.jar"
+                    -Duser.language=en -Duser.region=US
+                </argLine>
             </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.mortbay.jetty.alpn</groupId>
+                    <artifactId>alpn-boot</artifactId>
+                    <version>${alpn-boot.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
         </profile>
         <profile>
             <id>jdk-1.8.0_112</id>
@@ -389,7 +647,19 @@
             </activation>
             <properties>
                 <alpn-boot.version>8.1.10.v20161026</alpn-boot.version>
+                <argLine>
+                    "-Xbootclasspath/p:/${user.home}/.m2/repository/org/mortbay/jetty/alpn/alpn-boot/${alpn-boot.version}/alpn-boot-${alpn-boot.version}.jar"
+                    -Duser.language=en -Duser.region=US
+                </argLine>
             </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.mortbay.jetty.alpn</groupId>
+                    <artifactId>alpn-boot</artifactId>
+                    <version>${alpn-boot.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
         </profile>
         <profile>
             <id>jdk-1.8.0_121</id>
@@ -401,7 +671,19 @@
             </activation>
             <properties>
                 <alpn-boot.version>8.1.11.v20170118</alpn-boot.version>
+                <argLine>
+                    "-Xbootclasspath/p:/${user.home}/.m2/repository/org/mortbay/jetty/alpn/alpn-boot/${alpn-boot.version}/alpn-boot-${alpn-boot.version}.jar"
+                    -Duser.language=en -Duser.region=US
+                </argLine>
             </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.mortbay.jetty.alpn</groupId>
+                    <artifactId>alpn-boot</artifactId>
+                    <version>${alpn-boot.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
         </profile>
         <profile>
             <id>jdk-1.8.0_131</id>
@@ -413,7 +695,19 @@
             </activation>
             <properties>
                 <alpn-boot.version>8.1.11.v20170118</alpn-boot.version>
+                <argLine>
+                    "-Xbootclasspath/p:/${user.home}/.m2/repository/org/mortbay/jetty/alpn/alpn-boot/${alpn-boot.version}/alpn-boot-${alpn-boot.version}.jar"
+                    -Duser.language=en -Duser.region=US
+                </argLine>
             </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.mortbay.jetty.alpn</groupId>
+                    <artifactId>alpn-boot</artifactId>
+                    <version>${alpn-boot.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
         </profile>
         <profile>
             <id>jdk-1.8.0_141</id>
@@ -425,7 +719,19 @@
             </activation>
             <properties>
                 <alpn-boot.version>8.1.11.v20170118</alpn-boot.version>
+                <argLine>
+                    "-Xbootclasspath/p:/${user.home}/.m2/repository/org/mortbay/jetty/alpn/alpn-boot/${alpn-boot.version}/alpn-boot-${alpn-boot.version}.jar"
+                    -Duser.language=en -Duser.region=US
+                </argLine>
             </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.mortbay.jetty.alpn</groupId>
+                    <artifactId>alpn-boot</artifactId>
+                    <version>${alpn-boot.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
         </profile>
         <profile>
             <id>jdk-1.8.0_144</id>
@@ -437,7 +743,19 @@
             </activation>
             <properties>
                 <alpn-boot.version>8.1.11.v20170118</alpn-boot.version>
+                <argLine>
+                    "-Xbootclasspath/p:/${user.home}/.m2/repository/org/mortbay/jetty/alpn/alpn-boot/${alpn-boot.version}/alpn-boot-${alpn-boot.version}.jar"
+                    -Duser.language=en -Duser.region=US
+                </argLine>
             </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.mortbay.jetty.alpn</groupId>
+                    <artifactId>alpn-boot</artifactId>
+                    <version>${alpn-boot.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
         </profile>
         <profile>
             <id>jdk-1.8.0_151</id>
@@ -449,7 +767,19 @@
             </activation>
             <properties>
                 <alpn-boot.version>8.1.11.v20170118</alpn-boot.version>
+                <argLine>
+                    "-Xbootclasspath/p:/${user.home}/.m2/repository/org/mortbay/jetty/alpn/alpn-boot/${alpn-boot.version}/alpn-boot-${alpn-boot.version}.jar"
+                    -Duser.language=en -Duser.region=US
+                </argLine>
             </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.mortbay.jetty.alpn</groupId>
+                    <artifactId>alpn-boot</artifactId>
+                    <version>${alpn-boot.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
         </profile>
         <profile>
             <id>jdk-1.8.0_152</id>
@@ -461,7 +791,19 @@
             </activation>
             <properties>
                 <alpn-boot.version>8.1.11.v20170118</alpn-boot.version>
+                <argLine>
+                    "-Xbootclasspath/p:/${user.home}/.m2/repository/org/mortbay/jetty/alpn/alpn-boot/${alpn-boot.version}/alpn-boot-${alpn-boot.version}.jar"
+                    -Duser.language=en -Duser.region=US
+                </argLine>
             </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.mortbay.jetty.alpn</groupId>
+                    <artifactId>alpn-boot</artifactId>
+                    <version>${alpn-boot.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
         </profile>
         <profile>
             <id>jdk-1.8.0_161</id>
@@ -473,7 +815,19 @@
             </activation>
             <properties>
                 <alpn-boot.version>8.1.12.v20180117</alpn-boot.version>
+                <argLine>
+                    "-Xbootclasspath/p:/${user.home}/.m2/repository/org/mortbay/jetty/alpn/alpn-boot/${alpn-boot.version}/alpn-boot-${alpn-boot.version}.jar"
+                    -Duser.language=en -Duser.region=US
+                </argLine>
             </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.mortbay.jetty.alpn</groupId>
+                    <artifactId>alpn-boot</artifactId>
+                    <version>${alpn-boot.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
         </profile>
         <profile>
             <id>jdk-1.8.0_162</id>
@@ -485,7 +839,19 @@
             </activation>
             <properties>
                 <alpn-boot.version>8.1.12.v20180117</alpn-boot.version>
+                <argLine>
+                    "-Xbootclasspath/p:/${user.home}/.m2/repository/org/mortbay/jetty/alpn/alpn-boot/${alpn-boot.version}/alpn-boot-${alpn-boot.version}.jar"
+                    -Duser.language=en -Duser.region=US
+                </argLine>
             </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.mortbay.jetty.alpn</groupId>
+                    <artifactId>alpn-boot</artifactId>
+                    <version>${alpn-boot.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
         </profile>
         <profile>
             <id>jdk-1.8.0_171</id>
@@ -497,7 +863,19 @@
             </activation>
             <properties>
                 <alpn-boot.version>8.1.12.v20180117</alpn-boot.version>
+                <argLine>
+                    "-Xbootclasspath/p:/${user.home}/.m2/repository/org/mortbay/jetty/alpn/alpn-boot/${alpn-boot.version}/alpn-boot-${alpn-boot.version}.jar"
+                    -Duser.language=en -Duser.region=US
+                </argLine>
             </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.mortbay.jetty.alpn</groupId>
+                    <artifactId>alpn-boot</artifactId>
+                    <version>${alpn-boot.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
         </profile>
         <profile>
             <id>jdk-1.8.0_172</id>
@@ -509,7 +887,19 @@
             </activation>
             <properties>
                 <alpn-boot.version>8.1.12.v20180117</alpn-boot.version>
+                <argLine>
+                    "-Xbootclasspath/p:/${user.home}/.m2/repository/org/mortbay/jetty/alpn/alpn-boot/${alpn-boot.version}/alpn-boot-${alpn-boot.version}.jar"
+                    -Duser.language=en -Duser.region=US
+                </argLine>
             </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.mortbay.jetty.alpn</groupId>
+                    <artifactId>alpn-boot</artifactId>
+                    <version>${alpn-boot.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
         </profile>
         <profile>
             <id>jdk-1.8.0_181</id>
@@ -521,7 +911,19 @@
             </activation>
             <properties>
                 <alpn-boot.version>8.1.12.v20180117</alpn-boot.version>
+                <argLine>
+                    "-Xbootclasspath/p:/${user.home}/.m2/repository/org/mortbay/jetty/alpn/alpn-boot/${alpn-boot.version}/alpn-boot-${alpn-boot.version}.jar"
+                    -Duser.language=en -Duser.region=US
+                </argLine>
             </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.mortbay.jetty.alpn</groupId>
+                    <artifactId>alpn-boot</artifactId>
+                    <version>${alpn-boot.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
         </profile>
         <profile>
             <id>jdk-1.8.0_191</id>
@@ -533,7 +935,19 @@
             </activation>
             <properties>
                 <alpn-boot.version>8.1.13.v20181017</alpn-boot.version>
+                <argLine>
+                    "-Xbootclasspath/p:/${user.home}/.m2/repository/org/mortbay/jetty/alpn/alpn-boot/${alpn-boot.version}/alpn-boot-${alpn-boot.version}.jar"
+                    -Duser.language=en -Duser.region=US
+                </argLine>
             </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.mortbay.jetty.alpn</groupId>
+                    <artifactId>alpn-boot</artifactId>
+                    <version>${alpn-boot.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
         </profile>
         <profile>
             <id>jdk-1.8.0_192</id>
@@ -545,7 +959,259 @@
             </activation>
             <properties>
                 <alpn-boot.version>8.1.13.v20181017</alpn-boot.version>
+                <argLine>
+                    "-Xbootclasspath/p:/${user.home}/.m2/repository/org/mortbay/jetty/alpn/alpn-boot/${alpn-boot.version}/alpn-boot-${alpn-boot.version}.jar"
+                    -Duser.language=en -Duser.region=US
+                </argLine>
             </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.mortbay.jetty.alpn</groupId>
+                    <artifactId>alpn-boot</artifactId>
+                    <version>${alpn-boot.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>jdk-1.8.0_201</id>
+            <activation>
+                <property>
+                    <name>java.version</name>
+                    <value>1.8.0_201</value>
+                </property>
+            </activation>
+            <properties>
+                <alpn-boot.version>8.1.13.v20181017</alpn-boot.version>
+                <argLine>
+                    "-Xbootclasspath/p:/${user.home}/.m2/repository/org/mortbay/jetty/alpn/alpn-boot/${alpn-boot.version}/alpn-boot-${alpn-boot.version}.jar"
+                    -Duser.language=en -Duser.region=US
+                </argLine>
+            </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.mortbay.jetty.alpn</groupId>
+                    <artifactId>alpn-boot</artifactId>
+                    <version>${alpn-boot.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>jdk-1.8.0_202</id>
+            <activation>
+                <property>
+                    <name>java.version</name>
+                    <value>1.8.0_202</value>
+                </property>
+            </activation>
+            <properties>
+                <alpn-boot.version>8.1.13.v20181017</alpn-boot.version>
+                <argLine>
+                    "-Xbootclasspath/p:/${user.home}/.m2/repository/org/mortbay/jetty/alpn/alpn-boot/${alpn-boot.version}/alpn-boot-${alpn-boot.version}.jar"
+                    -Duser.language=en -Duser.region=US
+                </argLine>
+            </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.mortbay.jetty.alpn</groupId>
+                    <artifactId>alpn-boot</artifactId>
+                    <version>${alpn-boot.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>jdk-1.8.0_211</id>
+            <activation>
+                <property>
+                    <name>java.version</name>
+                    <value>1.8.0_211</value>
+                </property>
+            </activation>
+            <properties>
+                <alpn-boot.version>8.1.13.v20181017</alpn-boot.version>
+                <argLine>
+                    "-Xbootclasspath/p:/${user.home}/.m2/repository/org/mortbay/jetty/alpn/alpn-boot/${alpn-boot.version}/alpn-boot-${alpn-boot.version}.jar"
+                    -Duser.language=en -Duser.region=US
+                </argLine>
+            </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.mortbay.jetty.alpn</groupId>
+                    <artifactId>alpn-boot</artifactId>
+                    <version>${alpn-boot.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>jdk-1.8.0_212</id>
+            <activation>
+                <property>
+                    <name>java.version</name>
+                    <value>1.8.0_212</value>
+                </property>
+            </activation>
+            <properties>
+                <alpn-boot.version>8.1.13.v20181017</alpn-boot.version>
+                <argLine>
+                    "-Xbootclasspath/p:/${user.home}/.m2/repository/org/mortbay/jetty/alpn/alpn-boot/${alpn-boot.version}/alpn-boot-${alpn-boot.version}.jar"
+                    -Duser.language=en -Duser.region=US
+                </argLine>
+            </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.mortbay.jetty.alpn</groupId>
+                    <artifactId>alpn-boot</artifactId>
+                    <version>${alpn-boot.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>jdk-1.8.0_221</id>
+            <activation>
+                <property>
+                    <name>java.version</name>
+                    <value>1.8.0_221</value>
+                </property>
+            </activation>
+            <properties>
+                <alpn-boot.version>8.1.13.v20181017</alpn-boot.version>
+                <argLine>
+                    "-Xbootclasspath/p:/${user.home}/.m2/repository/org/mortbay/jetty/alpn/alpn-boot/${alpn-boot.version}/alpn-boot-${alpn-boot.version}.jar"
+                    -Duser.language=en -Duser.region=US
+                </argLine>
+            </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.mortbay.jetty.alpn</groupId>
+                    <artifactId>alpn-boot</artifactId>
+                    <version>${alpn-boot.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>jdk-1.8.0_222</id>
+            <activation>
+                <property>
+                    <name>java.version</name>
+                    <value>1.8.0_222</value>
+                </property>
+            </activation>
+            <properties>
+                <alpn-boot.version>8.1.13.v20181017</alpn-boot.version>
+                <argLine>
+                    "-Xbootclasspath/p:/${user.home}/.m2/repository/org/mortbay/jetty/alpn/alpn-boot/${alpn-boot.version}/alpn-boot-${alpn-boot.version}.jar"
+                    -Duser.language=en -Duser.region=US
+                </argLine>
+            </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.mortbay.jetty.alpn</groupId>
+                    <artifactId>alpn-boot</artifactId>
+                    <version>${alpn-boot.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>jdk-1.8.0_231</id>
+            <activation>
+                <property>
+                    <name>java.version</name>
+                    <value>1.8.0_231</value>
+                </property>
+            </activation>
+            <properties>
+                <alpn-boot.version>8.1.13.v20181017</alpn-boot.version>
+                <argLine>
+                    "-Xbootclasspath/p:/${user.home}/.m2/repository/org/mortbay/jetty/alpn/alpn-boot/${alpn-boot.version}/alpn-boot-${alpn-boot.version}.jar"
+                    -Duser.language=en -Duser.region=US
+                </argLine>
+            </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.mortbay.jetty.alpn</groupId>
+                    <artifactId>alpn-boot</artifactId>
+                    <version>${alpn-boot.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>jdk-1.8.0_232</id>
+            <activation>
+                <property>
+                    <name>java.version</name>
+                    <value>1.8.0_232</value>
+                </property>
+            </activation>
+            <properties>
+                <alpn-boot.version>8.1.13.v20181017</alpn-boot.version>
+                <argLine>
+                    "-Xbootclasspath/p:/${user.home}/.m2/repository/org/mortbay/jetty/alpn/alpn-boot/${alpn-boot.version}/alpn-boot-${alpn-boot.version}.jar"
+                    -Duser.language=en -Duser.region=US
+                </argLine>
+            </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.mortbay.jetty.alpn</groupId>
+                    <artifactId>alpn-boot</artifactId>
+                    <version>${alpn-boot.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>jdk-1.8.0_241</id>
+            <activation>
+                <property>
+                    <name>java.version</name>
+                    <value>1.8.0_241</value>
+                </property>
+            </activation>
+            <properties>
+                <alpn-boot.version>8.1.13.v20181017</alpn-boot.version>
+                <argLine>
+                    "-Xbootclasspath/p:/${user.home}/.m2/repository/org/mortbay/jetty/alpn/alpn-boot/${alpn-boot.version}/alpn-boot-${alpn-boot.version}.jar"
+                    -Duser.language=en -Duser.region=US
+                </argLine>
+            </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.mortbay.jetty.alpn</groupId>
+                    <artifactId>alpn-boot</artifactId>
+                    <version>${alpn-boot.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>jdk-1.8.0_242</id>
+            <activation>
+                <property>
+                    <name>java.version</name>
+                    <value>1.8.0_242</value>
+                </property>
+            </activation>
+            <properties>
+                <alpn-boot.version>8.1.13.v20181017</alpn-boot.version>
+                <argLine>
+                    "-Xbootclasspath/p:/${user.home}/.m2/repository/org/mortbay/jetty/alpn/alpn-boot/${alpn-boot.version}/alpn-boot-${alpn-boot.version}.jar"
+                    -Duser.language=en -Duser.region=US
+                </argLine>
+            </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.mortbay.jetty.alpn</groupId>
+                    <artifactId>alpn-boot</artifactId>
+                    <version>${alpn-boot.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
         </profile>
     </profiles>
 </project>
