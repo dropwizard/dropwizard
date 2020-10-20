@@ -3,6 +3,7 @@ package io.dropwizard.db;
 import com.codahale.metrics.MetricRegistry;
 import io.dropwizard.util.Duration;
 
+import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.Optional;
 
@@ -67,6 +68,7 @@ public interface PooledDataSourceFactory {
      *
      * @return the JDBC driver class as a string
      */
+    @Nullable
     String getDriverClass();
 
     /**
