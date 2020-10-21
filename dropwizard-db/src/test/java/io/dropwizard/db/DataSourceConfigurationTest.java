@@ -12,10 +12,10 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class DataSourceConfigurationTest {
+class DataSourceConfigurationTest {
 
     @Test
-    public void testFullConfiguration() throws Exception {
+    void testFullConfiguration() throws Exception {
         DataSourceFactory ds = getDataSourceFactory("yaml/full_db_pool.yml");
 
         assertThat(ds.getDriverClass()).isEqualTo("org.postgresql.Driver");
@@ -59,7 +59,7 @@ public class DataSourceConfigurationTest {
     }
 
     @Test
-    public void testMinimalConfiguration() throws Exception {
+    void testMinimalConfiguration() throws Exception {
         DataSourceFactory ds = getDataSourceFactory("yaml/minimal_db_pool.yml");
 
         assertThat(ds.getDriverClass()).isEqualTo("org.postgresql.Driver");
@@ -101,7 +101,7 @@ public class DataSourceConfigurationTest {
     }
 
     @Test
-    public void testInlineUserPasswordConfiguration() throws Exception {
+    void testInlineUserPasswordConfiguration() throws Exception {
         DataSourceFactory ds = getDataSourceFactory("yaml/inline_user_pass_db_pool.yml");
 
         assertThat(ds.getDriverClass()).isEqualTo("org.postgresql.Driver");
@@ -109,10 +109,17 @@ public class DataSourceConfigurationTest {
         assertThat(ds.getUser()).isNull();
         assertThat(ds.getPassword()).isNull();
     }
+
     @Test
-    public void testInitialSizeZeroIsAllowed() throws Exception {
+    void testInitialSizeZeroIsAllowed() throws Exception {
         DataSourceFactory ds = getDataSourceFactory("yaml/empty_initial_pool.yml");
         assertThat(ds.getInitialSize()).isEqualTo(0);
+    }
+
+    @Test
+    void testEmptyDriverClassIsAllowed() throws Exception {
+        DataSourceFactory ds = getDataSourceFactory("yaml/empty_driver_class_db_pool.yml");
+        assertThat(ds.getDriverClass()).isNull();
     }
 
     private DataSourceFactory getDataSourceFactory(String resourceName) throws Exception {

@@ -684,7 +684,7 @@ queueSize              256                                      The maximum capa
 discardingThreshold    -1                                       When the blocking queue has only the capacity mentioned in
                                                                 discardingThreshold remaining, it will drop events of level TRACE,
                                                                 DEBUG and INFO, keeping only events of level WARN and ERROR.
-                                                                If no discarding threshold is specified (-1), then a default of 
+                                                                If no discarding threshold is specified (-1), then a default of
                                                                 queueSize / 5 (logback's default ratio) is used.
                                                                 To keep all events, set discardingThreshold to 0.
 timeZone               UTC                                      The time zone to which event timestamps will be converted.
@@ -739,7 +739,7 @@ queueSize                    256                                        The maxi
 discardingThreshold          -1                                         When the blocking queue has only the capacity mentioned in discardingThreshold
                                                                         remaining, it will drop events of level TRACE, DEBUG and INFO, keeping only events
                                                                         of level WARN and ERROR. If no discarding threshold is specified (-1), then a default
-                                                                        of queueSize / 5 (logback's default ratio) is used. To keep all events, set 
+                                                                        of queueSize / 5 (logback's default ratio) is used. To keep all events, set
                                                                         discardingThreshold to 0.
 archive                      true                                       Whether or not to archive old events in separate files.
 archivedLogFilenamePattern   (none)                                     Required if ``archive`` is ``true``.
@@ -881,7 +881,7 @@ FilterFactories
 A factory used for request logging appenders should implement ``io.dropwizard.logging.filter.FilterFactory<IAccessEvent>``
 while one used for regular logging should implement ``io.dropwizard.logging.filter.FilterFactory<ILoggingEvent>``.
 To register a factory, its fully qualified classname must be listed in
-``META-INF/services/io.dropwizard.logging.filter.FilterFactory``. The factory then can be referenced in the configuration 
+``META-INF/services/io.dropwizard.logging.filter.FilterFactory``. The factory then can be referenced in the configuration
 either via its simple classname or via type name, if factory class annotated with ``@JsonTypeName``.
 
 
@@ -1046,7 +1046,7 @@ additionalFields         (empty)                      Map of fields to add in th
 
 .. _DateTimeFormatter:  https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html
 
-.. _TeeFilter: https://logback.qos.ch/access.html#teeFilter           
+.. _TeeFilter: https://logback.qos.ch/access.html#teeFilter
 
 .. _register: https://github.com/dropwizard/dropwizard/issues/2045#issuecomment-299149563
 
@@ -1465,9 +1465,11 @@ Database
 ============================    =====================    ===============================================================
 Name                            Default                  Description
 ============================    =====================    ===============================================================
-driverClass                     REQUIRED                 The full name of the JDBC driver class.
-
 url                             REQUIRED                 The URL of the server.
+
+driverClass                     none                     The fully qualified class name of the JDBC driver class.
+                                                         Only required if there were no JDBC drivers registered in
+                                                         ``META-INF/services/java.sql.Driver``.
 
 user                            none                     The username used to connect to the server.
 

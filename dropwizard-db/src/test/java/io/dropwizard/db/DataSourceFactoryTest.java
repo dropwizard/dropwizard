@@ -24,8 +24,9 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.assertThatNoException;
 
-public class DataSourceFactoryTest {
+class DataSourceFactoryTest {
     private final MetricRegistry metricRegistry = new MetricRegistry();
 
     private DataSourceFactory factory;
@@ -34,7 +35,7 @@ public class DataSourceFactoryTest {
     private ManagedDataSource dataSource;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         factory = new DataSourceFactory();
         factory.setUrl("jdbc:h2:mem:DbTest-" + System.currentTimeMillis() + ";user=sa");
         factory.setDriverClass("org.h2.Driver");
@@ -42,7 +43,7 @@ public class DataSourceFactoryTest {
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    void tearDown() throws Exception {
         if (null != dataSource) {
             dataSource.stop();
         }
@@ -55,15 +56,22 @@ public class DataSourceFactoryTest {
     }
 
     @Test
-    public void testInitialSizeIsZero() throws Exception {
-        factory.setUrl("nonsense invalid url");
-        factory.setInitialSize(0);
+    void testEmptyDriverClass() throws Exception {
+        factory.setDriverClass(null);
         ManagedDataSource dataSource = factory.build(metricRegistry, "test");
-        dataSource.start();
+        assertThatNoException().isThrownBy(dataSource::start);
     }
 
     @Test
-    public void buildsAConnectionPoolToTheDatabase() throws Exception {
+    void testInitialSizeIsZero() throws Exception {
+        factory.setUrl("nonsense invalid url");
+        factory.setInitialSize(0);
+        ManagedDataSource dataSource = factory.build(metricRegistry, "test");
+        assertThatNoException().isThrownBy(dataSource::start);
+    }
+
+    @Test
+    void buildsAConnectionPoolToTheDatabase() throws Exception {
         try (Connection connection = dataSource().getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement("select 1")) {
                 try (ResultSet set = statement.executeQuery()) {
@@ -76,7 +84,7 @@ public class DataSourceFactoryTest {
     }
 
     @Test
-    public void testNoValidationQueryTimeout() throws Exception {
+    void testNoValidationQueryTimeout() throws Exception {
         try (Connection connection = dataSource().getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement("select 1")) {
                 assertThat(statement.getQueryTimeout()).isEqualTo(0);
@@ -85,7 +93,7 @@ public class DataSourceFactoryTest {
     }
 
     @Test
-    public void testValidationQueryTimeoutIsSet() throws Exception {
+    void testValidationQueryTimeoutIsSet() throws Exception {
         factory.setValidationQueryTimeout(Duration.seconds(3));
 
         try (Connection connection = dataSource().getConnection()) {
@@ -96,7 +104,7 @@ public class DataSourceFactoryTest {
     }
 
     @Test
-    public void invalidJDBCDriverClassThrowsSQLException() {
+    void invalidJDBCDriverClassThrowsSQLException() {
         final DataSourceFactory factory = new DataSourceFactory();
         factory.setDriverClass("org.example.no.driver.here");
 
@@ -105,7 +113,7 @@ public class DataSourceFactoryTest {
     }
 
     @Test
-    public void testCustomValidator() throws Exception {
+    void testCustomValidator() throws Exception {
         factory.setValidatorClassName(Optional.of(CustomConnectionValidator.class.getName()));
         try (Connection connection = dataSource().getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement("select 1")) {
@@ -119,7 +127,7 @@ public class DataSourceFactoryTest {
     }
 
     @Test
-    public void testJdbcInterceptors() throws Exception {
+    void testJdbcInterceptors() throws Exception {
         factory.setJdbcInterceptors(Optional.of("StatementFinalizer;ConnectionState"));
         final ManagedPooledDataSource source = (ManagedPooledDataSource) dataSource();
 
@@ -129,7 +137,7 @@ public class DataSourceFactoryTest {
     }
 
     @Test
-    public void createDefaultFactory() throws Exception {
+    void createDefaultFactory() throws Exception {
         final DataSourceFactory factory = new YamlConfigurationFactory<>(DataSourceFactory.class,
             BaseValidator.newValidator(), Jackson.newObjectMapper(), "dw")
             .build(new ResourceConfigurationSourceProvider(), "yaml/minimal_db_pool.yml");
@@ -143,7 +151,7 @@ public class DataSourceFactoryTest {
     }
 
     @Test
-    public void metricsRecorded() throws Exception {
+    void metricsRecorded() throws Exception {
         dataSource();
         Map<String, Gauge> poolMetrics = metricRegistry.getGauges(MetricFilter.startsWith("io.dropwizard.db.ManagedPooledDataSource.test."));
         assertThat(poolMetrics.keySet()).contains(

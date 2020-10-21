@@ -7,11 +7,11 @@ import io.dropwizard.util.Duration;
 import io.dropwizard.validation.MinDuration;
 import io.dropwizard.validation.ValidationMethod;
 import org.apache.tomcat.jdbc.pool.PoolProperties;
-import javax.validation.constraints.NotEmpty;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.sql.Connection;
 import java.util.LinkedHashMap;
@@ -32,14 +32,17 @@ import java.util.concurrent.TimeUnit;
  *         <td>Description</td>
  *     </tr>
  *     <tr>
- *         <td>{@code driverClass}</td>
- *         <td><b>REQUIRED</b></td>
- *         <td>The full name of the JDBC driver class.</td>
- *     </tr>
- *     <tr>
  *         <td>{@code url}</td>
  *         <td><b>REQUIRED</b></td>
  *         <td>The URL of the server.</td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code driverClass}</td>
+ *         <td><b>none</b></td>
+ *         <td>
+ *             The fully qualified class name of the JDBC driver class.
+ *             Only required if there were no JDBC drivers registered in {@code META-INF/services/java.sql.Driver}.
+ *         </td>
  *     </tr>
  *     <tr>
  *         <td>{@code user}</td>
@@ -329,8 +332,8 @@ public class DataSourceFactory implements PooledDataSourceFactory {
         }
     }
 
-    @NotEmpty
-    private String driverClass = "";
+    @Nullable
+    private String driverClass;
 
     @Min(0)
     @Max(100)
@@ -443,6 +446,7 @@ public class DataSourceFactory implements PooledDataSourceFactory {
         this.autoCommentsEnabled = autoCommentsEnabled;
     }
 
+    @Nullable
     @JsonProperty
     @Override
     public String getDriverClass() {
@@ -450,7 +454,7 @@ public class DataSourceFactory implements PooledDataSourceFactory {
     }
 
     @JsonProperty
-    public void setDriverClass(String driverClass) {
+    public void setDriverClass(@Nullable String driverClass) {
         this.driverClass = driverClass;
     }
 
@@ -461,7 +465,7 @@ public class DataSourceFactory implements PooledDataSourceFactory {
     }
 
     @JsonProperty
-    public void setUser(String user) {
+    public void setUser(@Nullable String user) {
         this.user = user;
     }
 
@@ -472,7 +476,7 @@ public class DataSourceFactory implements PooledDataSourceFactory {
     }
 
     @JsonProperty
-    public void setPassword(String password) {
+    public void setPassword(@Nullable String password) {
         this.password = password;
     }
 
@@ -633,7 +637,7 @@ public class DataSourceFactory implements PooledDataSourceFactory {
     }
 
     @JsonProperty
-    public void setAutoCommitByDefault(Boolean autoCommit) {
+    public void setAutoCommitByDefault(@Nullable Boolean autoCommit) {
         this.autoCommitByDefault = autoCommit;
     }
 
@@ -644,7 +648,7 @@ public class DataSourceFactory implements PooledDataSourceFactory {
     }
 
     @JsonProperty
-    public void setDefaultCatalog(String defaultCatalog) {
+    public void setDefaultCatalog(@Nullable String defaultCatalog) {
         this.defaultCatalog = defaultCatalog;
     }
 
@@ -655,7 +659,7 @@ public class DataSourceFactory implements PooledDataSourceFactory {
     }
 
     @JsonProperty
-    public void setReadOnlyByDefault(Boolean readOnlyByDefault) {
+    public void setReadOnlyByDefault(@Nullable Boolean readOnlyByDefault) {
         this.readOnlyByDefault = readOnlyByDefault;
     }
 
@@ -696,7 +700,7 @@ public class DataSourceFactory implements PooledDataSourceFactory {
     }
 
     @JsonProperty
-    public void setInitializationQuery(String query) {
+    public void setInitializationQuery(@Nullable String query) {
         this.initializationQuery = query;
     }
 
@@ -726,7 +730,7 @@ public class DataSourceFactory implements PooledDataSourceFactory {
     }
 
     @JsonProperty
-    public void setMaxConnectionAge(Duration age) {
+    public void setMaxConnectionAge(@Nullable Duration age) {
         this.maxConnectionAge = age;
     }
 
@@ -814,7 +818,7 @@ public class DataSourceFactory implements PooledDataSourceFactory {
     }
 
     @JsonProperty
-    public void setValidationQueryTimeout(Duration validationQueryTimeout) {
+    public void setValidationQueryTimeout(@Nullable Duration validationQueryTimeout) {
         this.validationQueryTimeout = validationQueryTimeout;
     }
 
@@ -911,7 +915,7 @@ public class DataSourceFactory implements PooledDataSourceFactory {
         poolConfig.setTimeBetweenEvictionRunsMillis((int) evictionInterval.toMilliseconds());
         poolConfig.setValidationInterval(validationInterval.toMilliseconds());
 
-        getValidationQueryTimeout().map(x -> (int)x.toSeconds()).ifPresent(poolConfig::setValidationQueryTimeout);
+        getValidationQueryTimeout().map(x -> (int) x.toSeconds()).ifPresent(poolConfig::setValidationQueryTimeout);
         validatorClassName.ifPresent(poolConfig::setValidatorClassName);
         jdbcInterceptors.ifPresent(poolConfig::setJdbcInterceptors);
         return new ManagedPooledDataSource(poolConfig, metricRegistry);
