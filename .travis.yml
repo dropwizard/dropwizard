@@ -1,14 +1,18 @@
-dist: xenial
+dist: bionic
+branches:
+  only:
+  - master
+  - /^release\/.*$/
+  - /^v[0-9].*$/
 language: java
 jdk:
   - openjdk8
   - openjdk11
-  - openjdk14
 before_install:
   - rm ~/.m2/settings.xml || true
   - ulimit -c unlimited -S
 script:
-  - ./mvnw --no-transfer-progress -Pjakarta-apis -V -B -ff verify
+  - ./mvnw --no-transfer-progress -Pjakarta-apis -V -B -ff install
   - ./mvnw --no-transfer-progress -Pjakarta-apis -V -B -ff -q -pl docs site
 after_success:
   - bash ci/after_success.sh
