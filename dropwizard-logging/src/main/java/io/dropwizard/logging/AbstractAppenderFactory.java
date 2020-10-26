@@ -275,7 +275,8 @@ public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware>
         }
         if (!Strings.isNullOrEmpty(logFormat)) {
             if (layoutBase instanceof PatternLayoutBase) {
-                ((PatternLayoutBase<E>)layoutBase).setPattern(logFormat);
+                String logFormatWithTimeZone = logFormat.replace("%dwTimeZone", timeZone.getID());
+                ((PatternLayoutBase<E>)layoutBase).setPattern(logFormatWithTimeZone);
             } else {
                 LOGGER.warn("Ignoring 'logFormat', because 'layout' does not extend PatternLayoutBase");
             }
