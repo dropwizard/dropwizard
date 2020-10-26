@@ -49,7 +49,7 @@
         <jersey.version>2.32</jersey.version>
         <jetty-setuid-java.version>1.0.4</jetty-setuid-java.version>
         <jetty.version>9.4.33.v20201020</jetty.version>
-        <joda-time.version>2.10.7</joda-time.version>
+        <joda-time.version>2.10.8</joda-time.version>
         <jsr305.version>3.0.2</jsr305.version>
         <liquibase-core.version>4.1.1</liquibase-core.version>
         <liquibase-slf4j.version>4.0.0</liquibase-slf4j.version>
