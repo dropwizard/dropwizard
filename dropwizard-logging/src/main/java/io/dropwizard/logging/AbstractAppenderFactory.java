@@ -19,6 +19,8 @@ import io.dropwizard.util.Strings;
 import io.dropwizard.util.Duration;
 import io.dropwizard.validation.MaxDuration;
 import io.dropwizard.validation.MinDuration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.Max;
@@ -102,6 +104,7 @@ import java.util.concurrent.TimeUnit;
  * </table>
  */
 public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware> implements AppenderFactory<E> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractAppenderFactory.class);
 
     @NotNull
     protected Level threshold = Level.ALL;
@@ -266,13 +269,16 @@ public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware>
     protected LayoutBase<E> buildLayout(LoggerContext context, LayoutFactory<E> defaultLayoutFactory) {
         final LayoutBase<E> layoutBase;
         if (layout == null) {
-            final PatternLayoutBase<E> patternLayoutBase = defaultLayoutFactory.build(context, timeZone);
-            if (!Strings.isNullOrEmpty(logFormat)) {
-                patternLayoutBase.setPattern(logFormat);
-            }
-            layoutBase = patternLayoutBase;
+            layoutBase = defaultLayoutFactory.build(context, timeZone);
         } else {
             layoutBase = layout.build(context, timeZone);
+        }
+        if (!Strings.isNullOrEmpty(logFormat)) {
+            if (layoutBase instanceof PatternLayoutBase) {
+                ((PatternLayoutBase<E>)layoutBase).setPattern(logFormat);
+            } else {
+                LOGGER.warn("Ignoring 'logFormat', because 'layout' does not extend PatternLayoutBase");
+            }
         }
 
         layoutBase.start();
