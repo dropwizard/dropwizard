@@ -1,11 +1,12 @@
 package io.dropwizard.jetty.setup;
 
 import io.dropwizard.jetty.MutableServletContextHandler;
-import io.dropwizard.jetty.NonblockingServletHolder;
 import org.eclipse.jetty.security.SecurityHandler;
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.servlet.FilterHolder;
+import org.eclipse.jetty.servlet.ServletHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.servlet.Source;
 import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.util.resource.ResourceCollection;
 import org.slf4j.Logger;
@@ -43,9 +44,9 @@ public class ServletEnvironment {
      *         configuration
      */
     public ServletRegistration.Dynamic addServlet(String name, Servlet servlet) {
-        final ServletHolder holder = new NonblockingServletHolder(requireNonNull(servlet));
-        holder.setName(name);
-        handler.getServletHandler().addServlet(holder);
+        final ServletHolder holder = new ServletHolder(name, servlet);
+        final ServletHandler servletHandler = handler.getServletHandler();
+        servletHandler.addServlet(holder);
 
         final ServletRegistration.Dynamic registration = holder.getRegistration();
         checkDuplicateRegistration(name, servlets, "servlet");
@@ -61,9 +62,9 @@ public class ServletEnvironment {
      * @return a {@link javax.servlet.ServletRegistration.Dynamic} instance allowing for further configuration
      */
     public ServletRegistration.Dynamic addServlet(String name, Class<? extends Servlet> klass) {
-        final ServletHolder holder = new ServletHolder(requireNonNull(klass));
-        holder.setName(name);
-        handler.getServletHandler().addServlet(holder);
+        final ServletHolder holder = new ServletHolder(name, klass);
+        final ServletHandler servletHandler = handler.getServletHandler();
+        servletHandler.addServlet(holder);
 
         final ServletRegistration.Dynamic registration = holder.getRegistration();
         checkDuplicateRegistration(name, servlets, "servlet");
