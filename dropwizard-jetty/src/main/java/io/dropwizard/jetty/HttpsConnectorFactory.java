@@ -287,7 +287,7 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
     private List<String> supportedProtocols;
 
     @Nullable
-    private List<String> excludedProtocols = Arrays.asList("SSLv3", "TLSv1", "TLSv1.1");
+    private List<String> excludedProtocols = Arrays.asList("SSLv2Hello", "SSLv3", "TLSv1", "TLSv1.1");
 
     @Nullable
     private List<String> supportedCipherSuites;
