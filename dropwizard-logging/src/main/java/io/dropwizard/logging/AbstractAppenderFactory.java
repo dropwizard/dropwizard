@@ -266,6 +266,7 @@ public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware>
         }
     }
 
+    @SuppressWarnings("NullAway")
     protected LayoutBase<E> buildLayout(LoggerContext context, LayoutFactory<E> defaultLayoutFactory) {
         final LayoutBase<E> layoutBase;
         if (layout == null) {
