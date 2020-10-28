@@ -13,7 +13,12 @@ import java.io.IOException;
 /**
  * A {@link ServletHolder} subclass which removes the synchronization around servlet initialization
  * by requiring a pre-initialized servlet holder.
+ *
+ * @deprecated If necessary, use {@link ServletHolder} or {@link org.eclipse.jetty.servlet.FilterHolder} directly.
+ * This class will be removed in Dropwizard 2.1.0.
  */
+@SuppressWarnings("unused")
+@Deprecated
 public class NonblockingServletHolder extends ServletHolder {
     private final Servlet servlet;
 

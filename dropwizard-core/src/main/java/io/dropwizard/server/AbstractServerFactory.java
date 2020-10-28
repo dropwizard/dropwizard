@@ -16,7 +16,6 @@ import io.dropwizard.jersey.setup.JerseyEnvironment;
 import io.dropwizard.jersey.validation.HibernateValidationBinder;
 import io.dropwizard.jetty.GzipHandlerFactory;
 import io.dropwizard.jetty.MutableServletContextHandler;
-import io.dropwizard.jetty.NonblockingServletHolder;
 import io.dropwizard.jetty.ServerPushFilterFactory;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import io.dropwizard.request.logging.LogbackAccessRequestLogFactory;
@@ -31,6 +30,7 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ErrorHandler;
 import org.eclipse.jetty.server.handler.RequestLogHandler;
 import org.eclipse.jetty.server.handler.StatisticsHandler;
+import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.setuid.RLimit;
 import org.eclipse.jetty.setuid.SetUIDListener;
 import org.eclipse.jetty.util.BlockingArrayQueue;
@@ -558,9 +558,8 @@ public abstract class AbstractServerFactory implements ServerFactory {
         handler.setServer(server);
         handler.getServletContext().setAttribute(MetricsServlet.METRICS_REGISTRY, metrics);
         handler.getServletContext().setAttribute(HealthCheckServlet.HEALTH_CHECK_REGISTRY, healthChecks);
-        handler.addServlet(new NonblockingServletHolder(new AdminServlet()), "/*");
-        final String allowedMethodsParam = allowedMethods.stream()
-                .collect(Collectors.joining(","));
+        handler.addServlet(AdminServlet.class, "/*");
+        final String allowedMethodsParam = String.join(",", allowedMethods);
         handler.addFilter(AllowedMethodsFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST))
                 .setInitParameter(AllowedMethodsFilter.ALLOWED_METHODS_PARAM, allowedMethodsParam);
         return handler;
@@ -584,8 +583,7 @@ public abstract class AbstractServerFactory implements ServerFactory {
                                        @Nullable Servlet jerseyContainer,
                                        MetricRegistry metricRegistry) {
         configureSessionsAndSecurity(handler, server);
-        final String allowedMethodsParam = allowedMethods.stream()
-                .collect(Collectors.joining(","));
+        final String allowedMethodsParam = String.join(",", allowedMethods);
         handler.addFilter(AllowedMethodsFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST))
                 .setInitParameter(AllowedMethodsFilter.ALLOWED_METHODS_PARAM, allowedMethodsParam);
         if (enableThreadNameFilter) {
@@ -599,7 +597,7 @@ public abstract class AbstractServerFactory implements ServerFactory {
             if (registerDefaultExceptionMappers == null || registerDefaultExceptionMappers) {
                 jersey.register(new ExceptionMapperBinder(detailedJsonProcessingExceptionMapper));
             }
-            handler.addServlet(new NonblockingServletHolder(jerseyContainer), jersey.getUrlPattern());
+            handler.addServlet(new ServletHolder("jersey", jerseyContainer), jersey.getUrlPattern());
         }
         final InstrumentedHandler instrumented = new InstrumentedHandler(metricRegistry);
         instrumented.setServer(server);

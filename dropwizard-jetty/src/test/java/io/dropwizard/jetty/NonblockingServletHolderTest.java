@@ -21,6 +21,7 @@ import static org.mockito.Mockito.verify;
 
 public class NonblockingServletHolderTest {
     private final Servlet servlet = mock(Servlet.class);
+    @SuppressWarnings("deprecation")
     private final NonblockingServletHolder holder = new NonblockingServletHolder(servlet);
     private final Request baseRequest = mock(Request.class);
     private final ServletRequest request = mock(ServletRequest.class);
