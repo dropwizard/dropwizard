@@ -470,10 +470,10 @@ validatePeers                    false                            Whether or not
                                                                   implemented.
 supportedProtocols               (none)                           A list of protocols (e.g., ``SSLv3``, ``TLSv1``) which are supported. All
                                                                   other protocols will be refused.
-excludedProtocols                ["SSL.*", "TLSv1", "TLSv1\\.1"]  A list of protocols (e.g., ``SSLv3``, ``TLSv1``) which are excluded. These
+excludedProtocols                ["SSLv3", "TLSv1", "TLSv1.1"]    A list of protocols (e.g., ``SSLv3``, ``TLSv1``) which are excluded. These
                                                                   protocols will be refused.
 supportedCipherSuites            (none)                           A list of cipher suites (e.g., ``TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256``) which
-                                                                  are supported. All other cipher suites will be refused
+                                                                  are supported. All other cipher suites will be refused.
 excludedCipherSuites             (none)                           A list of cipher suites (e.g., ``TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256``) which
                                                                   are excluded. These cipher suites will be refused and exclusion takes higher
                                                                   precedence than inclusion, such that if a cipher suite is listed in

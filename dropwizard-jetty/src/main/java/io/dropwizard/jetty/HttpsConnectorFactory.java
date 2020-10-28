@@ -182,7 +182,7 @@ import java.util.stream.Collectors;
  *     </tr>
  *     <tr>
  *         <td>{@code excludedProtocols}</td>
- *         <td>["SSL.*", "TLSv1", "TLSv1\.1"]</td>
+ *         <td>["SSLv3", "TLSv1", "TLSv1.1"]</td>
  *         <td>
  *             A list of protocols (e.g., {@code SSLv3}, {@code TLSv1}) which are excluded. These
  *             protocols will be refused.
@@ -193,7 +193,7 @@ import java.util.stream.Collectors;
  *         <td>JVM default</td>
  *         <td>
  *             A list of cipher suites (e.g., {@code TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256}) which
- *             are supported. All other cipher suites will be refused
+ *             are supported. All other cipher suites will be refused.
  *         </td>
  *    </tr>
  *    <tr>
@@ -287,7 +287,7 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
     private List<String> supportedProtocols;
 
     @Nullable
-    private List<String> excludedProtocols = Arrays.asList("SSL.*", "TLSv1", "TLSv1\\.1");
+    private List<String> excludedProtocols = Arrays.asList("SSLv3", "TLSv1", "TLSv1.1");
 
     @Nullable
     private List<String> supportedCipherSuites;
@@ -317,7 +317,7 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
     }
 
     @JsonProperty
-    public void setEndpointIdentificationAlgorithm(String endpointIdentificationAlgorithm) {
+    public void setEndpointIdentificationAlgorithm(@Nullable String endpointIdentificationAlgorithm) {
         this.endpointIdentificationAlgorithm = endpointIdentificationAlgorithm;
     }
 
@@ -328,7 +328,7 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
     }
 
     @JsonProperty
-    public void setKeyStorePath(String keyStorePath) {
+    public void setKeyStorePath(@Nullable String keyStorePath) {
         this.keyStorePath = keyStorePath;
     }
 
@@ -339,7 +339,7 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
     }
 
     @JsonProperty
-    public void setKeyStorePassword(String keyStorePassword) {
+    public void setKeyStorePassword(@Nullable String keyStorePassword) {
         this.keyStorePassword = keyStorePassword;
     }
 
@@ -360,7 +360,7 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
     }
 
     @JsonProperty
-    public void setKeyStoreProvider(String keyStoreProvider) {
+    public void setKeyStoreProvider(@Nullable String keyStoreProvider) {
         this.keyStoreProvider = keyStoreProvider;
     }
 
@@ -381,7 +381,7 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
     }
 
     @JsonProperty
-    public void setTrustStoreProvider(String trustStoreProvider) {
+    public void setTrustStoreProvider(@Nullable String trustStoreProvider) {
         this.trustStoreProvider = trustStoreProvider;
     }
 
@@ -392,7 +392,7 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
     }
 
     @JsonProperty
-    public void setKeyManagerPassword(String keyManagerPassword) {
+    public void setKeyManagerPassword(@Nullable String keyManagerPassword) {
         this.keyManagerPassword = keyManagerPassword;
     }
 
@@ -403,7 +403,7 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
     }
 
     @JsonProperty
-    public void setTrustStorePath(String trustStorePath) {
+    public void setTrustStorePath(@Nullable String trustStorePath) {
         this.trustStorePath = trustStorePath;
     }
 
@@ -425,7 +425,7 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
     }
 
     @JsonProperty
-    public void setNeedClientAuth(Boolean needClientAuth) {
+    public void setNeedClientAuth(@Nullable Boolean needClientAuth) {
         this.needClientAuth = needClientAuth;
     }
 
@@ -436,7 +436,7 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
     }
 
     @JsonProperty
-    public void setWantClientAuth(Boolean wantClientAuth) {
+    public void setWantClientAuth(@Nullable Boolean wantClientAuth) {
         this.wantClientAuth = wantClientAuth;
     }
 
@@ -447,7 +447,7 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
     }
 
     @JsonProperty
-    public void setCertAlias(String certAlias) {
+    public void setCertAlias(@Nullable String certAlias) {
         this.certAlias = certAlias;
     }
 
@@ -458,7 +458,7 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
     }
 
     @JsonProperty
-    public void setCrlPath(File crlPath) {
+    public void setCrlPath(@Nullable File crlPath) {
         this.crlPath = crlPath;
     }
 
@@ -469,7 +469,7 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
     }
 
     @JsonProperty
-    public void setEnableCRLDP(Boolean enableCRLDP) {
+    public void setEnableCRLDP(@Nullable Boolean enableCRLDP) {
         this.enableCRLDP = enableCRLDP;
     }
 
@@ -480,7 +480,7 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
     }
 
     @JsonProperty
-    public void setEnableOCSP(Boolean enableOCSP) {
+    public void setEnableOCSP(@Nullable Boolean enableOCSP) {
         this.enableOCSP = enableOCSP;
     }
 
@@ -491,7 +491,7 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
     }
 
     @JsonProperty
-    public void setMaxCertPathLength(Integer maxCertPathLength) {
+    public void setMaxCertPathLength(@Nullable Integer maxCertPathLength) {
         this.maxCertPathLength = maxCertPathLength;
     }
 
@@ -502,7 +502,7 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
     }
 
     @JsonProperty
-    public void setOcspResponderUrl(URI ocspResponderUrl) {
+    public void setOcspResponderUrl(@Nullable URI ocspResponderUrl) {
         this.ocspResponderUrl = ocspResponderUrl;
     }
 
@@ -513,7 +513,7 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
     }
 
     @JsonProperty
-    public void setJceProvider(String jceProvider) {
+    public void setJceProvider(@Nullable String jceProvider) {
         this.jceProvider = jceProvider;
     }
 
@@ -534,7 +534,7 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
     }
 
     @JsonProperty
-    public void setSupportedProtocols(List<String> supportedProtocols) {
+    public void setSupportedProtocols(@Nullable List<String> supportedProtocols) {
         this.supportedProtocols = supportedProtocols;
     }
 
@@ -545,7 +545,7 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
     }
 
     @JsonProperty
-    public void setExcludedProtocols(List<String> excludedProtocols) {
+    public void setExcludedProtocols(@Nullable List<String> excludedProtocols) {
         this.excludedProtocols = excludedProtocols;
     }
 
@@ -562,12 +562,12 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
     }
 
     @JsonProperty
-    public void setExcludedCipherSuites(List<String> excludedCipherSuites) {
+    public void setExcludedCipherSuites(@Nullable List<String> excludedCipherSuites) {
         this.excludedCipherSuites = excludedCipherSuites;
     }
 
     @JsonProperty
-    public void setSupportedCipherSuites(List<String> supportedCipherSuites) {
+    public void setSupportedCipherSuites(@Nullable List<String> supportedCipherSuites) {
         this.supportedCipherSuites = supportedCipherSuites;
     }
 
@@ -762,12 +762,12 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
             factory.setKeyManagerPassword(keyManagerPassword);
         }
 
-        if (needClientAuth != null) {
-            factory.setNeedClientAuth(needClientAuth);
+        if (needClientAuth != null && factory instanceof SslContextFactory.Server) {
+            ((SslContextFactory.Server) factory).setNeedClientAuth(needClientAuth);
         }
 
-        if (wantClientAuth != null) {
-            factory.setWantClientAuth(wantClientAuth);
+        if (wantClientAuth != null && factory instanceof SslContextFactory.Server) {
+            ((SslContextFactory.Server) factory).setWantClientAuth(wantClientAuth);
         }
 
         if (certAlias != null) {
