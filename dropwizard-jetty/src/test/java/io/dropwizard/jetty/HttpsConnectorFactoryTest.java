@@ -44,18 +44,18 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
-public class HttpsConnectorFactoryTest {
+class HttpsConnectorFactoryTest {
     private static final String WINDOWS_MY_KEYSTORE_NAME = "Windows-MY";
     private final Validator validator = BaseValidator.newValidator();
 
     @Test
-    public void isDiscoverable() throws Exception {
+    void isDiscoverable() {
         assertThat(new DiscoverableSubtypeResolver().getDiscoveredSubtypes())
                 .contains(HttpsConnectorFactory.class);
     }
 
     @Test
-    public void testParsingConfiguration() throws Exception {
+    void testParsingConfiguration() throws Exception {
         HttpsConnectorFactory https = new YamlConfigurationFactory<>(HttpsConnectorFactory.class, validator,
                 Jackson.newObjectMapper(), "dw-https")
                 .build(new File(Resources.getResource("yaml/https-connector.yml").toURI()));
@@ -90,7 +90,7 @@ public class HttpsConnectorFactoryTest {
     }
 
     @Test
-    public void testSupportedProtocols() {
+    void testSupportedProtocols() {
         List<String> supportedProtocols = Arrays.asList("SSLv3", "TLS1");
 
         HttpsConnectorFactory factory = new HttpsConnectorFactory();
@@ -102,7 +102,7 @@ public class HttpsConnectorFactoryTest {
     }
 
     @Test
-    public void testExcludedProtocols() {
+    void testExcludedProtocols() {
         List<String> excludedProtocols = Arrays.asList("SSLv3", "TLS1");
 
         HttpsConnectorFactory factory = new HttpsConnectorFactory();
@@ -114,7 +114,25 @@ public class HttpsConnectorFactoryTest {
     }
 
     @Test
-    public void nonWindowsKeyStoreValidation() throws Exception {
+    void testDefaultExcludedProtocols() throws Exception {
+        HttpsConnectorFactory factory = new HttpsConnectorFactory();
+
+        SslContextFactory sslContextFactory = factory.configureSslContextFactory(new SslContextFactory.Server());
+        assertThat(sslContextFactory.getExcludeProtocols())
+                .containsExactlyElementsOf(factory.getExcludedProtocols());
+
+        sslContextFactory.start();
+        try {
+            assertThat(sslContextFactory.newSSLEngine().getEnabledProtocols())
+                    .doesNotContainAnyElementsOf(factory.getExcludedProtocols())
+                    .allSatisfy(protocol -> assertThat(protocol).doesNotStartWith("SSL"));
+        } finally {
+            sslContextFactory.stop();
+        }
+    }
+
+    @Test
+    void nonWindowsKeyStoreValidation() {
         HttpsConnectorFactory factory = new HttpsConnectorFactory();
         Collection<String> properties = getViolationProperties(validator.validate(factory));
         assertThat(properties.contains("validKeyStorePassword")).isEqualTo(true);
@@ -122,7 +140,7 @@ public class HttpsConnectorFactoryTest {
     }
 
     @Test
-    public void windowsKeyStoreValidation() throws Exception {
+    void windowsKeyStoreValidation() {
         HttpsConnectorFactory factory = new HttpsConnectorFactory();
         factory.setKeyStoreType(WINDOWS_MY_KEYSTORE_NAME);
         Collection<String> properties = getViolationProperties(validator.validate(factory));
@@ -131,7 +149,7 @@ public class HttpsConnectorFactoryTest {
     }
 
     @Test
-    public void canBuildContextFactoryWhenWindowsKeyStoreAvailable() throws Exception {
+    void canBuildContextFactoryWhenWindowsKeyStoreAvailable() {
         // ignore test when Windows Keystore unavailable
         assumeTrue(canAccessWindowsKeyStore());
 
@@ -142,7 +160,7 @@ public class HttpsConnectorFactoryTest {
     }
 
     @Test
-    public void windowsKeyStoreUnavailableThrowsException() throws Exception {
+    void windowsKeyStoreUnavailableThrowsException() {
         assumeFalse(canAccessWindowsKeyStore());
 
         final HttpsConnectorFactory factory = new HttpsConnectorFactory();
@@ -152,7 +170,7 @@ public class HttpsConnectorFactoryTest {
     }
 
     @Test
-    public void testBuild() throws Exception {
+    void testBuild() throws Exception {
         final HttpsConnectorFactory https = new HttpsConnectorFactory();
         https.setBindHost("127.0.0.1");
         https.setPort(8443);
@@ -196,7 +214,7 @@ public class HttpsConnectorFactoryTest {
             assertThat(serverConnector.getServer()).isSameAs(server);
             assertThat(serverConnector.getScheduler()).isInstanceOf(ScheduledExecutorScheduler.class);
             assertThat(serverConnector.getExecutor()).isSameAs(threadPool);
-    
+
             final Jetty93InstrumentedConnectionFactory jetty93SslConnectionFacttory =
                 (Jetty93InstrumentedConnectionFactory) serverConnector.getConnectionFactory("ssl");
             assertThat(jetty93SslConnectionFacttory).isInstanceOf(Jetty93InstrumentedConnectionFactory.class);
@@ -204,7 +222,7 @@ public class HttpsConnectorFactoryTest {
                 metrics.timer("org.eclipse.jetty.server.HttpConnectionFactory.127.0.0.1.8443.connections"));
             final SslContextFactory sslContextFactory = ((SslConnectionFactory) jetty93SslConnectionFacttory
                 .getConnectionFactory()).getSslContextFactory();
-    
+
             assertThat(getField(SslContextFactory.class, "_keyStoreResource", true).get(sslContextFactory))
                 .isEqualTo(Resource.newResource("/etc/app/server.ks"));
             assertThat(sslContextFactory.getKeyStoreType()).isEqualTo("JKS");
@@ -235,7 +253,7 @@ public class HttpsConnectorFactoryTest {
             assertThat(sslContextFactory.isValidatePeerCerts()).isTrue();
             assertThat(sslContextFactory.getIncludeProtocols()).containsOnly("TLSv1.1", "TLSv1.2");
             assertThat(sslContextFactory.getIncludeCipherSuites()).containsOnly("TLS_DHE_RSA.*", "TLS_ECDHE.*");
-    
+
             final ConnectionFactory httpConnectionFactory = serverConnector.getConnectionFactory("http/1.1");
             assertThat(httpConnectionFactory).isInstanceOf(HttpConnectionFactory.class);
             final HttpConfiguration httpConfiguration = ((HttpConnectionFactory) httpConnectionFactory)
@@ -250,7 +268,7 @@ public class HttpsConnectorFactoryTest {
     }
 
     @Test
-    public void partitionSupportOnlyEnable() {
+    void partitionSupportOnlyEnable() {
         final String[] supported = {"SSLv2Hello", "SSLv3", "TLSv1", "TLSv1.1", "TLSv1.2"};
         final String[] enabled = {"TLSv1", "TLSv1.1", "TLSv1.2"};
         final Map<Boolean, List<String>> partition =
@@ -264,7 +282,7 @@ public class HttpsConnectorFactoryTest {
     }
 
     @Test
-    public void partitionSupportExclude() {
+    void partitionSupportExclude() {
         final String[] supported = {"SSLv2Hello", "SSLv3", "TLSv1", "TLSv1.1", "TLSv1.2"};
         final String[] enabled = {"SSLv3", "TLSv1", "TLSv1.1", "TLSv1.2"};
         final String[] exclude = {"SSL.*"};
@@ -279,7 +297,7 @@ public class HttpsConnectorFactoryTest {
     }
 
     @Test
-    public void partitionSupportInclude() {
+    void partitionSupportInclude() {
         final String[] supported = {"SSLv2Hello", "SSLv3", "TLSv1", "TLSv1.1", "TLSv1.2"};
         final String[] enabled = {"SSLv3", "TLSv1", "TLSv1.1", "TLSv1.2"};
         final String[] exclude = {"SSL*"};
