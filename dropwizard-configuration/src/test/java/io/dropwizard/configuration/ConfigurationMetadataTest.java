@@ -1,18 +1,23 @@
 package io.dropwizard.configuration;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.jackson.Jackson;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatNoException;
 
 class ConfigurationMetadataTest {
 
@@ -60,7 +65,7 @@ class ConfigurationMetadataTest {
 
     @SuppressWarnings("UnusedDeclaration")
     public static class DefaultExampleInterface implements ExampleInterface,
-        ExampleInterfaceWithDefaultImpl {
+            ExampleInterfaceWithDefaultImpl {
 
         @JsonProperty
         private String[] array = new String[]{};
@@ -84,18 +89,64 @@ class ConfigurationMetadataTest {
         }
     }
 
+    public static class Issue3528Configuration {
+        @JsonProperty
+        public ObjectMapper getMapper() {
+            return new ObjectMapper();
+        }
+    }
+
+    public static class SelfReferencingConfiguration {
+        private String str;
+
+        @JsonProperty
+        public SelfReferencingConfiguration getSelfReferencingConfiguration() {
+            return new SelfReferencingConfiguration();
+        }
+
+        @JsonProperty
+        public String getStr() {
+            return str;
+        }
+    }
+
+    public static class SelfReferencingIgnoredConfiguration {
+        private String str;
+        private Long number;
+        @JsonIgnore
+        private SelfReferencingConfiguration ignored;
+
+        @JsonIgnore
+        public SelfReferencingConfiguration getSelfReferencingConfiguration() {
+            return new SelfReferencingConfiguration();
+        }
+
+        @JsonProperty
+        public String getStr() {
+            return str;
+        }
+
+        public Long getNumber() {
+            return number;
+        }
+
+        public SelfReferencingConfiguration getIgnored() {
+            return ignored;
+        }
+    }
+
     @ParameterizedTest
     @MethodSource("provideArgsForShouldDiscoverAllFields")
     public void shouldDiscoverAllFields(String name, boolean isPrimitive,
-        boolean isCollectionOrArrayType,
-        Class<?> klass) {
+                                        boolean isCollectionOrArrayType,
+                                        Class<?> klass) {
         final ConfigurationMetadata metadata = new ConfigurationMetadata(
-            Jackson.newObjectMapper(), ExampleConfiguration.class);
+                Jackson.newObjectMapper(), ExampleConfiguration.class);
 
         assertThat(metadata.fields.get(name)).isNotNull().satisfies((f) -> {
             assertThat(f.isPrimitive()).isEqualTo(isPrimitive);
             assertThat(f.isCollectionLikeType() || f.isArrayType())
-                .isEqualTo(isCollectionOrArrayType);
+                    .isEqualTo(isCollectionOrArrayType);
 
             if (isCollectionOrArrayType) {
                 assertThat(f.getContentType().isTypeOrSubTypeOf(klass)).isTrue();
@@ -107,14 +158,14 @@ class ConfigurationMetadataTest {
 
     private static Stream<Arguments> provideArgsForShouldDiscoverAllFields() {
         return Stream.of(
-            Arguments.of("port", true, false, Integer.TYPE),
-            Arguments.of("example", false, false, ExampleInterface.class),
-            Arguments.of("exampleWithDefault.array", false, true, String.class),
-            Arguments.of("exampleWithDefault.list", false, true, String.class),
-            Arguments.of("exampleWithDefault.set", false, true, String.class),
-            Arguments.of("exampleWithDefaults[*].array", false, true, String.class),
-            Arguments.of("exampleWithDefaults[*].list", false, true, String.class),
-            Arguments.of("exampleWithDefaults[*].set", false, true, String.class)
+                Arguments.of("port", true, false, Integer.TYPE),
+                Arguments.of("example", false, false, ExampleInterface.class),
+                Arguments.of("exampleWithDefault.array", false, true, String.class),
+                Arguments.of("exampleWithDefault.list", false, true, String.class),
+                Arguments.of("exampleWithDefault.set", false, true, String.class),
+                Arguments.of("exampleWithDefaults[*].array", false, true, String.class),
+                Arguments.of("exampleWithDefaults[*].list", false, true, String.class),
+                Arguments.of("exampleWithDefaults[*].set", false, true, String.class)
         );
     }
 
@@ -122,25 +173,46 @@ class ConfigurationMetadataTest {
     @MethodSource("provideArgsForIsCollectionOfStringsShouldWork")
     public void isCollectionOfStringsShouldWork(String name, boolean isCollectionOfStrings) {
         final ConfigurationMetadata metadata = new ConfigurationMetadata(
-            Jackson.newObjectMapper(), ExampleConfiguration.class);
+                Jackson.newObjectMapper(), ExampleConfiguration.class);
 
         assertThat(metadata.isCollectionOfStrings(name)).isEqualTo(isCollectionOfStrings);
     }
 
-
     private static Stream<Arguments> provideArgsForIsCollectionOfStringsShouldWork() {
         return Stream.of(
-            Arguments.of("doesnotexist", false),
-            Arguments.of("port", false),
-            Arguments.of("example.array", false),
-            Arguments.of("example.list", false),
-            Arguments.of("example.set", false),
-            Arguments.of("exampleWithDefault.array", true),
-            Arguments.of("exampleWithDefault.list", true),
-            Arguments.of("exampleWithDefault.set", true),
-            Arguments.of("exampleWithDefaults[0].array", true),
-            Arguments.of("exampleWithDefaults[0].list", true),
-            Arguments.of("exampleWithDefaults[0].set", true)
+                Arguments.of("doesnotexist", false),
+                Arguments.of("port", false),
+                Arguments.of("example.array", false),
+                Arguments.of("example.list", false),
+                Arguments.of("example.set", false),
+                Arguments.of("exampleWithDefault.array", true),
+                Arguments.of("exampleWithDefault.list", true),
+                Arguments.of("exampleWithDefault.set", true),
+                Arguments.of("exampleWithDefaults[0].array", true),
+                Arguments.of("exampleWithDefaults[0].list", true),
+                Arguments.of("exampleWithDefaults[0].set", true)
         );
+    }
+
+    @Test
+    void issue3528ShouldNotProduceOutOfMemoryError() {
+        assertThatNoException().isThrownBy(
+                () -> new ConfigurationMetadata(Jackson.newObjectMapper(), Issue3528Configuration.class));
+    }
+
+    @Test
+    void fieldsAnnotatedWithJsonIgnoreShouldBeIgnored() {
+        final ConfigurationMetadata metadata =
+                new ConfigurationMetadata(Jackson.newObjectMapper(), SelfReferencingIgnoredConfiguration.class);
+
+        assertThat(metadata.fields).containsOnlyKeys("str", "number");
+    }
+
+    @Test
+    void selfReferencingConfigurationShouldNotLoop() {
+        final ConfigurationMetadata metadata =
+                new ConfigurationMetadata(Jackson.newObjectMapper(), SelfReferencingConfiguration.class);
+
+        assertThat(metadata.fields).containsOnlyKeys("selfReferencingConfiguration.str", "str");
     }
 }
