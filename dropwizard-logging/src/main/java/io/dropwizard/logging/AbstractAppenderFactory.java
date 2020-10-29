@@ -266,7 +266,6 @@ public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware>
         }
     }
 
-    @SuppressWarnings("NullAway")
     protected LayoutBase<E> buildLayout(LoggerContext context, LayoutFactory<E> defaultLayoutFactory) {
         final LayoutBase<E> layoutBase;
         if (layout == null) {
@@ -276,6 +275,7 @@ public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware>
         }
         if (!Strings.isNullOrEmpty(logFormat)) {
             if (layoutBase instanceof PatternLayoutBase) {
+                @SuppressWarnings("NullAway")
                 String logFormatWithTimeZone = logFormat.replace("%dwTimeZone", timeZone.getID());
                 ((PatternLayoutBase<E>)layoutBase).setPattern(logFormatWithTimeZone);
             } else {
