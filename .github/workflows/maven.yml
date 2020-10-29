@@ -59,7 +59,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      run: ./mvnw --no-transfer-progress -Pjakarta-apis -V -B -ff -s .github/settings.xml org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
+      run: ./mvnw --no-transfer-progress -Pjakarta-apis -V -B -ff -s .github/settings.xml -Dsonar.projectKey=dropwizard_dropwizard -Dsonar.organization=dropwizard -Dsonar.host.url=https://sonarcloud.io -Dsonar.moduleKey='${project.artifactId}' org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v1
       if: matrix.java_version == '8'
