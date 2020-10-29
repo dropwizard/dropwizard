@@ -97,7 +97,7 @@ class ConfigurationMetadataTest {
     }
 
     public static class SelfReferencingConfiguration {
-        private String str;
+        private String str = "test";
 
         @JsonProperty
         public SelfReferencingConfiguration getSelfReferencingConfiguration() {
@@ -111,10 +111,10 @@ class ConfigurationMetadataTest {
     }
 
     public static class SelfReferencingIgnoredConfiguration {
-        private String str;
-        private Long number;
+        private String str = "test";
+        private Long number = 42L;
         @JsonIgnore
-        private SelfReferencingConfiguration ignored;
+        private SelfReferencingConfiguration ignored = new SelfReferencingConfiguration();
 
         @JsonIgnore
         public SelfReferencingConfiguration getSelfReferencingConfiguration() {
