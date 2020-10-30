@@ -1,5 +1,6 @@
 package io.dropwizard.configuration;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.BeanProperty;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -7,9 +8,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatVisitorWrapper;
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonObjectFormatVisitor;
 import com.fasterxml.jackson.databind.jsontype.TypeDeserializer;
+
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * A class to get metadata about the properties that are available in a configuration class. It can
@@ -35,26 +39,27 @@ import java.util.Optional;
  *     }
  * }
  * </pre>
- *
+ * <p>
  * This leads to the following entries:
  * <ul>
  *     <li><pre>{@code name -> {SimpleType} "[simple type, class java.lang.String]"}</pre></li>
  *     <li><pre>{@code names -> {CollectionType} "[collection type; class java.util.List, contains [simple type, class java.lang.String]]"}</pre></li>
  * </ul>
- *
+ * <p>
  * Restrictions: The field-tree is only discovered correctly when no inheritance is present. It is
  * hard to discover the correct class, so this sticks to the defaultImpl that is provided.
  */
 public class ConfigurationMetadata extends JsonFormatVisitorWrapper.Base {
 
     // Just a safety option if someone uses recursive configuration classes
-    private static final int MAX_DEPTH = 100;
+    private static final int MAX_DEPTH = 10;
 
     private final ObjectMapper mapper;
 
     // Field is package-private to be visible for unit tests
     final Map<String, JavaType> fields = new HashMap<>();
 
+    private final Set<BeanProperty> parentProps = new HashSet<>();
     private String currentPrefix = "";
     private int currentDepth = 0;
 
@@ -62,7 +67,7 @@ public class ConfigurationMetadata extends JsonFormatVisitorWrapper.Base {
      * Create a metadata instance and
      *
      * @param mapper the {@link ObjectMapper} that is used to parse the configuration file
-     * @param klass the target class of the configuration
+     * @param klass  the target class of the configuration
      */
     public ConfigurationMetadata(ObjectMapper mapper, Class<?> klass) {
         this.mapper = mapper;
@@ -109,13 +114,22 @@ public class ConfigurationMetadata extends JsonFormatVisitorWrapper.Base {
             @Override
             public void optionalProperty(BeanProperty prop) throws JsonMappingException {
                 // don't run into an infinite loop with circular dependencies
-                if (currentDepth > MAX_DEPTH) {
+                if (currentDepth >= MAX_DEPTH) {
+                    return;
+                }
+
+                // check if we already visited the same property
+                if (parentProps.contains(prop)) {
+                    return;
+                }
+
+                if (prop.getAnnotation(JsonIgnore.class) != null) {
                     return;
                 }
 
                 // build the complete field path
                 String name = !currentPrefix.isEmpty() ? currentPrefix + "." + prop.getName()
-                    : prop.getName();
+                        : prop.getName();
 
                 // set state for the recursive traversal
                 int oldFieldSize = fields.size();
@@ -135,17 +149,21 @@ public class ConfigurationMetadata extends JsonFormatVisitorWrapper.Base {
 
                 // get the type deserializer
                 TypeDeserializer typeDeserializer =
-                    mapper.getDeserializationConfig().findTypeDeserializer(fieldType);
+                        mapper.getDeserializationConfig().findTypeDeserializer(fieldType);
 
                 // get the default impl if available
                 Class<?> defaultImpl =
-                    typeDeserializer != null ? typeDeserializer.getDefaultImpl() : null;
+                        typeDeserializer != null ? typeDeserializer.getDefaultImpl() : null;
+
+                // remember current property
+                parentProps.add(prop);
 
                 // visit the type of the property (or its defaultImpl).
                 mapper.acceptJsonFormatVisitor(
-                    defaultImpl == null ? fieldType.getRawClass() : defaultImpl, thiss);
+                        defaultImpl == null ? fieldType.getRawClass() : defaultImpl, thiss);
 
                 // reset state after the recursive traversal
+                parentProps.remove(prop);
                 currentDepth--;
                 currentPrefix = oldPrefix;
 
