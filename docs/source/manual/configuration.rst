@@ -694,6 +694,8 @@ target                 stdout                                   The name of the 
 logFormat              %-5p [%d{ISO8601,UTC}] %c: %m%n%rEx      The Logback pattern with which events will be formatted. See
                                                                 the Logback_ documentation for details.
                                                                 The default log pattern is ```%h %l %u [%t{dd/MMM/yyyy:HH:mm:ss Z,UTC}] "%r" %s %b "%i{Referer}" "%i{User-Agent}" %D```.
+                                                                Use the placeholder ``%dwTimeZone`` to include the value of
+                                                                ``timeZone`` in the pattern.
 filterFactories        (none)                                   The list of filters to apply to the appender, in order, after
                                                                 the threshold.
 neverBlock             false                                    Prevent the wrapping asynchronous appender from blocking when its underlying queue is full.
@@ -762,6 +764,8 @@ timeZone                     UTC                                        The time
 logFormat                    %-5p [%d{ISO8601,UTC}] %c: %m%n%rEx        The Logback pattern with which events will be formatted. See
                                                                         the Logback_ documentation for details.
                                                                         The default log pattern is ```%h %l %u [%t{dd/MMM/yyyy:HH:mm:ss Z,UTC}] "%r" %s %b "%i{Referer}" "%i{User-Agent}" %D```.
+                                                                        Use the placeholder ``%dwTimeZone`` to include the value of
+                                                                        ``timeZone`` in the pattern.
 filterFactories              (none)                                     The list of filters to apply to the appender, in order, after
                                                                         the threshold.
 neverBlock                   false                                      Prevent the wrapping asynchronous appender from blocking when its underlying queue is full.
