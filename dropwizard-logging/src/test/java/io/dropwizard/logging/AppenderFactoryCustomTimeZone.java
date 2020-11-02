@@ -1,7 +1,15 @@
 package io.dropwizard.logging;
 
+import ch.qos.logback.classic.AsyncAppender;
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.core.ConsoleAppender;
+import ch.qos.logback.core.encoder.LayoutWrappingEncoder;
+import ch.qos.logback.core.pattern.PatternLayoutBase;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
+import io.dropwizard.logging.async.AsyncLoggingEventAppenderFactory;
+import io.dropwizard.logging.filter.NullLevelFilterFactory;
+import io.dropwizard.logging.layout.DropwizardLayoutFactory;
 import io.dropwizard.util.Resources;
 import io.dropwizard.validation.BaseValidator;
 import org.junit.jupiter.api.Test;
@@ -60,6 +68,22 @@ public class AppenderFactoryCustomTimeZone {
     public void testLoadAppenderWithSystemTimeZone() throws Exception {
         final ConsoleAppenderFactory<?> appender = factory.build(loadResource("yaml/appender_with_system_time_zone.yml"));
         assertThat(appender.getTimeZone()).isEqualTo(TimeZone.getDefault());
+    }
+
+    @Test
+    public void testBuildAppenderWithTimeZonePlaceholderInLogFormat() throws Exception {
+        ConsoleAppender<?> consoleAppender = buildAppender("yaml/appender_with_time_zone_placeholder.yml");
+        LayoutWrappingEncoder<?> encoder = (LayoutWrappingEncoder<?>) consoleAppender.getEncoder();
+        PatternLayoutBase<?> layout = (PatternLayoutBase<?>) encoder.getLayout();
+        assertThat(layout.getPattern()).isEqualTo("custom format with UTC");
+    }
+
+    @SuppressWarnings("unchecked")
+    private ConsoleAppender<?> buildAppender(String resourceName) throws Exception {
+        AsyncAppender appender = (AsyncAppender) factory.build(loadResource(resourceName))
+            .build(new LoggerContext(), "test-custom-time-zone", new DropwizardLayoutFactory(),
+                new NullLevelFilterFactory<>(), new AsyncLoggingEventAppenderFactory());
+        return (ConsoleAppender<?>) appender.getAppender("console-appender");
     }
 
 }
