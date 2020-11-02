@@ -37,6 +37,7 @@ import java.util.concurrent.TimeUnit;
 import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
+import static org.awaitility.Awaitility.await;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -149,10 +150,10 @@ public class LayoutIntegrationTests {
             defaultLoggingFactory.configure(new MetricRegistry(), "json-log-test");
             Marker marker = MarkerFactory.getMarker("marker");
             LoggerFactory.getLogger("com.example.app").info(marker, "Application log");
-            Thread.sleep(100); // Need to wait, because the logger is async
+            // Need to wait, because the logger is async
+            await().atMost(1, TimeUnit.SECONDS).until(() -> !redirectedStream.toString().isEmpty());
 
             JsonNode jsonNode = objectMapper.readTree(redirectedStream.toString());
-            assertThat(jsonNode).isNotNull();
             assertThat(jsonNode.get("timestamp").isTextual()).isTrue();
             assertThat(jsonNode.get("level").asText()).isEqualTo("INFO");
             assertThat(jsonNode.get("logger").asText()).isEqualTo("com.example.app");
@@ -204,10 +205,10 @@ public class LayoutIntegrationTests {
             when(response.getHeader("Server")).thenReturn("Apache/2.4.12");
 
             requestLog.log(request, response);
-            Thread.sleep(100); // Need to wait, because the logger is async
+            // Need to wait, because the logger is async
+            await().atMost(1, TimeUnit.SECONDS).until(() -> !redirectedStream.toString().isEmpty());
 
             JsonNode jsonNode = objectMapper.readTree(redirectedStream.toString());
-            assertThat(jsonNode).isNotNull();
             assertThat(jsonNode.get("timestamp").isNumber()).isTrue();
             assertThat(jsonNode.get("requestTime").isNumber()).isTrue();
             assertThat(jsonNode.get("remoteAddress").asText()).isEqualTo("10.0.0.1");
