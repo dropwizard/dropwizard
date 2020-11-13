@@ -5,6 +5,7 @@ updates:
   target-branch: "release/1.3.x"
   schedule:
     interval: daily
+  open-pull-requests-limit: 100
 - package-ecosystem: bundler
   directory: "/docs"
   target-branch: "release/1.3.x"
