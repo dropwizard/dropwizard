@@ -6,6 +6,7 @@ Dropwizard
 [![Javadocs](https://javadoc.io/badge/io.dropwizard/dropwizard-project.svg?color=brightgreen)](https://javadoc.io/doc/io.dropwizard/dropwizard-project)
 [![Documentation Status](https://readthedocs.org/projects/dropwizard/badge/?version=stable)](https://www.dropwizard.io/en/stable/?badge=stable)
 [![Maintainability](https://api.codeclimate.com/v1/badges/11a16ea08c8b5499e2b9/maintainability)](https://codeclimate.com/github/dropwizard/dropwizard/maintainability)
+[![Reproducible Builds](https://img.shields.io/badge/Reproducible_Builds-ok-green?labelColor=blue)](https://github.com/jvm-repo-rebuild/reproducible-central#io.dropwizard:dropwizard-core)
 
 *Dropwizard is a sneaky way of making fast Java web applications.*
 
