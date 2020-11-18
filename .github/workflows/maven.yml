@@ -23,7 +23,7 @@ jobs:
       uses: joschi/setup-jdk@v2.3.0
       with:
         java-version: ${{ matrix.java_version }}
-    - uses: actions/cache@v1
+    - uses: actions/cache@v2.1.3
       with:
         path: ~/.m2/repository
         key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
