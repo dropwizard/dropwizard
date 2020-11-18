@@ -12,3 +12,8 @@ updates:
   schedule:
     interval: daily
   open-pull-requests-limit: 10
+- package-ecosystem: github-actions
+  directory: "/"
+  target-branch: "release/1.3.x"
+  schedule:
+    interval: daily
