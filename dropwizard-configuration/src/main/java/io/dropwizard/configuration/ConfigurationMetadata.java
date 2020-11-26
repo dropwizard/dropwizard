@@ -162,7 +162,7 @@ public class ConfigurationMetadata extends JsonFormatVisitorWrapper.Base {
                 try {
                     mapper.acceptJsonFormatVisitor(defaultImpl == null ? fieldType.getRawClass() : defaultImpl, thiss);
                 } catch (NoClassDefFoundError | Exception e) {
-                    e.printStackTrace();
+                    System.err.println(getClass() + ": " e.getMessage());
                 }
 
                 // reset state after the recursive traversal
