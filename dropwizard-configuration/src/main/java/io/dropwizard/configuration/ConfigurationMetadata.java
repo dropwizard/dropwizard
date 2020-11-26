@@ -106,6 +106,7 @@ public class ConfigurationMetadata extends JsonFormatVisitorWrapper.Base {
     }
 
     @Override
+    @SuppressWarnings("java:S106")
     public JsonObjectFormatVisitor expectObjectFormat(JavaType type) throws JsonMappingException {
         // store the pointer to the own instance
         final ConfigurationMetadata thiss = this;
