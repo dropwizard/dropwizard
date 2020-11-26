@@ -159,8 +159,11 @@ public class ConfigurationMetadata extends JsonFormatVisitorWrapper.Base {
                 parentProps.add(prop);
 
                 // visit the type of the property (or its defaultImpl).
-                mapper.acceptJsonFormatVisitor(
-                        defaultImpl == null ? fieldType.getRawClass() : defaultImpl, thiss);
+                try {
+                    mapper.acceptJsonFormatVisitor(defaultImpl == null ? fieldType.getRawClass() : defaultImpl, thiss);
+                } catch (NoClassDefFoundError | Exception e) {
+                    e.printStackTrace();
+                }
 
                 // reset state after the recursive traversal
                 parentProps.remove(prop);
