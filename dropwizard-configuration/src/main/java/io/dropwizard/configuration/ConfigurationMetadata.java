@@ -106,6 +106,7 @@ public class ConfigurationMetadata extends JsonFormatVisitorWrapper.Base {
     }
 
     @Override
+    @SuppressWarnings("java:S106")
     public JsonObjectFormatVisitor expectObjectFormat(JavaType type) throws JsonMappingException {
         // store the pointer to the own instance
         final ConfigurationMetadata thiss = this;
@@ -159,8 +160,11 @@ public class ConfigurationMetadata extends JsonFormatVisitorWrapper.Base {
                 parentProps.add(prop);
 
                 // visit the type of the property (or its defaultImpl).
-                mapper.acceptJsonFormatVisitor(
-                        defaultImpl == null ? fieldType.getRawClass() : defaultImpl, thiss);
+                try {
+                    mapper.acceptJsonFormatVisitor(defaultImpl == null ? fieldType.getRawClass() : defaultImpl, thiss);
+                } catch (NoClassDefFoundError | Exception e) {
+                    System.err.println(getClass() + ": " + e.getMessage());
+                }
 
                 // reset state after the recursive traversal
                 parentProps.remove(prop);
