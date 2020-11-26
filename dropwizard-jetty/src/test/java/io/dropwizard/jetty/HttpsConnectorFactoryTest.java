@@ -90,20 +90,51 @@ class HttpsConnectorFactoryTest {
     }
 
     @Test
-    void testSupportedProtocols() {
-        List<String> supportedProtocols = Arrays.asList("SSLv3", "TLS1");
+    void testSupportedProtocols() throws Exception {
+        List<String> supportedProtocols = Arrays.asList("SSLv3", "TLSv1");
 
         HttpsConnectorFactory factory = new HttpsConnectorFactory();
         factory.setKeyStorePassword("password"); // necessary to avoid a prompt for a password
         factory.setSupportedProtocols(supportedProtocols);
+        factory.setExcludedProtocols(Collections.emptyList());
 
         SslContextFactory sslContextFactory = factory.configureSslContextFactory(new SslContextFactory.Server());
         assertThat(Arrays.asList(sslContextFactory.getIncludeProtocols())).isEqualTo(supportedProtocols);
+
+        sslContextFactory.start();
+        try {
+            assertThat(sslContextFactory.newSSLEngine().getEnabledProtocols())
+                .containsExactlyElementsOf(supportedProtocols);
+        } finally {
+            sslContextFactory.stop();
+        }
     }
 
     @Test
-    void testExcludedProtocols() {
-        List<String> excludedProtocols = Arrays.asList("SSLv3", "TLS1");
+    void testSupportedProtocolsWithWildcards() throws Exception {
+        List<String> supportedProtocols = Arrays.asList("SSL.*", "TLSv1\\.[01]");
+
+        HttpsConnectorFactory factory = new HttpsConnectorFactory();
+        factory.setKeyStorePassword("password"); // necessary to avoid a prompt for a password
+        factory.setSupportedProtocols(supportedProtocols);
+        factory.setExcludedProtocols(Collections.emptyList());
+
+        SslContextFactory sslContextFactory = factory.configureSslContextFactory(new SslContextFactory.Server());
+        assertThat(Arrays.asList(sslContextFactory.getIncludeProtocols())).isEqualTo(supportedProtocols);
+
+        sslContextFactory.start();
+        try {
+            assertThat(sslContextFactory.newSSLEngine().getEnabledProtocols())
+                .contains("SSLv3", "TLSv1.1")
+                .doesNotContain("TLSv1.2", "TLSv1.3");
+        } finally {
+            sslContextFactory.stop();
+        }
+    }
+
+    @Test
+    void testExcludedProtocols() throws Exception {
+        List<String> excludedProtocols = Arrays.asList("SSLv3", "TLSv1");
 
         HttpsConnectorFactory factory = new HttpsConnectorFactory();
         factory.setKeyStorePassword("password"); // necessary to avoid a prompt for a password
@@ -111,6 +142,37 @@ class HttpsConnectorFactoryTest {
 
         SslContextFactory sslContextFactory = factory.configureSslContextFactory(new SslContextFactory.Server());
         assertThat(Arrays.asList(sslContextFactory.getExcludeProtocols())).isEqualTo(excludedProtocols);
+
+        sslContextFactory.start();
+        try {
+            assertThat(sslContextFactory.newSSLEngine().getEnabledProtocols())
+                .contains("TLSv1.1", "TLSv1.2")
+                .doesNotContain("SSLv3", "TLSv1");
+        } finally {
+            sslContextFactory.stop();
+        }
+    }
+
+    @Test
+    void testExcludedProtocolsWithWildcards() throws Exception {
+        List<String> excludedProtocols = Arrays.asList("SSL.*", "TLSv1(\\.[01])?");
+
+        HttpsConnectorFactory factory = new HttpsConnectorFactory();
+        factory.setKeyStorePassword("password"); // necessary to avoid a prompt for a password
+        factory.setExcludedProtocols(excludedProtocols);
+
+        SslContextFactory sslContextFactory = factory.configureSslContextFactory(new SslContextFactory.Server());
+        assertThat(Arrays.asList(sslContextFactory.getExcludeProtocols())).isEqualTo(excludedProtocols);
+
+        sslContextFactory.start();
+        try {
+            assertThat(sslContextFactory.newSSLEngine().getEnabledProtocols())
+                .contains("TLSv1.2")
+                .allSatisfy(protocol -> assertThat(protocol).doesNotStartWith("SSL"))
+                .doesNotContain("TLSv1");
+        } finally {
+            sslContextFactory.stop();
+        }
     }
 
     @Test
@@ -125,7 +187,8 @@ class HttpsConnectorFactoryTest {
         try {
             assertThat(sslContextFactory.newSSLEngine().getEnabledProtocols())
                     .doesNotContainAnyElementsOf(factory.getExcludedProtocols())
-                    .allSatisfy(protocol -> assertThat(protocol).doesNotStartWith("SSL"));
+                    .allSatisfy(protocol -> assertThat(protocol).doesNotStartWith("SSL"))
+                    .doesNotContain("TLSv1", "TLSv1.1");
         } finally {
             sslContextFactory.stop();
         }
