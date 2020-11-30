@@ -18,7 +18,7 @@ public class MapBuilderTest {
     @Test
     public void testIncludeStringValue() {
         assertThat(mapBuilder.add("message", true, message).build())
-            .containsOnly(entry("message", message));
+            .contains(entry("message", message));
     }
 
     @Test
