@@ -528,7 +528,7 @@ which setups a Hibernate ``SessionFactory``.
         }
 
         @Test
-        public createsFoo() {
+        public void createsFoo() {
             FooEntity fooEntity = new FooEntity("bar");
             long id = database.inTransaction(() -> {
                 return fooDAO.save(fooEntity);
@@ -538,7 +538,7 @@ which setups a Hibernate ``SessionFactory``.
         }
 
         @Test
-        public roundtripsFoo() {
+        public void roundtripsFoo() {
             long id = database.inTransaction(() -> {
                 return fooDAO.save(new FooEntity("baz"));
             });
