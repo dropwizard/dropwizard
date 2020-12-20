@@ -71,13 +71,14 @@ public class AdminEnvironment extends ServletEnvironment {
                                                taskClassName));
         }
 
-        LOGGER.info("tasks = {}", stringBuilder.toString());
+        LOGGER.info("tasks = {}", stringBuilder);
     }
 
     private static <T> T firstNonNull(T first, T second) {
         return first == null ? second : first;
     }
 
+    @SuppressWarnings("Slf4jFormatShouldBeConst")
     private void logHealthChecks() {
         if (healthChecks.getNames().size() <= 1) {
             LOGGER.warn(String.format(

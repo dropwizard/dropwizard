@@ -64,16 +64,14 @@ public class FuzzyEnumParamConverter<T> implements ParamConverter<T> {
                 final String errMsg = String.format("%s is not a valid %s", parameterName, rawType.getSimpleName());
                 throw new WebApplicationException(getErrorResponse(errMsg));
             } catch (IllegalAccessException e) {
-                final String errMsg = String.format("Not permitted to call fromString on %s", rawType.getSimpleName());
-                LOGGER.debug(errMsg, e);
-                throw new WebApplicationException(getErrorResponse(errMsg));
+                LOGGER.debug("Not permitted to call fromString on {}", rawType.getSimpleName(), e);
+                throw new WebApplicationException(getErrorResponse("Not permitted to call fromString on %s" + rawType.getSimpleName()));
             } catch (InvocationTargetException e) {
                 if (e.getCause() instanceof WebApplicationException) {
                     throw (WebApplicationException) e.getCause();
                 }
-                final String errMsg = String.format("Failed to convert %s to %s", parameterName, rawType.getSimpleName());
-                LOGGER.debug(errMsg, e);
-                throw new WebApplicationException(getErrorResponse(errMsg));
+                LOGGER.debug("Failed to convert {} to {}", parameterName, rawType.getSimpleName(), e);
+                throw new WebApplicationException(getErrorResponse("Failed to convert " + parameterName + " to " + rawType.getSimpleName()));
             }
         }
 

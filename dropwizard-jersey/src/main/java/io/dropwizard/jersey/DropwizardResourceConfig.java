@@ -268,6 +268,7 @@ public class DropwizardResourceConfig extends ResourceConfig {
         }
 
         @Override
+        @SuppressWarnings("Slf4jFormatShouldBeConst")
         public void onEvent(ApplicationEvent event) {
             if (event.getType() == ApplicationEvent.Type.INITIALIZATION_APP_FINISHED) {
                 resources = event.getResourceModel().getResources();
