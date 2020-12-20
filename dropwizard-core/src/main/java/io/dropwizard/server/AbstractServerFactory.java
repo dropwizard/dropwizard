@@ -699,6 +699,7 @@ public abstract class AbstractServerFactory implements ServerFactory {
         return gzip.isEnabled() ? gzip.build(handler) : handler;
     }
 
+    @SuppressWarnings("Slf4jFormatShouldBeConst")
     protected void printBanner(String name) {
         String msg = "Starting " + name;
         final URL resource = Thread.currentThread().getContextClassLoader().getResource("banner.txt");

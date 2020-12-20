@@ -36,7 +36,7 @@ public class ExecutorServiceManager implements Managed {
         executor.shutdown();
         final boolean success = executor.awaitTermination(shutdownPeriod.getQuantity(), shutdownPeriod.getUnit());
         if (!success && LOG.isDebugEnabled()) {
-            LOG.debug("Timeout has elapsed before termination completed for executor " + executor.toString());
+            LOG.debug("Timeout has elapsed before termination completed for executor {}", executor);
         }
     }
 

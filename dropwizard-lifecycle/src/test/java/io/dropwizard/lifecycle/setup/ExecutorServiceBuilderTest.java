@@ -23,23 +23,23 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
-public class ExecutorServiceBuilderTest {
+class ExecutorServiceBuilderTest {
 
     private static final String WARNING = "Parameter 'maximumPoolSize' is conflicting with unbounded work queues";
 
-    private MetricRegistry metricRegistry = new MetricRegistry();
+    private final MetricRegistry metricRegistry = new MetricRegistry();
     private ExecutorServiceBuilder executorServiceBuilder;
     private Logger log;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         executorServiceBuilder = new ExecutorServiceBuilder(new LifecycleEnvironment(metricRegistry), "test-%d");
         log = mock(Logger.class);
         ExecutorServiceBuilder.setLog(log);
     }
 
     @Test
-    public void testGiveAWarningAboutMaximumPoolSizeAndUnboundedQueue() {
+    void testGiveAWarningAboutMaximumPoolSizeAndUnboundedQueue() {
         executorServiceBuilder
             .minThreads(4)
             .maxThreads(8)
@@ -51,7 +51,8 @@ public class ExecutorServiceBuilderTest {
     }
 
     @Test
-    public void testGiveNoWarningAboutMaximumPoolSizeAndBoundedQueue() throws InterruptedException {
+    @SuppressWarnings("Slf4jFormatShouldBeConst")
+    void testGiveNoWarningAboutMaximumPoolSizeAndBoundedQueue() throws InterruptedException {
         ExecutorService exe = executorServiceBuilder
             .minThreads(4)
             .maxThreads(8)
@@ -67,7 +68,8 @@ public class ExecutorServiceBuilderTest {
      * @see java.util.concurrent.Executors#newSingleThreadExecutor()
      */
     @Test
-    public void shouldNotWarnWhenSettingUpSingleThreadedPool() {
+    @SuppressWarnings("Slf4jFormatShouldBeConst")
+    void shouldNotWarnWhenSettingUpSingleThreadedPool() {
         executorServiceBuilder
             .minThreads(1)
             .maxThreads(1)
@@ -83,7 +85,8 @@ public class ExecutorServiceBuilderTest {
      * @see java.util.concurrent.Executors#newCachedThreadPool()
      */
     @Test
-    public void shouldNotWarnWhenSettingUpCachedThreadPool() throws InterruptedException {
+    @SuppressWarnings("Slf4jFormatShouldBeConst")
+    void shouldNotWarnWhenSettingUpCachedThreadPool() throws InterruptedException {
         ExecutorService exe = executorServiceBuilder
             .minThreads(0)
             .maxThreads(Integer.MAX_VALUE)
@@ -96,7 +99,8 @@ public class ExecutorServiceBuilderTest {
     }
 
     @Test
-    public void shouldNotWarnWhenUsingTheDefaultConfiguration() {
+    @SuppressWarnings("Slf4jFormatShouldBeConst")
+    void shouldNotWarnWhenUsingTheDefaultConfiguration() {
         executorServiceBuilder.build();
         verify(log, never()).warn(anyString());
     }
@@ -106,7 +110,8 @@ public class ExecutorServiceBuilderTest {
      * It should warn or work
      */
     @Test
-    public void shouldBeAbleToExecute2TasksAtOnceWithLargeMaxThreadsOrBeWarnedOtherwise() {
+    @SuppressWarnings("Slf4jFormatShouldBeConst")
+    void shouldBeAbleToExecute2TasksAtOnceWithLargeMaxThreadsOrBeWarnedOtherwise() {
         ExecutorService exe = executorServiceBuilder
             .maxThreads(Integer.MAX_VALUE)
             .build();
@@ -120,7 +125,7 @@ public class ExecutorServiceBuilderTest {
     }
 
     @Test
-    public void shouldUseInstrumentedThreadFactory() {
+    void shouldUseInstrumentedThreadFactory() {
         ExecutorService exe = executorServiceBuilder.build();
         final ThreadPoolExecutor castedExec = (ThreadPoolExecutor) exe;
 
@@ -128,7 +133,7 @@ public class ExecutorServiceBuilderTest {
     }
 
     @Test
-    public void nameWithoutFormat() {
+    void nameWithoutFormat() {
         final String[][] tests = new String[][] {
             { "my-client-%d", "my-client" },
             { "my-client--%d", "my-client-" },
