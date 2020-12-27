@@ -267,15 +267,11 @@ public class DropwizardTestSupport<C extends Configuration> {
     }
 
     private void applyConfigOverrides() {
-        for (ConfigOverride configOverride : configOverrides) {
-            configOverride.addToSystemProperties();
-        }
+        configOverrides.forEach(ConfigOverride::addToSystemProperties);
     }
 
     private void resetConfigOverrides() {
-        for (ConfigOverride configOverride : configOverrides) {
-            configOverride.removeFromSystemProperties();
-        }
+        configOverrides.forEach(ConfigOverride::removeFromSystemProperties);
     }
 
     private void startIfRequired() throws Exception {
