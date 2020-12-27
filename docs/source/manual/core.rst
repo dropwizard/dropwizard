@@ -55,7 +55,7 @@ which tends to look like this:
   * ``cli``: :ref:`man-core-commands`
   * ``client``: :ref:`Client <man-client>` code that accesses external HTTP services.
   * ``core``: Domain implementation; where objects not used in the API such as POJOs, validations, crypto, etc, reside.
-  * ``jdbi3``: :ref:`Database <man-jdbi3>` access classes
+  * ``db``: :ref:`Database <man-jdbi3>` access classes
   * ``health``: :ref:`man-core-healthchecks`
   * ``resources``: :ref:`man-core-resources`
   * ``MyApplication``: The :ref:`application <man-core-application>` class
