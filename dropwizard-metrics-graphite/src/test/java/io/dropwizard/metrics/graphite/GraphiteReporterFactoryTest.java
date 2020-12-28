@@ -8,10 +8,10 @@ import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.DiscoverableSubtypeResolver;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.validation.BaseValidator;
-import org.apache.commons.lang3.reflect.FieldUtils;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
+import java.lang.reflect.Field;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -22,7 +22,7 @@ public class GraphiteReporterFactoryTest {
 
     private final GraphiteReporter.Builder builderSpy = mock(GraphiteReporter.Builder.class);
 
-    private GraphiteReporterFactory graphiteReporterFactory = new GraphiteReporterFactory() {
+    private final GraphiteReporterFactory graphiteReporterFactory = new GraphiteReporterFactory() {
         @Override
         protected GraphiteReporter.Builder builder(MetricRegistry registry) {
             return builderSpy;
@@ -30,7 +30,7 @@ public class GraphiteReporterFactoryTest {
     };
 
     @Test
-    public void isDiscoverable() throws Exception {
+    public void isDiscoverable() {
         assertThat(new DiscoverableSubtypeResolver().getDiscoveredSubtypes())
             .contains(GraphiteReporterFactory.class);
     }
@@ -70,19 +70,25 @@ public class GraphiteReporterFactoryTest {
         assertThat(getField(graphite, "address")).isNull();
     }
 
-    private static Object getField(GraphiteUDP graphite, String name) {
+    private static Object getField(GraphiteUDP graphite, String name) throws NoSuchFieldException {
         try {
-            return FieldUtils.getDeclaredField(GraphiteUDP.class, name, true).get(graphite);
+            return getInaccessibleField(GraphiteUDP.class, name).get(graphite);
         } catch (IllegalAccessException e) {
             throw new IllegalStateException(e);
         }
     }
 
-    private static Object getField(Graphite graphite, String name) {
+    private static Object getField(Graphite graphite, String name) throws NoSuchFieldException {
         try {
-            return FieldUtils.getDeclaredField(Graphite.class, name, true).get(graphite);
+            return getInaccessibleField(Graphite.class, name).get(graphite);
         } catch (IllegalAccessException e) {
             throw new IllegalStateException(e);
         }
+    }
+
+    private static Field getInaccessibleField(Class klass, String name) throws NoSuchFieldException {
+        Field field = klass.getDeclaredField(name);
+        field.setAccessible(true);
+        return field;
     }
 }
