@@ -24,6 +24,7 @@ import org.junit.jupiter.api.Test;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 import java.io.File;
+import java.lang.reflect.Field;
 import java.net.URI;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -35,7 +36,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.apache.commons.lang3.reflect.FieldUtils.getField;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 import static org.assertj.core.api.Assertions.entry;
@@ -289,16 +289,16 @@ class HttpsConnectorFactoryTest {
             assertThat(sslContextFactory.getKeyStoreResource())
                 .isEqualTo(Resource.newResource("/etc/app/server.ks"));
             assertThat(sslContextFactory.getKeyStoreType()).isEqualTo("JKS");
-            assertThat(getField(SslContextFactory.class, "_keyStorePassword", true).get(sslContextFactory).toString())
+            assertThat(getSSLContextFactoryPrivateField("_keyStorePassword").get(sslContextFactory).toString())
                 .isEqualTo("correct_horse");
             assertThat(sslContextFactory.getKeyStoreProvider()).isEqualTo("BC");
             assertThat(sslContextFactory.getTrustStoreResource())
                 .isEqualTo(Resource.newResource("/etc/app/server.ts"));
             assertThat(sslContextFactory.getKeyStoreType()).isEqualTo("JKS");
-            assertThat(getField(SslContextFactory.class, "_trustStorePassword", true).get(sslContextFactory).toString())
+            assertThat(getSSLContextFactoryPrivateField("_trustStorePassword").get(sslContextFactory).toString())
                 .isEqualTo("battery_staple");
             assertThat(sslContextFactory.getKeyStoreProvider()).isEqualTo("BC");
-            assertThat(getField(SslContextFactory.class, "_keyManagerPassword", true).get(sslContextFactory).toString())
+            assertThat(getSSLContextFactoryPrivateField("_keyManagerPassword").get(sslContextFactory).toString())
                 .isEqualTo("new_overlords");
             assertThat(sslContextFactory.getNeedClientAuth()).isTrue();
             assertThat(sslContextFactory.getWantClientAuth()).isTrue();
@@ -390,5 +390,11 @@ class HttpsConnectorFactoryTest {
         return violations.stream()
                 .map(input -> input.getPropertyPath().toString())
                 .collect(Collectors.toSet());
+    }
+
+    private static Field getSSLContextFactoryPrivateField(final String name) throws NoSuchFieldException {
+        final Field field = SslContextFactory.class.getDeclaredField(name);
+        field.setAccessible(true);
+        return field;
     }
 }
