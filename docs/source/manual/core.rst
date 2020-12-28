@@ -1472,7 +1472,7 @@ this:
                         @NotNull @Valid Notification notification) {
         final long id = store.add(userId.get(), notification);
         return Response.created(UriBuilder.fromResource(NotificationResource.class)
-                                          .build(userId.get(), id)
+                                          .build(userId.get(), id))
                        .build();
     }
 
