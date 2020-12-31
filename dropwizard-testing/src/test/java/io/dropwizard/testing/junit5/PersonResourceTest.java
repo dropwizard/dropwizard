@@ -6,7 +6,6 @@ import io.dropwizard.jackson.Jackson;
 import io.dropwizard.testing.app.PeopleStore;
 import io.dropwizard.testing.app.Person;
 import io.dropwizard.testing.app.PersonResource;
-import io.dropwizard.testing.junit.ResourceTestRule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,10 +21,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
 
 /**
- * Tests {@link ResourceTestRule}.
+ * Tests {@link ResourceExtension}.
  */
 @ExtendWith(DropwizardExtensionsSupport.class)
 class PersonResourceTest {
@@ -50,7 +48,6 @@ class PersonResourceTest {
 
     @BeforeEach
     void setup() {
-        initMocks(peopleStore);
         when(peopleStore.fetchPerson("blah")).thenReturn(person);
     }
 
