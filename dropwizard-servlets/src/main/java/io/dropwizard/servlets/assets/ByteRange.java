@@ -3,6 +3,7 @@ package io.dropwizard.servlets.assets;
 import io.dropwizard.util.Strings;
 
 import javax.annotation.concurrent.Immutable;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -29,17 +30,18 @@ public final class ByteRange {
 
     public static ByteRange parse(final String byteRange,
                                   final int resourceLength) {
+        final String asciiString = new String(byteRange.getBytes(), StandardCharsets.US_ASCII);
         // missing separator
         if (!byteRange.contains("-")) {
-            final int start = Integer.parseInt(byteRange);
+            final int start = Integer.parseInt(asciiString);
             return new ByteRange(start, resourceLength - 1);
         }
         // negative range
         if (byteRange.indexOf("-") == 0) {
-            final int start = Integer.parseInt(byteRange);
+            final int start = Integer.parseInt(asciiString);
             return new ByteRange(resourceLength + start, resourceLength - 1);
         }
-        final List<String> parts = Arrays.stream(byteRange.split("-", -1))
+        final List<String> parts = Arrays.stream(asciiString.split("-", -1))
                 .map(String::trim)
                 .filter(s -> !Strings.isNullOrEmpty(s))
                 .collect(Collectors.toList());
