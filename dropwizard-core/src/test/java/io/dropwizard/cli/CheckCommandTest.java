@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 
 public class CheckCommandTest {
     private static class MyApplication extends Application<Configuration> {
@@ -27,13 +27,13 @@ public class CheckCommandTest {
     private final Configuration configuration = mock(Configuration.class);
 
     @Test
-    public void hasAName() throws Exception {
+    public void hasAName() {
         assertThat(command.getName())
                 .isEqualTo("check");
     }
 
     @Test
-    public void hasADescription() throws Exception {
+    public void hasADescription() {
         assertThat(command.getDescription())
                 .isEqualTo("Parses and validates the configuration file");
     }
@@ -42,6 +42,6 @@ public class CheckCommandTest {
     public void doesNotInteractWithAnything() throws Exception {
         command.run(bootstrap, namespace, configuration);
 
-        verifyZeroInteractions(bootstrap, namespace, configuration);
+        verifyNoInteractions(bootstrap, namespace, configuration);
     }
 }

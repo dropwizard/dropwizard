@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 
 public class CacheBustingFilterTest {
     private final HttpServletRequest request = mock(HttpServletRequest.class);
@@ -28,7 +28,7 @@ public class CacheBustingFilterTest {
         filter.doFilter(req, res, chain);
 
         verify(chain).doFilter(req, res);
-        verifyZeroInteractions(res);
+        verifyNoInteractions(res);
     }
 
     @Test
