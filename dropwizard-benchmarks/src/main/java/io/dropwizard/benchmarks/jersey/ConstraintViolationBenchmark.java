@@ -23,8 +23,6 @@ import javax.ws.rs.HeaderParam;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import static org.apache.commons.lang3.reflect.MethodUtils.getAccessibleMethod;
-
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @State(Scope.Benchmark)
@@ -55,14 +53,14 @@ public class ConstraintViolationBenchmark {
     final Invocable invocable = Invocable.create(request -> null);
 
     @Setup
-    public void prepare() {
+    public void prepare() throws NoSuchMethodException {
         final Validator validator = Validators.newValidator();
         final ExecutableValidator execValidator = validator.forExecutables();
 
         final Set<ConstraintViolation<ConstraintViolationBenchmark.Resource>> paramViolations =
             execValidator.validateParameters(
                 new Resource(),
-                getAccessibleMethod(ConstraintViolationBenchmark.Resource.class, "paramFunc", String.class),
+                ConstraintViolationBenchmark.Resource.class.getMethod("paramFunc", String.class),
                 new Object[]{""} // the parameter value
             );
         paramViolation = paramViolations.iterator().next();
@@ -70,7 +68,7 @@ public class ConstraintViolationBenchmark {
         final Set<ConstraintViolation<ConstraintViolationBenchmark.Resource>> objViolations =
             execValidator.validateParameters(
                 new Resource(),
-                getAccessibleMethod(ConstraintViolationBenchmark.Resource.class, "objectFunc", Foo.class),
+                ConstraintViolationBenchmark.Resource.class.getMethod("objectFunc", Foo.class),
                 new Object[]{new Foo()} // the parameter value
             );
         objViolation = objViolations.iterator().next();
