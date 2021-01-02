@@ -149,7 +149,7 @@ public class HttpClientBuilder {
     }
 
     /**
-     * Use the give (@link HostnameVerifier} instance.
+     * Use the given {@link HostnameVerifier} instance.
      *
      * @param verifier a {@link HostnameVerifier} instance
      * @return {@code this}
