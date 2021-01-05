@@ -84,7 +84,7 @@ public class CachingAuthorizer<P extends Principal> implements Authorizer<P> {
      *
      * @param metricRegistry the application's registry of metrics
      * @param authorizer     the underlying authorizer
-     * @param builder        a {@link CaffeineSpec}
+     * @param builder        a {@link Caffeine} spec
      * @param supplier       a {@link Supplier<StatsCounter>}
      */
     public CachingAuthorizer(
