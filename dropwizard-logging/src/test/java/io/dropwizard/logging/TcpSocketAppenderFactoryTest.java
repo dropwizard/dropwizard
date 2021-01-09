@@ -29,9 +29,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class TcpSocketAppenderFactoryTest {
 
-    private TcpServer tcpServer = new TcpServer(createServerSocket());
-    private ObjectMapper objectMapper = Jackson.newObjectMapper();
-    private YamlConfigurationFactory<DefaultLoggingFactory> yamlConfigurationFactory = new YamlConfigurationFactory<>(
+    private final TcpServer tcpServer = new TcpServer(createServerSocket());
+    private final ObjectMapper objectMapper = Jackson.newObjectMapper();
+    private final YamlConfigurationFactory<DefaultLoggingFactory> yamlConfigurationFactory = new YamlConfigurationFactory<>(
         DefaultLoggingFactory.class, BaseValidator.newValidator(), objectMapper, "dw-tcp");
 
     @BeforeEach
