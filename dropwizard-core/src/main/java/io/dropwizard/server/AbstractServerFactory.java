@@ -705,8 +705,8 @@ public abstract class AbstractServerFactory implements ServerFactory {
         final URL resource = Thread.currentThread().getContextClassLoader().getResource("banner.txt");
         if (resource != null) {
             try (final InputStream resourceStream = resource.openStream();
-                final InputStreamReader inputStreamReader = new InputStreamReader(resourceStream);
-                final BufferedReader bufferedReader = new BufferedReader(inputStreamReader)) {
+                 final InputStreamReader inputStreamReader = new InputStreamReader(resourceStream);
+                 final BufferedReader bufferedReader = new BufferedReader(inputStreamReader)) {
                 final String banner = bufferedReader
                         .lines()
                         .collect(Collectors.joining(System.lineSeparator()));
