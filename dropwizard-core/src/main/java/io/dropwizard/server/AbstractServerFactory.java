@@ -709,7 +709,7 @@ public abstract class AbstractServerFactory implements ServerFactory {
                  final BufferedReader bufferedReader = new BufferedReader(inputStreamReader)) {
                 final String banner = bufferedReader
                         .lines()
-                        .collect(Collectors.joining(String.format("%n")));
+                        .collect(Collectors.joining(System.lineSeparator()));
                 msg = String.format("Starting %s%n%s", name, banner);
             } catch (IllegalArgumentException | IOException ignored) {
             }
