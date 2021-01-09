@@ -147,23 +147,25 @@ class DefaultServerFactoryTest {
     }
 
     @Test
-    void defaultsDetailedJsonProcessingExceptionToFalse() throws Exception {
+    void defaultsDetailedJsonProcessingExceptionToFalse() {
         http.build(environment);
         assertThat(environment.jersey().getResourceConfig().getSingletons())
             .filteredOn(x -> x instanceof ExceptionMapperBinder)
-            .hasOnlyOneElementSatisfying(x ->
-                assertThat(((ExceptionMapperBinder) x).isShowDetails()).isFalse());
+            .map(x -> (ExceptionMapperBinder) x)
+            .singleElement()
+            .satisfies(x -> assertThat(x.isShowDetails()).isFalse());
     }
 
     @Test
-    void doesNotDefaultDetailedJsonProcessingExceptionToFalse() throws Exception {
+    void doesNotDefaultDetailedJsonProcessingExceptionToFalse() {
         http.setDetailedJsonProcessingExceptionMapper(true);
 
         http.build(environment);
         assertThat(environment.jersey().getResourceConfig().getSingletons())
             .filteredOn(x -> x instanceof ExceptionMapperBinder)
-            .hasOnlyOneElementSatisfying(x ->
-                assertThat(((ExceptionMapperBinder) x).isShowDetails()).isTrue());
+            .map(x -> (ExceptionMapperBinder) x)
+            .singleElement()
+            .satisfies(x -> assertThat(x.isShowDetails()).isTrue());
     }
 
     @Test
