@@ -151,9 +151,9 @@ class DefaultServerFactoryTest {
         http.build(environment);
         assertThat(environment.jersey().getResourceConfig().getSingletons())
             .filteredOn(x -> x instanceof ExceptionMapperBinder)
-            .map(x -> (ExceptionMapperBinder)x)
+            .map(x -> (ExceptionMapperBinder) x)
             .singleElement()
-            .hasFieldOrPropertyWithValue("showDetails", false);
+            .satisfies(x -> assertThat(x.isShowDetails()).isFalse());
     }
 
     @Test
@@ -163,9 +163,9 @@ class DefaultServerFactoryTest {
         http.build(environment);
         assertThat(environment.jersey().getResourceConfig().getSingletons())
             .filteredOn(x -> x instanceof ExceptionMapperBinder)
-            .map(x -> (ExceptionMapperBinder)x)
+            .map(x -> (ExceptionMapperBinder) x)
             .singleElement()
-            .hasFieldOrPropertyWithValue("showDetails", true);
+            .satisfies(x -> assertThat(x.isShowDetails()).isTrue());
     }
 
     @Test
