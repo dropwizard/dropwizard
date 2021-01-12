@@ -27,7 +27,7 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-maven-
     - name: Build and Deploy
-      run: ./mvnw -B -V -ntp -Pjakarta-apis -Prelease deploy
+      run: ./mvnw -B -V -ntp -Pjakarta-apis -DperformRelease=true deploy
       env:
         CI_DEPLOY_USERNAME: ${{ secrets.CI_DEPLOY_USERNAME }}
         CI_DEPLOY_PASSWORD: ${{ secrets.CI_DEPLOY_PASSWORD }}
