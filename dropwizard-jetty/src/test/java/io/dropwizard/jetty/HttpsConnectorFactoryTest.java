@@ -286,13 +286,13 @@ class HttpsConnectorFactoryTest {
             final SslContextFactory sslContextFactory = ((SslConnectionFactory) jetty93SslConnectionFacttory
                 .getConnectionFactory()).getSslContextFactory();
 
-            assertThat(getField(SslContextFactory.class, "_keyStoreResource", true).get(sslContextFactory))
+            assertThat(sslContextFactory.getKeyStoreResource())
                 .isEqualTo(Resource.newResource("/etc/app/server.ks"));
             assertThat(sslContextFactory.getKeyStoreType()).isEqualTo("JKS");
             assertThat(getField(SslContextFactory.class, "_keyStorePassword", true).get(sslContextFactory).toString())
                 .isEqualTo("correct_horse");
             assertThat(sslContextFactory.getKeyStoreProvider()).isEqualTo("BC");
-            assertThat(getField(SslContextFactory.class, "_trustStoreResource", true).get(sslContextFactory))
+            assertThat(sslContextFactory.getTrustStoreResource())
                 .isEqualTo(Resource.newResource("/etc/app/server.ts"));
             assertThat(sslContextFactory.getKeyStoreType()).isEqualTo("JKS");
             assertThat(getField(SslContextFactory.class, "_trustStorePassword", true).get(sslContextFactory).toString())
@@ -310,8 +310,7 @@ class HttpsConnectorFactoryTest {
             assertThat(sslContextFactory.getOcspResponderURL()).isEqualTo("http://windc1/ocsp");
             assertThat(sslContextFactory.getProvider()).isEqualTo("BC");
             assertThat(sslContextFactory.isRenegotiationAllowed()).isFalse();
-            assertThat(getField(SslContextFactory.class, "_endpointIdentificationAlgorithm", true).get(sslContextFactory))
-                .isEqualTo("HTTPS");
+            assertThat(sslContextFactory.getEndpointIdentificationAlgorithm()).isEqualTo("HTTPS");
             assertThat(sslContextFactory.isValidateCerts()).isTrue();
             assertThat(sslContextFactory.isValidatePeerCerts()).isTrue();
             assertThat(sslContextFactory.getIncludeProtocols()).containsOnly("TLSv1.1", "TLSv1.2");
