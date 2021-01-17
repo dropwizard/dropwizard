@@ -1,17 +1,14 @@
-package io.dropwizard.client.ssl;
+package io.dropwizard.client;
 
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
-import io.dropwizard.client.DropwizardSSLConnectionSocketFactory;
-import io.dropwizard.client.JerseyClientBuilder;
-import io.dropwizard.client.JerseyClientConfiguration;
+import io.dropwizard.client.ssl.TlsConfiguration;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import io.dropwizard.util.Duration;
-import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLInitializationException;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -35,7 +32,6 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.core.Response;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.net.SocketException;
 import java.security.Security;
 import java.util.Collections;
@@ -115,13 +111,8 @@ public class DropwizardSSLConnectionSocketFactoryTest {
     }
 
     @Test
-    void configOnlyConstructorShouldSetNullCustomVerifier() throws Exception {
-        final DropwizardSSLConnectionSocketFactory socketFactory;
-        socketFactory = new DropwizardSSLConnectionSocketFactory(tlsConfiguration);
-
-        final Field verifierField =
-                FieldUtils.getField(DropwizardSSLConnectionSocketFactory.class, "verifier", true);
-        assertThat(verifierField.get(socketFactory)).isNull();
+    void configOnlyConstructorShouldSetNullCustomVerifier() {
+        assertThat(new DropwizardSSLConnectionSocketFactory(tlsConfiguration).verifier).isNull();
     }
 
     @Test
