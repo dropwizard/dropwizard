@@ -6,7 +6,6 @@ import io.dropwizard.jackson.DiscoverableSubtypeResolver;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.util.Resources;
 import io.dropwizard.validation.BaseValidator;
-import org.apache.commons.lang3.SystemUtils;
 import org.eclipse.jetty.server.ConnectionFactory;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.HttpConfiguration;
@@ -43,6 +42,7 @@ import static org.assertj.core.api.Assertions.entry;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
+import static org.junit.jupiter.api.condition.OS.WINDOWS;
 
 class HttpsConnectorFactoryTest {
     private static final String WINDOWS_MY_KEYSTORE_NAME = "Windows-MY";
@@ -376,7 +376,7 @@ class HttpsConnectorFactoryTest {
     }
 
     private boolean canAccessWindowsKeyStore() {
-        if (SystemUtils.IS_OS_WINDOWS) {
+        if (WINDOWS.isCurrentOs()) {
             try {
                 KeyStore.getInstance(WINDOWS_MY_KEYSTORE_NAME);
                 return true;
