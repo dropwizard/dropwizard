@@ -6,7 +6,6 @@ import io.dropwizard.jackson.DiscoverableSubtypeResolver;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.util.Resources;
 import io.dropwizard.validation.BaseValidator;
-import org.apache.commons.lang3.SystemUtils;
 import org.eclipse.jetty.server.ConnectionFactory;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.HttpConfiguration;
@@ -43,6 +42,7 @@ import static org.assertj.core.api.Assertions.entry;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
+import static org.junit.jupiter.api.condition.OS.WINDOWS;
 
 class HttpsConnectorFactoryTest {
     private static final String WINDOWS_MY_KEYSTORE_NAME = "Windows-MY";
@@ -286,13 +286,13 @@ class HttpsConnectorFactoryTest {
             final SslContextFactory sslContextFactory = ((SslConnectionFactory) jetty93SslConnectionFacttory
                 .getConnectionFactory()).getSslContextFactory();
 
-            assertThat(getField(SslContextFactory.class, "_keyStoreResource", true).get(sslContextFactory))
+            assertThat(sslContextFactory.getKeyStoreResource())
                 .isEqualTo(Resource.newResource("/etc/app/server.ks"));
             assertThat(sslContextFactory.getKeyStoreType()).isEqualTo("JKS");
             assertThat(getField(SslContextFactory.class, "_keyStorePassword", true).get(sslContextFactory).toString())
                 .isEqualTo("correct_horse");
             assertThat(sslContextFactory.getKeyStoreProvider()).isEqualTo("BC");
-            assertThat(getField(SslContextFactory.class, "_trustStoreResource", true).get(sslContextFactory))
+            assertThat(sslContextFactory.getTrustStoreResource())
                 .isEqualTo(Resource.newResource("/etc/app/server.ts"));
             assertThat(sslContextFactory.getKeyStoreType()).isEqualTo("JKS");
             assertThat(getField(SslContextFactory.class, "_trustStorePassword", true).get(sslContextFactory).toString())
@@ -310,8 +310,7 @@ class HttpsConnectorFactoryTest {
             assertThat(sslContextFactory.getOcspResponderURL()).isEqualTo("http://windc1/ocsp");
             assertThat(sslContextFactory.getProvider()).isEqualTo("BC");
             assertThat(sslContextFactory.isRenegotiationAllowed()).isFalse();
-            assertThat(getField(SslContextFactory.class, "_endpointIdentificationAlgorithm", true).get(sslContextFactory))
-                .isEqualTo("HTTPS");
+            assertThat(sslContextFactory.getEndpointIdentificationAlgorithm()).isEqualTo("HTTPS");
             assertThat(sslContextFactory.isValidateCerts()).isTrue();
             assertThat(sslContextFactory.isValidatePeerCerts()).isTrue();
             assertThat(sslContextFactory.getIncludeProtocols()).containsOnly("TLSv1.1", "TLSv1.2");
@@ -376,7 +375,7 @@ class HttpsConnectorFactoryTest {
     }
 
     private boolean canAccessWindowsKeyStore() {
-        if (SystemUtils.IS_OS_WINDOWS) {
+        if (WINDOWS.isCurrentOs()) {
             try {
                 KeyStore.getInstance(WINDOWS_MY_KEYSTORE_NAME);
                 return true;
