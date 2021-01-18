@@ -29,7 +29,7 @@ public class DropwizardSSLConnectionSocketFactory {
     private final TlsConfiguration configuration;
 
     @Nullable
-    private final HostnameVerifier verifier;
+    final HostnameVerifier verifier;
 
     public DropwizardSSLConnectionSocketFactory(TlsConfiguration configuration) {
         this(configuration, null);
