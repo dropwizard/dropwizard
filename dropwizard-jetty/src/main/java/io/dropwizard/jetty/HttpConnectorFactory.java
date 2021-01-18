@@ -694,8 +694,13 @@ public class HttpConnectorFactory implements ConnectorFactory {
     }
 
     protected ByteBufferPool buildBufferPool() {
-        return new ArrayByteBufferPool((int) minBufferPoolSize.toBytes(),
-                                       (int) bufferPoolIncrement.toBytes(),
-                                       (int) maxBufferPoolSize.toBytes());
+        return buildBufferPool((int) minBufferPoolSize.toBytes(),
+                               (int) bufferPoolIncrement.toBytes(),
+                               (int) maxBufferPoolSize.toBytes());
+    }
+
+    // This method only exists so that mockito can spy on the constructor parameters.
+    ByteBufferPool buildBufferPool(int minCapacity, int factor, int maxCapacity) {
+        return new ArrayByteBufferPool(minCapacity, factor, maxCapacity);
     }
 }
