@@ -602,6 +602,7 @@ class SizeTest {
 
         try (final ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
              final ObjectInputStream objectInputStream = new ObjectInputStream(inputStream)) {
+            @SuppressWarnings("BanSerializableRead")
             final Object o = objectInputStream.readObject();
             assertThat(o)
                     .isInstanceOf(Size.class)
