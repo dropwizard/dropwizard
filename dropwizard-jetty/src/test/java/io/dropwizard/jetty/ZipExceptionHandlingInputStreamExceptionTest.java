@@ -12,8 +12,7 @@ import java.io.InputStream;
 import java.util.stream.Stream;
 import java.util.zip.ZipException;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
@@ -40,83 +39,53 @@ public class ZipExceptionHandlingInputStreamExceptionTest {
     public void testReadBytes(Exception t, Class<? extends Exception> expected) throws Exception {
         doThrow(t).when(delegate).read(Mockito.any(byte[].class), anyInt(), anyInt());
         byte[] buffer = new byte[20];
-        try {
-            in.read(buffer, 4, 16);
-            fail();
-        } catch (Exception e) {
-            assertThat(e).isInstanceOf(expected);
-            verify(delegate).read(same(buffer), eq(4), eq(16));
-            verifyNoMoreInteractions(delegate);
-        }
+        assertThatExceptionOfType(expected).isThrownBy(() -> in.read(buffer, 4, 16));
+        verify(delegate).read(same(buffer), eq(4), eq(16));
+        verifyNoMoreInteractions(delegate);
     }
 
     @ParameterizedTest
     @MethodSource("parameters")
     public void testReadByte(Exception t, Class<? extends Exception> expected) throws Exception {
         doThrow(t).when(delegate).read();
-        try {
-            in.read();
-            fail();
-        } catch (Exception e) {
-            assertThat(e).isInstanceOf(expected);
-            verify(delegate).read();
-            verifyNoMoreInteractions(delegate);
-        }
+        assertThatExceptionOfType(expected).isThrownBy(() -> in.read());
+        verify(delegate).read();
+        verifyNoMoreInteractions(delegate);
     }
 
     @ParameterizedTest
     @MethodSource("parameters")
     public void testSkip(Exception t, Class<? extends Exception> expected) throws Exception {
         doThrow(t).when(delegate).skip(anyLong());
-        try {
-            in.skip(42L);
-            fail();
-        } catch (Exception e) {
-            assertThat(e).isInstanceOf(expected);
-            verify(delegate).skip(42L);
-            verifyNoMoreInteractions(delegate);
-        }
+        assertThatExceptionOfType(expected).isThrownBy(() -> in.skip(42L));
+        verify(delegate).skip(42L);
+        verifyNoMoreInteractions(delegate);
     }
 
     @ParameterizedTest
     @MethodSource("parameters")
     public void testAvailable(Exception t, Class<? extends Exception> expected) throws Exception {
         doThrow(t).when(delegate).available();
-        try {
-            in.available();
-            fail();
-        } catch (Exception e) {
-            assertThat(e).isInstanceOf(expected);
-            verify(delegate).available();
-            verifyNoMoreInteractions(delegate);
-        }
+        assertThatExceptionOfType(expected).isThrownBy(() -> in.available());
+        verify(delegate).available();
+        verifyNoMoreInteractions(delegate);
     }
 
     @ParameterizedTest
     @MethodSource("parameters")
     public void testClose(Exception t, Class<? extends Exception> expected) throws Exception {
         doThrow(t).when(delegate).close();
-        try {
-            in.close();
-            fail();
-        } catch (Exception e) {
-            assertThat(e).isInstanceOf(expected);
-            verify(delegate).close();
-            verifyNoMoreInteractions(delegate);
-        }
+        assertThatExceptionOfType(expected).isThrownBy(() -> in.close());
+        verify(delegate).close();
+        verifyNoMoreInteractions(delegate);
     }
 
     @ParameterizedTest
     @MethodSource("parameters")
     public void testReset(Exception t, Class<? extends Exception> expected) throws Exception {
         doThrow(t).when(delegate).reset();
-        try {
-            in.reset();
-            fail();
-        } catch (Exception e) {
-            assertThat(e).isInstanceOf(expected);
-            verify(delegate).reset();
-            verifyNoMoreInteractions(delegate);
-        }
+        assertThatExceptionOfType(expected).isThrownBy(() -> in.reset());
+        verify(delegate).reset();
+        verifyNoMoreInteractions(delegate);
     }
 }
