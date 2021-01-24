@@ -63,7 +63,7 @@
         <usertype.core.version>7.0.0.CR1</usertype.core.version>
 
         <!-- Test dependencies -->
-        <assertj.version>3.18.1</assertj.version>
+        <assertj.version>3.19.0</assertj.version>
         <awaitility.version>4.0.3</awaitility.version>
         <bcprov-jdk15on.version>1.68</bcprov-jdk15on.version>
         <h2.version>1.4.200</h2.version>
