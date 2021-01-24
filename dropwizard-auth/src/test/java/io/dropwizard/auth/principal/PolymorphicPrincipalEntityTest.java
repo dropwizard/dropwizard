@@ -27,7 +27,7 @@ import java.security.Principal;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 /**
  * Testing that polymorphic principal entity injection works.
@@ -129,12 +129,9 @@ public class PolymorphicPrincipalEntityTest extends JerseyTest {
 
     @Test
     public void jsonPrincipalEntityResourceNoAuth401() {
-        try {
-            target("/auth-test/json-principal-entity").request().get(String.class);
-            failBecauseExceptionWasNotThrown(WebApplicationException.class);
-        } catch (WebApplicationException e) {
-            assertThat(e.getResponse().getStatus()).isEqualTo(401);
-        }
+        assertThatExceptionOfType(WebApplicationException.class)
+            .isThrownBy(() -> target("/auth-test/json-principal-entity").request().get(String.class))
+            .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(401));
     }
 
     @Test
@@ -147,12 +144,9 @@ public class PolymorphicPrincipalEntityTest extends JerseyTest {
 
     @Test
     public void nullPrincipalEntityResourceNoAuth401() {
-        try {
-            target("/auth-test/null-principal-entity").request().get(String.class);
-            failBecauseExceptionWasNotThrown(WebApplicationException.class);
-        } catch (WebApplicationException e) {
-            assertThat(e.getResponse().getStatus()).isEqualTo(401);
-        }
+        assertThatExceptionOfType(WebApplicationException.class)
+            .isThrownBy(() -> target("/auth-test/null-principal-entity").request().get(String.class))
+            .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(401));
     }
 
     @Test
