@@ -18,7 +18,6 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -48,7 +47,7 @@ public class DockerIntegrationTest {
     }
 
     @Test
-    public void testHelloWorld() throws Exception {
+    public void testHelloWorld() {
         final Optional<String> name = Optional.of("Dr. IntegrationTest");
         final Saying saying = APP.client().target("http://localhost:" + APP.getLocalPort() + "/hello-world")
                 .queryParam("name", name.get())
@@ -58,25 +57,24 @@ public class DockerIntegrationTest {
     }
 
     @Test
-    public void testPostPerson() throws Exception {
+    public void testPostPerson() {
         final Person person = new Person("Dr. IntegrationTest", "Chief Wizard", 1525);
         final Person newPerson = postPerson(person);
-        assertThat(newPerson.getId()).isNotNull();
         assertThat(newPerson.getFullName()).isEqualTo(person.getFullName());
         assertThat(newPerson.getJobTitle()).isEqualTo(person.getJobTitle());
     }
 
     @Test
-    public void testRenderingPersonFreemarker() throws Exception {
+    public void testRenderingPersonFreemarker() {
         testRenderingPerson("view_freemarker");
     }
 
     @Test
-    public void testRenderingPersonMustache() throws Exception {
+    public void testRenderingPersonMustache() {
         testRenderingPerson("view_mustache");
     }
 
-    private void testRenderingPerson(String viewName) throws Exception {
+    private void testRenderingPerson(String viewName) {
         final Person person = new Person("Dr. IntegrationTest", "Chief Wizard", 1525);
         final Person newPerson = postPerson(person);
         final String url = "http://localhost:" + APP.getLocalPort() + "/people/" + newPerson.getId() + "/" + viewName;
