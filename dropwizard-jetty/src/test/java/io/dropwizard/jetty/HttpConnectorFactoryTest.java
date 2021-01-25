@@ -14,8 +14,6 @@ import io.dropwizard.util.Resources;
 import io.dropwizard.validation.BaseValidator;
 import org.eclipse.jetty.http.CookieCompliance;
 import org.eclipse.jetty.http.HttpCompliance;
-import org.eclipse.jetty.io.ArrayByteBufferPool;
-import org.eclipse.jetty.io.ByteBufferPool;
 import org.eclipse.jetty.server.ForwardedRequestCustomizer;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
@@ -32,8 +30,9 @@ import javax.validation.Validator;
 import java.io.File;
 import java.util.Optional;
 
-import static org.apache.commons.lang3.reflect.FieldUtils.getField;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 
 class HttpConnectorFactoryTest {
 
@@ -120,7 +119,7 @@ class HttpConnectorFactoryTest {
 
     @Test
     void testBuildConnector() throws Exception {
-        HttpConnectorFactory http = new HttpConnectorFactory();
+        HttpConnectorFactory http = spy(new HttpConnectorFactory());
         http.setBindHost("127.0.0.1");
         http.setAcceptorThreads(Optional.of(1));
         http.setSelectorThreads(Optional.of(2));
@@ -147,13 +146,7 @@ class HttpConnectorFactoryTest {
         assertThat(connector.getScheduler()).isInstanceOf(ScheduledExecutorScheduler.class);
         assertThat(connector.getExecutor()).isSameAs(threadPool);
 
-        // That's gross, but unfortunately ArrayByteBufferPool doesn't have API for configuration
-        ByteBufferPool byteBufferPool = connector.getByteBufferPool();
-        assertThat(byteBufferPool).isInstanceOf(ArrayByteBufferPool.class);
-        assertThat(getField(ArrayByteBufferPool.class, "_minCapacity", true).get(byteBufferPool)).isEqualTo(64);
-        assertThat(getField(ArrayByteBufferPool.class, "_factor", true).get(byteBufferPool)).isEqualTo(1024);
-        assertThat(((Object[]) getField(ArrayByteBufferPool.class, "_direct", true)
-                .get(byteBufferPool)).length).isEqualTo(64);
+        verify(http).buildBufferPool(64, 1024, 64 * 1024);
 
         assertThat(connector.getAcceptors()).isEqualTo(1);
         assertThat(connector.getSelectorManager().getSelectorCount()).isEqualTo(2);
@@ -217,5 +210,4 @@ class HttpConnectorFactoryTest {
 
         connector.stop();
     }
-
 }
