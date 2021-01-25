@@ -3,7 +3,6 @@ package io.dropwizard.migrations;
 import io.dropwizard.util.Resources;
 import net.jcip.annotations.NotThreadSafe;
 import net.sourceforge.argparse4j.inf.Namespace;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -25,7 +24,7 @@ public class DbStatusCommandTest extends AbstractMigrationTest {
     private TestMigrationConfiguration conf;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         conf = createConfiguration(getDatabaseUrl());
 
         statusCommand.setOutputStream(new PrintStream(baos));
@@ -34,7 +33,7 @@ public class DbStatusCommandTest extends AbstractMigrationTest {
     @Test
     public void testRunOnMigratedDb() throws Exception {
         final String existedDbPath = new File(Resources.getResource("test-db.mv.db").toURI()).getAbsolutePath();
-        final String existedDbUrl = "jdbc:h2:" + StringUtils.removeEnd(existedDbPath, ".mv.db");
+        final String existedDbUrl = "jdbc:h2:" + existedDbPath.substring(0, existedDbPath.length() - ".mv.db".length());
         final TestMigrationConfiguration existedDbConf = createConfiguration(existedDbUrl);
 
         statusCommand.run(null, new Namespace(Collections.emptyMap()), existedDbConf);

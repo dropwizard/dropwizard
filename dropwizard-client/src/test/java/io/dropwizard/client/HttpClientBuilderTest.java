@@ -11,7 +11,6 @@ import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.util.Duration;
-import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.http.Header;
 import org.apache.http.HeaderIterator;
 import org.apache.http.HttpHeaders;
@@ -193,9 +192,9 @@ public class HttpClientBuilderTest {
 
         // Yes, this is gross. Thanks, Apache!
         final Field connectionOperatorField =
-                FieldUtils.getField(PoolingHttpClientConnectionManager.class, "connectionOperator", true);
+                getInaccessibleField(PoolingHttpClientConnectionManager.class, "connectionOperator");
         final Object connectOperator = connectionOperatorField.get(manager);
-        final Field dnsResolverField = FieldUtils.getField(connectOperator.getClass(), "dnsResolver", true);
+        final Field dnsResolverField = getInaccessibleField(connectOperator.getClass(), "dnsResolver");
         assertThat(dnsResolverField.get(connectOperator)).isEqualTo(resolver);
     }
 
@@ -206,9 +205,9 @@ public class HttpClientBuilderTest {
 
         // Yes, this is gross. Thanks, Apache!
         final Field connectionOperatorField =
-                FieldUtils.getField(PoolingHttpClientConnectionManager.class, "connectionOperator", true);
+                getInaccessibleField(PoolingHttpClientConnectionManager.class, "connectionOperator");
         final Object connectOperator = connectionOperatorField.get(manager);
-        final Field dnsResolverField = FieldUtils.getField(connectOperator.getClass(), "dnsResolver", true);
+        final Field dnsResolverField = getInaccessibleField(connectOperator.getClass(), "dnsResolver");
         assertThat(dnsResolverField.get(connectOperator)).isInstanceOf(SystemDefaultDnsResolver.class);
     }
 
@@ -225,7 +224,7 @@ public class HttpClientBuilderTest {
         assertThat(socketFactory).isNotNull();
 
         final Field hostnameVerifierField =
-                FieldUtils.getField(SSLConnectionSocketFactory.class, "hostnameVerifier", true);
+                getInaccessibleField(SSLConnectionSocketFactory.class, "hostnameVerifier");
         assertThat(hostnameVerifierField.get(socketFactory)).isSameAs(customVerifier);
     }
 
@@ -246,7 +245,7 @@ public class HttpClientBuilderTest {
         assertThat(socketFactory).isNotNull();
 
         final Field hostnameVerifierField =
-                FieldUtils.getField(SSLConnectionSocketFactory.class, "hostnameVerifier", true);
+                getInaccessibleField(SSLConnectionSocketFactory.class, "hostnameVerifier");
         assertThat(hostnameVerifierField.get(socketFactory)).isSameAs(customVerifier);
     }
 
@@ -261,7 +260,7 @@ public class HttpClientBuilderTest {
         assertThat(socketFactory).isNotNull();
 
         final Field hostnameVerifierField =
-                FieldUtils.getField(SSLConnectionSocketFactory.class, "hostnameVerifier", true);
+                getInaccessibleField(SSLConnectionSocketFactory.class, "hostnameVerifier");
         assertThat(hostnameVerifierField.get(socketFactory)).isInstanceOf(HostnameVerifier.class);
     }
 
@@ -280,7 +279,7 @@ public class HttpClientBuilderTest {
         assertThat(socketFactory).isNotNull();
 
         final Field hostnameVerifierField =
-                FieldUtils.getField(SSLConnectionSocketFactory.class, "hostnameVerifier", true);
+                getInaccessibleField(SSLConnectionSocketFactory.class, "hostnameVerifier");
         assertThat(hostnameVerifierField.get(socketFactory)).isInstanceOf(HostnameVerifier.class);
     }
 
@@ -291,7 +290,7 @@ public class HttpClientBuilderTest {
         assertThat(builder.using(customVerifier).createClient(apacheBuilder, connectionManager, "test")).isNotNull();
 
         final Field hostnameVerifierField =
-                FieldUtils.getField(org.apache.http.impl.client.HttpClientBuilder.class, "hostnameVerifier", true);
+                getInaccessibleField(org.apache.http.impl.client.HttpClientBuilder.class, "hostnameVerifier");
         assertThat(hostnameVerifierField.get(apacheBuilder)).isSameAs(customVerifier);
     }
 
@@ -333,7 +332,7 @@ public class HttpClientBuilderTest {
         configuration.setKeepAlive(Duration.seconds(1));
         assertThat(builder.using(configuration).createClient(apacheBuilder, connectionManager, "test")).isNotNull();
 
-        final Field field = FieldUtils.getField(httpClientBuilderClass, "keepAliveStrategy", true);
+        final Field field = getInaccessibleField(httpClientBuilderClass, "keepAliveStrategy");
         final DefaultConnectionKeepAliveStrategy strategy = (DefaultConnectionKeepAliveStrategy) field.get(apacheBuilder);
         final HttpContext context = mock(HttpContext.class);
         final HttpResponse response = mock(HttpResponse.class);
@@ -519,8 +518,7 @@ public class HttpClientBuilderTest {
         CloseableHttpClient httpClient = checkProxy(config, new HttpHost("dropwizard.io", 80),
                 new HttpHost("192.168.52.11", 8080, "http"));
         CredentialsProvider credentialsProvider = (CredentialsProvider)
-                FieldUtils.getField(httpClient.getClass(), "credentialsProvider", true)
-                        .get(httpClient);
+                getInaccessibleField(httpClient.getClass(), "credentialsProvider").get(httpClient);
 
         assertThat(credentialsProvider.getCredentials(new AuthScope("192.168.52.11", 8080)))
                 .isEqualTo(new UsernamePasswordCredentials("secret", "stuff"));
@@ -536,8 +534,7 @@ public class HttpClientBuilderTest {
         CloseableHttpClient httpClient = checkProxy(config, new HttpHost("dropwizard.io", 80),
                 new HttpHost("192.168.52.11", 8080, "http"));
         CredentialsProvider credentialsProvider = (CredentialsProvider)
-                FieldUtils.getField(httpClient.getClass(), "credentialsProvider", true)
-                        .get(httpClient);
+                getInaccessibleField(httpClient.getClass(), "credentialsProvider").get(httpClient);
 
         AuthScope authScope = new AuthScope("192.168.52.11", 8080, "realm", "NTLM");
         Credentials credentials = new NTCredentials("secret", "stuff", "host", "domain");
@@ -575,7 +572,7 @@ public class HttpClientBuilderTest {
                                            @Nullable HttpHost expectedProxy) throws Exception {
         CloseableHttpClient httpClient = builder.using(config).build("test");
         HttpRoutePlanner routePlanner = (HttpRoutePlanner)
-                FieldUtils.getField(httpClient.getClass(), "routePlanner", true).get(httpClient);
+                getInaccessibleField(httpClient.getClass(), "routePlanner").get(httpClient);
 
         HttpRoute route = routePlanner.determineRoute(target, new HttpGet(target.toURI()),
                 new BasicHttpContext());
@@ -603,8 +600,7 @@ public class HttpClientBuilderTest {
         assertThat(builder.using(HttpClientMetricNameStrategies.HOST_AND_METHOD)
                 .createClient(apacheBuilder, connectionManager, "test"))
                 .isNotNull();
-        assertThat(FieldUtils.getField(InstrumentedHttpRequestExecutor.class,
-                "metricNameStrategy", true)
+        assertThat(getInaccessibleField(InstrumentedHttpRequestExecutor.class,"metricNameStrategy")
                 .get(spyHttpClientBuilderField("requestExec", apacheBuilder)))
                 .isSameAs(HttpClientMetricNameStrategies.HOST_AND_METHOD);
     }
@@ -613,8 +609,7 @@ public class HttpClientBuilderTest {
     public void usesMethodOnlyHttpClientMetricNameStrategyByDefault() throws Exception {
         assertThat(builder.createClient(apacheBuilder, connectionManager, "test"))
                 .isNotNull();
-        assertThat(FieldUtils.getField(InstrumentedHttpRequestExecutor.class,
-                "metricNameStrategy", true)
+        assertThat(getInaccessibleField(InstrumentedHttpRequestExecutor.class, "metricNameStrategy")
                 .get(spyHttpClientBuilderField("requestExec", apacheBuilder)))
                 .isSameAs(HttpClientMetricNameStrategies.METHOD_ONLY);
     }
@@ -634,9 +629,8 @@ public class HttpClientBuilderTest {
                 .createClient(apacheBuilder, connectionManager, "test");
         assertThat(client).isNotNull();
 
-        final Boolean contentCompressionDisabled = (Boolean) FieldUtils
-                .getField(httpClientBuilderClass, "contentCompressionDisabled", true)
-                .get(apacheBuilder);
+        final Boolean contentCompressionDisabled =
+            (Boolean) getInaccessibleField(httpClientBuilderClass, "contentCompressionDisabled").get(apacheBuilder);
         assertThat(contentCompressionDisabled).isTrue();
     }
 
@@ -697,8 +691,8 @@ public class HttpClientBuilderTest {
         assertThat(client).isNotNull();
 
         @SuppressWarnings("unchecked")
-        List<? extends Header> defaultHeaders = (List<? extends Header>) FieldUtils
-                .getField(httpClientBuilderClass, "defaultHeaders", true)
+        List<? extends Header> defaultHeaders =
+            (List<? extends Header>) getInaccessibleField(httpClientBuilderClass, "defaultHeaders")
                 .get(apacheBuilder);
 
         assertThat(defaultHeaders).hasSize(1);
@@ -714,8 +708,7 @@ public class HttpClientBuilderTest {
             builder.using(httpProcessor)
                 .createClient(apacheBuilder, connectionManager, "test");
         assertThat(client).isNotNull();
-        assertThat(FieldUtils.getField(httpClientBuilderClass,
-            "httpprocessor", true)
+        assertThat(getInaccessibleField(httpClientBuilderClass, "httpprocessor")
             .get(apacheBuilder))
             .isSameAs(httpProcessor);
     }
@@ -727,8 +720,7 @@ public class HttpClientBuilderTest {
             builder.using(serviceUnavailableRetryStrategy)
                 .createClient(apacheBuilder, connectionManager, "test");
         assertThat(client).isNotNull();
-        assertThat(FieldUtils.getField(httpClientBuilderClass,
-            "serviceUnavailStrategy", true)
+        assertThat(getInaccessibleField(httpClientBuilderClass, "serviceUnavailStrategy")
             .get(apacheBuilder))
             .isSameAs(serviceUnavailableRetryStrategy);
     }
@@ -739,9 +731,7 @@ public class HttpClientBuilderTest {
         assertThat(builder.customized).isFalse();
         builder.createClient(apacheBuilder, connectionManager, "test");
         assertThat(builder.customized).isTrue();
-        assertThat(FieldUtils.getField(httpClientBuilderClass,
-            "requestExec", true)
-            .get(apacheBuilder))
+        assertThat(getInaccessibleField(httpClientBuilderClass, "requestExec").get(apacheBuilder))
             .isInstanceOf(CustomRequestExecutor.class);
     }
 
@@ -749,9 +739,7 @@ public class HttpClientBuilderTest {
     public void buildWithAnotherBuilder() throws Exception {
         CustomBuilder builder = new CustomBuilder(new MetricRegistry(), anotherApacheBuilder);
         builder.build("test");
-        assertThat(FieldUtils.getField(httpClientBuilderClass,
-            "requestExec", true)
-            .get(anotherApacheBuilder))
+        assertThat(getInaccessibleField(httpClientBuilderClass, "requestExec").get(anotherApacheBuilder))
             .isInstanceOf(CustomRequestExecutor.class);
     }
 
@@ -776,12 +764,18 @@ public class HttpClientBuilderTest {
     }
 
     private Object spyHttpClientBuilderField(final String fieldName, final Object obj) throws Exception {
-        final Field field = FieldUtils.getField(httpClientBuilderClass, fieldName, true);
+        final Field field = getInaccessibleField(httpClientBuilderClass, fieldName);
         return field.get(obj);
     }
 
     private Object spyHttpClientField(final String fieldName, final Object obj) throws Exception {
-        final Field field = FieldUtils.getField(httpClientClass, fieldName, true);
+        final Field field = getInaccessibleField(httpClientClass, fieldName);
         return field.get(obj);
+    }
+
+    private static Field getInaccessibleField(Class klass, String name) throws NoSuchFieldException {
+        Field field = klass.getDeclaredField(name);
+        field.setAccessible(true);
+        return field;
     }
 }
