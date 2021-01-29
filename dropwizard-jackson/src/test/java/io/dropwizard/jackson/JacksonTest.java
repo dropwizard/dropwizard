@@ -75,6 +75,7 @@ public class JacksonTest {
         Set<Object> registeredModuleIds = Jackson.newObjectMapper().getRegisteredModuleIds();
 
         assertThat(registeredModuleIds).extracting(Object::toString)
+            .isNotEmpty()
             .doesNotContain("com.fasterxml.jackson.module.blackbird.BlackbirdModule");
     }
 
