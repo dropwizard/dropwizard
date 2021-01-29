@@ -26,14 +26,20 @@ class JavaVersionTest {
     }
 
     @Test
-    @EnabledOnJre({JRE.JAVA_11, JRE.JAVA_15})
-    void isJava11_or_higher_returns_true_on_Java_11_15() {
+    void isJava11_or_higher_returns_true_on_Java_11() {
+        System.setProperty("java.specification.version", "11");
         assertThat(JavaVersion.isJava11OrHigher()).isTrue();
     }
 
     @Test
-    @EnabledOnJre(JRE.JAVA_8)
+    void isJava11_or_higher_returns_true_on_Java_15() {
+        System.setProperty("java.specification.version", "15");
+        assertThat(JavaVersion.isJava11OrHigher()).isTrue();
+    }
+
+    @Test
     void isJava11_or_higher_returns_false_on_Java_8() {
+        System.setProperty("java.specification.version", "1.8.0_222");
         assertThat(JavaVersion.isJava11OrHigher()).isFalse();
     }
 }
