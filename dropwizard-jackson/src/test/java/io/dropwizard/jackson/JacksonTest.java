@@ -62,7 +62,7 @@ public class JacksonTest {
 
     @Test
     @EnabledOnJre({JRE.JAVA_11, JRE.JAVA_15})
-    public void blackbirdIsEnabledOnJdk11() {
+    void blackbirdIsEnabledOnJdk11() {
         Set<Object> registeredModuleIds = Jackson.newObjectMapper().getRegisteredModuleIds();
 
         assertThat(registeredModuleIds).extracting(Object::toString)
@@ -71,7 +71,7 @@ public class JacksonTest {
 
     @Test
     @EnabledOnJre(JRE.JAVA_8)
-    public void blackbirdIsNotEnabledOnJdk8() {
+    void blackbirdIsNotEnabledOnJdk8() {
         Set<Object> registeredModuleIds = Jackson.newObjectMapper().getRegisteredModuleIds();
 
         assertThat(registeredModuleIds).extracting(Object::toString)
