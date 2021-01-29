@@ -62,11 +62,10 @@ public class Jackson {
         mapper.registerModule(new GuavaExtrasModule());
         mapper.registerModule(new CaffeineModule());
         mapper.registerModule(new JodaModule());
-        if (JavaVersion.isJava8()) {
-            mapper.registerModule(new AfterburnerModule());
-        }
         if (JavaVersion.isJava11OrHigher()) {
             mapper.registerModule(new BlackbirdModule());
+        } else if (JavaVersion.isJava8()) {
+            mapper.registerModule(new AfterburnerModule());
         }
         mapper.registerModule(new FuzzyEnumModule());
         mapper.registerModule(new ParameterNamesModule());
