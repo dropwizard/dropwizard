@@ -15,13 +15,9 @@ public final class JavaVersion {
     }
 
     public static boolean isJava11OrHigher() {
-        final String specVersion = getJavaSpecVersion();
-        if (specVersion == null) {
-            return false;
-        }
         final int numericVersion;
         try {
-            numericVersion = Integer.parseInt(specVersion);
+            numericVersion = Integer.parseInt(getJavaSpecVersion());
         } catch (NumberFormatException ignore) {
             return false;
         }
