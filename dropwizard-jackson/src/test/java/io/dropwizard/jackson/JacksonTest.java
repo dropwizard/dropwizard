@@ -3,12 +3,16 @@ package io.dropwizard.jackson;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledOnJre;
+import org.junit.jupiter.api.condition.JRE;
 import org.mockito.Mockito;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatCode;
@@ -53,6 +57,25 @@ public class JacksonTest {
             Jackson.newObjectMapper()
                 .readValue("{\"unknown\": 4711, \"path\": \"/var/log/app/server.log\"}", LogMetadata.class)
         ).doesNotThrowAnyException();
+    }
+
+
+    @Test
+    @EnabledOnJre({JRE.JAVA_11, JRE.JAVA_15})
+    public void blackbirdIsEnabledOnJdk11() {
+        Set<Object> registeredModuleIds = Jackson.newObjectMapper().getRegisteredModuleIds();
+
+        assertThat(registeredModuleIds).extracting(Object::toString)
+            .contains("com.fasterxml.jackson.module.blackbird.BlackbirdModule");
+    }
+
+    @Test
+    @EnabledOnJre(JRE.JAVA_8)
+    public void blackbirdIsNotEnabledOnJdk8() {
+        Set<Object> registeredModuleIds = Jackson.newObjectMapper().getRegisteredModuleIds();
+
+        assertThat(registeredModuleIds).extracting(Object::toString)
+            .doesNotContain("com.fasterxml.jackson.module.blackbird.BlackbirdModule");
     }
 
     static class LogMetadata {

@@ -14,6 +14,20 @@ public final class JavaVersion {
         return specVersion != null && specVersion.startsWith("1.8");
     }
 
+    public static boolean isJava11OrHigher() {
+        final String specVersion = getJavaSpecVersion();
+        if (specVersion == null) {
+            return false;
+        }
+        final int numericVersion;
+        try {
+            numericVersion = Integer.parseInt(specVersion);
+        } catch (NumberFormatException ignore) {
+            return false;
+        }
+        return numericVersion >= 11;
+    }
+
     @Nullable
     private static String getJavaSpecVersion() {
         try {

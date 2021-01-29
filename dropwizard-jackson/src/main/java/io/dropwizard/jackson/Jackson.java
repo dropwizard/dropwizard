@@ -1,7 +1,5 @@
 package io.dropwizard.jackson;
 
-import static com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES;
-
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.guava.GuavaModule;
@@ -9,10 +7,13 @@ import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.afterburner.AfterburnerModule;
+import com.fasterxml.jackson.module.blackbird.BlackbirdModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import io.dropwizard.util.JavaVersion;
 
 import javax.annotation.Nullable;
+
+import static com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES;
 
 /**
  * A utility class for Jackson.
@@ -63,6 +64,9 @@ public class Jackson {
         mapper.registerModule(new JodaModule());
         if (JavaVersion.isJava8()) {
             mapper.registerModule(new AfterburnerModule());
+        }
+        if (JavaVersion.isJava11OrHigher()) {
+            mapper.registerModule(new BlackbirdModule());
         }
         mapper.registerModule(new FuzzyEnumModule());
         mapper.registerModule(new ParameterNamesModule());
