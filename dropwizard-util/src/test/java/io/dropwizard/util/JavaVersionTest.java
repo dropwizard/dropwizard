@@ -34,6 +34,6 @@ class JavaVersionTest {
     @Test
     @EnabledOnJre(JRE.JAVA_8)
     void isJava11_or_higher_returns_false_on_Java_8() {
-        assertThat(JavaVersion.isJava11OrHigher()).isTrue();
+        assertThat(JavaVersion.isJava11OrHigher()).isFalse();
     }
 }
