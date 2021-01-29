@@ -15,13 +15,11 @@ public final class JavaVersion {
     }
 
     public static boolean isJava11OrHigher() {
-        final int numericVersion;
         try {
-            numericVersion = Integer.parseInt(getJavaSpecVersion());
+            return Integer.parseInt(getJavaSpecVersion()) >= 11;
         } catch (NumberFormatException ignore) {
             return false;
         }
-        return numericVersion >= 11;
     }
 
     @Nullable
