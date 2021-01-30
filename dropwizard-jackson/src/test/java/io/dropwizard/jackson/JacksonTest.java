@@ -59,22 +59,30 @@ public class JacksonTest {
         ).doesNotThrowAnyException();
     }
 
-
     @Test
-    @EnabledOnJre({JRE.JAVA_11, JRE.JAVA_15})
     void blackbirdIsEnabledOnJdk11() {
-        Set<Object> registeredModuleIds = Jackson.newObjectMapper().getRegisteredModuleIds();
+        System.setProperty("java.specification.version", "11");
 
-        assertThat(registeredModuleIds).extracting(Object::toString)
+        assertThat(Jackson.newObjectMapper().getRegisteredModuleIds())
+            .extracting(Object::toString)
             .contains("com.fasterxml.jackson.module.blackbird.BlackbirdModule");
     }
 
     @Test
-    @EnabledOnJre(JRE.JAVA_8)
-    void blackbirdIsNotEnabledOnJdk8() {
-        Set<Object> registeredModuleIds = Jackson.newObjectMapper().getRegisteredModuleIds();
+    void blackbirdIsEnabledOnJdk15() {
+        System.setProperty("java.specification.version", "15");
 
-        assertThat(registeredModuleIds).extracting(Object::toString)
+        assertThat(Jackson.newObjectMapper().getRegisteredModuleIds())
+            .extracting(Object::toString)
+            .contains("com.fasterxml.jackson.module.blackbird.BlackbirdModule");
+    }
+
+    @Test
+    void blackbirdIsNotEnabledOnJdk8() {
+        System.setProperty("java.specification.version", "1.8.0_222");
+
+        assertThat(Jackson.newObjectMapper().getRegisteredModuleIds())
+            .extracting(Object::toString)
             .isNotEmpty()
             .doesNotContain("com.fasterxml.jackson.module.blackbird.BlackbirdModule");
     }
