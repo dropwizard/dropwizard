@@ -11,7 +11,7 @@ import javax.validation.ConstraintViolationException;
 import java.io.Serializable;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 @ExtendWith(DropwizardExtensionsSupport.class)
 class DAOTestExtensionTest {
@@ -55,19 +55,14 @@ class DAOTestExtensionTest {
 
         // when we prepare an update of that entity
         testEntity.setDescription("newDescription");
-        try {
-            // ... but cause a constraint violation during the actual update
-            daoTestExtension.inTransaction(() -> {
+        // ... but cause a constraint violation during the actual update
+        assertThatExceptionOfType(ConstraintViolationException.class)
+            .isThrownBy(() -> daoTestExtension.inTransaction(() -> {
                 persist(testEntity);
                 persist(new TestEntity(null));
-            });
-            failBecauseExceptionWasNotThrown(ConstraintViolationException.class);
-        } catch (ConstraintViolationException ignoredException) {
-            // keep calm and carry on
-            // ... the entity has the original value
-            final TestEntity sameTestEntity = get(testEntity.getId());
-            assertThat(sameTestEntity.getDescription()).isEqualTo("junit 5 description");
-        }
+            }));
+        // ... the entity has the original value
+        assertThat(get(testEntity.getId()).getDescription()).isEqualTo("junit 5 description");
     }
 
 

@@ -1,8 +1,5 @@
 package io.dropwizard.configuration;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -12,6 +9,9 @@ import java.nio.charset.StandardCharsets;
 import org.apache.commons.text.StringSubstitutor;
 import org.apache.commons.text.lookup.StringLookup;
 import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 public class SubstitutingSourceProviderTest {
     @Test
@@ -23,9 +23,9 @@ public class SubstitutingSourceProviderTest {
         assertThat(provider.open("foo: ${bar}")).hasSameContentAs(new ByteArrayInputStream("foo: baz".getBytes(StandardCharsets.UTF_8)));
 
         // ensure that opened streams are closed
-        assertThatThrownBy(() -> dummyProvider.lastStream.read())
-                .isInstanceOf(IOException.class)
-                .hasMessage("Stream closed");
+        assertThatExceptionOfType(IOException.class)
+            .isThrownBy(() -> dummyProvider.lastStream.read())
+            .withMessage("Stream closed");
     }
 
     @Test

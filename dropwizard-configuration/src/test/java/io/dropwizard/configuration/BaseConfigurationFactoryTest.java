@@ -6,9 +6,9 @@ import io.dropwizard.jackson.Jackson;
 import io.dropwizard.util.Maps;
 import io.dropwizard.util.Resources;
 import io.dropwizard.validation.BaseValidator;
+import org.assertj.core.api.ThrowableAssertAlternative;
 import org.assertj.core.data.MapEntry;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.validation.Valid;
@@ -16,7 +16,6 @@ import javax.validation.Validator;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.io.File;
-import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Collections;
@@ -27,8 +26,6 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
 
 public abstract class BaseConfigurationFactoryTest {
 
@@ -139,12 +136,12 @@ public abstract class BaseConfigurationFactoryTest {
     protected final Validator validator = BaseValidator.newValidator();
     protected ConfigurationFactory<Example> factory = new ConfigurationFactory<Example>() {
         @Override
-        public Example build(ConfigurationSourceProvider provider, String path) throws IOException, ConfigurationException {
+        public Example build(ConfigurationSourceProvider provider, String path) {
             return new Example();
         }
 
         @Override
-        public Example build() throws IOException, ConfigurationException {
+        public Example build() {
             return new Example();
         }
     };
@@ -315,78 +312,58 @@ public abstract class BaseConfigurationFactoryTest {
     }
 
     @Test
-    public void throwsAnExceptionOnUnexpectedArrayOverride() throws Exception {
+    public void throwsAnExceptionOnUnexpectedArrayOverride() {
         System.setProperty("dw.servers.port", "9000");
-        try {
-            factory.build(validFile);
-            failBecauseExceptionWasNotThrown(IllegalArgumentException.class);
-        } catch (IllegalArgumentException e) {
-            assertThat(e.getMessage())
-                    .containsOnlyOnce("target is an array but no index specified");
-        }
+        assertThatExceptionOfType(IllegalArgumentException.class)
+            .isThrownBy(() -> factory.build(validFile))
+            .withMessageContaining("target is an array but no index specified");
     }
 
     @Test
-    public void throwsAnExceptionOnArrayOverrideWithInvalidType() throws Exception {
+    public void throwsAnExceptionOnArrayOverrideWithInvalidType() {
         System.setProperty("dw.servers", "one,two");
 
         assertThatExceptionOfType(ConfigurationParsingException.class).isThrownBy(() -> factory.build(validFile));
     }
 
     @Test
-    public void throwsAnExceptionOnOverrideArrayIndexOutOfBounds() throws Exception {
+    public void throwsAnExceptionOnOverrideArrayIndexOutOfBounds() {
         System.setProperty("dw.type[2]", "invalid");
-        try {
-            factory.build(validFile);
-            failBecauseExceptionWasNotThrown(ArrayIndexOutOfBoundsException.class);
-        } catch (ArrayIndexOutOfBoundsException e) {
-            assertThat(e.getMessage())
-                    .containsOnlyOnce("index is greater than size of array");
-        }
+        assertThatExceptionOfType(ArrayIndexOutOfBoundsException.class)
+            .isThrownBy(() -> factory.build(validFile))
+            .withMessageContaining("index is greater than size of array");
     }
 
     @Test
-    public void throwsAnExceptionOnOverrideArrayPropertyIndexOutOfBounds() throws Exception {
+    public void throwsAnExceptionOnOverrideArrayPropertyIndexOutOfBounds() {
         System.setProperty("dw.servers[4].port", "9000");
-        try {
-            factory.build(validFile);
-            failBecauseExceptionWasNotThrown(ArrayIndexOutOfBoundsException.class);
-        } catch (ArrayIndexOutOfBoundsException e) {
-            assertThat(e.getMessage())
-                    .containsOnlyOnce("index is greater than size of array");
-        }
+        assertThatExceptionOfType(ArrayIndexOutOfBoundsException.class)
+            .isThrownBy(() -> factory.build(validFile))
+            .withMessageContaining("index is greater than size of array");
     }
 
     @Test
-    public void throwsAnExceptionOnMalformedFiles() throws Exception {
-        factory.build(malformedFile);
-        failBecauseExceptionWasNotThrown(ConfigurationParsingException.class);
+    public void throwsAnExceptionOnMalformedFiles() {
+        assertThatExceptionOfType(ConfigurationParsingException.class)
+            .isThrownBy(() -> factory.build(malformedFile));
     }
 
     @Test
-    public void throwsAnExceptionOnEmptyFiles() throws Exception {
-        try {
-            factory.build(emptyFile);
-            failBecauseExceptionWasNotThrown(ConfigurationParsingException.class);
-        } catch (ConfigurationParsingException e) {
-            assertThat(e.getMessage())
-                    .containsOnlyOnce(" * Configuration at " + emptyFile.toString() + " must not be empty");
-        }
+    public void throwsAnExceptionOnEmptyFiles() {
+        assertThatExceptionOfType(ConfigurationParsingException.class)
+            .isThrownBy(() -> factory.build(emptyFile))
+            .withMessageContaining(" * Configuration at " + emptyFile.toString() + " must not be empty");
     }
 
     @Test
-    public void throwsAnExceptionOnInvalidFiles() throws Exception {
-        try {
-            factory.build(invalidFile);
-            failBecauseExceptionWasNotThrown(ConfigurationValidationException.class);
-        } catch (ConfigurationValidationException e) {
-            if ("en".equals(Locale.getDefault().getLanguage())) {
-                assertThat(e.getMessage())
-                        .endsWith(String.format(
-                                "%s has an error:%n" +
-                                        "  * name must match \"[\\w]+[\\s]+[\\w]+([\\s][\\w]+)?\"%n",
-                                        invalidFile.getName()));
-            }
+    public void throwsAnExceptionOnInvalidFiles() {
+        ThrowableAssertAlternative<ConfigurationValidationException> t = assertThatExceptionOfType(ConfigurationValidationException.class)
+            .isThrownBy(() -> factory.build(invalidFile));
+
+        if ("en".equals(Locale.getDefault().getLanguage())) {
+            t.withMessageEndingWith(String.format(
+                    "%s has an error:%n  * name must match \"[\\w]+[\\s]+[\\w]+([\\s][\\w]+)?\"%n",
+                    invalidFile.getName()));
         }
     }
 
@@ -425,21 +402,21 @@ public abstract class BaseConfigurationFactoryTest {
     }
 
     @Test
-    public void throwsAnExceptionIfDefaultConfigurationCantBeInstantiated() throws Exception {
+    public void throwsAnExceptionIfDefaultConfigurationCantBeInstantiated() {
         System.setProperty("dw.name", "Coda Hale Overridden");
         final YamlConfigurationFactory<NonInsatiableExample> factory =
             new YamlConfigurationFactory<>(NonInsatiableExample.class, validator, Jackson.newObjectMapper(), "dw");
-        assertThatThrownBy(factory::build)
-            .isInstanceOf(IllegalArgumentException.class)
-            .hasMessage("Unable to create an instance of the configuration class: " +
+        assertThatExceptionOfType(IllegalArgumentException.class)
+            .isThrownBy(factory::build)
+            .withMessage("Unable to create an instance of the configuration class: " +
                 "'io.dropwizard.configuration.BaseConfigurationFactoryTest.NonInsatiableExample'");
     }
 
     @Test
-    public void incorrectTypeIsFound() throws Exception {
-        assertThatThrownBy(() -> factory.build(wrongTypeFile))
-            .isInstanceOf(ConfigurationParsingException.class)
-            .hasMessage(String.format("%s has an error:" + NEWLINE +
+    public void incorrectTypeIsFound() {
+        assertThatExceptionOfType(ConfigurationParsingException.class)
+            .isThrownBy(() -> factory.build(wrongTypeFile))
+            .withMessage(String.format("%s has an error:" + NEWLINE +
                 "  * Incorrect type of value at: age; is of type: String, expected: int" + NEWLINE, wrongTypeFile));
     }
 

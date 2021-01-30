@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.IOException;
 
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class JsonConfigurationFactoryTest extends BaseConfigurationFactoryTest {
@@ -37,12 +38,12 @@ public class JsonConfigurationFactoryTest extends BaseConfigurationFactoryTest {
 
     @Override
     public void printsDetailedInformationOnMalformedContent() {
-        assertThatThrownBy(super::printsDetailedInformationOnMalformedContent)
-                .isInstanceOf(ConfigurationParsingException.class)
-                .hasMessageContaining(String.format(
-                        "%s has an error:%n" +
-                        "  * Malformed JSON at line: 7, column: 3; Unexpected close marker '}': expected ']'",
-                        malformedAdvancedFile.getName()));
+        assertThatExceptionOfType(ConfigurationParsingException.class)
+            .isThrownBy(super::printsDetailedInformationOnMalformedContent)
+            .withMessageContaining(String.format(
+                    "%s has an error:%n" +
+                    "  * Malformed JSON at line: 7, column: 3; Unexpected close marker '}': expected ']'",
+                    malformedAdvancedFile.getName()));
     }
 
     @Test

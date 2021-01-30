@@ -13,7 +13,7 @@ import java.sql.ClientInfoStatus;
 import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 public class FuzzyEnumModuleTest {
     private final ObjectMapper mapper = new ObjectMapper();
@@ -120,15 +120,12 @@ public class FuzzyEnumModuleTest {
     }
 
     @Test
-    public void failsOnIncorrectValue() throws Exception {
-        try {
-            mapper.readValue("\"wrong\"", TimeUnit.class);
-            failBecauseExceptionWasNotThrown(JsonMappingException.class);
-        } catch (JsonMappingException e) {
-            assertThat(e.getOriginalMessage())
-                    .isEqualTo("Cannot deserialize value of type `java.util.concurrent.TimeUnit` from String \"wrong\": " +
-                        "wrong was not one of [NANOSECONDS, MICROSECONDS, MILLISECONDS, SECONDS, MINUTES, HOURS, DAYS]");
-        }
+    public void failsOnIncorrectValue() {
+        assertThatExceptionOfType(JsonMappingException.class)
+            .isThrownBy(() -> mapper.readValue("\"wrong\"", TimeUnit.class))
+            .satisfies(e -> assertThat(e.getOriginalMessage())
+                .isEqualTo("Cannot deserialize value of type `java.util.concurrent.TimeUnit` from String \"wrong\": " +
+                    "wrong was not one of [NANOSECONDS, MICROSECONDS, MILLISECONDS, SECONDS, MINUTES, HOURS, DAYS]"));
     }
 
     @Test
