@@ -1,9 +1,7 @@
 name: Release
 on:
   push:
-    branches:
-    - master
-    - release/2.0.x
+    tags:
 jobs:
   release:
     runs-on: 'ubuntu-latest'
