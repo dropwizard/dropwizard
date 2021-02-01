@@ -722,6 +722,11 @@ location specified by ``-c``), adapt the ConfiguredCommand_ class as needed.
 
 .. _ConfiguredCommand: https://github.com/dropwizard/dropwizard/blob/master/dropwizard-core/src/main/java/io/dropwizard/cli/ConfiguredCommand.java
 
+.. note::
+
+     If you override the ``configure`` method, you **must** call ``super.override(subparser)`` (or call ``addFileArgument``) 
+     in order to preserve the configuration file parameter in the subparser.
+
 .. _man-core-tasks:
 
 Tasks
