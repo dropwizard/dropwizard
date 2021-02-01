@@ -14,10 +14,6 @@ public class BadLogApp extends Application<Configuration> {
         LOGGER.warn("Mayday we're going down");
     }
 
-    public static void runMe(String[] args) throws Exception {
-        new BadLogApp().run(args);
-    }
-
     @Override
     public void run(Configuration configuration, Environment environment) throws Exception {
         throw new RuntimeException("I'm a bad app");

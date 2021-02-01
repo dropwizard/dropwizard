@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.cli.Command;
+import io.dropwizard.cli.ConfiguredCommand;
+import io.dropwizard.cli.EnvironmentCommand;
 import io.dropwizard.cli.ServerCommand;
 import io.dropwizard.configuration.ConfigurationSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
@@ -285,8 +287,6 @@ public class DropwizardTestSupport<C extends Configuration> {
             @Override
             public void run(C configuration, Environment environment) throws Exception {
                 environment.lifecycle().addServerLifecycleListener(server -> jettyServer = server);
-                DropwizardTestSupport.this.configuration = configuration;
-                DropwizardTestSupport.this.environment = environment;
                 super.run(configuration, environment);
                 for (ServiceListener<C> listener : listeners) {
                     try {
@@ -324,23 +324,34 @@ public class DropwizardTestSupport<C extends Configuration> {
         final Namespace namespace = new Namespace(namespaceAttributes);
         final Command command = commandInstantiator.apply(application);
         command.run(bootstrap, namespace);
+
+        if (command instanceof EnvironmentCommand) {
+            @SuppressWarnings("unchecked")
+            EnvironmentCommand<C> environmentCommand = (EnvironmentCommand<C>) command;
+            this.configuration = environmentCommand.getConfiguration();
+            this.environment = environmentCommand.getEnvironment();
+        } else if (command instanceof ConfiguredCommand) {
+            @SuppressWarnings("unchecked")
+            ConfiguredCommand<C> configuredCommand = (ConfiguredCommand<C>) command;
+            this.configuration = configuredCommand.getConfiguration();
+        }
     }
 
     public C getConfiguration() {
-        return requireNonNull(configuration);
+        return requireNonNull(configuration, "configuration");
     }
 
     public int getLocalPort() {
-        return ((ServerConnector) requireNonNull(jettyServer).getConnectors()[0]).getLocalPort();
+        return getPort(0);
     }
 
     public int getAdminPort() {
-        final Connector[] connectors = requireNonNull(jettyServer).getConnectors();
+        final Connector[] connectors = requireNonNull(jettyServer, "jettyServer").getConnectors();
         return ((ServerConnector) connectors[connectors.length - 1]).getLocalPort();
     }
 
     public int getPort(int connectorIndex) {
-        return ((ServerConnector) requireNonNull(jettyServer).getConnectors()[connectorIndex]).getLocalPort();
+        return ((ServerConnector) requireNonNull(jettyServer, "jettyServer").getConnectors()[connectorIndex]).getLocalPort();
     }
 
     public Application<C> newApplication() {
@@ -353,11 +364,11 @@ public class DropwizardTestSupport<C extends Configuration> {
 
     @SuppressWarnings({"unchecked", "TypeParameterUnusedInFormals"})
     public <A extends Application<C>> A getApplication() {
-        return (A) requireNonNull(application);
+        return (A) requireNonNull(application, "application");
     }
 
     public Environment getEnvironment() {
-        return requireNonNull(environment);
+        return requireNonNull(environment, "environment");
     }
 
     public ObjectMapper getObjectMapper() {
