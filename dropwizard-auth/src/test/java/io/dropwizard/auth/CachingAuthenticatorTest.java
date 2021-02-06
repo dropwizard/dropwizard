@@ -95,9 +95,9 @@ class CachingAuthenticatorTest {
     @Test
     void shouldNotCacheAbsentPrincipals() throws Exception {
         when(underlying.authenticate(anyString())).thenReturn(Optional.empty());
-        assertThat(cached.authenticate("credentials")).isEqualTo(Optional.empty());
+        assertThat(cached.authenticate("credentials")).isEmpty();
         verify(underlying).authenticate("credentials");
-        assertThat(cached.size()).isEqualTo(0);
+        assertThat(cached.size()).isZero();
     }
 
     @Test
