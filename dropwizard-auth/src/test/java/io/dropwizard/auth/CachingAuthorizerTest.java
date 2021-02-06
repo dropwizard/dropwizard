@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 
 import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.core.UriInfo;
 import java.security.Principal;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -120,19 +119,19 @@ public class CachingAuthorizerTest {
         cached.authorize(principal, role, requestContext);
         assertThat(cached.size()).isEqualTo(1);
         cached.invalidateAll();
-        assertThat(cached.size()).isEqualTo(0);
+        assertThat(cached.size()).isZero();
     }
 
     @Test
     public void calculatesCacheStats() throws Exception {
-        assertThat(cached.stats().loadCount()).isEqualTo(0);
+        assertThat(cached.stats().loadCount()).isZero();
         cached.authorize(principal, role, requestContext);
         assertThat(cached.stats().loadCount()).isEqualTo(1);
         assertThat(cached.size()).isEqualTo(1);
     }
 
     @Test
-    public void shouldPropagateRuntimeException() throws AuthenticationException {
+    public void shouldPropagateRuntimeException() {
         final RuntimeException e = new NullPointerException();
         when(underlying.authorize(principal, role, requestContext)).thenThrow(e);
         assertThatNullPointerException()
