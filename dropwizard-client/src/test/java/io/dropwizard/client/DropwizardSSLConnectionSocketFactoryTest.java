@@ -38,7 +38,6 @@ import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.bouncycastle.jce.provider.BouncyCastleProvider.PROVIDER_NAME;
 
@@ -126,9 +125,9 @@ public class DropwizardSSLConnectionSocketFactoryTest {
     void shouldErrorIfServerCertNotFoundInTruststore() {
         tlsConfiguration.setTrustStorePath(new File(ResourceHelpers.resourceFilePath("stores/server/other_cert_truststore.ts")));
         final Client client = new JerseyClientBuilder(TLS_APP_RULE.getEnvironment()).using(jerseyClientConfiguration).build("tls_broken_client");
-        assertThatThrownBy(() -> client.target(String.format("https://localhost:%d", TLS_APP_RULE.getLocalPort())).request().get())
-            .isInstanceOf(ProcessingException.class)
-            .hasCauseInstanceOf(SSLHandshakeException.class);
+        assertThatExceptionOfType(ProcessingException.class)
+            .isThrownBy(() -> client.target(String.format("https://localhost:%d", TLS_APP_RULE.getLocalPort())).request().get())
+            .withCauseInstanceOf(SSLHandshakeException.class);
     }
 
     @Test
@@ -142,9 +141,9 @@ public class DropwizardSSLConnectionSocketFactoryTest {
     @Test
     void shouldErrorIfServerCertSelfSignedAndSelfSignedCertsNotAllowed() {
         final Client client = new JerseyClientBuilder(TLS_APP_RULE.getEnvironment()).using(jerseyClientConfiguration).build("self_sign_failure");
-        assertThatThrownBy(() -> client.target(String.format("https://localhost:%d", TLS_APP_RULE.getPort(1))).request().get(ClientResponse.class))
-            .isInstanceOf(ProcessingException.class)
-            .hasCauseInstanceOf(SSLHandshakeException.class);
+        assertThatExceptionOfType(ProcessingException.class)
+            .isThrownBy(() -> client.target(String.format("https://localhost:%d", TLS_APP_RULE.getPort(1))).request().get(ClientResponse.class))
+            .withCauseInstanceOf(SSLHandshakeException.class);
     }
 
     @Test
@@ -163,9 +162,9 @@ public class DropwizardSSLConnectionSocketFactoryTest {
         tlsConfiguration.setKeyStorePassword("password");
         tlsConfiguration.setKeyStoreType("PKCS12");
         final Client client = new JerseyClientBuilder(TLS_APP_RULE.getEnvironment()).using(jerseyClientConfiguration).build("client_auth_broken");
-        final Throwable exn = catchThrowable(() -> client.target(String.format("https://localhost:%d", TLS_APP_RULE.getPort(2))).request().get());
-        assertThat(exn).isInstanceOf(ProcessingException.class);
-        assertThat(exn.getCause()).isInstanceOfAny(SocketException.class, SSLHandshakeException.class, SSLException.class);
+        assertThatExceptionOfType(ProcessingException.class)
+            .isThrownBy(() -> client.target(String.format("https://localhost:%d", TLS_APP_RULE.getPort(2))).request().get())
+            .satisfies(e -> assertThat(e.getCause()).isInstanceOfAny(SocketException.class, SSLHandshakeException.class, SSLException.class));
     }
 
     @Test
@@ -186,9 +185,9 @@ public class DropwizardSSLConnectionSocketFactoryTest {
         tlsConfiguration.setKeyStoreType("PKCS12");
         tlsConfiguration.setCertAlias("2");
         final Client client = new JerseyClientBuilder(TLS_APP_RULE.getEnvironment()).using(jerseyClientConfiguration).build("client_auth_using_cert_alias_broken");
-        final Throwable exn = catchThrowable(() -> client.target(String.format("https://localhost:%d", TLS_APP_RULE.getPort(2))).request().get());
-        assertThat(exn).isInstanceOf(ProcessingException.class);
-        assertThat(exn.getCause()).isInstanceOfAny(SocketException.class, SSLHandshakeException.class, SSLException.class);
+        assertThatExceptionOfType(ProcessingException.class)
+            .isThrownBy(() -> client.target(String.format("https://localhost:%d", TLS_APP_RULE.getPort(2))).request().get())
+            .satisfies(e -> assertThat(e.getCause()).isInstanceOfAny(SocketException.class, SSLHandshakeException.class, SSLException.class));
     }
 
     @Test
@@ -198,9 +197,9 @@ public class DropwizardSSLConnectionSocketFactoryTest {
         tlsConfiguration.setKeyStoreType("PKCS12");
         tlsConfiguration.setCertAlias("unknown");
         final Client client = new JerseyClientBuilder(TLS_APP_RULE.getEnvironment()).using(jerseyClientConfiguration).build("client_auth_using_unknown_cert_alias_broken");
-        final Throwable exn = catchThrowable(() -> client.target(String.format("https://localhost:%d", TLS_APP_RULE.getPort(2))).request().get());
-        assertThat(exn).isInstanceOf(ProcessingException.class);
-        assertThat(exn.getCause()).isInstanceOfAny(SocketException.class, SSLHandshakeException.class, SSLException.class);
+        assertThatExceptionOfType(ProcessingException.class)
+            .isThrownBy(() -> client.target(String.format("https://localhost:%d", TLS_APP_RULE.getPort(2))).request().get())
+            .satisfies(e -> assertThat(e.getCause()).isInstanceOfAny(SocketException.class, SSLHandshakeException.class, SSLException.class));
     }
 
     @Test
@@ -246,9 +245,9 @@ public class DropwizardSSLConnectionSocketFactoryTest {
     void shouldRejectNonSupportedProtocols() {
         tlsConfiguration.setSupportedProtocols(Collections.singletonList("TLSv1.2"));
         final Client client = new JerseyClientBuilder(TLS_APP_RULE.getEnvironment()).using(jerseyClientConfiguration).build("reject_non_supported");
-        assertThatThrownBy(() -> client.target(String.format("https://localhost:%d", TLS_APP_RULE.getPort(4))).request().get())
-            .isInstanceOf(ProcessingException.class)
-            .hasRootCauseInstanceOf(IOException.class);
+        assertThatExceptionOfType(ProcessingException.class)
+            .isThrownBy(() -> client.target(String.format("https://localhost:%d", TLS_APP_RULE.getPort(4))).request().get())
+            .withRootCauseInstanceOf(IOException.class);
     }
 
     @Test
