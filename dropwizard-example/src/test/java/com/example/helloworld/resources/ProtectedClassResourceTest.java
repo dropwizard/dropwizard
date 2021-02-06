@@ -17,7 +17,7 @@ import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.core.HttpHeaders;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 @ExtendWith(DropwizardExtensionsSupport.class)
 public final class ProtectedClassResourceTest {
@@ -72,14 +72,11 @@ public final class ProtectedClassResourceTest {
 
     @Test
     public void testProtectedBasicUserEndpointPrincipalIsNotAuthorized403() {
-        try {
-            RULE.target("/protected").request()
+        assertThatExceptionOfType(ForbiddenException.class)
+            .isThrownBy(() -> RULE.target("/protected").request()
             .header(HttpHeaders.AUTHORIZATION, "Basic Z3Vlc3Q6c2VjcmV0")
-            .get(String.class);
-            failBecauseExceptionWasNotThrown(ForbiddenException.class);
-        } catch (ForbiddenException e) {
-            assertThat(e.getResponse().getStatus()).isEqualTo(403);
-        }
+            .get(String.class))
+            .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(403));
     }
 
 }

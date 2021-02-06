@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import javax.ws.rs.WebApplicationException;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 public class SizeParamTest {
 
@@ -20,12 +20,11 @@ public class SizeParamTest {
 
     @Test
     public void badValueThrowsException() {
-        assertThatThrownBy(() -> new SizeParam("10 kelvins", "degrees"))
-            .isInstanceOfSatisfying(WebApplicationException.class, e -> {
-                assertThat(e.getResponse().getStatus()).isEqualTo(400);
-                assertThat(e.getResponse().getEntity()).isEqualTo(
-                    new ErrorMessage(400, "degrees is not a valid size.")
-                );
-            });
+        assertThatExceptionOfType(WebApplicationException.class)
+            .isThrownBy(() -> new SizeParam("10 kelvins", "degrees"))
+            .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(400))
+            .satisfies(e -> assertThat(e.getResponse().getEntity()).isEqualTo(
+                new ErrorMessage(400, "degrees is not a valid size.")
+            ));
     }
 }

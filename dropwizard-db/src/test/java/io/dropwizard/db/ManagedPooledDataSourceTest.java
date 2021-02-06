@@ -6,8 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import java.sql.SQLFeatureNotSupportedException;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 public class ManagedPooledDataSourceTest {
     private final PoolProperties config = new PoolProperties();
@@ -15,12 +14,8 @@ public class ManagedPooledDataSourceTest {
     private final ManagedPooledDataSource dataSource = new ManagedPooledDataSource(config, metricRegistry);
 
     @Test
-    public void hasNoParentLogger() throws Exception {
-        try {
-            dataSource.getParentLogger();
-            failBecauseExceptionWasNotThrown(SQLFeatureNotSupportedException.class);
-        } catch (SQLFeatureNotSupportedException e) {
-            assertThat((Object) e).isInstanceOf(SQLFeatureNotSupportedException.class);
-        }
+    public void hasNoParentLogger() {
+        assertThatExceptionOfType(SQLFeatureNotSupportedException.class)
+            .isThrownBy(dataSource::getParentLogger);
     }
 }

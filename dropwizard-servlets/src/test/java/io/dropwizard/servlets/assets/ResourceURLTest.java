@@ -11,7 +11,7 @@ import java.nio.file.Path;
 import java.util.jar.JarEntry;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 class ResourceURLTest {
@@ -112,12 +112,12 @@ class ResourceURLTest {
     void isDirectoryThrowsResourceNotFoundExceptionForMissingDirectories() throws Exception {
         final URL url = Resources.getResource("META-INF/");
         final URL nurl = new URL(url.toExternalForm() + "missing");
-        assertThatThrownBy(() -> ResourceURL.isDirectory(nurl))
-            .isInstanceOf(ResourceNotFoundException.class);
+        assertThatExceptionOfType(ResourceNotFoundException.class)
+            .isThrownBy(() -> ResourceURL.isDirectory(nurl));
     }
 
     @Test
-    void appendTrailingSlashAddsASlash() throws Exception {
+    void appendTrailingSlashAddsASlash() {
         final URL url = Resources.getResource("META-INF");
 
         assertThat(url.toExternalForm())
@@ -127,7 +127,7 @@ class ResourceURLTest {
     }
 
     @Test
-    void appendTrailingSlashDoesntASlashWhenOneIsAlreadyPresent() throws Exception {
+    void appendTrailingSlashDoesntASlashWhenOneIsAlreadyPresent() {
         final URL url = Resources.getResource("META-INF/");
 
         assertThat(url.toExternalForm())

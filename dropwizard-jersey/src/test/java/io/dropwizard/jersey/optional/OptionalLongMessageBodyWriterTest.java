@@ -19,8 +19,7 @@ import javax.ws.rs.core.Response;
 import java.util.OptionalLong;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 public class OptionalLongMessageBodyWriterTest extends AbstractJerseyTest {
 
@@ -32,7 +31,7 @@ public class OptionalLongMessageBodyWriterTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void presentOptionalsReturnTheirValue() throws Exception {
+    public void presentOptionalsReturnTheirValue() {
         assertThat(target("optional-return")
                 .queryParam("id", "1").request()
                 .get(Long.class))
@@ -40,7 +39,7 @@ public class OptionalLongMessageBodyWriterTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void presentOptionalsReturnTheirValueWithResponse() throws Exception {
+    public void presentOptionalsReturnTheirValueWithResponse() {
         assertThat(target("optional-return/response-wrapped")
                 .queryParam("id", "1").request()
                 .get(Long.class))
@@ -48,13 +47,10 @@ public class OptionalLongMessageBodyWriterTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void absentOptionalsThrowANotFound() throws Exception {
-        try {
-            target("optional-return").request().get(Long.class);
-            failBecauseExceptionWasNotThrown(WebApplicationException.class);
-        } catch (WebApplicationException e) {
-            assertThat(e.getResponse().getStatus()).isEqualTo(404);
-        }
+    public void absentOptionalsThrowANotFound() {
+        assertThatExceptionOfType(WebApplicationException.class)
+            .isThrownBy(() -> target("optional-return").request().get(Long.class))
+            .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(404));
     }
 
     @Test
@@ -80,10 +76,12 @@ public class OptionalLongMessageBodyWriterTest extends AbstractJerseyTest {
 
     @Test
     public void valueInvalidReturns404() {
-        assertThatThrownBy(() -> target("optional-return/default").queryParam("id", "invalid").request().get(Long.class))
-            .isInstanceOf(NotFoundException.class);
-        assertThatThrownBy(() -> target("optional-return/long/default").queryParam("id", "invalid").request().get(Long.class))
-            .isInstanceOf(NotFoundException.class);
+        assertThatExceptionOfType(NotFoundException.class)
+            .isThrownBy(() -> target("optional-return/default").queryParam("id", "invalid")
+                .request().get(Long.class));;
+        assertThatExceptionOfType(NotFoundException.class)
+            .isThrownBy(() -> target("optional-return/long/default").queryParam("id", "invalid")
+                .request().get(Long.class));
     }
 
     @Path("optional-return")

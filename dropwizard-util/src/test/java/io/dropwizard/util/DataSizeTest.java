@@ -10,7 +10,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 class DataSizeTest {
     @Test
@@ -222,23 +222,23 @@ class DataSizeTest {
 
     @Test
     void unableParseWrongDataSizeCount() {
-        assertThatThrownBy(() -> DataSize.parse("three bytes"))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Invalid size: three bytes");
+        assertThatExceptionOfType(IllegalArgumentException.class)
+            .isThrownBy(() -> DataSize.parse("three bytes"))
+            .withMessage("Invalid size: three bytes");
     }
 
     @Test
     void unableParseWrongDataSizeUnit() {
-        assertThatThrownBy(() -> DataSize.parse("1EB"))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Invalid size: 1EB. Wrong size unit");
+        assertThatExceptionOfType(IllegalArgumentException.class)
+            .isThrownBy(() -> DataSize.parse("1EB"))
+            .withMessage("Invalid size: 1EB. Wrong size unit");
     }
 
     @Test
     void unableParseWrongDataSizeFormat() {
-        assertThatThrownBy(() -> DataSize.parse("1 mega byte"))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Invalid size: 1 mega byte");
+        assertThatExceptionOfType(IllegalArgumentException.class)
+            .isThrownBy(() -> DataSize.parse("1 mega byte"))
+            .withMessage("Invalid size: 1 mega byte");
     }
 
     @Test
