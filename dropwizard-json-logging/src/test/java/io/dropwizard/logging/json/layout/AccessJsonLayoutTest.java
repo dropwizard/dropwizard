@@ -214,7 +214,14 @@ public class AccessJsonLayoutTest {
         accessJsonLayout.setRequestAttributes(attributes.keySet());
         assertThat(accessJsonLayout.toJsonMap(event))
             .containsEntry("requestAttributes", attributes);
+    }
 
+    @Test
+    public void testStartAndStop() {
+        accessJsonLayout.start();
+        assertThat(accessJsonLayout.isStarted()).isTrue();
+        accessJsonLayout.stop();
+        assertThat(accessJsonLayout.isStarted()).isFalse();
     }
 
     @Test
