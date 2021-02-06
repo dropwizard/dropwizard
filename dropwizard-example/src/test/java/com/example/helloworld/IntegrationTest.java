@@ -29,6 +29,11 @@ public class IntegrationTest {
 
     private static final String TMP_FILE = createTempFile();
     private static final String CONFIG_PATH = ResourceHelpers.resourceFilePath("test-example.yml");
+    private static final Path APPLICATION_LOG = Paths.get("./logs/application.log");
+
+    static {
+        APPLICATION_LOG.toFile().delete();
+    }
 
     public static final DropwizardAppExtension<HelloWorldConfiguration> RULE = new DropwizardAppExtension<>(
             HelloWorldApplication.class, CONFIG_PATH,
@@ -95,9 +100,16 @@ public class IntegrationTest {
         // The log file is using a size and time based policy, which used to silently
         // fail (and not write to a log file). This test ensures not only that the
         // log file exists, but also contains the log line that jetty prints on startup
-        final Path log = Paths.get("./logs/application.log");
-        assertThat(log).exists();
-        final String actual = new String(Files.readAllBytes(log), UTF_8);
-        assertThat(actual).contains("0.0.0.0:" + RULE.getLocalPort());
+        assertThat(APPLICATION_LOG).exists();
+        final String actual = new String(Files.readAllBytes(APPLICATION_LOG), UTF_8);
+        assertThat(actual).contains(
+            "0.0.0.0:" + RULE.getLocalPort(),
+            "Starting hello-world",
+            "Started application",
+            "Started admin");
+        assertThat(actual).doesNotContain(
+            "Exception",
+            "ERROR",
+            "FATAL");
     }
 }
