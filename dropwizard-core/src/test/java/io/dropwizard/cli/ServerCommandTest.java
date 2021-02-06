@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -56,19 +56,19 @@ public class ServerCommandTest {
     }
 
     @Test
-    public void hasAName() throws Exception {
+    public void hasAName() {
         assertThat(command.getName())
                 .isEqualTo("server");
     }
 
     @Test
-    public void hasADescription() throws Exception {
+    public void hasADescription() {
         assertThat(command.getDescription())
                 .isEqualTo("Runs the Dropwizard application as an HTTP server");
     }
 
     @Test
-    public void hasTheApplicationsConfigurationClass() throws Exception {
+    public void hasTheApplicationsConfigurationClass() {
         assertThat(command.getConfigurationClass())
                 .isEqualTo(application.getConfigurationClass());
     }
@@ -82,7 +82,7 @@ public class ServerCommandTest {
     }
 
     @Test
-    public void stopsAServerIfThereIsAnErrorStartingIt() throws Exception {
+    public void stopsAServerIfThereIsAnErrorStartingIt() {
         this.throwException = true;
         server.addBean(new AbstractLifeCycle() {
             @Override
@@ -91,13 +91,9 @@ public class ServerCommandTest {
             }
         });
 
-        try {
-            command.run(environment, namespace, configuration);
-            failBecauseExceptionWasNotThrown(IOException.class);
-        } catch (IOException e) {
-            assertThat(e.getMessage())
-                    .isEqualTo("oh crap");
-        }
+        assertThatExceptionOfType(IOException.class)
+            .isThrownBy(() -> command.run(environment, namespace, configuration))
+            .withMessage("oh crap");
 
         assertThat(server.isStarted())
                 .isFalse();

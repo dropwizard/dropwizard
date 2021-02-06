@@ -11,7 +11,6 @@ import java.io.Serializable;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
 
 public class DAOTestRuleTest {
     @SuppressWarnings("deprecation")
@@ -56,19 +55,14 @@ public class DAOTestRuleTest {
 
         // when we prepare an update of that entity
         testEntity.setDescription("newDescription");
-        try {
-            // ... but cause a constraint violation during the actual update
-            daoTestRule.inTransaction(() -> {
+        // ... but cause a constraint violation during the actual update
+        assertThatExceptionOfType(ConstraintViolationException.class)
+            .isThrownBy(() -> daoTestRule.inTransaction(() -> {
                 persist(testEntity);
                 persist(new TestEntity(null));
-            });
-            failBecauseExceptionWasNotThrown(ConstraintViolationException.class);
-        } catch (ConstraintViolationException ignoredException) {
-            // keep calm and carry on
-            // ... the entity has the original value
-            final TestEntity sameTestEntity = get(testEntity.getId());
-            assertThat(sameTestEntity.getDescription()).isEqualTo("description");
-        }
+            }));
+        // ... the entity has the original value
+        assertThat(get(testEntity.getId()).getDescription()).isEqualTo("description");
     }
 
 
