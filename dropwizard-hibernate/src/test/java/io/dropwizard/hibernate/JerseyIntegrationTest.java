@@ -88,13 +88,13 @@ public class JerseyIntegrationTest extends JerseyTest {
 
     @Override
     @BeforeEach
-    void setUp() throws Exception {
+    public void setUp() throws Exception {
         super.setUp();
     }
 
     @Override
     @AfterEach
-    void tearDown() throws Exception {
+    public void tearDown() throws Exception {
         super.tearDown();
 
         if (sessionFactory != null) {
