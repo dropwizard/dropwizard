@@ -86,21 +86,23 @@ class FileAppenderFactoryTest {
     }
 
     @Test
-    void testAppenderIsStarted(@TempDir Path tempDir) throws Exception {
-        FileAppenderFactory<ILoggingEvent> fileAppenderFactory = new FileAppenderFactory<ILoggingEvent>();
-        fileAppenderFactory.setCurrentLogFilename("application.log");
+    void testAppenderIsStarted(@TempDir Path tempDir) {
+        FileAppenderFactory<ILoggingEvent> fileAppenderFactory = new FileAppenderFactory<>();
+        fileAppenderFactory.setCurrentLogFilename(tempDir.resolve("application.log").toString());
         fileAppenderFactory.setArchive(true);
         fileAppenderFactory.setArchivedFileCount(20);
         fileAppenderFactory.setArchivedLogFilenamePattern("application-%i.log");
         fileAppenderFactory.setMaxFileSize(DataSize.megabytes(500));
         fileAppenderFactory.setImmediateFlush(false);
         fileAppenderFactory.setThreshold("ERROR");
-        Appender appender = fileAppenderFactory.build(new LoggerContext(),
+        Appender<ILoggingEvent> appender = fileAppenderFactory.build(new LoggerContext(),
             "test-app",
             new DropwizardLayoutFactory(),
             new NullLevelFilterFactory<>(),
             new AsyncLoggingEventAppenderFactory());
         assertThat(appender.isStarted()).isTrue();
+        appender.stop();
+        assertThat(appender.isStarted()).isFalse();
     }
 
     @Test
