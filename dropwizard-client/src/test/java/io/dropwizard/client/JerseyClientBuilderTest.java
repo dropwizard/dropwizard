@@ -84,7 +84,7 @@ public class JerseyClientBuilderTest {
     private final HttpClientBuilder apacheHttpClientBuilder = mock(HttpClientBuilder.class);
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         when(environment.lifecycle()).thenReturn(lifecycleEnvironment);
         when(environment.getObjectMapper()).thenReturn(objectMapper);
         when(environment.getValidator()).thenReturn(validator);
@@ -92,33 +92,33 @@ public class JerseyClientBuilderTest {
     }
 
     @AfterEach
-    public void tearDown() {
+    void tearDown() {
         executorService.shutdown();
     }
 
     @Test
-    public void throwsAnExceptionWithoutAnEnvironmentOrAThreadPoolAndObjectMapper() {
+    void throwsAnExceptionWithoutAnEnvironmentOrAThreadPoolAndObjectMapper() {
         assertThatExceptionOfType(IllegalStateException.class)
             .isThrownBy(() -> builder.build("test"))
             .withMessage("Must have either an environment or both an executor service and an object mapper");
     }
 
     @Test
-    public void throwsAnExceptionWithoutAnEnvironmentAndOnlyObjectMapper() {
+    void throwsAnExceptionWithoutAnEnvironmentAndOnlyObjectMapper() {
         assertThatExceptionOfType(IllegalStateException.class)
             .isThrownBy(() -> builder.using(objectMapper).build("test"))
             .withMessage("Must have either an environment or both an executor service and an object mapper");
     }
 
     @Test
-    public void throwsAnExceptionWithoutAnEnvironmentAndOnlyAThreadPool() {
+    void throwsAnExceptionWithoutAnEnvironmentAndOnlyAThreadPool() {
         assertThatExceptionOfType(IllegalStateException.class)
             .isThrownBy(() -> builder.using(executorService).build("test"))
             .withMessage("Must have either an environment or both an executor service and an object mapper");
     }
 
     @Test
-    public void includesJerseyProperties() {
+    void includesJerseyProperties() {
         final Client client = builder.withProperty("poop", true)
                 .using(executorService, objectMapper)
                 .build("test");
@@ -127,7 +127,7 @@ public class JerseyClientBuilderTest {
     }
 
     @Test
-    public void includesJerseyProviderSingletons() {
+    void includesJerseyProviderSingletons() {
         final FakeMessageBodyReader provider = new FakeMessageBodyReader();
         final Client client = builder.withProvider(provider)
                 .using(executorService, objectMapper)
@@ -137,7 +137,7 @@ public class JerseyClientBuilderTest {
     }
 
     @Test
-    public void includesJerseyProviderClasses() {
+    void includesJerseyProviderClasses() {
         @SuppressWarnings("unused")
         final Client client = builder.withProvider(FakeMessageBodyReader.class)
                 .using(executorService, objectMapper)
@@ -147,7 +147,7 @@ public class JerseyClientBuilderTest {
     }
 
     @Test
-    public void createsAnRxEnabledClient() {
+    void createsAnRxEnabledClient() {
         final Client client =
             builder.using(executorService, objectMapper)
                 .buildRx("test", RxFlowableInvokerProvider.class);
@@ -161,7 +161,7 @@ public class JerseyClientBuilderTest {
     }
 
     @Test
-    public void usesTheGivenThreadPool() {
+    void usesTheGivenThreadPool() {
         final Client client = builder.using(executorService, objectMapper).build("test");
         for (Object o : client.getConfiguration().getInstances()) {
             if (o instanceof DropwizardExecutorProvider) {
@@ -173,7 +173,7 @@ public class JerseyClientBuilderTest {
     }
 
     @Test
-    public void usesTheGivenThreadPoolAndEnvironmentsObjectMapper() {
+    void usesTheGivenThreadPoolAndEnvironmentsObjectMapper() {
         final Client client = builder.using(environment).using(executorService).build("test");
         for (Object o : client.getConfiguration().getInstances()) {
             if (o instanceof DropwizardExecutorProvider) {
@@ -185,7 +185,7 @@ public class JerseyClientBuilderTest {
     }
 
     @Test
-    public void createsNewConnectorProvider() {
+    void createsNewConnectorProvider() {
         final JerseyClient clientA = (JerseyClient) builder.using(executorService, objectMapper).build("testA");
         final JerseyClient clientB = (JerseyClient) builder.build("testB");
         assertThat(clientA.getConfiguration().getConnectorProvider())
@@ -193,7 +193,7 @@ public class JerseyClientBuilderTest {
     }
 
     @Test
-    public void usesSameConnectorProvider()  {
+    void usesSameConnectorProvider()  {
         final JerseyClient clientA = (JerseyClient) builder.using(executorService, objectMapper)
             .using(mock(ConnectorProvider.class))
             .build("testA");
@@ -204,7 +204,7 @@ public class JerseyClientBuilderTest {
     }
 
     @Test
-    public void addBidirectionalGzipSupportIfEnabled() {
+    void addBidirectionalGzipSupportIfEnabled() {
         final JerseyClientConfiguration configuration = new JerseyClientConfiguration();
         configuration.setGzipEnabled(true);
 
@@ -218,7 +218,7 @@ public class JerseyClientBuilderTest {
     }
 
     @Test
-    public void disablesGzipSupportIfDisabled() {
+    void disablesGzipSupportIfDisabled() {
         final JerseyClientConfiguration configuration = new JerseyClientConfiguration();
         configuration.setGzipEnabled(false);
 
@@ -258,42 +258,42 @@ public class JerseyClientBuilderTest {
     }
 
     @Test
-    public void usesACustomHttpClientMetricNameStrategy() {
+    void usesACustomHttpClientMetricNameStrategy() {
         final HttpClientMetricNameStrategy customStrategy = HttpClientMetricNameStrategies.HOST_AND_METHOD;
         builder.using(customStrategy);
         verify(apacheHttpClientBuilder).using(customStrategy);
     }
 
     @Test
-    public void usesACustomHttpRequestRetryHandler() {
+    void usesACustomHttpRequestRetryHandler() {
         final DefaultHttpRequestRetryHandler customRetryHandler = new DefaultHttpRequestRetryHandler(2, true);
         builder.using(customRetryHandler);
         verify(apacheHttpClientBuilder).using(customRetryHandler);
     }
 
     @Test
-    public void usesACustomDnsResolver() {
+    void usesACustomDnsResolver() {
         final DnsResolver customDnsResolver = new SystemDefaultDnsResolver();
         builder.using(customDnsResolver);
         verify(apacheHttpClientBuilder).using(customDnsResolver);
     }
 
     @Test
-    public void usesACustomHostnameVerifier() {
+    void usesACustomHostnameVerifier() {
         final HostnameVerifier customHostnameVerifier = new NoopHostnameVerifier();
         builder.using(customHostnameVerifier);
         verify(apacheHttpClientBuilder).using(customHostnameVerifier);
     }
 
     @Test
-    public void usesACustomServiceUnavailableRetryStrategy() {
+    void usesACustomServiceUnavailableRetryStrategy() {
         final ServiceUnavailableRetryStrategy customServiceUnavailableRetryStrategy = mock(ServiceUnavailableRetryStrategy.class);
         builder.using(customServiceUnavailableRetryStrategy);
         verify(apacheHttpClientBuilder).using(customServiceUnavailableRetryStrategy);
     }
 
     @Test
-    public void usesACustomConnectionFactoryRegistry() throws Exception {
+    void usesACustomConnectionFactoryRegistry() throws Exception {
         final SSLContext ctx = SSLContext.getInstance(SSLConnectionSocketFactory.TLS);
         ctx.init(null, new TrustManager[]{
             new X509TrustManager() {
@@ -322,14 +322,14 @@ public class JerseyClientBuilderTest {
     }
 
     @Test
-    public void usesACustomEnvironmentName() {
+    void usesACustomEnvironmentName() {
         final String userAgent = "Dropwizard Jersey Client";
         builder.name(userAgent);
         verify(apacheHttpClientBuilder).name(userAgent);
     }
 
     @Test
-    public void usesACustomHttpRoutePlanner() {
+    void usesACustomHttpRoutePlanner() {
         final HttpRoutePlanner customHttpRoutePlanner = new SystemDefaultRoutePlanner(new ProxySelector() {
             @Override
             public List<Proxy> select(URI uri) {
@@ -346,14 +346,14 @@ public class JerseyClientBuilderTest {
     }
 
     @Test
-    public void usesACustomCredentialsProvider() {
+    void usesACustomCredentialsProvider() {
         CredentialsProvider customCredentialsProvider = new SystemDefaultCredentialsProvider();
         builder.using(customCredentialsProvider);
         verify(apacheHttpClientBuilder).using(customCredentialsProvider);
     }
 
     @Test
-    public void apacheConnectorCanOverridden() {
+    void apacheConnectorCanOverridden() {
         assertThat(new JerseyClientBuilder(new MetricRegistry()) {
             @Override
             protected DropwizardApacheConnector createDropwizardApacheConnector(ConfiguredCloseableHttpClient configuredClient) {

@@ -18,7 +18,7 @@ public class AsyncServletTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void testAsyncResponse() {
+    void testAsyncResponse() {
         final Response response = target("/async").request(MediaType.TEXT_PLAIN_TYPE).get();
 
         assertThat(response.getStatus()).isEqualTo(200);

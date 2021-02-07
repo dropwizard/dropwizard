@@ -38,7 +38,7 @@ public class EofExceptionWriterInterceptorJerseyTest extends AbstractJerseyTest 
     }
 
     @Test
-    public void shouldCountZeroEofExceptions() throws IOException {
+    void shouldCountZeroEofExceptions() throws IOException {
         target("/").request().get(InputStream.class).close();
         assertThat(EofExceptionCountingInterceptor.exceptionCount).isEqualByComparingTo(0L);
     }

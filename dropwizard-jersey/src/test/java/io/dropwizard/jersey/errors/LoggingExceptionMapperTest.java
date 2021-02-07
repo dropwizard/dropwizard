@@ -23,7 +23,7 @@ public class LoggingExceptionMapperTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void returnsAnErrorMessage() {
+    void returnsAnErrorMessage() {
         assertThatExceptionOfType(WebApplicationException.class)
             .isThrownBy(() -> target("/exception/").request(MediaType.APPLICATION_JSON).get(String.class))
             .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(500))
@@ -32,7 +32,7 @@ public class LoggingExceptionMapperTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void handlesJsonMappingException() {
+    void handlesJsonMappingException() {
         assertThatExceptionOfType(WebApplicationException.class)
             .isThrownBy(() -> target("/exception/json-mapping-exception").request(MediaType.APPLICATION_JSON).get(String.class))
             .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(500))
@@ -41,7 +41,7 @@ public class LoggingExceptionMapperTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void handlesMethodNotAllowedWithHeaders() {
+    void handlesMethodNotAllowedWithHeaders() {
         assertThatExceptionOfType(WebApplicationException.class)
             .isThrownBy(() -> target("/exception/json-mapping-exception")
             .request(MediaType.APPLICATION_JSON)
@@ -53,7 +53,7 @@ public class LoggingExceptionMapperTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void formatsWebApplicationException() {
+    void formatsWebApplicationException() {
         assertThatExceptionOfType(WebApplicationException.class)
             .isThrownBy(() -> target("/exception/web-application-exception").request(MediaType.APPLICATION_JSON).get(String.class))
             .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(400))
@@ -62,7 +62,7 @@ public class LoggingExceptionMapperTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void handlesRedirectInWebApplicationException() {
+    void handlesRedirectInWebApplicationException() {
         String responseText = target("/exception/web-application-exception-with-redirect")
             .request(MediaType.APPLICATION_JSON)
             .get(String.class);

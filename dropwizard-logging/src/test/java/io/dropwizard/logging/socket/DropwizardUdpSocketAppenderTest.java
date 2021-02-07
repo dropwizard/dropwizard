@@ -26,7 +26,7 @@ public class DropwizardUdpSocketAppenderTest {
     private CountDownLatch countDownLatch = new CountDownLatch(1);
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         datagramSocket = new DatagramSocket();
         thread = new Thread(() -> {
             byte[] buffer = new byte[128];
@@ -49,14 +49,14 @@ public class DropwizardUdpSocketAppenderTest {
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    void tearDown() throws Exception {
         datagramSocket.close();
         thread.interrupt();
         udpStreamAppender.stop();
     }
 
     @Test
-    public void testSendMessage() throws Exception {
+    void testSendMessage() throws Exception {
         udpStreamAppender.getOutputStream().write("Test message".getBytes(UTF_8));
 
         countDownLatch.await(5, TimeUnit.SECONDS);

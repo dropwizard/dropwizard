@@ -28,13 +28,13 @@ public class OptionalAuthFilterOrderingTest extends JerseyTest {
 
     @Override
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         super.setUp();
     }
 
     @Override
     @AfterEach
-    public void tearDown() throws Exception {
+    void tearDown() throws Exception {
         super.tearDown();
     }
 
@@ -79,13 +79,13 @@ public class OptionalAuthFilterOrderingTest extends JerseyTest {
     }
 
     @Test
-    public void authenticationFilterShouldExecuteInAuthenticationPhaseForImplicitPermitall() {
+    void authenticationFilterShouldExecuteInAuthenticationPhaseForImplicitPermitall() {
         assertThat(target("/test/implicit-permitall").request().get(String.class))
             .isEqualTo("authorization ok");
     }
 
     @Test
-    public void authenticationFilterShouldExecuteInAuthenticationPhaseForOptionalPrincipal() {
+    void authenticationFilterShouldExecuteInAuthenticationPhaseForOptionalPrincipal() {
         assertThat(target("/test/optional").request().get(String.class))
             .isEqualTo("authorization ok");
     }

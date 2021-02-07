@@ -36,13 +36,13 @@ public class NoAuthPolymorphicPrincipalEntityTest extends JerseyTest {
 
     @Override
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         super.setUp();
     }
 
     @Override
     @AfterEach
-    public void tearDown() throws Exception {
+    void tearDown() throws Exception {
         super.tearDown();
     }
 
@@ -89,7 +89,7 @@ public class NoAuthPolymorphicPrincipalEntityTest extends JerseyTest {
     }
 
     @Test
-    public void jsonPrincipalEntityResourceWithoutAuth200() {
+    void jsonPrincipalEntityResourceWithoutAuth200() {
         String principalName = "Astar Seran";
         assertThat(target("/no-auth-test/json-principal-entity").request()
                 .header(HttpHeaders.AUTHORIZATION, "Anything here")
@@ -99,7 +99,7 @@ public class NoAuthPolymorphicPrincipalEntityTest extends JerseyTest {
     }
 
     @Test
-    public void nullPrincipalEntityResourceWithoutAuth200() {
+    void nullPrincipalEntityResourceWithoutAuth200() {
         assertThat(target("/no-auth-test/null-principal-entity").request()
                 .header(HttpHeaders.AUTHORIZATION, "Anything here")
                 .post(Entity.entity(new NullPrincipal(), MediaType.APPLICATION_JSON))
@@ -115,7 +115,7 @@ public class NoAuthPolymorphicPrincipalEntityTest extends JerseyTest {
      * logic is different for these two sources therefore must be tested separately.
      */
     @Test
-    public void annotatedJsonPrincipalEntityResourceWithoutAuth200() {
+    void annotatedJsonPrincipalEntityResourceWithoutAuth200() {
         String principalName = "Astar Seran";
         assertThat(target("/no-auth-test/annotated-json-principal-entity").request()
                 .header(HttpHeaders.AUTHORIZATION, "Anything here")
@@ -125,7 +125,7 @@ public class NoAuthPolymorphicPrincipalEntityTest extends JerseyTest {
     }
 
     @Test
-    public void annotatedNullPrincipalEntityResourceWithoutAuth200() {
+    void annotatedNullPrincipalEntityResourceWithoutAuth200() {
         assertThat(target("/no-auth-test/annotated-null-principal-entity").request()
                 .header(HttpHeaders.AUTHORIZATION, "Anything here")
                 .post(Entity.entity(new NullPrincipal(), MediaType.APPLICATION_JSON))

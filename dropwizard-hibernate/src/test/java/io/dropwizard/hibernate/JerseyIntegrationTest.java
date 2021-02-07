@@ -88,13 +88,13 @@ public class JerseyIntegrationTest extends JerseyTest {
 
     @Override
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         super.setUp();
     }
 
     @Override
     @AfterEach
-    public void tearDown() throws Exception {
+    void tearDown() throws Exception {
         super.tearDown();
 
         if (sessionFactory != null) {
@@ -154,7 +154,7 @@ public class JerseyIntegrationTest extends JerseyTest {
     }
 
     @Test
-    public void findsExistingData() {
+    void findsExistingData() {
         final Person coda = target("/people/Coda").request(MediaType.APPLICATION_JSON).get(Person.class);
 
         assertThat(coda.getName())
@@ -168,7 +168,7 @@ public class JerseyIntegrationTest extends JerseyTest {
     }
 
     @Test
-    public void doesNotFindMissingData() {
+    void doesNotFindMissingData() {
         assertThatExceptionOfType(WebApplicationException.class)
             .isThrownBy(() -> target("/people/Poof").request(MediaType.APPLICATION_JSON)
                     .get(Person.class))
@@ -176,7 +176,7 @@ public class JerseyIntegrationTest extends JerseyTest {
     }
 
     @Test
-    public void createsNewData() {
+    void createsNewData() {
         final Person person = new Person();
         person.setName("Hank");
         person.setEmail("hank@example.com");
@@ -200,7 +200,7 @@ public class JerseyIntegrationTest extends JerseyTest {
 
 
     @Test
-    public void testSqlExceptionIsHandled() {
+    void testSqlExceptionIsHandled() {
         final Person person = new Person();
         person.setName("Jeff");
         person.setEmail("jeff.hammersmith@targetprocessinc.com");

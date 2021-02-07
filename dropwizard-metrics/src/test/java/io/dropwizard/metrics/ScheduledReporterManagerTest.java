@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 public class ScheduledReporterManagerTest {
 
     @Test
-    public void testStopWithoutReporting() throws Exception {
+    void testStopWithoutReporting() throws Exception {
         final boolean reportOnStop = false;
         ScheduledReporter mockReporter = Mockito.mock(ScheduledReporter.class);
         ScheduledReporterManager manager = new ScheduledReporterManager(mockReporter, Duration.minutes(5), reportOnStop);
@@ -24,7 +24,7 @@ public class ScheduledReporterManagerTest {
     }
 
     @Test
-    public void testStopWithReporting() throws Exception {
+    void testStopWithReporting() throws Exception {
         final boolean reportOnStop = true;
         ScheduledReporter mockReporter = Mockito.mock(ScheduledReporter.class);
         ScheduledReporterManager manager = new ScheduledReporterManager(mockReporter, Duration.minutes(5), reportOnStop);

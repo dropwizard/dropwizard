@@ -13,7 +13,7 @@ public class UrlConfigurationSourceProviderTest {
     private final ConfigurationSourceProvider provider = new UrlConfigurationSourceProvider();
 
     @Test
-    public void readsFileContents() throws Exception {
+    void readsFileContents() throws Exception {
         try (InputStream input = provider.open(Resources.getResource("example.txt").toString())) {
             assertThat(new String(ByteStreams.toByteArray(input), StandardCharsets.UTF_8).trim())
                 .isEqualTo("whee");

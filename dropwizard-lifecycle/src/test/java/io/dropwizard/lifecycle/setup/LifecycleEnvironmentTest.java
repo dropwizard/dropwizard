@@ -24,7 +24,7 @@ public class LifecycleEnvironmentTest {
     private final LifecycleEnvironment environment = new LifecycleEnvironment(new MetricRegistry());
 
     @Test
-    public void managesLifeCycleObjects() throws Exception {
+    void managesLifeCycleObjects() throws Exception {
         final LifeCycle lifeCycle = mock(LifeCycle.class);
         environment.manage(lifeCycle);
 
@@ -36,7 +36,7 @@ public class LifecycleEnvironmentTest {
     }
 
     @Test
-    public void managesManagedObjects() throws Exception {
+    void managesManagedObjects() throws Exception {
         final Managed managed = mock(Managed.class);
         environment.manage(managed);
 
@@ -54,7 +54,7 @@ public class LifecycleEnvironmentTest {
     }
 
     @Test
-    public void scheduledExecutorServiceBuildsDaemonThreads() throws ExecutionException, InterruptedException {
+    void scheduledExecutorServiceBuildsDaemonThreads() throws ExecutionException, InterruptedException {
         final ScheduledExecutorService executorService = environment.scheduledExecutorService("daemon-%d", true).build();
         final Future<Boolean> isDaemon = executorService.submit(() -> Thread.currentThread().isDaemon());
 
@@ -62,7 +62,7 @@ public class LifecycleEnvironmentTest {
     }
 
     @Test
-    public void scheduledExecutorServiceBuildsUserThreadsByDefault() throws ExecutionException, InterruptedException {
+    void scheduledExecutorServiceBuildsUserThreadsByDefault() throws ExecutionException, InterruptedException {
         final ScheduledExecutorService executorService = environment.scheduledExecutorService("user-%d").build();
         final Future<Boolean> isDaemon = executorService.submit(() -> Thread.currentThread().isDaemon());
 
@@ -70,7 +70,7 @@ public class LifecycleEnvironmentTest {
     }
 
     @Test
-    public void scheduledExecutorServiceThreadFactory() throws ExecutionException, InterruptedException {
+    void scheduledExecutorServiceThreadFactory() throws ExecutionException, InterruptedException {
         final String expectedName = "DropWizard ThreadFactory Test";
         final String expectedNamePattern = expectedName + "-%d";
 
@@ -83,7 +83,7 @@ public class LifecycleEnvironmentTest {
     }
 
     @Test
-    public void executorServiceThreadFactory() throws ExecutionException, InterruptedException {
+    void executorServiceThreadFactory() throws ExecutionException, InterruptedException {
         final String expectedName = "DropWizard ThreadFactory Test";
         final String expectedNamePattern = expectedName + "-%d";
 

@@ -19,7 +19,7 @@ public class ZipExceptionHandlingInputStreamDelegateTest {
     private final ZipExceptionHandlingInputStream in = new ZipExceptionHandlingInputStream(delegate, "gzip");
 
     @Test
-    public void testReadBytes() throws Exception {
+    void testReadBytes() throws Exception {
         byte[] buffer = new byte[64];
 
         doReturn(buffer.length)
@@ -31,7 +31,7 @@ public class ZipExceptionHandlingInputStreamDelegateTest {
     }
 
     @Test
-    public void testReadByte() throws Exception {
+    void testReadByte() throws Exception {
         doReturn(42).when(delegate).read();
         assertEquals(42, in.read());
         verify(delegate).read();
@@ -39,7 +39,7 @@ public class ZipExceptionHandlingInputStreamDelegateTest {
     }
 
     @Test
-    public void testSkip() throws Exception {
+    void testSkip() throws Exception {
         doReturn(42L).when(delegate).skip(42L);
         assertEquals(42L, in.skip(42L));
         verify(delegate).skip(42L);
@@ -47,7 +47,7 @@ public class ZipExceptionHandlingInputStreamDelegateTest {
     }
 
     @Test
-    public void testAvailable() throws Exception {
+    void testAvailable() throws Exception {
         doReturn(42).when(delegate).available();
         assertEquals(42, in.available());
         verify(delegate).available();
@@ -55,21 +55,21 @@ public class ZipExceptionHandlingInputStreamDelegateTest {
     }
 
     @Test
-    public void testClose() throws Exception {
+    void testClose() throws Exception {
         in.close();
         verify(delegate).close();
         verifyNoMoreInteractions(delegate);
     }
 
     @Test
-    public void testMark() {
+    void testMark() {
         in.mark(42);
         verify(delegate).mark(42);
         verifyNoMoreInteractions(delegate);
     }
 
     @Test
-    public void testMarkSupported() {
+    void testMarkSupported() {
         doReturn(true).when(delegate).markSupported();
         assertTrue(in.markSupported());
         verify(delegate).markSupported();
@@ -77,7 +77,7 @@ public class ZipExceptionHandlingInputStreamDelegateTest {
     }
 
     @Test
-    public void testReset() throws Exception {
+    void testReset() throws Exception {
         doNothing().when(delegate).reset();
         in.reset();
         verify(delegate).reset();

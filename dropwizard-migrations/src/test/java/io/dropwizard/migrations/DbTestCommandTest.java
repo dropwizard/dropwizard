@@ -18,7 +18,7 @@ public class DbTestCommandTest extends AbstractMigrationTest {
         new TestMigrationDatabaseConfiguration(), TestMigrationConfiguration.class, "migrations-ddl.xml");
 
     @Test
-    public void testRun() throws Exception {
+    void testRun() throws Exception {
         // Apply and rollback some DDL changes
         final TestMigrationConfiguration conf = createConfiguration(getDatabaseUrl());
         dbTestCommand.run(null, new Namespace(Collections.emptyMap()), conf);
@@ -27,7 +27,7 @@ public class DbTestCommandTest extends AbstractMigrationTest {
     }
 
     @Test
-    public void testPrintHelp() throws Exception {
+    void testPrintHelp() throws Exception {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         createSubparser(dbTestCommand).printHelp(new PrintWriter(new OutputStreamWriter(baos, UTF_8), true));
         assertThat(baos.toString(UTF_8)).isEqualTo(String.format(

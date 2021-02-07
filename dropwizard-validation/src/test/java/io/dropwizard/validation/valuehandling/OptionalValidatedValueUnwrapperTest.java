@@ -35,14 +35,14 @@ public class OptionalValidatedValueUnwrapperTest {
             .getValidator();
 
     @Test
-    public void succeedsWhenAbsent() {
+    void succeedsWhenAbsent() {
         Example example = new Example();
         Set<ConstraintViolation<Example>> violations = validator.validate(example);
         assertThat(violations).isEmpty();
     }
 
     @Test
-    public void failsWhenFailingConstraint() {
+    void failsWhenFailingConstraint() {
         Example example = new Example();
         example.three = Optional.of(2);
         Set<ConstraintViolation<Example>> violations = validator.validate(example);
@@ -50,7 +50,7 @@ public class OptionalValidatedValueUnwrapperTest {
     }
 
     @Test
-    public void succeedsWhenConstraintsMet() {
+    void succeedsWhenConstraintsMet() {
         Example example = new Example();
         example.three = Optional.of(10);
         Set<ConstraintViolation<Example>> violations = validator.validate(example);
@@ -58,7 +58,7 @@ public class OptionalValidatedValueUnwrapperTest {
     }
 
     @Test
-    public void notNullFailsWhenAbsent() {
+    void notNullFailsWhenAbsent() {
         Example example = new Example();
         example.notNull = Optional.empty();
         Set<ConstraintViolation<Example>> violations = validator.validate(example);

@@ -13,21 +13,21 @@ public class SessionFactoryManagerTest {
     private final SessionFactoryManager manager = new SessionFactoryManager(factory, dataSource);
 
     @Test
-    public void closesTheFactoryOnStopping() throws Exception {
+    void closesTheFactoryOnStopping() throws Exception {
         manager.stop();
 
         verify(factory).close();
     }
 
     @Test
-    public void stopsTheDataSourceOnStopping() throws Exception {
+    void stopsTheDataSourceOnStopping() throws Exception {
         manager.stop();
 
         verify(dataSource).stop();
     }
 
     @Test
-    public void startsTheDataSourceOnStarting() throws Exception {
+    void startsTheDataSourceOnStarting() throws Exception {
         manager.start();
 
         verify(dataSource).start();

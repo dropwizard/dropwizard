@@ -64,14 +64,14 @@ public class SslReloadAppTest {
     }
 
     @AfterEach
-    public void after() throws IOException {
+    void after() throws IOException {
         // Reset keystore to known good keystore
         final byte[] keystoreBytes = Resources.toByteArray(Resources.getResource("sslreload/keystore.jks"));
         Files.write(keystore, keystoreBytes);
     }
 
     @Test
-    public void reloadCertificateChangesTheServerCertificate() throws Exception {
+    void reloadCertificateChangesTheServerCertificate() throws Exception {
         // Copy over our new keystore that has our new certificate to the current
         // location of our keystore
         final byte[] keystore2Bytes = Resources.toByteArray(Resources.getResource("sslreload/keystore2.jks"));
@@ -92,7 +92,7 @@ public class SslReloadAppTest {
     }
 
     @Test
-    public void badReloadDoesNotChangeTheServerCertificate() throws Exception {
+    void badReloadDoesNotChangeTheServerCertificate() throws Exception {
         // This keystore has a different password than what jetty has been configured with
         // the password is "password2"
         final byte[] badKeystore = Resources.toByteArray(Resources.getResource("sslreload/keystore-diff-pwd.jks"));

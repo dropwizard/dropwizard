@@ -32,7 +32,7 @@ public class Http2IntegrationTest extends AbstractHttp2Test {
     );
 
     @Test
-    public void testHttp11() throws Exception {
+    void testHttp11() throws Exception {
         final String hostname = "localhost";
         final int port = appRule.getLocalPort();
         final JerseyClient http11Client = new JerseyClientBuilder()
@@ -47,12 +47,12 @@ public class Http2IntegrationTest extends AbstractHttp2Test {
     }
 
     @Test
-    public void testHttp2() throws Exception {
+    void testHttp2() throws Exception {
         assertResponse(client.GET("https://localhost:" + appRule.getLocalPort() + "/api/test"));
     }
 
     @Test
-    public void testHttp2ManyRequests() throws Exception {
+    void testHttp2ManyRequests() throws Exception {
         performManyAsyncRequests(client, "https://localhost:" + appRule.getLocalPort() + "/api/test");
     }
 }

@@ -39,13 +39,13 @@ public class AppenderFactoryCustomLayoutTest {
     }
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         objectMapper.registerSubtypes(TestLayoutFactory.class);
         objectMapper.registerSubtypes(TestPatternLayoutFactory.class);
     }
 
     @Test
-    public void testLoadAppenderWithCustomLayout() throws Exception {
+    void testLoadAppenderWithCustomLayout() throws Exception {
         final ConsoleAppenderFactory<ILoggingEvent> appender = factory
             .build(loadResource("yaml/appender_with_custom_layout.yml"));
         assertThat(appender.getLayout()).isNotNull().isInstanceOf(TestLayoutFactory.class);
@@ -54,14 +54,14 @@ public class AppenderFactoryCustomLayoutTest {
     }
 
     @Test
-    public void testBuildAppenderWithCustomLayout() throws Exception {
+    void testBuildAppenderWithCustomLayout() throws Exception {
         ConsoleAppender<?> consoleAppender = buildAppender("yaml/appender_with_custom_layout.yml");
         LayoutWrappingEncoder<?> encoder = (LayoutWrappingEncoder<?>) consoleAppender.getEncoder();
         assertThat(encoder.getLayout()).isInstanceOf(TestLayoutFactory.TestLayout.class);
     }
 
     @Test
-    public void testBuildAppenderWithCustomPatternLayoutAndFormat() throws Exception {
+    void testBuildAppenderWithCustomPatternLayoutAndFormat() throws Exception {
         ConsoleAppender<?> consoleAppender = buildAppender("yaml/appender_with_custom_layout_and_format.yml");
         LayoutWrappingEncoder<?> encoder = (LayoutWrappingEncoder<?>) consoleAppender.getEncoder();
         TestPatternLayout layout = (TestPatternLayout) encoder.getLayout();

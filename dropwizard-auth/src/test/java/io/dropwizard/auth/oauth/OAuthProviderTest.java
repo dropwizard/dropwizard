@@ -29,7 +29,7 @@ public class OAuthProviderTest extends AuthBaseTest<OAuthProviderTest.OAuthTestR
     }
 
     @Test
-    public void checksQueryStringAccessTokenIfAuthorizationHeaderMissing() {
+    void checksQueryStringAccessTokenIfAuthorizationHeaderMissing() {
         assertThat(target("/test/profile")
             .queryParam(OAuthCredentialAuthFilter.OAUTH_ACCESS_TOKEN_PARAM, getOrdinaryGuyValidToken())
             .request()

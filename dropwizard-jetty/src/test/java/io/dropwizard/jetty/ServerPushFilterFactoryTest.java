@@ -24,7 +24,7 @@ import static org.mockito.Mockito.verify;
 public class ServerPushFilterFactoryTest {
 
     @Test
-    public void testLoadConfiguration() throws Exception {
+    void testLoadConfiguration() throws Exception {
         final ServerPushFilterFactory serverPush = new YamlConfigurationFactory<>(
                 ServerPushFilterFactory.class, BaseValidator.newValidator(),
                 Jackson.newObjectMapper(), "dw-server-push")
@@ -37,7 +37,7 @@ public class ServerPushFilterFactoryTest {
     }
 
     @Test
-    public void testDefaultConfiguration() {
+    void testDefaultConfiguration() {
         final ServerPushFilterFactory serverPush = new ServerPushFilterFactory();
         assertThat(serverPush.isEnabled()).isFalse();
         assertThat(serverPush.getAssociatePeriod()).isEqualTo(Duration.seconds(4));
@@ -47,7 +47,7 @@ public class ServerPushFilterFactoryTest {
     }
 
     @Test
-    public void testDontAddFilterByDefault() {
+    void testDontAddFilterByDefault() {
         final ServerPushFilterFactory serverPush = new ServerPushFilterFactory();
 
         ServletContextHandler servletContextHandler = mock(ServletContextHandler.class);
@@ -57,7 +57,7 @@ public class ServerPushFilterFactoryTest {
     }
 
     @Test
-    public void testAddFilter() {
+    void testAddFilter() {
         final ServerPushFilterFactory serverPush = new ServerPushFilterFactory();
         serverPush.setRefererHosts(Arrays.asList("dropwizard.io", "dropwizard.github.io"));
         serverPush.setRefererPorts(Arrays.asList(8444, 8445));
@@ -75,7 +75,7 @@ public class ServerPushFilterFactoryTest {
     }
 
     @Test
-    public void testRefererHostsAndPortsAreNotSet() {
+    void testRefererHostsAndPortsAreNotSet() {
         final ServerPushFilterFactory serverPush = new ServerPushFilterFactory();
         serverPush.setEnabled(true);
 

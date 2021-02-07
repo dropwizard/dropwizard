@@ -22,7 +22,7 @@ public class InjectValidatorTest {
     );
 
     @Test
-    public void shouldValidateNormally() {
+    void shouldValidateNormally() {
         final Client client = RULE.client();
         final String url = String.format("http://localhost:%d/default", RULE.getLocalPort());
         final WebTarget target = client.target(url);
@@ -43,7 +43,7 @@ public class InjectValidatorTest {
     }
 
     @Test
-    public void shouldInjectValidator() {
+    void shouldInjectValidator() {
         final Client client = RULE.client();
         final String url = String.format("http://localhost:%d/injectable", RULE.getLocalPort());
 

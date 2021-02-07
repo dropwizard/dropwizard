@@ -9,7 +9,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class YearMonthParamTest {
     @Test
-    public void parsesDateTimes() throws Exception {
+    void parsesDateTimes() throws Exception {
         final YearMonthParam param = new YearMonthParam("2012-11");
 
         assertThat(param.get())

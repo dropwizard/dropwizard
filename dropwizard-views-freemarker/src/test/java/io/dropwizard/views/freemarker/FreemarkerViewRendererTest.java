@@ -71,13 +71,13 @@ public class FreemarkerViewRendererTest extends JerseyTest {
 
     @Override
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         super.setUp();
     }
 
     @Override
     @AfterEach
-    public void tearDown() throws Exception {
+    void tearDown() throws Exception {
         super.tearDown();
     }
 
@@ -92,21 +92,21 @@ public class FreemarkerViewRendererTest extends JerseyTest {
     }
 
     @Test
-    public void rendersViewsWithAbsoluteTemplatePaths() {
+    void rendersViewsWithAbsoluteTemplatePaths() {
         final String response = target("/test/absolute")
                 .request().get(String.class);
         assertThat(response).isEqualTo("Woop woop. yay\n");
     }
 
     @Test
-    public void rendersViewsWithRelativeTemplatePaths() {
+    void rendersViewsWithRelativeTemplatePaths() {
         final String response = target("/test/relative")
                 .request().get(String.class);
         assertThat(response).isEqualTo("Ok.\n");
     }
 
     @Test
-    public void returnsA500ForViewsWithBadTemplatePaths() {
+    void returnsA500ForViewsWithBadTemplatePaths() {
         assertThatExceptionOfType(WebApplicationException.class)
             .isThrownBy(() -> target("/test/bad").request().get(String.class))
             .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(500))
@@ -125,7 +125,7 @@ public class FreemarkerViewRendererTest extends JerseyTest {
     }
 
     @Test
-    public void rendersViewsUsingUnsafeInputWithAutoEscapingEnabled() {
+    void rendersViewsUsingUnsafeInputWithAutoEscapingEnabled() {
         final String unsafe = "<script>alert(\"hello\")</script>";
         final Response response = target("/test/auto-escaping")
             .request().post(Entity.form(new Form("input", unsafe)));

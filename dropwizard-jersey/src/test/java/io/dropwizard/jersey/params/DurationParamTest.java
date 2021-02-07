@@ -12,13 +12,13 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 public class DurationParamTest {
 
     @Test
-    public void parseDurationSeconds() {
+    void parseDurationSeconds() {
         assertThat(new DurationParam("10 seconds").get())
             .isEqualTo(Duration.seconds(10));
     }
 
     @Test
-    public void badValueThrowsException() {
+    void badValueThrowsException() {
         assertThatExceptionOfType(WebApplicationException.class)
             .isThrownBy(() -> new DurationParam("invalid", "param_name"))
             .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(400))

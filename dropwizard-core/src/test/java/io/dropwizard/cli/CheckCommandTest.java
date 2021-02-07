@@ -27,19 +27,19 @@ public class CheckCommandTest {
     private final Configuration configuration = mock(Configuration.class);
 
     @Test
-    public void hasAName() {
+    void hasAName() {
         assertThat(command.getName())
                 .isEqualTo("check");
     }
 
     @Test
-    public void hasADescription() {
+    void hasADescription() {
         assertThat(command.getDescription())
                 .isEqualTo("Parses and validates the configuration file");
     }
 
     @Test
-    public void doesNotInteractWithAnything() throws Exception {
+    void doesNotInteractWithAnything() throws Exception {
         command.run(bootstrap, namespace, configuration);
 
         verifyNoInteractions(bootstrap, namespace, configuration);

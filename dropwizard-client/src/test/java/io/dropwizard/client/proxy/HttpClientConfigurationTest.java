@@ -34,13 +34,13 @@ public class HttpClientConfigurationTest {
     }
 
     @Test
-    public void testNoProxy() throws Exception {
+    void testNoProxy() throws Exception {
         load("./yaml/no_proxy.yml");
         assertThat(configuration.getProxyConfiguration()).isNull();
     }
 
     @Test
-    public void testFullConfigBasicProxy() throws Exception {
+    void testFullConfigBasicProxy() throws Exception {
         load("yaml/proxy.yml");
 
         ProxyConfiguration proxy = requireNonNull(configuration.getProxyConfiguration());
@@ -58,7 +58,7 @@ public class HttpClientConfigurationTest {
     }
 
     @Test
-    public void testFullConfigNtlmProxy() throws Exception {
+    void testFullConfigNtlmProxy() throws Exception {
         load("yaml/proxy_ntlm.yml");
 
         ProxyConfiguration proxy = requireNonNull(configuration.getProxyConfiguration());
@@ -81,7 +81,7 @@ public class HttpClientConfigurationTest {
     }
 
     @Test
-    public void testNoScheme() throws Exception {
+    void testNoScheme() throws Exception {
         load("./yaml/no_scheme.yml");
 
         ProxyConfiguration proxy = requireNonNull(configuration.getProxyConfiguration());
@@ -91,7 +91,7 @@ public class HttpClientConfigurationTest {
     }
 
     @Test
-    public void testNoAuth() throws Exception {
+    void testNoAuth() throws Exception {
         load("./yaml/no_auth.yml");
 
         ProxyConfiguration proxy = requireNonNull(configuration.getProxyConfiguration());
@@ -100,7 +100,7 @@ public class HttpClientConfigurationTest {
     }
 
     @Test
-    public void testNoPort() throws Exception {
+    void testNoPort() throws Exception {
         load("./yaml/no_port.yml");
 
         ProxyConfiguration proxy = requireNonNull(configuration.getProxyConfiguration());
@@ -109,7 +109,7 @@ public class HttpClientConfigurationTest {
     }
 
     @Test
-    public void testNoNonProxy() throws Exception {
+    void testNoNonProxy() throws Exception {
         load("./yaml/no_port.yml");
 
         ProxyConfiguration proxy = requireNonNull(configuration.getProxyConfiguration());
@@ -117,38 +117,38 @@ public class HttpClientConfigurationTest {
     }
 
     @Test
-    public void testNoHost() {
+    void testNoHost() {
         assertConfigurationValidationException("yaml/bad_host.yml");
     }
 
     @Test
-    public void testBadPort() {
+    void testBadPort() {
         assertConfigurationValidationException("./yaml/bad_port.yml");
     }
 
     @Test
-    public void testBadScheme() {
+    void testBadScheme() {
         assertThatExceptionOfType(ConfigurationParsingException.class).isThrownBy(() ->
             load("./yaml/bad_scheme.yml"));
     }
 
     @Test
-    public void testBadAuthUsername() {
+    void testBadAuthUsername() {
         assertConfigurationValidationException("./yaml/bad_auth_username.yml");
     }
 
     @Test
-    public void testBadPassword() {
+    void testBadPassword() {
         assertConfigurationValidationException("./yaml/bad_auth_password.yml");
     }
 
     @Test
-    public void testBadAuthScheme() {
+    void testBadAuthScheme() {
         assertConfigurationValidationException("./yaml/bad_auth_scheme.yml");
     }
 
     @Test
-    public void testBadCredentialType() {
+    void testBadCredentialType() {
         assertConfigurationValidationException("./yaml/bad_auth_credential_type.yml");
     }
 

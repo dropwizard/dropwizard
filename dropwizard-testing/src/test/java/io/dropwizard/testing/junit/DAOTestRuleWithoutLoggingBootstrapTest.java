@@ -16,7 +16,7 @@ public class DAOTestRuleWithoutLoggingBootstrapTest {
             .build();
 
     @Test
-    public void ruleCreatedSessionFactory() {
+    void ruleCreatedSessionFactory() {
         final SessionFactory sessionFactory = daoTestRule.getSessionFactory();
 
         assertThat(sessionFactory).isNotNull();

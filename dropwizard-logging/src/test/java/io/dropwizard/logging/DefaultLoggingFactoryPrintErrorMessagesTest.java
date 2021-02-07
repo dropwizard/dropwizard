@@ -27,13 +27,13 @@ public class DefaultLoggingFactoryPrintErrorMessagesTest {
     private ByteArrayOutputStream output;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         output = new ByteArrayOutputStream();
         factory = new DefaultLoggingFactory(new LoggerContext(), new PrintStream(output));
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    void tearDown() throws Exception {
         factory.stop();
         factory.reset();
     }
@@ -58,21 +58,21 @@ public class DefaultLoggingFactoryPrintErrorMessagesTest {
     }
 
     @Test
-    public void testWhenUsingDefaultConstructor_SystemErrIsSet() throws Exception {
+    void testWhenUsingDefaultConstructor_SystemErrIsSet() throws Exception {
         PrintStream configurationErrorsStream = new DefaultLoggingFactory().getConfigurationErrorsStream();
 
         assertThat(configurationErrorsStream).isSameAs(System.err);
     }
 
     @Test
-    public void testWhenUsingDefaultConstructor_StaticILoggerFactoryIsSet() throws Exception {
+    void testWhenUsingDefaultConstructor_StaticILoggerFactoryIsSet() throws Exception {
         LoggerContext loggerContext = new DefaultLoggingFactory().getLoggerContext();
 
         assertThat(loggerContext).isSameAs(LoggerFactory.getILoggerFactory());
     }
 
     @Test
-    public void testWhenFileAppenderDoesNotHaveWritePermissionToFolder_PrintsErrorMessageToConsole(@TempDir Path tempDir) throws Exception {
+    void testWhenFileAppenderDoesNotHaveWritePermissionToFolder_PrintsErrorMessageToConsole(@TempDir Path tempDir) throws Exception {
         File folderWithoutWritePermission = tempDir.resolve("folder-without-write-permission").toFile();
         assumeTrue(folderWithoutWritePermission.mkdirs());
         assumeTrue(folderWithoutWritePermission.setWritable(false));
@@ -84,7 +84,7 @@ public class DefaultLoggingFactoryPrintErrorMessagesTest {
     }
 
     @Test
-    public void testWhenSettingUpLoggingWithValidConfiguration_NoErrorMessageIsPrintedToConsole(@TempDir Path tempDir) throws Exception {
+    void testWhenSettingUpLoggingWithValidConfiguration_NoErrorMessageIsPrintedToConsole(@TempDir Path tempDir) throws Exception {
         File folderWithWritePermission = tempDir.resolve("folder-with-write-permission").toFile();
         assumeTrue(folderWithWritePermission.mkdirs());
 
@@ -95,7 +95,7 @@ public class DefaultLoggingFactoryPrintErrorMessagesTest {
     }
 
     @Test
-    public void testLogbackStatusPrinterPrintStreamIsRestoredToSystemOut() throws Exception {
+    void testLogbackStatusPrinterPrintStreamIsRestoredToSystemOut() throws Exception {
         Field field = StatusPrinter.class.getDeclaredField("ps");
         field.setAccessible(true);
 
