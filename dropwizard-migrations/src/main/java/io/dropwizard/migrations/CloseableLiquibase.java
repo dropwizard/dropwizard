@@ -22,7 +22,7 @@ public abstract class CloseableLiquibase extends Liquibase implements AutoClosea
         this.dataSource = dataSource;
     }
 
-    public CloseableLiquibase(String changeLogFile, ResourceAccessor resourceAccessor, DatabaseConnection conn, ManagedDataSource dataSource) throws LiquibaseException, SQLException {
+    protected CloseableLiquibase(String changeLogFile, ResourceAccessor resourceAccessor, DatabaseConnection conn, ManagedDataSource dataSource) throws LiquibaseException, SQLException {
         super(changeLogFile, resourceAccessor, conn);
         this.dataSource = dataSource;
     }

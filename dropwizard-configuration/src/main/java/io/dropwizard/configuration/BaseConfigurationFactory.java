@@ -61,7 +61,7 @@ public abstract class BaseConfigurationFactory<T> implements ConfigurationFactor
      * @param validator      the validator to use
      * @param propertyPrefix the system property name prefix used by overrides
      */
-    public BaseConfigurationFactory(JsonFactory parserFactory,
+    protected BaseConfigurationFactory(JsonFactory parserFactory,
                                     String formatName,
                                     Class<T> klass,
                                     @Nullable Validator validator,

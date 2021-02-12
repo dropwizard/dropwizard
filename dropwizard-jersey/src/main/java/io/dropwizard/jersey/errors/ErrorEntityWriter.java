@@ -29,7 +29,7 @@ public abstract class ErrorEntityWriter<T, U> implements MessageBodyWriter<T> {
      * @param contentType Content type the writer will produce
      * @param representation Response type the writer will produce
      */
-    public ErrorEntityWriter(MediaType contentType, Class<U> representation) {
+    protected ErrorEntityWriter(MediaType contentType, Class<U> representation) {
         this.contentType = contentType;
         this.representation = representation;
     }
