@@ -5,7 +5,7 @@
     <parent>
         <groupId>io.dropwizard</groupId>
         <artifactId>dropwizard-project</artifactId>
-        <version>2.0.8-campspot</version>
+        <version>2.0.9-campspot</version>
     </parent>
 
     <artifactId>dropwizard-bom</artifactId>
