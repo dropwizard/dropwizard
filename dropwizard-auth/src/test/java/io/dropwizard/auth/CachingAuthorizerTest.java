@@ -13,6 +13,7 @@ import java.security.Principal;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
@@ -33,10 +34,14 @@ public class CachingAuthorizerTest {
     private final Principal principal2 = new PrincipalImpl("principal2");
     private final String role = "popular_kids";
     private final ContainerRequestContext requestContext = mock(ContainerRequestContext.class);
+    private final AuthorizationContext<Principal> authorizationContext = new DefaultAuthorizationContext<>(principal, role, requestContext);
+    private final AuthorizationContext<Principal> authorizationContext2 = new DefaultAuthorizationContext<>(principal2, role, requestContext);
 
     @BeforeEach
     public void setUp() throws Exception {
         when(underlying.authorize(any(), anyString(), any())).thenReturn(true);
+        when(underlying.getAuthorizationContext(eq(principal), anyString(), any())).thenReturn(authorizationContext);
+        when(underlying.getAuthorizationContext(eq(principal2), anyString(), any())).thenReturn(authorizationContext2);
     }
 
     @Test

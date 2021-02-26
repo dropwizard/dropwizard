@@ -6,7 +6,7 @@ import java.util.Objects;
 import javax.annotation.Nullable;
 import javax.ws.rs.container.ContainerRequestContext;
 
-class AuthorizationContext<P extends Principal> {
+public abstract class AuthorizationContext<P extends Principal> {
     private final P principal;
     private final String role;
     private final @Nullable
