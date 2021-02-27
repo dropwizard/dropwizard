@@ -27,7 +27,7 @@ public class DropwizardAppRuleWithoutConfigTest {
         ConfigOverride.config("server.adminConnectors[0].port", "0"));
 
     @Test
-    void runWithoutConfigFile() {
+    public void runWithoutConfigFile() {
         Map<String, String> response = RULE.client().target("http://localhost:" + RULE.getLocalPort() + "/test")
             .request()
             .get(new GenericType<Map<String, String>>() {

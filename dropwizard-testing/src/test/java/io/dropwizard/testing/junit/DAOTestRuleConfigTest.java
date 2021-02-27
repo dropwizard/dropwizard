@@ -25,7 +25,7 @@ public class DAOTestRuleConfigTest {
         .build();
 
     @Test
-    void explicitConfigCreatesSessionFactory() {
+    public void explicitConfigCreatesSessionFactory() {
         // it yields a valid SessionFactory instance
         final SessionFactory sessionFactory = database.getSessionFactory();
         assertThat(sessionFactory).isNotNull();

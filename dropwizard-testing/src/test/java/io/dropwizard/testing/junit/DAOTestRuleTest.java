@@ -18,21 +18,21 @@ public class DAOTestRuleTest {
     public final DAOTestRule daoTestRule = DAOTestRule.newBuilder().addEntityClass(TestEntity.class).build();
 
     @Test
-    void ruleCreatedSessionFactory() {
+    public void ruleCreatedSessionFactory() {
         final SessionFactory sessionFactory = daoTestRule.getSessionFactory();
 
         assertThat(sessionFactory).isNotNull();
     }
 
     @Test
-    void ruleCanOpenTransaction() {
+    public void ruleCanOpenTransaction() {
         final Long id = daoTestRule.inTransaction(() -> persist(new TestEntity("description")).getId());
 
         assertThat(id).isNotNull();
     }
 
     @Test
-    void ruleCanRoundtrip() {
+    public void ruleCanRoundtrip() {
         final Long id = daoTestRule.inTransaction(() -> persist(new TestEntity("description")).getId());
 
         final TestEntity testEntity = get(id);
@@ -42,13 +42,13 @@ public class DAOTestRuleTest {
     }
 
     @Test
-    void transactionThrowsExceptionAsExpected() {
+    public void transactionThrowsExceptionAsExpected() {
         assertThatExceptionOfType(ConstraintViolationException.class).isThrownBy(()->
             daoTestRule.inTransaction(() -> persist(new TestEntity(null))));
     }
 
     @Test
-    void rollsBackTransaction() {
+    public void rollsBackTransaction() {
         // given a successfully persisted entity
         final TestEntity testEntity = new TestEntity("description");
         daoTestRule.inTransaction(() -> persist(testEntity));
