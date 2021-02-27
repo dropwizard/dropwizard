@@ -15,17 +15,17 @@ public class ConfiguredCloseableHttpClientTest {
     private RequestConfig defaultRequestConfigMock = Mockito.mock(RequestConfig.class);
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         configuredClient = new ConfiguredCloseableHttpClient(closeableHttpClientMock, defaultRequestConfigMock);
     }
 
     @Test
-    public void getDefaultRequestConfig_returns_config_provided_at_construction() {
+    void getDefaultRequestConfig_returns_config_provided_at_construction() {
         assertThat(configuredClient.getDefaultRequestConfig()).isEqualTo(defaultRequestConfigMock);
     }
 
     @Test
-    public void getClient_returns_config_provided_at_construction() {
+    void getClient_returns_config_provided_at_construction() {
         assertThat(configuredClient.getClient()).isEqualTo(closeableHttpClientMock);
     }
 }

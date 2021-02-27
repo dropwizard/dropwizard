@@ -21,7 +21,7 @@ public class PostBodyTaskTest {
 
     @SuppressWarnings("deprecation")
     @Test
-    public void throwsExceptionWhenCallingExecuteWithoutThePostBody() throws Exception {
+    void throwsExceptionWhenCallingExecuteWithoutThePostBody() throws Exception {
         assertThatExceptionOfType(UnsupportedOperationException.class).isThrownBy(() ->
                 task.execute(Collections.emptyMap(), new PrintWriter(new OutputStreamWriter(System.out, UTF_8))));
     }

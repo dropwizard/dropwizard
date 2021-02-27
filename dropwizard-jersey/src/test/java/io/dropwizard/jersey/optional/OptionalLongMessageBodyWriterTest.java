@@ -31,7 +31,7 @@ public class OptionalLongMessageBodyWriterTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void presentOptionalsReturnTheirValue() {
+    void presentOptionalsReturnTheirValue() {
         assertThat(target("optional-return")
                 .queryParam("id", "1").request()
                 .get(Long.class))
@@ -39,7 +39,7 @@ public class OptionalLongMessageBodyWriterTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void presentOptionalsReturnTheirValueWithResponse() {
+    void presentOptionalsReturnTheirValueWithResponse() {
         assertThat(target("optional-return/response-wrapped")
                 .queryParam("id", "1").request()
                 .get(Long.class))
@@ -47,35 +47,35 @@ public class OptionalLongMessageBodyWriterTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void absentOptionalsThrowANotFound() {
+    void absentOptionalsThrowANotFound() {
         assertThatExceptionOfType(WebApplicationException.class)
             .isThrownBy(() -> target("optional-return").request().get(Long.class))
             .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(404));
     }
 
     @Test
-    public void valueSetIgnoresDefault() {
+    void valueSetIgnoresDefault() {
         assertThat(target("optional-return/default").queryParam("id", "1").request().get(Long.class))
             .isEqualTo(target("optional-return/long/default").queryParam("id", "1").request().get(Long.class))
             .isEqualTo(1L);
     }
 
     @Test
-    public void valueNotSetReturnsDefault() {
+    void valueNotSetReturnsDefault() {
         assertThat(target("optional-return/default").request().get(Long.class))
             .isEqualTo(target("optional-return/long/default").request().get(Long.class))
             .isEqualTo(0L);
     }
 
     @Test
-    public void valueEmptyReturnsDefault() {
+    void valueEmptyReturnsDefault() {
         assertThat(target("optional-return/default").queryParam("id", "").request().get(Long.class))
             .isEqualTo(target("optional-return/long/default").queryParam("id", "").request().get(Long.class))
             .isEqualTo(0L);
     }
 
     @Test
-    public void valueInvalidReturns404() {
+    void valueInvalidReturns404() {
         assertThatExceptionOfType(NotFoundException.class)
             .isThrownBy(() -> target("optional-return/default").queryParam("id", "invalid")
                 .request().get(Long.class));;

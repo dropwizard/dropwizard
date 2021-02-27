@@ -28,7 +28,7 @@ public class LogConfigurationTaskTest {
     private final LogConfigurationTask task = new LogConfigurationTask(loggerContext);
 
     @Test
-    public void configuresSpecificLevelForALogger() throws Exception {
+    void configuresSpecificLevelForALogger() throws Exception {
 
         // given
         Level twoEffectiveBefore = logger2.getEffectiveLevel();
@@ -47,7 +47,7 @@ public class LogConfigurationTaskTest {
     }
 
     @Test
-    public void configuresSpecificLevelForALoggerForADuration() throws Exception {
+    void configuresSpecificLevelForALoggerForADuration() throws Exception {
 
         // given
         long millis = 2000;
@@ -70,7 +70,7 @@ public class LogConfigurationTaskTest {
     }
 
     @Test
-    public void configuresDefaultLevelForALogger() throws Exception {
+    void configuresDefaultLevelForALogger() throws Exception {
         // given
         Level oneEffectiveBefore = logger1.getEffectiveLevel();
         Level twoEffectiveBefore = logger2.getEffectiveLevel();
@@ -88,7 +88,7 @@ public class LogConfigurationTaskTest {
     }
 
     @Test
-    public void configuresLevelForMultipleLoggers() throws Exception {
+    void configuresLevelForMultipleLoggers() throws Exception {
         // given
         Map<String, List<String>> parameters = Maps.of(
                 "logger", Arrays.asList("logger.one", "logger.two"),

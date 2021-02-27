@@ -42,7 +42,7 @@ public class LogbackClassicRequestLogFactoryTest {
     private RequestLogFactory<?> requestLog;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         final ObjectMapper objectMapper = Jackson.newObjectMapper();
         objectMapper.getSubtypeResolver().registerSubtypes(ConsoleAppenderFactory.class, FileAppenderFactory.class,
             SyslogAppenderFactory.class);
@@ -52,7 +52,7 @@ public class LogbackClassicRequestLogFactoryTest {
     }
 
     @Test
-    public void testDeserialized() {
+    void testDeserialized() {
         LogbackClassicRequestLogFactory classicRequestLogFactory = (LogbackClassicRequestLogFactory) requestLog;
         assertThat(classicRequestLogFactory.getTimeZone()).isEqualTo(TimeZone.getTimeZone("Europe/Amsterdam"));
         assertThat(classicRequestLogFactory.getAppenders()).hasSize(3).extractingResultOf("getClass").contains(
@@ -61,7 +61,7 @@ public class LogbackClassicRequestLogFactoryTest {
     }
 
     @Test
-    public void testLogFormat() throws Exception {
+    void testLogFormat() throws Exception {
         final LogbackClassicRequestLogFactory factory = new LogbackClassicRequestLogFactory();
 
         @SuppressWarnings("unchecked")
@@ -112,7 +112,7 @@ public class LogbackClassicRequestLogFactoryTest {
     }
 
     @Test
-    public void isDiscoverable() throws Exception {
+    void isDiscoverable() throws Exception {
         assertThat(new DiscoverableSubtypeResolver().getDiscoveredSubtypes())
             .contains(LogbackClassicRequestLogFactory.class);
     }

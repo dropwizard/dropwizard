@@ -23,20 +23,20 @@ public class CsvReporterFactoryTest {
                                            objectMapper, "dw");
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         objectMapper.getSubtypeResolver().registerSubtypes(ConsoleReporterFactory.class,
                                                            CsvReporterFactory.class,
                                                            Slf4jReporterFactory.class);
     }
 
     @Test
-    public void isDiscoverable() throws Exception {
+    void isDiscoverable() throws Exception {
         assertThat(new DiscoverableSubtypeResolver().getDiscoveredSubtypes())
                 .contains(CsvReporterFactory.class);
     }
 
     @Test
-    public void directoryCreatedOnStartup() throws Exception {
+    void directoryCreatedOnStartup() throws Exception {
         File dir = new File("metrics");
         dir.delete();
 

@@ -13,7 +13,7 @@ public class FileConfigurationSourceProviderTest {
     private final ConfigurationSourceProvider provider = new FileConfigurationSourceProvider();
 
     @Test
-    public void readsFileContents() throws Exception {
+    void readsFileContents() throws Exception {
         try (InputStream input = provider.open(Resources.getResource("example.txt").getFile());
              ByteArrayOutputStream output = new ByteArrayOutputStream()) {
             byte[] buffer = new byte[1024];

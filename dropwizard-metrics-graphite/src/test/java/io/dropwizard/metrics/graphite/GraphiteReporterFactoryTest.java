@@ -30,13 +30,13 @@ public class GraphiteReporterFactoryTest {
     };
 
     @Test
-    public void isDiscoverable() {
+    void isDiscoverable() {
         assertThat(new DiscoverableSubtypeResolver().getDiscoveredSubtypes())
             .contains(GraphiteReporterFactory.class);
     }
 
     @Test
-    public void createDefaultFactory() throws Exception {
+    void createDefaultFactory() throws Exception {
         final GraphiteReporterFactory factory = new YamlConfigurationFactory<>(GraphiteReporterFactory.class,
              BaseValidator.newValidator(), Jackson.newObjectMapper(), "dw")
             .build();
@@ -44,7 +44,7 @@ public class GraphiteReporterFactoryTest {
     }
 
     @Test
-    public void testNoAddressResolutionForGraphite() throws Exception {
+    void testNoAddressResolutionForGraphite() throws Exception {
         graphiteReporterFactory.build(new MetricRegistry());
 
         final ArgumentCaptor<Graphite> argument = ArgumentCaptor.forClass(Graphite.class);
@@ -57,7 +57,7 @@ public class GraphiteReporterFactoryTest {
     }
 
     @Test
-    public void testCorrectTransportForGraphiteUDP() throws Exception {
+    void testCorrectTransportForGraphiteUDP() throws Exception {
         graphiteReporterFactory.setTransport("udp");
         graphiteReporterFactory.build(new MetricRegistry());
 

@@ -31,7 +31,7 @@ public class OptionalDoubleMessageBodyWriterTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void presentOptionalsReturnTheirValue() {
+    void presentOptionalsReturnTheirValue() {
         assertThat(target("optional-return")
                 .queryParam("id", "1").request()
                 .get(Double.class))
@@ -39,7 +39,7 @@ public class OptionalDoubleMessageBodyWriterTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void presentOptionalsReturnTheirValueWithResponse() {
+    void presentOptionalsReturnTheirValueWithResponse() {
         assertThat(target("optional-return/response-wrapped")
                 .queryParam("id", "1").request()
                 .get(Double.class))
@@ -47,28 +47,28 @@ public class OptionalDoubleMessageBodyWriterTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void absentOptionalsThrowANotFound() {
+    void absentOptionalsThrowANotFound() {
         assertThatExceptionOfType(WebApplicationException.class)
             .isThrownBy(() -> target("optional-return").request().get(Double.class))
             .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(404));
     }
 
     @Test
-    public void valueSetIgnoresDefault() {
+    void valueSetIgnoresDefault() {
         assertThat(target("optional-return/default").queryParam("id", "1").request().get(Double.class))
             .isEqualTo(target("optional-return/double/default").queryParam("id", "1").request().get(Double.class))
             .isEqualTo(1);
     }
 
     @Test
-    public void valueNotSetReturnsDefault() {
+    void valueNotSetReturnsDefault() {
         assertThat(target("optional-return/default").request().get(Double.class))
             .isEqualTo(target("optional-return/double/default").request().get(Double.class))
             .isEqualTo(0);
     }
 
     @Test
-    public void valueEmptyReturnsDefault() {
+    void valueEmptyReturnsDefault() {
         assertThat(target("optional-return/default").queryParam("id", "")
             .request().get(Double.class))
             .isEqualTo(target("optional-return/double/default").queryParam("id", "")
@@ -77,7 +77,7 @@ public class OptionalDoubleMessageBodyWriterTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void valueInvalidReturns404() {
+    void valueInvalidReturns404() {
         assertThatExceptionOfType(NotFoundException.class)
             .isThrownBy(() -> target("optional-return/default").queryParam("id", "invalid")
                 .request().get(Double.class));

@@ -26,7 +26,7 @@ public class DropwizardAppRuleReentrantTest {
     private Description description = mock(Description.class);
 
     @Test
-    public void testReentrantRuleStartsApplicationOnlyOnce() throws Throwable {
+    void testReentrantRuleStartsApplicationOnlyOnce() throws Throwable {
         @SuppressWarnings("deprecation")
         DropwizardAppRule<TestConfiguration> dropwizardAppRule = new DropwizardAppRule<>(testSupport);
 

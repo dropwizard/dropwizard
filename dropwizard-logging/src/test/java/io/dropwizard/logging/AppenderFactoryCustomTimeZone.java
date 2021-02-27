@@ -35,43 +35,43 @@ public class AppenderFactoryCustomTimeZone {
     }
 
     @Test
-    public void testLoadAppenderWithTimeZoneInFullFormat() throws Exception {
+    void testLoadAppenderWithTimeZoneInFullFormat() throws Exception {
         final ConsoleAppenderFactory<?> appender = factory.build(loadResource("yaml/appender_with_time_zone_in_full_format.yml"));
         assertThat(appender.getTimeZone().getID()).isEqualTo("America/Los_Angeles");
     }
 
     @Test
-    public void testLoadAppenderWithTimeZoneInCustomFormat() throws Exception {
+    void testLoadAppenderWithTimeZoneInCustomFormat() throws Exception {
         final ConsoleAppenderFactory<?> appender = factory.build(loadResource("yaml/appender_with_custom_time_zone_format.yml"));
         assertThat(appender.getTimeZone().getID()).isEqualTo("GMT-02:00");
     }
 
     @Test
-    public void testLoadAppenderWithNoTimeZone() throws Exception {
+    void testLoadAppenderWithNoTimeZone() throws Exception {
         final ConsoleAppenderFactory<?> appender = factory.build(loadResource("yaml/appender_with_no_time_zone.yml"));
         assertThat(appender.getTimeZone().getID()).isEqualTo("UTC");
     }
 
     @Test
-    public void testLoadAppenderWithUtcTimeZone() throws Exception {
+    void testLoadAppenderWithUtcTimeZone() throws Exception {
         final ConsoleAppenderFactory<?> appender = factory.build(loadResource("yaml/appender_with_utc_time_zone.yml"));
         assertThat(appender.getTimeZone().getID()).isEqualTo("UTC");
     }
 
     @Test
-    public void testLoadAppenderWithWrongTimeZone() throws Exception {
+    void testLoadAppenderWithWrongTimeZone() throws Exception {
         final ConsoleAppenderFactory<?> appender = factory.build(loadResource("yaml/appender_with_wrong_time_zone.yml"));
         assertThat(appender.getTimeZone().getID()).isEqualTo("GMT");
     }
 
     @Test
-    public void testLoadAppenderWithSystemTimeZone() throws Exception {
+    void testLoadAppenderWithSystemTimeZone() throws Exception {
         final ConsoleAppenderFactory<?> appender = factory.build(loadResource("yaml/appender_with_system_time_zone.yml"));
         assertThat(appender.getTimeZone()).isEqualTo(TimeZone.getDefault());
     }
 
     @Test
-    public void testBuildAppenderWithTimeZonePlaceholderInLogFormat() throws Exception {
+    void testBuildAppenderWithTimeZonePlaceholderInLogFormat() throws Exception {
         ConsoleAppender<?> consoleAppender = buildAppender("yaml/appender_with_time_zone_placeholder.yml");
         LayoutWrappingEncoder<?> encoder = (LayoutWrappingEncoder<?>) consoleAppender.getEncoder();
         PatternLayoutBase<?> layout = (PatternLayoutBase<?>) encoder.getLayout();

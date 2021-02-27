@@ -120,7 +120,7 @@ public class PolymorphicPrincipalEntityTest extends JerseyTest {
     }
 
     @Test
-    public void jsonPrincipalEntityResourceAuth200() {
+    void jsonPrincipalEntityResourceAuth200() {
         assertThat(target("/auth-test/json-principal-entity").request()
                    .header(HttpHeaders.AUTHORIZATION, "Basic " + JSON_USERNAME_ENCODED_TOKEN)
                    .get(String.class))
@@ -128,14 +128,14 @@ public class PolymorphicPrincipalEntityTest extends JerseyTest {
     }
 
     @Test
-    public void jsonPrincipalEntityResourceNoAuth401() {
+    void jsonPrincipalEntityResourceNoAuth401() {
         assertThatExceptionOfType(WebApplicationException.class)
             .isThrownBy(() -> target("/auth-test/json-principal-entity").request().get(String.class))
             .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(401));
     }
 
     @Test
-    public void nullPrincipalEntityResourceAuth200() {
+    void nullPrincipalEntityResourceAuth200() {
         assertThat(target("/auth-test/null-principal-entity").request()
                 .header(HttpHeaders.AUTHORIZATION, "Basic " + NULL_USERNAME_ENCODED_TOKEN)
                 .get(String.class))
@@ -143,14 +143,14 @@ public class PolymorphicPrincipalEntityTest extends JerseyTest {
     }
 
     @Test
-    public void nullPrincipalEntityResourceNoAuth401() {
+    void nullPrincipalEntityResourceNoAuth401() {
         assertThatExceptionOfType(WebApplicationException.class)
             .isThrownBy(() -> target("/auth-test/null-principal-entity").request().get(String.class))
             .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(401));
     }
 
     @Test
-    public void resourceWithValidOptionalAuthentication200() {
+    void resourceWithValidOptionalAuthentication200() {
         assertThat(target("/auth-test/optional").request()
             .header(HttpHeaders.AUTHORIZATION, "Basic " + NULL_USERNAME_ENCODED_TOKEN)
             .get(String.class))
@@ -158,7 +158,7 @@ public class PolymorphicPrincipalEntityTest extends JerseyTest {
     }
 
     @Test
-    public void resourceWithInvalidOptionalAuthentication200() {
+    void resourceWithInvalidOptionalAuthentication200() {
         assertThat(target("/auth-test/optional").request()
             .header(HttpHeaders.AUTHORIZATION, "Basic cats")
             .get(String.class))
@@ -166,14 +166,14 @@ public class PolymorphicPrincipalEntityTest extends JerseyTest {
     }
 
     @Test
-    public void resourceWithoutOptionalAuthentication200() {
+    void resourceWithoutOptionalAuthentication200() {
         assertThat(target("/auth-test/optional").request()
             .get(String.class))
             .isEqualTo("principal was not present");
     }
 
     @Test
-    public void resourceWithDifferentOptionalAuthentication200() {
+    void resourceWithDifferentOptionalAuthentication200() {
         assertThat(target("/auth-test/optional").request()
             .header(HttpHeaders.AUTHORIZATION, "Basic " + JSON_USERNAME_ENCODED_TOKEN)
             .get(String.class))

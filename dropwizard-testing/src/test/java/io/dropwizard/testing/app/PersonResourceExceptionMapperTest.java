@@ -35,7 +35,7 @@ public class PersonResourceExceptionMapperTest {
         .build();
 
     @Test
-    public void testDefaultConstraintViolation() {
+    void testDefaultConstraintViolation() {
         assertThat(RESOURCES.target("/person/blah/index")
             .queryParam("ind", -1).request()
             .get().readEntity(String.class))
@@ -43,7 +43,7 @@ public class PersonResourceExceptionMapperTest {
     }
 
     @Test
-    public void testDefaultJsonProcessingMapper() {
+    void testDefaultJsonProcessingMapper() {
         assertThat(RESOURCES.target("/person/blah/runtime-exception")
             .request()
             .post(Entity.json("{ \"he: \"ho\"}"))
@@ -52,7 +52,7 @@ public class PersonResourceExceptionMapperTest {
     }
 
     @Test
-    public void testDefaultExceptionMapper() {
+    void testDefaultExceptionMapper() {
         assertThat(RESOURCES.target("/person/blah/runtime-exception")
             .request()
             .post(Entity.json("{}"))
@@ -61,7 +61,7 @@ public class PersonResourceExceptionMapperTest {
     }
 
     @Test
-    public void testDefaultEofExceptionMapper() {
+    void testDefaultEofExceptionMapper() {
         assertThat(RESOURCES.target("/person/blah/eof-exception")
             .request()
             .get().readEntity(String.class))

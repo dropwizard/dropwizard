@@ -20,7 +20,7 @@ public class DropwizardAppRuleTest {
         new DropwizardAppRule<>(DropwizardTestApplication.class, resourceFilePath("test-config.yaml"));
 
     @Test
-    public void canGetExpectedResourceOverHttp() {
+    void canGetExpectedResourceOverHttp() {
         final String content = ClientBuilder.newClient().target(
             "http://localhost:" + RULE.getLocalPort() + "/test").request().get(String.class);
 
@@ -28,25 +28,25 @@ public class DropwizardAppRuleTest {
     }
 
     @Test
-    public void returnsConfiguration() {
+    void returnsConfiguration() {
         final TestConfiguration config = RULE.getConfiguration();
         assertThat(config.getMessage()).isEqualTo("Yes, it's here");
     }
 
     @Test
-    public void returnsApplication() {
+    void returnsApplication() {
         final DropwizardTestApplication application = RULE.getApplication();
         assertThat(application).isNotNull();
     }
 
     @Test
-    public void returnsEnvironment() {
+    void returnsEnvironment() {
         final Environment environment = RULE.getEnvironment();
         assertThat(environment.getName()).isEqualTo("DropwizardTestApplication");
     }
 
     @Test
-    public void canPerformAdminTask() {
+    void canPerformAdminTask() {
         final String response
             = RULE.client().target("http://localhost:"
             + RULE.getAdminPort() + "/tasks/hello?name=test_user")
@@ -57,7 +57,7 @@ public class DropwizardAppRuleTest {
     }
 
     @Test
-    public void canPerformAdminTaskWithPostBody() {
+    void canPerformAdminTaskWithPostBody() {
         final String response
             = RULE.client().target("http://localhost:"
             + RULE.getAdminPort() + "/tasks/echo")
@@ -68,7 +68,7 @@ public class DropwizardAppRuleTest {
     }
 
     @Test
-    public void clientUsesJacksonMapperFromEnvironment() {
+    void clientUsesJacksonMapperFromEnvironment() {
         assertThat(RULE.client().target("http://localhost:" + RULE.getLocalPort() + "/message")
             .request()
             .get(DropwizardTestApplication.MessageView.class).getMessage())
@@ -76,7 +76,7 @@ public class DropwizardAppRuleTest {
     }
 
     @Test
-    public void clientSupportsPatchMethod() {
+    void clientSupportsPatchMethod() {
         assertThat(RULE.client().target("http://localhost:" + RULE.getLocalPort() + "/echoPatch")
             .request()
             .method("PATCH", Entity.text("Patch is working"), String.class))

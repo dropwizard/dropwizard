@@ -35,7 +35,7 @@ public class ScheduledExecutorServiceBuilderTest {
     }
 
     @AfterEach
-    public void tearDown() {
+    void tearDown() {
         if (this.execTracker != null) {
             this.execTracker.shutdownNow();
 
@@ -53,7 +53,7 @@ public class ScheduledExecutorServiceBuilderTest {
     }
 
     @Test
-    public void testBasicInvocation() {
+    void testBasicInvocation() {
         final String poolName = this.getClass().getSimpleName();
 
         final ScheduledExecutorServiceBuilder test = new ScheduledExecutorServiceBuilder(this.le,
@@ -77,7 +77,7 @@ public class ScheduledExecutorServiceBuilderTest {
     }
 
     @Test
-    public void testRemoveOnCancelTrue() {
+    void testRemoveOnCancelTrue() {
         final String poolName = this.getClass().getSimpleName();
 
         final ScheduledExecutorServiceBuilder test = new ScheduledExecutorServiceBuilder(this.le,
@@ -100,7 +100,7 @@ public class ScheduledExecutorServiceBuilderTest {
     }
 
     @Test
-    public void testRemoveOnCancelFalse() {
+    void testRemoveOnCancelFalse() {
         final String poolName = this.getClass().getSimpleName();
 
         final ScheduledExecutorServiceBuilder test = new ScheduledExecutorServiceBuilder(this.le,
@@ -123,7 +123,7 @@ public class ScheduledExecutorServiceBuilderTest {
     }
 
     @Test
-    public void testPredefinedThreadFactory() {
+    void testPredefinedThreadFactory() {
         final ThreadFactory tfactory = mock(ThreadFactory.class);
         final String poolName = this.getClass().getSimpleName();
 

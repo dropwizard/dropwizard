@@ -40,7 +40,7 @@ public class FlashFactoryTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void passesInHttpSessions() throws Exception {
+    void passesInHttpSessions() throws Exception {
         Response firstResponse = target("/flash").request(MediaType.TEXT_PLAIN)
                 .post(Entity.entity("Mr. Peeps", MediaType.TEXT_PLAIN));
 

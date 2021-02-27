@@ -27,18 +27,18 @@ public class PersonResourceTest {
     private Person person;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         person = new Person();
         person.setId(1L);
     }
 
     @AfterEach
-    public void tearDown() {
+    void tearDown() {
         reset(DAO);
     }
 
     @Test
-    public void getPersonSuccess() {
+    void getPersonSuccess() {
         when(DAO.findById(1L)).thenReturn(Optional.of(person));
 
         Person found = RULE.target("/people/1").request().get(Person.class);
@@ -48,7 +48,7 @@ public class PersonResourceTest {
     }
 
     @Test
-    public void getPersonNotFound() {
+    void getPersonNotFound() {
         when(DAO.findById(2L)).thenReturn(Optional.empty());
         final Response response = RULE.target("/people/2").request().get();
 

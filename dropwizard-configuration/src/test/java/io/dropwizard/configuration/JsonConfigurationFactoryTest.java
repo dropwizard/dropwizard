@@ -17,7 +17,7 @@ public class JsonConfigurationFactoryTest extends BaseConfigurationFactoryTest {
     private File commentFile;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         this.factory = new JsonConfigurationFactory<>(Example.class, validator, Jackson.newObjectMapper(), "dw");
         this.malformedFile = resourceFileName("factory-test-malformed.json");
         this.emptyFile = resourceFileName("factory-test-empty.json");
@@ -47,7 +47,7 @@ public class JsonConfigurationFactoryTest extends BaseConfigurationFactoryTest {
     }
 
     @Test
-    public void defaultJsonFactoryFailsOnComment() {
+    void defaultJsonFactoryFailsOnComment() {
         assertThatThrownBy(() -> factory.build(commentFile))
                 .hasMessageContaining(String.format(
                         "%s has an error:%n" +
@@ -56,7 +56,7 @@ public class JsonConfigurationFactoryTest extends BaseConfigurationFactoryTest {
     }
 
     @Test
-    public void configuredMapperAllowsComment() throws IOException, ConfigurationException {
+    void configuredMapperAllowsComment() throws IOException, ConfigurationException {
         ObjectMapper mapper = Jackson
             .newObjectMapper()
             .configure(Feature.ALLOW_COMMENTS, true);

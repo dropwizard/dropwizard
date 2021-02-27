@@ -33,12 +33,12 @@ public class FormsAppTest {
     private final JerseyClientConfiguration config = new JerseyClientConfiguration();
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         config.setTimeout(Duration.seconds(2));
     }
 
     @Test
-    public void canSubmitFormAndReceiveResponse() throws IOException {
+    void canSubmitFormAndReceiveResponse() throws IOException {
         config.setChunkedEncodingEnabled(false);
 
         final Client client = new JerseyClientBuilder(RULE.getEnvironment())
@@ -65,7 +65,7 @@ public class FormsAppTest {
      * @throws IOException
      */
     @Test
-    public void failOnNoChunkedEncoding() throws IOException {
+    void failOnNoChunkedEncoding() throws IOException {
         final Client client = new JerseyClientBuilder(RULE.getEnvironment())
             .using(config)
             .build("test client 2");

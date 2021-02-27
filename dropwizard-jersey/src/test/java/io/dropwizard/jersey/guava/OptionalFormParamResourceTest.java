@@ -30,7 +30,7 @@ public class OptionalFormParamResourceTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void shouldReturnDefaultMessageWhenMessageIsNotPresent() throws IOException {
+    void shouldReturnDefaultMessageWhenMessageIsNotPresent() throws IOException {
         final String defaultMessage = "Default Message";
         final Response response = target("/optional/message").request().post(Entity.form(new MultivaluedStringMap()));
 
@@ -38,7 +38,7 @@ public class OptionalFormParamResourceTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void shouldReturnMessageWhenMessageBlank() throws IOException {
+    void shouldReturnMessageWhenMessageBlank() throws IOException {
         final Form form = new Form("message", "");
         final Response response = target("/optional/message").request().post(Entity.form(form));
 
@@ -46,7 +46,7 @@ public class OptionalFormParamResourceTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void shouldReturnMessageWhenMessageIsPresent() throws IOException {
+    void shouldReturnMessageWhenMessageIsPresent() throws IOException {
         final String customMessage = "Custom Message";
         final Form form = new Form("message", customMessage);
         final Response response = target("/optional/message").request().post(Entity.form(form));
@@ -55,7 +55,7 @@ public class OptionalFormParamResourceTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void shouldReturnDefaultMessageWhenMyMessageIsNotPresent() throws IOException {
+    void shouldReturnDefaultMessageWhenMyMessageIsNotPresent() throws IOException {
         final String defaultMessage = "My Default Message";
         final Response response = target("/optional/my-message").request().post(Entity.form(new MultivaluedStringMap()));
 
@@ -63,7 +63,7 @@ public class OptionalFormParamResourceTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void shouldReturnMyMessageWhenMyMessageIsPresent() throws IOException {
+    void shouldReturnMyMessageWhenMyMessageIsPresent() throws IOException {
         final String myMessage = "My Message";
         final Form form = new Form("mymessage", myMessage);
         final Response response = target("/optional/my-message").request().post(Entity.form(form));
@@ -72,7 +72,7 @@ public class OptionalFormParamResourceTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void shouldThrowBadRequestExceptionWhenInvalidUUIDIsPresent() throws IOException {
+    void shouldThrowBadRequestExceptionWhenInvalidUUIDIsPresent() throws IOException {
         final String invalidUUID = "invalid-uuid";
         final Form form = new Form("uuid", invalidUUID);
         final Response response = target("/optional/uuid").request().post(Entity.form(form));
@@ -81,7 +81,7 @@ public class OptionalFormParamResourceTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void shouldReturnDefaultUUIDWhenUUIDIsNotPresent() throws IOException {
+    void shouldReturnDefaultUUIDWhenUUIDIsNotPresent() throws IOException {
         final String defaultUUID = "d5672fa8-326b-40f6-bf71-d9dacf44bcdc";
         final Response response = target("/optional/uuid").request().post(Entity.form(new MultivaluedStringMap()));
 
@@ -89,7 +89,7 @@ public class OptionalFormParamResourceTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void shouldReturnUUIDWhenValidUUIDIsPresent() throws IOException {
+    void shouldReturnUUIDWhenValidUUIDIsPresent() throws IOException {
         final String uuid = "fd94b00d-bd50-46b3-b42f-905a9c9e7d78";
         final Form form = new Form("uuid", uuid);
         final Response response = target("/optional/uuid").request().post(Entity.form(form));

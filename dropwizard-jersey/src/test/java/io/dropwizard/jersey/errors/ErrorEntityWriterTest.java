@@ -52,7 +52,7 @@ public class ErrorEntityWriterTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void formatsErrorsAsHtml() {
+    void formatsErrorsAsHtml() {
         assertThatExceptionOfType(WebApplicationException.class)
             .isThrownBy(() -> target("/exception/html-exception")
                 .request(MediaType.TEXT_HTML_TYPE)

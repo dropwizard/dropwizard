@@ -44,7 +44,7 @@ public class AllowedMethodsFilterTest extends AbstractJerseyTest {
     private final AllowedMethodsFilter filter = new AllowedMethodsFilter();
 
     @BeforeEach
-    public void setUpFilter() {
+    void setUpFilter() {
         filter.init(config);
     }
 
@@ -81,32 +81,32 @@ public class AllowedMethodsFilterTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void testGetRequestAllowed() {
+    void testGetRequestAllowed() {
         assertEquals(OK_STATUS_CODE, getResponseStatusForRequestMethod("GET", false));
     }
 
     @Test
-    public void testPostRequestAllowed() {
+    void testPostRequestAllowed() {
         assertEquals(OK_STATUS_CODE, getResponseStatusForRequestMethod("POST", true));
     }
 
     @Test
-    public void testPutRequestBlocked() {
+    void testPutRequestBlocked() {
         assertEquals(DISALLOWED_STATUS_CODE, getResponseStatusForRequestMethod("PUT", true));
     }
 
     @Test
-    public void testDeleteRequestBlocked() {
+    void testDeleteRequestBlocked() {
         assertEquals(DISALLOWED_STATUS_CODE, getResponseStatusForRequestMethod("DELETE", false));
     }
 
     @Test
-    public void testTraceRequestBlocked() {
+    void testTraceRequestBlocked() {
         assertEquals(DISALLOWED_STATUS_CODE, getResponseStatusForRequestMethod("TRACE", false));
     }
 
     @Test
-    public void allowsAllowedMethod() throws Exception {
+    void allowsAllowedMethod() throws Exception {
         when(request.getMethod()).thenReturn("GET");
         filter.doFilter(request, response, chain);
 
@@ -114,7 +114,7 @@ public class AllowedMethodsFilterTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void blocksDisallowedMethod() throws Exception {
+    void blocksDisallowedMethod() throws Exception {
         when(request.getMethod()).thenReturn("TRACE");
         filter.doFilter(request, response, chain);
 
@@ -122,7 +122,7 @@ public class AllowedMethodsFilterTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void disallowedMethodCausesMethodNotAllowedResponse() throws IOException, ServletException {
+    void disallowedMethodCausesMethodNotAllowedResponse() throws IOException, ServletException {
         when(request.getMethod()).thenReturn("TRACE");
         filter.doFilter(request, response, chain);
         verify(response).sendError(eq(DISALLOWED_STATUS_CODE));

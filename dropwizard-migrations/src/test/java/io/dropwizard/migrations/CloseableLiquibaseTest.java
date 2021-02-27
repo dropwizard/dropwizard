@@ -17,7 +17,7 @@ public class CloseableLiquibaseTest {
     ManagedPooledDataSource dataSource;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         DataSourceFactory factory = new DataSourceFactory();
 
         factory.setDriverClass(org.h2.Driver.class.getName());
@@ -29,7 +29,7 @@ public class CloseableLiquibaseTest {
     }
 
     @Test
-    public void testWhenClosingAllConnectionsInPoolIsReleased() throws Exception {
+    void testWhenClosingAllConnectionsInPoolIsReleased() throws Exception {
 
         ConnectionPool pool = dataSource.getPool();
         assertThat(pool.getActive()).isEqualTo(1);
