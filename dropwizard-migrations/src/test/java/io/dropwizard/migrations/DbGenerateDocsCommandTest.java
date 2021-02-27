@@ -20,14 +20,14 @@ public class DbGenerateDocsCommandTest extends AbstractMigrationTest {
         TestMigrationConfiguration::getDataSource, TestMigrationConfiguration.class, "migrations.xml");
 
     @Test
-    public void testRun() throws Exception {
+    void testRun() throws Exception {
         Liquibase liquibase = Mockito.mock(Liquibase.class);
         generateDocsCommand.run(new Namespace(Collections.singletonMap("output", Collections.singletonList("/tmp/docs"))), liquibase);
         Mockito.verify(liquibase).generateDocumentation("/tmp/docs");
     }
 
     @Test
-    public void testHelpPage() throws Exception {
+    void testHelpPage() throws Exception {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         createSubparser(generateDocsCommand).printHelp(new PrintWriter(new OutputStreamWriter(baos, UTF_8), true));
         assertThat(baos.toString(UTF_8)).isEqualTo(String.format(

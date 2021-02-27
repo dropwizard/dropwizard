@@ -20,7 +20,7 @@ public class RequestLogFactoryTest {
     private LogbackAccessRequestLogFactory logbackAccessRequestLogFactory;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         final ObjectMapper objectMapper = Jackson.newObjectMapper();
         objectMapper.getSubtypeResolver().registerSubtypes(ConsoleAppenderFactory.class,
                                                            FileAppenderFactory.class,
@@ -32,7 +32,7 @@ public class RequestLogFactoryTest {
     }
 
     @Test
-    public void fileAppenderFactoryIsSet() {
+    void fileAppenderFactoryIsSet() {
         assertThat(logbackAccessRequestLogFactory).isNotNull();
         assertThat(logbackAccessRequestLogFactory.getAppenders()).isNotNull();
         assertThat(logbackAccessRequestLogFactory.getAppenders().size()).isEqualTo(1);
@@ -41,7 +41,7 @@ public class RequestLogFactoryTest {
     }
 
     @Test
-    public void isDiscoverable() throws Exception {
+    void isDiscoverable() throws Exception {
         assertThat(new DiscoverableSubtypeResolver().getDiscoveredSubtypes())
             .contains(LogbackAccessRequestLogFactory.class);
     }

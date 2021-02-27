@@ -55,30 +55,30 @@ public class InheritedServerCommandTest {
     private final Configuration configuration = mock(Configuration.class);
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         when(serverFactory.build(environment)).thenReturn(server);
         when(configuration.getServerFactory()).thenReturn(serverFactory);
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    void tearDown() throws Exception {
         server.stop();
     }
 
     @Test
-    public void hasAName() throws Exception {
+    void hasAName() throws Exception {
         assertThat(command.getName())
                 .isEqualTo("api");
     }
 
     @Test
-    public void hasADescription() throws Exception {
+    void hasADescription() throws Exception {
         assertThat(command.getDescription())
                 .isEqualTo("Runs the Dropwizard application as an API HTTP server");
     }
 
     @Test
-    public void buildsAndRunsAConfiguredServer() throws Exception {
+    void buildsAndRunsAConfiguredServer() throws Exception {
         command.run(environment, namespace, configuration);
 
         assertThat(server.isStarted())
@@ -86,7 +86,7 @@ public class InheritedServerCommandTest {
     }
 
     @Test
-    public void usesDefaultConfigPath() throws Exception {
+    void usesDefaultConfigPath() throws Exception {
 
         class SingletonConfigurationFactory implements ConfigurationFactory<Configuration> {
             @Override

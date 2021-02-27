@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class BundleTest {
     @Test
-    public void deprecatedBundleWillBeInitializedAndRun() throws Exception {
+    void deprecatedBundleWillBeInitializedAndRun() throws Exception {
         final DeprecatedBundle deprecatedBundle = new DeprecatedBundle();
         assertThat(deprecatedBundle.wasInitialized()).isFalse();
         assertThat(deprecatedBundle.wasRun()).isFalse();

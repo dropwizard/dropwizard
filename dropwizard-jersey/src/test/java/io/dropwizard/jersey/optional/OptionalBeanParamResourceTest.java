@@ -38,7 +38,7 @@ public class OptionalBeanParamResourceTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void shouldReturnValuesIfProvidedAndValid() {
+    void shouldReturnValuesIfProvidedAndValid() {
         Map<String, Object> response = target("/optional")
                 .path("param")
                 .queryParam("double", 1234567890D)
@@ -60,7 +60,7 @@ public class OptionalBeanParamResourceTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void shouldReturnBadRequestIfValuesInvalid() {
+    void shouldReturnBadRequestIfValuesInvalid() {
         Response response = target("/optional")
                 .path("param")
                 .queryParam("double", "invalid-double")
@@ -74,7 +74,7 @@ public class OptionalBeanParamResourceTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void shouldReturnaDefaultsIfValuesMissing() {
+    void shouldReturnaDefaultsIfValuesMissing() {
         Map<String, Object> response = target("/optional")
                 .path("param")
                 .request(MediaType.APPLICATION_JSON_TYPE)

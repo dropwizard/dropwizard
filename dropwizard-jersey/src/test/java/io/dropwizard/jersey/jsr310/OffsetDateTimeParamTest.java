@@ -9,7 +9,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class OffsetDateTimeParamTest {
     @Test
-    public void parsesDateTimes() throws Exception {
+    void parsesDateTimes() throws Exception {
         final OffsetDateTimeParam param = new OffsetDateTimeParam("2012-11-19T13:37+01:00");
 
         assertThat(param.get())

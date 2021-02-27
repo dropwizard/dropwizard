@@ -20,7 +20,7 @@ public class SafeRequestParameterConverterTest {
     private AccessEvent accessEvent;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         accessEvent = new AccessEvent(httpServletRequest, Mockito.mock(HttpServletResponse.class),
             Mockito.mock(ServerAdapter.class));
 
@@ -29,12 +29,12 @@ public class SafeRequestParameterConverterTest {
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    void tearDown() throws Exception {
         safeRequestParameterConverter.stop();
     }
 
     @Test
-    public void testConvertOneParameter() throws Exception {
+    void testConvertOneParameter() throws Exception {
         Mockito.when(httpServletRequest.getParameterValues("name")).thenReturn(new String[]{"Alice"});
         Mockito.when(httpServletRequest.getParameterNames())
                 .thenReturn(Collections.enumeration(Collections.singleton("name")));
@@ -49,7 +49,7 @@ public class SafeRequestParameterConverterTest {
     }
 
     @Test
-    public void testConvertSeveralParameters() throws Exception {
+    void testConvertSeveralParameters() throws Exception {
         Mockito.when(httpServletRequest.getParameterValues("name")).thenReturn(new String[]{"Alice", "Bob"});
         Mockito.when(httpServletRequest.getParameterNames())
                 .thenReturn(Collections.enumeration(Collections.singleton("name")));

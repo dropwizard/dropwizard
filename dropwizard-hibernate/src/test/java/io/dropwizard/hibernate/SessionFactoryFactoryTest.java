@@ -50,7 +50,7 @@ public class SessionFactoryFactoryTest {
     private SessionFactory sessionFactory;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         when(environment.metrics()).thenReturn(metricRegistry);
         when(environment.lifecycle()).thenReturn(lifecycleEnvironment);
 
@@ -67,28 +67,28 @@ public class SessionFactoryFactoryTest {
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    void tearDown() throws Exception {
         if (sessionFactory != null) {
             sessionFactory.close();
         }
     }
 
     @Test
-    public void managesTheSessionFactory() throws Exception {
+    void managesTheSessionFactory() throws Exception {
         build();
 
         verify(lifecycleEnvironment).manage(any(SessionFactoryManager.class));
     }
 
     @Test
-    public void callsBundleToConfigure() throws Exception {
+    void callsBundleToConfigure() throws Exception {
         build();
 
         verify(bundle).configure(any(Configuration.class));
     }
 
     @Test
-    public void setsPoolName() {
+    void setsPoolName() {
         build();
 
         ArgumentCaptor<SessionFactoryManager> sessionFactoryManager = ArgumentCaptor.forClass(SessionFactoryManager.class);
@@ -98,7 +98,7 @@ public class SessionFactoryFactoryTest {
     }
 
     @Test
-    public void setsACustomPoolName() {
+    void setsACustomPoolName() {
         this.sessionFactory = factory.build(bundle, environment, config,
             Collections.singletonList(Person.class), "custom-hibernate-db");
 
@@ -109,7 +109,7 @@ public class SessionFactoryFactoryTest {
     }
 
     @Test
-    public void buildsAWorkingSessionFactory() throws Exception {
+    void buildsAWorkingSessionFactory() throws Exception {
         build();
 
         try (Session session = requireNonNull(sessionFactory).openSession()) {
@@ -133,7 +133,7 @@ public class SessionFactoryFactoryTest {
     }
 
     @Test
-    public void configureRunsBeforeSessionFactoryCreation() {
+    void configureRunsBeforeSessionFactoryCreation() {
         final SessionFactoryFactory customFactory = new SessionFactoryFactory() {
             @Override
             protected void configure(Configuration configuration, ServiceRegistry registry) {
@@ -150,7 +150,7 @@ public class SessionFactoryFactoryTest {
     }
 
     @Test
-    public void buildBootstrapServiceRegistryRunsBeforeSessionFactoryCreation() {
+    void buildBootstrapServiceRegistryRunsBeforeSessionFactoryCreation() {
         final SessionFactoryFactory customFactory = new SessionFactoryFactory() {
             @Override
             protected BootstrapServiceRegistryBuilder configureBootstrapServiceRegistryBuilder(BootstrapServiceRegistryBuilder builder) {

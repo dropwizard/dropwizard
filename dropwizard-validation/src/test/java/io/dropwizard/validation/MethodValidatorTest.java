@@ -35,7 +35,7 @@ public class MethodValidatorTest {
     private final Validator validator = BaseValidator.newValidator();
 
     @Test
-    public void complainsAboutMethodsWhichReturnFalse() throws Exception {
+    void complainsAboutMethodsWhichReturnFalse() throws Exception {
         final Collection<String> errors =
                 ConstraintViolations.format(validator.validate(new Example()));
 

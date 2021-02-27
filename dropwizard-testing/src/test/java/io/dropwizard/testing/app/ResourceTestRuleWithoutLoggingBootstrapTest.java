@@ -15,7 +15,7 @@ public class ResourceTestRuleWithoutLoggingBootstrapTest {
             .build();
 
     @Test
-    public void testResource() {
+    void testResource() {
         assertThat(resourceTestRule.target("test").request()
                 .get(String.class))
                 .isEqualTo("Default message");

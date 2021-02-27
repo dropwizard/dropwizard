@@ -21,7 +21,7 @@ public class DbCalculateChecksumCommandTest extends AbstractMigrationTest {
         TestMigrationConfiguration::getDataSource, TestMigrationConfiguration.class, "migrations.xml");
 
     @Test
-    public void testRun() throws Exception {
+    void testRun() throws Exception {
         final AtomicBoolean checkSumVerified = new AtomicBoolean();
         migrateCommand.setCheckSumConsumer(checkSum -> {
             assertThat(checkSum).isEqualTo(CheckSum.parse("8:0f3683b37321ccfb1694a044986de4d9"));
@@ -35,7 +35,7 @@ public class DbCalculateChecksumCommandTest extends AbstractMigrationTest {
     }
 
     @Test
-    public void testHelpPage() throws Exception {
+    void testHelpPage() throws Exception {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         createSubparser(migrateCommand).printHelp(new PrintWriter(new OutputStreamWriter(out, UTF_8), true));
         assertThat(out.toString(UTF_8)).isEqualTo(String.format(

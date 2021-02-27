@@ -12,32 +12,32 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 public class BooleanParamTest {
 
     @Test
-    public void trueReturnsTrue() {
+    void trueReturnsTrue() {
         assertThat(new BooleanParam("true").get()).isTrue();
     }
 
     @Test
-    public void uppercaseTrueReturnsTrue() {
+    void uppercaseTrueReturnsTrue() {
         assertThat(new BooleanParam("TRUE").get()).isTrue();
     }
 
     @Test
-    public void falseReturnsFalse() {
+    void falseReturnsFalse() {
         assertThat(new BooleanParam("false").get()).isFalse();
     }
 
     @Test
-    public void uppercaseFalseReturnsFalse() {
+    void uppercaseFalseReturnsFalse() {
         assertThat(new BooleanParam("FALSE").get()).isFalse();
     }
 
     @Test
-    public void nullThrowsAnException() {
+    void nullThrowsAnException() {
         booleanParamNegativeTest(null);
     }
 
     @Test
-    public void nonBooleanValuesThrowAnException() {
+    void nonBooleanValuesThrowAnException() {
         booleanParamNegativeTest("foo");
     }
 

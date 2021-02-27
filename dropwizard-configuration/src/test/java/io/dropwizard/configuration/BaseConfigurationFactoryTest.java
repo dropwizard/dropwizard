@@ -159,7 +159,7 @@ public abstract class BaseConfigurationFactoryTest {
     }
 
     @AfterEach
-    public void resetConfigOverrides() {
+    void resetConfigOverrides() {
         for (Enumeration<?> props = System.getProperties().propertyNames(); props.hasMoreElements();) {
             String keyString = (String) props.nextElement();
             if (keyString.startsWith("dw.")) {
@@ -169,7 +169,7 @@ public abstract class BaseConfigurationFactoryTest {
     }
 
     @Test
-    public void usesDefaultedCacheBuilderSpec() throws Exception {
+    void usesDefaultedCacheBuilderSpec() throws Exception {
         final ExampleWithDefaults example =
             new YamlConfigurationFactory<>(ExampleWithDefaults.class, validator, Jackson.newObjectMapper(), "dw")
                 .build();
@@ -180,7 +180,7 @@ public abstract class BaseConfigurationFactoryTest {
     }
 
     @Test
-    public void loadsValidConfigFiles() throws Exception {
+    void loadsValidConfigFiles() throws Exception {
         final Example example = factory.build(validFile);
 
         assertThat(example.getName())
@@ -203,7 +203,7 @@ public abstract class BaseConfigurationFactoryTest {
     }
 
     @Test
-    public void handlesSimpleOverride() throws Exception {
+    void handlesSimpleOverride() throws Exception {
         System.setProperty("dw.name", "Coda Hale Overridden");
         final Example example = factory.build(validFile);
         assertThat(example.getName())
@@ -211,7 +211,7 @@ public abstract class BaseConfigurationFactoryTest {
     }
 
     @Test
-    public void handlesExistingOverrideWithPeriod() throws Exception {
+    void handlesExistingOverrideWithPeriod() throws Exception {
         System.setProperty("dw.my\\.logger.level", "debug");
         final Example example = factory.build(validFile);
         assertThat(example.getLogger().get("level"))
@@ -219,7 +219,7 @@ public abstract class BaseConfigurationFactoryTest {
     }
 
     @Test
-    public void handlesNewOverrideWithPeriod() throws Exception {
+    void handlesNewOverrideWithPeriod() throws Exception {
         System.setProperty("dw.my\\.logger.com\\.example", "error");
         final Example example = factory.build(validFile);
         assertThat(example.getLogger().get("com.example"))
@@ -227,7 +227,7 @@ public abstract class BaseConfigurationFactoryTest {
     }
 
     @Test
-    public void handlesArrayOverride() throws Exception {
+    void handlesArrayOverride() throws Exception {
         System.setProperty("dw.type", "coder,wizard,overridden");
         final Example example = factory.build(validFile);
         assertThat(example.getType().get(2))
@@ -237,7 +237,7 @@ public abstract class BaseConfigurationFactoryTest {
     }
 
     @Test
-    public void handlesArrayOverrideEscaped() throws Exception {
+    void handlesArrayOverrideEscaped() throws Exception {
         System.setProperty("dw.type", "coder,wizard,overr\\,idden");
         final Example example = factory.build(validFile);
         assertThat(example.getType().get(2))
@@ -247,7 +247,7 @@ public abstract class BaseConfigurationFactoryTest {
     }
 
     @Test
-    public void handlesSingleElementArrayOverride() throws Exception {
+    void handlesSingleElementArrayOverride() throws Exception {
         System.setProperty("dw.type", "overridden");
         final Example example = factory.build(validFile);
         assertThat(example.getType().get(0))
@@ -257,7 +257,7 @@ public abstract class BaseConfigurationFactoryTest {
     }
 
     @Test
-    public void handlesArrayOverrideIntoValidNoTypeFile() throws Exception {
+    void handlesArrayOverrideIntoValidNoTypeFile() throws Exception {
         System.setProperty("dw.type", "coder,wizard,overridden");
         final Example example = factory.build(validNoTypeFile);
         assertThat(example.getType().get(2))
@@ -267,7 +267,7 @@ public abstract class BaseConfigurationFactoryTest {
     }
 
     @Test
-    public void overridesArrayWithIndices() throws Exception {
+    void overridesArrayWithIndices() throws Exception {
         System.setProperty("dw.type[1]", "overridden");
         final Example example = factory.build(validFile);
 
@@ -278,7 +278,7 @@ public abstract class BaseConfigurationFactoryTest {
     }
 
     @Test
-    public void overridesArrayWithIndicesReverse() throws Exception {
+    void overridesArrayWithIndicesReverse() throws Exception {
         System.setProperty("dw.type[0]", "overridden");
         final Example example = factory.build(validFile);
 
@@ -289,7 +289,7 @@ public abstract class BaseConfigurationFactoryTest {
     }
 
     @Test
-    public void overridesArrayPropertiesWithIndices() throws Exception {
+    void overridesArrayPropertiesWithIndices() throws Exception {
         System.setProperty("dw.servers[0].port", "7000");
         System.setProperty("dw.servers[2].port", "9000");
         final Example example = factory.build(validFile);
@@ -303,7 +303,7 @@ public abstract class BaseConfigurationFactoryTest {
     }
 
     @Test
-    public void overrideMapProperty() throws Exception {
+    void overrideMapProperty() throws Exception {
         System.setProperty("dw.properties.settings.enabled", "true");
         final Example example = factory.build(validFile);
         assertThat(example.getProperties())
@@ -312,7 +312,7 @@ public abstract class BaseConfigurationFactoryTest {
     }
 
     @Test
-    public void throwsAnExceptionOnUnexpectedArrayOverride() {
+    void throwsAnExceptionOnUnexpectedArrayOverride() {
         System.setProperty("dw.servers.port", "9000");
         assertThatExceptionOfType(IllegalArgumentException.class)
             .isThrownBy(() -> factory.build(validFile))
@@ -320,14 +320,14 @@ public abstract class BaseConfigurationFactoryTest {
     }
 
     @Test
-    public void throwsAnExceptionOnArrayOverrideWithInvalidType() {
+    void throwsAnExceptionOnArrayOverrideWithInvalidType() {
         System.setProperty("dw.servers", "one,two");
 
         assertThatExceptionOfType(ConfigurationParsingException.class).isThrownBy(() -> factory.build(validFile));
     }
 
     @Test
-    public void throwsAnExceptionOnOverrideArrayIndexOutOfBounds() {
+    void throwsAnExceptionOnOverrideArrayIndexOutOfBounds() {
         System.setProperty("dw.type[2]", "invalid");
         assertThatExceptionOfType(ArrayIndexOutOfBoundsException.class)
             .isThrownBy(() -> factory.build(validFile))
@@ -335,7 +335,7 @@ public abstract class BaseConfigurationFactoryTest {
     }
 
     @Test
-    public void throwsAnExceptionOnOverrideArrayPropertyIndexOutOfBounds() {
+    void throwsAnExceptionOnOverrideArrayPropertyIndexOutOfBounds() {
         System.setProperty("dw.servers[4].port", "9000");
         assertThatExceptionOfType(ArrayIndexOutOfBoundsException.class)
             .isThrownBy(() -> factory.build(validFile))
@@ -343,20 +343,20 @@ public abstract class BaseConfigurationFactoryTest {
     }
 
     @Test
-    public void throwsAnExceptionOnMalformedFiles() {
+    void throwsAnExceptionOnMalformedFiles() {
         assertThatExceptionOfType(ConfigurationParsingException.class)
             .isThrownBy(() -> factory.build(malformedFile));
     }
 
     @Test
-    public void throwsAnExceptionOnEmptyFiles() {
+    void throwsAnExceptionOnEmptyFiles() {
         assertThatExceptionOfType(ConfigurationParsingException.class)
             .isThrownBy(() -> factory.build(emptyFile))
             .withMessageContaining(" * Configuration at " + emptyFile.toString() + " must not be empty");
     }
 
     @Test
-    public void throwsAnExceptionOnInvalidFiles() {
+    void throwsAnExceptionOnInvalidFiles() {
         ThrowableAssertAlternative<ConfigurationValidationException> t = assertThatExceptionOfType(ConfigurationValidationException.class)
             .isThrownBy(() -> factory.build(invalidFile));
 
@@ -368,7 +368,7 @@ public abstract class BaseConfigurationFactoryTest {
     }
 
     @Test
-    public void handleOverrideDefaultConfiguration() throws Exception {
+    void handleOverrideDefaultConfiguration() throws Exception {
         System.setProperty("dw.name", "Coda Hale Overridden");
         System.setProperty("dw.type", "coder,wizard,overridden");
         System.setProperty("dw.properties.settings.enabled", "true");
@@ -388,7 +388,7 @@ public abstract class BaseConfigurationFactoryTest {
     }
 
     @Test
-    public void handleDefaultConfigurationWithoutOverriding() throws Exception {
+    void handleDefaultConfigurationWithoutOverriding() throws Exception {
         final ExampleWithDefaults example =
                 new YamlConfigurationFactory<>(ExampleWithDefaults.class, validator, Jackson.newObjectMapper(), "dw")
                         .build();
@@ -402,7 +402,7 @@ public abstract class BaseConfigurationFactoryTest {
     }
 
     @Test
-    public void throwsAnExceptionIfDefaultConfigurationCantBeInstantiated() {
+    void throwsAnExceptionIfDefaultConfigurationCantBeInstantiated() {
         System.setProperty("dw.name", "Coda Hale Overridden");
         final YamlConfigurationFactory<NonInsatiableExample> factory =
             new YamlConfigurationFactory<>(NonInsatiableExample.class, validator, Jackson.newObjectMapper(), "dw");
@@ -413,7 +413,7 @@ public abstract class BaseConfigurationFactoryTest {
     }
 
     @Test
-    public void incorrectTypeIsFound() {
+    void incorrectTypeIsFound() {
         assertThatExceptionOfType(ConfigurationParsingException.class)
             .isThrownBy(() -> factory.build(wrongTypeFile))
             .withMessage(String.format("%s has an error:" + NEWLINE +
@@ -421,7 +421,7 @@ public abstract class BaseConfigurationFactoryTest {
     }
 
     @Test
-    public void printsDetailedInformationOnMalformedContent() throws Exception {
+    void printsDetailedInformationOnMalformedContent() throws Exception {
         factory.build(malformedAdvancedFile);
     }
 }

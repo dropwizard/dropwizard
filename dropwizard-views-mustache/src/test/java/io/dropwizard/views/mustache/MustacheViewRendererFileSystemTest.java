@@ -86,19 +86,19 @@ public class MustacheViewRendererFileSystemTest extends JerseyTest {
     }
 
     @Test
-    public void rendersViewsWithAbsoluteTemplatePaths() {
+    void rendersViewsWithAbsoluteTemplatePaths() {
         final String response = target("/test/absolute").request().get(String.class);
         assertThat(response).isEqualTo("Woop woop. yay\n");
     }
 
     @Test
-    public void rendersViewsWithRelativeTemplatePaths() {
+    void rendersViewsWithRelativeTemplatePaths() {
         final String response = target("/test/relative").request().get(String.class);
         assertThat(response).isEqualTo("Ok.\n");
     }
 
     @Test
-    public void returnsA500ForViewsWithBadTemplatePaths() {
+    void returnsA500ForViewsWithBadTemplatePaths() {
         assertThatExceptionOfType(WebApplicationException.class)
             .isThrownBy(() -> target("/test/bad").request().get(String.class))
             .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(500))
@@ -107,7 +107,7 @@ public class MustacheViewRendererFileSystemTest extends JerseyTest {
     }
 
     @Test
-    public void returnsA500ForViewsThatCantCompile() {
+    void returnsA500ForViewsThatCantCompile() {
         assertThatExceptionOfType(WebApplicationException.class)
             .isThrownBy(() -> target("/test/error").request().get(String.class))
             .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(500))

@@ -22,13 +22,13 @@ public class DbPrepareRollbackCommandTest extends AbstractMigrationTest {
     private TestMigrationConfiguration conf;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         final String databaseUrl = getDatabaseUrl();
         conf = createConfiguration(databaseUrl);
     }
 
     @Test
-    public void testRun() throws Exception {
+    void testRun() throws Exception {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         prepareRollbackCommand.setOutputStream(new PrintStream(baos));
         prepareRollbackCommand.run(null, new Namespace(Collections.emptyMap()), conf);
@@ -38,7 +38,7 @@ public class DbPrepareRollbackCommandTest extends AbstractMigrationTest {
     }
 
     @Test
-    public void testPrepareOnlyChange() throws Exception {
+    void testPrepareOnlyChange() throws Exception {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         prepareRollbackCommand.setOutputStream(new PrintStream(baos));
         prepareRollbackCommand.run(null, new Namespace(Collections.singletonMap("count", 1)), conf);
@@ -46,7 +46,7 @@ public class DbPrepareRollbackCommandTest extends AbstractMigrationTest {
     }
 
     @Test
-    public void testPrintHelp() throws Exception {
+    void testPrintHelp() throws Exception {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         createSubparser(prepareRollbackCommand).printHelp(new PrintWriter(new OutputStreamWriter(out, UTF_8), true));
         assertThat(out.toString(UTF_8)).isEqualTo(String.format(

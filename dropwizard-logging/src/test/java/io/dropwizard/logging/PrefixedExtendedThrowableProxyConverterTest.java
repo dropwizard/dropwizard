@@ -14,13 +14,13 @@ public class PrefixedExtendedThrowableProxyConverterTest {
     private final ThrowableProxy proxy = new ThrowableProxy(new IOException("noo"));
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         converter.setOptionList(Collections.singletonList("full"));
         converter.start();
     }
 
     @Test
-    public void prefixesExceptionsWithExclamationMarks() throws Exception {
+    void prefixesExceptionsWithExclamationMarks() throws Exception {
         assertThat(converter.throwableProxyToString(proxy))
                 .startsWith(String.format("! java.io.IOException: noo%n" +
                                                   "! at io.dropwizard.logging.PrefixedExtendedThrowableProxyConverterTest.<init>(PrefixedExtendedThrowableProxyConverterTest.java:14)%n"));

@@ -48,7 +48,7 @@ public class IntegrationTest {
     }
 
     @Test
-    public void testHelloWorld() throws Exception {
+    void testHelloWorld() throws Exception {
         final Optional<String> name = Optional.of("Dr. IntegrationTest");
         final Saying saying = RULE.client().target("http://localhost:" + RULE.getLocalPort() + "/hello-world")
                 .queryParam("name", name.get())
@@ -58,7 +58,7 @@ public class IntegrationTest {
     }
 
     @Test
-    public void testPostPerson() throws Exception {
+    void testPostPerson() throws Exception {
         final Person person = new Person("Dr. IntegrationTest", "Chief Wizard", 1525);
         final Person newPerson = postPerson(person);
         assertThat(newPerson.getFullName()).isEqualTo(person.getFullName());
@@ -66,12 +66,12 @@ public class IntegrationTest {
     }
 
     @Test
-    public void testRenderingPersonFreemarker() throws Exception {
+    void testRenderingPersonFreemarker() throws Exception {
         testRenderingPerson("view_freemarker");
     }
 
     @Test
-    public void testRenderingPersonMustache() throws Exception {
+    void testRenderingPersonMustache() throws Exception {
         testRenderingPerson("view_mustache");
     }
 
@@ -91,7 +91,7 @@ public class IntegrationTest {
     }
 
     @Test
-    public void testLogFileWritten() throws IOException {
+    void testLogFileWritten() throws IOException {
         // The log file is using a size and time based policy, which used to silently
         // fail (and not write to a log file). This test ensures not only that the
         // log file exists, but also contains the log line that jetty prints on startup

@@ -15,7 +15,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatCode;
 
 public class JacksonTest {
     @Test
-    public void objectMapperUsesGivenCustomJsonFactory() {
+    void objectMapperUsesGivenCustomJsonFactory() {
         JsonFactory factory = Mockito.mock(JsonFactory.class);
 
         ObjectMapper mapper = Jackson.newObjectMapper(factory);
@@ -24,14 +24,14 @@ public class JacksonTest {
     }
 
     @Test
-    public void objectMapperCanHandleNullInsteadOfCustomJsonFactory() {
+    void objectMapperCanHandleNullInsteadOfCustomJsonFactory() {
         ObjectMapper mapper = Jackson.newObjectMapper(null);
 
         assertThat(mapper.getFactory()).isNotNull();
     }
 
     @Test
-    public void objectMapperCanDeserializeJdk7Types() throws IOException {
+    void objectMapperCanDeserializeJdk7Types() throws IOException {
         final LogMetadata metadata = Jackson.newObjectMapper()
             .readValue("{\"path\": \"/var/log/app/server.log\"}", LogMetadata.class);
         assertThat(metadata).isNotNull();
@@ -39,7 +39,7 @@ public class JacksonTest {
     }
 
     @Test
-    public void objectMapperSerializesNullValues() throws IOException {
+    void objectMapperSerializesNullValues() throws IOException {
         final ObjectMapper mapper = Jackson.newObjectMapper();
         final Issue1627 pojo = new Issue1627(null, null);
         final String json = "{\"string\":null,\"uuid\":null}";
@@ -48,7 +48,7 @@ public class JacksonTest {
     }
 
     @Test
-    public void objectMapperIgnoresUnknownProperties() {
+    void objectMapperIgnoresUnknownProperties() {
         assertThatCode(() ->
             Jackson.newObjectMapper()
                 .readValue("{\"unknown\": 4711, \"path\": \"/var/log/app/server.log\"}", LogMetadata.class)

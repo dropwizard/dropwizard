@@ -15,12 +15,12 @@ public class ParanamerModuleTest {
     private final ObjectMapper mapper = new ObjectMapper();
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         mapper.registerModule(new ParameterNamesModule());
     }
 
     @Test
-    public void deserializePersonWithoutAnnotations() throws IOException {
+    void deserializePersonWithoutAnnotations() throws IOException {
         final ObjectReader reader = mapper.readerFor(Person.class);
         final Person person = reader.readValue("{ \"name\": \"Foo\", \"surname\": \"Bar\" }");
         assertThat(person.getName()).isEqualTo("Foo");
@@ -28,7 +28,7 @@ public class ParanamerModuleTest {
     }
 
     @Test
-    public void serializePersonWithoutAnnotations() throws IOException {
+    void serializePersonWithoutAnnotations() throws IOException {
         final ObjectWriter reader = mapper.writerFor(Person.class);
         final String person = reader.writeValueAsString(new Person("Foo", "Bar"));
         assertThat(person)

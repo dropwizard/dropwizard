@@ -58,13 +58,13 @@ public class PrefixedRootCauseFirstThrowableProxyConverterTest {
     }
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         converter.setOptionList(Collections.singletonList("full"));
         converter.start();
     }
 
     @Test
-    public void prefixesExceptionsWithExclamationMarks()  {
+    void prefixesExceptionsWithExclamationMarks()  {
         final List<String> stackTrace = Arrays.stream(converter.throwableProxyToString(proxy).split(System.lineSeparator()))
                 .filter(s -> !Strings.isNullOrEmpty(s))
                 .collect(Collectors.toList());
@@ -75,7 +75,7 @@ public class PrefixedRootCauseFirstThrowableProxyConverterTest {
     }
 
     @Test
-    public void placesRootCauseIsFirst() {
+    void placesRootCauseIsFirst() {
         assertThat(converter.throwableProxyToString(proxy)).matches(Pattern.compile(".+" +
                 "java\\.net\\.SocketTimeoutException: Timed-out reading from socket.+" +
                 "java\\.io\\.IOException: Fairly general error doing some IO.+" +

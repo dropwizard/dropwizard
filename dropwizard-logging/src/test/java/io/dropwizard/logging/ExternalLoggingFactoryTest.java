@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class ExternalLoggingFactoryTest {
 
     @Test
-    public void canBeDeserialized() throws Exception {
+    void canBeDeserialized() throws Exception {
         LoggingFactory externalRequestLogFactory = new YamlConfigurationFactory<>(LoggingFactory.class,
             BaseValidator.newValidator(), Jackson.newObjectMapper(), "dw")
             .build(new File(Resources.getResource("yaml/logging_external.yml").toURI()));
@@ -23,7 +23,7 @@ public class ExternalLoggingFactoryTest {
     }
 
     @Test
-    public void isDiscoverable() throws Exception {
+    void isDiscoverable() throws Exception {
         assertThat(new DiscoverableSubtypeResolver().getDiscoveredSubtypes())
             .contains(ExternalLoggingFactory.class);
     }

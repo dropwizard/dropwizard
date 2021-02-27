@@ -7,7 +7,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class ExceptionFormatTest {
 
     @Test
-    public void testDefaults() {
+    void testDefaults() {
         ExceptionFormat ef = new ExceptionFormat();
         assertThat(ef.isRootFirst()).isTrue();
         assertThat(ef.getDepth()).isEqualTo("full");
@@ -15,7 +15,7 @@ public class ExceptionFormatTest {
     }
 
     @Test
-    public void testSetDepth() {
+    void testSetDepth() {
         ExceptionFormat ef = new ExceptionFormat();
         assertThat(ef.getDepth()).isEqualTo("full");
 

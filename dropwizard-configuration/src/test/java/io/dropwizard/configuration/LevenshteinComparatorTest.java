@@ -18,7 +18,7 @@ public class LevenshteinComparatorTest {
      * specifics of the environment / JVM.
      */
     @Test
-    public void testLevenshteinComparatorSort() {
+    void testLevenshteinComparatorSort() {
         // no assertions, just making sure we don't violate the compare contract
         Arrays.sort(new String[]{
             "y", "w", "y", "e",
@@ -32,7 +32,7 @@ public class LevenshteinComparatorTest {
     }
 
     @Test
-    public void testLevenshteinCompare() {
+    void testLevenshteinCompare() {
         assertThat(c.compare("z", "v")).isEqualTo(0);
         assertThat(c.compare("b", "v")).isEqualTo(-1);
         assertThat(c.compare("v", "b")).isEqualTo(1);

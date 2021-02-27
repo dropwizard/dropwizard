@@ -8,13 +8,13 @@ import static org.assertj.core.api.Assumptions.assumeThat;
 
 public class EnvironmentVariableLookupTest {
     @Test
-    public void lookupThrowsExceptionInStrictMode() {
+    void lookupThrowsExceptionInStrictMode() {
         assumeThat(System.getenv("nope")).isNull();
         assertThat(new EnvironmentVariableLookup().lookup("nope")).isNull();
     }
 
     @Test
-    public void lookupReplacesWithEnvironmentVariables() {
+    void lookupReplacesWithEnvironmentVariables() {
         EnvironmentVariableLookup lookup = new EnvironmentVariableLookup();
 
         // Let's hope this doesn't break on Windows

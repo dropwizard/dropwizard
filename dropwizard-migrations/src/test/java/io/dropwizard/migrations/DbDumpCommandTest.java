@@ -48,7 +48,7 @@ public class DbDumpCommandTest extends AbstractMigrationTest {
     }
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         final String existedDbPath = new File(Resources.getResource("test-db.mv.db").toURI()).getAbsolutePath();
         final String existedDbUrl = "jdbc:h2:" + existedDbPath.substring(0, existedDbPath.length() - ".mv.db".length());
         existedDbConf = createConfiguration(existedDbUrl);
@@ -56,7 +56,7 @@ public class DbDumpCommandTest extends AbstractMigrationTest {
     }
 
     @Test
-    public void testDumpSchema() throws Exception {
+    void testDumpSchema() throws Exception {
         dumpCommand.run(null, new Namespace(ATTRIBUTE_NAMES.stream()
             .collect(Collectors.toMap(a -> a, b -> true))), existedDbConf);
 
@@ -65,7 +65,7 @@ public class DbDumpCommandTest extends AbstractMigrationTest {
     }
 
     @Test
-    public void testDumpSchemaAndData() throws Exception {
+    void testDumpSchemaAndData() throws Exception {
         dumpCommand.run(null, new Namespace(Stream.concat(ATTRIBUTE_NAMES.stream(), Stream.of("data"))
             .collect(Collectors.toMap(a -> a, b -> true))), existedDbConf);
 
@@ -75,7 +75,7 @@ public class DbDumpCommandTest extends AbstractMigrationTest {
     }
 
     @Test
-    public void testDumpOnlyData() throws Exception {
+    void testDumpOnlyData() throws Exception {
         dumpCommand.run(null, new Namespace(Collections.singletonMap("data", true)), existedDbConf);
 
         final Element changeSet = getFirstElement(toXmlDocument(baos).getDocumentElement(), "changeSet");
@@ -83,7 +83,7 @@ public class DbDumpCommandTest extends AbstractMigrationTest {
     }
 
     @Test
-    public void testWriteToFile() throws Exception {
+    void testWriteToFile() throws Exception {
         final File file = File.createTempFile("migration", ".xml");
         dumpCommand.run(null, new Namespace(Collections.singletonMap("output", file.getAbsolutePath())), existedDbConf);
         // Check that file is exist, and has some XML content (no reason to make a full-blown XML assertion)
@@ -92,7 +92,7 @@ public class DbDumpCommandTest extends AbstractMigrationTest {
     }
 
     @Test
-    public void testHelpPage() throws Exception {
+    void testHelpPage() throws Exception {
         createSubparser(dumpCommand).printHelp(new PrintWriter(new OutputStreamWriter(baos, UTF_8), true));
         assertThat(baos.toString(UTF_8)).isEqualTo(String.format(
                 "usage: db dump [-h] [--migrations MIGRATIONS-FILE] [--catalog CATALOG]%n" +

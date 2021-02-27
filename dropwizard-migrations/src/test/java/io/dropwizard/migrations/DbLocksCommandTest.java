@@ -22,7 +22,7 @@ public class DbLocksCommandTest extends AbstractMigrationTest {
         TestMigrationConfiguration::getDataSource, TestMigrationConfiguration.class, "migrations.xml");
 
     @Test
-    public void testRelease() throws Exception {
+    void testRelease() throws Exception {
         // We can't create locks in the database, so use mocks
         final Liquibase liquibase = Mockito.mock(Liquibase.class);
         locksCommand.run(new Namespace(Maps.of("list", false, "release", true)), liquibase);
@@ -30,7 +30,7 @@ public class DbLocksCommandTest extends AbstractMigrationTest {
     }
 
     @Test
-    public void testListLocks() throws Exception {
+    void testListLocks() throws Exception {
         final PrintStream printStream = new PrintStream(new ByteArrayOutputStream());
         locksCommand.setPrintStream(printStream);
 
@@ -41,7 +41,7 @@ public class DbLocksCommandTest extends AbstractMigrationTest {
     }
 
     @Test
-    public void testFailsWhenNoListOrRelease() throws Exception {
+    void testFailsWhenNoListOrRelease() throws Exception {
         final Liquibase liquibase = Mockito.mock(Liquibase.class);
         assertThatExceptionOfType(IllegalArgumentException.class)
             .isThrownBy(() -> locksCommand.run(new Namespace(Maps.of("list", false, "release", false)),
@@ -50,7 +50,7 @@ public class DbLocksCommandTest extends AbstractMigrationTest {
     }
 
     @Test
-    public void testFailsWhenBothListAndRelease() throws Exception {
+    void testFailsWhenBothListAndRelease() throws Exception {
         final Liquibase liquibase = Mockito.mock(Liquibase.class);
         assertThatExceptionOfType(IllegalArgumentException.class)
             .isThrownBy(() -> locksCommand.run(new Namespace(Maps.of("list", true, "release", true)),
@@ -59,7 +59,7 @@ public class DbLocksCommandTest extends AbstractMigrationTest {
     }
 
     @Test
-    public void testPrintHelp() throws Exception {
+    void testPrintHelp() throws Exception {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         createSubparser(locksCommand).printHelp(new PrintWriter(new OutputStreamWriter(out, UTF_8), true));
         assertThat(out.toString(UTF_8)).isEqualTo(String.format(

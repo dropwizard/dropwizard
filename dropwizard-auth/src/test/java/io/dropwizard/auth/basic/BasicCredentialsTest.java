@@ -8,12 +8,12 @@ public class BasicCredentialsTest {
     private final BasicCredentials credentials = new BasicCredentials("u", "p");
 
     @Test
-    public void hasAUsername() {
+    void hasAUsername() {
         assertThat(credentials.getUsername()).isEqualTo("u");
     }
 
     @Test
-    public void hasAPassword() {
+    void hasAPassword() {
         assertThat(credentials.getPassword()).isEqualTo("p");
     }
 
@@ -30,7 +30,7 @@ public class BasicCredentialsTest {
     }
 
     @Test
-    public void hasAWorkingHashCode() {
+    void hasAWorkingHashCode() {
         assertThat(credentials.hashCode())
             .hasSameHashCodeAs(new BasicCredentials("u", "p"))
             .isNotEqualTo(new BasicCredentials("u1", "p").hashCode())
@@ -38,7 +38,7 @@ public class BasicCredentialsTest {
     }
 
     @Test
-    public void isHumanReadable() {
+    void isHumanReadable() {
         assertThat(credentials).hasToString("BasicCredentials{username=u, password=**********}");
     }
 }

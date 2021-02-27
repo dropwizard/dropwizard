@@ -19,7 +19,7 @@ public class DbTagCommandTest extends AbstractMigrationTest {
         new TestMigrationDatabaseConfiguration(), TestMigrationConfiguration.class, migrationsFileName);
 
     @Test
-    public void testRun() throws Exception {
+    void testRun() throws Exception {
         // Migrate some DDL changes
         final TestMigrationConfiguration conf = createConfiguration(getDatabaseUrl());
         final DbMigrateCommand<TestMigrationConfiguration> dbMigrateCommand = new DbMigrateCommand<>(
@@ -37,7 +37,7 @@ public class DbTagCommandTest extends AbstractMigrationTest {
     }
 
     @Test
-    public void testPrintHelp() throws Exception {
+    void testPrintHelp() throws Exception {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         createSubparser(dbTagCommand).printHelp(new PrintWriter(new OutputStreamWriter(baos, UTF_8), true));
         assertThat(baos.toString(UTF_8)).isEqualTo(String.format(

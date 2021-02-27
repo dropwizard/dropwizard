@@ -15,7 +15,7 @@ public class IllegalStateExceptionMapperTest {
     private final IllegalStateExceptionMapper mapper = new IllegalStateExceptionMapper();
 
     @Test
-    public void delegatesToParentClass() {
+    void delegatesToParentClass() {
         @SuppressWarnings("serial")
         final Response reponse = mapper.toResponse(new IllegalStateException(getClass().getName()) {
         });
@@ -23,7 +23,7 @@ public class IllegalStateExceptionMapperTest {
     }
 
     @Test
-    public void handlesFormParamContentTypeError() {
+    void handlesFormParamContentTypeError() {
         final Response reponse = mapper
             .toResponse(new IllegalStateException(LocalizationMessages.FORM_PARAM_CONTENT_TYPE_ERROR()));
         assertThat(reponse.getStatusInfo()).isEqualTo(UNSUPPORTED_MEDIA_TYPE);

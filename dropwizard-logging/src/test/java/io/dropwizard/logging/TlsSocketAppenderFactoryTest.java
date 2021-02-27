@@ -34,7 +34,7 @@ public class TlsSocketAppenderFactoryTest {
         DefaultLoggingFactory.class, BaseValidator.newValidator(), objectMapper, "dw-ssl");
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         tcpServer.setUp();
         objectMapper.getSubtypeResolver().registerSubtypes(TcpSocketAppenderFactory.class);
     }
@@ -65,7 +65,7 @@ public class TlsSocketAppenderFactoryTest {
     }
 
     @Test
-    public void testTlsLogging() throws Exception {
+    void testTlsLogging() throws Exception {
         DefaultLoggingFactory loggingFactory = yamlConfigurationFactory.build(new SubstitutingSourceProvider(
             new ResourceConfigurationSourceProvider(), new StringSubstitutor(Maps.of(
             "tls.trust_store.path", resourcePath("stores/tls_client.jks").getAbsolutePath(),
@@ -85,7 +85,7 @@ public class TlsSocketAppenderFactoryTest {
     }
 
     @Test
-    public void testParseCustomConfiguration() throws Exception {
+    void testParseCustomConfiguration() throws Exception {
         DefaultLoggingFactory loggingFactory = yamlConfigurationFactory.build(
             resourcePath("yaml/logging-tls-custom.yml"));
         assertThat(loggingFactory.getAppenders()).hasSize(1);

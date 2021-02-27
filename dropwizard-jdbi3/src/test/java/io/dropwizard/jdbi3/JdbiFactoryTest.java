@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
 
 public class JdbiFactoryTest {
     @Test
-    public void testBuild() {
+    void testBuild() {
         final Environment environment = mock(Environment.class);
         final MetricRegistry metrics = mock(MetricRegistry.class);
         final LifecycleEnvironment lifecycle = mock(LifecycleEnvironment.class);

@@ -45,7 +45,7 @@ public class DefaultLoggingFactoryTest {
     private DefaultLoggingFactory config;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         objectMapper.getSubtypeResolver().registerSubtypes(ConsoleAppenderFactory.class,
                 FileAppenderFactory.class,
                 SyslogAppenderFactory.class);
@@ -54,12 +54,12 @@ public class DefaultLoggingFactoryTest {
     }
 
     @Test
-    public void hasADefaultLevel() {
+    void hasADefaultLevel() {
         assertThat(config.getLevel()).isEqualTo("INFO");
     }
 
     @Test
-    public void loggerLevelsCanBeOff() throws Exception {
+    void loggerLevelsCanBeOff() throws Exception {
         DefaultLoggingFactory config = null;
         try {
             config = factory.build(new File(Resources.getResource("yaml/logging_level_off.yml").toURI()));
@@ -83,7 +83,7 @@ public class DefaultLoggingFactoryTest {
     }
 
     @Test
-    public void canParseNewLoggerFormat() throws Exception {
+    void canParseNewLoggerFormat() throws Exception {
         final DefaultLoggingFactory config = factory.build(
                 new File(Resources.getResource("yaml/logging_advanced.yml").toURI()));
 
@@ -115,7 +115,7 @@ public class DefaultLoggingFactoryTest {
     }
 
     @Test
-    public void testConfigure(@TempDir Path tempDir) throws Exception {
+    void testConfigure(@TempDir Path tempDir) throws Exception {
         final StringSubstitutor substitutor = new StringSubstitutor(Maps.of(
                 "new_app", tempDir.resolve("example-new-app").toFile().getAbsolutePath(),
                 "new_app_not_additive", tempDir.resolve("example-new-app-not-additive").toFile().getAbsolutePath(),
@@ -162,7 +162,7 @@ public class DefaultLoggingFactoryTest {
     }
 
     @Test
-    public void testResetAppenders() throws Exception {
+    void testResetAppenders() throws Exception {
         final String configPath = Resources.getResource("yaml/logging.yml").getFile();
         final DefaultLoggingFactory config = factory.build(new FileConfigurationSourceProvider(), configPath);
         config.configure(new MetricRegistry(), "test-logger");
@@ -179,7 +179,7 @@ public class DefaultLoggingFactoryTest {
     }
 
     @Test
-    public void testToStringIsImplemented() {
+    void testToStringIsImplemented() {
         assertThat(config.toString()).startsWith(
                 "DefaultLoggingFactory{level=INFO, loggers={com.example.app=\"DEBUG\"}, appenders=");
     }

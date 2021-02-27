@@ -19,7 +19,7 @@ public class ExternalRequestLogFactoryTest {
     }
 
     @Test
-    public void canBeDeserialized() throws Exception {
+    void canBeDeserialized() throws Exception {
         RequestLogFactory<?> externalRequestLogFactory = new YamlConfigurationFactory<>(RequestLogFactory.class,
             BaseValidator.newValidator(), Jackson.newObjectMapper(), "dw")
             .build(new File(Resources.getResource("yaml/externalRequestLog.yml").toURI()));
@@ -29,7 +29,7 @@ public class ExternalRequestLogFactoryTest {
     }
 
     @Test
-    public void isDiscoverable() throws Exception {
+    void isDiscoverable() throws Exception {
         assertThat(new DiscoverableSubtypeResolver().getDiscoveredSubtypes())
             .contains(ExternalRequestLogFactory.class);
     }

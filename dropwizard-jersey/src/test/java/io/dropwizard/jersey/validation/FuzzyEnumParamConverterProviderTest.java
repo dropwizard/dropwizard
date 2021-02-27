@@ -160,7 +160,7 @@ public class FuzzyEnumParamConverterProviderTest {
     }
 
     @Test
-    public void testFuzzyEnum() {
+    void testFuzzyEnum() {
         final ParamConverter<Fuzzy> converter = getConverter(Fuzzy.class);
         assertThat(converter.fromString(null)).isNull();
         assertThat(converter.fromString("A.1")).isSameAs(Fuzzy.A_1);
@@ -180,18 +180,18 @@ public class FuzzyEnumParamConverterProviderTest {
 
 
     @Test
-    public void testToString() {
+    void testToString() {
         final ParamConverter<WithToString> converter = getConverter(WithToString.class);
         assertThat(converter.toString(WithToString.A_1)).isEqualTo("<A_1>");
     }
 
     @Test
-    public void testNonEnum() {
+    void testNonEnum() {
         assertThat(paramConverterProvider.getConverter(Klass.class, null, new Annotation[] {})).isNull();
     }
 
     @Test
-    public void testEnumViaExplicitFromString() {
+    void testEnumViaExplicitFromString() {
         final ParamConverter<ExplicitFromString> converter = getConverter(ExplicitFromString.class);
         assertThat(converter.fromString("1")).isSameAs(ExplicitFromString.A);
         assertThat(converter.fromString("2")).isSameAs(ExplicitFromString.B);
@@ -203,7 +203,7 @@ public class FuzzyEnumParamConverterProviderTest {
     }
 
     @Test
-    public void testEnumViaExplicitFromStringThatThrowsWebApplicationException() {
+    void testEnumViaExplicitFromStringThatThrowsWebApplicationException() {
         final ParamConverter<ExplicitFromStringThrowsWebApplicationException> converter =
             getConverter(ExplicitFromStringThrowsWebApplicationException.class);
         final WebApplicationException throwable = catchThrowableOfType(() -> converter.fromString("3"), WebApplicationException.class);
@@ -214,7 +214,7 @@ public class FuzzyEnumParamConverterProviderTest {
     }
 
     @Test
-    public void testEnumViaExplicitFromStringThatThrowsOtherException() {
+    void testEnumViaExplicitFromStringThatThrowsOtherException() {
         final ParamConverter<ExplicitFromStringThrowsOtherException> converter =
             getConverter(ExplicitFromStringThrowsOtherException.class);
         final WebApplicationException throwable = catchThrowableOfType(() -> converter.fromString("1"), WebApplicationException.class);
@@ -225,7 +225,7 @@ public class FuzzyEnumParamConverterProviderTest {
     }
 
     @Test
-    public void testEnumViaExplicitFromStringNonStatic() {
+    void testEnumViaExplicitFromStringNonStatic() {
         final ParamConverter<ExplicitFromStringNonStatic> converter = getConverter(ExplicitFromStringNonStatic.class);
         final WebApplicationException throwable = catchThrowableOfType(() -> converter.fromString("1"), WebApplicationException.class);
         assertThat(throwable.getResponse())
@@ -238,7 +238,7 @@ public class FuzzyEnumParamConverterProviderTest {
     }
 
     @Test
-    public void testEnumViaExplicitFromStringPrivate() {
+    void testEnumViaExplicitFromStringPrivate() {
         final ParamConverter<ExplicitFromStringPrivate> converter = getConverter(ExplicitFromStringPrivate.class);
         final WebApplicationException throwable = catchThrowableOfType(() -> converter.fromString("1"), WebApplicationException.class);
         assertThat(throwable.getResponse())

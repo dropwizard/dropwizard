@@ -20,13 +20,13 @@ public class ConsoleAppenderFactoryTest {
     }
 
     @Test
-    public void isDiscoverable() throws Exception {
+    void isDiscoverable() throws Exception {
         assertThat(new DiscoverableSubtypeResolver().getDiscoveredSubtypes())
                 .contains(ConsoleAppenderFactory.class);
     }
 
     @Test
-    public void includesCallerData() {
+    void includesCallerData() {
         ConsoleAppenderFactory<ILoggingEvent> consoleAppenderFactory = new ConsoleAppenderFactory<>();
         AsyncAppender asyncAppender = (AsyncAppender) consoleAppenderFactory.build(new LoggerContext(), "test", new DropwizardLayoutFactory(), new NullLevelFilterFactory<>(), new AsyncLoggingEventAppenderFactory());
         assertThat(asyncAppender.isIncludeCallerData()).isFalse();
@@ -37,7 +37,7 @@ public class ConsoleAppenderFactoryTest {
     }
 
     @Test
-    public void appenderContextIsSet() throws Exception {
+    void appenderContextIsSet() throws Exception {
         final Logger root = (Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
         final ConsoleAppenderFactory<ILoggingEvent> appenderFactory = new ConsoleAppenderFactory<>();
         final Appender<ILoggingEvent> appender = appenderFactory.build(root.getLoggerContext(), "test", new DropwizardLayoutFactory(), new NullLevelFilterFactory<>(), new AsyncLoggingEventAppenderFactory());
@@ -46,7 +46,7 @@ public class ConsoleAppenderFactoryTest {
     }
 
     @Test
-    public void appenderNameIsSet() throws Exception {
+    void appenderNameIsSet() throws Exception {
         final Logger root = (Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
         final ConsoleAppenderFactory<ILoggingEvent> appenderFactory = new ConsoleAppenderFactory<>();
         final Appender<ILoggingEvent> appender = appenderFactory.build(root.getLoggerContext(), "test", new DropwizardLayoutFactory(), new NullLevelFilterFactory<>(), new AsyncLoggingEventAppenderFactory());
@@ -55,7 +55,7 @@ public class ConsoleAppenderFactoryTest {
     }
     
     @Test
-    public void isNeverBlock() throws Exception {
+    void isNeverBlock() throws Exception {
         ConsoleAppenderFactory<ILoggingEvent> consoleAppenderFactory = new ConsoleAppenderFactory<>();
         consoleAppenderFactory.setNeverBlock(true);
         AsyncAppender asyncAppender = (AsyncAppender) consoleAppenderFactory.build(new LoggerContext(), "test", new DropwizardLayoutFactory(), new NullLevelFilterFactory<>(), new AsyncLoggingEventAppenderFactory());
@@ -64,7 +64,7 @@ public class ConsoleAppenderFactoryTest {
     }
     
     @Test
-    public void isNotNeverBlock() throws Exception {
+    void isNotNeverBlock() throws Exception {
         ConsoleAppenderFactory<ILoggingEvent> consoleAppenderFactory = new ConsoleAppenderFactory<>();
         consoleAppenderFactory.setNeverBlock(false);
         AsyncAppender asyncAppender = (AsyncAppender) consoleAppenderFactory.build(new LoggerContext(), "test", new DropwizardLayoutFactory(), new NullLevelFilterFactory<>(), new AsyncLoggingEventAppenderFactory());
@@ -73,7 +73,7 @@ public class ConsoleAppenderFactoryTest {
     }
     
     @Test
-    public void defaultIsNotNeverBlock() throws Exception {
+    void defaultIsNotNeverBlock() throws Exception {
         ConsoleAppenderFactory<ILoggingEvent> consoleAppenderFactory = new ConsoleAppenderFactory<>();
         // default neverBlock
         AsyncAppender asyncAppender = (AsyncAppender) consoleAppenderFactory.build(new LoggerContext(), "test", new DropwizardLayoutFactory(), new NullLevelFilterFactory<>(), new AsyncLoggingEventAppenderFactory());

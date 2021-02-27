@@ -26,7 +26,7 @@ public class Http2WithCustomCipherTest extends AbstractHttp2Test {
     );
 
     @Test
-    public void testHttp2WithCustomCipher() throws Exception {
+    void testHttp2WithCustomCipher() throws Exception {
         assertResponse(client.GET("https://localhost:" + appRule.getLocalPort() + "/api/test"));
     }
 
