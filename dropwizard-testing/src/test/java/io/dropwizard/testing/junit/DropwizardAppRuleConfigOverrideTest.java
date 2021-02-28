@@ -20,7 +20,7 @@ public class DropwizardAppRuleConfigOverrideTest {
             config("extra", () -> "supplied again"));
 
     @Test
-    void supportsConfigAttributeOverrides() {
+    public void supportsConfigAttributeOverrides() {
         final String content = RULE.client().target("http://localhost:" + RULE.getLocalPort() + "/test")
             .request().get(String.class);
 
@@ -28,7 +28,7 @@ public class DropwizardAppRuleConfigOverrideTest {
     }
 
     @Test
-    void supportsSuppliedConfigAttributeOverrides() throws Exception {
+    public void supportsSuppliedConfigAttributeOverrides() throws Exception {
         assertThat(System.getProperty("app-rule.extra")).isEqualTo("supplied");
         assertThat(System.getProperty("dw.extra")).isEqualTo("supplied again");
     }

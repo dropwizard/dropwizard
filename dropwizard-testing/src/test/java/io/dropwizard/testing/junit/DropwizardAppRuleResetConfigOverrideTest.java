@@ -17,7 +17,7 @@ public class DropwizardAppRuleResetConfigOverrideTest {
         config("app-rule-reset", "message", "A new way to say Hooray!"));
 
     @Test
-    void test2() throws Exception {
+    public void test2() throws Exception {
         dropwizardAppRule.before();
         assertThat(System.getProperty("app-rule-reset.message")).isEqualTo("A new way to say Hooray!");
         assertThat(System.getProperty("app-rule-reset.extra")).isNull();
