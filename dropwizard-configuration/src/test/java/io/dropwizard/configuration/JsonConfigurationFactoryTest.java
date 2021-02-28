@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.IOException;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -62,6 +63,7 @@ public class JsonConfigurationFactoryTest extends BaseConfigurationFactoryTest {
             .configure(Feature.ALLOW_COMMENTS, true);
 
         JsonConfigurationFactory<Example> factory = new JsonConfigurationFactory<>(Example.class, validator, mapper, "dw");
-        factory.build(commentFile);
+        assertThat(factory.build(commentFile).getName())
+            .isEqualTo("Mighty Wizard commentator");
     }
 }
