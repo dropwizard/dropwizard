@@ -39,7 +39,7 @@ public class DropwizardAppRuleWithExplicitTest {
 
 
     @Test
-    void runWithExplicitConfig() {
+    public void runWithExplicitConfig() {
         Map<String, String> response = RULE.client().target("http://localhost:" + RULE.getLocalPort() + "/test")
             .request()
             .get(new GenericType<Map<String, String>>() {

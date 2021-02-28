@@ -26,14 +26,14 @@ public class ResourceTestRuleWithGrizzlyTest {
             .build();
 
     @Test
-    void testResource() {
+    public void testResource() {
         assertThat(resourceTestRule.target("test").request()
                 .get(String.class))
                 .isEqualTo("test");
     }
 
     @Test
-    void testExceptionMapper() {
+    public void testExceptionMapper() {
         final Response resp = resourceTestRule.target("test").request()
                 .post(Entity.json(""));
         assertThat(resp.getStatus()).isEqualTo(500);
@@ -41,7 +41,7 @@ public class ResourceTestRuleWithGrizzlyTest {
     }
 
     @Test
-    void testClientSupportsPatchMethod() {
+    public void testClientSupportsPatchMethod() {
         final String resp = resourceTestRule.target("test")
             .request()
             .method("PATCH", Entity.text("Patch is working"), String.class);

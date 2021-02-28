@@ -54,7 +54,7 @@ public class ResourceTestRuleTest {
     }
 
     @Test
-    void testGetPerson() {
+    public void testGetPerson() {
         assertThat(resourceTestRule.target("/person/blah").request()
                 .get(Person.class))
                 .isEqualTo(person);
@@ -62,14 +62,14 @@ public class ResourceTestRuleTest {
     }
 
     @Test
-    void testGetImmutableListOfPersons() {
+    public void testGetImmutableListOfPersons() {
         assertThat(resourceTestRule.target("/person/blah/list").request()
                 .get(new GenericType<List<Person>>() {
                 })).isEqualTo(Collections.singletonList(person));
     }
 
     @Test
-    void testGetPersonWithQueryParam() {
+    public void testGetPersonWithQueryParam() {
         // Test to ensure that the dropwizard validator is registered so that
         // it can validate the "ind" IntParam.
         assertThat(resourceTestRule.target("/person/blah/index")
@@ -80,7 +80,7 @@ public class ResourceTestRuleTest {
     }
 
     @Test
-    void testDefaultConstraintViolation() {
+    public void testDefaultConstraintViolation() {
         assertThat(resourceTestRule.target("/person/blah/index")
                 .queryParam("ind", -1).request()
                 .get().readEntity(String.class))
@@ -88,7 +88,7 @@ public class ResourceTestRuleTest {
     }
 
     @Test
-    void testDefaultJsonProcessingMapper() {
+    public void testDefaultJsonProcessingMapper() {
         assertThat(resourceTestRule.target("/person/blah/runtime-exception")
                 .request()
                 .post(Entity.json("{ \"he: \"ho\"}"))
@@ -97,7 +97,7 @@ public class ResourceTestRuleTest {
     }
 
     @Test
-    void testDefaultExceptionMapper() {
+    public void testDefaultExceptionMapper() {
         assertThat(resourceTestRule.target("/person/blah/runtime-exception")
                 .request()
                 .post(Entity.json("{}"))
@@ -106,7 +106,7 @@ public class ResourceTestRuleTest {
     }
 
     @Test
-    void testDefaultEofExceptionMapper() {
+    public void testDefaultEofExceptionMapper() {
         assertThat(resourceTestRule.target("/person/blah/eof-exception")
                 .request()
                 .get().getStatus())
@@ -114,7 +114,7 @@ public class ResourceTestRuleTest {
     }
 
     @Test
-    void testValidationGroupsException() {
+    public void testValidationGroupsException() {
         final Response resp = resourceTestRule.target("/person/blah/validation-groups-exception")
                 .request()
                 .post(Entity.json("{}"));
@@ -125,7 +125,7 @@ public class ResourceTestRuleTest {
     }
 
     @Test
-    void testCustomClientConfiguration() {
+    public void testCustomClientConfiguration() {
         assertThat(resourceTestRule.client().getConfiguration().isRegistered(DummyExceptionMapper.class)).isTrue();
     }
 }

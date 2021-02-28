@@ -22,7 +22,7 @@ public class GzipDefaultVaryBehaviourTest {
             new DropwizardAppRule<>(TestApplication.class, resourceFilePath("gzip-vary-test-config.yaml"));
 
     @Test
-    void testDefaultVaryHeader() {
+    public void testDefaultVaryHeader() {
         final Response clientResponse = RULE.client().target(
             "http://localhost:" + RULE.getLocalPort() + "/test").request().header(ACCEPT_ENCODING, "gzip").get();
 
