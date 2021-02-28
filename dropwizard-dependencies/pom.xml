@@ -57,7 +57,7 @@
         <logback.version>1.2.3</logback.version>
         <metrics4.version>4.1.18</metrics4.version>
         <mustache-compiler.version>0.9.7</mustache-compiler.version>
-        <nullaway.version>0.8.0</nullaway.version>
+        <nullaway.version>0.9.0</nullaway.version>
         <slf4j.version>1.7.30</slf4j.version>
         <tomcat-jdbc.version>9.0.43</tomcat-jdbc.version>
         <usertype.core.version>7.0.0.CR1</usertype.core.version>
