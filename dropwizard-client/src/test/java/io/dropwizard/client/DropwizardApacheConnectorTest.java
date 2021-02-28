@@ -97,10 +97,12 @@ public class DropwizardApacheConnectorTest {
 
     @Test
     void when_read_timeout_override_created_then_client_requests_completes_successfully() {
-        client.target(testUri + "/long_running")
+        assertThat(client.target(testUri + "/long_running")
                 .property(ClientProperties.READ_TIMEOUT, SLEEP_TIME_IN_MILLIS * 2)
                 .request()
-                .get();
+                .get()
+                .getStatus())
+            .isEqualTo(200);
     }
 
     /**
