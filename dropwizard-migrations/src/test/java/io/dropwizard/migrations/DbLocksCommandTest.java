@@ -12,13 +12,14 @@ import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 @NotThreadSafe
 public class DbLocksCommandTest extends AbstractMigrationTest {
 
-    private DbLocksCommand<TestMigrationConfiguration> locksCommand = new DbLocksCommand<>(
+    private final DbLocksCommand<TestMigrationConfiguration> locksCommand = new DbLocksCommand<>(
         TestMigrationConfiguration::getDataSource, TestMigrationConfiguration.class, "migrations.xml");
 
     @Test
@@ -41,7 +42,7 @@ public class DbLocksCommandTest extends AbstractMigrationTest {
     }
 
     @Test
-    void testFailsWhenNoListOrRelease() throws Exception {
+    void testFailsWhenNoListOrRelease() {
         final Liquibase liquibase = Mockito.mock(Liquibase.class);
         assertThatExceptionOfType(IllegalArgumentException.class)
             .isThrownBy(() -> locksCommand.run(new Namespace(Maps.of("list", false, "release", false)),
@@ -50,7 +51,7 @@ public class DbLocksCommandTest extends AbstractMigrationTest {
     }
 
     @Test
-    void testFailsWhenBothListAndRelease() throws Exception {
+    void testFailsWhenBothListAndRelease() {
         final Liquibase liquibase = Mockito.mock(Liquibase.class);
         assertThatExceptionOfType(IllegalArgumentException.class)
             .isThrownBy(() -> locksCommand.run(new Namespace(Maps.of("list", true, "release", true)),
@@ -62,7 +63,7 @@ public class DbLocksCommandTest extends AbstractMigrationTest {
     void testPrintHelp() throws Exception {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         createSubparser(locksCommand).printHelp(new PrintWriter(new OutputStreamWriter(out, UTF_8), true));
-        assertThat(out.toString(UTF_8)).isEqualTo(String.format(
+        assertThat(out.toString(UTF_8.name())).isEqualTo(String.format(
             "usage: db locks [-h] [--migrations MIGRATIONS-FILE] [--catalog CATALOG]%n" +
                 "          [--schema SCHEMA] [-l] [-r] [file]%n" +
                 "%n" +

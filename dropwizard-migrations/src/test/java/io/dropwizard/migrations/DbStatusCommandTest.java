@@ -13,6 +13,7 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.Collections;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @NotThreadSafe
@@ -37,20 +38,20 @@ public class DbStatusCommandTest extends AbstractMigrationTest {
         final TestMigrationConfiguration existedDbConf = createConfiguration(existedDbUrl);
 
         statusCommand.run(null, new Namespace(Collections.emptyMap()), existedDbConf);
-        assertThat(baos.toString(UTF_8)).matches("\\S+ is up to date" + System.lineSeparator());
+        assertThat(baos.toString(UTF_8.name())).matches("\\S+ is up to date" + System.lineSeparator());
     }
 
     @Test
     void testRun() throws Exception {
         statusCommand.run(null, new Namespace(Collections.emptyMap()), conf);
-        assertThat(baos.toString(UTF_8)).matches(
+        assertThat(baos.toString(UTF_8.name())).matches(
                 "3 change sets have not been applied to \\S+" + System.lineSeparator());
     }
 
     @Test
     void testVerbose() throws Exception {
         statusCommand.run(null, new Namespace(Collections.singletonMap("verbose", true)), conf);
-        assertThat(baos.toString(UTF_8)).matches(
+        assertThat(baos.toString(UTF_8.name())).matches(
                 "3 change sets have not been applied to \\S+" + System.lineSeparator() +
                         "\\s*migrations\\.xml::1::db_dev"  + System.lineSeparator() +
                         "\\s*migrations\\.xml::2::db_dev"  + System.lineSeparator() +
@@ -60,7 +61,7 @@ public class DbStatusCommandTest extends AbstractMigrationTest {
     @Test
     void testPrintHelp() throws Exception {
         createSubparser(statusCommand).printHelp(new PrintWriter(new OutputStreamWriter(baos, UTF_8), true));
-        assertThat(baos.toString(UTF_8)).isEqualTo(String.format(
+        assertThat(baos.toString(UTF_8.name())).isEqualTo(String.format(
                 "usage: db status [-h] [--migrations MIGRATIONS-FILE] [--catalog CATALOG]%n" +
                         "          [--schema SCHEMA] [-v] [-i CONTEXTS] [file]%n" +
                         "%n" +

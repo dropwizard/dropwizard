@@ -12,12 +12,13 @@ import java.io.PrintWriter;
 import java.util.Collections;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @NotThreadSafe
 public class DbCalculateChecksumCommandTest extends AbstractMigrationTest {
 
-    private DbCalculateChecksumCommand<TestMigrationConfiguration> migrateCommand = new DbCalculateChecksumCommand<>(
+    private final DbCalculateChecksumCommand<TestMigrationConfiguration> migrateCommand = new DbCalculateChecksumCommand<>(
         TestMigrationConfiguration::getDataSource, TestMigrationConfiguration.class, "migrations.xml");
 
     @Test
@@ -38,7 +39,7 @@ public class DbCalculateChecksumCommandTest extends AbstractMigrationTest {
     void testHelpPage() throws Exception {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         createSubparser(migrateCommand).printHelp(new PrintWriter(new OutputStreamWriter(out, UTF_8), true));
-        assertThat(out.toString(UTF_8)).isEqualTo(String.format(
+        assertThat(out.toString(UTF_8.name())).isEqualTo(String.format(
             "usage: db calculate-checksum [-h] [--migrations MIGRATIONS-FILE]%n" +
                 "          [--catalog CATALOG] [--schema SCHEMA] [file] id author%n" +
                 "%n" +

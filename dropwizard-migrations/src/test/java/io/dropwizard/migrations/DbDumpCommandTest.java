@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @NotThreadSafe
@@ -94,7 +95,7 @@ public class DbDumpCommandTest extends AbstractMigrationTest {
     @Test
     void testHelpPage() throws Exception {
         createSubparser(dumpCommand).printHelp(new PrintWriter(new OutputStreamWriter(baos, UTF_8), true));
-        assertThat(baos.toString(UTF_8)).isEqualTo(String.format(
+        assertThat(baos.toString(UTF_8.name())).isEqualTo(String.format(
                 "usage: db dump [-h] [--migrations MIGRATIONS-FILE] [--catalog CATALOG]%n" +
                         "          [--schema SCHEMA] [-o OUTPUT] [--tables] [--ignore-tables]%n" +
                         "          [--columns] [--ignore-columns] [--views] [--ignore-views]%n" +
