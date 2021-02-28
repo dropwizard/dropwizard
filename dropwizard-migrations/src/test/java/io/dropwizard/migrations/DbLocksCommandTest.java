@@ -13,8 +13,7 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.*;
 
 @NotThreadSafe
 public class DbLocksCommandTest extends AbstractMigrationTest {
@@ -44,7 +43,7 @@ public class DbLocksCommandTest extends AbstractMigrationTest {
     @Test
     void testFailsWhenNoListOrRelease() {
         final Liquibase liquibase = Mockito.mock(Liquibase.class);
-        assertThatExceptionOfType(IllegalArgumentException.class)
+        assertThatIllegalArgumentException()
             .isThrownBy(() -> locksCommand.run(new Namespace(Maps.of("list", false, "release", false)),
                 liquibase))
             .withMessage("Must specify either --list or --force-release");
@@ -53,7 +52,7 @@ public class DbLocksCommandTest extends AbstractMigrationTest {
     @Test
     void testFailsWhenBothListAndRelease() {
         final Liquibase liquibase = Mockito.mock(Liquibase.class);
-        assertThatExceptionOfType(IllegalArgumentException.class)
+        assertThatIllegalArgumentException()
             .isThrownBy(() -> locksCommand.run(new Namespace(Maps.of("list", true, "release", true)),
                 liquibase))
             .withMessage("Must specify either --list or --force-release");

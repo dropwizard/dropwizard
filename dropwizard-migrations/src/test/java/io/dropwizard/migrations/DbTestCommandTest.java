@@ -11,6 +11,7 @@ import java.util.Collections;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatNoException;
 
 @NotThreadSafe
 public class DbTestCommandTest extends AbstractMigrationTest {
@@ -22,9 +23,8 @@ public class DbTestCommandTest extends AbstractMigrationTest {
     void testRun() throws Exception {
         // Apply and rollback some DDL changes
         final TestMigrationConfiguration conf = createConfiguration(getDatabaseUrl());
-        dbTestCommand.run(null, new Namespace(Collections.emptyMap()), conf);
-
-        // No exception, the test passed
+        assertThatNoException()
+            .isThrownBy(() -> dbTestCommand.run(null, new Namespace(Collections.emptyMap()), conf));
     }
 
     @Test

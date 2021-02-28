@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.sql.SQLException;
 import java.util.Collections;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -30,12 +31,17 @@ class DbDropAllCommandTest extends AbstractMigrationTest {
             TestMigrationConfiguration::getDataSource, TestMigrationConfiguration.class, "migrations.xml")
             .run(null, new Namespace(Collections.emptyMap()), conf);
 
+        try (Handle handle = Jdbi.create(databaseUrl, "sa", "").open()) {
+            assertThat(tableExists(handle, "PERSONS"))
+                .isTrue();
+        }
+
         // Drop it
         dropAllCommand.run(null, new Namespace(Collections.emptyMap()), conf);
 
-        // After we dropped data and schema, we should be able to create the "persons" table again
         try (Handle handle = Jdbi.create(databaseUrl, "sa", "").open()) {
-            handle.execute("create table persons(id int, name varchar(255))");
+            assertThat(tableExists(handle, "PERSONS"))
+                .isFalse();
         }
     }
 
