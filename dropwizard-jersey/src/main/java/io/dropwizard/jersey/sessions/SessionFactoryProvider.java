@@ -15,6 +15,8 @@ import javax.inject.Singleton;
 import javax.servlet.http.HttpSession;
 import java.util.function.Function;
 
+import static org.glassfish.jersey.model.Parameter.Source.UNKNOWN;
+
 @Singleton
 public class SessionFactoryProvider extends AbstractValueParamProvider {
 
@@ -22,7 +24,7 @@ public class SessionFactoryProvider extends AbstractValueParamProvider {
 
     @Inject
     public SessionFactoryProvider(final Provider<MultivaluedParameterExtractorProvider> extractorProvider, InjectionManager im) {
-        super(extractorProvider, Parameter.Source.UNKNOWN);
+        super(extractorProvider, UNKNOWN);
         this.im = im;
     }
 
