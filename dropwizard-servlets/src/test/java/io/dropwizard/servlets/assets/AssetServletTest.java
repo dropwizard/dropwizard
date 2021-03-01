@@ -151,6 +151,25 @@ public class AssetServletTest {
     }
 
     @Test
+    public void cacheIfModifiedSinceOverwrittenByIfNoneMatch() throws Exception{
+        request.setHeader(HttpHeader.IF_MODIFIED_SINCE.toString(), "Sat, 05 Nov 1955 22:57:05 GMT"); 
+        request.setURI(DUMMY_SERVLET + "index.htm");
+        response = HttpTester.parseResponse(SERVLET_TESTER.getResponses(request.generate()));
+
+        assertThat(response.getStatus())
+            .isEqualTo(200);
+
+        String eTag = response.get(HttpHeader.ETAG);
+
+        // If-None-Match should override If-Modified-Since
+        request.setHeader(HttpHeader.IF_NONE_MATCH.toString(), eTag);
+        response = HttpTester.parseResponse(SERVLET_TESTER.getResponses(request.generate()));
+        assertThat(response.getStatus())
+            .isEqualTo(304);
+
+    }
+
+    @Test
     public void servesFilesWithA200() throws Exception {
         response = HttpTester.parseResponse(SERVLET_TESTER.getResponses(request.generate()));
         assertThat(response.getStatus())
