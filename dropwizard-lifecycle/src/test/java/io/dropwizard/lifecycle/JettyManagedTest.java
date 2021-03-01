@@ -11,7 +11,7 @@ public class JettyManagedTest {
     private final JettyManaged jettyManaged = new JettyManaged(managed);
 
     @Test
-    public void startsAndStops() throws Exception {
+    void startsAndStops() throws Exception {
         jettyManaged.start();
         jettyManaged.stop();
 

@@ -56,7 +56,7 @@ public class ChainedAuthProviderTest extends AuthBaseTest<ChainedAuthProviderTes
     }
 
     @Test
-    public void transformsBearerCredentialsToPrincipals() throws Exception {
+    void transformsBearerCredentialsToPrincipals() throws Exception {
         assertThat(target("/test/admin").request()
             .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + " " + BEARER_USER)
             .get(String.class))

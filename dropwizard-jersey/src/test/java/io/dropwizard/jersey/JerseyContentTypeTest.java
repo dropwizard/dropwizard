@@ -18,7 +18,7 @@ public class JerseyContentTypeTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void testValidContentType() {
+    void testValidContentType() {
         final Response response = target("/").request(MediaType.TEXT_PLAIN_TYPE).get();
 
         assertThat(response.getStatus()).isEqualTo(200);
@@ -26,7 +26,7 @@ public class JerseyContentTypeTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void testInvalidContentType() {
+    void testInvalidContentType() {
         final Response response = target("/").request("foo").get();
 
         assertThat(response.getStatus()).isEqualTo(406);

@@ -54,7 +54,7 @@ public class LayoutIntegrationTests {
         ConsoleAppenderFactory.class, BaseValidator.newValidator(), objectMapper, "dw-json-log");
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         objectMapper.getSubtypeResolver().registerSubtypes(AccessJsonLayoutBaseFactory.class, EventJsonLayoutBaseFactory.class);
     }
 
@@ -64,7 +64,7 @@ public class LayoutIntegrationTests {
     }
 
     @Test
-    public void testDeserializeJson() throws Exception {
+    void testDeserializeJson() throws Exception {
         ConsoleAppenderFactory<ILoggingEvent> appenderFactory = getAppenderFactory("yaml/json-log.yml");
         DiscoverableLayoutFactory<?> layout = requireNonNull(appenderFactory.getLayout());
         assertThat(layout).isInstanceOf(EventJsonLayoutBaseFactory.class);
@@ -94,7 +94,7 @@ public class LayoutIntegrationTests {
     }
 
     @Test
-    public void testDeserializeAccessJson() throws Exception {
+    void testDeserializeAccessJson() throws Exception {
         ConsoleAppenderFactory<IAccessEvent> appenderFactory = getAppenderFactory("yaml/json-access-log.yml");
         DiscoverableLayoutFactory<?> layout = requireNonNull(appenderFactory.getLayout());
         assertThat(layout).isInstanceOf(AccessJsonLayoutBaseFactory.class);
@@ -122,7 +122,7 @@ public class LayoutIntegrationTests {
     }
 
     @Test
-    public void testLogJsonToConsole() throws Exception {
+    void testLogJsonToConsole() throws Exception {
         ConsoleAppenderFactory<ILoggingEvent> consoleAppenderFactory = getAppenderFactory("yaml/json-log-default.yml");
         DefaultLoggingFactory defaultLoggingFactory = new DefaultLoggingFactory();
         defaultLoggingFactory.setAppenders(Collections.singletonList(consoleAppenderFactory));
@@ -165,7 +165,7 @@ public class LayoutIntegrationTests {
     }
 
     @Test
-    public void testLogAccessJsonToConsole() throws Exception {
+    void testLogAccessJsonToConsole() throws Exception {
         ConsoleAppenderFactory<IAccessEvent> consoleAppenderFactory = getAppenderFactory("yaml/json-access-log-default.yml");
         // Use sys.err, because there are some other log configuration messages in std.out
         consoleAppenderFactory.setTarget(ConsoleAppenderFactory.ConsoleStream.STDERR);

@@ -8,19 +8,19 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class NonEmptyStringParamTest {
     @Test
-    public void aBlankStringIsAnAbsentString() {
+    void aBlankStringIsAnAbsentString() {
         final NonEmptyStringParam param = new NonEmptyStringParam("");
         assertThat(param.get()).isEqualTo(Optional.empty());
     }
 
     @Test
-    public void aNullStringIsAnAbsentString() {
+    void aNullStringIsAnAbsentString() {
         final NonEmptyStringParam param = new NonEmptyStringParam(null);
         assertThat(param.get()).isEqualTo(Optional.empty());
     }
 
     @Test
-    public void aStringWithContentIsItself() {
+    void aStringWithContentIsItself() {
         final NonEmptyStringParam param = new NonEmptyStringParam("hello");
         assertThat(param.get()).isEqualTo(Optional.of("hello"));
     }

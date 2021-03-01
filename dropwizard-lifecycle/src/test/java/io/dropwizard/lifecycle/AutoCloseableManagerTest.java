@@ -11,7 +11,7 @@ public class AutoCloseableManagerTest {
     private final AutoCloseableManager closeableManager = new AutoCloseableManager(this.managed);
 
     @Test
-    public void startsAndStops() throws Exception {
+    void startsAndStops() throws Exception {
         this.closeableManager.start();
         this.closeableManager.stop();
 

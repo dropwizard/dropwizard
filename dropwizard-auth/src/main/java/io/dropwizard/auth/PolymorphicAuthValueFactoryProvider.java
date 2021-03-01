@@ -42,7 +42,7 @@ public class PolymorphicAuthValueFactoryProvider<T extends Principal> extends Ab
         MultivaluedParameterExtractorProvider mpep,
         PrincipalClassSetProvider<T> principalClassSetProvider
     ) {
-        super(() -> mpep, Parameter.Source.UNKNOWN);
+        super(() -> mpep, org.glassfish.jersey.model.Parameter.Source.UNKNOWN);
         this.principalClassSet = principalClassSetProvider.clazzSet;
     }
 

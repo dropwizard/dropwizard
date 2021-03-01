@@ -1,8 +1,5 @@
 package io.dropwizard.configuration;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -13,9 +10,12 @@ import org.apache.commons.text.StringSubstitutor;
 import org.apache.commons.text.lookup.StringLookup;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+
 public class SubstitutingSourceProviderTest {
     @Test
-    public void shouldSubstituteCorrectly() throws IOException {
+    void shouldSubstituteCorrectly() throws IOException {
         StringLookup dummyLookup = (x) -> "baz";
         DummySourceProvider dummyProvider = new DummySourceProvider();
         SubstitutingSourceProvider provider = new SubstitutingSourceProvider(dummyProvider, new StringSubstitutor(dummyLookup));
@@ -23,13 +23,13 @@ public class SubstitutingSourceProviderTest {
         assertThat(provider.open("foo: ${bar}")).hasSameContentAs(new ByteArrayInputStream("foo: baz".getBytes(StandardCharsets.UTF_8)));
 
         // ensure that opened streams are closed
-        assertThatThrownBy(() -> dummyProvider.lastStream.read())
-                .isInstanceOf(IOException.class)
-                .hasMessage("Stream closed");
+        assertThatExceptionOfType(IOException.class)
+            .isThrownBy(() -> dummyProvider.lastStream.read())
+            .withMessage("Stream closed");
     }
 
     @Test
-    public void shouldSubstituteOnlyExistingVariables() throws IOException {
+    void shouldSubstituteOnlyExistingVariables() throws IOException {
         StringLookup dummyLookup = (x) -> null;
         SubstitutingSourceProvider provider = new SubstitutingSourceProvider(new DummySourceProvider(), new StringSubstitutor(dummyLookup));
 
@@ -37,7 +37,7 @@ public class SubstitutingSourceProviderTest {
     }
 
     @Test
-    public void shouldSubstituteWithDefaultValue() throws IOException {
+    void shouldSubstituteWithDefaultValue() throws IOException {
         StringLookup dummyLookup = (x) -> null;
         SubstitutingSourceProvider provider = new SubstitutingSourceProvider(new DummySourceProvider(), new StringSubstitutor(dummyLookup));
 

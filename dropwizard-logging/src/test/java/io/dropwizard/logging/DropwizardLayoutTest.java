@@ -14,25 +14,25 @@ public class DropwizardLayoutTest {
     private final DropwizardLayout layout = new DropwizardLayout(context, timeZone);
 
     @Test
-    public void prefixesThrowables() throws Exception {
+    void prefixesThrowables() throws Exception {
         assertThat(layout.getDefaultConverterMap().get("ex"))
                 .isEqualTo(PrefixedThrowableProxyConverter.class.getName());
     }
 
     @Test
-    public void prefixesExtendedThrowables() throws Exception {
+    void prefixesExtendedThrowables() throws Exception {
         assertThat(layout.getDefaultConverterMap().get("xEx"))
                 .isEqualTo(PrefixedExtendedThrowableProxyConverter.class.getName());
     }
 
     @Test
-    public void hasAContext() throws Exception {
+    void hasAContext() throws Exception {
         assertThat(layout.getContext())
                 .isEqualTo(context);
     }
 
     @Test
-    public void hasAPatternWithATimeZoneAndExtendedThrowables() throws Exception {
+    void hasAPatternWithATimeZoneAndExtendedThrowables() throws Exception {
         assertThat(layout.getPattern())
                 .isEqualTo("%-5p [%d{ISO8601,UTC}] %c: %m%n%rEx");
     }

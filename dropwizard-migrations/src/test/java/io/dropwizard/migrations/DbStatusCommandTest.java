@@ -3,7 +3,6 @@ package io.dropwizard.migrations;
 import io.dropwizard.util.Resources;
 import net.jcip.annotations.NotThreadSafe;
 import net.sourceforge.argparse4j.inf.Namespace;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -25,16 +24,16 @@ public class DbStatusCommandTest extends AbstractMigrationTest {
     private TestMigrationConfiguration conf;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() {
         conf = createConfiguration(getDatabaseUrl());
 
         statusCommand.setOutputStream(new PrintStream(baos));
     }
 
     @Test
-    public void testRunOnMigratedDb() throws Exception {
+    void testRunOnMigratedDb() throws Exception {
         final String existedDbPath = new File(Resources.getResource("test-db.mv.db").toURI()).getAbsolutePath();
-        final String existedDbUrl = "jdbc:h2:" + StringUtils.removeEnd(existedDbPath, ".mv.db");
+        final String existedDbUrl = "jdbc:h2:" + existedDbPath.substring(0, existedDbPath.length() - ".mv.db".length());
         final TestMigrationConfiguration existedDbConf = createConfiguration(existedDbUrl);
 
         statusCommand.run(null, new Namespace(Collections.emptyMap()), existedDbConf);
@@ -42,14 +41,14 @@ public class DbStatusCommandTest extends AbstractMigrationTest {
     }
 
     @Test
-    public void testRun() throws Exception {
+    void testRun() throws Exception {
         statusCommand.run(null, new Namespace(Collections.emptyMap()), conf);
         assertThat(baos.toString(UTF_8)).matches(
                 "3 change sets have not been applied to \\S+" + System.lineSeparator());
     }
 
     @Test
-    public void testVerbose() throws Exception {
+    void testVerbose() throws Exception {
         statusCommand.run(null, new Namespace(Collections.singletonMap("verbose", true)), conf);
         assertThat(baos.toString(UTF_8)).matches(
                 "3 change sets have not been applied to \\S+" + System.lineSeparator() +
@@ -59,7 +58,7 @@ public class DbStatusCommandTest extends AbstractMigrationTest {
     }
 
     @Test
-    public void testPrintHelp() throws Exception {
+    void testPrintHelp() throws Exception {
         createSubparser(statusCommand).printHelp(new PrintWriter(new OutputStreamWriter(baos, UTF_8), true));
         assertThat(baos.toString(UTF_8)).isEqualTo(String.format(
                 "usage: db status [-h] [--migrations MIGRATIONS-FILE] [--catalog CATALOG]%n" +

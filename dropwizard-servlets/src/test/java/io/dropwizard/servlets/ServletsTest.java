@@ -14,20 +14,20 @@ public class ServletsTest {
     private final HttpServletRequest fullRequest = mock(HttpServletRequest.class);
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         when(request.getRequestURI()).thenReturn("/one/two");
         when(fullRequest.getRequestURI()).thenReturn("/one/two");
         when(fullRequest.getQueryString()).thenReturn("one=two&three=four");
     }
 
     @Test
-    public void formatsBasicURIs() throws Exception {
+    void formatsBasicURIs() throws Exception {
         assertThat(Servlets.getFullUrl(request))
                 .isEqualTo("/one/two");
     }
 
     @Test
-    public void formatsFullURIs() throws Exception {
+    void formatsFullURIs() throws Exception {
         assertThat(Servlets.getFullUrl(fullRequest))
                 .isEqualTo("/one/two?one=two&three=four");
     }

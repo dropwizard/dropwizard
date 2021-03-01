@@ -1,16 +1,15 @@
 package io.dropwizard.logging;
 
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.CountDownLatch;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.fail;
 
 class TcpServer {
 
@@ -26,19 +25,13 @@ class TcpServer {
                 Socket socket;
                 try {
                     socket = serverSocket.accept();
-                } catch (SocketException e) {
-                    break;
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    fail("Error setting up logging server", e);
                     continue;
                 }
                 new Thread(() -> readAndVerifyData(socket)).start();
             }
         });
-    }
-
-    ServerSocket getServerSocket() {
-        return serverSocket;
     }
 
     int getMessageCount() {
@@ -77,7 +70,7 @@ class TcpServer {
                 latch.countDown();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            fail("Error reading logs", e);
         }
     }
 }

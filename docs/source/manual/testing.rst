@@ -114,7 +114,7 @@ This test uses `AssertJ assertions`_ and JUnit_ to test that when a ``Person`` i
 via Jackson it matches the JSON in the fixture file. (The comparison is done on a normalized JSON
 string representation, so formatting doesn't affect the results.)
 
-.. _AssertJ assertions: http://assertj.org/assertj-core-conditions.html
+.. _AssertJ assertions: https://assertj.github.io/doc/#assertj-core-assertions-guide
 .. _JUnit: http://www.junit.org/
 
 .. _man-testing-representations-deserialization:
@@ -528,7 +528,7 @@ which setups a Hibernate ``SessionFactory``.
         }
 
         @Test
-        public createsFoo() {
+        public void createsFoo() {
             FooEntity fooEntity = new FooEntity("bar");
             long id = database.inTransaction(() -> {
                 return fooDAO.save(fooEntity);
@@ -538,7 +538,7 @@ which setups a Hibernate ``SessionFactory``.
         }
 
         @Test
-        public roundtripsFoo() {
+        public void roundtripsFoo() {
             long id = database.inTransaction(() -> {
                 return fooDAO.save(new FooEntity("baz"));
             });

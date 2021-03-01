@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class JerseyClientConfigurationTest {
 
     @Test
-    public void testBasicJerseyClient() throws Exception {
+    void testBasicJerseyClient() throws Exception {
         final JerseyClientConfiguration configuration = new YamlConfigurationFactory<>(JerseyClientConfiguration.class,
                 Validators.newValidator(), Jackson.newObjectMapper(), "dw")
                 .build(new File(Resources.getResource("yaml/jersey-client.yml").toURI()));

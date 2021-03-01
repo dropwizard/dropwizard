@@ -16,12 +16,12 @@ import java.io.File;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class UdpSocketAppenderFactoryTest {
 
@@ -30,11 +30,11 @@ public class UdpSocketAppenderFactoryTest {
     private Thread thread;
     private DatagramSocket datagramSocket;
 
-    private int messagesCount = 100;
-    private CountDownLatch countDownLatch = new CountDownLatch(messagesCount);
+    private final int messagesCount = 100;
+    private final CountDownLatch countDownLatch = new CountDownLatch(messagesCount);
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         datagramSocket = new DatagramSocket(UDP_PORT);
         thread = new Thread(() -> {
             byte[] buffer = new byte[256];
@@ -45,10 +45,8 @@ public class UdpSocketAppenderFactoryTest {
                     assertThat(new String(buffer, 0, datagramPacket.getLength(), StandardCharsets.UTF_8))
                         .startsWith("INFO").contains("com.example.app: Application log " + i);
                     countDownLatch.countDown();
-                } catch (SocketException e) {
-                    break;
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    fail("Error reading logs", e);
                 }
             }
         });
@@ -56,13 +54,13 @@ public class UdpSocketAppenderFactoryTest {
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    void tearDown() throws Exception {
         thread.interrupt();
         datagramSocket.close();
     }
 
     @Test
-    public void testSendLogsByTcp() throws Exception {
+    void testSendLogsByTcp() throws Exception {
         ObjectMapper objectMapper = Jackson.newObjectMapper();
         objectMapper.getSubtypeResolver().registerSubtypes(UdpSocketAppenderFactory.class);
 

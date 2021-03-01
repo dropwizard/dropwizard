@@ -7,7 +7,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class InstantSecondParamTest {
     @Test
-    public void parsesInstants() throws Exception {
+    void parsesInstants() throws Exception {
         final InstantSecondParam param = new InstantSecondParam("1488752017");
 
         assertThat(param.get())

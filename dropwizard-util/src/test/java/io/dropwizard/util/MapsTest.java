@@ -10,7 +10,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class MapsTest {
 
     @Test
-    public void of2KeyValuePairs() {
+    void of2KeyValuePairs() {
         final Map map = Maps.of(1, 60, 2, 61);
         final HashMap hashMap = new HashMap();
         hashMap.put(1, 60);
@@ -20,7 +20,7 @@ public class MapsTest {
     }
 
     @Test
-    public void of3KeyValuePairs() {
+    void of3KeyValuePairs() {
         final Map map = Maps.of(1, 60, 2, 61, 3, 62);
         final HashMap hashMap = new HashMap();
         hashMap.put(1, 60);
@@ -31,7 +31,7 @@ public class MapsTest {
     }
 
     @Test
-    public void of4KeyValuePairs() {
+    void of4KeyValuePairs() {
         final Map map = Maps.of(1, 60, 2, 61, 3, 62, 4, 63);
         final HashMap hashMap = new HashMap();
         hashMap.put(1, 60);
@@ -43,7 +43,7 @@ public class MapsTest {
     }
 
     @Test
-    public void of5KeyValuePairs() {
+    void of5KeyValuePairs() {
         final Map map = Maps.of(1, 60, 2, 61, 3, 62, 4, 63, 5, 64);
         final HashMap hashMap = new HashMap();
         hashMap.put(1, 60);

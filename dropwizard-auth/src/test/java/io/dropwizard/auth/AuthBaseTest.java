@@ -18,7 +18,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.HttpHeaders;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 public abstract class AuthBaseTest<T extends DropwizardResourceConfig> extends JerseyTest {
     protected static final String ADMIN_ROLE = "ADMIN";
@@ -70,26 +70,23 @@ public abstract class AuthBaseTest<T extends DropwizardResourceConfig> extends J
     }
 
     @Test
-    public void respondsToMissingCredentialsWith401() throws Exception {
-        try {
-            target("/test/admin").request().get(String.class);
-            failBecauseExceptionWasNotThrown(WebApplicationException.class);
-        } catch (WebApplicationException e) {
-            assertThat(e.getResponse().getStatus()).isEqualTo(401);
-            assertThat(e.getResponse().getHeaders().get(HttpHeaders.WWW_AUTHENTICATE))
-                .containsOnly(getPrefix() + " realm=\"realm\"");
-        }
+    void respondsToMissingCredentialsWith401() {
+        assertThatExceptionOfType(WebApplicationException.class)
+            .isThrownBy(() -> target("/test/admin").request().get(String.class))
+            .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(401))
+            .satisfies(e -> assertThat(e.getResponse().getHeaders().get(HttpHeaders.WWW_AUTHENTICATE))
+                .containsOnly(getPrefix() + " realm=\"realm\""));
     }
 
     @Test
-    public void resourceWithoutAuth200() {
+    void resourceWithoutAuth200() {
         assertThat(target("/test/noauth").request()
             .get(String.class))
             .isEqualTo("hello");
     }
 
     @Test
-    public void resourceWithAuthenticationWithoutAuthorizationWithCorrectCredentials200() {
+    void resourceWithAuthenticationWithoutAuthorizationWithCorrectCredentials200() {
         assertThat(target("/test/profile").request()
             .header(HttpHeaders.AUTHORIZATION, getPrefix() + " " + getOrdinaryGuyValidToken())
             .get(String.class))
@@ -97,19 +94,16 @@ public abstract class AuthBaseTest<T extends DropwizardResourceConfig> extends J
     }
 
     @Test
-    public void resourceWithAuthenticationWithoutAuthorizationNoCredentials401() {
-        try {
-            target("/test/profile").request().get(String.class);
-            failBecauseExceptionWasNotThrown(WebApplicationException.class);
-        } catch (WebApplicationException e) {
-            assertThat(e.getResponse().getStatus()).isEqualTo(401);
-            assertThat(e.getResponse().getHeaders().get(HttpHeaders.WWW_AUTHENTICATE))
-                .containsOnly(getPrefix() + " realm=\"realm\"");
-        }
+    void resourceWithAuthenticationWithoutAuthorizationNoCredentials401() {
+        assertThatExceptionOfType(WebApplicationException.class)
+            .isThrownBy(() -> target("/test/profile").request().get(String.class))
+            .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(401))
+            .satisfies(e -> assertThat(e.getResponse().getHeaders().get(HttpHeaders.WWW_AUTHENTICATE))
+                .containsOnly(getPrefix() + " realm=\"realm\""));
     }
 
     @Test
-    public void resourceWithValidOptionalAuthentication200() {
+    void resourceWithValidOptionalAuthentication200() {
         assertThat(target("/test/optional").request()
             .header(HttpHeaders.AUTHORIZATION, getPrefix() + " " + getOrdinaryGuyValidToken())
             .get(String.class))
@@ -117,7 +111,7 @@ public abstract class AuthBaseTest<T extends DropwizardResourceConfig> extends J
     }
 
     @Test
-    public void resourceWithInvalidOptionalAuthentication200() {
+    void resourceWithInvalidOptionalAuthentication200() {
         assertThat(target("/test/optional").request()
             .header(HttpHeaders.AUTHORIZATION, getPrefix() + " " + getBadGuyToken())
             .get(String.class))
@@ -125,49 +119,40 @@ public abstract class AuthBaseTest<T extends DropwizardResourceConfig> extends J
     }
 
     @Test
-    public void resourceWithoutOptionalAuthentication200() {
+    void resourceWithoutOptionalAuthentication200() {
         assertThat(target("/test/optional").request()
             .get(String.class))
             .isEqualTo("principal was not present");
     }
 
     @Test
-    public void resourceWithAuthorizationPrincipalIsNotAuthorized403() {
-        try {
-            target("/test/admin").request()
+    void resourceWithAuthorizationPrincipalIsNotAuthorized403() {
+        assertThatExceptionOfType(WebApplicationException.class)
+            .isThrownBy(() -> target("/test/admin").request()
                 .header(HttpHeaders.AUTHORIZATION, getPrefix() + " " + getOrdinaryGuyValidToken())
-                .get(String.class);
-            failBecauseExceptionWasNotThrown(WebApplicationException.class);
-        } catch (WebApplicationException e) {
-            assertThat(e.getResponse().getStatus()).isEqualTo(403);
-        }
+                .get(String.class))
+            .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(403));
     }
 
 
     @Test
-    public void resourceWithDenyAllAndNoAuth401() {
-        try {
-            target("/test/denied").request().get(String.class);
-            failBecauseExceptionWasNotThrown(WebApplicationException.class);
-        } catch (WebApplicationException e) {
-            assertThat(e.getResponse().getStatus()).isEqualTo(401);
-        }
+    void resourceWithDenyAllAndNoAuth401() {
+        assertThatExceptionOfType(WebApplicationException.class)
+            .isThrownBy(() -> target("/test/denied").request().get(String.class))
+            .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(401));
     }
 
     @Test
-    public void resourceWithDenyAllAndAuth403() {
-        try {
-            target("/test/denied").request()
+    void resourceWithDenyAllAndAuth403() {
+        assertThatExceptionOfType(WebApplicationException.class)
+            .isThrownBy(() -> target("/test/denied").request()
                 .header(HttpHeaders.AUTHORIZATION, getPrefix() + " " + getGoodGuyValidToken())
-                .get(String.class);
-            failBecauseExceptionWasNotThrown(WebApplicationException.class);
-        } catch (WebApplicationException e) {
-            assertThat(e.getResponse().getStatus()).isEqualTo(403);
-        }
+                .get(String.class))
+            .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(403));
     }
 
     @Test
-    public void transformsCredentialsToPrincipals() throws Exception {
+    void transformsCredentialsToPrincipals() {
         assertThat(target("/test/admin").request()
             .header(HttpHeaders.AUTHORIZATION, getPrefix() + " " + getGoodGuyValidToken())
             .get(String.class))
@@ -175,7 +160,7 @@ public abstract class AuthBaseTest<T extends DropwizardResourceConfig> extends J
     }
 
     @Test
-    public void transformsCredentialsToPrincipalsWhenAuthAnnotationExistsWithoutMethodAnnotation() throws Exception {
+    void transformsCredentialsToPrincipalsWhenAuthAnnotationExistsWithoutMethodAnnotation() {
         assertThat(target("/test/implicit-permitall").request()
             .header(HttpHeaders.AUTHORIZATION, getPrefix() + " " + getGoodGuyValidToken())
             .get(String.class))
@@ -184,28 +169,22 @@ public abstract class AuthBaseTest<T extends DropwizardResourceConfig> extends J
 
 
     @Test
-    public void respondsToNonBasicCredentialsWith401() throws Exception {
-        try {
-            target("/test/admin").request()
+    void respondsToNonBasicCredentialsWith401() {
+        assertThatExceptionOfType(WebApplicationException.class)
+            .isThrownBy(() -> target("/test/admin").request()
                 .header(HttpHeaders.AUTHORIZATION, "Derp irrelevant")
-                .get(String.class);
-            failBecauseExceptionWasNotThrown(WebApplicationException.class);
-        } catch (WebApplicationException e) {
-            assertThat(e.getResponse().getStatus()).isEqualTo(401);
-            assertThat(e.getResponse().getHeaders().get(HttpHeaders.WWW_AUTHENTICATE))
-                .containsOnly(getPrefix() + " realm=\"realm\"");
-        }
+                .get(String.class))
+            .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(401))
+                .satisfies(e -> assertThat(e.getResponse().getHeaders().get(HttpHeaders.WWW_AUTHENTICATE))
+                    .containsOnly(getPrefix() + " realm=\"realm\""));
     }
 
     @Test
-    public void respondsToExceptionsWith500() throws Exception {
-        try {
-            target("/test/admin").request()
+    void respondsToExceptionsWith500() {
+        assertThatExceptionOfType(WebApplicationException.class)
+            .isThrownBy(() -> target("/test/admin").request()
                 .header(HttpHeaders.AUTHORIZATION, getPrefix() + " " + getBadGuyToken())
-                .get(String.class);
-            failBecauseExceptionWasNotThrown(WebApplicationException.class);
-        } catch (WebApplicationException e) {
-            assertThat(e.getResponse().getStatus()).isEqualTo(500);
-        }
+                .get(String.class))
+            .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(500));
     }
 }

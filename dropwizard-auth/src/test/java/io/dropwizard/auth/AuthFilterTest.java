@@ -29,7 +29,7 @@ import static org.mockito.Mockito.when;
 public class AuthFilterTest {
 
     @Test
-    public void isSecureShouldStayTheSame() throws Exception {
+    void isSecureShouldStayTheSame() throws Exception {
         ContainerRequestContext requestContext = new FakeSecureRequestContext();
 
         new SimpleAuthFilter().filter(requestContext);

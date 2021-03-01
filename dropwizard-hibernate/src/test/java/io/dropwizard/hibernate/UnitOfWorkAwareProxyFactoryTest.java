@@ -31,7 +31,7 @@ public class UnitOfWorkAwareProxyFactoryTest {
     private SessionFactory sessionFactory;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         final HibernateBundle<?> bundle = mock(HibernateBundle.class);
         final Environment environment = mock(Environment.class);
         when(environment.lifecycle()).thenReturn(mock(LifecycleEnvironment.class));
@@ -59,7 +59,7 @@ public class UnitOfWorkAwareProxyFactoryTest {
     }
 
     @Test
-    public void testProxyWorks() throws Exception {
+    void testProxyWorks() throws Exception {
         final SessionDao sessionDao = new SessionDao(sessionFactory);
         final UnitOfWorkAwareProxyFactory unitOfWorkAwareProxyFactory =
                 new UnitOfWorkAwareProxyFactory("default", sessionFactory);
@@ -71,7 +71,7 @@ public class UnitOfWorkAwareProxyFactoryTest {
     }
 
     @Test
-    public void testProxyWorksWithoutUnitOfWork() {
+    void testProxyWorksWithoutUnitOfWork() {
         assertThat(new UnitOfWorkAwareProxyFactory("default", sessionFactory)
                 .create(PlainAuthenticator.class)
                 .authenticate("c82d11e"))
@@ -79,7 +79,7 @@ public class UnitOfWorkAwareProxyFactoryTest {
     }
 
     @Test
-    public void testProxyHandlesErrors() {
+    void testProxyHandlesErrors() {
         assertThatExceptionOfType(IllegalStateException.class).isThrownBy(()->
             new UnitOfWorkAwareProxyFactory("default", sessionFactory)
                 .create(BrokenAuthenticator.class)
@@ -88,7 +88,7 @@ public class UnitOfWorkAwareProxyFactoryTest {
     }
 
     @Test
-    public void testNewAspect() {
+    void testNewAspect() {
         final UnitOfWorkAwareProxyFactory unitOfWorkAwareProxyFactory =
                 new UnitOfWorkAwareProxyFactory("default", sessionFactory);
 
@@ -99,7 +99,7 @@ public class UnitOfWorkAwareProxyFactoryTest {
     }
 
     @Test
-    public void testCanBeConfiguredWithACustomAspect() {
+    void testCanBeConfiguredWithACustomAspect() {
         final SessionDao sessionDao = new SessionDao(sessionFactory);
         final UnitOfWorkAwareProxyFactory unitOfWorkAwareProxyFactory =
             new UnitOfWorkAwareProxyFactory("default", sessionFactory) {
@@ -115,7 +115,7 @@ public class UnitOfWorkAwareProxyFactoryTest {
     }
 
     @Test
-    public void testNestedCall() {
+    void testNestedCall() {
         final UnitOfWorkAwareProxyFactory unitOfWorkAwareProxyFactory =
                 new UnitOfWorkAwareProxyFactory("default", sessionFactory);
 
@@ -130,7 +130,7 @@ public class UnitOfWorkAwareProxyFactoryTest {
     }
 
     @Test
-    public void testInvalidNestedCall() {
+    void testInvalidNestedCall() {
         final UnitOfWorkAwareProxyFactory unitOfWorkAwareProxyFactory =
                 new UnitOfWorkAwareProxyFactory("default", sessionFactory);
 

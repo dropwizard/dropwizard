@@ -33,7 +33,7 @@ class ExceptionMapperBinderTest {
     private Environment environment = new Environment("testEnvironment");
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         final ObjectMapper objectMapper = environment.getObjectMapper();
         final Validator validator = environment.getValidator();
         objectMapper.getSubtypeResolver().registerSubtypes(ConsoleAppenderFactory.class,
@@ -43,7 +43,7 @@ class ExceptionMapperBinderTest {
     }
 
     @Test
-    public void testOverrideDefaultExceptionMapper() throws Exception {
+    void testOverrideDefaultExceptionMapper() throws Exception {
         environment.jersey().register(new TestValidationResource());
         environment.jersey().register(new MyJerseyExceptionMapper());
         final Server server = http.build(environment);

@@ -42,7 +42,7 @@ import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -90,17 +90,19 @@ public class DropwizardApacheConnectorTest {
 
     @Test
     void when_no_read_timeout_override_then_client_request_times_out() {
-        assertThatThrownBy(() ->client.target(testUri + "/long_running").request().get())
-                .isInstanceOf(ProcessingException.class)
-                .hasCauseInstanceOf(SocketTimeoutException.class);
+        assertThatExceptionOfType(ProcessingException.class)
+            .isThrownBy(() ->client.target(testUri + "/long_running").request().get())
+            .withCauseInstanceOf(SocketTimeoutException.class);
     }
 
     @Test
     void when_read_timeout_override_created_then_client_requests_completes_successfully() {
-        client.target(testUri + "/long_running")
+        assertThat(client.target(testUri + "/long_running")
                 .property(ClientProperties.READ_TIMEOUT, SLEEP_TIME_IN_MILLIS * 2)
                 .request()
-                .get();
+                .get()
+                .getStatus())
+            .isEqualTo(200);
     }
 
     /**

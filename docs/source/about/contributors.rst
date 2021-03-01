@@ -10,9 +10,10 @@ Many, many thanks to:
 
 * :ghuser:`_ Kilemensi <kilemensi>`
 * :ghuser:`Aaron Ingram <aingram>`
-* :ghuser:`Adam Jordens <ajordens>`
 * :ghuser:`Adam Jordens <adamjordens>`
+* :ghuser:`Adam Jordens <ajordens>`
 * :ghuser:`Adam Marcus <marcua>`
+* :ghuser:`Adrian Suarez <adriansuarez>`
 * :ghuser:`afrin216 <afrin216>`
 * :ghuser:`aharin <aharin>`
 * :ghuser:`Aidan <mcgin>`
@@ -42,8 +43,10 @@ Many, many thanks to:
 * :ghuser:`Anthony Wat <acwwat>`
 * :ghuser:`Arien Kock <arienkock>`
 * :ghuser:`Armando Singer <asinger>`
+* :ghuser:`Artem Grankin <muRn>`
 * :ghuser:`Artem Prigoda <arteam>`
 * :ghuser:`arunh <arunh>`
+* :ghuser:`Bakary DJIBA <dialaya>`
 * :ghuser:`Bart Hanssens <barthanssens>`
 * :ghuser:`Bartek Szymański <draakhan>`
 * :ghuser:`Basil James Whitehouse III <basil3whitehouse>`
@@ -57,6 +60,7 @@ Many, many thanks to:
 * :ghuser:`BoatMisser <boatmisser>`
 * :ghuser:`Boyd Meier <bwmeier>`
 * :ghuser:`Brandon Beck <bbeck>`
+* :ghuser:`Brent Ryan <brentryan>`
 * :ghuser:`Brett Hoerner <bretthoerner>`
 * :ghuser:`Brian Demers <bdemers>`
 * :ghuser:`Brian McCallister <brianm>`
@@ -86,9 +90,11 @@ Many, many thanks to:
 * :ghuser:`Chris Tierney <BCctierney>`
 * :ghuser:`Christoffer Eide <eiden>`
 * :ghuser:`Christoph Kutzinski <kutzi>`
+* :ghuser:`Christopher Cudennec <christopher-cudennec>`
 * :ghuser:`Christopher Currie <christophercurrie>`
 * :ghuser:`Christopher Currie <umcodemonkey>`
 * :ghuser:`Christopher Elkins <celkins>`
+* :ghuser:`cleiner <cleiner>`
 * :ghuser:`Coda Hale <codahale>`
 * :ghuser:`Colin Armstrong <colin-armstrong>`
 * :ghuser:`Collin Van Dyck <collinvandyck>`
@@ -131,6 +137,7 @@ Many, many thanks to:
 * :ghuser:`Dylan Scott <dylanscott>`
 * :ghuser:`Eduardo Caceres <nedcg>`
 * :ghuser:`Emeka Mosanya <emeka>`
+* :ghuser:`Emrullah YILDIRIM <Sangaibisi>`
 * :ghuser:`eocantu <eocantu>`
 * :ghuser:`Erik van Oosten <erikvanoosten>`
 * :ghuser:`EthanLozano <EthanLozano>`
@@ -179,6 +186,7 @@ Many, many thanks to:
 * :ghuser:`Jason Clawson <jclawson>`
 * :ghuser:`Jason Dunkelberger <dirkraft>`
 * :ghuser:`Jason Toffaletti <toffaletti>`
+* :ghuser:`Jasper Vandemalle <jasper-vandemalle>`
 * :ghuser:`Javier Campanini <jmcampanini>`
 * :ghuser:`jduan <jduan>`
 * :ghuser:`Jeff Klukas <jklukas>`
@@ -226,6 +234,7 @@ Many, many thanks to:
 * :ghuser:`Marcus Höjvall <softarn>`
 * :ghuser:`Marius Volkhart <MariusVolkhart>`
 * :ghuser:`Mark Elliot <markelliot>`
+* :ghuser:`Mark Lilback <mlilback>`
 * :ghuser:`Mark Reddy <markreddy>`
 * :ghuser:`Mark Symons <msymons>`
 * :ghuser:`Mark Wolfe <wolfeidau>`
@@ -254,6 +263,7 @@ Many, many thanks to:
 * :ghuser:`Michal Rutkowski <velocipedist>`
 * :ghuser:`Michel Decima <lehcim>`
 * :ghuser:`Michiel Leegwater <mleegwt>`
+* :ghuser:`Miguel Ángel Martín <miguelbemartin>`
 * :ghuser:`MikaelAmborn <MikaelAmborn>`
 * :ghuser:`Mike Miller <mikemil>`
 * :ghuser:`Mikhail Gromov <mgtriffid>`
@@ -261,6 +271,7 @@ Many, many thanks to:
 * :ghuser:`Moritz Kammerer <phxql>`
 * :ghuser:`Moxie Marlinspike <moxie0>`
 * :ghuser:`Mårten Gustafson <chids>`
+* :ghuser:`nanreh <nanreh>`
 * :ghuser:`Nasir <mnrasul>`
 * :ghuser:`Natan Abolafya <natnan>`
 * :ghuser:`Nicholas Heitz <nheitz>`
@@ -301,6 +312,7 @@ Many, many thanks to:
 * :ghuser:`Richard Nyström <ricn>`
 * :ghuser:`Robert Barbey <rbarbey>`
 * :ghuser:`Rohan Nagar <RohanNagar>`
+* :ghuser:`Russell Howe <rhowe>`
 * :ghuser:`Ryan Berdeen <also>`
 * :ghuser:`Ryan Kennedy <ryankennedy>`
 * :ghuser:`Ryan Warren <rwwarren>`

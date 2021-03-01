@@ -15,7 +15,7 @@ import static org.mockito.Mockito.mock;
 public class JerseyViolationExceptionTest {
 
     @Test
-    public void testAccessors() {
+    void testAccessors() {
         final Set<? extends ConstraintViolation<?>> violations = Collections.emptySet();
 
         @SuppressWarnings("unchecked")

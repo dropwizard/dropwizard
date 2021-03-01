@@ -8,7 +8,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class ZoneIdParamTest {
     @Test
-    public void parsesDateTimes() throws Exception {
+    void parsesDateTimes() throws Exception {
         final ZoneIdParam param = new ZoneIdParam("Europe/Berlin");
 
         assertThat(param.get())

@@ -32,7 +32,7 @@ public class JerseyIgnoreRequestUserAgentHeaderFilterTest {
     private JerseyClientConfiguration clientConfiguration;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         clientConfiguration = new JerseyClientConfiguration();
         clientConfiguration.setConnectionTimeout(Duration.milliseconds(1000L));
         clientConfiguration.setTimeout(Duration.milliseconds(2500L));
@@ -42,7 +42,7 @@ public class JerseyIgnoreRequestUserAgentHeaderFilterTest {
     }
 
     @Test
-    public void clientIsSetRequestIsNotSet() {
+    void clientIsSetRequestIsNotSet() {
         clientConfiguration.setUserAgent(Optional.of("ClientUserAgentHeaderValue"));
         assertThat(
                 clientBuilder.using(clientConfiguration).
@@ -53,7 +53,7 @@ public class JerseyIgnoreRequestUserAgentHeaderFilterTest {
     }
 
     @Test
-    public void clientIsNotSetRequestIsSet() {
+    void clientIsNotSetRequestIsSet() {
         assertThat(
                 clientBuilder.build("ClientName").target(testUri + "/user_agent")
                         .request().header("User-Agent", "RequestUserAgentHeaderValue")
@@ -62,7 +62,7 @@ public class JerseyIgnoreRequestUserAgentHeaderFilterTest {
     }
 
     @Test
-    public void clientIsNotSetRequestIsNotSet() {
+    void clientIsNotSetRequestIsNotSet() {
         assertThat(
                 clientBuilder.build("ClientName").target(testUri + "/user_agent")
                         .request()
@@ -71,7 +71,7 @@ public class JerseyIgnoreRequestUserAgentHeaderFilterTest {
     }
 
     @Test
-    public void clientIsSetRequestIsSet() {
+    void clientIsSetRequestIsSet() {
         clientConfiguration.setUserAgent(Optional.of("ClientUserAgentHeaderValue"));
         assertThat(
                 clientBuilder.build("ClientName").target(testUri + "/user_agent")

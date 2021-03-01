@@ -20,14 +20,14 @@ public class DbClearChecksumsCommandTest extends AbstractMigrationTest {
         TestMigrationConfiguration::getDataSource, TestMigrationConfiguration.class, "migrations.xml");
 
     @Test
-    public void testRun() throws Exception {
+    void testRun() throws Exception {
         final Liquibase liquibase = Mockito.mock(Liquibase.class);
         clearChecksums.run(new Namespace(Collections.emptyMap()), liquibase);
         Mockito.verify(liquibase).clearCheckSums();
     }
 
     @Test
-    public void testHelpPage() throws Exception {
+    void testHelpPage() throws Exception {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         createSubparser(clearChecksums).printHelp(new PrintWriter(new OutputStreamWriter(out, UTF_8), true));
         assertThat(out.toString(UTF_8)).isEqualTo(String.format(

@@ -27,6 +27,7 @@ public class LoggingSQLExceptionMapper extends LoggingExceptionMapper<SQLExcepti
     }
 
     @Override
+    @SuppressWarnings("Slf4jFormatShouldBeConst")
     protected void logException(long id, SQLException exception) {
         final String message = formatLogMessage(id, exception);
         for (Throwable throwable : exception) {

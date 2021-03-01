@@ -28,20 +28,20 @@ public class NonblockingServletHolderTest {
     private final ServletResponse response = mock(ServletResponse.class);
 
     @Test
-    public void hasAServlet() throws Exception {
+    void hasAServlet() throws Exception {
         assertThat(holder.getServlet())
                 .isEqualTo(servlet);
     }
 
     @Test
-    public void servicesRequests() throws Exception {
+    void servicesRequests() throws Exception {
         holder.handle(baseRequest, request, response);
 
         verify(servlet).service(request, response);
     }
 
     @Test
-    public void servicesRequestHandleEofException() throws Exception {
+    void servicesRequestHandleEofException() throws Exception {
         doThrow(new EofException()).when(servlet).service(eq(request), eq(response));
         assertThatCode(() -> {
             holder.handle(baseRequest, request, response);
@@ -50,7 +50,7 @@ public class NonblockingServletHolderTest {
     }
 
     @Test
-    public void servicesRequestException() throws Exception {
+    void servicesRequestException() throws Exception {
         doThrow(new IOException()).when(servlet).service(eq(request), eq(response));
         assertThatExceptionOfType(IOException.class).isThrownBy(() -> {
             holder.handle(baseRequest, request, response);
@@ -58,7 +58,7 @@ public class NonblockingServletHolderTest {
     }
 
     @Test
-    public void temporarilyDisablesAsyncRequestsIfDisabled() throws Exception {
+    void temporarilyDisablesAsyncRequestsIfDisabled() throws Exception {
         holder.setAsyncSupported(false);
 
         holder.handle(baseRequest, request, response);
@@ -70,7 +70,7 @@ public class NonblockingServletHolderTest {
     }
 
     @Test
-    public void isEagerlyInitialized() throws Exception {
+    void isEagerlyInitialized() throws Exception {
         assertThat(holder.getInitOrder())
                 .isEqualTo(1);
     }

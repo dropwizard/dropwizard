@@ -37,7 +37,7 @@ import java.util.Collections;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -154,7 +154,7 @@ public class JerseyIntegrationTest extends JerseyTest {
     }
 
     @Test
-    public void findsExistingData() throws Exception {
+    void findsExistingData() {
         final Person coda = target("/people/Coda").request(MediaType.APPLICATION_JSON).get(Person.class);
 
         assertThat(coda.getName())
@@ -168,19 +168,15 @@ public class JerseyIntegrationTest extends JerseyTest {
     }
 
     @Test
-    public void doesNotFindMissingData() throws Exception {
-        try {
-            target("/people/Poof").request(MediaType.APPLICATION_JSON)
-                    .get(Person.class);
-            failBecauseExceptionWasNotThrown(WebApplicationException.class);
-        } catch (WebApplicationException e) {
-            assertThat(e.getResponse().getStatus())
-                    .isEqualTo(404);
-        }
+    void doesNotFindMissingData() {
+        assertThatExceptionOfType(WebApplicationException.class)
+            .isThrownBy(() -> target("/people/Poof").request(MediaType.APPLICATION_JSON)
+                    .get(Person.class))
+            .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(404));
     }
 
     @Test
-    public void createsNewData() throws Exception {
+    void createsNewData() {
         final Person person = new Person();
         person.setName("Hank");
         person.setEmail("hank@example.com");
@@ -204,7 +200,7 @@ public class JerseyIntegrationTest extends JerseyTest {
 
 
     @Test
-    public void testSqlExceptionIsHandled() throws Exception {
+    void testSqlExceptionIsHandled() {
         final Person person = new Person();
         person.setName("Jeff");
         person.setEmail("jeff.hammersmith@targetprocessinc.com");

@@ -6,7 +6,6 @@ import io.dropwizard.jackson.DiscoverableSubtypeResolver;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.util.Resources;
 import io.dropwizard.validation.BaseValidator;
-import org.apache.commons.lang3.SystemUtils;
 import org.eclipse.jetty.server.ConnectionFactory;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.HttpConfiguration;
@@ -25,6 +24,7 @@ import org.junit.jupiter.api.Test;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 import java.io.File;
+import java.lang.reflect.Field;
 import java.net.URI;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -36,13 +36,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.apache.commons.lang3.reflect.FieldUtils.getField;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 import static org.assertj.core.api.Assertions.entry;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
+import static org.junit.jupiter.api.condition.OS.WINDOWS;
 
 class HttpsConnectorFactoryTest {
     private static final String WINDOWS_MY_KEYSTORE_NAME = "Windows-MY";
@@ -90,20 +90,51 @@ class HttpsConnectorFactoryTest {
     }
 
     @Test
-    void testSupportedProtocols() {
-        List<String> supportedProtocols = Arrays.asList("SSLv3", "TLS1");
+    void testSupportedProtocols() throws Exception {
+        List<String> supportedProtocols = Arrays.asList("SSLv3", "TLSv1");
 
         HttpsConnectorFactory factory = new HttpsConnectorFactory();
         factory.setKeyStorePassword("password"); // necessary to avoid a prompt for a password
         factory.setSupportedProtocols(supportedProtocols);
+        factory.setExcludedProtocols(Collections.emptyList());
 
         SslContextFactory sslContextFactory = factory.configureSslContextFactory(new SslContextFactory.Server());
         assertThat(Arrays.asList(sslContextFactory.getIncludeProtocols())).isEqualTo(supportedProtocols);
+
+        sslContextFactory.start();
+        try {
+            assertThat(sslContextFactory.newSSLEngine().getEnabledProtocols())
+                .containsExactlyElementsOf(supportedProtocols);
+        } finally {
+            sslContextFactory.stop();
+        }
     }
 
     @Test
-    void testExcludedProtocols() {
-        List<String> excludedProtocols = Arrays.asList("SSLv3", "TLS1");
+    void testSupportedProtocolsWithWildcards() throws Exception {
+        List<String> supportedProtocols = Arrays.asList("SSL.*", "TLSv1\\.[01]");
+
+        HttpsConnectorFactory factory = new HttpsConnectorFactory();
+        factory.setKeyStorePassword("password"); // necessary to avoid a prompt for a password
+        factory.setSupportedProtocols(supportedProtocols);
+        factory.setExcludedProtocols(Collections.emptyList());
+
+        SslContextFactory sslContextFactory = factory.configureSslContextFactory(new SslContextFactory.Server());
+        assertThat(Arrays.asList(sslContextFactory.getIncludeProtocols())).isEqualTo(supportedProtocols);
+
+        sslContextFactory.start();
+        try {
+            assertThat(sslContextFactory.newSSLEngine().getEnabledProtocols())
+                .contains("SSLv3", "TLSv1.1")
+                .doesNotContain("TLSv1.2", "TLSv1.3");
+        } finally {
+            sslContextFactory.stop();
+        }
+    }
+
+    @Test
+    void testExcludedProtocols() throws Exception {
+        List<String> excludedProtocols = Arrays.asList("SSLv3", "TLSv1");
 
         HttpsConnectorFactory factory = new HttpsConnectorFactory();
         factory.setKeyStorePassword("password"); // necessary to avoid a prompt for a password
@@ -111,6 +142,37 @@ class HttpsConnectorFactoryTest {
 
         SslContextFactory sslContextFactory = factory.configureSslContextFactory(new SslContextFactory.Server());
         assertThat(Arrays.asList(sslContextFactory.getExcludeProtocols())).isEqualTo(excludedProtocols);
+
+        sslContextFactory.start();
+        try {
+            assertThat(sslContextFactory.newSSLEngine().getEnabledProtocols())
+                .contains("TLSv1.1", "TLSv1.2")
+                .doesNotContain("SSLv3", "TLSv1");
+        } finally {
+            sslContextFactory.stop();
+        }
+    }
+
+    @Test
+    void testExcludedProtocolsWithWildcards() throws Exception {
+        List<String> excludedProtocols = Arrays.asList("SSL.*", "TLSv1(\\.[01])?");
+
+        HttpsConnectorFactory factory = new HttpsConnectorFactory();
+        factory.setKeyStorePassword("password"); // necessary to avoid a prompt for a password
+        factory.setExcludedProtocols(excludedProtocols);
+
+        SslContextFactory sslContextFactory = factory.configureSslContextFactory(new SslContextFactory.Server());
+        assertThat(Arrays.asList(sslContextFactory.getExcludeProtocols())).isEqualTo(excludedProtocols);
+
+        sslContextFactory.start();
+        try {
+            assertThat(sslContextFactory.newSSLEngine().getEnabledProtocols())
+                .contains("TLSv1.2")
+                .allSatisfy(protocol -> assertThat(protocol).doesNotStartWith("SSL"))
+                .doesNotContain("TLSv1");
+        } finally {
+            sslContextFactory.stop();
+        }
     }
 
     @Test
@@ -125,7 +187,8 @@ class HttpsConnectorFactoryTest {
         try {
             assertThat(sslContextFactory.newSSLEngine().getEnabledProtocols())
                     .doesNotContainAnyElementsOf(factory.getExcludedProtocols())
-                    .allSatisfy(protocol -> assertThat(protocol).doesNotStartWith("SSL"));
+                    .allSatisfy(protocol -> assertThat(protocol).doesNotStartWith("SSL"))
+                    .doesNotContain("TLSv1", "TLSv1.1");
         } finally {
             sslContextFactory.stop();
         }
@@ -223,19 +286,19 @@ class HttpsConnectorFactoryTest {
             final SslContextFactory sslContextFactory = ((SslConnectionFactory) jetty93SslConnectionFacttory
                 .getConnectionFactory()).getSslContextFactory();
 
-            assertThat(getField(SslContextFactory.class, "_keyStoreResource", true).get(sslContextFactory))
+            assertThat(sslContextFactory.getKeyStoreResource())
                 .isEqualTo(Resource.newResource("/etc/app/server.ks"));
             assertThat(sslContextFactory.getKeyStoreType()).isEqualTo("JKS");
-            assertThat(getField(SslContextFactory.class, "_keyStorePassword", true).get(sslContextFactory).toString())
+            assertThat(getSSLContextFactoryPrivateField("_keyStorePassword").get(sslContextFactory).toString())
                 .isEqualTo("correct_horse");
             assertThat(sslContextFactory.getKeyStoreProvider()).isEqualTo("BC");
-            assertThat(getField(SslContextFactory.class, "_trustStoreResource", true).get(sslContextFactory))
+            assertThat(sslContextFactory.getTrustStoreResource())
                 .isEqualTo(Resource.newResource("/etc/app/server.ts"));
             assertThat(sslContextFactory.getKeyStoreType()).isEqualTo("JKS");
-            assertThat(getField(SslContextFactory.class, "_trustStorePassword", true).get(sslContextFactory).toString())
+            assertThat(getSSLContextFactoryPrivateField("_trustStorePassword").get(sslContextFactory).toString())
                 .isEqualTo("battery_staple");
             assertThat(sslContextFactory.getKeyStoreProvider()).isEqualTo("BC");
-            assertThat(getField(SslContextFactory.class, "_keyManagerPassword", true).get(sslContextFactory).toString())
+            assertThat(getSSLContextFactoryPrivateField("_keyManagerPassword").get(sslContextFactory).toString())
                 .isEqualTo("new_overlords");
             assertThat(sslContextFactory.getNeedClientAuth()).isTrue();
             assertThat(sslContextFactory.getWantClientAuth()).isTrue();
@@ -247,8 +310,7 @@ class HttpsConnectorFactoryTest {
             assertThat(sslContextFactory.getOcspResponderURL()).isEqualTo("http://windc1/ocsp");
             assertThat(sslContextFactory.getProvider()).isEqualTo("BC");
             assertThat(sslContextFactory.isRenegotiationAllowed()).isFalse();
-            assertThat(getField(SslContextFactory.class, "_endpointIdentificationAlgorithm", true).get(sslContextFactory))
-                .isEqualTo("HTTPS");
+            assertThat(sslContextFactory.getEndpointIdentificationAlgorithm()).isEqualTo("HTTPS");
             assertThat(sslContextFactory.isValidateCerts()).isTrue();
             assertThat(sslContextFactory.isValidatePeerCerts()).isTrue();
             assertThat(sslContextFactory.getIncludeProtocols()).containsOnly("TLSv1.1", "TLSv1.2");
@@ -313,7 +375,7 @@ class HttpsConnectorFactoryTest {
     }
 
     private boolean canAccessWindowsKeyStore() {
-        if (SystemUtils.IS_OS_WINDOWS) {
+        if (WINDOWS.isCurrentOs()) {
             try {
                 KeyStore.getInstance(WINDOWS_MY_KEYSTORE_NAME);
                 return true;
@@ -328,5 +390,11 @@ class HttpsConnectorFactoryTest {
         return violations.stream()
                 .map(input -> input.getPropertyPath().toString())
                 .collect(Collectors.toSet());
+    }
+
+    private static Field getSSLContextFactoryPrivateField(final String name) throws NoSuchFieldException {
+        final Field field = SslContextFactory.class.getDeclaredField(name);
+        field.setAccessible(true);
+        return field;
     }
 }

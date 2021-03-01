@@ -16,19 +16,19 @@ public class ConfigurationTest {
     private final Configuration configuration = new Configuration();
 
     @Test
-    public void hasAnHttpConfiguration() throws Exception {
+    void hasAnHttpConfiguration() throws Exception {
         assertThat(configuration.getServerFactory())
                 .isNotNull();
     }
 
     @Test
-    public void hasALoggingConfiguration() throws Exception {
+    void hasALoggingConfiguration() throws Exception {
         assertThat(configuration.getLoggingFactory())
                 .isNotNull();
     }
 
     @Test
-    public void ensureConfigSerializable() throws Exception {
+    void ensureConfigSerializable() throws Exception {
         final ObjectMapper mapper = Jackson.newObjectMapper();
         Class<?>[] dummyArray = {};
 

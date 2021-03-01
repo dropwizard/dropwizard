@@ -56,6 +56,11 @@
                                     <artifactId>nullaway</artifactId>
                                     <version>${nullaway.version}</version>
                                 </path>
+                                <path>
+                                    <groupId>jp.skypencil.errorprone.slf4j</groupId>
+                                    <artifactId>errorprone-slf4j</artifactId>
+                                    <version>0.1.4</version>
+                                </path>
                             </annotationProcessorPaths>
                             <compilerArgs>
                                 <arg>-XDcompilePolicy=simple</arg>

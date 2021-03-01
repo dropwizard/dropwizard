@@ -26,7 +26,7 @@ public class UriFilterFactoryTest {
     }
 
     @Test
-    public void shouldDenyLogsForConfiguredUri() {
+    void shouldDenyLogsForConfiguredUri() {
         final String path = "/health-check";
         filterFactory.setUris(Collections.singleton(path));
         final Filter filter = filterFactory.build();
@@ -39,7 +39,7 @@ public class UriFilterFactoryTest {
     }
 
     @Test
-    public void shouldNotDenyUnconfiguredUriLogs() {
+    void shouldNotDenyUnconfiguredUriLogs() {
         filterFactory.setUris(Collections.emptySet());
         final Filter filter = filterFactory.build();
 
@@ -51,7 +51,7 @@ public class UriFilterFactoryTest {
     }
 
     @Test
-    public void shouldDenyLogsForAdditionalConfiguredUris() {
+    void shouldDenyLogsForAdditionalConfiguredUris() {
         final Set<String> paths = new HashSet<>();
         paths.add("/health-check");
         paths.add("/sys/health");
@@ -67,7 +67,7 @@ public class UriFilterFactoryTest {
     }
 
     @Test
-    public void isDiscoverable() {
+    void isDiscoverable() {
         assertThat(new DiscoverableSubtypeResolver().getDiscoveredSubtypes()).contains(UriFilterFactory.class);
     }
 }

@@ -23,7 +23,7 @@ import static org.mockito.Mockito.when;
 
 public class ConfiguredGZipEncoderTest {
     @Test
-    public void gzipParametersSpec() throws IOException {
+    void gzipParametersSpec() throws IOException {
         ClientRequestContext context = mock(ClientRequestContext.class);
         MultivaluedMap<String, Object> headers = new MultivaluedHashMap<>();
         when(context.getHeaders()).thenReturn(headers);
@@ -36,7 +36,7 @@ public class ConfiguredGZipEncoderTest {
     }
 
     @Test
-    public void aroundWriteToSpec() throws IOException, WebApplicationException {
+    void aroundWriteToSpec() throws IOException, WebApplicationException {
         MultivaluedMap<String, Object> headers = new MultivaluedHashMap<>();
         headers.add(HttpHeaders.CONTENT_ENCODING, "gzip");
         WriterInterceptorContextMock context = new WriterInterceptorContextMock(headers);
@@ -45,7 +45,7 @@ public class ConfiguredGZipEncoderTest {
         assertThat(context.isProceedCalled()).isTrue();
     }
     @Test
-    public void aroundWriteToSpecX_GZip() throws IOException, WebApplicationException {
+    void aroundWriteToSpecX_GZip() throws IOException, WebApplicationException {
         MultivaluedMap<String, Object> headers = new MultivaluedHashMap<>();
         headers.add(HttpHeaders.CONTENT_ENCODING, "x-gzip");
         WriterInterceptorContextMock context = new WriterInterceptorContextMock(headers);
@@ -54,7 +54,7 @@ public class ConfiguredGZipEncoderTest {
         assertThat(context.isProceedCalled()).isTrue();
     }
     @Test
-    public void otherEncodingWillNotAroundWrite() throws IOException, WebApplicationException {
+    void otherEncodingWillNotAroundWrite() throws IOException, WebApplicationException {
         MultivaluedMap<String, Object> headers = new MultivaluedHashMap<>();
         headers.add(HttpHeaders.CONTENT_ENCODING, "someOtherEnc");
         WriterInterceptorContextMock context = new WriterInterceptorContextMock(headers);
@@ -63,7 +63,7 @@ public class ConfiguredGZipEncoderTest {
         assertThat(context.isProceedCalled()).isTrue();
     }
     @Test
-    public void noEncodingwillNotAroundWrite() throws IOException, WebApplicationException {
+    void noEncodingwillNotAroundWrite() throws IOException, WebApplicationException {
         MultivaluedMap<String, Object> headers = new MultivaluedHashMap<>();
         headers.add(HttpHeaders.CONTENT_ENCODING, null);
         WriterInterceptorContextMock context = new WriterInterceptorContextMock(headers);

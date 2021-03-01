@@ -172,8 +172,7 @@ public abstract class BaseConfigurationFactory<T> implements ConfigurationFactor
             }
             final ObjectNode obj = (ObjectNode) node;
 
-            final String remainingPath = parts.subList(i, parts.size()).stream()
-                    .collect(Collectors.joining("."));
+            final String remainingPath = String.join(".", parts.subList(i, parts.size()));
             if (obj.has(remainingPath) && !remainingPath.equals(key)) {
                 if (obj.get(remainingPath).isValueNode()) {
                     obj.put(remainingPath, value);

@@ -3,17 +3,17 @@ package io.dropwizard.jersey.optional;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 class OptionalDoubleParamConverterProviderTest {
     @Test
-    public void verifyInvalidDefaultValueFailsFast() {
-        assertThatThrownBy(() -> new OptionalDoubleParamConverterProvider.OptionalDoubleParamConverter("invalid").fromString("invalid"))
-            .isInstanceOf(NumberFormatException.class);
+    void verifyInvalidDefaultValueFailsFast() {
+        assertThatExceptionOfType(NumberFormatException.class)
+            .isThrownBy(() -> new OptionalDoubleParamConverterProvider.OptionalDoubleParamConverter("invalid").fromString("invalid"));
     }
 
     @Test
-    public void verifyInvalidValueNoDefaultReturnsNotPresent() {
+    void verifyInvalidValueNoDefaultReturnsNotPresent() {
         assertThat(new OptionalDoubleParamConverterProvider.OptionalDoubleParamConverter().fromString("invalid")).isNotPresent();
     }
 }

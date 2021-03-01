@@ -18,7 +18,7 @@ public class TaskTest {
     };
 
     @Test
-    public void hasAName() throws Exception {
+    void hasAName() throws Exception {
         assertThat(task.getName())
                 .isEqualTo("test");
     }

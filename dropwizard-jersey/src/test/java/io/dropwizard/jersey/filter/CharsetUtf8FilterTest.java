@@ -21,7 +21,7 @@ public class CharsetUtf8FilterTest {
     private CharsetUtf8Filter charsetUtf8Filter = new CharsetUtf8Filter();
 
     @Test
-    public void testSetsCharsetEncoding() throws Exception {
+    void testSetsCharsetEncoding() throws Exception {
         when(response.getMediaType()).thenReturn(MediaType.APPLICATION_JSON_TYPE);
         MultivaluedMap<String, Object> headers = new MultivaluedHashMap<>();
         headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_TYPE);

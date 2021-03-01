@@ -7,7 +7,6 @@ import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import io.dropwizard.util.CharStreams;
 import io.dropwizard.util.Resources;
-import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -16,6 +15,7 @@ import org.junit.jupiter.api.io.TempDir;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import java.io.IOException;
@@ -24,7 +24,6 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -34,12 +33,12 @@ public class SslReloadAppTest {
 
     private static final X509TrustManager TRUST_ALL = new X509TrustManager() {
         @Override
-        public void checkClientTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
+        public void checkClientTrusted(X509Certificate[] x509Certificates, String s) {
 
         }
 
         @Override
-        public void checkServerTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
+        public void checkServerTrusted(X509Certificate[] x509Certificates, String s) {
 
         }
 
@@ -64,14 +63,14 @@ public class SslReloadAppTest {
     }
 
     @AfterEach
-    public void after() throws IOException {
+    void after() throws IOException {
         // Reset keystore to known good keystore
         final byte[] keystoreBytes = Resources.toByteArray(Resources.getResource("sslreload/keystore.jks"));
         Files.write(keystore, keystoreBytes);
     }
 
     @Test
-    public void reloadCertificateChangesTheServerCertificate() throws Exception {
+    void reloadCertificateChangesTheServerCertificate() throws Exception {
         // Copy over our new keystore that has our new certificate to the current
         // location of our keystore
         final byte[] keystore2Bytes = Resources.toByteArray(Resources.getResource("sslreload/keystore2.jks"));
@@ -92,7 +91,7 @@ public class SslReloadAppTest {
     }
 
     @Test
-    public void badReloadDoesNotChangeTheServerCertificate() throws Exception {
+    void badReloadDoesNotChangeTheServerCertificate() throws Exception {
         // This keystore has a different password than what jetty has been configured with
         // the password is "password2"
         final byte[] badKeystore = Resources.toByteArray(Resources.getResource("sslreload/keystore-diff-pwd.jks"));
@@ -143,7 +142,7 @@ public class SslReloadAppTest {
         final SSLContext sslCtx = SSLContext.getInstance("TLS");
         sslCtx.init(null, new TrustManager[]{TRUST_ALL}, null);
 
-        conn.setHostnameVerifier(new NoopHostnameVerifier());
+        conn.setHostnameVerifier((String s, SSLSession sslSession) -> true);
         conn.setSSLSocketFactory(sslCtx.getSocketFactory());
 
         // Make it a POST

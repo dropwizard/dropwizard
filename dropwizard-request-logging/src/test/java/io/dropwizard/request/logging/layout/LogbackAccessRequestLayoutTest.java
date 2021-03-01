@@ -15,18 +15,18 @@ public class LogbackAccessRequestLayoutTest {
     final LogbackAccessRequestLayout layout = new LogbackAccessRequestLayout(context, timeZone);
 
     @Test
-    public void outputPatternAsHeaderIsFalse() {
+    void outputPatternAsHeaderIsFalse() {
         assertThat(layout.isOutputPatternAsHeader()).isFalse();
     }
 
     @Test
-    public void hasAContext() throws Exception {
+    void hasAContext() throws Exception {
         assertThat(layout.getContext())
             .isEqualTo(context);
     }
 
     @Test
-    public void hasAPatternWithATimeZone() throws Exception {
+    void hasAPatternWithATimeZone() throws Exception {
         assertThat(layout.getPattern())
             .isEqualTo("%h %l %u [%t{dd/MMM/yyyy:HH:mm:ss Z,UTC}] \"%r\" %s %b \"%i{Referer}\" \"%i{User-Agent}\" %D");
     }

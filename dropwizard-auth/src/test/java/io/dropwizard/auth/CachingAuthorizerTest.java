@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 
 import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.core.UriInfo;
 import java.security.Principal;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -36,12 +35,12 @@ public class CachingAuthorizerTest {
     private final ContainerRequestContext requestContext = mock(ContainerRequestContext.class);
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         when(underlying.authorize(any(), anyString(), any())).thenReturn(true);
     }
 
     @Test
-    public void cachesTheFirstReturnedPrincipal() throws Exception {
+    void cachesTheFirstReturnedPrincipal() throws Exception {
         assertThat(cached.authorize(principal, role, requestContext)).isTrue();
         assertThat(cached.authorize(principal, role, requestContext)).isTrue();
 
@@ -49,7 +48,7 @@ public class CachingAuthorizerTest {
     }
 
     @Test
-    public void respectsTheCacheConfiguration() throws Exception {
+    void respectsTheCacheConfiguration() throws Exception {
         cached.authorize(principal, role, requestContext);
         // We need to make sure that background cache invalidation is done before other requests
         cached.cache.cleanUp();
@@ -64,7 +63,7 @@ public class CachingAuthorizerTest {
     }
 
     @Test
-    public void invalidatesPrincipalAndRole() throws Exception {
+    void invalidatesPrincipalAndRole() throws Exception {
         cached.authorize(principal, role, requestContext);
         cached.invalidate(principal, role, requestContext);
         cached.authorize(principal, role, requestContext);
@@ -73,7 +72,7 @@ public class CachingAuthorizerTest {
     }
 
     @Test
-    public void invalidatesSinglePrincipal() throws Exception {
+    void invalidatesSinglePrincipal() throws Exception {
         cached.authorize(principal, role, requestContext);
         cached.invalidate(principal);
         cached.authorize(principal, role, requestContext);
@@ -82,7 +81,7 @@ public class CachingAuthorizerTest {
     }
 
     @Test
-    public void invalidatesSetsofPrincipals() throws Exception {
+    void invalidatesSetsofPrincipals() throws Exception {
         cached.authorize(principal, role, requestContext);
         cached.authorize(principal2, role, requestContext);
         cached.invalidateAll(Sets.of(principal, principal2));
@@ -94,7 +93,7 @@ public class CachingAuthorizerTest {
     }
 
     @Test
-    public void invalidatesPrincipalsMatchingGivenPredicate() throws Exception {
+    void invalidatesPrincipalsMatchingGivenPredicate() throws Exception {
         cached.authorize(principal, role, requestContext);
         cached.invalidateAll(principal::equals);
         cached.authorize(principal, role, requestContext);
@@ -103,7 +102,7 @@ public class CachingAuthorizerTest {
     }
 
     @Test
-    public void invalidatesAllPrincipals() throws Exception {
+    void invalidatesAllPrincipals() throws Exception {
         cached.authorize(principal, role, requestContext);
         cached.authorize(principal2, role, requestContext);
         cached.invalidateAll();
@@ -115,24 +114,24 @@ public class CachingAuthorizerTest {
     }
 
     @Test
-    public void calculatesTheSizeOfTheCache() throws Exception {
+    void calculatesTheSizeOfTheCache() throws Exception {
         assertThat(cached.size()).isEqualTo(0);
         cached.authorize(principal, role, requestContext);
         assertThat(cached.size()).isEqualTo(1);
         cached.invalidateAll();
-        assertThat(cached.size()).isEqualTo(0);
+        assertThat(cached.size()).isZero();
     }
 
     @Test
-    public void calculatesCacheStats() throws Exception {
-        assertThat(cached.stats().loadCount()).isEqualTo(0);
+    void calculatesCacheStats() throws Exception {
+        assertThat(cached.stats().loadCount()).isZero();
         cached.authorize(principal, role, requestContext);
         assertThat(cached.stats().loadCount()).isEqualTo(1);
         assertThat(cached.size()).isEqualTo(1);
     }
 
     @Test
-    public void shouldPropagateRuntimeException() throws AuthenticationException {
+    void shouldPropagateRuntimeException() {
         final RuntimeException e = new NullPointerException();
         when(underlying.authorize(principal, role, requestContext)).thenThrow(e);
         assertThatNullPointerException()

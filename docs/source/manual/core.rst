@@ -55,7 +55,7 @@ which tends to look like this:
   * ``cli``: :ref:`man-core-commands`
   * ``client``: :ref:`Client <man-client>` code that accesses external HTTP services.
   * ``core``: Domain implementation; where objects not used in the API such as POJOs, validations, crypto, etc, reside.
-  * ``jdbi3``: :ref:`Database <man-jdbi3>` access classes
+  * ``db``: :ref:`Database <man-jdbi3>` access classes
   * ``health``: :ref:`man-core-healthchecks`
   * ``resources``: :ref:`man-core-resources`
   * ``MyApplication``: The :ref:`application <man-core-application>` class
@@ -721,6 +721,11 @@ For more advanced customization of the command line (for example, having the con
 location specified by ``-c``), adapt the ConfiguredCommand_ class as needed.
 
 .. _ConfiguredCommand: https://github.com/dropwizard/dropwizard/blob/master/dropwizard-core/src/main/java/io/dropwizard/cli/ConfiguredCommand.java
+
+.. note::
+
+     If you override the ``configure`` method, you **must** call ``super.override(subparser)`` (or call ``addFileArgument``) 
+     in order to preserve the configuration file parameter in the subparser.
 
 .. _man-core-tasks:
 
@@ -1472,7 +1477,7 @@ this:
                         @NotNull @Valid Notification notification) {
         final long id = store.add(userId.get(), notification);
         return Response.created(UriBuilder.fromResource(NotificationResource.class)
-                                          .build(userId.get(), id)
+                                          .build(userId.get(), id))
                        .build();
     }
 

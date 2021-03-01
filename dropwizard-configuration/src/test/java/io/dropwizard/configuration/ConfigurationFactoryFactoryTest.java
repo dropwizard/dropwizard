@@ -22,7 +22,7 @@ public class ConfigurationFactoryFactoryTest {
     private final Validator validator = BaseValidator.newValidator();
 
     @Test
-    public void createDefaultFactory() throws Exception {
+    void createDefaultFactory() throws Exception {
         File validFile = new File(Resources.getResource("factory-test-valid.yml").toURI());
         ConfigurationFactory<Example> factory =
             factoryFactory.create(Example.class, validator, Jackson.newObjectMapper(), "dw");
@@ -32,7 +32,7 @@ public class ConfigurationFactoryFactoryTest {
     }
 
     @Test
-    public void createDefaultFactoryFailsUnknownProperty() throws Exception {
+    void createDefaultFactoryFailsUnknownProperty() throws Exception {
         File validFileWithUnknownProp = new File(
             Resources.getResource("factory-test-unknown-property.yml").toURI());
         ConfigurationFactory<Example> factory =
@@ -44,7 +44,7 @@ public class ConfigurationFactoryFactoryTest {
     }
 
     @Test
-    public void createFactoryAllowingUnknownProperties() throws Exception {
+    void createFactoryAllowingUnknownProperties() throws Exception {
         ConfigurationFactoryFactory<Example> customFactory = new PassThroughConfigurationFactoryFactory();
         File validFileWithUnknownProp = new File(
             Resources.getResource("factory-test-unknown-property.yml").toURI());

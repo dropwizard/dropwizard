@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.IOException;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class JsonConfigurationFactoryTest extends BaseConfigurationFactoryTest {
@@ -16,7 +18,7 @@ public class JsonConfigurationFactoryTest extends BaseConfigurationFactoryTest {
     private File commentFile;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         this.factory = new JsonConfigurationFactory<>(Example.class, validator, Jackson.newObjectMapper(), "dw");
         this.malformedFile = resourceFileName("factory-test-malformed.json");
         this.emptyFile = resourceFileName("factory-test-empty.json");
@@ -37,16 +39,16 @@ public class JsonConfigurationFactoryTest extends BaseConfigurationFactoryTest {
 
     @Override
     public void printsDetailedInformationOnMalformedContent() {
-        assertThatThrownBy(super::printsDetailedInformationOnMalformedContent)
-                .isInstanceOf(ConfigurationParsingException.class)
-                .hasMessageContaining(String.format(
-                        "%s has an error:%n" +
-                        "  * Malformed JSON at line: 7, column: 3; Unexpected close marker '}': expected ']'",
-                        malformedAdvancedFile.getName()));
+        assertThatExceptionOfType(ConfigurationParsingException.class)
+            .isThrownBy(super::printsDetailedInformationOnMalformedContent)
+            .withMessageContaining(String.format(
+                    "%s has an error:%n" +
+                    "  * Malformed JSON at line: 7, column: 3; Unexpected close marker '}': expected ']'",
+                    malformedAdvancedFile.getName()));
     }
 
     @Test
-    public void defaultJsonFactoryFailsOnComment() {
+    void defaultJsonFactoryFailsOnComment() {
         assertThatThrownBy(() -> factory.build(commentFile))
                 .hasMessageContaining(String.format(
                         "%s has an error:%n" +
@@ -55,12 +57,13 @@ public class JsonConfigurationFactoryTest extends BaseConfigurationFactoryTest {
     }
 
     @Test
-    public void configuredMapperAllowsComment() throws IOException, ConfigurationException {
+    void configuredMapperAllowsComment() throws IOException, ConfigurationException {
         ObjectMapper mapper = Jackson
             .newObjectMapper()
             .configure(Feature.ALLOW_COMMENTS, true);
 
         JsonConfigurationFactory<Example> factory = new JsonConfigurationFactory<>(Example.class, validator, mapper, "dw");
-        factory.build(commentFile);
+        assertThat(factory.build(commentFile).getName())
+            .isEqualTo("Mighty Wizard commentator");
     }
 }

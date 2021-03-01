@@ -17,7 +17,7 @@ import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 public class OptionalMessageBodyWriterTest extends AbstractJerseyTest {
 
@@ -29,7 +29,7 @@ public class OptionalMessageBodyWriterTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void presentOptionalsReturnTheirValue() throws Exception {
+    void presentOptionalsReturnTheirValue() {
         assertThat(target("/optional-return/")
                 .queryParam("id", "woo").request()
                 .get(String.class))
@@ -37,14 +37,10 @@ public class OptionalMessageBodyWriterTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void absentOptionalsThrowANotFound() throws Exception {
-        try {
-            target("/optional-return/").request().get(String.class);
-            failBecauseExceptionWasNotThrown(WebApplicationException.class);
-        } catch (WebApplicationException e) {
-            assertThat(e.getResponse().getStatus())
-                    .isEqualTo(404);
-        }
+    void absentOptionalsThrowANotFound() {
+        assertThatExceptionOfType(WebApplicationException.class)
+            .isThrownBy(() -> target("/optional-return/").request().get(String.class))
+            .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(404));
     }
 
     @Path("/optional-return/")

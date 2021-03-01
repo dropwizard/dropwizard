@@ -38,7 +38,7 @@ public class InjectValidatorFeatureTest {
     private ValidatorFactory validatorFactory;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         Bootstrap<Configuration> bootstrap = new Bootstrap<>(application);
         application.initialize(bootstrap);
 
@@ -46,14 +46,14 @@ public class InjectValidatorFeatureTest {
     }
 
     @Test
-    public void shouldReplaceValidatorFactory() {
+    void shouldReplaceValidatorFactory() {
         ConstraintValidatorFactory factory = validatorFactory.getConstraintValidatorFactory();
 
         assertThat(factory).isInstanceOf(MutableValidatorFactory.class);
     }
 
     @Test
-    public void shouldValidateNormally() {
+    void shouldValidateNormally() {
         Validator validator = validatorFactory.getValidator();
 
         // Run validation manually
@@ -70,7 +70,7 @@ public class InjectValidatorFeatureTest {
     }
 
     @Test
-    public void shouldInvokeUpdatedFactory() {
+    void shouldInvokeUpdatedFactory() {
         MutableValidatorFactory mutableFactory = (MutableValidatorFactory) validatorFactory
             .getConstraintValidatorFactory();
 

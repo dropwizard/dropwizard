@@ -42,19 +42,19 @@ public class ViewBundleTest {
     }
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         when(environment.jersey()).thenReturn(jerseyEnvironment);
     }
 
     @Test
-    public void addsTheViewMessageBodyWriterToTheEnvironment() throws Exception {
+    void addsTheViewMessageBodyWriterToTheEnvironment() throws Exception {
         new ViewBundle<>().run(new MyConfiguration(), environment);
 
         verify(jerseyEnvironment).register(any(ViewMessageBodyWriter.class));
     }
 
     @Test
-    public void addsTheViewMessageBodyWriterWithSingleViewRendererToTheEnvironment() throws Exception {
+    void addsTheViewMessageBodyWriterWithSingleViewRendererToTheEnvironment() throws Exception {
         final String configurationKey = "freemarker";
         final String testKey = "testKey";
         final Map<String, String> freeMarkerConfig = Collections.singletonMap(testKey, "yes");

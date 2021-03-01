@@ -13,17 +13,17 @@ public class JerseyEnvironmentTest {
     private final JerseyEnvironment jerseyEnvironment = new JerseyEnvironment(holder, config);
 
     @Test
-    public void urlPatternEndsWithSlashStar() {
+    void urlPatternEndsWithSlashStar() {
         assertPatternEndsWithSlashStar("/missing/slash/star");
     }
 
     @Test
-    public void urlPatternEndsWithStar() {
+    void urlPatternEndsWithStar() {
         assertPatternEndsWithSlashStar("/missing/star/");
     }
 
     @Test
-    public void urlPatternSuffixNoop() {
+    void urlPatternSuffixNoop() {
         String slashStarPath = "/slash/star/*";
         jerseyEnvironment.setUrlPattern(slashStarPath);
         assertThat(jerseyEnvironment.getUrlPattern()).isEqualTo(slashStarPath);

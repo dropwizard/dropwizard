@@ -38,7 +38,7 @@ public class ConfiguredCommandTest {
 
     @SuppressWarnings("unchecked")
     @Test
-    public void canUseCustomConfigurationFactory() throws Exception {
+    void canUseCustomConfigurationFactory() throws Exception {
 
         ConfigurationFactory<Configuration> factory = Mockito.mock(ConfigurationFactory.class);
         when(factory.build()).thenReturn(null);
