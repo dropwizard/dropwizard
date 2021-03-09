@@ -18,7 +18,7 @@
 
     <properties>
         <!-- External dependencies -->
-        <activation-api.version>1.2.2</activation-api.version>
+        <activation-api.version>2.0.0</activation-api.version>
         <argparse4j.version>0.8.1</argparse4j.version>
         <byte-buddy.version>1.10.21</byte-buddy.version>
         <caffeine.version>2.9.0</caffeine.version>
