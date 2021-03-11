@@ -162,7 +162,6 @@
                 <groupId>jakarta.activation</groupId>
                 <artifactId>jakarta.activation-api</artifactId>
                 <version>${activation-api.version}</version>
-                <scope>runtime</scope>
             </dependency>
             <dependency>
                 <groupId>jakarta.annotation</groupId>
@@ -173,7 +172,6 @@
                 <groupId>jakarta.xml.bind</groupId>
                 <artifactId>jakarta.xml.bind-api</artifactId>
                 <version>${jaxb-api.version}</version>
-                <scope>runtime</scope>
             </dependency>
             <dependency>
                 <groupId>jakarta.servlet</groupId>
