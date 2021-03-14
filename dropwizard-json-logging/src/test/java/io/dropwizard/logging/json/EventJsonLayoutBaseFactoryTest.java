@@ -43,6 +43,8 @@ class EventJsonLayoutBaseFactoryTest {
         ThrowableHandlingConverter converter = factory.createThrowableProxyConverter(new LoggerContext());
         converter.start();
 
+        assertThat(converter.isStarted()).isTrue();
+
         // Verify the original stack includes the excluded packages
         assertThat(proxy.getThrowable()).hasStackTraceContaining(packageFilter);
 
@@ -66,6 +68,8 @@ class EventJsonLayoutBaseFactoryTest {
 
         ThrowableHandlingConverter converter = factory.createThrowableProxyConverter(new LoggerContext());
         converter.start();
+
+        assertThat(converter.isStarted()).isTrue();
 
         String conversion = converter.convert(event);
 

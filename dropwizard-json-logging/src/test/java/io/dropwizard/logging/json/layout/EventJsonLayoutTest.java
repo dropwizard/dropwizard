@@ -189,12 +189,16 @@ public class EventJsonLayoutTest {
     void testStartThrowableConverter() {
         eventJsonLayout.start();
 
+        assertThat(eventJsonLayout.isStarted()).isTrue();
+
         verify(throwableProxyConverter).start();
     }
 
     @Test
     void testStopThrowableConverter() {
         eventJsonLayout.stop();
+
+        assertThat(eventJsonLayout.isStarted()).isFalse();
 
         verify(throwableProxyConverter).stop();
     }
