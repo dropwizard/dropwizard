@@ -40,7 +40,7 @@
         <jakarta.el.version>3.0.3</jakarta.el.version>
         <jakarta.servlet-api.version>4.0.4</jakarta.servlet-api.version>
         <jakarta.validation-api.version>2.0.2</jakarta.validation-api.version>
-        <jakarta.ws.rs-api.version>2.1.6</jakarta.ws.rs-api.version>
+        <jakarta.ws.rs-api.version>3.0.0</jakarta.ws.rs-api.version>
         <javassist.version>3.27.0-GA</javassist.version>
         <javax.persistence-api.version>2.2</javax.persistence-api.version>
         <jaxb-api.version>2.3.3</jaxb-api.version>
