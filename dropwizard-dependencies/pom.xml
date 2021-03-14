@@ -43,7 +43,7 @@
         <jakarta.ws.rs-api.version>2.1.6</jakarta.ws.rs-api.version>
         <javassist.version>3.27.0-GA</javassist.version>
         <javax.persistence-api.version>2.2</javax.persistence-api.version>
-        <jaxb-api.version>2.3.3</jaxb-api.version>
+        <jaxb-api.version>3.0.0</jaxb-api.version>
         <jcip-annotations.version>1.0</jcip-annotations.version>
         <jdbi3.version>3.18.0</jdbi3.version>
         <jersey.version>2.33</jersey.version>
