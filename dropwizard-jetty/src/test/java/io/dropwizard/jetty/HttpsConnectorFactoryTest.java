@@ -20,6 +20,8 @@ import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.util.thread.ScheduledExecutorScheduler;
 import org.eclipse.jetty.util.thread.ThreadPool;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledForJreRange;
+import org.junit.jupiter.api.condition.JRE;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
@@ -133,6 +135,7 @@ class HttpsConnectorFactoryTest {
     }
 
     @Test
+    @DisabledForJreRange(min = JRE.JAVA_16)
     void testExcludedProtocols() throws Exception {
         List<String> excludedProtocols = Arrays.asList("SSLv3", "TLSv1");
 
@@ -154,6 +157,29 @@ class HttpsConnectorFactoryTest {
     }
 
     @Test
+    @DisabledForJreRange(max = JRE.JAVA_15)
+    void testExcludedProtocolsJava16() throws Exception {
+        List<String> excludedProtocols = Arrays.asList("SSLv3", "TLSv1");
+
+        HttpsConnectorFactory factory = new HttpsConnectorFactory();
+        factory.setKeyStorePassword("password"); // necessary to avoid a prompt for a password
+        factory.setExcludedProtocols(excludedProtocols);
+
+        SslContextFactory sslContextFactory = factory.configureSslContextFactory(new SslContextFactory.Server());
+        assertThat(Arrays.asList(sslContextFactory.getExcludeProtocols())).isEqualTo(excludedProtocols);
+
+        sslContextFactory.start();
+        try {
+            assertThat(sslContextFactory.newSSLEngine().getEnabledProtocols())
+                .contains("TLSv1.2", "TLSv1.3")
+                .doesNotContain("SSLv3", "TLSv1");
+        } finally {
+            sslContextFactory.stop();
+        }
+    }
+
+    @Test
+    @DisabledForJreRange(min = JRE.JAVA_16)
     void testExcludedProtocolsWithWildcards() throws Exception {
         List<String> excludedProtocols = Arrays.asList("SSL.*", "TLSv1(\\.[01])?");
 
@@ -168,6 +194,29 @@ class HttpsConnectorFactoryTest {
         try {
             assertThat(sslContextFactory.newSSLEngine().getEnabledProtocols())
                 .contains("TLSv1.2")
+                .allSatisfy(protocol -> assertThat(protocol).doesNotStartWith("SSL"))
+                .doesNotContain("TLSv1");
+        } finally {
+            sslContextFactory.stop();
+        }
+    }
+
+    @Test
+    @DisabledForJreRange(max = JRE.JAVA_15)
+    void testExcludedProtocolsWithWildcardsJava16() throws Exception {
+        List<String> excludedProtocols = Arrays.asList("SSL.*", "TLSv1(\\.[01])?");
+
+        HttpsConnectorFactory factory = new HttpsConnectorFactory();
+        factory.setKeyStorePassword("password"); // necessary to avoid a prompt for a password
+        factory.setExcludedProtocols(excludedProtocols);
+
+        SslContextFactory sslContextFactory = factory.configureSslContextFactory(new SslContextFactory.Server());
+        assertThat(Arrays.asList(sslContextFactory.getExcludeProtocols())).isEqualTo(excludedProtocols);
+
+        sslContextFactory.start();
+        try {
+            assertThat(sslContextFactory.newSSLEngine().getEnabledProtocols())
+                .contains("TLSv1.2", "TLSv1.3")
                 .allSatisfy(protocol -> assertThat(protocol).doesNotStartWith("SSL"))
                 .doesNotContain("TLSv1");
         } finally {
