@@ -57,13 +57,6 @@ import java.util.Collections;
  */
 @JsonTypeName("h2")
 public class Http2ConnectorFactory extends HttpsConnectorFactory {
-
-    /**
-     * Supported protocols
-     */
-    private static final String H2 = "h2";
-    private static final String H2_17 = "h2-17";
-    private static final String HTTP_1_1 = "http/1.1";
     private static final String HTTP2_DEFAULT_CIPHER = "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256";
 
     @Min(100)
@@ -108,8 +101,8 @@ public class Http2ConnectorFactory extends HttpsConnectorFactory {
         http2.setMaxConcurrentStreams(maxConcurrentStreams);
         http2.setInitialStreamRecvWindow(initialStreamRecvWindow);
 
-        final NegotiatingServerConnectionFactory alpn = new ALPNServerConnectionFactory(H2, H2_17);
-        alpn.setDefaultProtocol(HTTP_1_1); // Speak HTTP 1.1 over TLS if negotiation fails
+        final NegotiatingServerConnectionFactory alpn = new ALPNServerConnectionFactory();
+        alpn.setDefaultProtocol("http/1.1"); // Speak HTTP 1.1 over TLS if negotiation fails
 
         final SslContextFactory sslContextFactory = configureSslContextFactory(new SslContextFactory.Server());
         sslContextFactory.addLifeCycleListener(logSslInfoOnStart(sslContextFactory));
@@ -122,8 +115,8 @@ public class Http2ConnectorFactory extends HttpsConnectorFactory {
         final SslConnectionFactory sslConnectionFactory = new SslConnectionFactory(sslContextFactory, "alpn");
 
         return buildConnector(server, new ScheduledExecutorScheduler(), buildBufferPool(), name, threadPool,
-                new Jetty93InstrumentedConnectionFactory(sslConnectionFactory, metrics.timer(httpConnections())),
-                alpn, http2, http1);
+            new Jetty93InstrumentedConnectionFactory(sslConnectionFactory, metrics.timer(httpConnections())),
+            alpn, http2, http1);
     }
 
     void checkSupportedCipherSuites() {
