@@ -206,8 +206,8 @@ public class SyslogAppenderFactory extends AbstractAppenderFactory<ILoggingEvent
         appender.setContext(context);
         if (logFormat != null && !logFormat.isEmpty()) {
             appender.setSuffixPattern(logFormat
-                    .replaceAll(LOG_TOKEN_PID, pid)
-                    .replaceAll(LOG_TOKEN_NAME, Matcher.quoteReplacement(applicationName)));
+                    .replace(LOG_TOKEN_PID, pid)
+                    .replace(LOG_TOKEN_NAME, Matcher.quoteReplacement(applicationName)));
         }
         appender.setSyslogHost(host);
         appender.setPort(port);

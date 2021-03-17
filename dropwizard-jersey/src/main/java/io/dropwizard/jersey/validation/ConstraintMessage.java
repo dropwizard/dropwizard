@@ -24,6 +24,9 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static org.glassfish.jersey.model.Parameter.Source.BEAN_PARAM;
+import static org.glassfish.jersey.model.Parameter.Source.UNKNOWN;
+
 public class ConstraintMessage {
 
     private static final Cache<Pair<Path, ? extends ConstraintDescriptor<?>>, String> PREFIX_CACHE =
@@ -96,7 +99,7 @@ public class ConstraintMessage {
 
         if (parent.getKind() == ElementKind.PARAMETER) {
             final Parameter param = parameters.get(parent.as(Path.ParameterNode.class).getParameterIndex());
-            if (param.getSource().equals(Parameter.Source.UNKNOWN)) {
+            if (param.getSource().equals(UNKNOWN)) {
                 final String path = propertyPath.stream()
                         .skip(2L)
                         .map(Path.Node::toString)
@@ -128,7 +131,7 @@ public class ConstraintMessage {
                 final Parameter param = parameters.get(parent.as(Path.ParameterNode.class).getParameterIndex());
 
                 // Extract the failing *Param annotation inside the Bean Param
-                if (param.getSource().equals(Parameter.Source.BEAN_PARAM)) {
+                if (param.getSource().equals(BEAN_PARAM)) {
                     final Field field = FieldUtils.getField(param.getRawType(), member.getName(), true);
                     return JerseyParameterNameProvider.getParameterNameFromAnnotations(field.getDeclaredAnnotations());
                 }
@@ -184,7 +187,7 @@ public class ConstraintMessage {
                         // Now determine if the parameter is the request entity
                         final int index = node.as(Path.ParameterNode.class).getParameterIndex();
                         final Parameter parameter = invocable.getParameters().get(index);
-                        return parameter.getSource().equals(Parameter.Source.UNKNOWN) ? 422 : 400;
+                        return parameter.getSource().equals(UNKNOWN) ? 422 : 400;
                     default:
                         continue;
                 }
