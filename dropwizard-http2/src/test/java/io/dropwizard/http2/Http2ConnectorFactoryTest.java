@@ -8,9 +8,9 @@ import java.util.Collections;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
-public class Http2ConnectorFactoryTest {
+class Http2ConnectorFactoryTest {
 
-    private Http2ConnectorFactory http2ConnectorFactory = new Http2ConnectorFactory();
+    private final Http2ConnectorFactory http2ConnectorFactory = new Http2ConnectorFactory();
 
     @Test
     void testSetDefaultHttp2Cipher() {
@@ -35,7 +35,7 @@ public class Http2ConnectorFactoryTest {
     void testThrowExceptionIfDefaultCipherIsNotSet() {
         http2ConnectorFactory.setSupportedCipherSuites(Collections.singletonList("TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384"));
 
-        assertThatIllegalArgumentException().isThrownBy(() -> http2ConnectorFactory.checkSupportedCipherSuites())
+        assertThatIllegalArgumentException().isThrownBy(http2ConnectorFactory::checkSupportedCipherSuites)
             .withMessage("HTTP/2 server configuration must include cipher: TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256");
     }
 }
