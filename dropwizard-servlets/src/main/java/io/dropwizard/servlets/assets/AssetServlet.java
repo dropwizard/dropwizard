@@ -302,13 +302,14 @@ public class AssetServlet extends HttpServlet {
     }
 
     private boolean isCachedClientSide(HttpServletRequest req, CachedAsset cachedAsset) {
-       // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/If-Modified-Since 
-       // Indicates that with the presense of If-None-Match If-Modified-Since should be ignored.
+        // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/If-Modified-Since 
+        // Indicates that with the presense of If-None-Match If-Modified-Since should be ignored.
         String ifNoneMatchHeader = req.getHeader(IF_NONE_MATCH);
-        if (ifNoneMatchHeader != null)
+        if (ifNoneMatchHeader != null) {
             return cachedAsset.getETag().equals(ifNoneMatchHeader);
-        else
+        } else {
             return req.getDateHeader(IF_MODIFIED_SINCE) >= cachedAsset.getLastModifiedTime();
+        }
     }
 
     /**
