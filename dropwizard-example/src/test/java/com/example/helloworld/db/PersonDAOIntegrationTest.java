@@ -8,6 +8,8 @@ import org.hibernate.dialect.MySQL57Dialect;
 import org.hibernate.exception.ConstraintViolationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledForJreRange;
+import org.junit.jupiter.api.condition.JRE;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
@@ -21,6 +23,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 @Testcontainers(disabledWithoutDocker = true)
 @ExtendWith(DropwizardExtensionsSupport.class)
+@DisabledForJreRange(min = JRE.JAVA_16)
 public class PersonDAOIntegrationTest {
     @Container
     private static final MySQLContainer<?> MY_SQL_CONTAINER = new MySQLContainer<>();
