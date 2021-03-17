@@ -22,9 +22,9 @@ jobs:
     - uses: actions/cache@v2.1.4
       with:
         path: ~/.m2/repository
-        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        key: ${{ runner.os }}-maven-${{ secrets.CACHE_VERSION }}-${{ hashFiles('**/pom.xml') }}
         restore-keys: |
-          ${{ runner.os }}-maven-
+          ${{ runner.os }}-maven-${{ secrets.CACHE_VERSION }}-
     - name: Build and Deploy
       run: ./mvnw -B -V -ntp -Pjakarta-apis -DperformRelease=true deploy
       env:
