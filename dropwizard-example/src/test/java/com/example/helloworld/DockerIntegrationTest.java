@@ -9,6 +9,8 @@ import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import org.eclipse.jetty.http.HttpStatus;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledForJreRange;
+import org.junit.jupiter.api.condition.JRE;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
@@ -28,6 +30,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @Testcontainers(disabledWithoutDocker = true)
 @ExtendWith(DropwizardExtensionsSupport.class)
+@DisabledForJreRange(min = JRE.JAVA_16)
 public class DockerIntegrationTest {
     @Container
     private static final MySQLContainer<?> MY_SQL_CONTAINER = new MySQLContainer<>();
