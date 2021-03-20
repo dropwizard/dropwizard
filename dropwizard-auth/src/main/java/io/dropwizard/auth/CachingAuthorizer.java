@@ -112,7 +112,7 @@ public class CachingAuthorizer<P extends Principal> implements Authorizer<P> {
     @Override
     public boolean authorize(P principal, String role, @Nullable ContainerRequestContext requestContext) {
         try (Timer.Context context = getsTimer.time()) {
-            final AuthorizationContext<P> cacheKey = new AuthorizationContext<>(principal, role, requestContext);
+            final AuthorizationContext<P> cacheKey = getAuthorizationContext(principal, role, requestContext);
             final Boolean result = cache.get(cacheKey);
             return result == null ? false : result;
         } catch (CompletionException e) {
@@ -127,6 +127,11 @@ public class CachingAuthorizer<P extends Principal> implements Authorizer<P> {
         }
     }
 
+    @Override
+    public AuthorizationContext<P> getAuthorizationContext(P principal, String role, @Nullable ContainerRequestContext requestContext) {
+        return underlying.getAuthorizationContext(principal, role, requestContext);
+    }
+
     /**
      * Discards any cached role associations for the given principal and role.
      *
@@ -135,7 +140,7 @@ public class CachingAuthorizer<P extends Principal> implements Authorizer<P> {
      * @param requestContext
      */
     public void invalidate(P principal, String role, ContainerRequestContext requestContext) {
-        cache.invalidate(new AuthorizationContext<>(principal, role, requestContext));
+        cache.invalidate(getAuthorizationContext(principal, role, requestContext));
     }
 
     /**

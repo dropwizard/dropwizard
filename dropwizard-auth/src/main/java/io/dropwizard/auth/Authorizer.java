@@ -34,4 +34,16 @@ public interface Authorizer<P extends Principal> {
     default boolean authorize(P principal, String role, @Nullable ContainerRequestContext requestContext) {
         return authorize(principal, role);
     }
+
+    /**
+     * Returns an {@link AuthorizationContext} object, to be used in {@link CachingAuthorizer} as cache key.
+     * @param principal      a {@link Principal} object, representing a user
+     * @param role           a user role
+     * @param requestContext a request context.
+     * @return {@link AuthorizationContext} object, to be used in {@link CachingAuthorizer}.
+     * @since 2.1
+     */
+    default AuthorizationContext<P> getAuthorizationContext(P principal, String role, @Nullable ContainerRequestContext requestContext) {
+        return new DefaultAuthorizationContext<>(principal, role, requestContext);
+    }
 }
