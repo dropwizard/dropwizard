@@ -10,27 +10,31 @@ import io.dropwizard.jackson.Jackson;
 import io.dropwizard.validation.BaseValidator;
 import org.junit.jupiter.api.Test;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class JacksonObjectCodecIssue3796 {
+@SuppressWarnings("NullAway")
+class Issue3796Test {
     @Test
     void configurationWithCustomDeserializerCanBeRead() throws IOException, ConfigurationException {
-        ConfigurationFactory<CustomConfiguration> factory = new YamlConfigurationFactory<>(CustomConfiguration.class, BaseValidator.newValidator(), Jackson.newObjectMapper(), "dw");
-
+        final ConfigurationFactory<CustomConfiguration> factory = new YamlConfigurationFactory<>(CustomConfiguration.class, BaseValidator.newValidator(), Jackson.newObjectMapper(), "dw");
         final CustomConfiguration testObject = factory.build(new ResourceConfigurationSourceProvider(), "issue-3796.yml");
+
         assertThat(testObject).isNotNull();
+        assertThat(testObject.customProperty).isNotNull();
         assertThat(testObject.customProperty.customString).isEqualTo("hello, world");
     }
 
     static class CustomConfiguration {
+        @Nullable
         public CustomProperty customProperty;
     }
 
     @JsonDeserialize(using = CustomDeserializer.class)
     static class CustomProperty {
-        String customString;
+        final String customString;
 
         CustomProperty(String customString) {
             this.customString = customString;
