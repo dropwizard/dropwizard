@@ -125,7 +125,7 @@ public abstract class BaseConfigurationFactory<T> implements ConfigurationFactor
         }
 
         try {
-            final T config = mapper.readValue(new TreeTraversingParser(node), klass);
+            final T config = mapper.readValue(new TreeTraversingParser(node, mapper), klass);
             validate(path, config);
             return config;
         } catch (UnrecognizedPropertyException e) {
