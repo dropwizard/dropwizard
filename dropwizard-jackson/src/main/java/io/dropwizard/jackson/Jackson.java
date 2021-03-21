@@ -8,9 +8,8 @@ import com.fasterxml.jackson.datatype.guava.GuavaModule;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.fasterxml.jackson.module.afterburner.AfterburnerModule;
+import com.fasterxml.jackson.module.blackbird.BlackbirdModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
-import io.dropwizard.util.JavaVersion;
 
 import javax.annotation.Nullable;
 
@@ -61,9 +60,7 @@ public class Jackson {
         mapper.registerModule(new GuavaExtrasModule());
         mapper.registerModule(new CaffeineModule());
         mapper.registerModule(new JodaModule());
-        if (JavaVersion.isJava8()) {
-            mapper.registerModule(new AfterburnerModule());
-        }
+        mapper.registerModule(new BlackbirdModule());
         mapper.registerModule(new FuzzyEnumModule());
         mapper.registerModule(new ParameterNamesModule());
         mapper.registerModule(new Jdk8Module());
