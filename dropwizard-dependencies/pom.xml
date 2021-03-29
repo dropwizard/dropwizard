@@ -48,7 +48,7 @@
         <jdbi3.version>3.18.1</jdbi3.version>
         <jersey.version>2.33</jersey.version>
         <jetty-setuid-java.version>1.0.4</jetty-setuid-java.version>
-        <jetty.version>9.4.39.v20210325</jetty.version>
+        <jetty.version>11.0.2</jetty.version>
         <joda-time.version>2.10.10</joda-time.version>
         <jsr305.version>3.0.2</jsr305.version>
         <liquibase-core.version>4.3.2</liquibase-core.version>
