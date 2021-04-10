@@ -1,10 +1,10 @@
 package io.dropwizard.http2;
 
 import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.jetty9.InstrumentedConnectionFactory;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.dropwizard.jetty.HttpsConnectorFactory;
-import io.dropwizard.jetty.Jetty93InstrumentedConnectionFactory;
 import io.dropwizard.jetty.SslReload;
 import org.eclipse.jetty.alpn.server.ALPNServerConnectionFactory;
 import org.eclipse.jetty.http2.server.HTTP2ServerConnectionFactory;
@@ -115,7 +115,7 @@ public class Http2ConnectorFactory extends HttpsConnectorFactory {
         final SslConnectionFactory sslConnectionFactory = new SslConnectionFactory(sslContextFactory, "alpn");
 
         return buildConnector(server, new ScheduledExecutorScheduler(), buildBufferPool(), name, threadPool,
-            new Jetty93InstrumentedConnectionFactory(sslConnectionFactory, metrics.timer(httpConnections())),
+            new InstrumentedConnectionFactory(sslConnectionFactory, metrics.timer(httpConnections())),
             alpn, http2, http1);
     }
 

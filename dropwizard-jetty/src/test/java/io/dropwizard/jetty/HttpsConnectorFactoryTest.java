@@ -1,11 +1,13 @@
 package io.dropwizard.jetty;
 
 import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.jetty9.InstrumentedConnectionFactory;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.DiscoverableSubtypeResolver;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.util.Resources;
 import io.dropwizard.validation.BaseValidator;
+import org.assertj.core.api.InstanceOfAssertFactories;
 import org.eclipse.jetty.server.ConnectionFactory;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.HttpConfiguration;
@@ -26,7 +28,8 @@ import org.junit.jupiter.api.condition.JRE;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 import java.io.File;
-import java.lang.reflect.Field;
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.net.URI;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -106,7 +109,7 @@ class HttpsConnectorFactoryTest {
         sslContextFactory.start();
         try {
             assertThat(sslContextFactory.newSSLEngine().getEnabledProtocols())
-                .containsExactlyElementsOf(supportedProtocols);
+                    .containsExactlyElementsOf(supportedProtocols);
         } finally {
             sslContextFactory.stop();
         }
@@ -127,8 +130,8 @@ class HttpsConnectorFactoryTest {
         sslContextFactory.start();
         try {
             assertThat(sslContextFactory.newSSLEngine().getEnabledProtocols())
-                .contains("SSLv3", "TLSv1.1")
-                .doesNotContain("TLSv1.2", "TLSv1.3");
+                    .contains("SSLv3", "TLSv1.1")
+                    .doesNotContain("TLSv1.2", "TLSv1.3");
         } finally {
             sslContextFactory.stop();
         }
@@ -149,8 +152,8 @@ class HttpsConnectorFactoryTest {
         sslContextFactory.start();
         try {
             assertThat(sslContextFactory.newSSLEngine().getEnabledProtocols())
-                .contains("TLSv1.1", "TLSv1.2")
-                .doesNotContain("SSLv3", "TLSv1");
+                    .contains("TLSv1.1", "TLSv1.2")
+                    .doesNotContain("SSLv3", "TLSv1");
         } finally {
             sslContextFactory.stop();
         }
@@ -171,8 +174,8 @@ class HttpsConnectorFactoryTest {
         sslContextFactory.start();
         try {
             assertThat(sslContextFactory.newSSLEngine().getEnabledProtocols())
-                .contains("TLSv1.2", "TLSv1.3")
-                .doesNotContain("SSLv3", "TLSv1");
+                    .contains("TLSv1.2", "TLSv1.3")
+                    .doesNotContain("SSLv3", "TLSv1");
         } finally {
             sslContextFactory.stop();
         }
@@ -193,9 +196,9 @@ class HttpsConnectorFactoryTest {
         sslContextFactory.start();
         try {
             assertThat(sslContextFactory.newSSLEngine().getEnabledProtocols())
-                .contains("TLSv1.2")
-                .allSatisfy(protocol -> assertThat(protocol).doesNotStartWith("SSL"))
-                .doesNotContain("TLSv1");
+                    .contains("TLSv1.2")
+                    .allSatisfy(protocol -> assertThat(protocol).doesNotStartWith("SSL"))
+                    .doesNotContain("TLSv1");
         } finally {
             sslContextFactory.stop();
         }
@@ -216,9 +219,9 @@ class HttpsConnectorFactoryTest {
         sslContextFactory.start();
         try {
             assertThat(sslContextFactory.newSSLEngine().getEnabledProtocols())
-                .contains("TLSv1.2", "TLSv1.3")
-                .allSatisfy(protocol -> assertThat(protocol).doesNotStartWith("SSL"))
-                .doesNotContain("TLSv1");
+                    .contains("TLSv1.2", "TLSv1.3")
+                    .allSatisfy(protocol -> assertThat(protocol).doesNotStartWith("SSL"))
+                    .doesNotContain("TLSv1");
         } finally {
             sslContextFactory.stop();
         }
@@ -278,7 +281,7 @@ class HttpsConnectorFactoryTest {
         final HttpsConnectorFactory factory = new HttpsConnectorFactory();
         factory.setKeyStoreType(WINDOWS_MY_KEYSTORE_NAME);
         assertThatIllegalStateException().isThrownBy(() ->
-            factory.configureSslContextFactory(new SslContextFactory.Server()));
+                factory.configureSslContextFactory(new SslContextFactory.Server()));
     }
 
     @Test
@@ -327,48 +330,49 @@ class HttpsConnectorFactoryTest {
             assertThat(serverConnector.getScheduler()).isInstanceOf(ScheduledExecutorScheduler.class);
             assertThat(serverConnector.getExecutor()).isSameAs(threadPool);
 
-            final Jetty93InstrumentedConnectionFactory jetty93SslConnectionFacttory =
-                (Jetty93InstrumentedConnectionFactory) serverConnector.getConnectionFactory("ssl");
-            assertThat(jetty93SslConnectionFacttory).isInstanceOf(Jetty93InstrumentedConnectionFactory.class);
-            assertThat(jetty93SslConnectionFacttory.getTimer()).isSameAs(
-                metrics.timer("org.eclipse.jetty.server.HttpConnectionFactory.127.0.0.1.8443.connections"));
-            final SslContextFactory sslContextFactory = ((SslConnectionFactory) jetty93SslConnectionFacttory
-                .getConnectionFactory()).getSslContextFactory();
-
-            assertThat(sslContextFactory.getKeyStoreResource())
-                .isEqualTo(Resource.newResource("/etc/app/server.ks"));
-            assertThat(sslContextFactory.getKeyStoreType()).isEqualTo("JKS");
-            assertThat(getSSLContextFactoryPrivateField("_keyStorePassword").get(sslContextFactory).toString())
-                .isEqualTo("correct_horse");
-            assertThat(sslContextFactory.getKeyStoreProvider()).isEqualTo("BC");
-            assertThat(sslContextFactory.getTrustStoreResource())
-                .isEqualTo(Resource.newResource("/etc/app/server.ts"));
-            assertThat(sslContextFactory.getKeyStoreType()).isEqualTo("JKS");
-            assertThat(getSSLContextFactoryPrivateField("_trustStorePassword").get(sslContextFactory).toString())
-                .isEqualTo("battery_staple");
-            assertThat(sslContextFactory.getKeyStoreProvider()).isEqualTo("BC");
-            assertThat(getSSLContextFactoryPrivateField("_keyManagerPassword").get(sslContextFactory).toString())
-                .isEqualTo("new_overlords");
-            assertThat(sslContextFactory.getNeedClientAuth()).isTrue();
-            assertThat(sslContextFactory.getWantClientAuth()).isTrue();
-            assertThat(sslContextFactory.getCertAlias()).isEqualTo("alt_server");
-            assertThat(sslContextFactory.getCrlPath()).isEqualTo(new File("/etc/ctr_list.txt").getAbsolutePath());
-            assertThat(sslContextFactory.isEnableCRLDP()).isTrue();
-            assertThat(sslContextFactory.isEnableOCSP()).isTrue();
-            assertThat(sslContextFactory.getMaxCertPathLength()).isEqualTo(4);
-            assertThat(sslContextFactory.getOcspResponderURL()).isEqualTo("http://windc1/ocsp");
-            assertThat(sslContextFactory.getProvider()).isEqualTo("BC");
-            assertThat(sslContextFactory.isRenegotiationAllowed()).isFalse();
-            assertThat(sslContextFactory.getEndpointIdentificationAlgorithm()).isEqualTo("HTTPS");
-            assertThat(sslContextFactory.isValidateCerts()).isTrue();
-            assertThat(sslContextFactory.isValidatePeerCerts()).isTrue();
-            assertThat(sslContextFactory.getIncludeProtocols()).containsOnly("TLSv1.1", "TLSv1.2");
-            assertThat(sslContextFactory.getIncludeCipherSuites()).containsOnly("TLS_DHE_RSA.*", "TLS_ECDHE.*");
+            final InstrumentedConnectionFactory sslConnectionFactory =
+                    (InstrumentedConnectionFactory) serverConnector.getConnectionFactory("ssl");
+            assertThat(sslConnectionFactory).isInstanceOf(InstrumentedConnectionFactory.class);
+            assertThat(sslConnectionFactory)
+                    .extracting("connectionFactory")
+                    .asInstanceOf(InstanceOfAssertFactories.type(SslConnectionFactory.class))
+                    .extracting(SslConnectionFactory::getSslContextFactory)
+                    .satisfies(sslContextFactory -> {
+                        assertThat(sslContextFactory.getKeyStoreResource())
+                                .isEqualTo(newResource("/etc/app/server.ks"));
+                        assertThat(sslContextFactory.getKeyStoreType()).isEqualTo("JKS");
+                        assertThat(sslContextFactory).extracting("_keyStorePassword")
+                                .isEqualTo("correct_horse");
+                        assertThat(sslContextFactory.getKeyStoreProvider()).isEqualTo("BC");
+                        assertThat(sslContextFactory.getTrustStoreResource())
+                                .isEqualTo(newResource("/etc/app/server.ts"));
+                        assertThat(sslContextFactory.getKeyStoreType()).isEqualTo("JKS");
+                        assertThat(sslContextFactory).extracting("_trustStorePassword")
+                                .isEqualTo("battery_staple");
+                        assertThat(sslContextFactory.getKeyStoreProvider()).isEqualTo("BC");
+                        assertThat(sslContextFactory).extracting("_keyManagerPassword")
+                                .isEqualTo("new_overlords");
+                        assertThat(sslContextFactory.getNeedClientAuth()).isTrue();
+                        assertThat(sslContextFactory.getWantClientAuth()).isTrue();
+                        assertThat(sslContextFactory.getCertAlias()).isEqualTo("alt_server");
+                        assertThat(sslContextFactory.getCrlPath()).isEqualTo(new File("/etc/ctr_list.txt").getAbsolutePath());
+                        assertThat(sslContextFactory.isEnableCRLDP()).isTrue();
+                        assertThat(sslContextFactory.isEnableOCSP()).isTrue();
+                        assertThat(sslContextFactory.getMaxCertPathLength()).isEqualTo(4);
+                        assertThat(sslContextFactory.getOcspResponderURL()).isEqualTo("http://windc1/ocsp");
+                        assertThat(sslContextFactory.getProvider()).isEqualTo("BC");
+                        assertThat(sslContextFactory.isRenegotiationAllowed()).isFalse();
+                        assertThat(sslContextFactory.getEndpointIdentificationAlgorithm()).isEqualTo("HTTPS");
+                        assertThat(sslContextFactory.isValidateCerts()).isTrue();
+                        assertThat(sslContextFactory.isValidatePeerCerts()).isTrue();
+                        assertThat(sslContextFactory.getIncludeProtocols()).containsOnly("TLSv1.1", "TLSv1.2");
+                        assertThat(sslContextFactory.getIncludeCipherSuites()).containsOnly("TLS_DHE_RSA.*", "TLS_ECDHE.*");
+                    });
 
             final ConnectionFactory httpConnectionFactory = serverConnector.getConnectionFactory("http/1.1");
             assertThat(httpConnectionFactory).isInstanceOf(HttpConnectionFactory.class);
             final HttpConfiguration httpConfiguration = ((HttpConnectionFactory) httpConnectionFactory)
-                .getHttpConfiguration();
+                    .getHttpConfiguration();
             assertThat(httpConfiguration.getSecureScheme()).isEqualTo("https");
             assertThat(httpConfiguration.getSecurePort()).isEqualTo(8443);
             assertThat(httpConfiguration.getCustomizers()).hasAtLeastOneElementOfType(SecureRequestCustomizer.class);
@@ -383,13 +387,13 @@ class HttpsConnectorFactoryTest {
         final String[] supported = {"SSLv2Hello", "SSLv3", "TLSv1", "TLSv1.1", "TLSv1.2"};
         final String[] enabled = {"TLSv1", "TLSv1.1", "TLSv1.2"};
         final Map<Boolean, List<String>> partition =
-            HttpsConnectorFactory.partitionSupport(supported, enabled, new String[]{}, new String[]{});
+                HttpsConnectorFactory.partitionSupport(supported, enabled, new String[]{}, new String[]{});
 
         assertThat(partition)
-            .containsOnly(
-                entry(true, Arrays.asList("TLSv1", "TLSv1.1", "TLSv1.2")),
-                entry(false, Arrays.asList("SSLv2Hello", "SSLv3"))
-            );
+                .containsOnly(
+                        entry(true, Arrays.asList("TLSv1", "TLSv1.1", "TLSv1.2")),
+                        entry(false, Arrays.asList("SSLv2Hello", "SSLv3"))
+                );
     }
 
     @Test
@@ -398,13 +402,13 @@ class HttpsConnectorFactoryTest {
         final String[] enabled = {"SSLv3", "TLSv1", "TLSv1.1", "TLSv1.2"};
         final String[] exclude = {"SSL.*"};
         final Map<Boolean, List<String>> partition =
-            HttpsConnectorFactory.partitionSupport(supported, enabled, exclude, new String[]{});
+                HttpsConnectorFactory.partitionSupport(supported, enabled, exclude, new String[]{});
 
         assertThat(partition)
-            .containsOnly(
-                entry(true, Arrays.asList("TLSv1", "TLSv1.1", "TLSv1.2")),
-                entry(false, Arrays.asList("SSLv2Hello", "SSLv3"))
-            );
+                .containsOnly(
+                        entry(true, Arrays.asList("TLSv1", "TLSv1.1", "TLSv1.2")),
+                        entry(false, Arrays.asList("SSLv2Hello", "SSLv3"))
+                );
     }
 
     @Test
@@ -414,13 +418,13 @@ class HttpsConnectorFactoryTest {
         final String[] exclude = {"SSL*"};
         final String[] include = {"TLSv1.2|SSLv2Hello"};
         final Map<Boolean, List<String>> partition =
-            HttpsConnectorFactory.partitionSupport(supported, enabled, exclude, include);
+                HttpsConnectorFactory.partitionSupport(supported, enabled, exclude, include);
 
         assertThat(partition)
-            .containsOnly(
-                entry(true, Collections.singletonList("TLSv1.2")),
-                entry(false, Arrays.asList("SSLv2Hello", "SSLv3", "TLSv1", "TLSv1.1"))
-            );
+                .containsOnly(
+                        entry(true, Collections.singletonList("TLSv1.2")),
+                        entry(false, Arrays.asList("SSLv2Hello", "SSLv3", "TLSv1", "TLSv1.1"))
+                );
     }
 
     private boolean canAccessWindowsKeyStore() {
@@ -435,15 +439,17 @@ class HttpsConnectorFactoryTest {
         return false;
     }
 
-    private <T> Collection<String> getViolationProperties(Set<ConstraintViolation<T>> violations) {
+    private static <T> Collection<String> getViolationProperties(Set<ConstraintViolation<T>> violations) {
         return violations.stream()
                 .map(input -> input.getPropertyPath().toString())
                 .collect(Collectors.toSet());
     }
 
-    private static Field getSSLContextFactoryPrivateField(final String name) throws NoSuchFieldException {
-        final Field field = SslContextFactory.class.getDeclaredField(name);
-        field.setAccessible(true);
-        return field;
+    private static Resource newResource(String resource) {
+        try {
+            return Resource.newResource(resource);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 }
