@@ -1,11 +1,11 @@
 package io.dropwizard.http2;
 
 import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.jetty9.InstrumentedConnectionFactory;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.dropwizard.jetty.HttpConnectorFactory;
 import io.dropwizard.jetty.HttpsConnectorFactory;
-import io.dropwizard.jetty.Jetty93InstrumentedConnectionFactory;
 import org.eclipse.jetty.http2.server.HTTP2CServerConnectionFactory;
 import org.eclipse.jetty.http2.server.HTTP2ServerConnectionFactory;
 import org.eclipse.jetty.server.Connector;
@@ -97,6 +97,6 @@ public class Http2CConnectorFactory extends HttpConnectorFactory {
         // so it will return the predefined HTTP/2 preamble and the client and the server will switch to the
         // new protocol.
         return buildConnector(server, new ScheduledExecutorScheduler(), buildBufferPool(), name, threadPool,
-                new Jetty93InstrumentedConnectionFactory(http11, metrics.timer(httpConnections())), http2c);
+                new InstrumentedConnectionFactory(http11, metrics.timer(httpConnections())), http2c);
     }
 }
