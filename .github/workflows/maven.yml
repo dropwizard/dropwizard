@@ -26,14 +26,14 @@ jobs:
       uses: joschi/setup-jdk@v2.3.0
       with:
         java-version: ${{ matrix.java_version }}
-    - uses: actions/cache@v2.1.4
+    - uses: actions/cache@v2.1.5
       if: runner.os != 'Windows'
       with:
         path: ~/.m2/repository
         key: ${{ runner.os }}-maven-${{ secrets.CACHE_VERSION }}-${{ hashFiles('**/pom.xml') }}
         restore-keys: |
           ${{ runner.os }}-maven-${{ secrets.CACHE_VERSION }}-
-    - uses: actions/cache@v2.1.4
+    - uses: actions/cache@v2.1.5
       if: runner.os == 'Windows'
       with:
         path: ~/.m2/repository
@@ -41,7 +41,7 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-maven-${{ secrets.CACHE_VERSION }}-
     - name: Cache SonarCloud packages
-      uses: actions/cache@v2.1.4
+      uses: actions/cache@v2.1.5
       if: ${{ env.SONAR_TOKEN != null && env.SONAR_TOKEN != '' && matrix.java_version == '11' }}
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
