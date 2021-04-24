@@ -146,8 +146,8 @@ class HttpsConnectorFactoryTest {
         sslContextFactory.start();
         try {
             assertThat(sslContextFactory.newSSLEngine().getEnabledProtocols())
-                .contains("TLSv1.1", "TLSv1.2")
-                .doesNotContain("SSLv3", "TLSv1");
+                    .contains("TLSv1.2")
+                    .doesNotContain("SSLv3", "TLSv1");
         } finally {
             sslContextFactory.stop();
         }
