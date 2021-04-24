@@ -2,7 +2,6 @@ package io.dropwizard.validation.selfvalidating;
 
 import org.hibernate.validator.constraintvalidation.HibernateConstraintValidatorContext;
 
-import javax.annotation.Nullable;
 import javax.validation.ConstraintValidatorContext;
 import java.util.Collections;
 import java.util.Map;
@@ -15,17 +14,10 @@ import static io.dropwizard.validation.InterpolationHelper.escapeMessageParamete
  */
 public class ViolationCollector {
     private final ConstraintValidatorContext constraintValidatorContext;
-    private final boolean escapeExpressions;
-
     private boolean violationOccurred = false;
 
     public ViolationCollector(ConstraintValidatorContext constraintValidatorContext) {
-        this(constraintValidatorContext, true);
-    }
-
-    public ViolationCollector(ConstraintValidatorContext constraintValidatorContext, boolean escapeExpressions) {
         this.constraintValidatorContext = constraintValidatorContext;
-        this.escapeExpressions = escapeExpressions;
     }
 
     /**
@@ -50,7 +42,7 @@ public class ViolationCollector {
     public void addViolation(String message, Map<String, Object> messageParameters) {
         violationOccurred = true;
         getContextWithMessageParameters(messageParameters)
-                .buildConstraintViolationWithTemplate(sanitizeTemplate(message))
+                .buildConstraintViolationWithTemplate(message)
                 .addConstraintViolation();
     }
 
@@ -79,7 +71,7 @@ public class ViolationCollector {
     public void addViolation(String propertyName, String message, Map<String, Object> messageParameters) {
         violationOccurred = true;
         getContextWithMessageParameters(messageParameters)
-                .buildConstraintViolationWithTemplate(sanitizeTemplate(message))
+                .buildConstraintViolationWithTemplate(message)
                 .addPropertyNode(propertyName)
                 .addConstraintViolation();
     }
@@ -110,7 +102,7 @@ public class ViolationCollector {
     public void addViolation(String propertyName, Integer index, String message, Map<String, Object> messageParameters) {
         violationOccurred = true;
         getContextWithMessageParameters(messageParameters)
-                .buildConstraintViolationWithTemplate(sanitizeTemplate(message))
+                .buildConstraintViolationWithTemplate(message)
                 .addPropertyNode(propertyName)
                 .addBeanNode().inIterable().atIndex(index)
                 .addConstraintViolation();
@@ -139,9 +131,8 @@ public class ViolationCollector {
      */
     public void addViolation(String propertyName, String key, String message, Map<String, Object> messageParameters) {
         violationOccurred = true;
-        final String messageTemplate = sanitizeTemplate(message);
         final HibernateConstraintValidatorContext context = getContextWithMessageParameters(messageParameters);
-        context.buildConstraintViolationWithTemplate(messageTemplate)
+        context.buildConstraintViolationWithTemplate(message)
                 .addPropertyNode(propertyName)
                 .addBeanNode().inIterable().atKey(key)
                 .addConstraintViolation();
@@ -156,11 +147,6 @@ public class ViolationCollector {
             context.addMessageParameter(messageParameter.getKey(), escapedValue);
         }
         return context;
-    }
-
-    @Nullable
-    private String sanitizeTemplate(@Nullable String message) {
-        return escapeExpressions ? escapeMessageParameter(message) : message;
     }
 
     /**

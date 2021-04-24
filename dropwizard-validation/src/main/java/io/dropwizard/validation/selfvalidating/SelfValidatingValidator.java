@@ -31,17 +31,11 @@ public class SelfValidatingValidator implements ConstraintValidator<SelfValidati
     private final AnnotationConfiguration annotationConfiguration = new AnnotationConfiguration.StdConfiguration(AnnotationInclusion.INCLUDE_AND_INHERIT_IF_INHERITED);
     private final TypeResolver typeResolver = new TypeResolver();
     private final MemberResolver memberResolver = new MemberResolver(typeResolver);
-    private boolean escapeExpressions = true;
-
-    @Override
-    public void initialize(SelfValidating constraintAnnotation) {
-        escapeExpressions = constraintAnnotation.escapeExpressions();
-    }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
     public boolean isValid(Object value, ConstraintValidatorContext context) {
-        final ViolationCollector collector = new ViolationCollector(context, escapeExpressions);
+        final ViolationCollector collector = new ViolationCollector(context);
         context.disableDefaultConstraintViolation();
         for (ValidationCaller caller : methodMap.computeIfAbsent(value.getClass(), this::findMethods)) {
             caller.setValidationObject(value);
