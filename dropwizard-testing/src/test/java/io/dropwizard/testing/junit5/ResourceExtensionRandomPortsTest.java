@@ -1,28 +1,27 @@
 package io.dropwizard.testing.junit5;
 
 import org.glassfish.jersey.test.grizzly.GrizzlyTestContainerFactory;
-import org.junit.jupiter.api.RepeatedTest;
-import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.Test;
 
-import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@ExtendWith(DropwizardExtensionsSupport.class)
 class ResourceExtensionRandomPortsTest {
-    private final ResourceExtension resources = ResourceExtension.builder()
-            .setTestContainerFactory(new GrizzlyTestContainerFactory())
-            .build();
 
-    ConcurrentSkipListSet<Integer> usedPorts = new ConcurrentSkipListSet<>();
+    @Test
+    public void eachTestShouldUseANewPort() throws Throwable {
+        final ResourceExtension resources = ResourceExtension.builder()
+                .setTestContainerFactory(new GrizzlyTestContainerFactory())
+                .build();
+        Set<Integer> usedPorts = new HashSet<>();
 
-    @RepeatedTest(10)
-    public void eachTestShouldUseANewPort() {
-        final int port = resources.target("/").getUri().getPort();
-        assertThat(usedPorts).doesNotContain(port);
-
-        usedPorts.add(port);
+        for (int i = 0; i < 10; i++) {
+            resources.before();
+            final int port = resources.target("/").getUri().getPort();
+            usedPorts.add(port);
+        }
+        assertThat(usedPorts).hasSizeGreaterThanOrEqualTo(2);
     }
 }
