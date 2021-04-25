@@ -156,21 +156,7 @@ public class SelfValidationTest {
         }
     }
 
-    @SelfValidating(escapeExpressions = false)
-    public static class EscapingDisabledExample {
-        @SuppressWarnings("unused")
-        @SelfValidation
-        public void validateFail(ViolationCollector col) {
-            col.addViolation("${'value'}");
-            col.addViolation("$\\A{1+1}");
-            col.addViolation("{value}", Collections.singletonMap("value", "TEST"));
-            col.addViolation("${'property'}", "${'value'}");
-            col.addViolation("${'property'}", 1, "${'value'}");
-            col.addViolation("${'property'}", "${'key'}", "${'value'}");
-        }
-    }
-
-    @SelfValidating(escapeExpressions = false)
+    @SelfValidating
     public static class MessageParametersExample {
         @SuppressWarnings("unused")
         @SelfValidation
@@ -313,7 +299,7 @@ public class SelfValidationTest {
         assertThat(ConstraintViolations.format(validator.validate(new InjectionExample()))).containsExactly(
                 " $\\A{1+1}",
                 " ${'value'}",
-                " {value}",
+                " TEST",
                 "${'property'} ${'value'}",
                 "${'property'}[${'key'}] ${'value'}",
                 "${'property'}[1] ${'value'}"
@@ -322,22 +308,9 @@ public class SelfValidationTest {
     }
 
     @Test
-    void violationMessagesAreInterpolatedIfEscapingDisabled() {
-        assertThat(ConstraintViolations.format(validator.validate(new EscapingDisabledExample()))).containsExactly(
-                " $\\A{1+1}",
-                " TEST",
-                " value",
-                "${'property'} value",
-                "${'property'}[${'key'}] value",
-                "${'property'}[1] value"
-        );
-        assertThat(TestLoggerFactory.getAllLoggingEvents()).isEmpty();
-    }
-
-    @Test
     void messageParametersExample() {
         assertThat(ConstraintViolations.format(validator.validate(new MessageParametersExample()))).containsExactly(
-                " Mixed value VALUE",
+                " Mixed ${'value'} VALUE",
                 " Nested ${'nested'}",
                 " No parameter",
                 " VALUE",
