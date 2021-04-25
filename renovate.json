@@ -2,7 +2,7 @@
   "extends": [
     "config:base"
   ],
-  "baseBranches": ["master", "release/2.0.x", "release/2.1.x", "release/3.0.x"],
+  "baseBranches": ["master", "release/2.0.x", "release/2.1.x", "release/2.2", "release/3.0.x"],
   "labels": ["dependencies"],
   "reviewers": ["team:committers"],
   "schedule": [
