@@ -22,7 +22,7 @@
         <argparse4j.version>0.9.0</argparse4j.version>
         <byte-buddy.version>1.11.0</byte-buddy.version>
         <caffeine.version>2.9.0</caffeine.version>
-        <checker-qual.version>3.12.0</checker-qual.version>
+        <checker-qual.version>3.13.0</checker-qual.version>
         <classmate.version>1.5.1</classmate.version>
         <commons-codec.version>1.15</commons-codec.version>
         <commons-lang3.version>3.12.0</commons-lang3.version>
@@ -56,7 +56,7 @@
         <liquibase-slf4j.version>4.0.0</liquibase-slf4j.version>
         <logback-throttling-appender.version>1.1.0</logback-throttling-appender.version>
         <logback.version>1.2.3</logback.version>
-        <metrics4.version>4.2.0-rc.1</metrics4.version>
+        <metrics4.version>4.2.0-rc.2</metrics4.version>
         <mustache-compiler.version>0.9.7</mustache-compiler.version>
         <nullaway.version>0.9.1</nullaway.version>
         <slf4j.version>1.7.30</slf4j.version>
