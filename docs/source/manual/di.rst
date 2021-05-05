@@ -12,7 +12,7 @@ Dropwizard Dependency Injection
 .. _man-di-hk2:
 
 Dependency Injection Using HK2
-=================
+==============================
 
 The underlying library for out-of-the-box dependency injection mechanism in Dropwizard is Eclipse's HK2_, a CDI-compliant dependency injection framework.
 
