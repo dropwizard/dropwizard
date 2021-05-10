@@ -8,6 +8,8 @@ import io.dropwizard.setup.Environment;
 import io.dropwizard.util.Resources;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.ArgumentCaptor;
 
 import javax.servlet.ServletRegistration;
@@ -84,34 +86,25 @@ class AssetsBundleTest {
                 .isEqualTo("/what");
     }
 
-    @Test
-    void canSupportDifferentAssetsBundleName() {
-        runBundle(new AssetsBundle("/json", "/what/new", "index.txt", "customAsset1"), "customAsset1");
 
+    @ParameterizedTest
+    @CsvSource({
+        "customAsset1, /what/new",
+        "customAsset2, /what/old"
+    })
+    void canSupportDifferentAssetsBundleName(String asset, String path) {
+        runBundle(new AssetsBundle("/json", path, "index.txt", asset), asset);
         assertThat(servletPath)
-                .isEqualTo("/what/new/*");
+            .isEqualTo(path + "/*");
 
         assertThat(servlet.getIndexFile())
-                .isEqualTo("index.txt");
+            .isEqualTo("index.txt");
 
         assertThat(servlet.getResourceURL())
-                .isEqualTo(normalize("json"));
+            .isEqualTo(normalize("json"));
 
         assertThat(servlet.getUriPath())
-                .isEqualTo("/what/new");
-
-        runBundle(new AssetsBundle("/json", "/what/old", "index.txt", "customAsset2"), "customAsset2");
-        assertThat(servletPath)
-                .isEqualTo("/what/old/*");
-
-        assertThat(servlet.getIndexFile())
-                .isEqualTo("index.txt");
-
-        assertThat(servlet.getResourceURL())
-                .isEqualTo(normalize("json"));
-
-        assertThat(servlet.getUriPath())
-                .isEqualTo("/what/old");
+            .isEqualTo(path);
     }
 
     @Test
