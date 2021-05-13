@@ -71,7 +71,7 @@
         <hsqldb.version>2.5.1</hsqldb.version>
         <junit.version>4.13.2</junit.version>
         <junit5.version>5.7.1</junit5.version>
-        <mockito.version>3.9.0</mockito.version>
+        <mockito.version>3.10.0</mockito.version>
 
         <!-- Plugin versions -->
         <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
