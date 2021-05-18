@@ -77,6 +77,17 @@ public class AbstractDAO<E> {
     }
 
     /**
+     * Returns a named and type-safe {@link Query}.
+     *
+     * @param queryName the name of the query
+     * @return the named query
+     * @see Session#createNamedQuery(String)
+     */
+    protected Query<E> namedTypedQuery(String queryName) throws HibernateException {
+        return currentSession().createNamedQuery(queryName, getEntityClass());
+    }
+
+    /**
      * Returns a typed {@link Query<E>}
      *
      * @param queryString HQL query
