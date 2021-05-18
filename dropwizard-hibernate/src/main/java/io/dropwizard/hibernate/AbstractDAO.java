@@ -81,7 +81,7 @@ public class AbstractDAO<E> {
      *
      * @param queryName the name of the query
      * @return the named query
-     * @see Session#createNamedQuery(String)
+     * @see Session#createNamedQuery(String, Class)
      */
     protected Query<E> namedTypedQuery(String queryName) throws HibernateException {
         return currentSession().createNamedQuery(queryName, getEntityClass());
