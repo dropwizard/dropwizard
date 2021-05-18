@@ -125,7 +125,7 @@ contains type-safe wrappers for most of ``SessionFactory``'s common operations:
 
         @SuppressWarnings("unchecked")
         public List<Person> findAll() {
-            return list((Query<Person>) namedQuery("com.example.helloworld.core.Person.findAll"));
+            return list(namedTypedQuery("com.example.helloworld.core.Person.findAll"));
         }
     }
 
