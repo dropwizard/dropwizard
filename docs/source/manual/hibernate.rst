@@ -106,7 +106,7 @@ Data Access Objects
 -------------------
 
 Dropwizard comes with ``AbstractDAO``, a minimal template for entity-specific DAO classes. It
-contains type-safe wrappers for most of ``SessionFactory``'s common operations:
+contains type-safe wrappers for ``SessionFactory``'s common operations:
 
 .. code-block:: java
 
