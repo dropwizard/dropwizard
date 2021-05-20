@@ -26,7 +26,7 @@ Many, many thanks to:
 * :ghuser:`Alex Katlein <vemilyus>`
 * :ghuser:`Alex Shpak <alex-shpak>`
 * :ghuser:`Alexander von Renteln <herrphon>`
-* :ghuser:`Alexey Gavrilov <Alexey1Gavrilov>`
+* :ghuser:`Alexey Gavrilov <agavrilov76>`
 * :ghuser:`alexey-wg2 <alexey-wg2>`
 * :ghuser:`Alice Chen <chena>`
 * :ghuser:`Amr Mostafa <amr>`
@@ -172,6 +172,7 @@ Many, many thanks to:
 * :ghuser:`Ian Eure <ieure>`
 * :ghuser:`Ian Ferguson <ianferguson>`
 * :ghuser:`Ian White <eonwhite>`
+* :ghuser:`Igor Savin <kibertoad>`
 * :ghuser:`Ilias Bartolini <iliasbartolini>`
 * :ghuser:`islasjuanp <islasjuanp>`
 * :ghuser:`Jacek Jackowiak <airborn>`
@@ -183,6 +184,7 @@ Many, many thanks to:
 * :ghuser:`Jan Galinski <jangalinski>`
 * :ghuser:`Jan-Terje Sørensen <jansoren>`
 * :ghuser:`Jared Stehler <jaredstehler-cengage>`
+* :ghuser:`Jason <dirkraft>`
 * :ghuser:`Jason Clawson <jclawson>`
 * :ghuser:`Jason Dunkelberger <dirkraft>`
 * :ghuser:`Jason Toffaletti <toffaletti>`
@@ -291,6 +293,7 @@ Many, many thanks to:
 * :ghuser:`Otto Jongerius <ojongerius>`
 * :ghuser:`Owen Jacobson <ojacobson>`
 * :ghuser:`pandaadb <pandaadb>`
+* :ghuser:`Pablo Fernandez <fernandezpablo85>`
 * :ghuser:`Patrick Stegmann <wonderb0lt>`
 * :ghuser:`Patryk Najda <patrox>`
 * :ghuser:`Paul Kenneth Kent <paulkennethkent>`
