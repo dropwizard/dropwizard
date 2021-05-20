@@ -814,4 +814,4 @@ provide a phenomenal platform for developing RESTful web applications.
 
 There's a lot more to Dropwizard than is covered here (commands, bundles, servlets, advanced
 configuration, validation, HTTP clients, database clients, views, etc.), all of which is covered by
-the :ref:`User Manual <manual-index>`.
+the User Manual.
