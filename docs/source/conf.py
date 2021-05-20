@@ -174,8 +174,6 @@ html_static_path = ['_static']
 # using the given strftime format.
 #html_last_updated_fmt = '%b %d, %Y'
 
-html_add_permalinks = ''
-
 # Custom sidebar templates, maps document names to template names.
 #html_sidebars = {}
 

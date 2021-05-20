@@ -334,7 +334,7 @@ The optional ``dropwizard-client`` module offers more helpers, e.g. a custom Jer
 which is aware of your application's environment.
 
 JUnit 5
------
+-------
 Adding ``DropwizardExtensionsSupport`` annotation and ``DropwizardAppExtension`` extension to your JUnit5 test class will start the app prior to any tests
 running and stop it again when they've completed (roughly equivalent to having used ``@BeforeAll`` and ``@AfterAll``).
 ``DropwizardAppExtension`` also exposes the app's ``Configuration``,
@@ -368,7 +368,7 @@ and can be reused across tests.
     }
 
 JUnit 4
------
+-------
 Adding ``DropwizardAppRule`` to your JUnit4 test class will start the app prior to any tests
 running and stop it again when they've completed (roughly equivalent to having used ``@BeforeClass`` and ``@AfterClass``).
 ``DropwizardAppRule`` also exposes the app's ``Configuration``,
