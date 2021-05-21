@@ -49,6 +49,11 @@ public class AbstractDAOTest {
         }
 
         @Override
+        protected Query<String> namedTypedQuery(String queryName) throws HibernateException {
+            return super.namedTypedQuery(queryName);
+        }
+
+        @Override
         public Class<String> getEntityClass() {
             return super.getEntityClass();
         }
@@ -107,6 +112,7 @@ public class AbstractDAOTest {
         when(session.getCriteriaBuilder()).thenReturn(criteriaBuilder);
         when(session.getNamedQuery(anyString())).thenReturn(query);
         when(session.createQuery(anyString(), same(String.class))).thenReturn(query);
+        when(session.createNamedQuery(anyString(), same(String.class))).thenReturn(query);
     }
 
     @Test
@@ -127,6 +133,14 @@ public class AbstractDAOTest {
                 .isEqualTo(query);
 
         verify(session).getNamedQuery("query-name");
+    }
+
+    @Test
+    void getsNamedTypedQueries() throws Exception {
+        assertThat(dao.namedTypedQuery("query-name"))
+            .isEqualTo(query);
+
+        verify(session).createNamedQuery("query-name", String.class);
     }
 
     @Test
