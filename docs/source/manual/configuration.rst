@@ -614,12 +614,64 @@ Health checks
 
 
 ============= ======= ==========================================================
-Name                   Default Description
+Name          Default Description
 ============= ======= ==========================================================
 minThreads    1       The minimum number of threads for executing health checks.
 maxThreads    4       The maximum number of threads for executing health checks.
 workQueueSize 1       The length of the work queue for health check executions.
 ============= ======= ==========================================================
+
+.. _man-configuration-adminservlet:
+
+Admin servlet capabilities
+==========================
+
+See ``adminContextPath`` and ``adminConnectors`` in the ref:`default configuration <default>` for more information on
+the root path and port for the ``AdminServlet`` endpoint. All URIs provided here are relative to the context path
+for that servlet. More details on this servlet are available in the Metrics documentation__.
+
+.. __: https://github.com/dropwizard/metrics/blob/release/4.2.x/docs/source/manual/servlets.rst
+
+The thread dump and CPU profiling endpoints can allow a DDOS__-style attack on a Dropwizard application if the port(s)
+for the ``adminConnectors`` are exposed publicly. Please configure your application appropriately for production
+environments.
+
+.. __: https://en.wikipedia.org/wiki/Denial-of-service_attack
+
+.. code-block:: yaml
+
+    adminServlets:
+      metricsEnabled: true
+      metricsUri: /metrics
+      pingEnabled: true
+      pingUri: /ping
+      threadsEnabled: false
+      threadsUri: /threads
+      healthcheckEnabled: true
+      healthcheckUri: /healthcheck
+      cpuProfileEnabled: false
+      cpuProfileUri: /pprof
+
+
+=================== ============ ======================================================================================
+Name                Default      Description
+=================== ============ ======================================================================================
+metricsEnabled      true         Determines whether metrics information will be available via the ``AdminServlet``
+                                 endpoint.
+metricsUri          /metrics     The relative URI for metrics retrieval.
+pingEnabled         true         Determines whether a ``ping`` liveness function will be available via the
+                                 ``AdminServlet`` endpoint.
+pingUri             /ping        The relative URI for liveness response retrieval.
+threadsEnabled      true         Determines whether thread dump information will be available via the ``AdminServlet``
+                                 endpoint.
+threadsUri          /threads     The relative URI for thread dump retrieval.
+healthcheckEnabled  true         Determines whether health check information will be available via the ``AdminServlet``
+                                 endpoint.
+healthcheckUri      /healthcheck The relative URI for health check retrieval.
+cpuProfileEnabled   true         Determines whether CPU profiling results will be available via the ``AdminServlet``
+                                 endpoint.
+cpuProfileUri       /pprof       The relative URI for CPU profiling retrieval.
+=================== ============ ======================================================================================
 
 .. _man-configuration-logging:
 

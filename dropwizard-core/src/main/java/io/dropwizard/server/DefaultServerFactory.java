@@ -163,7 +163,6 @@ public class DefaultServerFactory extends AbstractServerFactory {
                                                             environment.getJerseyServletContainer(),
                                                             environment.metrics());
 
-
         final Handler adminHandler = createAdminServlet(server,
                                                         environment.getAdminContext(),
                                                         environment.metrics(),

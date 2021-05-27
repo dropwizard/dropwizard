@@ -4,9 +4,6 @@ import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheckRegistry;
 import com.codahale.metrics.jetty9.InstrumentedHandler;
 import com.codahale.metrics.jetty9.InstrumentedQueuedThreadPool;
-import com.codahale.metrics.servlets.AdminServlet;
-import com.codahale.metrics.servlets.HealthCheckServlet;
-import com.codahale.metrics.servlets.MetricsServlet;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -232,6 +229,10 @@ public abstract class AbstractServerFactory implements ServerFactory {
 
     @Valid
     @NotNull
+    private AdminServletFactory adminServlet = new AdminServletFactory();
+
+    @Valid
+    @NotNull
     private GzipHandlerFactory gzip = new GzipHandlerFactory();
 
     @Valid
@@ -310,6 +311,16 @@ public abstract class AbstractServerFactory implements ServerFactory {
     @JsonProperty("requestLog")
     public synchronized void setRequestLogFactory(RequestLogFactory<?> requestLog) {
         this.requestLog = requestLog;
+    }
+
+    @JsonProperty("adminServlets")
+    public AdminServletFactory getAdminServletFactory() {
+        return adminServlet;
+    }
+
+    @JsonProperty("adminServlets")
+    public void setAdminServletFactory(AdminServletFactory adminServlet) {
+        this.adminServlet = adminServlet;
     }
 
     @JsonProperty("gzip")
@@ -556,9 +567,7 @@ public abstract class AbstractServerFactory implements ServerFactory {
                                          HealthCheckRegistry healthChecks) {
         configureSessionsAndSecurity(handler, server);
         handler.setServer(server);
-        handler.getServletContext().setAttribute(MetricsServlet.METRICS_REGISTRY, metrics);
-        handler.getServletContext().setAttribute(HealthCheckServlet.HEALTH_CHECK_REGISTRY, healthChecks);
-        handler.addServlet(AdminServlet.class, "/*");
+        adminServlet.addServlet(handler, metrics, healthChecks);
         final String allowedMethodsParam = String.join(",", allowedMethods);
         handler.addFilter(AllowedMethodsFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST))
                 .setInitParameter(AllowedMethodsFilter.ALLOWED_METHODS_PARAM, allowedMethodsParam);
