@@ -20,9 +20,9 @@
         <!-- External dependencies -->
         <activation-api.version>1.2.2</activation-api.version>
         <argparse4j.version>0.9.0</argparse4j.version>
-        <byte-buddy.version>1.11.0</byte-buddy.version>
+        <byte-buddy.version>1.11.1</byte-buddy.version>
         <caffeine.version>2.9.1</caffeine.version>
-        <checker-qual.version>3.13.0</checker-qual.version>
+        <checker-qual.version>3.14.0</checker-qual.version>
         <classmate.version>1.5.1</classmate.version>
         <commons-codec.version>1.15</commons-codec.version>
         <commons-lang3.version>3.12.0</commons-lang3.version>
@@ -31,7 +31,7 @@
         <error_prone.version>2.7.1</error_prone.version>
         <freemarker.version>2.3.31</freemarker.version>
         <guava.version>30.1.1-jre</guava.version>
-        <hibernate-core.version>5.4.31.Final</hibernate-core.version>
+        <hibernate-core.version>5.5.0.Final</hibernate-core.version>
         <hibernate-validator.version>6.2.0.Final</hibernate-validator.version>
         <hk2.version>2.6.1</hk2.version>
         <httpclient.version>4.5.13</httpclient.version>
@@ -57,7 +57,7 @@
         <logback-throttling-appender.version>1.1.0</logback-throttling-appender.version>
         <logback.version>1.2.3</logback.version>
         <metrics4.version>4.2.0</metrics4.version>
-        <mustache-compiler.version>0.9.7</mustache-compiler.version>
+        <mustache-compiler.version>0.9.10</mustache-compiler.version>
         <nullaway.version>0.9.1</nullaway.version>
         <slf4j.version>1.7.30</slf4j.version>
         <tomcat-jdbc.version>9.0.46</tomcat-jdbc.version>
