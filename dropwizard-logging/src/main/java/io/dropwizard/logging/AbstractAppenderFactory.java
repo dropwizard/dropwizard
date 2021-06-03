@@ -235,10 +235,12 @@ public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware>
     }
 
     @Nullable
+    @JsonProperty
     public DiscoverableLayoutFactory<?> getLayout() {
         return layout;
     }
 
+    @JsonProperty
     public void setLayout(@Nullable DiscoverableLayoutFactory<E> layout) {
         this.layout = layout;
     }
