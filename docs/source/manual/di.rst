@@ -7,7 +7,7 @@ Dropwizard Dependency Injection
 .. highlight:: text
 
 .. rubric:: Dropwizard provides you with simple dependency injection mechanism, using HK2,
-            out-of-the-box, and you can add support for more advanced DI by using Guice bundle.
+            out-of-the-box, and you can add support for more advanced DI by using `Guice bundle <https://github.com/xvik/dropwizard-guicey>`_.
 
 .. _man-di-hk2:
 
