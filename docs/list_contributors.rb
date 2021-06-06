@@ -19,7 +19,9 @@ excluded_contributors = [
   'dependabot-bot',
   'dependabot-preview[bot]',
   'dependabot[bot]',
-  'codetriage-readme-bot'
+  'codetriage-readme-bot',
+  'renovate[bot]',
+  'renovate-bot'
 ]
 
 contributors = []
