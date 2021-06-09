@@ -157,5 +157,5 @@ Then you can provide alternate configuration for testing purposes:
         public static final DropwizardAppExtension<TestConfiguration> app = new DropwizardAppExtension<>(ExampleApplication.class, new TestConfiguration());
     }
 
-Note: the `Singleton` annotation is only effective for Dropwizard resources. For custom classes, don't forget
-to register them as shown above with `bindAsContract(singletonClass).in(Singleton.class);`
+Note: the ``@Singleton`` annotation is only effective for Dropwizard resources. For custom classes, don't forget
+to register them as shown above with ``bindAsContract(singletonClass).in(Singleton.class)``.
