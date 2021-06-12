@@ -20,7 +20,7 @@
         <!-- External dependencies -->
         <activation-api.version>1.2.2</activation-api.version>
         <argparse4j.version>0.9.0</argparse4j.version>
-        <byte-buddy.version>1.11.1</byte-buddy.version>
+        <byte-buddy.version>1.11.2</byte-buddy.version>
         <caffeine.version>2.9.1</caffeine.version>
         <checker-qual.version>3.14.0</checker-qual.version>
         <classmate.version>1.5.1</classmate.version>
@@ -46,13 +46,13 @@
         <javax.persistence-api.version>2.2</javax.persistence-api.version>
         <jaxb-api.version>2.3.3</jaxb-api.version>
         <jcip-annotations.version>1.0</jcip-annotations.version>
-        <jdbi3.version>3.20.0</jdbi3.version>
+        <jdbi3.version>3.20.1</jdbi3.version>
         <jersey.version>2.33</jersey.version>
         <jetty-setuid-java.version>1.0.4</jetty-setuid-java.version>
-        <jetty.version>9.4.41.v20210516</jetty.version>
+        <jetty.version>9.4.42.v20210604</jetty.version>
         <joda-time.version>2.10.10</joda-time.version>
         <jsr305.version>3.0.2</jsr305.version>
-        <liquibase-core.version>4.3.5</liquibase-core.version>
+        <liquibase-core.version>4.4.0</liquibase-core.version>
         <liquibase-slf4j.version>4.0.0</liquibase-slf4j.version>
         <logback-throttling-appender.version>1.1.0</logback-throttling-appender.version>
         <logback.version>1.2.3</logback.version>
@@ -66,7 +66,7 @@
         <!-- Test dependencies -->
         <assertj.version>3.19.0</assertj.version>
         <awaitility.version>4.1.0</awaitility.version>
-        <bcprov-jdk15on.version>1.68</bcprov-jdk15on.version>
+        <bcprov-jdk15on.version>1.69</bcprov-jdk15on.version>
         <h2.version>1.4.200</h2.version>
         <hsqldb.version>2.5.1</hsqldb.version>
         <junit.version>4.13.2</junit.version>
@@ -79,7 +79,7 @@
         <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
         <jacoco-maven-plugin.version>0.8.7</jacoco-maven-plugin.version>
         <lifecycle-mapping.version>1.0.0</lifecycle-mapping.version>
-        <pgpverify-maven-plugin.version>1.12.0</pgpverify-maven-plugin.version>
+        <pgpverify-maven-plugin.version>1.13.0</pgpverify-maven-plugin.version>
         <error_prone.javac.version>9+181-r4173-1</error_prone.javac.version>
     </properties>
 
