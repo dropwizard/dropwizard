@@ -87,7 +87,7 @@ import org.eclipse.jetty.servlet.ServletHolder;
  *     </tr>
  * </table>
  *
- * @since 2.0
+ * @since 2.1
  */
 public class AdminServletFactory {
 
