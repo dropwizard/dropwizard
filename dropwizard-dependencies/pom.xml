@@ -31,7 +31,7 @@
         <error_prone.version>2.7.1</error_prone.version>
         <freemarker.version>2.3.31</freemarker.version>
         <guava.version>30.1.1-jre</guava.version>
-        <hibernate-core.version>5.5.0.Final</hibernate-core.version>
+        <hibernate-core.version>5.5.2.Final</hibernate-core.version>
         <hibernate-validator.version>6.2.0.Final</hibernate-validator.version>
         <hk2.version>2.6.1</hk2.version>
         <httpclient.version>4.5.13</httpclient.version>
@@ -60,11 +60,11 @@
         <mustache-compiler.version>0.9.10</mustache-compiler.version>
         <nullaway.version>0.9.1</nullaway.version>
         <slf4j.version>1.7.30</slf4j.version>
-        <tomcat-jdbc.version>9.0.46</tomcat-jdbc.version>
+        <tomcat-jdbc.version>9.0.48</tomcat-jdbc.version>
         <usertype.core.version>7.0.0.CR1</usertype.core.version>
 
         <!-- Test dependencies -->
-        <assertj.version>3.19.0</assertj.version>
+        <assertj.version>3.20.0</assertj.version>
         <awaitility.version>4.1.0</awaitility.version>
         <bcprov-jdk15on.version>1.69</bcprov-jdk15on.version>
         <h2.version>1.4.200</h2.version>
