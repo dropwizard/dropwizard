@@ -149,6 +149,7 @@ public class SelfValidationTest {
         public void validateFail(ViolationCollector col) {
             col.addViolation("${'value'}");
             col.addViolation("$\\A{1+1}");
+            col.addViolation("$\\#{1+1}"); // https://securitylab.github.com/advisories/GHSL-2020-021-jakarta-el/
             col.addViolation("{value}", Collections.singletonMap("value", "TEST"));
             col.addViolation("${'property'}", "${'value'}");
             col.addViolation("${'property'}", 1, "${'value'}");
@@ -163,6 +164,7 @@ public class SelfValidationTest {
         public void validateFail(ViolationCollector col) {
             col.addViolation("${'value'}");
             col.addViolation("$\\A{1+1}");
+            col.addViolation("$\\#{1+1}"); // https://securitylab.github.com/advisories/GHSL-2020-021-jakarta-el/
             col.addViolation("{value}", Collections.singletonMap("value", "TEST"));
             col.addViolation("${'property'}", "${'value'}");
             col.addViolation("${'property'}", 1, "${'value'}");
@@ -176,6 +178,7 @@ public class SelfValidationTest {
         @SelfValidation
         public void validateFail(ViolationCollector col) {
             col.addViolation("{1+1}");
+            col.addViolation("$\\#{1+1}"); // https://securitylab.github.com/advisories/GHSL-2020-021-jakarta-el/
             col.addViolation("{value}", Collections.singletonMap("value", "VALUE"));
             col.addViolation("No parameter", Collections.singletonMap("value", "VALUE"));
             col.addViolation("{value} {unsetParameter}", Collections.singletonMap("value", "VALUE"));
@@ -311,6 +314,7 @@ public class SelfValidationTest {
     @Test
     void violationMessagesAreEscapedByDefault() {
         assertThat(ConstraintViolations.format(validator.validate(new InjectionExample()))).containsExactly(
+                " $\\#{1+1}",
                 " $\\A{1+1}",
                 " ${'value'}",
                 " {value}",
@@ -324,6 +328,7 @@ public class SelfValidationTest {
     @Test
     void violationMessagesAreInterpolatedIfEscapingDisabled() {
         assertThat(ConstraintViolations.format(validator.validate(new EscapingDisabledExample()))).containsExactly(
+                " $\\#{1+1}",
                 " $\\A{1+1}",
                 " TEST",
                 " value",
@@ -337,6 +342,7 @@ public class SelfValidationTest {
     @Test
     void messageParametersExample() {
         assertThat(ConstraintViolations.format(validator.validate(new MessageParametersExample()))).containsExactly(
+                " $\\#{1+1}",
                 " Mixed value VALUE",
                 " Nested ${'nested'}",
                 " No parameter",
