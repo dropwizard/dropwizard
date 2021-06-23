@@ -31,7 +31,7 @@
         <error_prone.version>2.7.1</error_prone.version>
         <freemarker.version>2.3.31</freemarker.version>
         <guava.version>30.1.1-jre</guava.version>
-        <hibernate-core.version>5.5.2.Final</hibernate-core.version>
+        <hibernate-core.version>5.5.3.Final</hibernate-core.version>
         <hibernate-validator.version>6.2.0.Final</hibernate-validator.version>
         <hk2.version>2.6.1</hk2.version>
         <httpclient.version>4.5.13</httpclient.version>
@@ -56,7 +56,7 @@
         <liquibase-slf4j.version>4.0.0</liquibase-slf4j.version>
         <logback-throttling-appender.version>1.1.0</logback-throttling-appender.version>
         <logback.version>1.2.3</logback.version>
-        <metrics4.version>4.2.1</metrics4.version>
+        <metrics4.version>4.2.2</metrics4.version>
         <mustache-compiler.version>0.9.10</mustache-compiler.version>
         <nullaway.version>0.9.1</nullaway.version>
         <slf4j.version>1.7.31</slf4j.version>
