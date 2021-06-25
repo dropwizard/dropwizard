@@ -1,0 +1,9 @@
+servletConfigurations:
+    metrics:
+        enabled: true
+        uri: /metrics-test
+    ping:
+        enabled: true
+        uri: /ping-test
+    threads:
+        enabled: false

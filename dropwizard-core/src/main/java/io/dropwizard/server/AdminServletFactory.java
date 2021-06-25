@@ -7,8 +7,12 @@ import com.codahale.metrics.servlets.HealthCheckServlet;
 import com.codahale.metrics.servlets.MetricsServlet;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.jetty.MutableServletContextHandler;
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jetty.server.handler.ContextHandler.Context;
 import org.eclipse.jetty.servlet.ServletHolder;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A factory for configuring the administrative servlet (and its child servlets) for the environment.
@@ -91,125 +95,138 @@ import org.eclipse.jetty.servlet.ServletHolder;
  */
 public class AdminServletFactory {
 
-    private boolean metricsEnabled = true;
+    private Map<String, ServletConfiguration> servletConfigurations = new HashMap<>();
 
-    private String metricsUri = AdminServlet.DEFAULT_METRICS_URI;
-
-    private boolean pingEnabled = true;
-
-    private String pingUri = AdminServlet.DEFAULT_PING_URI;
-
-    private boolean threadsEnabled = true;
-
-    private String threadsUri = AdminServlet.DEFAULT_THREADS_URI;
-
-    private boolean healthcheckEnabled = true;
-
-    private String healthcheckUri = AdminServlet.DEFAULT_HEALTHCHECK_URI;
-
-    private boolean cpuProfileEnabled = true;
-
-    private String cpuProfileUri = AdminServlet.DEFAULT_CPU_PROFILE_URI;
-
-    @JsonProperty("metricsEnabled")
-    public boolean isMetricsEnabled() {
-        return metricsEnabled;
+    @JsonProperty("servletConfigurations")
+    public Map<String, ServletConfiguration> getServletConfigurations() {
+        return servletConfigurations;
     }
 
-    @JsonProperty("metricsEnabled")
-    public void setMetricsEnabled(boolean metricsEnabled) {
-        this.metricsEnabled = metricsEnabled;
+    @JsonProperty("servletConfigurations")
+    public void setServletConfigurations(Map<String, ServletConfiguration> servletConfigurations) {
+        if (null != servletConfigurations) {
+            this.servletConfigurations = servletConfigurations;
+        }
     }
+//    private boolean metricsEnabled = true;
+//
+//    private String metricsUri = AdminServlet.DEFAULT_METRICS_URI;
+//
+//    private boolean pingEnabled = true;
+//
+//    private String pingUri = AdminServlet.DEFAULT_PING_URI;
+//
+//    private boolean threadsEnabled = true;
+//
+//    private String threadsUri = AdminServlet.DEFAULT_THREADS_URI;
+//
+//    private boolean healthcheckEnabled = true;
+//
+//    private String healthcheckUri = AdminServlet.DEFAULT_HEALTHCHECK_URI;
+//
+//    private boolean cpuProfileEnabled = true;
+//
+//    private String cpuProfileUri = AdminServlet.DEFAULT_CPU_PROFILE_URI;
 
-    @JsonProperty("metricsUri")
-    public String getMetricsUri() {
-        return metricsUri;
-    }
-
-    @JsonProperty("metricsUri")
-    public void setMetricsUri(String metricsUri) {
-        this.metricsUri = metricsUri;
-    }
-
-    @JsonProperty("pingEnabled")
-    public boolean isPingEnabled() {
-        return pingEnabled;
-    }
-
-    @JsonProperty("pingEnabled")
-    public void setPingEnabled(boolean pingEnabled) {
-        this.pingEnabled = pingEnabled;
-    }
-
-    @JsonProperty("pingUri")
-    public String getPingUri() {
-        return pingUri;
-    }
-
-    @JsonProperty("pingUri")
-    public void setPingUri(String pingUri) {
-        this.pingUri = pingUri;
-    }
-
-    @JsonProperty("threadsEnabled")
-    public boolean isThreadsEnabled() {
-        return threadsEnabled;
-    }
-
-    @JsonProperty("threadsEnabled")
-    public void setThreadsEnabled(boolean threadsEnabled) {
-        this.threadsEnabled = threadsEnabled;
-    }
-
-    @JsonProperty("threadsUri")
-    public String getThreadsUri() {
-        return threadsUri;
-    }
-
-    @JsonProperty("threadsUri")
-    public void setThreadsUri(String threadsUri) {
-        this.threadsUri = threadsUri;
-    }
-
-    @JsonProperty("healthcheckEnabled")
-    public boolean isHealthcheckEnabled() {
-        return healthcheckEnabled;
-    }
-
-    @JsonProperty("healthcheckEnabled")
-    public void setHealthcheckEnabled(boolean healthcheckEnabled) {
-        this.healthcheckEnabled = healthcheckEnabled;
-    }
-
-    @JsonProperty("healthcheckUri")
-    public String getHealthcheckUri() {
-        return healthcheckUri;
-    }
-
-    @JsonProperty("healthcheckUri")
-    public void setHealthcheckUri(String healthcheckUri) {
-        this.healthcheckUri = healthcheckUri;
-    }
-
-    @JsonProperty("cpuProfileEnabled")
-    public boolean isCpuProfileEnabled() {
-        return cpuProfileEnabled;
-    }
-
-    @JsonProperty("cpuProfileEnabled")
-    public void setCpuProfileEnabled(boolean cpuProfileEnabled) {
-        this.cpuProfileEnabled = cpuProfileEnabled;
-    }
-
-    @JsonProperty("cpuProfileUri")
-    public String getCpuProfileUri() {
-        return cpuProfileUri;
-    }
-
-    @JsonProperty("cpuProfileUri")
-    public void setCpuProfileUri(String cpuProfileUri) {
-        this.cpuProfileUri = cpuProfileUri;
-    }
+//    @JsonProperty("metricsEnabled")
+//    public boolean isMetricsEnabled() {
+//        return metricsEnabled;
+//    }
+//
+//    @JsonProperty("metricsEnabled")
+//    public void setMetricsEnabled(boolean metricsEnabled) {
+//        this.metricsEnabled = metricsEnabled;
+//    }
+//
+//    @JsonProperty("metricsUri")
+//    public String getMetricsUri() {
+//        return metricsUri;
+//    }
+//
+//    @JsonProperty("metricsUri")
+//    public void setMetricsUri(String metricsUri) {
+//        this.metricsUri = metricsUri;
+//    }
+//
+//    @JsonProperty("pingEnabled")
+//    public boolean isPingEnabled() {
+//        return pingEnabled;
+//    }
+//
+//    @JsonProperty("pingEnabled")
+//    public void setPingEnabled(boolean pingEnabled) {
+//        this.pingEnabled = pingEnabled;
+//    }
+//
+//    @JsonProperty("pingUri")
+//    public String getPingUri() {
+//        return pingUri;
+//    }
+//
+//    @JsonProperty("pingUri")
+//    public void setPingUri(String pingUri) {
+//        this.pingUri = pingUri;
+//    }
+//
+//    @JsonProperty("threadsEnabled")
+//    public boolean isThreadsEnabled() {
+//        return threadsEnabled;
+//    }
+//
+//    @JsonProperty("threadsEnabled")
+//    public void setThreadsEnabled(boolean threadsEnabled) {
+//        this.threadsEnabled = threadsEnabled;
+//    }
+//
+//    @JsonProperty("threadsUri")
+//    public String getThreadsUri() {
+//        return threadsUri;
+//    }
+//
+//    @JsonProperty("threadsUri")
+//    public void setThreadsUri(String threadsUri) {
+//        this.threadsUri = threadsUri;
+//    }
+//
+//    @JsonProperty("healthcheckEnabled")
+//    public boolean isHealthcheckEnabled() {
+//        return healthcheckEnabled;
+//    }
+//
+//    @JsonProperty("healthcheckEnabled")
+//    public void setHealthcheckEnabled(boolean healthcheckEnabled) {
+//        this.healthcheckEnabled = healthcheckEnabled;
+//    }
+//
+//    @JsonProperty("healthcheckUri")
+//    public String getHealthcheckUri() {
+//        return healthcheckUri;
+//    }
+//
+//    @JsonProperty("healthcheckUri")
+//    public void setHealthcheckUri(String healthcheckUri) {
+//        this.healthcheckUri = healthcheckUri;
+//    }
+//
+//    @JsonProperty("cpuProfileEnabled")
+//    public boolean isCpuProfileEnabled() {
+//        return cpuProfileEnabled;
+//    }
+//
+//    @JsonProperty("cpuProfileEnabled")
+//    public void setCpuProfileEnabled(boolean cpuProfileEnabled) {
+//        this.cpuProfileEnabled = cpuProfileEnabled;
+//    }
+//
+//    @JsonProperty("cpuProfileUri")
+//    public String getCpuProfileUri() {
+//        return cpuProfileUri;
+//    }
+//
+//    @JsonProperty("cpuProfileUri")
+//    public void setCpuProfileUri(String cpuProfileUri) {
+//        this.cpuProfileUri = cpuProfileUri;
+//    }
 
     public void addServlet(MutableServletContextHandler handler,
                            MetricRegistry metrics,
@@ -219,17 +236,59 @@ public class AdminServletFactory {
         servletContext.setAttribute(HealthCheckServlet.HEALTH_CHECK_REGISTRY, healthChecks);
 
         final ServletHolder adminHolder = handler.addServlet(AdminServlet.class, "/*");
-        adminHolder.setInitParameter(AdminServlet.METRICS_ENABLED_PARAM_KEY, Boolean.toString(metricsEnabled));
-        adminHolder.setInitParameter(AdminServlet.METRICS_URI_PARAM_KEY, metricsUri);
-        adminHolder.setInitParameter(AdminServlet.PING_ENABLED_PARAM_KEY, Boolean.toString(pingEnabled));
-        adminHolder.setInitParameter(AdminServlet.PING_URI_PARAM_KEY, pingUri);
-        adminHolder.setInitParameter(AdminServlet.THREADS_ENABLED_PARAM_KEY, Boolean.toString(threadsEnabled));
-        adminHolder.setInitParameter(AdminServlet.THREADS_URI_PARAM_KEY, threadsUri);
-        adminHolder.setInitParameter(AdminServlet.HEALTHCHECK_ENABLED_PARAM_KEY,
-            Boolean.toString(healthcheckEnabled));
-        adminHolder.setInitParameter(AdminServlet.HEALTHCHECK_URI_PARAM_KEY, healthcheckUri);
-        adminHolder.setInitParameter(AdminServlet.CPU_PROFILE_ENABLED_PARAM_KEY,
-            Boolean.toString(cpuProfileEnabled));
-        adminHolder.setInitParameter(AdminServlet.CPU_PROFILE_URI_PARAM_KEY, cpuProfileUri);
+
+        final ServletConfiguration metricsServletConfiguration = servletConfigurations.get("metrics");
+        if (null != metricsServletConfiguration) {
+            adminHolder.setInitParameter(AdminServlet.METRICS_ENABLED_PARAM_KEY,
+                metricsServletConfiguration.isEnabledString());
+
+            if (StringUtils.isNotEmpty(metricsServletConfiguration.getUri())) {
+                adminHolder.setInitParameter(AdminServlet.METRICS_URI_PARAM_KEY,
+                    metricsServletConfiguration.getUri());
+            }
+        }
+
+        final ServletConfiguration pingServletConfiguration = servletConfigurations.get("ping");
+        if (null != pingServletConfiguration) {
+            adminHolder.setInitParameter(AdminServlet.PING_ENABLED_PARAM_KEY,
+                pingServletConfiguration.isEnabledString());
+
+            if (StringUtils.isNotEmpty(pingServletConfiguration.getUri())) {
+                adminHolder.setInitParameter(AdminServlet.PING_URI_PARAM_KEY, pingServletConfiguration.getUri());
+            }
+        }
+
+        final ServletConfiguration threadsServletConfiguration = servletConfigurations.get("threads");
+        if (null != threadsServletConfiguration) {
+            adminHolder.setInitParameter(AdminServlet.THREADS_ENABLED_PARAM_KEY,
+                threadsServletConfiguration.isEnabledString());
+
+            if (StringUtils.isNotEmpty(threadsServletConfiguration.getUri())) {
+                adminHolder.setInitParameter(AdminServlet.THREADS_URI_PARAM_KEY,
+                    threadsServletConfiguration.getUri());
+            }
+        }
+
+        final ServletConfiguration healthcheckServletConfiguration = servletConfigurations.get("healthcheck");
+        if (null != healthcheckServletConfiguration) {
+            adminHolder.setInitParameter(AdminServlet.HEALTHCHECK_ENABLED_PARAM_KEY,
+                healthcheckServletConfiguration.isEnabledString());
+
+            if (StringUtils.isNotEmpty(healthcheckServletConfiguration.getUri())) {
+                adminHolder.setInitParameter(AdminServlet.HEALTHCHECK_URI_PARAM_KEY,
+                    healthcheckServletConfiguration.getUri());
+            }
+        }
+
+        final ServletConfiguration cpuProfileServletConfiguration = servletConfigurations.get("cpuProfile");
+        if (null != cpuProfileServletConfiguration) {
+            adminHolder.setInitParameter(AdminServlet.CPU_PROFILE_ENABLED_PARAM_KEY,
+                cpuProfileServletConfiguration.isEnabledString());
+
+            if (StringUtils.isNotEmpty(cpuProfileServletConfiguration.getUri())) {
+                adminHolder.setInitParameter(AdminServlet.CPU_PROFILE_URI_PARAM_KEY,
+                    cpuProfileServletConfiguration.getUri());
+            }
+        }
     }
 }

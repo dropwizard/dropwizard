@@ -1,0 +1,16 @@
+servletConfigurations:
+    metrics:
+        enabled: false
+        uri: /metrics-test
+    ping:
+        enabled: false
+        uri: /ping-test
+    threads:
+        enabled: false
+        uri: /threads-test
+    healthcheck:
+        enabled: false
+        uri: /healthcheck-test
+    cpuProfile:
+        enabled: false
+        uri: /pprof-test
