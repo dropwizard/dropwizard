@@ -20,8 +20,8 @@
         <!-- External dependencies -->
         <activation-api.version>1.2.2</activation-api.version>
         <argparse4j.version>0.9.0</argparse4j.version>
-        <byte-buddy.version>1.11.5</byte-buddy.version>
-        <caffeine.version>2.9.1</caffeine.version>
+        <byte-buddy.version>1.11.6</byte-buddy.version>
+        <caffeine.version>2.9.2</caffeine.version>
         <checker-qual.version>3.15.0</checker-qual.version>
         <classmate.version>1.5.1</classmate.version>
         <commons-codec.version>1.15</commons-codec.version>
@@ -60,7 +60,7 @@
         <mustache-compiler.version>0.9.10</mustache-compiler.version>
         <nullaway.version>0.9.1</nullaway.version>
         <slf4j.version>1.7.31</slf4j.version>
-        <tomcat-jdbc.version>9.0.48</tomcat-jdbc.version>
+        <tomcat-jdbc.version>9.0.50</tomcat-jdbc.version>
         <usertype.core.version>7.0.0.CR1</usertype.core.version>
 
         <!-- Test dependencies -->
@@ -79,7 +79,7 @@
         <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
         <jacoco-maven-plugin.version>0.8.7</jacoco-maven-plugin.version>
         <lifecycle-mapping.version>1.0.0</lifecycle-mapping.version>
-        <pgpverify-maven-plugin.version>1.13.0</pgpverify-maven-plugin.version>
+        <pgpverify-maven-plugin.version>1.14.0</pgpverify-maven-plugin.version>
         <error_prone.javac.version>9+181-r4173-1</error_prone.javac.version>
     </properties>
 
