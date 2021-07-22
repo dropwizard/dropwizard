@@ -46,6 +46,7 @@
         <module>dropwizard-http2</module>
         <module>dropwizard-request-logging</module>
         <module>dropwizard-json-logging</module>
+        <module>dropwizard-health</module>
 
         <module>dropwizard-archetypes</module>
         <module>dropwizard-example</module>

@@ -1,13 +1,14 @@
 package io.dropwizard;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.dropwizard.health.HealthFactory;
 import io.dropwizard.logging.DefaultLoggingFactory;
 import io.dropwizard.logging.LoggingFactory;
 import io.dropwizard.metrics.MetricsFactory;
 import io.dropwizard.server.DefaultServerFactory;
 import io.dropwizard.server.ServerFactory;
 import io.dropwizard.setup.AdminFactory;
-
+import java.util.Optional;
 import javax.annotation.Nullable;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -76,6 +77,10 @@ public class Configuration {
     @Valid
     @NotNull
     private AdminFactory admin = new AdminFactory();
+
+    @Valid
+    @Nullable
+    private HealthFactory health;
 
     /**
      * Returns the server-specific section of the configuration file.
@@ -148,8 +153,29 @@ public class Configuration {
         this.admin = admin;
     }
 
+    /**
+     * Returns the health interface-specific section of the configuration file.
+     *
+     * @return health interface-specific configuration parameters
+     * @since 2.1
+     */
+    @JsonProperty("health")
+    public Optional<HealthFactory> getHealthFactory() {
+        return Optional.ofNullable(health);
+    }
+
+    /**
+     * Sets the health interface-specific section of the configuration file.
+     *
+     * @since 2.1
+     */
+    @JsonProperty("health")
+    public void setHealthFactory(HealthFactory health) {
+        this.health = health;
+    }
+
     @Override
     public String toString() {
-        return "Configuration{server=" + server + ", logging=" + logging + ", metrics=" + metrics + ", admin=" + admin + "}";
+        return "Configuration{server=" + server + ", logging=" + logging + ", metrics=" + metrics + ", admin=" + admin + ", health=" + health + "}";
     }
 }
