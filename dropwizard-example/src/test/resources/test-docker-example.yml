@@ -29,3 +29,19 @@ logging:
       archivedFileCount: 7
       maxFileSize: '1MiB'
 
+# Health settings
+health:
+  delayedShutdownHandlerEnabled: true
+  shutdownWaitPeriod: 1s
+  healthChecks:
+    - name: deadlocks
+      type: ALIVE
+    - name: hibernate
+      type: READY
+      critical: true
+    - name: template
+      type: READY
+      critical: true
+      schedule:
+        checkInterval: 1s
+        downtimeInterval: 2s
