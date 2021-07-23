@@ -1,0 +1,14 @@
+enabled: true
+name: test
+initialOverallState: true
+healthChecks:
+  - name: foundationdb
+    critical: true
+  - name: kafka
+    critical: false
+  - name: redis
+    critical: false
+delayedShutdownHandlerEnabled: true
+shutdownWaitPeriod: 1ms
+servletFactory:
+  type: default

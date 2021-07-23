@@ -4,9 +4,8 @@ import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import net.sourceforge.argparse4j.inf.Namespace;
-
 import javax.annotation.Nullable;
+import net.sourceforge.argparse4j.inf.Namespace;
 
 /**
  * A command which executes with a configured {@link Environment}.
@@ -42,6 +41,7 @@ public abstract class EnvironmentCommand<T extends Configuration> extends Config
         return environment;
     }
 
+    @SuppressWarnings("NullAway")
     @Override
     protected void run(Bootstrap<T> bootstrap, Namespace namespace, T configuration) throws Exception {
         this.environment = new Environment(bootstrap.getApplication().getName(),
@@ -54,6 +54,11 @@ public abstract class EnvironmentCommand<T extends Configuration> extends Config
         configuration.getMetricsFactory().configure(environment.lifecycle(),
                                                     bootstrap.getMetricRegistry());
         configuration.getServerFactory().configure(environment);
+        configuration.getHealthFactory().ifPresent(health -> health.configure(
+                bootstrap.getMetricRegistry(),
+                environment.lifecycle(),
+                bootstrap.getHealthCheckRegistry(),
+                environment.servlets()));
 
         bootstrap.run(configuration, environment);
         application.run(configuration, environment);

@@ -1,0 +1,4 @@
+type: default
+contentType: text/plain;charset=UTF-8
+healthyValue: HAPPY
+unhealthyValue: SAD
