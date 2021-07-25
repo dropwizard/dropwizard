@@ -6,6 +6,7 @@ import com.codahale.metrics.health.HealthCheckRegistry;
 import com.codahale.metrics.health.SharedHealthCheckRegistries;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.Configuration;
+import io.dropwizard.health.HealthEnvironment;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.jersey.setup.JerseyContainerHolder;
@@ -16,16 +17,14 @@ import io.dropwizard.jetty.MutableServletContextHandler;
 import io.dropwizard.jetty.setup.ServletEnvironment;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import io.dropwizard.validation.InjectValidatorFeature;
-
-import javax.annotation.Nullable;
-import javax.servlet.Servlet;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
-
+import javax.annotation.Nullable;
+import javax.servlet.Servlet;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -49,6 +48,8 @@ public class Environment {
 
     private final MutableServletContextHandler adminContext;
     private final AdminEnvironment adminEnvironment;
+
+    private final HealthEnvironment healthEnvironment;
 
     private final ExecutorService healthCheckExecutorService;
 
@@ -80,6 +81,8 @@ public class Environment {
 
         final AdminFactory adminFactory = configuration.getAdminFactory();
         this.adminEnvironment = new AdminEnvironment(adminContext, healthCheckRegistry, metricRegistry, adminFactory);
+
+        this.healthEnvironment = new HealthEnvironment(healthCheckRegistry);
 
         this.lifecycleEnvironment = new LifecycleEnvironment(metricRegistry);
 
@@ -162,6 +165,13 @@ public class Environment {
      */
     public ServletEnvironment servlets() {
         return servletEnvironment;
+    }
+
+    /**
+     * Returns the application's {@link HealthEnvironment}.
+     */
+    public HealthEnvironment health() {
+        return healthEnvironment;
     }
 
     /**

@@ -19,7 +19,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(DropwizardExtensionsSupport.class)
-public class HealthCheckIntegrationTest {
+public class HealthIntegrationTest {
     private static final String CONFIG_PATH = "health/config.yml";
     private static final String HOST = "localhost";
     private static final String APP_PORT_KEY = "server.connector.port";
@@ -75,6 +75,10 @@ public class HealthCheckIntegrationTest {
                 .pollInSameThread()
                 .pollDelay(POLL_DELAY)
                 .until(this::isAppHealthy);
+
+        assertThat(app.getStateChangeCounter().get()).isGreaterThanOrEqualTo(1);
+        assertThat(app.getHealthyCheckCounter().get()).isGreaterThanOrEqualTo(1);
+        assertThat(app.getUnhealthyCheckCounter().get()).isGreaterThanOrEqualTo(1);
     }
 
     @Test
@@ -89,6 +93,9 @@ public class HealthCheckIntegrationTest {
                 .atMost(testTimeout)
                 .pollDelay(POLL_DELAY)
                 .until(this::isAppHealthy);
+        assertThat(app.getStateChangeCounter().get()).isGreaterThanOrEqualTo(1);
+        assertThat(app.getHealthyCheckCounter().get()).isGreaterThanOrEqualTo(1);
+        assertThat(app.getUnhealthyCheckCounter().get()).isGreaterThanOrEqualTo(1);
     }
 
     @Test
@@ -103,6 +110,10 @@ public class HealthCheckIntegrationTest {
                 .atMost(testTimeout)
                 .pollDelay(POLL_DELAY)
                 .until(this::isAppHealthy);
+
+        assertThat(app.getStateChangeCounter().get()).isGreaterThanOrEqualTo(1);
+        assertThat(app.getHealthyCheckCounter().get()).isGreaterThanOrEqualTo(1);
+        assertThat(app.getUnhealthyCheckCounter().get()).isGreaterThanOrEqualTo(1);
     }
 
     @Test
@@ -114,6 +125,10 @@ public class HealthCheckIntegrationTest {
                 .pollInSameThread()
                 .pollDelay(POLL_DELAY)
                 .until(() -> !isAppHealthy());
+        // 2 state changes (to unhealthy) for critical checks, because of initial value of false
+        assertThat(app.getStateChangeCounter().get()).isEqualTo(2);
+        assertThat(app.getHealthyCheckCounter().get()).isEqualTo(0);
+        assertThat(app.getUnhealthyCheckCounter().get()).isGreaterThanOrEqualTo(1);
     }
 
     @Test
@@ -133,6 +148,10 @@ public class HealthCheckIntegrationTest {
                 .pollInSameThread()
                 .pollDelay(POLL_DELAY)
                 .until(this::isAppHealthy);
+
+        assertThat(app.getStateChangeCounter().get()).isGreaterThanOrEqualTo(1);
+        assertThat(app.getHealthyCheckCounter().get()).isGreaterThanOrEqualTo(1);
+        assertThat(app.getUnhealthyCheckCounter().get()).isGreaterThanOrEqualTo(1);
     }
 
     private boolean isAppHealthy() {

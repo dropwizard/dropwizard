@@ -139,12 +139,15 @@ public class DefaultHealthFactory implements HealthFactory {
     }
 
     @Override
-    public void configure(final MetricRegistry metrics, final LifecycleEnvironment lifecycle,
-                          final HealthCheckRegistry healthChecks, final ServletEnvironment servlets) {
+    public void configure(final LifecycleEnvironment lifecycle, final ServletEnvironment servlets,
+                          final HealthEnvironment health) {
         if (!isEnabled()) {
             LOGGER.info("Health check configuration is disabled.");
             return;
         }
+
+        final MetricRegistry metrics = lifecycle.getMetricRegistry();
+        final HealthCheckRegistry healthChecks = health.healthChecks();
 
         final String fullName;
         if (name != null) {
@@ -179,6 +182,10 @@ public class DefaultHealthFactory implements HealthFactory {
             shutdownHandler.register();
             LOGGER.debug("Set up delayed shutdown with delay: {}", shutdownWaitPeriod);
         }
+
+        // configure health manager to receive registered health state listeners
+        health.setHealthStateListenerListener(healthCheckManager);
+
         LOGGER.debug("Configured ongoing health check monitoring for healthChecks: {}", getHealthChecks());
     }
 

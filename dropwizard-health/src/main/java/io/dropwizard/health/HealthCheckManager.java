@@ -10,7 +10,9 @@ import io.dropwizard.health.conf.HealthCheckType;
 import io.dropwizard.health.conf.Schedule;
 import io.dropwizard.health.shutdown.ShutdownNotifier;
 import io.dropwizard.util.Duration;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -22,8 +24,8 @@ import javax.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class HealthCheckManager implements HealthCheckRegistryListener, StateChangedCallback, HealthStatusChecker,
-        ShutdownNotifier {
+class HealthCheckManager implements HealthCheckRegistryListener, HealthStatusChecker, ShutdownNotifier,
+        HealthStateListener, HealthStateListenerListener {
     private static final Logger log = LoggerFactory.getLogger(HealthCheckManager.class);
 
     private final AtomicBoolean isAppAlive = new AtomicBoolean(true);
@@ -31,8 +33,9 @@ public class HealthCheckManager implements HealthCheckRegistryListener, StateCha
     private final AtomicInteger unhealthyCriticalHealthChecks = new AtomicInteger();
     private final AtomicInteger unhealthyCriticalAliveChecks = new AtomicInteger();
     private final HealthCheckScheduler scheduler;
-    private final Map<String, ScheduledHealthCheck> checks;
+    private Map<String, ScheduledHealthCheck> checks;
     private final Map<String, HealthCheckConfiguration> configs;
+    private final Collection<HealthStateListener> healthStateListeners;
     private final MetricRegistry metrics;
     private final Duration shutdownWaitPeriod;
     private final boolean initialOverallState;
@@ -45,28 +48,24 @@ public class HealthCheckManager implements HealthCheckRegistryListener, StateCha
                               final MetricRegistry metrics,
                               final Duration shutdownWaitPeriod,
                               final boolean initialOverallState) {
-        this(configs, scheduler, metrics, shutdownWaitPeriod, initialOverallState, new HashMap<>());
-    }
-
-    // Visible for testing
-    HealthCheckManager(final List<HealthCheckConfiguration> configs,
-                       final HealthCheckScheduler scheduler,
-                       final MetricRegistry metrics,
-                       final Duration shutdownWaitPeriod,
-                       final boolean initialOverallState,
-                       final Map<String, ScheduledHealthCheck> checks) {
         this.configs = configs.stream()
                 .collect(Collectors.toMap(HealthCheckConfiguration::getName, Function.identity()));
         this.scheduler = Objects.requireNonNull(scheduler);
         this.metrics = Objects.requireNonNull(metrics);
         this.shutdownWaitPeriod = shutdownWaitPeriod;
         this.initialOverallState = initialOverallState;
-        this.checks = Objects.requireNonNull(checks);
+        this.checks = new HashMap<>();
+        this.healthStateListeners = new LinkedList<>();
 
         this.aggregateHealthyName = MetricRegistry.name("health", "aggregate", "healthy");
         this.aggregateUnhealthyName = MetricRegistry.name("health", "aggregate", "unhealthy");
         metrics.register(aggregateHealthyName, (Gauge) this::calculateNumberOfHealthyChecks);
         metrics.register(aggregateUnhealthyName, (Gauge) this::calculateNumberOfUnhealthyChecks);
+    }
+
+    // visible for testing
+    void setChecks(Map<String, ScheduledHealthCheck> checks) {
+        this.checks = checks;
     }
 
     @Override
@@ -122,6 +121,8 @@ public class HealthCheckManager implements HealthCheckRegistryListener, StateCha
         }
 
         scheduler.schedule(check, isNowHealthy);
+
+        healthStateListeners.forEach(listener -> listener.onStateChanged(name, isNowHealthy));
     }
 
     protected void initializeAppHealth() {
@@ -218,5 +219,20 @@ public class HealthCheckManager implements HealthCheckRegistryListener, StateCha
         Thread.sleep(shutdownWaitPeriod.toMilliseconds());
 
         log.info("delayed shutdown: finished");
+    }
+
+    @Override
+    public void onHealthStateListenerAdded(final HealthStateListener healthStateListener) {
+        healthStateListeners.add(healthStateListener);
+    }
+
+    @Override
+    public void onHealthyCheck(String healthCheckName) {
+        healthStateListeners.forEach(listener -> listener.onHealthyCheck(healthCheckName));
+    }
+
+    @Override
+    public void onUnhealthyCheck(String healthCheckName) {
+        healthStateListeners.forEach(listener -> listener.onUnhealthyCheck(healthCheckName));
     }
 }

@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -34,6 +35,16 @@ public class HealthCheckManagerTest {
     private static final String NAME_2 = "test2";
     private static final HealthCheckType READY = HealthCheckType.READY;
     private static final Duration SHUTDOWN_WAIT = Duration.seconds(5);
+    private static final HealthStateListener LISTENER = new HealthStateListener() {
+        @Override
+        public void onHealthyCheck(String healthCheckName) {}
+
+        @Override
+        public void onUnhealthyCheck(String healthCheckName) {}
+
+        @Override
+        public void onStateChanged(String healthCheckName, boolean healthy) {}
+    };
 
     @Mock
     private HealthCheckScheduler scheduler;
@@ -73,7 +84,8 @@ public class HealthCheckManagerTest {
         // given
         final ScheduledHealthCheck healthCheck = mock(ScheduledHealthCheck.class);
         final HealthCheckManager manager = new HealthCheckManager(Collections.emptyList(), scheduler,
-                new MetricRegistry(), SHUTDOWN_WAIT, true, ImmutableMap.of(NAME, healthCheck));
+                new MetricRegistry(), SHUTDOWN_WAIT, true);
+        manager.setChecks(ImmutableMap.of(NAME, healthCheck));
 
         // when
         manager.onHealthCheckRemoved(NAME, mock(HealthCheck.class));
@@ -324,14 +336,33 @@ public class HealthCheckManagerTest {
         final List<HealthCheckConfiguration> configs = ImmutableList.of(nonCriticalConfig, criticalConfig);
         final HealthCheck check = mock(HealthCheck.class);
         final MetricRegistry metrics = new MetricRegistry();
+        final AtomicInteger healthyCounter = new AtomicInteger();
+        final AtomicInteger unhealthyCounter = new AtomicInteger();
+
+        final HealthStateListener countingListener = new HealthStateListener() {
+            @Override
+            public void onHealthyCheck(String healthCheckName) {
+                healthyCounter.incrementAndGet();
+            }
+
+            @Override
+            public void onUnhealthyCheck(String healthCheckName) {
+                unhealthyCounter.incrementAndGet();
+            }
+
+            @Override
+            public void onStateChanged(String healthCheckName, boolean healthy) {}
+        };
+        final HealthCheckManager manager = new HealthCheckManager(configs, scheduler, metrics, SHUTDOWN_WAIT, true);
+        manager.onHealthStateListenerAdded(countingListener);
+
         final ScheduledHealthCheck check1 = new ScheduledHealthCheck(NAME, READY, nonCriticalConfig.isCritical(), check,
-                schedule, new State(NAME, schedule.getFailureAttempts(), schedule.getSuccessAttempts(), true,
-                (name, newState) -> {}), metrics.counter(NAME + ".healthy"), metrics.counter(NAME + ".unhealthy"));
+                schedule, new State(NAME, schedule.getFailureAttempts(), schedule.getSuccessAttempts(), true, manager),
+                metrics.counter(NAME + ".healthy"), metrics.counter(NAME + ".unhealthy"));
         final ScheduledHealthCheck check2 = new ScheduledHealthCheck(NAME_2, READY, criticalConfig.isCritical(), check,
-                schedule, new State(NAME, schedule.getFailureAttempts(), schedule.getSuccessAttempts(), true,
-                (name, newState) -> {}), metrics.counter(NAME_2 + ".healthy"), metrics.counter(NAME_2 + ".unhealthy"));
-        final HealthCheckManager manager = new HealthCheckManager(configs, scheduler, metrics, SHUTDOWN_WAIT, true,
-                ImmutableMap.of(NAME, check1, NAME_2, check2));
+                schedule, new State(NAME, schedule.getFailureAttempts(), schedule.getSuccessAttempts(), true, manager),
+                metrics.counter(NAME_2 + ".healthy"), metrics.counter(NAME_2 + ".unhealthy"));
+        manager.setChecks(ImmutableMap.of(NAME, check1, NAME_2, check2));
 
         // then
         assertThat(metrics.gauge(manager.getAggregateHealthyName(), null).getValue())
@@ -351,6 +382,8 @@ public class HealthCheckManagerTest {
                 .isEqualTo(1L);
         assertThat(metrics.gauge(manager.getAggregateUnhealthyName(), null).getValue())
                 .isEqualTo(1L);
+        assertThat(unhealthyCounter.get()).isEqualTo(3);
+        assertThat(healthyCounter.get()).isEqualTo(0);
     }
 
     @Test

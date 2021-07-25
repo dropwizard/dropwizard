@@ -11,7 +11,7 @@ class State {
     private final String name;
     private final int successAttempts;
     private final int failureAttempts;
-    private final StateChangedCallback stateChangedCallback;
+    private final HealthStateListener healthStateListener;
     private final AtomicInteger counter = new AtomicInteger(0);
     private final AtomicBoolean healthy;
 
@@ -25,16 +25,16 @@ class State {
      *                                (from an unhealthy state)
      * @param initialState            initial state ({@code true} indicates to start in a healthy state and
      *                                {@code false} indicates to start in an unhealthy state)
-     * @param stateChangedCallback    {@link StateChangedCallback} that is called when state changes
+     * @param healthStateListener    {@link HealthStateListener} that is called when state changes
      *                                (e.g. healthy to unhealthy or unhealthy to healthy)
      */
     State(final String name, final int failureAttempts, final int successAttempts, final boolean initialState,
-          final StateChangedCallback stateChangedCallback) {
+          final HealthStateListener healthStateListener) {
         this.name = name;
         this.failureAttempts = failureAttempts;
         this.successAttempts = successAttempts;
         this.healthy = new AtomicBoolean(initialState);
-        this.stateChangedCallback = stateChangedCallback;
+        this.healthStateListener = healthStateListener;
     }
 
     void success() {
@@ -43,6 +43,7 @@ class State {
             return;
         }
         log.trace("health check received a successful result: name={} current={}", name, healthy);
+        healthStateListener.onHealthyCheck(this.name);
         handleEvent(successAttempts, true);
     }
 
@@ -52,6 +53,7 @@ class State {
             return;
         }
         log.trace("health check received a failed result: name={} current={}", name, healthy);
+        healthStateListener.onUnhealthyCheck(this.name);
         handleEvent(failureAttempts, false);
     }
 
@@ -62,7 +64,7 @@ class State {
             final boolean newState = !healthy.get();
             healthy.set(newState);
             resetCount();
-            stateChangedCallback.onStateChanged(this.name, newState);
+            healthStateListener.onStateChanged(this.name, newState);
         }
     }
 
@@ -82,13 +84,25 @@ class State {
         return successAttempts == state.successAttempts &&
                 failureAttempts == state.failureAttempts &&
                 Objects.equals(name, state.name) &&
-                Objects.equals(stateChangedCallback, state.stateChangedCallback) &&
+                Objects.equals(healthStateListener, state.healthStateListener) &&
                 Objects.equals(counter, state.counter) &&
                 Objects.equals(healthy, state.healthy);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, successAttempts, failureAttempts, stateChangedCallback, counter, healthy);
+        return Objects.hash(name, successAttempts, failureAttempts, healthStateListener, counter, healthy);
+    }
+
+    @Override
+    public String toString() {
+        return "State{" +
+                "name='" + name + '\'' +
+                ", successAttempts=" + successAttempts +
+                ", failureAttempts=" + failureAttempts +
+                ", healthStateListener=" + healthStateListener +
+                ", counter=" + counter +
+                ", healthy=" + healthy +
+                '}';
     }
 }

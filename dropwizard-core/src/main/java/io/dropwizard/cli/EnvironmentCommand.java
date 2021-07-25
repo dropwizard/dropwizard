@@ -54,11 +54,9 @@ public abstract class EnvironmentCommand<T extends Configuration> extends Config
         configuration.getMetricsFactory().configure(environment.lifecycle(),
                                                     bootstrap.getMetricRegistry());
         configuration.getServerFactory().configure(environment);
-        configuration.getHealthFactory().ifPresent(health -> health.configure(
-                bootstrap.getMetricRegistry(),
-                environment.lifecycle(),
-                bootstrap.getHealthCheckRegistry(),
-                environment.servlets()));
+        configuration.getHealthFactory().ifPresent(health ->
+            health.configure(environment.lifecycle(), environment.servlets(), environment.health())
+        );
 
         bootstrap.run(configuration, environment);
         application.run(configuration, environment);

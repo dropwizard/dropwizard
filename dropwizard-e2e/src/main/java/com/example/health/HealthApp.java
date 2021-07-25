@@ -3,9 +3,11 @@ package com.example.health;
 import com.codahale.metrics.health.HealthCheck;
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
+import io.dropwizard.health.HealthStateListener;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class HealthApp extends Application<Configuration> {
     static final String CRITICAL_HEALTH_CHECK_NAME_1 = "critical1";
@@ -15,6 +17,10 @@ public class HealthApp extends Application<Configuration> {
     private final AtomicBoolean criticalCheckHealthy1 = new AtomicBoolean();
     private final AtomicBoolean criticalCheckHealthy2 = new AtomicBoolean();
     private final AtomicBoolean nonCriticalCheckHealthy = new AtomicBoolean();
+
+    private final AtomicInteger healthyCheckCounter = new AtomicInteger();
+    private final AtomicInteger unhealthyCheckCounter = new AtomicInteger();
+    private final AtomicInteger stateChangeCounter = new AtomicInteger();
 
     @Override
     public void initialize(Bootstrap<Configuration> bootstrap) {
@@ -42,6 +48,23 @@ public class HealthApp extends Application<Configuration> {
                 return nonCriticalCheckHealthy.get() ? Result.healthy() : Result.builder().unhealthy().build();
             }
         });
+
+        environment.health().addHealthStateListener(new HealthStateListener() {
+            @Override
+            public void onHealthyCheck(String healthCheckName) {
+                healthyCheckCounter.incrementAndGet();
+            }
+
+            @Override
+            public void onUnhealthyCheck(String healthCheckName) {
+                unhealthyCheckCounter.incrementAndGet();
+            }
+
+            @Override
+            public void onStateChanged(String healthCheckName, boolean healthy) {
+                stateChangeCounter.incrementAndGet();
+            }
+        });
     }
 
     AtomicBoolean getCriticalCheckHealthy1() {
@@ -54,5 +77,17 @@ public class HealthApp extends Application<Configuration> {
 
     AtomicBoolean getNonCriticalCheckHealthy() {
         return nonCriticalCheckHealthy;
+    }
+
+    AtomicInteger getHealthyCheckCounter() {
+        return healthyCheckCounter;
+    }
+
+    AtomicInteger getUnhealthyCheckCounter() {
+        return unhealthyCheckCounter;
+    }
+
+    AtomicInteger getStateChangeCounter() {
+        return stateChangeCounter;
     }
 }
