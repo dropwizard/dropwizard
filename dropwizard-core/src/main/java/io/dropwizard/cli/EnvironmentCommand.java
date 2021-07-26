@@ -4,8 +4,9 @@ import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import javax.annotation.Nullable;
 import net.sourceforge.argparse4j.inf.Namespace;
+
+import javax.annotation.Nullable;
 
 /**
  * A command which executes with a configured {@link Environment}.

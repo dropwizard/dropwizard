@@ -9,12 +9,6 @@ import io.dropwizard.health.HealthStatusChecker;
 import io.dropwizard.jackson.DiscoverableSubtypeResolver;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.validation.Validators;
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-import javax.servlet.http.HttpServlet;
-import javax.validation.Validator;
-import javax.ws.rs.core.MediaType;
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpTester;
 import org.eclipse.jetty.server.Response;
@@ -26,6 +20,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import javax.servlet.http.HttpServlet;
+import javax.validation.Validator;
+import javax.ws.rs.core.MediaType;
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.when;

@@ -1,7 +1,7 @@
 package io.dropwizard.health.http;
 
-import java.util.Objects;
 import javax.annotation.Nonnull;
+import java.util.Objects;
 
 public class HttpHealthResponse {
     private final int status;

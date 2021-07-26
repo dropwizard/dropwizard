@@ -3,11 +3,12 @@ package io.dropwizard.health;
 import com.codahale.metrics.health.HealthCheckRegistry;
 import io.dropwizard.health.conf.HealthCheckConfiguration;
 import io.dropwizard.lifecycle.Managed;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class HealthCheckConfigValidator implements Managed {
     private static final Logger log = LoggerFactory.getLogger(HealthCheckConfigValidator.class);

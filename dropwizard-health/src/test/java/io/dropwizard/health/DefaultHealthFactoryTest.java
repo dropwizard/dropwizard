@@ -7,10 +7,12 @@ import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.health.conf.HealthCheckConfiguration;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.validation.Validators;
+import org.junit.jupiter.api.Test;
+
+import javax.validation.Validator;
 import java.io.File;
 import java.util.stream.Collectors;
-import javax.validation.Validator;
-import org.junit.jupiter.api.Test;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class DefaultHealthFactoryTest {

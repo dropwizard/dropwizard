@@ -1,14 +1,16 @@
 package io.dropwizard.health;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Collection;
+
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Collection;
+
 import static java.util.Objects.requireNonNull;
 
 public class DetailedJsonHealthServlet extends HttpServlet {

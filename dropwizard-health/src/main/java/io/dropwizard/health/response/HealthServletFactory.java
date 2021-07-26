@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.health.HealthStateAggregator;
 import io.dropwizard.health.HealthStatusChecker;
 import io.dropwizard.jackson.Discoverable;
+
 import javax.servlet.http.HttpServlet;
 
 /**

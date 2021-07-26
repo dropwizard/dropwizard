@@ -2,14 +2,15 @@ package io.dropwizard.health.tcp;
 
 import com.codahale.metrics.health.HealthCheck;
 import com.google.common.base.Preconditions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.time.Duration;
 import java.util.Objects;
-import javax.annotation.Nonnull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class TcpHealthCheck extends HealthCheck {
     private static final Logger log = LoggerFactory.getLogger(TcpHealthCheck.class);

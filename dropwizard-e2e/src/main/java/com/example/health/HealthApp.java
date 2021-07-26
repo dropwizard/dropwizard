@@ -6,6 +6,7 @@ import io.dropwizard.Configuration;
 import io.dropwizard.health.HealthStateListener;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 

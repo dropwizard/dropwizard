@@ -2,15 +2,16 @@ package io.dropwizard.health.http;
 
 import com.codahale.metrics.health.HealthCheck;
 import com.google.common.base.Preconditions;
-import java.time.Duration;
-import java.util.Objects;
+import org.glassfish.jersey.client.ClientProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.annotation.Nonnull;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.Response;
-import org.glassfish.jersey.client.ClientProperties;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.time.Duration;
+import java.util.Objects;
 
 public class HttpHealthCheck extends HealthCheck {
     private static final Logger log = LoggerFactory.getLogger(HttpHealthCheck.class);

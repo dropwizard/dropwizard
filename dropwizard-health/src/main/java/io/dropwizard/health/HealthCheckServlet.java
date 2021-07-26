@@ -1,11 +1,12 @@
 package io.dropwizard.health;
 
-import java.io.IOException;
-import java.io.PrintWriter;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.HttpHeaders;
+import java.io.IOException;
+import java.io.PrintWriter;
+
 import static java.util.Objects.requireNonNull;
 
 public class HealthCheckServlet extends HttpServlet {

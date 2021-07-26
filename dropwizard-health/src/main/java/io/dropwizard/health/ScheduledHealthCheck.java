@@ -4,9 +4,10 @@ import com.codahale.metrics.Counter;
 import com.codahale.metrics.health.HealthCheck;
 import io.dropwizard.health.conf.HealthCheckType;
 import io.dropwizard.health.conf.Schedule;
-import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Objects;
 
 class ScheduledHealthCheck implements Runnable {
     private static final Logger log = LoggerFactory.getLogger(ScheduledHealthCheck.class);

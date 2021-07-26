@@ -5,9 +5,11 @@ import com.google.common.io.Resources;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.validation.Validators;
-import java.io.File;
-import javax.validation.Validator;
 import org.junit.jupiter.api.Test;
+
+import javax.validation.Validator;
+import java.io.File;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class HealthCheckConfigurationTest {

@@ -1,8 +1,9 @@
 package io.dropwizard.health;
 
 import io.dropwizard.health.conf.HealthCheckType;
-import java.util.Objects;
+
 import javax.annotation.Nonnull;
+import java.util.Objects;
 
 class DelegatingHealthStateView implements HealthStateView, Comparable<DelegatingHealthStateView> {
     @Nonnull

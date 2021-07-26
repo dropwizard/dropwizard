@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.health.HealthCheckServlet;
 import io.dropwizard.health.HealthStateAggregator;
 import io.dropwizard.health.HealthStatusChecker;
+
 import javax.servlet.http.HttpServlet;
 import javax.ws.rs.core.MediaType;
 

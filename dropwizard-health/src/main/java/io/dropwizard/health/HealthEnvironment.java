@@ -2,12 +2,13 @@ package io.dropwizard.health;
 
 import com.codahale.metrics.health.HealthCheckRegistry;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
-import java.util.Objects;
-import java.util.Optional;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.Objects;
+import java.util.Optional;
 
 public class HealthEnvironment {
     private static final Logger LOGGER = LoggerFactory.getLogger(LifecycleEnvironment.class);
