@@ -1380,6 +1380,7 @@ Name                           Default                       Description
 ============================== ============================  ====================================================================================================
 type                           default                       Polymorphic configuration factory for health check servlets.
                                                              - default
+                                                             - detailed-json
 ============================== ============================  ====================================================================================================
 
 
@@ -1408,6 +1409,29 @@ cacheControlValue              "no-store"                    The value to be set
 contentType                    application/json              The value of the `Content-Type` header in the health check response.
 healthyValue                   {"status":"healthy"}          The value of the body of the health check response when the application is healthy.
 unhealthyValue                 {"status":"unhealthy"}        The value of the body of the health check response when the application is unhealthy.
+============================== ============================  ====================================================================================================
+
+
+.. _man-configuration-health-servlet-detailedjson:
+
+Detailed JSON Health Servlet
+-------------------------
+
+A detailed servlet used to handle health check requests, which returns a JSON response explaining the various
+registered health checks, their current status, and other metadata.
+
+.. code-block:: yaml
+
+    health:
+      servlet:
+        type: detailed-json
+        cacheControlEnabled: true
+
+============================== ============================  ====================================================================================================
+Name                           Default                       Description
+============================== ============================  ====================================================================================================
+cacheControlEnabled            true                          Flag controlling whether a `Cache-Control` header will be included in the health check response or not. Set header value using `cacheControlValue`.
+cacheControlValue              "no-store"                    The value to be set in the `Cache-Control` header in the health check response. Only used if `cacheControlEnabled` is set to `true`.
 ============================== ============================  ====================================================================================================
 
 
