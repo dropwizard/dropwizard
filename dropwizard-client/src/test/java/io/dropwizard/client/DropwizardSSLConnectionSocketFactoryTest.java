@@ -10,14 +10,11 @@ import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import io.dropwizard.util.Duration;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
-import org.apache.http.conn.ssl.SSLInitializationException;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.glassfish.jersey.client.ClientResponse;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledOnJre;
-import org.junit.jupiter.api.condition.JRE;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import javax.net.ssl.HostnameVerifier;
@@ -248,21 +245,6 @@ public class DropwizardSSLConnectionSocketFactoryTest {
         assertThatExceptionOfType(ProcessingException.class)
             .isThrownBy(() -> client.target(String.format("https://localhost:%d", TLS_APP_RULE.getPort(4))).request().get())
             .withRootCauseInstanceOf(IOException.class);
-    }
-
-    @Test
-    @EnabledOnJre({JRE.JAVA_8, JRE.JAVA_11})
-    void shouldFailDueDefaultProviderInsufficiency() {
-        tlsConfiguration.setKeyStorePath(new File(ResourceHelpers.resourceFilePath("stores/client/acme-weak.keystore.p12")));
-        tlsConfiguration.setKeyStorePassword("acme2");
-        tlsConfiguration.setKeyStoreType("PKCS12");
-        tlsConfiguration.setCertAlias("acme-weak");
-        tlsConfiguration.setTrustStorePath(new File(ResourceHelpers.resourceFilePath("stores/server/acme-weak.truststore.p12")));
-        tlsConfiguration.setTrustStorePassword("acme2");
-        tlsConfiguration.setTrustStoreType("PKCS12");
-
-        assertThatExceptionOfType(SSLInitializationException.class).isThrownBy(() -> new JerseyClientBuilder(TLS_APP_RULE.getEnvironment()).using(
-                jerseyClientConfiguration).build("reject_provider_non_supported"));
     }
 
     @Test
