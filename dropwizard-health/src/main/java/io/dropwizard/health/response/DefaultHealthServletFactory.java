@@ -2,7 +2,9 @@ package io.dropwizard.health.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.health.HealthCheckServlet;
+import io.dropwizard.health.HealthStateAggregator;
 import io.dropwizard.health.HealthStatusChecker;
 import javax.servlet.http.HttpServlet;
 import javax.ws.rs.core.MediaType;
@@ -70,7 +72,8 @@ public class DefaultHealthServletFactory implements HealthServletFactory {
     }
 
     @Override
-    public HttpServlet build(HealthStatusChecker healthStatusChecker) {
+    public HttpServlet build(final HealthStatusChecker healthStatusChecker,
+                             final HealthStateAggregator healthStateAggregator, final ObjectMapper mapper) {
         return new HealthCheckServlet(healthStatusChecker, cacheControlEnabled, cacheControlValue, contentType,
                 healthyValue, unhealthyValue);
     }

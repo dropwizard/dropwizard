@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.io.Resources;
 import io.dropwizard.configuration.YamlConfigurationFactory;
+import io.dropwizard.health.HealthStateAggregator;
 import io.dropwizard.health.HealthStatusChecker;
 import io.dropwizard.jackson.DiscoverableSubtypeResolver;
 import io.dropwizard.jackson.Jackson;
@@ -43,6 +44,8 @@ public class DefaultHealthServletFactoryTest {
 
     @Mock
     private HealthStatusChecker healthStatusChecker;
+    @Mock
+    private HealthStateAggregator healthStateAggregator;
 
     @BeforeEach
     public void setUp() throws Exception {
@@ -79,7 +82,7 @@ public class DefaultHealthServletFactoryTest {
         // succeed first, fail second
         when(healthStatusChecker.isHealthy(isNull())).thenReturn(true, false);
         HealthServletFactory factory = configFactory.build(yml);
-        HttpServlet servlet = factory.build(healthStatusChecker);
+        HttpServlet servlet = factory.build(healthStatusChecker, healthStateAggregator, mapper);
         servletTester.addServlet(new ServletHolder(servlet), HEALTH_CHECK_URI);
         servletTester.start();
         HttpTester.Response healthyResponse = executeRequest(request);
@@ -103,7 +106,7 @@ public class DefaultHealthServletFactoryTest {
         // succeed first, fail second
         when(healthStatusChecker.isHealthy(isNull())).thenReturn(true, false);
         HealthServletFactory factory = configFactory.build(yml);
-        HttpServlet servlet = factory.build(healthStatusChecker);
+        HttpServlet servlet = factory.build(healthStatusChecker, healthStateAggregator, mapper);
         servletTester.addServlet(new ServletHolder(servlet), HEALTH_CHECK_URI);
         servletTester.start();
         HttpTester.Response healthyResponse = executeRequest(request);
@@ -129,7 +132,7 @@ public class DefaultHealthServletFactoryTest {
         // succeed first, fail second
         when(healthStatusChecker.isHealthy(isNull())).thenReturn(true, false);
         HealthServletFactory factory = configFactory.build(yml);
-        HttpServlet servlet = factory.build(healthStatusChecker);
+        HttpServlet servlet = factory.build(healthStatusChecker, healthStateAggregator, mapper);
         servletTester.addServlet(new ServletHolder(servlet), HEALTH_CHECK_URI);
         servletTester.start();
         HttpTester.Response healthyResponse = executeRequest(request);

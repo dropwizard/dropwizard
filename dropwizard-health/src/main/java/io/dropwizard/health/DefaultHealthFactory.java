@@ -6,6 +6,7 @@ import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheckRegistry;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import io.dropwizard.health.conf.HealthCheckConfiguration;
@@ -140,7 +141,7 @@ public class DefaultHealthFactory implements HealthFactory {
 
     @Override
     public void configure(final LifecycleEnvironment lifecycle, final ServletEnvironment servlets,
-                          final HealthEnvironment health) {
+                          final HealthEnvironment health, final ObjectMapper mapper) {
         if (!isEnabled()) {
             LOGGER.info("Health check configuration is disabled.");
             return;
@@ -166,7 +167,7 @@ public class DefaultHealthFactory implements HealthFactory {
         healthCheckManager.initializeAppHealth();
 
         // setup servlet to respond to health check requests
-        final HttpServlet servlet = getServletFactory().build(healthCheckManager);
+        final HttpServlet servlet = getServletFactory().build(healthCheckManager, healthCheckManager, mapper);
         servlets
                 .addServlet(fullName + "-servlet", servlet)
                 .addMapping(getHealthCheckUrlPaths().toArray(new String[0]));

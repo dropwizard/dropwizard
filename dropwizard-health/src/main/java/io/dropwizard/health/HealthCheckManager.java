@@ -5,6 +5,7 @@ import com.codahale.metrics.Gauge;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheck;
 import com.codahale.metrics.health.HealthCheckRegistryListener;
+import com.google.common.collect.ImmutableList;
 import io.dropwizard.health.conf.HealthCheckConfiguration;
 import io.dropwizard.health.conf.HealthCheckType;
 import io.dropwizard.health.conf.Schedule;
@@ -12,10 +13,12 @@ import io.dropwizard.health.shutdown.ShutdownNotifier;
 import io.dropwizard.util.Duration;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
@@ -25,7 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 class HealthCheckManager implements HealthCheckRegistryListener, HealthStatusChecker, ShutdownNotifier,
-        HealthStateListener, HealthStateListenerListener {
+        HealthStateListener, HealthStateListenerListener, HealthStateAggregator {
     private static final Logger log = LoggerFactory.getLogger(HealthCheckManager.class);
 
     private final AtomicBoolean isAppAlive = new AtomicBoolean(true);
@@ -34,6 +37,7 @@ class HealthCheckManager implements HealthCheckRegistryListener, HealthStatusChe
     private final AtomicInteger unhealthyCriticalAliveChecks = new AtomicInteger();
     private final HealthCheckScheduler scheduler;
     private Map<String, ScheduledHealthCheck> checks;
+    private Set<HealthStateView> healthStateViews;
     private final Map<String, HealthCheckConfiguration> configs;
     private final Collection<HealthStateListener> healthStateListeners;
     private final MetricRegistry metrics;
@@ -56,6 +60,7 @@ class HealthCheckManager implements HealthCheckRegistryListener, HealthStatusChe
         this.initialOverallState = initialOverallState;
         this.checks = new HashMap<>();
         this.healthStateListeners = new LinkedList<>();
+        this.healthStateViews = new LinkedHashSet<>();
 
         this.aggregateHealthyName = MetricRegistry.name("health", "aggregate", "healthy");
         this.aggregateUnhealthyName = MetricRegistry.name("health", "aggregate", "unhealthy");
@@ -64,8 +69,13 @@ class HealthCheckManager implements HealthCheckRegistryListener, HealthStatusChe
     }
 
     // visible for testing
-    void setChecks(Map<String, ScheduledHealthCheck> checks) {
+    void setChecks(final Map<String, ScheduledHealthCheck> checks) {
         this.checks = checks;
+        this.healthStateViews =
+                checks.values()
+                        .stream()
+                        .map(DelegatingHealthStateView::new)
+                        .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     @Override
@@ -90,6 +100,8 @@ class HealthCheckManager implements HealthCheckRegistryListener, HealthStatusChe
         final ScheduledHealthCheck check = new ScheduledHealthCheck(name, type, critical, healthCheck, schedule, state,
                 healthyCheckCounter, unhealthyCheckCounter);
         checks.put(name, check);
+        final HealthStateView healthStateView = new DelegatingHealthStateView(check);
+        healthStateViews.add(healthStateView);
 
         // handle initial state of 'false' to ensure counts line up
         if (!initialState && critical) {
@@ -234,5 +246,10 @@ class HealthCheckManager implements HealthCheckRegistryListener, HealthStatusChe
     @Override
     public void onUnhealthyCheck(String healthCheckName) {
         healthStateListeners.forEach(listener -> listener.onUnhealthyCheck(healthCheckName));
+    }
+
+    @Override
+    public Collection<HealthStateView> healthStateViews() {
+       return ImmutableList.copyOf(healthStateViews);
     }
 }
