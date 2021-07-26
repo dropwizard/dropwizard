@@ -1266,6 +1266,151 @@ markerName             (none)           The name of the marker to mark logged me
 ====================== ===============  ====================================================================================================
 
 
+.. _man-configuration-health:
+
+Health
+=======
+
+.. code-block:: yaml
+
+    health:
+      delayedShutdownHandlerEnabled: true
+      shutdownWaitPeriod: 5s
+      healthCheckUrlPaths: ["health-check"]
+      healthChecks:
+        - <some health check config>
+        - <some other health check config>
+      initialOverallState: false
+      servlet:
+        type: default
+
+
+============================== =======================  ====================================================================================================
+Name                           Default                  Description
+============================== =======================  ====================================================================================================
+enabled                        true                     Flag indicating whether to enable health functionality or not.
+delayedShutdownHandlerEnabled  false                    Flag indicating whether to delay shutdown to allow already processing requests to complete.
+shutdownWaitPeriod             15 seconds               Amount of time to delay shutdown by to allow already processing requests to complete. Only applicable if `delayedShutdownHandlerEnabled` is true.
+healthCheckUrlPaths            \["/health-check"\]      URLs to expose the app's health check on.
+healthChecks                   []                       A list of configured health checks. See the [Health Check Configuration section](#health-check-configuration) for more details.
+initialOverallState            true                     Flag indicating whether the overall health state of the application should start as healthy or unhealthy. A value of `true` indicates an initial state of healthy while a value of `false` indicates an initial state of unhealthy.
+servlet                        default health servlet   The health servlet that is used to generate health check responses. See the [Default Health Servlet section](#default-health-servlet) for more details.
+============================== =======================  ====================================================================================================
+
+
+.. _man-configuration-health-checks:
+
+Health Checks
+--------------
+
+Options around a particular health check which is registered in an Application
+
+  .. code-block:: yaml
+     
+      health:
+        healthChecks:
+          - name: file-system
+            type: alive
+            critical: true
+            initialState: true
+          - name: database
+            type: ready
+            critical: false
+            initialState: false
+
+
+============================== =======================  ====================================================================================================
+Name                           Default                  Description
+============================== =======================  ====================================================================================================
+name                           (none)                   The name of this health check. This must be unique, and match the name of the check registered in code. (On the applications `HealthCheckRegistry`)
+type                           ready                    The type of this health check. This is either `alive` or `ready`. See the [Application Status section](#application-status) for more details.
+critical                       false                    Flag indicating whether this dependency is critical to determine the health of the application. If `true` and this dependency is unhealthy, the application will also be marked as unhealthy.
+initialState                   true                     Flag indicating the initial state to use for this health check. A value of `true` indicates an initial state of healthy while a value of `false` indicates an initial state of unhealthy.
+schedule                       default schedule         The schedule that this health check will be run on. See the [Schedule section](#schedule) for more details.
+============================== =======================  ====================================================================================================
+
+
+.. _man-configuration-health-schedule:
+
+Schedule
+-----------
+
+The schedule on which to execute a particular :ref:`health checks <man-configuration-health-checks>`
+
+.. code-block:: yaml
+
+    health:
+       healthChecks:
+       - name: file-system
+         schedule:
+           checkInterval: 10s
+           downtimeInterval: 2s
+           initialDelay: 5s
+           failureAttempts: 1
+           successAttempts: 2
+
+
+============================== ============================  ====================================================================================================
+Name                           Default                       Description
+============================== ============================  ====================================================================================================
+checkInterval                  5 seconds                     The interval on which to perform a health check for this dependency while the dependency is in a healthy state.
+downtimeInterval               30 seconds                    The interval on which to perform a health check for this dependency while the dependency is in an unhealthy state.
+initialDelay                   the value of `checkInterval`  The initial delay to use when first scheduling the health check.
+failureAttempts                3                             The threshold of consecutive failed attempts needed to mark a dependency as unhealthy (from a healthy state).
+successAttempts                2                             The threshold of consecutive successful attempts needed to mark a dependency as healthy (from an unhealthy state).
+============================== ============================  ====================================================================================================
+
+
+.. _man-configuration-health-servlet-all:
+
+All Health Servlets
+------------------------
+
+Configurations common to all health servlets
+
+.. code-block:: yaml
+
+    health:
+      servlet:
+        type: <type>
+
+
+============================== ============================  ====================================================================================================
+Name                           Default                       Description
+============================== ============================  ====================================================================================================
+type                           default                       Polymorphic configuration factory for health check servlets.
+                                                             - default
+============================== ============================  ====================================================================================================
+
+
+.. _man-configuration-health-servlet-default:
+
+Default Health Servlet
+-------------------------
+
+The default servlet used to handle health check requests
+
+.. code-block:: yaml
+
+    health:
+      servlet:
+        type: default
+        cacheControlEnabled: true
+        contentType: "application/json"
+        healthyValue: {"status": "super happy! :)"}
+        unhealthyValue: {"status": "very sad. :("}
+
+============================== ============================  ====================================================================================================
+Name                           Default                       Description
+============================== ============================  ====================================================================================================
+cacheControlEnabled            true                          Flag controlling whether a `Cache-Control` header will be included in the health check response or not. Set header value using `cacheControlValue`.
+cacheControlValue              "no-store"                    The value to be set in the `Cache-Control` header in the health check response. Only used if `cacheControlEnabled` is set to `true`.
+contentType                    application/json              The value of the `Content-Type` header in the health check response.
+healthyValue                   {"status":"healthy"}          The value of the body of the health check response when the application is healthy.
+unhealthyValue                 {"status":"unhealthy"}        The value of the body of the health check response when the application is unhealthy.
+============================== ============================  ====================================================================================================
+
+
 .. _man-configuration-clients:
 
 Clients
