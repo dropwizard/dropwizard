@@ -20,7 +20,7 @@
         <!-- External dependencies -->
         <activation-api.version>1.2.2</activation-api.version>
         <argparse4j.version>0.9.0</argparse4j.version>
-        <byte-buddy.version>1.11.8</byte-buddy.version>
+        <byte-buddy.version>1.11.9</byte-buddy.version>
         <caffeine.version>2.9.2</caffeine.version>
         <checker-qual.version>3.16.0</checker-qual.version>
         <classmate.version>1.5.1</classmate.version>
@@ -54,11 +54,11 @@
         <jsr305.version>3.0.2</jsr305.version>
         <liquibase-core.version>4.4.2</liquibase-core.version>
         <liquibase-slf4j.version>4.0.0</liquibase-slf4j.version>
-        <logback-throttling-appender.version>1.1.0</logback-throttling-appender.version>
-        <logback.version>1.2.4</logback.version>
+        <logback-throttling-appender.version>1.1.2</logback-throttling-appender.version>
+        <logback.version>1.2.5</logback.version>
         <metrics4.version>4.2.3</metrics4.version>
         <mustache-compiler.version>0.9.10</mustache-compiler.version>
-        <nullaway.version>0.9.1</nullaway.version>
+        <nullaway.version>0.9.2</nullaway.version>
         <slf4j.version>1.7.32</slf4j.version>
         <tomcat-jdbc.version>9.0.50</tomcat-jdbc.version>
         <usertype.core.version>7.0.0.CR1</usertype.core.version>
