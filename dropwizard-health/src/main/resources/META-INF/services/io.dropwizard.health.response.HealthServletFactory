@@ -1,2 +1,0 @@
-io.dropwizard.health.response.DefaultHealthServletFactory
-io.dropwizard.health.response.DetailedJsonHealthServletFactory

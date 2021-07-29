@@ -1,34 +1,32 @@
 package io.dropwizard.health;
 
 import com.codahale.metrics.health.HealthCheckRegistry;
-import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Objects;
-import java.util.Optional;
 
 public class HealthEnvironment {
-    private static final Logger LOGGER = LoggerFactory.getLogger(LifecycleEnvironment.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(HealthEnvironment.class);
 
     @Nonnull
     private final HealthCheckRegistry healthCheckRegistry;
+    @Nonnull
+    private final Collection<HealthStateListener> healthStateListeners;
     @Nullable
-    private HealthStateListenerListener healthStateListenerListener;
+    private HealthStateAggregator healthStateAggregator;
 
     public HealthEnvironment(final HealthCheckRegistry healthCheckRegistry) {
         this.healthCheckRegistry = Objects.requireNonNull(healthCheckRegistry);
+        this.healthStateListeners = new ArrayList<>();
     }
 
     public void addHealthStateListener(final HealthStateListener listener) {
-        if (healthStateListenerListener == null) {
-            final String message = "Cannot add health state listener before HealthFactory setup has occurred";
-            LOGGER.error(message);
-            throw new IllegalStateException(message);
-        }
-        healthStateListenerListener.onHealthStateListenerAdded(listener);
+        healthStateListeners.add(listener);
     }
 
     @Nonnull
@@ -36,11 +34,22 @@ public class HealthEnvironment {
         return healthCheckRegistry;
     }
 
-    Optional<HealthStateListenerListener> getHealthStateListenerListener() {
-        return Optional.ofNullable(healthStateListenerListener);
+    @Nonnull
+    public Collection<HealthStateListener> healthStateListeners() {
+        return healthStateListeners;
     }
 
-    void setHealthStateListenerListener(@Nonnull HealthStateListenerListener healthStateListenerListener) {
-        this.healthStateListenerListener = Objects.requireNonNull(healthStateListenerListener);
+    @Nonnull
+    public HealthStateAggregator healthStateAggregator() {
+        if (healthStateAggregator == null) {
+            final String message = "Cannot access the HealthStateAggregator before HealthFactory setup has occurred";
+            LOGGER.error(message);
+            throw new IllegalStateException(message);
+        }
+        return healthStateAggregator;
+    }
+
+    void setHealthStateAggregator(@Nonnull final HealthStateAggregator healthStateAggregator) {
+        this.healthStateAggregator = Objects.requireNonNull(healthStateAggregator);
     }
 }

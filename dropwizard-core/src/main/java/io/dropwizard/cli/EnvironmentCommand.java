@@ -58,6 +58,7 @@ public abstract class EnvironmentCommand<T extends Configuration> extends Config
         configuration.getHealthFactory().ifPresent(health -> health.configure(
                 environment.lifecycle(),
                 environment.servlets(),
+                environment.jersey(),
                 environment.health(),
                 environment.getObjectMapper()));
 

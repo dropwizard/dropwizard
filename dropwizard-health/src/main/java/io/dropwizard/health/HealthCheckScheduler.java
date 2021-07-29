@@ -10,7 +10,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-public class HealthCheckScheduler {
+class HealthCheckScheduler {
     private static final Logger log = LoggerFactory.getLogger(HealthCheckScheduler.class);
 
     private final ScheduledExecutorService executorService;

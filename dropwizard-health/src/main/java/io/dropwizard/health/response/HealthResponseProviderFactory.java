@@ -5,25 +5,23 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.health.HealthStateAggregator;
 import io.dropwizard.health.HealthStatusChecker;
 import io.dropwizard.jackson.Discoverable;
-
-import javax.servlet.http.HttpServlet;
-
 /**
- * A factory for building an {@link HttpServlet} instance used for responding to health check requests.
+ * A factory for building an {@link HealthResponseProvider} instance used to provide responses to health check requests.
  *
- * @see DefaultHealthServletFactory
+ * @see SimpleHealthResponseProviderFactory
+ * @see JerseyHealthResponderFactory
  */
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", defaultImpl = DefaultHealthServletFactory.class)
-public interface HealthServletFactory extends Discoverable {
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", defaultImpl = DetailedJsonHealthResponseProvider.class)
+public interface HealthResponseProviderFactory extends Discoverable {
+
     /**
-     * Build a servlet for responding to health check requests (e.g. from load balancer).
+     * Configures a health responder for responding to health check requests (e.g. from load balancer).
      *
      * @param healthStatusChecker an interface that exposes the ability to check current status of health.
      * @param healthStateAggregator an interface that exposes the ability to check an aggregate view of all health
      *                              states.
      * @param mapper A Jackson object mapper to allow writing JSON responses (if needed).
-     * @return a {@link HttpServlet} that responds to health check requests
      */
-    HttpServlet build(HealthStatusChecker healthStatusChecker, HealthStateAggregator healthStateAggregator,
-                      ObjectMapper mapper);
+    HealthResponseProvider build(HealthStatusChecker healthStatusChecker, HealthStateAggregator healthStateAggregator,
+                                 ObjectMapper mapper);
 }

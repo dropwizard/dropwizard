@@ -1,0 +1,2 @@
+io.dropwizard.health.response.JerseyHealthResponderFactory
+io.dropwizard.health.response.ServletHealthResponderFactory

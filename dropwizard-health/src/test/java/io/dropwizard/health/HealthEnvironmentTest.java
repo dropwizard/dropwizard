@@ -7,8 +7,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class HealthEnvironmentTest {
@@ -18,8 +18,6 @@ class HealthEnvironmentTest {
 
     @Mock
     private HealthStateListener healthStateListener;
-    @Mock
-    private HealthStateListenerListener healthStateListenerListener;
 
     @BeforeEach
     void setUp() {
@@ -27,16 +25,14 @@ class HealthEnvironmentTest {
     }
 
     @Test
-    void addingAHealthStateListenerBeforeProperInitializationShouldFail() {
-        assertThrows(IllegalStateException.class, () -> healthEnvironment.addHealthStateListener(healthStateListener));
+    void gettingHealthStateAggregatorBeforeSetShouldResultInException() {
+        assertThrows(IllegalStateException.class, () -> healthEnvironment.healthStateAggregator());
     }
 
     @Test
-    void addingAHealthStateListenerShouldResultInListenerListenerCallback() {
-        healthEnvironment.setHealthStateListenerListener(healthStateListenerListener);
-
+    void shouldRegisterAListener() {
         healthEnvironment.addHealthStateListener(healthStateListener);
 
-        verify(healthStateListenerListener).onHealthStateListenerAdded(healthStateListener);
+        assertThat(healthEnvironment.healthStateListeners()).contains(healthStateListener);
     }
 }

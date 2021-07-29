@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class HealthCheckConfigValidator implements Managed {
+class HealthCheckConfigValidator implements Managed {
     private static final Logger log = LoggerFactory.getLogger(HealthCheckConfigValidator.class);
     private final List<HealthCheckConfiguration> configs;
     private final HealthCheckRegistry registry;

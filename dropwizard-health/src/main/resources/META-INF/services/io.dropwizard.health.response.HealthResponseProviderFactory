@@ -1,0 +1,2 @@
+io.dropwizard.health.response.DetailedJsonHealthResponseProviderFactory
+io.dropwizard.health.response.SimpleHealthResponseProviderFactory

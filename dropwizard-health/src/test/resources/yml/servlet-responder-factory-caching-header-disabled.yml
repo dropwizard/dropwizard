@@ -1,2 +1,2 @@
-type: default
+type: servlet
 cacheControlEnabled: false

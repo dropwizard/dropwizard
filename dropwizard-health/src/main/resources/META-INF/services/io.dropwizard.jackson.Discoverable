@@ -1,2 +1,2 @@
 io.dropwizard.health.HealthFactory
-io.dropwizard.health.response.HealthServletFactory
+io.dropwizard.health.response.HealthResponderFactory

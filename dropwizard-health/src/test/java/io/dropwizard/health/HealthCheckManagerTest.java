@@ -55,7 +55,7 @@ public class HealthCheckManagerTest {
     public void shouldIgnoreUnconfiguredAddedHealthChecks() {
         // given
         final HealthCheckManager manager = new HealthCheckManager(Collections.emptyList(), scheduler,
-                new MetricRegistry(), SHUTDOWN_WAIT, true);
+                new MetricRegistry(), SHUTDOWN_WAIT, true, Collections.emptyList());
 
         // when
         manager.onHealthCheckAdded(NAME, mock(HealthCheck.class));
@@ -72,7 +72,7 @@ public class HealthCheckManagerTest {
         config.setCritical(true);
         config.setSchedule(new Schedule());
         final HealthCheckManager manager = new HealthCheckManager(Collections.singletonList(config), scheduler,
-                new MetricRegistry(), SHUTDOWN_WAIT, true);
+                new MetricRegistry(), SHUTDOWN_WAIT, true, Collections.emptyList());
 
         // when
         manager.onHealthCheckAdded(NAME, mock(HealthCheck.class));
@@ -86,7 +86,7 @@ public class HealthCheckManagerTest {
         // given
         final ScheduledHealthCheck healthCheck = mock(ScheduledHealthCheck.class);
         final HealthCheckManager manager = new HealthCheckManager(Collections.emptyList(), scheduler,
-                new MetricRegistry(), SHUTDOWN_WAIT, true);
+                new MetricRegistry(), SHUTDOWN_WAIT, true, Collections.emptyList());
         manager.setChecks(ImmutableMap.of(NAME, healthCheck));
 
         // when
@@ -100,7 +100,7 @@ public class HealthCheckManagerTest {
     public void shouldDoNothingWhenStateChangesForUnconfiguredHealthCheck() {
         // given
         final HealthCheckManager manager = new HealthCheckManager(Collections.emptyList(), scheduler,
-                new MetricRegistry(), SHUTDOWN_WAIT, true);
+                new MetricRegistry(), SHUTDOWN_WAIT, true, Collections.emptyList());
 
         // when
         manager.onStateChanged(NAME, false);
@@ -118,7 +118,7 @@ public class HealthCheckManagerTest {
         config.setInitialState(false);
         config.setSchedule(new Schedule());
         final HealthCheckManager manager = new HealthCheckManager(Collections.singletonList(config), scheduler,
-                new MetricRegistry(), SHUTDOWN_WAIT, false);
+                new MetricRegistry(), SHUTDOWN_WAIT, false, Collections.emptyList());
         manager.initializeAppHealth();
         final HealthCheck check = mock(HealthCheck.class);
 
@@ -146,7 +146,7 @@ public class HealthCheckManagerTest {
         config.setCritical(true);
         config.setSchedule(new Schedule());
         final HealthCheckManager manager = new HealthCheckManager(Collections.singletonList(config), scheduler,
-                new MetricRegistry(), SHUTDOWN_WAIT, true);
+                new MetricRegistry(), SHUTDOWN_WAIT, true, Collections.emptyList());
         manager.initializeAppHealth();
         final HealthCheck check = mock(HealthCheck.class);
 
@@ -174,7 +174,7 @@ public class HealthCheckManagerTest {
         config.setType(HealthCheckType.ALIVE);
         config.setSchedule(new Schedule());
         final HealthCheckManager manager = new HealthCheckManager(Collections.singletonList(config), scheduler,
-                new MetricRegistry(), SHUTDOWN_WAIT, true);
+                new MetricRegistry(), SHUTDOWN_WAIT, true, Collections.emptyList());
         manager.initializeAppHealth();
         final HealthCheck check = mock(HealthCheck.class);
 
@@ -202,7 +202,7 @@ public class HealthCheckManagerTest {
         config.setCritical(true);
         config.setSchedule(new Schedule());
         final HealthCheckManager manager = new HealthCheckManager(Collections.singletonList(config), scheduler,
-                new MetricRegistry(), SHUTDOWN_WAIT, true);
+                new MetricRegistry(), SHUTDOWN_WAIT, true, Collections.emptyList());
         final HealthCheck check = mock(HealthCheck.class);
 
         // when
@@ -248,7 +248,7 @@ public class HealthCheckManagerTest {
         config.setSchedule(new Schedule());
         final HealthCheck check = mock(HealthCheck.class);
         final HealthCheckManager manager = new HealthCheckManager(Collections.singletonList(config), scheduler,
-                new MetricRegistry(), SHUTDOWN_WAIT, true);
+                new MetricRegistry(), SHUTDOWN_WAIT, true, Collections.emptyList());
         manager.initializeAppHealth();
 
         // when
@@ -274,7 +274,7 @@ public class HealthCheckManagerTest {
         criticalConfig.setSchedule(new Schedule());
         final List<HealthCheckConfiguration> configs = ImmutableList.of(nonCriticalConfig, criticalConfig);
         final HealthCheckManager manager = new HealthCheckManager(configs, scheduler, new MetricRegistry(),
-                SHUTDOWN_WAIT, true);
+                SHUTDOWN_WAIT, true, Collections.emptyList());
         final HealthCheck check = mock(HealthCheck.class);
 
         // when
@@ -355,8 +355,8 @@ public class HealthCheckManagerTest {
             @Override
             public void onStateChanged(String healthCheckName, boolean healthy) {}
         };
-        final HealthCheckManager manager = new HealthCheckManager(configs, scheduler, metrics, SHUTDOWN_WAIT, true);
-        manager.onHealthStateListenerAdded(countingListener);
+        final HealthCheckManager manager = new HealthCheckManager(configs, scheduler, metrics, SHUTDOWN_WAIT, true,
+            Collections.singleton(countingListener));
 
         final ScheduledHealthCheck check1 = new ScheduledHealthCheck(NAME, READY, nonCriticalConfig.isCritical(), check,
                 schedule, new State(NAME, schedule.getFailureAttempts(), schedule.getSuccessAttempts(), true, manager),
@@ -409,7 +409,8 @@ public class HealthCheckManagerTest {
         final Duration shutdownWaitPeriod = Duration.milliseconds(shutdownWaitTimeMillis);
 
         // when
-        final HealthCheckManager manager = new HealthCheckManager(configs, scheduler, metrics, shutdownWaitPeriod, true);
+        final HealthCheckManager manager = new HealthCheckManager(configs, scheduler, metrics, shutdownWaitPeriod,
+            true, Collections.emptyList());
         manager.onHealthCheckAdded("check1", check);
         // simulate JVM shutdown hook
         final Thread shutdownThread = new Thread(() -> {
