@@ -8,7 +8,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 class State {
-    private static final Logger log = LoggerFactory.getLogger(State.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(State.class);
+
     private final String name;
     private final int successAttempts;
     private final int failureAttempts;
@@ -43,7 +44,7 @@ class State {
             // already healthy, do nothing
             return;
         }
-        log.trace("health check received a successful result: name={} current={}", name, healthy);
+        LOGGER.trace("health check received a successful result: name={} current={}", name, healthy);
         healthStateListener.onHealthyCheck(this.name);
         handleEvent(successAttempts, true);
     }
@@ -53,14 +54,14 @@ class State {
             // already unhealthy, do nothing
             return;
         }
-        log.trace("health check received a failed result: name={} current={}", name, healthy);
+        LOGGER.trace("health check received a failed result: name={} current={}", name, healthy);
         healthStateListener.onUnhealthyCheck(this.name);
         handleEvent(failureAttempts, false);
     }
 
     private void handleEvent(final int numAttempts, final boolean result) {
         final int newCount = counter.incrementAndGet();
-        log.debug("health check state update: name={} result={} count={}/{}", name, result, newCount, numAttempts);
+        LOGGER.debug("health check state update: name={} result={} count={}/{}", name, result, newCount, numAttempts);
         if (newCount >= numAttempts) {
             final boolean newState = !healthy.get();
             healthy.set(newState);

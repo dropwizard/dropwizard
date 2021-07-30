@@ -10,7 +10,8 @@ import org.slf4j.LoggerFactory;
 import java.util.Objects;
 
 class ScheduledHealthCheck implements Runnable {
-    private static final Logger log = LoggerFactory.getLogger(ScheduledHealthCheck.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ScheduledHealthCheck.class);
+
     private final String name;
     private final HealthCheckType type;
     private final boolean critical;
@@ -60,22 +61,22 @@ class ScheduledHealthCheck implements Runnable {
 
     @Override
     public void run() {
-        log.trace("executing health check: name={}", name);
+        LOGGER.trace("executing health check: name={}", name);
 
         HealthCheck.Result result;
         try {
            result = healthCheck.execute();
         } catch (final Exception e) {
-            log.warn("Check for name={} failed exceptionally", name, e);
+            LOGGER.warn("Check for name={} failed exceptionally", name, e);
             result = HealthCheck.Result.unhealthy(e);
         }
 
         if (result.isHealthy()) {
-            log.trace("health check result: name={} result=success", name);
+            LOGGER.trace("health check result: name={} result=success", name);
             state.success();
             healthyCheckCounter.inc();
         } else {
-            log.trace("health check result: name={} result=failure result={}", name, result);
+            LOGGER.trace("health check result: name={} result=failure result={}", name, result);
             state.failure();
             unhealthyCheckCounter.inc();
         }

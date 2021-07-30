@@ -13,7 +13,7 @@ import java.time.Duration;
 import java.util.Objects;
 
 public class TcpHealthCheck extends HealthCheck {
-    private static final Logger log = LoggerFactory.getLogger(TcpHealthCheck.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TcpHealthCheck.class);
 
     private static final Duration DEFAULT_CONNECTION_TIMEOUT = Duration.ofSeconds(2);
 
@@ -43,11 +43,11 @@ public class TcpHealthCheck extends HealthCheck {
         final boolean isHealthy = tcpCheck(host, port);
 
         if (isHealthy) {
-            log.debug("Health check against url={}:{} successful", host, port);
+            LOGGER.debug("Health check against url={}:{} successful", host, port);
             return Result.healthy();
         }
 
-        log.debug("Health check against url={}:{} failed", host, port);
+        LOGGER.debug("Health check against url={}:{} failed", host, port);
         return Result.unhealthy("TCP health check against host=%s port=%s failed", host, port);
     }
 

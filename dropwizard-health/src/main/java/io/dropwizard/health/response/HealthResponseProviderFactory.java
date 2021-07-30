@@ -8,10 +8,9 @@ import io.dropwizard.jackson.Discoverable;
 /**
  * A factory for building an {@link HealthResponseProvider} instance used to provide responses to health check requests.
  *
- * @see SimpleHealthResponseProviderFactory
- * @see JerseyHealthResponderFactory
+ * @see DetailedJsonHealthResponseProviderFactory
  */
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", defaultImpl = DetailedJsonHealthResponseProvider.class)
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", defaultImpl = DetailedJsonHealthResponseProviderFactory.class)
 public interface HealthResponseProviderFactory extends Discoverable {
 
     /**

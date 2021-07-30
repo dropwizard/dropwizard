@@ -37,16 +37,6 @@ public class HealthCheckManagerTest {
     private static final String NAME_2 = "test2";
     private static final HealthCheckType READY = HealthCheckType.READY;
     private static final Duration SHUTDOWN_WAIT = Duration.seconds(5);
-    private static final HealthStateListener LISTENER = new HealthStateListener() {
-        @Override
-        public void onHealthyCheck(String healthCheckName) {}
-
-        @Override
-        public void onUnhealthyCheck(String healthCheckName) {}
-
-        @Override
-        public void onStateChanged(String healthCheckName, boolean healthy) {}
-    };
 
     @Mock
     private HealthCheckScheduler scheduler;
@@ -78,7 +68,7 @@ public class HealthCheckManagerTest {
         manager.onHealthCheckAdded(NAME, mock(HealthCheck.class));
 
         // then
-        verifyCheckWasScheduled(scheduler, NAME, true);
+        verifyCheckWasScheduled(scheduler, true);
     }
 
     @Test
@@ -135,7 +125,7 @@ public class HealthCheckManagerTest {
         assertThat(beforeSuccessAliveStatus).isTrue();
         assertThat(afterSuccessReadyStatus).isTrue();
         assertThat(afterSuccessAliveStatus).isTrue();
-        verifyCheckWasScheduled(scheduler, NAME, true);
+        verifyCheckWasScheduled(scheduler, true);
     }
 
     @Test
@@ -163,7 +153,7 @@ public class HealthCheckManagerTest {
         assertThat(beforeFailureAliveStatus).isTrue();
         assertThat(afterFailureReadyStatus).isFalse();
         assertThat(afterFailureAliveStatus).isTrue();
-        verifyCheckWasScheduled(scheduler, NAME, true);
+        verifyCheckWasScheduled(scheduler, true);
     }
 
     @Test
@@ -191,7 +181,7 @@ public class HealthCheckManagerTest {
         assertThat(beforeFailureAliveStatus).isTrue();
         assertThat(afterFailureReadyStatus).isFalse();
         assertThat(afterFailureAliveStatus).isFalse();
-        verifyCheckWasScheduled(scheduler, NAME, true);
+        verifyCheckWasScheduled(scheduler, true);
     }
 
     @Test
@@ -257,7 +247,7 @@ public class HealthCheckManagerTest {
         boolean afterFailure = manager.isHealthy();
 
         // then
-        verifyCheckWasScheduled(scheduler, NAME, false);
+        verifyCheckWasScheduled(scheduler, false);
         assertThat(afterFailure).isTrue();
     }
 
@@ -432,11 +422,11 @@ public class HealthCheckManagerTest {
         assertThat(afterCount - beforeCount).isGreaterThanOrEqualTo(expectedCount);
     }
 
-    private void verifyCheckWasScheduled(HealthCheckScheduler scheduler, String name, boolean critical) {
+    private void verifyCheckWasScheduled(HealthCheckScheduler scheduler, boolean critical) {
         ArgumentCaptor<ScheduledHealthCheck> checkCaptor = ArgumentCaptor.forClass(ScheduledHealthCheck.class);
         verify(scheduler).scheduleInitial(checkCaptor.capture());
         assertThat(checkCaptor.getValue().getName())
-                .isEqualTo(name);
+                .isEqualTo(HealthCheckManagerTest.NAME);
         assertThat(checkCaptor.getValue().isCritical())
                 .isEqualTo(critical);
     }

@@ -95,7 +95,7 @@ public class ServletHealthResponderFactoryTest {
 
         // when
         // succeed first, fail second
-        when(healthResponseProvider.currentHealthResponse(isNull())).thenReturn(SUCCESS, FAIL);
+        when(healthResponseProvider.minimalHealthResponse(isNull())).thenReturn(SUCCESS, FAIL);
         HealthResponderFactory factory = configFactory.build(yml);
         factory.configure(NAME, Collections.singletonList(HEALTH_CHECK_URI), healthResponseProvider, jersey,
             servlets, mapper);
@@ -106,11 +106,7 @@ public class ServletHealthResponderFactoryTest {
 
         // then
         assertThat(healthyResponse.getStatus()).isEqualTo(Response.SC_OK);
-        assertThat(healthyResponse.get(HttpHeader.CONTENT_TYPE)).startsWith(MediaType.TEXT_PLAIN);
-        assertThat(healthyResponse.getContent()).isEqualTo("healthy");
         assertThat(unhealthyResponse.getStatus()).isEqualTo(Response.SC_SERVICE_UNAVAILABLE);
-        assertThat(unhealthyResponse.get(HttpHeader.CONTENT_TYPE)).startsWith(MediaType.TEXT_PLAIN);
-        assertThat(unhealthyResponse.getContent()).isEqualTo("unhealthy");
     }
 
     @Test
@@ -121,7 +117,7 @@ public class ServletHealthResponderFactoryTest {
 
         // when
         // succeed first, fail second
-        when(healthResponseProvider.currentHealthResponse(isNull())).thenReturn(SUCCESS, FAIL);
+        when(healthResponseProvider.minimalHealthResponse(isNull())).thenReturn(SUCCESS, FAIL);
         HealthResponderFactory factory = configFactory.build(yml);
         factory.configure(NAME, Collections.singletonList(HEALTH_CHECK_URI), healthResponseProvider, jersey,
             servlets, mapper);
@@ -132,12 +128,8 @@ public class ServletHealthResponderFactoryTest {
 
         // then
         assertThat(healthyResponse.getStatus()).isEqualTo(Response.SC_OK);
-        assertThat(healthyResponse.get(HttpHeader.CONTENT_TYPE)).startsWith(MediaType.TEXT_PLAIN);
-        assertThat(healthyResponse.getContent()).isEqualTo("healthy");
         assertThat(healthyResponse.get(HttpHeader.CACHE_CONTROL)).isNull();
         assertThat(unhealthyResponse.getStatus()).isEqualTo(Response.SC_SERVICE_UNAVAILABLE);
-        assertThat(unhealthyResponse.get(HttpHeader.CONTENT_TYPE)).startsWith(MediaType.TEXT_PLAIN);
-        assertThat(unhealthyResponse.getContent()).isEqualTo("unhealthy");
         assertThat(unhealthyResponse.get(HttpHeader.CACHE_CONTROL)).isNull();
     }
 

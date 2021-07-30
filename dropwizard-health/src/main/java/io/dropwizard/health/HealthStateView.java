@@ -4,7 +4,7 @@ import io.dropwizard.health.conf.HealthCheckType;
 
 import javax.annotation.Nonnull;
 
-public interface HealthStateView {
+public interface HealthStateView extends Comparable<HealthStateView> {
     @Nonnull
     String getName();
 
@@ -14,4 +14,9 @@ public interface HealthStateView {
     HealthCheckType getType();
 
     boolean isCritical();
+
+    @Override
+    default int compareTo(final HealthStateView other) {
+        return this.getName().compareTo(other.getName());
+    }
 }

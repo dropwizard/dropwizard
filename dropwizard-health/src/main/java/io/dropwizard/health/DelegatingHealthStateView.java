@@ -5,7 +5,7 @@ import io.dropwizard.health.conf.HealthCheckType;
 import javax.annotation.Nonnull;
 import java.util.Objects;
 
-class DelegatingHealthStateView implements HealthStateView, Comparable<DelegatingHealthStateView> {
+class DelegatingHealthStateView implements HealthStateView {
     @Nonnull
     private final ScheduledHealthCheck scheduledHealthCheck;
 
@@ -57,10 +57,5 @@ class DelegatingHealthStateView implements HealthStateView, Comparable<Delegatin
                 ", type=" + scheduledHealthCheck.getType() +
                 ", critical=" + scheduledHealthCheck.isCritical() +
                 '}';
-    }
-
-    @Override
-    public int compareTo(final DelegatingHealthStateView other) {
-        return this.getName().compareTo(other.getName());
     }
 }

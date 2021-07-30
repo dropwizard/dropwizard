@@ -14,7 +14,7 @@ import java.time.Duration;
 import java.util.Objects;
 
 public class HttpHealthCheck extends HealthCheck {
-    private static final Logger log = LoggerFactory.getLogger(HttpHealthCheck.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(HttpHealthCheck.class);
 
     // visible for testing
     static final Duration DEFAULT_TIMEOUT = Duration.ofSeconds(2);
@@ -50,11 +50,11 @@ public class HttpHealthCheck extends HealthCheck {
         final HttpHealthResponse httpHealthResponse = httpCheck(url);
 
         if (isHealthResponseValid(httpHealthResponse)) {
-            log.debug("Health check against url={} successful", url);
+            LOGGER.debug("Health check against url={} successful", url);
             return Result.healthy();
         }
 
-        log.debug("Health check against url={} failed with response={}", url, httpHealthResponse);
+        LOGGER.debug("Health check against url={} failed with response={}", url, httpHealthResponse);
         return Result.unhealthy("Http health check against url=%s failed with response=%s", url, httpHealthResponse);
     }
 

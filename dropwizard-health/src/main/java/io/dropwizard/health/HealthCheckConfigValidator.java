@@ -11,7 +11,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 class HealthCheckConfigValidator implements Managed {
-    private static final Logger log = LoggerFactory.getLogger(HealthCheckConfigValidator.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(HealthCheckConfigValidator.class);
+
     private final List<HealthCheckConfiguration> configs;
     private final HealthCheckRegistry registry;
 
@@ -45,7 +46,7 @@ class HealthCheckConfigValidator implements Managed {
             final String healthCheckList = notConfiguredHealthCheckNames.stream()
                     .map(name -> "  * " + name)
                     .collect(Collectors.joining("\n"));
-            log.info("The following health check(s) were registered, but are not configured with a schedule:\n{}",
+            LOGGER.info("The following health check(s) were registered, but are not configured with a schedule:\n{}",
                     healthCheckList);
         }
 
@@ -58,7 +59,7 @@ class HealthCheckConfigValidator implements Managed {
             final String healthCheckList = notRegisteredHealthCheckNames.stream()
                     .map(name -> "  * " + name)
                     .collect(Collectors.joining("\n"));
-            log.error("The following health check(s) are configured with a schedule, but were not registered:\n{}",
+            LOGGER.error("The following health check(s) are configured with a schedule, but were not registered:\n{}",
                     healthCheckList);
             throw new IllegalStateException("The following configured health checks were not registered: "
                     + notRegisteredHealthCheckNames);

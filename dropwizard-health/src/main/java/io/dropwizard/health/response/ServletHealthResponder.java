@@ -6,11 +6,17 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.HttpHeaders;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Arrays;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
 
 public class ServletHealthResponder extends HttpServlet implements HealthResponder {
     public static final String CHECK_TYPE_QUERY_PARAM = "type";
+    public static final String NAME_QUERY_PARAM = "name";
+    public static final String ALL_VALUE = "all";
+
     private final HealthResponseProvider healthResponseProvider;
     private final boolean cacheControlEnabled;
     private final String cacheControlValue;
@@ -27,15 +33,33 @@ public class ServletHealthResponder extends HttpServlet implements HealthRespond
         if (cacheControlEnabled) {
             response.setHeader(HttpHeaders.CACHE_CONTROL, cacheControlValue);
         }
-
         final String type = request.getParameter(CHECK_TYPE_QUERY_PARAM);
-        final HealthResponse healthResponse = healthResponseProvider()
-            .currentHealthResponse(type);
+        final String[] nameParameters = request.getParameterValues(NAME_QUERY_PARAM);
+        Set<String> names = null;
+        if (nameParameters != null) {
+            names = Arrays.stream(nameParameters)
+                .map(String::toLowerCase)
+                .collect(Collectors.toSet());
+        }
+
+        final HealthResponse healthResponse;
+        if (names == null) {
+            healthResponse = healthResponseProvider()
+                .minimalHealthResponse(type);
+        } else if (names.contains(ALL_VALUE)) {
+            healthResponse = healthResponseProvider()
+                .fullHealthResponse(type);
+        } else {
+            healthResponse = healthResponseProvider()
+                .partialHealthResponse(type, names);
+        }
 
         response.setContentType(healthResponse.getContentType());
 
         final PrintWriter writer = response.getWriter();
-        writer.write(healthResponse.getMessage());
+        if (healthResponse.getMessage() != null) {
+            writer.write(healthResponse.getMessage());
+        }
         if (!healthResponse.isHealthy()) {
             response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
         }

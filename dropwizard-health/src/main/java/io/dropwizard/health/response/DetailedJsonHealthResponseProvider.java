@@ -1,6 +1,5 @@
 package io.dropwizard.health.response;
 
-import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.health.HealthStateAggregator;
 import io.dropwizard.health.HealthStateView;
@@ -13,8 +12,9 @@ import javax.annotation.Nullable;
 import javax.ws.rs.core.MediaType;
 import java.util.Collection;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
-@JsonTypeName("detailed-json")
 public class DetailedJsonHealthResponseProvider implements HealthResponseProvider {
     private static final Logger LOGGER = LoggerFactory.getLogger(DetailedJsonHealthResponseProvider.class);
 
@@ -35,11 +35,11 @@ public class DetailedJsonHealthResponseProvider implements HealthResponseProvide
 
     @Nonnull
     @Override
-    public HealthResponse currentHealthResponse(@Nullable final String type) {
+    public HealthResponse fullHealthResponse(@Nullable String type) {
         final Collection<HealthStateView> healthStateViews = healthStateAggregator.healthStateViews();
         final String responseBody;
         try {
-             responseBody = mapper.writeValueAsString(healthStateViews);
+            responseBody = mapper.writeValueAsString(healthStateViews);
         } catch (final Exception e) {
             LOGGER.error("Failed to serialize health state views: {}", healthStateViews, e);
             throw new RuntimeException(e);
@@ -51,7 +51,32 @@ public class DetailedJsonHealthResponseProvider implements HealthResponseProvide
 
     @Nonnull
     @Override
-    public String contentType() {
-        return MediaType.APPLICATION_JSON;
+    public HealthResponse minimalHealthResponse(@Nullable String type) {
+        final boolean healthy = healthStatusChecker.isHealthy(type);
+
+        return new HealthResponse(healthy, null, MediaType.APPLICATION_JSON);
+    }
+
+    @Nonnull
+    @Override
+    public HealthResponse partialHealthResponse(@Nullable final String type, @Nonnull final Collection<String> names) {
+        final Collection<HealthStateView> healthStateViews = names.stream()
+            .map(healthStateAggregator::healthStateView)
+            .filter(Optional::isPresent)
+            .map(Optional::get)
+            .collect(Collectors.toList());
+        String responseBody = null;
+        try {
+            // if no health state view exists for that name, fallback to minimal behavior
+            if (!healthStateViews.isEmpty()) {
+                responseBody = mapper.writeValueAsString(healthStateViews);
+            }
+        } catch (final Exception e) {
+            LOGGER.error("Failed to serialize health state views: {}", healthStateViews, e);
+            throw new RuntimeException(e);
+        }
+        final boolean healthy = healthStatusChecker.isHealthy(type);
+
+        return new HealthResponse(healthy, responseBody, MediaType.APPLICATION_JSON);
     }
 }

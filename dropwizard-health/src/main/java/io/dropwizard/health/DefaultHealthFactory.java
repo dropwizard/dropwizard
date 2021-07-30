@@ -14,7 +14,7 @@ import io.dropwizard.health.response.DetailedJsonHealthResponseProviderFactory;
 import io.dropwizard.health.response.HealthResponderFactory;
 import io.dropwizard.health.response.HealthResponseProvider;
 import io.dropwizard.health.response.HealthResponseProviderFactory;
-import io.dropwizard.health.response.JerseyHealthResponderFactory;
+import io.dropwizard.health.response.ServletHealthResponderFactory;
 import io.dropwizard.health.shutdown.DelayedShutdownHandler;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
 import io.dropwizard.jetty.setup.ServletEnvironment;
@@ -72,7 +72,7 @@ public class DefaultHealthFactory implements HealthFactory {
 
     @Valid
     @JsonProperty("responder")
-    private HealthResponderFactory healthResponderFactory = new JerseyHealthResponderFactory();
+    private HealthResponderFactory healthResponderFactory = new ServletHealthResponderFactory();
 
     public boolean isEnabled() {
         return enabled;

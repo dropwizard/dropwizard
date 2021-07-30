@@ -12,9 +12,8 @@ import java.util.Collection;
  * A factory for building an {@link HealthResponder} instance used for responding to health check requests.
  *
  * @see ServletHealthResponderFactory
- * @see JerseyHealthResponderFactory
  */
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", defaultImpl = JerseyHealthResponderFactory.class)
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", defaultImpl = ServletHealthResponderFactory.class)
 public interface HealthResponderFactory extends Discoverable {
     /**
      * Configures a health responder for responding to health check requests (e.g. from load balancer).
