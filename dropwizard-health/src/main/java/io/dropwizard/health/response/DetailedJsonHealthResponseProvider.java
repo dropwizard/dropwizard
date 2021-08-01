@@ -18,6 +18,8 @@ import java.util.stream.Collectors;
 public class DetailedJsonHealthResponseProvider implements HealthResponseProvider {
     private static final Logger LOGGER = LoggerFactory.getLogger(DetailedJsonHealthResponseProvider.class);
 
+    private static final String MEDIA_TYPE = MediaType.APPLICATION_JSON;
+
     @Nonnull
     private final HealthStatusChecker healthStatusChecker;
     @Nonnull
@@ -46,7 +48,7 @@ public class DetailedJsonHealthResponseProvider implements HealthResponseProvide
         }
         final boolean healthy = healthStatusChecker.isHealthy(type);
 
-        return new HealthResponse(healthy, responseBody, MediaType.APPLICATION_JSON);
+        return new HealthResponse(healthy, responseBody, MEDIA_TYPE);
     }
 
     @Nonnull
@@ -54,7 +56,7 @@ public class DetailedJsonHealthResponseProvider implements HealthResponseProvide
     public HealthResponse minimalHealthResponse(@Nullable String type) {
         final boolean healthy = healthStatusChecker.isHealthy(type);
 
-        return new HealthResponse(healthy, null, MediaType.APPLICATION_JSON);
+        return new HealthResponse(healthy, null, MEDIA_TYPE);
     }
 
     @Nonnull
@@ -65,18 +67,15 @@ public class DetailedJsonHealthResponseProvider implements HealthResponseProvide
             .filter(Optional::isPresent)
             .map(Optional::get)
             .collect(Collectors.toList());
-        String responseBody = null;
+        final String responseBody;
         try {
-            // if no health state view exists for that name, fallback to minimal behavior
-            if (!healthStateViews.isEmpty()) {
-                responseBody = mapper.writeValueAsString(healthStateViews);
-            }
+            responseBody = mapper.writeValueAsString(healthStateViews);
         } catch (final Exception e) {
             LOGGER.error("Failed to serialize health state views: {}", healthStateViews, e);
             throw new RuntimeException(e);
         }
         final boolean healthy = healthStatusChecker.isHealthy(type);
 
-        return new HealthResponse(healthy, responseBody, MediaType.APPLICATION_JSON);
+        return new HealthResponse(healthy, responseBody, MEDIA_TYPE);
     }
 }

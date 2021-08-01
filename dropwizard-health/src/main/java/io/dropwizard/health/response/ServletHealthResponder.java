@@ -57,9 +57,7 @@ public class ServletHealthResponder extends HttpServlet implements HealthRespond
         response.setContentType(healthResponse.getContentType());
 
         final PrintWriter writer = response.getWriter();
-        if (healthResponse.getMessage() != null) {
-            writer.write(healthResponse.getMessage());
-        }
+        healthResponse.getMessage().ifPresent(writer::write);
         if (!healthResponse.isHealthy()) {
             response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
         }

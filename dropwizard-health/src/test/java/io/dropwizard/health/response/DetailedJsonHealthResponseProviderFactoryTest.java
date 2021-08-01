@@ -61,7 +61,7 @@ class DetailedJsonHealthResponseProviderFactoryTest {
 
         // then
         assertThat(response.isHealthy()).isTrue();
-        assertThat(response.getMessage()).isNull();
+        assertThat(response.getMessage()).isEmpty();
         assertThat(response.getContentType()).isEqualTo(MediaType.APPLICATION_JSON);
         verifyNoInteractions(healthStateAggregator);
     }

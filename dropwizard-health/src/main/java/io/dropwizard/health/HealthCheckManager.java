@@ -5,7 +5,6 @@ import com.codahale.metrics.Gauge;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheck;
 import com.codahale.metrics.health.HealthCheckRegistryListener;
-import com.google.common.collect.ImmutableList;
 import io.dropwizard.health.conf.HealthCheckConfiguration;
 import io.dropwizard.health.conf.HealthCheckType;
 import io.dropwizard.health.conf.Schedule;
@@ -18,7 +17,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -40,8 +38,6 @@ class HealthCheckManager implements HealthCheckRegistryListener, HealthStatusChe
     private final HealthCheckScheduler scheduler;
     @Nonnull
     private Map<String, ScheduledHealthCheck> checks;
-    @Nonnull
-    private Map<String, HealthStateView> healthStateViews;
     @Nonnull
     private final Map<String, HealthCheckConfiguration> configs;
     @Nonnull
@@ -70,7 +66,6 @@ class HealthCheckManager implements HealthCheckRegistryListener, HealthStatusChe
         this.initialOverallState = initialOverallState;
         this.checks = new HashMap<>();
         this.healthStateListeners = Objects.requireNonNull(healthStateListeners);
-        this.healthStateViews = new LinkedHashMap<>();
 
         this.aggregateHealthyName = MetricRegistry.name("health", "aggregate", "healthy");
         this.aggregateUnhealthyName = MetricRegistry.name("health", "aggregate", "unhealthy");
@@ -81,15 +76,6 @@ class HealthCheckManager implements HealthCheckRegistryListener, HealthStatusChe
     // visible for testing
     void setChecks(final Map<String, ScheduledHealthCheck> checks) {
         this.checks = checks;
-        this.healthStateViews =
-                checks.values()
-                        .stream()
-                        .map(DelegatingHealthStateView::new)
-                        .collect(Collectors.toMap(
-                            HealthStateView::getName,
-                            Function.identity(),
-                            (a, b) -> b,
-                            LinkedHashMap::new));
     }
 
     @Override
@@ -114,7 +100,6 @@ class HealthCheckManager implements HealthCheckRegistryListener, HealthStatusChe
         final ScheduledHealthCheck check = new ScheduledHealthCheck(name, type, critical, healthCheck, schedule, state,
                 healthyCheckCounter, unhealthyCheckCounter);
         checks.put(name, check);
-        healthStateViews.put(name, new DelegatingHealthStateView(check));
 
         // handle initial state of 'false' to ensure counts line up
         if (!initialState && critical) {
@@ -281,13 +266,19 @@ class HealthCheckManager implements HealthCheckRegistryListener, HealthStatusChe
         });
     }
 
+    @Nonnull
     @Override
     public Collection<HealthStateView> healthStateViews() {
-       return ImmutableList.copyOf(healthStateViews.values());
+       return checks.values()
+           .stream()
+           .map(ScheduledHealthCheck::view)
+           .collect(Collectors.toList());
     }
 
+    @Nonnull
     @Override
-    public Optional<HealthStateView> healthStateView(final String name) {
-        return Optional.ofNullable(healthStateViews.get(name));
+    public Optional<HealthStateView> healthStateView(@Nonnull final String name) {
+        return Optional.ofNullable(checks.get(name))
+            .map(ScheduledHealthCheck::view);
     }
 }

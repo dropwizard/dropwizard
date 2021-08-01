@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
+import java.util.Optional;
 
 class ScheduledHealthCheck implements Runnable {
     private static final Logger LOGGER = LoggerFactory.getLogger(ScheduledHealthCheck.class);
@@ -80,6 +81,10 @@ class ScheduledHealthCheck implements Runnable {
             state.failure();
             unhealthyCheckCounter.inc();
         }
+    }
+
+    public HealthStateView view() {
+        return new HealthStateView(name, isHealthy(), type, isCritical());
     }
 
     @Override

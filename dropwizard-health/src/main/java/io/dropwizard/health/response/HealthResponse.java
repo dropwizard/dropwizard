@@ -3,6 +3,7 @@ package io.dropwizard.health.response;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Objects;
+import java.util.Optional;
 
 public final class HealthResponse {
     private final boolean healthy;
@@ -21,9 +22,9 @@ public final class HealthResponse {
         return healthy;
     }
 
-    @Nullable
-    public String getMessage() {
-        return message;
+    @Nonnull
+    public Optional<String> getMessage() {
+        return Optional.ofNullable(message);
     }
 
     @Nonnull

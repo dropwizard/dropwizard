@@ -1,10 +1,13 @@
 package io.dropwizard.health;
 
+import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Optional;
 
 public interface HealthStateAggregator {
+    @Nonnull
     Collection<HealthStateView> healthStateViews();
 
-    Optional<HealthStateView> healthStateView(String name);
+    @Nonnull
+    Optional<HealthStateView> healthStateView(@Nonnull String name);
 }
