@@ -37,6 +37,7 @@ public class DefaultHealthFactory implements HealthFactory {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultHealthFactory.class);
 
     private static final String DEFAULT_BASE_NAME = "health-check";
+    private static final String DEFAULT_PATH = "/health-check";
 
     @JsonProperty
     private boolean enabled = true;
@@ -63,7 +64,7 @@ public class DefaultHealthFactory implements HealthFactory {
     @NotNull
     @Size(min = 1)
     @JsonProperty
-    private List<String> healthCheckUrlPaths = ImmutableList.of("/health-check");
+    private List<String> healthCheckUrlPaths = ImmutableList.of(DEFAULT_PATH);
 
     @Valid
     @JsonProperty("responseProvider")
@@ -176,7 +177,7 @@ public class DefaultHealthFactory implements HealthFactory {
 
         // setup schedules for configured health checks
         final ScheduledExecutorService scheduledHealthCheckExecutor = createScheduledExecutorForHealthChecks(
-                healthCheckConfigs.size(), metrics, lifecycle, fullName);
+            healthCheckConfigs.size(), metrics, lifecycle, fullName);
         final HealthCheckScheduler scheduler = new HealthCheckScheduler(scheduledHealthCheckExecutor);
         // configure health manager to receive registered health state listeners from HealthEnvironment (via reference)
         final HealthCheckManager healthCheckManager = new HealthCheckManager(healthCheckConfigs, scheduler, metrics,
@@ -208,23 +209,23 @@ public class DefaultHealthFactory implements HealthFactory {
     }
 
     private ScheduledExecutorService createScheduledExecutorForHealthChecks(
-            final int numberOfScheduledHealthChecks,
-            final MetricRegistry metrics,
-            final LifecycleEnvironment lifecycle,
-            final String fullName) {
+        final int numberOfScheduledHealthChecks,
+        final MetricRegistry metrics,
+        final LifecycleEnvironment lifecycle,
+        final String fullName) {
         final ThreadFactory threadFactory = new ThreadFactoryBuilder()
-                .setNameFormat(fullName + "-%d")
-                .setDaemon(true)
-                .setUncaughtExceptionHandler((t, e) -> LOGGER.error("Thread={} died due to uncaught exception", t, e))
-                .build();
+            .setNameFormat(fullName + "-%d")
+            .setDaemon(true)
+            .setUncaughtExceptionHandler((t, e) -> LOGGER.error("Thread={} died due to uncaught exception", t, e))
+            .build();
 
         final InstrumentedThreadFactory instrumentedThreadFactory =
-                new InstrumentedThreadFactory(threadFactory, metrics);
+            new InstrumentedThreadFactory(threadFactory, metrics);
 
         final ScheduledExecutorService scheduledExecutorService =
-                lifecycle.scheduledExecutorService(fullName + "-scheduled-executor", instrumentedThreadFactory)
-                        .threads(numberOfScheduledHealthChecks)
-                        .build();
+            lifecycle.scheduledExecutorService(fullName + "-scheduled-executor", instrumentedThreadFactory)
+                .threads(numberOfScheduledHealthChecks)
+                .build();
 
         return new InstrumentedScheduledExecutorService(scheduledExecutorService, metrics);
     }
