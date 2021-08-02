@@ -1,6 +1,5 @@
 package io.dropwizard.health.response;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Charsets;
@@ -111,7 +110,7 @@ class DetailedJsonHealthResponseProviderTest {
     }
 
     @Test
-    void fullHealthResponseShouldThrowExceptionWhenJsonProcessorExceptionOccurs() throws JsonProcessingException {
+    void fullHealthResponseShouldThrowExceptionWhenJsonProcessorExceptionOccurs() throws IOException {
         // given
         final ObjectMapper mapperMock = mock(ObjectMapper.class);
         this.detailedJsonHealthResponseProvider = new DetailedJsonHealthResponseProvider(healthStatusChecker,
@@ -222,7 +221,7 @@ class DetailedJsonHealthResponseProviderTest {
     }
 
     @Test
-    void partialHealthResponseShouldThrowExceptionWhenJsonProcessorExceptionOccurs() throws JsonProcessingException {
+    void partialHealthResponseShouldThrowExceptionWhenJsonProcessorExceptionOccurs() throws IOException {
         // given
         final ObjectMapper mapperMock = mock(ObjectMapper.class);
         this.detailedJsonHealthResponseProvider = new DetailedJsonHealthResponseProvider(healthStatusChecker,

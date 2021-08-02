@@ -2,6 +2,7 @@ package io.dropwizard.health.response;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.dropwizard.health.HealthEnvironment;
 import io.dropwizard.jackson.Discoverable;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
 import io.dropwizard.jetty.setup.ServletEnvironment;
@@ -21,11 +22,12 @@ public interface HealthResponderFactory extends Discoverable {
      * @param name The name of the application.
      * @param healthCheckUrlPaths The paths to expose a health check on.
      * @param healthResponseProvider A provider of responses to respond to requests with.
-     * @param jersey The apps Jersey environment.
-     * @param servlets The apps Servlet environment.
+     * @param health The health environment.
+     * @param jersey The Jersey environment.
+     * @param servlets The servlet environment.
      * @param mapper A Jackson object mapper to allow writing JSON responses (if needed).
      */
     void configure(final String name, final Collection<String> healthCheckUrlPaths,
-                   final HealthResponseProvider healthResponseProvider, final JerseyEnvironment jersey,
-                   final ServletEnvironment servlets, final ObjectMapper mapper);
+                   final HealthResponseProvider healthResponseProvider, final HealthEnvironment health,
+                   final JerseyEnvironment jersey, final ServletEnvironment servlets, final ObjectMapper mapper);
 }

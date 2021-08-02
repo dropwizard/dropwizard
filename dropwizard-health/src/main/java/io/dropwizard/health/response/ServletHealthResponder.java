@@ -7,7 +7,7 @@ import javax.ws.rs.core.HttpHeaders;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Arrays;
-import java.util.Set;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
@@ -35,11 +35,13 @@ public class ServletHealthResponder extends HttpServlet implements HealthRespond
         }
         final String type = request.getParameter(CHECK_TYPE_QUERY_PARAM);
         final String[] nameParameters = request.getParameterValues(NAME_QUERY_PARAM);
-        Set<String> names = null;
+        List<String> names = null;
         if (nameParameters != null) {
             names = Arrays.stream(nameParameters)
+                // normalize to lowercase
                 .map(String::toLowerCase)
-                .collect(Collectors.toSet());
+                .distinct()
+                .collect(Collectors.toList());
         }
 
         final HealthResponse healthResponse;

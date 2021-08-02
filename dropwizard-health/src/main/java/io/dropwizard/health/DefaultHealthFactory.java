@@ -186,7 +186,8 @@ public class DefaultHealthFactory implements HealthFactory {
         // setup response provider and responder to respond to health check requests
         final HealthResponseProvider responseProvider = healthResponseProviderFactory.build(healthCheckManager,
             healthCheckManager, mapper);
-        healthResponderFactory.configure(fullName, healthCheckUrlPaths, responseProvider, jersey, servlets, mapper);
+        healthResponderFactory.configure(fullName, healthCheckUrlPaths, responseProvider, health, jersey, servlets,
+            mapper);
 
         // register listener for HealthCheckRegistry and setup validator to ensure correct config
         healthChecks.addListener(healthCheckManager);

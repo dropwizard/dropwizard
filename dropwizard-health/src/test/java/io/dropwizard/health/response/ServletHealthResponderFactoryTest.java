@@ -3,12 +3,14 @@ package io.dropwizard.health.response;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.io.Resources;
 import io.dropwizard.configuration.YamlConfigurationFactory;
+import io.dropwizard.health.HealthEnvironment;
 import io.dropwizard.jackson.DiscoverableSubtypeResolver;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
 import io.dropwizard.jersey.validation.Validators;
 import io.dropwizard.jetty.setup.ServletEnvironment;
 import org.eclipse.jetty.http.HttpHeader;
+import org.eclipse.jetty.http.HttpMethod;
 import org.eclipse.jetty.http.HttpTester;
 import org.eclipse.jetty.server.Response;
 import org.eclipse.jetty.servlet.ServletHolder;
@@ -33,6 +35,7 @@ import static io.dropwizard.health.response.ServletHealthResponderFactory.SERVLE
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -49,7 +52,7 @@ public class ServletHealthResponderFactoryTest {
     private final HttpTester.Request request = new HttpTester.Request();
 
     private ServletTester servletTester;
-    private ArgumentCaptor<HttpServlet> servletCaptor;
+    private ArgumentCaptor<ServletHealthResponder> servletCaptor;
 
     @Mock
     private HealthResponseProvider healthResponseProvider;
@@ -59,24 +62,26 @@ public class ServletHealthResponderFactoryTest {
     private JerseyEnvironment jersey;
     @Mock
     private ServletRegistration.Dynamic servletRegistration;
+    @Mock
+    private HealthEnvironment health;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         servletTester = new ServletTester();
-        servletCaptor = ArgumentCaptor.forClass(HttpServlet.class);
+        servletCaptor = ArgumentCaptor.forClass(ServletHealthResponder.class);
 
         request.setHeader(HttpHeader.HOST.asString(), "localhost");
         request.setURI(HEALTH_CHECK_URI);
-        request.setMethod("GET");
+        request.setMethod(HttpMethod.GET.asString());
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    void tearDown() throws Exception {
         servletTester.stop();
     }
 
     @Test
-    public void isDiscoverable() {
+    void isDiscoverable() {
         // given
         DiscoverableSubtypeResolver resolver = new DiscoverableSubtypeResolver();
 
@@ -88,7 +93,7 @@ public class ServletHealthResponderFactoryTest {
     }
 
     @Test
-    public void testBuildHealthServlet() throws Exception {
+    void testBuildHealthServlet() throws Exception {
         // given
         File yml = new File(Resources.getResource("yml/servlet-responder-factory-caching.yml").toURI());
         setupServletStubbing();
@@ -97,7 +102,7 @@ public class ServletHealthResponderFactoryTest {
         // succeed first, fail second
         when(healthResponseProvider.minimalHealthResponse(isNull())).thenReturn(SUCCESS, FAIL);
         HealthResponderFactory factory = configFactory.build(yml);
-        factory.configure(NAME, Collections.singletonList(HEALTH_CHECK_URI), healthResponseProvider, jersey,
+        factory.configure(NAME, Collections.singletonList(HEALTH_CHECK_URI), healthResponseProvider, health, jersey,
             servlets, mapper);
         servletTester.addServlet(new ServletHolder(servletCaptor.getValue()), HEALTH_CHECK_URI);
         servletTester.start();
@@ -107,10 +112,11 @@ public class ServletHealthResponderFactoryTest {
         // then
         assertThat(healthyResponse.getStatus()).isEqualTo(Response.SC_OK);
         assertThat(unhealthyResponse.getStatus()).isEqualTo(Response.SC_SERVICE_UNAVAILABLE);
+        verify(health).setHealthResponder(servletCaptor.getValue());
     }
 
     @Test
-    public void testBuildHealthServletWithCacheControlDisabled() throws Exception {
+    void testBuildHealthServletWithCacheControlDisabled() throws Exception {
         // given
         File yml = new File(Resources.getResource("yml/servlet-responder-factory-caching-header-disabled.yml").toURI());
         setupServletStubbing();
@@ -119,7 +125,7 @@ public class ServletHealthResponderFactoryTest {
         // succeed first, fail second
         when(healthResponseProvider.minimalHealthResponse(isNull())).thenReturn(SUCCESS, FAIL);
         HealthResponderFactory factory = configFactory.build(yml);
-        factory.configure(NAME, Collections.singletonList(HEALTH_CHECK_URI), healthResponseProvider, jersey,
+        factory.configure(NAME, Collections.singletonList(HEALTH_CHECK_URI), healthResponseProvider, health, jersey,
             servlets, mapper);
         servletTester.addServlet(new ServletHolder(servletCaptor.getValue()), HEALTH_CHECK_URI);
         servletTester.start();
@@ -131,6 +137,7 @@ public class ServletHealthResponderFactoryTest {
         assertThat(healthyResponse.get(HttpHeader.CACHE_CONTROL)).isNull();
         assertThat(unhealthyResponse.getStatus()).isEqualTo(Response.SC_SERVICE_UNAVAILABLE);
         assertThat(unhealthyResponse.get(HttpHeader.CACHE_CONTROL)).isNull();
+        verify(health).setHealthResponder(servletCaptor.getValue());
     }
 
     private HttpTester.Response executeRequest(HttpTester.Request request) throws Exception {
