@@ -23,7 +23,7 @@ jobs:
       with:
         fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
     - name: Set up JDK
-      uses: joschi/setup-jdk@v2.3.0
+      uses: joschi/setup-jdk@v2.4.0
       with:
         java-version: ${{ matrix.java_version }}
     - uses: actions/cache@v2.1.6
