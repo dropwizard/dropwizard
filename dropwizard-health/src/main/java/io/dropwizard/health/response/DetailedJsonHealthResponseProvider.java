@@ -48,7 +48,7 @@ public class DetailedJsonHealthResponseProvider implements HealthResponseProvide
         }
         final boolean healthy = healthStatusChecker.isHealthy(type);
 
-        return new HealthResponse(healthy, responseBody, MEDIA_TYPE);
+        return new DetailedHealthResponse(healthy, responseBody, MEDIA_TYPE, healthStateViews);
     }
 
     @Nonnull
@@ -56,7 +56,7 @@ public class DetailedJsonHealthResponseProvider implements HealthResponseProvide
     public HealthResponse minimalHealthResponse(@Nullable String type) {
         final boolean healthy = healthStatusChecker.isHealthy(type);
 
-        return new HealthResponse(healthy, null, MEDIA_TYPE);
+        return new MinimalHealthResponse(healthy, MEDIA_TYPE);
     }
 
     @Nonnull
@@ -76,6 +76,6 @@ public class DetailedJsonHealthResponseProvider implements HealthResponseProvide
         }
         final boolean healthy = healthStatusChecker.isHealthy(type);
 
-        return new HealthResponse(healthy, responseBody, MEDIA_TYPE);
+        return new DetailedHealthResponse(healthy, responseBody, MEDIA_TYPE, healthStateViews);
     }
 }

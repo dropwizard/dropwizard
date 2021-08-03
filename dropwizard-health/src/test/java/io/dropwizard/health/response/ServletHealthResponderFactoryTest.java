@@ -24,7 +24,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.servlet.ServletRegistration;
-import javax.servlet.http.HttpServlet;
 import javax.validation.Validator;
 import javax.ws.rs.core.MediaType;
 import java.io.File;
@@ -42,13 +41,15 @@ import static org.mockito.Mockito.when;
 public class ServletHealthResponderFactoryTest {
     private static final String NAME = "tests";
     private static final String HEALTH_CHECK_URI = "/health-check";
-    private static final HealthResponse SUCCESS = new HealthResponse(true, "healthy", MediaType.TEXT_PLAIN);
-    private static final HealthResponse FAIL = new HealthResponse(false, "unhealthy", MediaType.TEXT_PLAIN);
+    private static final HealthResponse SUCCESS = new DetailedHealthResponse(true, "healthy",
+        MediaType.TEXT_PLAIN, Collections.emptyList());
+    private static final HealthResponse FAIL = new DetailedHealthResponse(false, "unhealthy",
+        MediaType.TEXT_PLAIN, Collections.emptyList());
 
     private final ObjectMapper mapper = Jackson.newObjectMapper();
     private final Validator validator = Validators.newValidator();
     private final YamlConfigurationFactory<HealthResponderFactory> configFactory =
-            new YamlConfigurationFactory<>(HealthResponderFactory.class, validator, mapper, "dw");
+        new YamlConfigurationFactory<>(HealthResponderFactory.class, validator, mapper, "dw");
     private final HttpTester.Request request = new HttpTester.Request();
 
     private ServletTester servletTester;
