@@ -27,6 +27,8 @@ Details about these changes in Hibernate Validator can be found at:
 * `hibernate/hibernate-validator#1138 <https://github.com/hibernate/hibernate-validator/pull/1138>`_
 
 
+.. _upgrade-notes-dropwizard-2_1_x-health:
+
 Migrating from dropwizard-health
 ================================================
 TBD

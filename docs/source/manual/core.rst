@@ -385,7 +385,7 @@ Environments
 ============
 
 A Dropwizard ``Environment`` consists of all the :ref:`man-core-resources`, servlets, filters,
-:ref:`man-core-healthchecks`, Jersey providers, :ref:`man-core-managed`, :ref:`man-core-tasks`, and
+:ref:`man-core-healthchecks`, :ref:`man-core-health`, Jersey providers, :ref:`man-core-managed`, :ref:`man-core-tasks`, and
 Jersey properties which your application provides.
 
 Each ``Application`` subclass implements a ``run`` method. This is where you should be creating new
@@ -452,6 +452,77 @@ exception was thrown).
 
 All Dropwizard applications ship with the ``deadlocks`` health check installed by default, which uses
 Java 1.6's built-in thread deadlock detection to determine if any threads are deadlocked.
+
+.. _man-core-health:
+
+Health
+======
+
+The health checks described in :ref:`man-core-healthchecks` can be configured to create a holistic view of your
+service health, which can then be used to drive decision making by things like `Kubernetes readiness & liveness checks`_,
+or to dictate whether or not a load balancer should route traffic to your service.
+
+This can be done by running these dependency health checks periodically in the background on some schedule,
+and then aggregating the results of all of those checks into a single indicator of overall health. Certain
+dependencies may be critical to your application functioning, like a database that your service can't function without,
+but other dependencies may be more non-critical to your service being able to function (let's say a cache, that
+could be considered more of a nice to have than a necessity).
+
+Define the following health check configurations in your `config.yml` file:
+
+.. code-block:: yaml
+
+    health:
+      delayedShutdownHandlerEnabled: true
+      shutdownWaitPeriod: 10s
+      healthChecks:
+        - name: user-database
+          critical: true
+        - name: user-notifications-queue
+          critical: false
+          schedule:
+            checkInterval: 2500ms
+            downtimeInterval: 10s
+            failureAttempts: 2
+            successAttempts: 1
+        - name: user-cache
+          critical: false
+
+.. note::
+
+    This behavior was integrated from the `Dropwizard Health module`__. If you are migrating from that module
+    to the new Dropwizard core framework health code, you will want to refer to :ref:`upgrade-notes-dropwizard-2_1_x-health` the migration guide.
+
+
+.. _`Kubernetes readiness & liveness checks`: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
+.. __`Dropwizard Health module`: https://github.com/dropwizard/dropwizard-health
+
+.. _man-core-health-status:
+
+Application Status
+------------------
+
+There are two types of status that are supported currently: Alive and Ready.
+
+* An ``alive`` status indicates the application is operating normally and does not need to be restarted to recover from
+  a stuck state. Long-running applications can eventually reach a broken state and cannot recover except by being
+  restarted (e.g. deadlocked threads).
+* A ``ready`` status indicates the application is ready to serve traffic. Applications can temporarily be unable to
+  serve traffic due to a variety of reasons, for example, an application might need to build/compute large caches
+  during startup or can critically depend on an external service.
+
+Long-running applications can eventually reach a broken state and cannot recover except by being restarted
+(e.g. deadlocked threads).
+
+An example of how you might query the health check, assuming you're using the default responder/responseProvider
+settings in configuration:
+https://<hostname>:<port>/health-check?type=<type>
+(replace `<type>` with `ready` or `alive`; defaults to `ready`)
+
+Querying for particular health checks
+https://<hostname>:<port>/health-check?type=<type>&name=<name>
+(replace ``<type>`` with ``ready`` or ``alive``; defaults to ``ready``)
+(replace ``<name>`` with the name of the health check to query. Multiple names can be provided)
 
 .. _man-core-managed:
 
@@ -724,7 +795,7 @@ location specified by ``-c``), adapt the ConfiguredCommand_ class as needed.
 
 .. note::
 
-     If you override the ``configure`` method, you **must** call ``super.override(subparser)`` (or call ``addFileArgument``) 
+     If you override the ``configure`` method, you **must** call ``super.override(subparser)`` (or call ``addFileArgument``)
      in order to preserve the configuration file parameter in the subparser.
 
 .. _man-core-tasks:
@@ -945,7 +1016,7 @@ By default, all logging in Dropwizard is asynchronous, even to typically
 synchronous sinks such as files and the console. When a slow logger (like file
 logger on an overloaded disk) is coupled with a high load, Dropwizard will
 seamlessly drop events of lower importance (``TRACE``, ``DEBUG``, ``INFO``) in
-an attempt to maintain reasonable latency. 
+an attempt to maintain reasonable latency.
 
 .. TIP::
    Instead of logging business critical statements under ``INFO``, insert them
