@@ -1,9 +1,8 @@
-package io.dropwizard.health.config;
+package io.dropwizard.health;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.io.Resources;
 import io.dropwizard.configuration.YamlConfigurationFactory;
-import io.dropwizard.health.HealthCheckConfiguration;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.validation.Validators;
 import org.junit.jupiter.api.Test;
