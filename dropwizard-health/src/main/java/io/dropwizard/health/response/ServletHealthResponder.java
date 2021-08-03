@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
 
-public class ServletHealthResponder extends HttpServlet implements HealthResponder {
+public class ServletHealthResponder extends HttpServlet {
     public static final String CHECK_TYPE_QUERY_PARAM = "type";
     public static final String NAME_QUERY_PARAM = "name";
     public static final String ALL_VALUE = "all";
@@ -46,13 +46,13 @@ public class ServletHealthResponder extends HttpServlet implements HealthRespond
 
         final HealthResponse healthResponse;
         if (names == null) {
-            healthResponse = healthResponseProvider()
+            healthResponse = healthResponseProvider
                 .minimalHealthResponse(type);
         } else if (names.contains(ALL_VALUE)) {
-            healthResponse = healthResponseProvider()
+            healthResponse = healthResponseProvider
                 .fullHealthResponse(type);
         } else {
-            healthResponse = healthResponseProvider()
+            healthResponse = healthResponseProvider
                 .partialHealthResponse(type, names);
         }
 
@@ -63,10 +63,5 @@ public class ServletHealthResponder extends HttpServlet implements HealthRespond
         if (!healthResponse.isHealthy()) {
             response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
         }
-    }
-
-    @Override
-    public HealthResponseProvider healthResponseProvider() {
-        return healthResponseProvider;
     }
 }

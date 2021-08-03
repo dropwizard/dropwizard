@@ -48,6 +48,5 @@ public class ServletHealthResponderFactory implements HealthResponderFactory {
         servlets
             .addServlet(name + SERVLET_SUFFIX, servlet)
             .addMapping(healthCheckUrlPaths.toArray(new String[0]));
-        health.setHealthResponder(servlet);
     }
 }

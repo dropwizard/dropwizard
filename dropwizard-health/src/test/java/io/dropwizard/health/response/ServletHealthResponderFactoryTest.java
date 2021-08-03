@@ -34,7 +34,6 @@ import static io.dropwizard.health.response.ServletHealthResponderFactory.SERVLE
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -113,7 +112,6 @@ public class ServletHealthResponderFactoryTest {
         // then
         assertThat(healthyResponse.getStatus()).isEqualTo(Response.SC_OK);
         assertThat(unhealthyResponse.getStatus()).isEqualTo(Response.SC_SERVICE_UNAVAILABLE);
-        verify(health).setHealthResponder(servletCaptor.getValue());
     }
 
     @Test
@@ -138,7 +136,6 @@ public class ServletHealthResponderFactoryTest {
         assertThat(healthyResponse.get(HttpHeader.CACHE_CONTROL)).isNull();
         assertThat(unhealthyResponse.getStatus()).isEqualTo(Response.SC_SERVICE_UNAVAILABLE);
         assertThat(unhealthyResponse.get(HttpHeader.CACHE_CONTROL)).isNull();
-        verify(health).setHealthResponder(servletCaptor.getValue());
     }
 
     private HttpTester.Response executeRequest(HttpTester.Request request) throws Exception {
