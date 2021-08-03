@@ -1,4 +1,4 @@
-package io.dropwizard.health.tcp;
+package io.dropwizard.health.check.tcp;
 
 import com.codahale.metrics.health.HealthCheck;
 import com.google.common.base.Preconditions;
@@ -34,7 +34,7 @@ public class TcpHealthCheck extends HealthCheck {
         this.port = port;
         Preconditions.checkState(!connectionTimeout.isNegative(), "connectionTimeout must be a non-negative value.");
         Preconditions.checkState(connectionTimeout.toMillis() <= Integer.MAX_VALUE,
-                "Cannot configure a connectionTimeout greater than the max integer value");
+            "Cannot configure a connectionTimeout greater than the max integer value");
         this.connectionTimeout = connectionTimeout;
     }
 
@@ -54,6 +54,7 @@ public class TcpHealthCheck extends HealthCheck {
     /**
      * Performs a health check via TCP against an external dependency.
      * By default uses the Java {@link Socket} API, but can be overridden to allow for different behavior.
+     *
      * @param host the host to check.
      * @param port the port to check.
      * @return whether the check was successful or not.

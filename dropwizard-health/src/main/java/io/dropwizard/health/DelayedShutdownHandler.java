@@ -1,4 +1,4 @@
-package io.dropwizard.health.shutdown;
+package io.dropwizard.health;
 
 import org.eclipse.jetty.util.component.AbstractLifeCycle;
 import org.eclipse.jetty.util.thread.ShutdownThread;

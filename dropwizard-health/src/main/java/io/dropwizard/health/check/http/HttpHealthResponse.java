@@ -1,4 +1,4 @@
-package io.dropwizard.health.http;
+package io.dropwizard.health.check.http;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;
@@ -32,7 +32,7 @@ public class HttpHealthResponse {
         }
         final HttpHealthResponse that = (HttpHealthResponse) other;
         return status == that.status
-                && Objects.equals(body, that.body);
+            && Objects.equals(body, that.body);
     }
 
     @Override

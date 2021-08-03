@@ -1,4 +1,4 @@
-package io.dropwizard.health.conf;
+package io.dropwizard.health;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

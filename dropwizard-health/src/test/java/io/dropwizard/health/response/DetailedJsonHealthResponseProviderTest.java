@@ -4,10 +4,10 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableList;
+import io.dropwizard.health.HealthCheckType;
 import io.dropwizard.health.HealthStateAggregator;
 import io.dropwizard.health.HealthStateView;
 import io.dropwizard.health.HealthStatusChecker;
-import io.dropwizard.health.conf.HealthCheckType;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.util.Resources;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,13 +35,11 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class DetailedJsonHealthResponseProviderTest {
+    private final ObjectMapper mapper = Jackson.newObjectMapper();
     @Mock
     private HealthStatusChecker healthStatusChecker;
     @Mock
     private HealthStateAggregator healthStateAggregator;
-
-    private final ObjectMapper mapper = Jackson.newObjectMapper();
-
     private DetailedJsonHealthResponseProvider detailedJsonHealthResponseProvider;
 
     @BeforeEach

@@ -1,6 +1,5 @@
 package io.dropwizard.health;
 
-import io.dropwizard.health.conf.Schedule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -41,13 +40,13 @@ public class HealthCheckSchedulerTest {
         when(check.getSchedule()).thenReturn(schedule);
 
         when(executor.scheduleWithFixedDelay(eq(check), eq(schedule.getCheckInterval().toMilliseconds()),
-                eq(schedule.getCheckInterval().toMilliseconds()), eq(TimeUnit.MILLISECONDS)))
-                .thenReturn(mock(ScheduledFuture.class));
+            eq(schedule.getCheckInterval().toMilliseconds()), eq(TimeUnit.MILLISECONDS)))
+            .thenReturn(mock(ScheduledFuture.class));
 
         scheduler.schedule(check, true);
 
         verify(executor).scheduleWithFixedDelay(eq(check), eq(schedule.getCheckInterval().toMilliseconds()),
-                eq(schedule.getCheckInterval().toMilliseconds()), eq(TimeUnit.MILLISECONDS));
+            eq(schedule.getCheckInterval().toMilliseconds()), eq(TimeUnit.MILLISECONDS));
     }
 
     @Test
@@ -57,18 +56,18 @@ public class HealthCheckSchedulerTest {
 
         final ScheduledHealthCheck check = mock(ScheduledHealthCheck.class);
         when(check.getName())
-                .thenReturn(name);
+            .thenReturn(name);
         when(check.getSchedule())
-                .thenReturn(schedule);
+            .thenReturn(schedule);
 
         when(executor.scheduleWithFixedDelay(eq(check), eq(schedule.getDowntimeInterval().toMilliseconds()),
-                eq(schedule.getDowntimeInterval().toMilliseconds()), eq(TimeUnit.MILLISECONDS)))
-                .thenReturn(mock(ScheduledFuture.class));
+            eq(schedule.getDowntimeInterval().toMilliseconds()), eq(TimeUnit.MILLISECONDS)))
+            .thenReturn(mock(ScheduledFuture.class));
 
         scheduler.schedule(check, false);
 
         verify(executor).scheduleWithFixedDelay(eq(check), eq(schedule.getDowntimeInterval().toMilliseconds()),
-                eq(schedule.getDowntimeInterval().toMilliseconds()), eq(TimeUnit.MILLISECONDS));
+            eq(schedule.getDowntimeInterval().toMilliseconds()), eq(TimeUnit.MILLISECONDS));
     }
 
     @Test
@@ -84,22 +83,22 @@ public class HealthCheckSchedulerTest {
         when(check.getSchedule()).thenReturn(schedule);
 
         when(executor.scheduleWithFixedDelay(
-                eq(check),
-                or(eq(schedule.getCheckInterval().toMilliseconds()), eq(schedule.getDowntimeInterval().toMilliseconds())),
-                or(eq(schedule.getCheckInterval().toMilliseconds()), eq(schedule.getDowntimeInterval().toMilliseconds())),
-                eq(TimeUnit.MILLISECONDS))
+            eq(check),
+            or(eq(schedule.getCheckInterval().toMilliseconds()), eq(schedule.getDowntimeInterval().toMilliseconds())),
+            or(eq(schedule.getCheckInterval().toMilliseconds()), eq(schedule.getDowntimeInterval().toMilliseconds())),
+            eq(TimeUnit.MILLISECONDS))
         )
-                .thenReturn(future);
+            .thenReturn(future);
 
         scheduler.schedule(check, false);
 
         scheduler.schedule(check, true);
 
         verify(executor, times(2)).scheduleWithFixedDelay(
-                eq(check),
-                or(eq(schedule.getCheckInterval().toMilliseconds()), eq(schedule.getDowntimeInterval().toMilliseconds())),
-                or(eq(schedule.getCheckInterval().toMilliseconds()), eq(schedule.getDowntimeInterval().toMilliseconds())),
-                eq(TimeUnit.MILLISECONDS));
+            eq(check),
+            or(eq(schedule.getCheckInterval().toMilliseconds()), eq(schedule.getDowntimeInterval().toMilliseconds())),
+            or(eq(schedule.getCheckInterval().toMilliseconds()), eq(schedule.getDowntimeInterval().toMilliseconds())),
+            eq(TimeUnit.MILLISECONDS));
 
         verify(future).cancel(true);
     }
@@ -117,22 +116,22 @@ public class HealthCheckSchedulerTest {
         when(check.getSchedule()).thenReturn(schedule);
 
         when(executor.scheduleWithFixedDelay(
-                eq(check),
-                or(eq(schedule.getCheckInterval().toMilliseconds()), eq(schedule.getDowntimeInterval().toMilliseconds())),
-                or(eq(schedule.getCheckInterval().toMilliseconds()), eq(schedule.getDowntimeInterval().toMilliseconds())),
-                eq(TimeUnit.MILLISECONDS))
+            eq(check),
+            or(eq(schedule.getCheckInterval().toMilliseconds()), eq(schedule.getDowntimeInterval().toMilliseconds())),
+            or(eq(schedule.getCheckInterval().toMilliseconds()), eq(schedule.getDowntimeInterval().toMilliseconds())),
+            eq(TimeUnit.MILLISECONDS))
         )
-                .thenReturn(future);
+            .thenReturn(future);
 
         scheduler.schedule(check, true);
 
         scheduler.schedule(check, false);
 
         verify(executor, times(2)).scheduleWithFixedDelay(
-                eq(check),
-                or(eq(schedule.getCheckInterval().toMilliseconds()), eq(schedule.getDowntimeInterval().toMilliseconds())),
-                or(eq(schedule.getCheckInterval().toMilliseconds()), eq(schedule.getDowntimeInterval().toMilliseconds())),
-                eq(TimeUnit.MILLISECONDS));
+            eq(check),
+            or(eq(schedule.getCheckInterval().toMilliseconds()), eq(schedule.getDowntimeInterval().toMilliseconds())),
+            or(eq(schedule.getCheckInterval().toMilliseconds()), eq(schedule.getDowntimeInterval().toMilliseconds())),
+            eq(TimeUnit.MILLISECONDS));
 
         verify(future).cancel(true);
     }
@@ -148,22 +147,22 @@ public class HealthCheckSchedulerTest {
         when(check.getSchedule()).thenReturn(schedule);
 
         when(executor.scheduleWithFixedDelay(
-                eq(check),
-                or(eq(schedule.getCheckInterval().toMilliseconds()), eq(schedule.getDowntimeInterval().toMilliseconds())),
-                or(eq(schedule.getCheckInterval().toMilliseconds()), eq(schedule.getDowntimeInterval().toMilliseconds())),
-                eq(TimeUnit.MILLISECONDS))
+            eq(check),
+            or(eq(schedule.getCheckInterval().toMilliseconds()), eq(schedule.getDowntimeInterval().toMilliseconds())),
+            or(eq(schedule.getCheckInterval().toMilliseconds()), eq(schedule.getDowntimeInterval().toMilliseconds())),
+            eq(TimeUnit.MILLISECONDS))
         )
-                .thenReturn(future);
+            .thenReturn(future);
 
         scheduler.schedule(check, true);
 
         scheduler.unschedule(name);
 
         verify(executor).scheduleWithFixedDelay(
-                eq(check),
-                eq(schedule.getCheckInterval().toMilliseconds()),
-                eq(schedule.getCheckInterval().toMilliseconds()),
-                eq(TimeUnit.MILLISECONDS));
+            eq(check),
+            eq(schedule.getCheckInterval().toMilliseconds()),
+            eq(schedule.getCheckInterval().toMilliseconds()),
+            eq(TimeUnit.MILLISECONDS));
 
         verify(future).cancel(true);
     }

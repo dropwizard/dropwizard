@@ -1,7 +1,6 @@
 package io.dropwizard.health;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.dropwizard.health.conf.HealthCheckType;
 
 import javax.validation.constraints.NotNull;
 import java.util.Objects;

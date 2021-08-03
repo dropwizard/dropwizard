@@ -1,4 +1,4 @@
-package io.dropwizard.health.http;
+package io.dropwizard.health.check.http;
 
 import com.codahale.metrics.health.HealthCheck;
 import com.google.common.base.Preconditions;
@@ -14,11 +14,9 @@ import java.time.Duration;
 import java.util.Objects;
 
 public class HttpHealthCheck extends HealthCheck {
-    private static final Logger LOGGER = LoggerFactory.getLogger(HttpHealthCheck.class);
-
     // visible for testing
     static final Duration DEFAULT_TIMEOUT = Duration.ofSeconds(2);
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(HttpHealthCheck.class);
     @Nonnull
     private final String url;
     @Nonnull
@@ -35,8 +33,8 @@ public class HttpHealthCheck extends HealthCheck {
         Preconditions.checkState(readTimeout.toMillis() > 0L);
         Preconditions.checkState(connectionTimeout.toMillis() > 0L);
         this.client = ClientBuilder.newClient()
-                .property(ClientProperties.CONNECT_TIMEOUT, (int) connectionTimeout.toMillis())
-                .property(ClientProperties.READ_TIMEOUT, (int) readTimeout.toMillis());
+            .property(ClientProperties.CONNECT_TIMEOUT, (int) connectionTimeout.toMillis())
+            .property(ClientProperties.READ_TIMEOUT, (int) readTimeout.toMillis());
     }
 
     public HttpHealthCheck(@Nonnull final String url,
@@ -61,6 +59,7 @@ public class HttpHealthCheck extends HealthCheck {
     /**
      * Performs a health check via HTTP against an external dependency.
      * By default uses the Jersey 2 HTTP client, but can be overridden to allow for different behavior.
+     *
      * @param url the URL to check.
      * @return response from the health check.
      */
@@ -75,6 +74,7 @@ public class HttpHealthCheck extends HealthCheck {
     /**
      * Validates the response from the health check.
      * By default checks if the response status is 2xx.
+     *
      * @param httpHealthResponse The response resulting from the http health check.
      * @return healthiness flag.
      */

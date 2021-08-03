@@ -3,8 +3,6 @@ package io.dropwizard.health;
 import com.codahale.metrics.Counter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheck;
-import io.dropwizard.health.conf.HealthCheckType;
-import io.dropwizard.health.conf.Schedule;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -17,22 +15,22 @@ import static org.mockito.Mockito.when;
 public class ScheduledHealthCheckTest {
     private static final HealthStateListener LISTENER = new HealthStateListener() {
         @Override
-        public void onHealthyCheck(String healthCheckName) {}
+        public void onHealthyCheck(String healthCheckName) {
+        }
 
         @Override
-        public void onUnhealthyCheck(String healthCheckName) {}
+        public void onUnhealthyCheck(String healthCheckName) {
+        }
 
         @Override
-        public void onStateChanged(String healthCheckName, boolean healthy) {}
+        public void onStateChanged(String healthCheckName, boolean healthy) {
+        }
     };
-
+    private final MetricRegistry metrics = new MetricRegistry();
     @Mock
     private HealthCheck healthCheck;
-
     @Mock
     private Schedule schedule;
-
-    private final MetricRegistry metrics = new MetricRegistry();
 
     @Test
     public void healthyCheckShouldResultInSuccess() {
@@ -45,7 +43,7 @@ public class ScheduledHealthCheckTest {
         final Counter unhealthyCounter = metrics.counter("test.unhealthy");
         final State state = new State(name, schedule.getFailureAttempts(), schedule.getSuccessAttempts(), true, LISTENER);
         final ScheduledHealthCheck scheduledHealthCheck = new ScheduledHealthCheck(name, HealthCheckType.READY, true,
-                healthCheck, schedule, state, healthyCounter, unhealthyCounter);
+            healthCheck, schedule, state, healthyCounter, unhealthyCounter);
 
         when(healthCheck.execute()).thenReturn(HealthCheck.Result.healthy());
 
@@ -66,7 +64,7 @@ public class ScheduledHealthCheckTest {
         final Counter unhealthyCounter = metrics.counter("test.unhealthy");
         final State state = new State(name, schedule.getFailureAttempts(), schedule.getSuccessAttempts(), true, LISTENER);
         final ScheduledHealthCheck scheduledHealthCheck = new ScheduledHealthCheck(name, HealthCheckType.READY, true,
-                healthCheck, schedule, state, healthyCounter, unhealthyCounter);
+            healthCheck, schedule, state, healthyCounter, unhealthyCounter);
         when(healthCheck.execute()).thenReturn(HealthCheck.Result.unhealthy("something happened"));
 
         scheduledHealthCheck.run();

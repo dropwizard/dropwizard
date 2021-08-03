@@ -1,4 +1,4 @@
-package io.dropwizard.health.tcp;
+package io.dropwizard.health.check.tcp;
 
 import com.google.common.util.concurrent.Uninterruptibles;
 import org.junit.jupiter.api.AfterEach;
@@ -36,7 +36,7 @@ public class TcpHealthCheckTest {
         final ExecutorService executorService = Executors.newSingleThreadExecutor();
         executorService.submit(() -> serverSocket.accept());
         assertThat(tcpHealthCheck.check().isHealthy())
-                .isTrue();
+            .isTrue();
     }
 
     @Test

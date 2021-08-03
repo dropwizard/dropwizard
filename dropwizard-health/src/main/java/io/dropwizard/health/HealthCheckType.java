@@ -1,4 +1,4 @@
-package io.dropwizard.health.conf;
+package io.dropwizard.health;
 
 public enum HealthCheckType {
     ALIVE,

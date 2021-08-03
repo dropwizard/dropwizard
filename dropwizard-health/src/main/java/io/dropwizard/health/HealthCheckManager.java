@@ -5,10 +5,6 @@ import com.codahale.metrics.Gauge;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheck;
 import com.codahale.metrics.health.HealthCheckRegistryListener;
-import io.dropwizard.health.conf.HealthCheckConfiguration;
-import io.dropwizard.health.conf.HealthCheckType;
-import io.dropwizard.health.conf.Schedule;
-import io.dropwizard.health.shutdown.ShutdownNotifier;
 import io.dropwizard.util.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +23,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 class HealthCheckManager implements HealthCheckRegistryListener, HealthStatusChecker, ShutdownNotifier,
-        HealthStateListener, HealthStateAggregator {
+    HealthStateListener, HealthStateAggregator {
     private static final Logger LOGGER = LoggerFactory.getLogger(HealthCheckManager.class);
 
     private final AtomicBoolean isAppAlive = new AtomicBoolean(true);
@@ -36,8 +32,6 @@ class HealthCheckManager implements HealthCheckRegistryListener, HealthStatusChe
     private final AtomicInteger unhealthyCriticalAliveChecks = new AtomicInteger();
     @Nonnull
     private final HealthCheckScheduler scheduler;
-    @Nonnull
-    private Map<String, ScheduledHealthCheck> checks;
     @Nonnull
     private final Map<String, HealthCheckConfiguration> configs;
     @Nonnull
@@ -50,6 +44,8 @@ class HealthCheckManager implements HealthCheckRegistryListener, HealthStatusChe
     private final String aggregateHealthyName;
     @Nonnull
     private final String aggregateUnhealthyName;
+    @Nonnull
+    private Map<String, ScheduledHealthCheck> checks;
     private volatile boolean shuttingDown = false;
 
     public HealthCheckManager(final List<HealthCheckConfiguration> configs,
@@ -59,7 +55,7 @@ class HealthCheckManager implements HealthCheckRegistryListener, HealthStatusChe
                               final boolean initialOverallState,
                               final Collection<HealthStateListener> healthStateListeners) {
         this.configs = configs.stream()
-                .collect(Collectors.toMap(HealthCheckConfiguration::getName, Function.identity()));
+            .collect(Collectors.toMap(HealthCheckConfiguration::getName, Function.identity()));
         this.scheduler = Objects.requireNonNull(scheduler);
         this.metrics = Objects.requireNonNull(metrics);
         this.shutdownWaitPeriod = shutdownWaitPeriod;
@@ -95,10 +91,10 @@ class HealthCheckManager implements HealthCheckRegistryListener, HealthStatusChe
 
         final State state = new State(name, schedule.getFailureAttempts(), schedule.getSuccessAttempts(), initialState, this);
         final Counter healthyCheckCounter = metrics.counter(MetricRegistry.name("health", name, "healthy"));
-        final Counter unhealthyCheckCounter = metrics.counter(MetricRegistry.name("health",  name, "unhealthy"));
+        final Counter unhealthyCheckCounter = metrics.counter(MetricRegistry.name("health", name, "unhealthy"));
 
         final ScheduledHealthCheck check = new ScheduledHealthCheck(name, type, critical, healthCheck, schedule, state,
-                healthyCheckCounter, unhealthyCheckCounter);
+            healthyCheckCounter, unhealthyCheckCounter);
         checks.put(name, check);
 
         // handle initial state of 'false' to ensure counts line up
@@ -150,16 +146,16 @@ class HealthCheckManager implements HealthCheckRegistryListener, HealthStatusChe
 
     private long calculateNumberOfHealthyChecks() {
         return checks.values()
-                .stream()
-                .filter(ScheduledHealthCheck::isHealthy)
-                .count();
+            .stream()
+            .filter(ScheduledHealthCheck::isHealthy)
+            .count();
     }
 
     private long calculateNumberOfUnhealthyChecks() {
         return checks.values()
-                .stream()
-                .filter(check -> !check.isHealthy())
-                .count();
+            .stream()
+            .filter(check -> !check.isHealthy())
+            .count();
     }
 
     private void handleCriticalHealthChange(final String name, final HealthCheckType type, final boolean isNowHealthy) {
@@ -269,10 +265,10 @@ class HealthCheckManager implements HealthCheckRegistryListener, HealthStatusChe
     @Nonnull
     @Override
     public Collection<HealthStateView> healthStateViews() {
-       return checks.values()
-           .stream()
-           .map(ScheduledHealthCheck::view)
-           .collect(Collectors.toList());
+        return checks.values()
+            .stream()
+            .map(ScheduledHealthCheck::view)
+            .collect(Collectors.toList());
     }
 
     @Nonnull

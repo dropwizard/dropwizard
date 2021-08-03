@@ -1,4 +1,4 @@
-package io.dropwizard.health.conf;
+package io.dropwizard.health;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.util.Duration;
@@ -77,10 +77,10 @@ public class Schedule {
         if (!(o instanceof Schedule)) return false;
         final Schedule schedule = (Schedule) o;
         return failureAttempts == schedule.failureAttempts &&
-                successAttempts == schedule.successAttempts &&
-                Objects.equals(initialDelay, schedule.initialDelay) &&
-                Objects.equals(checkInterval, schedule.checkInterval) &&
-                Objects.equals(downtimeInterval, schedule.downtimeInterval);
+            successAttempts == schedule.successAttempts &&
+            Objects.equals(initialDelay, schedule.initialDelay) &&
+            Objects.equals(checkInterval, schedule.checkInterval) &&
+            Objects.equals(downtimeInterval, schedule.downtimeInterval);
     }
 
     @Override

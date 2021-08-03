@@ -1,8 +1,9 @@
-package io.dropwizard.health.conf;
+package io.dropwizard.health.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.io.Resources;
 import io.dropwizard.configuration.YamlConfigurationFactory;
+import io.dropwizard.health.Schedule;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.validation.Validators;
 import org.junit.jupiter.api.Test;
@@ -16,7 +17,7 @@ public class ScheduleTest {
     private final ObjectMapper objectMapper = Jackson.newObjectMapper();
     private final Validator validator = Validators.newValidator();
     private final YamlConfigurationFactory<Schedule> configFactory =
-            new YamlConfigurationFactory<>(Schedule.class, validator, objectMapper, "dw");
+        new YamlConfigurationFactory<>(Schedule.class, validator, objectMapper, "dw");
 
     @Test
     public void shouldBuildAScheduleFromYaml() throws Exception {

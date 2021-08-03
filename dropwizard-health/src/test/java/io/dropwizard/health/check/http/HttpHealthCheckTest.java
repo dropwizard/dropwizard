@@ -1,4 +1,4 @@
-package io.dropwizard.health.http;
+package io.dropwizard.health.check.http;
 
 import com.sun.net.httpserver.HttpServer;
 import org.junit.jupiter.api.AfterEach;
@@ -40,7 +40,7 @@ public class HttpHealthCheckTest {
         });
         httpServer.start();
         final HttpHealthCheck httpHealthCheck = new HttpHealthCheck(BASE_URI +
-                httpServer.getAddress().getPort() + SUCCESS_PATH);
+            httpServer.getAddress().getPort() + SUCCESS_PATH);
         assertThat(httpHealthCheck.check().isHealthy()).isTrue();
     }
 
@@ -55,7 +55,7 @@ public class HttpHealthCheckTest {
         });
         httpServer.start();
         final HttpHealthCheck httpHealthCheck = new HttpHealthCheck(BASE_URI +
-                httpServer.getAddress().getPort() + FAIL_PATH);
+            httpServer.getAddress().getPort() + FAIL_PATH);
         assertThat(httpHealthCheck.check().isHealthy()).isFalse();
     }
 
@@ -73,7 +73,7 @@ public class HttpHealthCheckTest {
         });
         httpServer.start();
         final HttpHealthCheck httpHealthCheck = new HttpHealthCheck(BASE_URI +
-                httpServer.getAddress().getPort() + TIMEOUT_PATH);
+            httpServer.getAddress().getPort() + TIMEOUT_PATH);
 
         assertThrows(ProcessingException.class, httpHealthCheck::check);
     }
