@@ -33,12 +33,12 @@ health:
   shutdownWaitPeriod: 1s
   healthChecks:
     - name: deadlocks
-      type: ALIVE
+      type: alive
     - name: hibernate
-      type: READY
+      type: ready
       critical: true
     - name: template
-      type: READY
+      type: ready
       critical: true
       schedule:
         checkInterval: 1s
