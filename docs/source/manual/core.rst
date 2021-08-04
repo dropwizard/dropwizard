@@ -460,7 +460,7 @@ Health
 
 The health checks described in :ref:`man-core-healthchecks` can be configured to create a holistic view of your
 service health, which can then be used to drive decision making by things like `Kubernetes readiness & liveness checks`_,
-or to dictate whether or not a load balancer should route traffic to your service.
+or to dictate whether or not a load balancer should forward traffic to your service.
 
 This can be done by running these dependency health checks periodically in the background on some schedule,
 and then aggregating the results of all of those checks into a single indicator of overall health. Certain
@@ -511,18 +511,45 @@ There are two types of status that are supported currently: Alive and Ready.
   serve traffic due to a variety of reasons, for example, an application might need to build/compute large caches
   during startup or can critically depend on an external service.
 
-Long-running applications can eventually reach a broken state and cannot recover except by being restarted
-(e.g. deadlocked threads).
-
 An example of how you might query the health check, assuming you're using the default responder/responseProvider
 settings in configuration:
-https://<hostname>:<port>/health-check?type=<type>
-(replace `<type>` with `ready` or `alive`; defaults to `ready`)
 
-Querying for particular health checks
-https://<hostname>:<port>/health-check?type=<type>&name=<name>
-(replace ``<type>`` with ``ready`` or ``alive``; defaults to ``ready``)
-(replace ``<name>`` with the name of the health check to query. Multiple names can be provided)
+``https://<hostname>:<port>/health-check?type=<type>&name=<name>``
+
+* replace ``<type>`` with ``ready`` or ``alive``; defaults to ``ready`` if the ``type`` parameter is not provided
+* replace ``<name>`` with the name of the health check to query. Multiple names can be provided, or no no names. If all checks are desired, 
+  ``name=all`` can be specified to retrieve all checks
+
+.. _man-core-health-providedchecks:
+
+HTTP & TCP Checks
+-----------------
+
+Should your service have any dependencies that it needs to perform health checks against that expose either an HTTP or TCP health check interface,
+you can use the ``HttpHealthCheck`` or ``TcpHealthCheck`` classes to do so easily.
+
+You will need to register your health check(s) in your ``Application`` class ``run()`` method.
+
+**HTTP**
+
+.. code-block:: java
+
+    @Override
+    public void run(final AppConfiguration configuration, final Environment environment) {
+        ...
+        environment.healthChecks().register("http-service-dependency", new HttpHealthCheck("http://some-http-dependency.com:8080/health-check"));
+    }
+
+**TCP**
+
+.. code-block:: java
+
+    @Override
+    public void run(final AppConfiguration configuration, final Environment environment) {
+        ...
+        environment.healthChecks().register("tcp-service-dependency", new TcpHealthCheck("some-tcp-dependency.com", 443));
+    }
+
 
 .. _man-core-managed:
 
