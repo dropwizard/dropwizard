@@ -1369,7 +1369,7 @@ successAttempts                2                             The threshold of co
 .. _man-configuration-health-responseprovider:
 
 Detailed JSON Health Response Provider
--------------------------
+--------------------------------------
 
 A detailed servlet used to handle health check requests, which returns a JSON response explaining the various
 registered health checks, their current status, and other metadata.
