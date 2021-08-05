@@ -30,5 +30,24 @@ Details about these changes in Hibernate Validator can be found at:
 .. _upgrade-notes-dropwizard-2_1_x-health:
 
 Migrating from dropwizard-health
-================================================
-TBD
+================================
+
+Migrating from the HealthBundle
+-------------------------------
+You'll want to remove the ``HealthBundle`` from your `Application`'s ``initialize()`` method, as you no longer need to add a bundle to get the dropwizard-health functionality.
+
+You'll also want to remove a reference to ``HealthConfiguration`` from your `Configuration` class, as it's now part of the base Dropwizard `Configuration`.
+
+Once you do that, and upgrade `2.1.x` you should be able to just rely on the adding the dropwizard-health behavior by adding config under the top-level config ``health``! 
+
+New Configuration Options
+-------------------------
+* ``enabled`` flag added to turn on/off health functionality (defaults to ``true``).
+* ``name`` configuration added, used in metric naming, thread naming, and log messages.
+* ``responder`` factory added, to control how health check requests are responded to. For more info, see :ref:`the config reference <man-configuration-health-responder>`
+* ``responseProvider`` factory added, to control the body of health check responses, separate from the mechanics of responding. For more info, see :ref:`the config reference <man-configuration-health-responseprovider>`.
+
+Changed Configuration Options
+-----------------------------
+* ``delayedShutdownHandlerEnabled`` default value changed to ``false``.
+* ``servlet`` removed in favor of the new ``responder`` and ``responseProvider`` factories.
