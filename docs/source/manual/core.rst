@@ -550,6 +550,47 @@ You will need to register your health check(s) in your ``Application`` class ``r
         environment.healthChecks().register("tcp-service-dependency", new TcpHealthCheck("some-tcp-dependency.com", 443));
     }
 
+.. _man-core-health-data:
+
+Health Data Access
+------------------
+In the `Application.run()` method, you can access views of the health state data in two different ways:
+
+**Accessing data directly**
+
+.. code-block:: java
+    
+    @Override
+    public void run(final AppConfiguration configuration, final Environment environment) {
+        ...
+        Collection<HealthStateView> views = environment.health().healthStateAggregator().healthStateViews();
+    }
+
+**Listening to data changes**
+    
+.. code-block:: java
+    
+    @Override
+    public void run(final AppConfiguration configuration, final Environment environment) {
+        ...
+        HealthStateListener myListener = new HealthStateListener() {
+            @Override
+            public void onStateChanged(String healthCheckName, boolean healthy) {
+                System.out.println(healthCheckName + "changed state to " + healthy);
+            }
+
+            @Override
+            public void onHealthyCheck(String healthCheckName) {
+                System.out.println(healthCheckName + "is healthy! :)");
+            }
+
+            @Override
+            public void onUnhealthyCheck(String healthCheckName) {
+                System.out.println(healthCheckName + "is unhealthy! :(");
+            }
+        };
+        environment.health().addHealthStateListener(myListener);
+    }
 
 .. _man-core-managed:
 
