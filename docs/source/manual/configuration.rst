@@ -1275,7 +1275,6 @@ Health
 
     health:
       enabled: true
-      name: my-super-fun-app
       delayedShutdownHandlerEnabled: true
       shutdownWaitPeriod: 5s
       healthCheckUrlPaths: ["/health-check"]
@@ -1293,7 +1292,6 @@ Health
 Name                           Default                  Description
 ============================== =======================  ====================================================================================================
 enabled                        true                     Flag indicating whether to enable health functionality or not.
-name                           (none)                   An identifier used for metric names, thread names, etc.
 delayedShutdownHandlerEnabled  false                    Flag indicating whether to delay shutdown to allow already processing requests to complete.
 shutdownWaitPeriod             15 seconds               Amount of time to delay shutdown by to allow already processing requests to complete. Only applicable if ``delayedShutdownHandlerEnabled`` is true.
 healthCheckUrlPaths            \["/health-check"\]      URLs to expose the app's health check on.

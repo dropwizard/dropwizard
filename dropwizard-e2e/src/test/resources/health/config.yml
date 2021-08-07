@@ -1,40 +1,39 @@
 health:
-    enabled: true
-    name: test
-    delayedShutdownHandlerEnabled: false
-    initialOverallState: false
-    healthChecks:
-        -   name: critical1
-            critical: true
-            schedule:
-                checkInterval: 10ms
-                downtimeInterval: 10ms
-                failureAttempts: 1
-                successAttempts: 1
-        -   name: critical2
-            critical: true
-            initialState: false
-            schedule:
-                checkInterval: 10ms
-                downtimeInterval: 10ms
-                failureAttempts: 1
-                successAttempts: 1
-        -   name: nonCritical
-            critical: false
-            schedule:
-                checkInterval: 10ms
-                downtimeInterval: 10ms
-                failureAttempts: 1
-                successAttempts: 1
-    responseProvider:
-        type: detailed-json
-    responder:
-        type: servlet
-        cacheControlEnabled: true
+  enabled: true
+  delayedShutdownHandlerEnabled: false
+  initialOverallState: false
+  healthChecks:
+    - name: critical1
+      critical: true
+      schedule:
+        checkInterval: 10ms
+        downtimeInterval: 10ms
+        failureAttempts: 1
+        successAttempts: 1
+    - name: critical2
+      critical: true
+      initialState: false
+      schedule:
+        checkInterval: 10ms
+        downtimeInterval: 10ms
+        failureAttempts: 1
+        successAttempts: 1
+    - name: nonCritical
+      critical: false
+      schedule:
+        checkInterval: 10ms
+        downtimeInterval: 10ms
+        failureAttempts: 1
+        successAttempts: 1
+  responseProvider:
+    type: detailed-json
+  responder:
+    type: servlet
+    cacheControlEnabled: true
 
 server:
-    type: simple
-    applicationContextPath: /
-    connector:
-        type: http
-        port: ${application.port}
+  type: simple
+  applicationContextPath: /
+  connector:
+    type: http
+    port: ${application.port}
