@@ -1326,7 +1326,7 @@ Options around a particular health check which is registered in an Application
 ============================== =======================  ====================================================================================================
 Name                           Default                  Description
 ============================== =======================  ====================================================================================================
-name                           (none)                   The name of this health check. This must be unique, and match the name of the check registered in code. (On the applications ``HealthCheckRegistry``)
+name                           (none)                   The name of this health check. This must be unique, and match the name of the check registered in code. (On the application's ``HealthCheckRegistry``)
 type                           ready                    The type of this health check. This is either ``alive`` or ``ready``. See the :ref:`application status section <man-core-health-status>` for more details.
 critical                       false                    Flag indicating whether this dependency is critical to determine the health of the application. If ``true`` and this dependency is unhealthy, the application will also be marked as unhealthy.
 initialState                   true                     Flag indicating the initial state to use for this health check. A value of ``true`` indicates an initial state of healthy while a value of ``false`` indicates an initial state of unhealthy.
