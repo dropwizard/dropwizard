@@ -60,7 +60,8 @@ public abstract class EnvironmentCommand<T extends Configuration> extends Config
                 environment.servlets(),
                 environment.jersey(),
                 environment.health(),
-                environment.getObjectMapper()));
+                environment.getObjectMapper(),
+                application.getName()));
 
         bootstrap.run(configuration, environment);
         application.run(configuration, environment);
