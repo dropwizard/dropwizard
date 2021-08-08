@@ -9,10 +9,10 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import io.dropwizard.health.response.DetailedJsonHealthResponseProviderFactory;
 import io.dropwizard.health.response.HealthResponderFactory;
 import io.dropwizard.health.response.HealthResponseProvider;
 import io.dropwizard.health.response.HealthResponseProviderFactory;
+import io.dropwizard.health.response.JsonHealthResponseProviderFactory;
 import io.dropwizard.health.response.ServletHealthResponderFactory;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
 import io.dropwizard.jetty.setup.ServletEnvironment;
@@ -61,7 +61,7 @@ public class DefaultHealthFactory implements HealthFactory {
     @Valid
     @JsonProperty("responseProvider")
     private HealthResponseProviderFactory healthResponseProviderFactory =
-            new DetailedJsonHealthResponseProviderFactory();
+            new JsonHealthResponseProviderFactory();
 
     @Valid
     @JsonProperty("responder")

@@ -1,21 +1,25 @@
 package io.dropwizard.health.response;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import io.dropwizard.health.HealthStateView;
+import java.util.Collection;
 import java.util.Objects;
-import java.util.Optional;
+import javax.annotation.Nonnull;
 
-public abstract class HealthResponse {
-    protected final boolean healthy;
-    @Nullable
-    protected final String message;
+public final class HealthResponse {
+    private final boolean healthy;
     @Nonnull
-    protected final String contentType;
+    private final String message;
+    @Nonnull
+    private final String contentType;
+    @Nonnull
+    private final Collection<HealthStateView> views;
 
-    protected HealthResponse(boolean healthy, @Nullable final String message, @Nonnull final String contentType) {
+    public HealthResponse(boolean healthy, @Nonnull final String message, @Nonnull final String contentType,
+                          final Collection<HealthStateView> views) {
         this.healthy = healthy;
         this.message = message;
         this.contentType = Objects.requireNonNull(contentType);
+        this.views = Objects.requireNonNull(views);
     }
 
     public boolean isHealthy() {
@@ -23,8 +27,8 @@ public abstract class HealthResponse {
     }
 
     @Nonnull
-    public Optional<String> getMessage() {
-        return Optional.ofNullable(message);
+    public String getMessage() {
+        return message;
     }
 
     @Nonnull
@@ -32,26 +36,32 @@ public abstract class HealthResponse {
         return contentType;
     }
 
+    @Nonnull
+    public Collection<HealthStateView> getViews() {
+        return views;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof HealthResponse)) return false;
         HealthResponse that = (HealthResponse) o;
-        return healthy == that.healthy && Objects.equals(message, that.message) && contentType.equals(that.contentType);
+        return healthy == that.healthy && Objects.equals(message, that.message) && contentType.equals(that.contentType) && views.equals(that.views);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(healthy, message, contentType);
+        return Objects.hash(healthy, message, contentType, views);
     }
 
     @Override
     public String toString() {
         return "HealthResponse{" +
-            "healthy=" + healthy +
-            ", message='" + message + '\'' +
-            ", contentType='" + contentType + '\'' +
-            '}';
+                "healthy=" + healthy +
+                ", message='" + message + '\'' +
+                ", contentType='" + contentType + '\'' +
+                ", views=" + views +
+                '}';
     }
 }
 

@@ -1,5 +1,11 @@
 package io.dropwizard.health.response;
 
+import com.google.common.collect.ImmutableList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import javax.ws.rs.core.MediaType;
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpMethod;
 import org.eclipse.jetty.http.HttpTester;
@@ -12,27 +18,18 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import javax.ws.rs.core.MediaType;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.StringJoiner;
-import java.util.stream.Collectors;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class ServletHealthResponderTest {
     private static final String NO_STORE = "no-store";
     private static final String HEALTH_CHECK_URI = "/health-check";
-    private static final HealthResponse SUCCESS = new DetailedHealthResponse(true, "healthy", MediaType.TEXT_PLAIN,
-        Collections.emptyList());
-    private static final HealthResponse FAIL = new DetailedHealthResponse(false, "unhealthy", MediaType.TEXT_PLAIN,
-        Collections.emptyList());
+    private static final HealthResponse SUCCESS = new HealthResponse(true, "healthy", MediaType.TEXT_PLAIN,
+            Collections.emptyList());
+    private static final HealthResponse FAIL = new HealthResponse(false, "unhealthy", MediaType.TEXT_PLAIN,
+            Collections.emptyList());
 
     private final HttpTester.Request request = new HttpTester.Request();
 
@@ -56,13 +53,13 @@ class ServletHealthResponderTest {
     }
 
     @Test
-    void shouldReturnHealthyWithNoParametersAndCacheControlDisabled() throws Exception {
+    void shouldReturnHealthyWithCacheControlDisabled() throws Exception {
         // given
         final ServletHealthResponder servletHealthResponder = new ServletHealthResponder(healthResponseProvider, false,
-            "no-store");
+                "no-store");
 
         // when
-        when(healthResponseProvider.minimalHealthResponse(isNull())).thenReturn(SUCCESS);
+        when(healthResponseProvider.healthResponse(eq(Collections.emptyMap()))).thenReturn(SUCCESS);
         servletTester.addServlet(new ServletHolder(servletHealthResponder), HEALTH_CHECK_URI);
         servletTester.start();
         final HttpTester.Response response = executeRequest(request);
@@ -76,10 +73,10 @@ class ServletHealthResponderTest {
     void shouldReturnHealthyWithNoParametersProvided() throws Exception {
         // given
         final ServletHealthResponder servletHealthResponder = new ServletHealthResponder(healthResponseProvider, true,
-            "no-store");
+                "no-store");
 
         // when
-        when(healthResponseProvider.minimalHealthResponse(isNull())).thenReturn(SUCCESS);
+        when(healthResponseProvider.healthResponse(eq(Collections.emptyMap()))).thenReturn(SUCCESS);
         servletTester.addServlet(new ServletHolder(servletHealthResponder), HEALTH_CHECK_URI);
         servletTester.start();
         final HttpTester.Response response = executeRequest(request);
@@ -87,39 +84,18 @@ class ServletHealthResponderTest {
         // then
         assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
         assertThat(response.get(HttpHeader.CACHE_CONTROL))
-            .isNotNull()
-            .isEqualTo(NO_STORE);
-    }
-
-    @Test
-    void shouldReturnHealthyWithAliveTypeProvided() throws Exception {
-        // given
-        final ServletHealthResponder servletHealthResponder = new ServletHealthResponder(healthResponseProvider, true,
-            "no-store");
-
-        // when
-        when(healthResponseProvider.minimalHealthResponse(eq("alive"))).thenReturn(SUCCESS);
-        servletTester.addServlet(new ServletHolder(servletHealthResponder), HEALTH_CHECK_URI);
-        servletTester.start();
-
-        request.setURI(String.format("%s?%s=%s", HEALTH_CHECK_URI, ServletHealthResponder.CHECK_TYPE_QUERY_PARAM, "alive"));
-        final HttpTester.Response response = executeRequest(request);
-
-        // then
-        assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
-        assertThat(response.get(HttpHeader.CACHE_CONTROL))
-            .isNotNull()
-            .isEqualTo(NO_STORE);
+                .isNotNull()
+                .isEqualTo(NO_STORE);
     }
 
     @Test
     void shouldReturnUnhealthyWithNoParametersProvided() throws Exception {
         // given
         final ServletHealthResponder servletHealthResponder = new ServletHealthResponder(healthResponseProvider, true,
-            "no-store");
+                "no-store");
 
         // when
-        when(healthResponseProvider.minimalHealthResponse(isNull())).thenReturn(FAIL);
+        when(healthResponseProvider.healthResponse(eq(Collections.emptyMap()))).thenReturn(FAIL);
         servletTester.addServlet(new ServletHolder(servletHealthResponder), HEALTH_CHECK_URI);
         servletTester.start();
         final HttpTester.Response response = executeRequest(request);
@@ -127,116 +103,40 @@ class ServletHealthResponderTest {
         // then
         assertThat(response.getStatus()).isEqualTo(Response.SC_SERVICE_UNAVAILABLE);
         assertThat(response.get(HttpHeader.CACHE_CONTROL))
-            .isNotNull()
-            .isEqualTo(NO_STORE);
+                .isNotNull()
+                .isEqualTo(NO_STORE);
     }
 
     @Test
-    void shouldReturnAllHealthCheckResultsWhenAllParameterIsProvided() throws Exception {
+    void shouldReturnHealthResultsWhenMultipleParametersProvided() throws Exception {
         // given
         final ServletHealthResponder servletHealthResponder = new ServletHealthResponder(healthResponseProvider, true,
-            "no-store");
+                "no-store");
+        final String typeQueryParam = "type";
+        final String type = "alive";
+        final String nameQueryParam = "name";
+        final String name = "all";
+        final String anotherName = "foo";
+        final Map<String, Collection<String>> queryParams = new HashMap<>();
+        queryParams.put(typeQueryParam, Collections.singletonList(type));
+        queryParams.put(nameQueryParam, ImmutableList.of(name, anotherName));
 
         // when
-        when(healthResponseProvider.fullHealthResponse(eq("alive"))).thenReturn(SUCCESS);
+        when(healthResponseProvider.healthResponse(eq(queryParams))).thenReturn(SUCCESS);
         servletTester.addServlet(new ServletHolder(servletHealthResponder), HEALTH_CHECK_URI);
         servletTester.start();
-        final String uri = String.format("%s?%s=%s&name=all", HEALTH_CHECK_URI,
-            ServletHealthResponder.CHECK_TYPE_QUERY_PARAM, "alive");
+        final String uri = String.format("%s?%s=%s&%s=%s&%s=%s", HEALTH_CHECK_URI, typeQueryParam, type, nameQueryParam,
+                name, nameQueryParam, anotherName);
         request.setURI(uri);
         final HttpTester.Response response = executeRequest(request);
 
         // then
         assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
-        assertThat(response.getContent()).isEqualTo(SUCCESS.getMessage().orElseThrow(IllegalStateException::new));
+        assertThat(response.getContent()).isEqualTo(SUCCESS.getMessage());
         assertThat(response.get(HttpHeader.CONTENT_TYPE)).startsWith(SUCCESS.getContentType());
         assertThat(response.get(HttpHeader.CACHE_CONTROL))
-            .isNotNull()
-            .isEqualTo(NO_STORE);
-    }
-
-    @Test
-    void shouldReturnSpecificHealthCheckResultsWhenNameParametersAreProvided() throws Exception {
-        // given
-        final ServletHealthResponder servletHealthResponder = new ServletHealthResponder(healthResponseProvider, true,
-            "no-store");
-        final List<String> names = Arrays.stream(new String[]{"foo", "bar", "baz"}).collect(Collectors.toList());
-
-        // when
-        when(healthResponseProvider.partialHealthResponse(eq("alive"), eq(names))).thenReturn(SUCCESS);
-        servletTester.addServlet(new ServletHolder(servletHealthResponder), HEALTH_CHECK_URI);
-        servletTester.start();
-
-        final StringJoiner joiner = new StringJoiner("&");
-        names.forEach(name -> joiner.add("name=" + name));
-        final String uri = String.format("%s?%s=%s&%s", HEALTH_CHECK_URI, ServletHealthResponder.CHECK_TYPE_QUERY_PARAM,
-            "alive", joiner);
-        request.setURI(uri);
-        final HttpTester.Response response = executeRequest(request);
-
-        // then
-        assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
-        assertThat(response.getContent()).isEqualTo(SUCCESS.getMessage().orElseThrow(IllegalStateException::new));
-        assertThat(response.get(HttpHeader.CONTENT_TYPE)).startsWith(SUCCESS.getContentType());
-        assertThat(response.get(HttpHeader.CACHE_CONTROL))
-            .isNotNull()
-            .isEqualTo(NO_STORE);
-    }
-
-    @Test
-    void shouldReturnSingleHealthCheckResultWhenOneNameParameterProvided() throws Exception {
-        // given
-        final ServletHealthResponder servletHealthResponder = new ServletHealthResponder(healthResponseProvider, true,
-            "no-store");
-        final String name = "foo";
-
-        // when
-        when(healthResponseProvider.partialHealthResponse(eq("alive"),
-            eq(Collections.singletonList(name)))).thenReturn(SUCCESS);
-        servletTester.addServlet(new ServletHolder(servletHealthResponder), HEALTH_CHECK_URI);
-        servletTester.start();
-
-        final String uri = String.format("%s?%s=%s&name=%s", HEALTH_CHECK_URI,
-            ServletHealthResponder.CHECK_TYPE_QUERY_PARAM,
-            "alive", name);
-        request.setURI(uri);
-        final HttpTester.Response response = executeRequest(request);
-
-        // then
-        assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
-        assertThat(response.getContent()).isEqualTo(SUCCESS.getMessage().orElseThrow(IllegalStateException::new));
-        assertThat(response.get(HttpHeader.CONTENT_TYPE)).startsWith(SUCCESS.getContentType());
-        assertThat(response.get(HttpHeader.CACHE_CONTROL))
-            .isNotNull()
-            .isEqualTo(NO_STORE);
-    }
-
-    @Test
-    void shouldReturnAllHealthCheckResultsWhenBothSpecificNamesAndAllParametersProvided() throws Exception {
-        // given
-        final ServletHealthResponder servletHealthResponder = new ServletHealthResponder(healthResponseProvider, true,
-            "no-store");
-        final List<String> names = Arrays.stream(new String[]{"foo", "bar", "baz"}).collect(Collectors.toList());
-
-        // when
-        when(healthResponseProvider.fullHealthResponse(eq("alive"))).thenReturn(SUCCESS);
-        servletTester.addServlet(new ServletHolder(servletHealthResponder), HEALTH_CHECK_URI);
-        servletTester.start();
-
-        final StringJoiner joiner = new StringJoiner("&");
-        names.forEach(name -> joiner.add("name=" + name));
-        final String uri = String.format("%s?%s=%s&%s&name=all", HEALTH_CHECK_URI,
-            ServletHealthResponder.CHECK_TYPE_QUERY_PARAM, "alive", joiner);
-        request.setURI(uri);
-        final HttpTester.Response response = executeRequest(request);
-
-        // then
-        assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
-        assertThat(response.getContent()).isEqualTo(SUCCESS.getMessage().orElseThrow(IllegalStateException::new));
-        assertThat(response.get(HttpHeader.CONTENT_TYPE)).startsWith(SUCCESS.getContentType());
-        assertThat(response.get(HttpHeader.CACHE_CONTROL))
-            .isNotNull()
-            .isEqualTo(NO_STORE);
+                .isNotNull()
+                .isEqualTo(NO_STORE);
     }
 
     private HttpTester.Response executeRequest(HttpTester.Request request) throws Exception {

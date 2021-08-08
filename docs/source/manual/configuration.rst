@@ -1283,7 +1283,7 @@ Health
         - <some other health check config>
       initialOverallState: false
       responseProvider:
-        type: detailed-json
+        type: json
       responder:
         type: servlet
 
@@ -1297,7 +1297,7 @@ shutdownWaitPeriod             15 seconds               Amount of time to delay 
 healthCheckUrlPaths            \["/health-check"\]      URLs to expose the app's health check on.
 healthChecks                   []                       A list of configured health checks. See the [Health Check Configuration section](#health-check-configuration) for more details.
 initialOverallState            true                     Flag indicating whether the overall health state of the application should start as healthy or unhealthy. A value of ``true`` indicates an initial state of healthy while a value of ``false`` indicates an initial state of unhealthy.
-responseProvider               detailed-json            The health response provider that is used to respond to generate responses to return to health check requests. This can be implemented using Jersey, Jetty, or other technologies if desired. See the :ref:`detailed JSON health response provider section <man-configuration-health-responseprovider>` for more details.
+responseProvider               json            The health response provider that is used to respond to generate responses to return to health check requests. This can be implemented using Jersey, Jetty, or other technologies if desired. See the :ref:`detailed JSON health response provider section <man-configuration-health-responseprovider>` for more details.
 responder                      servlet                  The health responder that is used to respond to health check requests. This can be implemented using Jersey, Jetty, or other technologies if desired. See the :ref:`servlet health responder section <man-configuration-health-responder>` for more details.
 ============================== =======================  ====================================================================================================
 
@@ -1376,12 +1376,12 @@ registered health checks, their current status, and other metadata.
 
     health:
       responseProvider:
-        type: detailed-json
+        type: json
 
 ============================== ============================  ====================================================================================================
 Name                           Default                       Description
 ============================== ============================  ====================================================================================================
-type                           detailed-json                 - detailed-json
+type                           json                 - json
 ============================== ============================  ====================================================================================================
 
 
