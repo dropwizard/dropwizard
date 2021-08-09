@@ -34,17 +34,23 @@ Migrating from dropwizard-health
 
 Migrating from the HealthBundle
 -------------------------------
-You'll want to remove the ``HealthBundle`` from your `Application`'s ``initialize()`` method, as you no longer need to add a bundle to get the dropwizard-health functionality.
+`dropwizard/dropwizard-health module <https://github.com/dropwizard/dropwizard-health>`_
+Starting in Dropwizard 2.1, the functionality from the external dropwizard/dropwizard-health module has been integrated into the main dropwizard/dropwizard project.
 
-You'll also want to remove a reference to ``HealthConfiguration`` from your `Configuration` class, as it's now part of the base Dropwizard `Configuration`.
+Perform the following steps to migrate your application:
 
-Once you do that, and upgrade `2.1.x` you should be able to just rely on the adding the dropwizard-health behavior by adding config under the top-level config ``health``! 
+* Remove the HealthBundle from your Application's initialize() method.
+* Remove the reference to HealthConfiguration from your application's Configuration class.
+* Migrate YAML configuration previously associated with your HealthConfiguration field to instead be nested under a top-level health field (at the same level as server, logging, and metrics).
+* Review the new and changed configuration options mentioned below.
+* Ensure that you don't already have a custom configuration class member using the health name or rename it to something else or nest it under another field in order not to conflict with the new top-level field.
+* Remove the dependency on the io.dropwizard.modules:dropwizard-health library from your application's pom.xml file (or other build dependency definition file).
 
 New Configuration Options
 -------------------------
 * ``enabled`` flag added to turn on/off health functionality (defaults to ``true``).
 * ``name`` configuration added, used in metric naming, thread naming, and log messages.
-* ``responder`` factory added, to control how health check requests are responded to. For more info, see :ref:`the config reference <man-configuration-health-responder>`
+* ``responder`` factory added, to control how health check requests are responded to. For more info, see :ref:`the config reference <man-configuration-health-responder>`.
 * ``responseProvider`` factory added, to control the body of health check responses, separate from the mechanics of responding. For more info, see :ref:`the config reference <man-configuration-health-responseprovider>`.
 
 Changed Configuration Options
