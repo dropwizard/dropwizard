@@ -537,7 +537,7 @@ You will need to register your health check(s) in your ``Application`` class ``r
     @Override
     public void run(final AppConfiguration configuration, final Environment environment) {
         ...
-        environment.healthChecks().register("http-service-dependency", new HttpHealthCheck("http://some-http-dependency.com:8080/health-check"));
+        environment.healthChecks().register("some-http-dependency", new HttpHealthCheck("http://some-http-dependency.com:8080/health-check"));
     }
 
 **TCP**
@@ -547,7 +547,7 @@ You will need to register your health check(s) in your ``Application`` class ``r
     @Override
     public void run(final AppConfiguration configuration, final Environment environment) {
         ...
-        environment.healthChecks().register("tcp-service-dependency", new TcpHealthCheck("some-tcp-dependency.com", 443));
+        environment.healthChecks().register("some-tcp-dependency", new TcpHealthCheck("some-tcp-dependency.com", 443));
     }
 
 .. _man-core-health-data:
