@@ -167,7 +167,8 @@ public class DefaultServerFactory extends AbstractServerFactory {
         final Handler adminHandler = createAdminServlet(server,
                                                         environment.getAdminContext(),
                                                         environment.metrics(),
-                                                        environment.healthChecks());
+                                                        environment.healthChecks(),
+                                                        environment.admin());
         final RoutingHandler routingHandler = buildRoutingHandler(environment.metrics(),
                                                                   server,
                                                                   applicationHandler,

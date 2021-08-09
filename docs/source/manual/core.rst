@@ -450,6 +450,13 @@ If all health checks report success, a ``200 OK`` is returned. If any fail, a
 ``500 Internal Server Error`` is returned with the error messages and exception stack traces (if an
 exception was thrown).
 
+.. note::
+
+    This behavior overlaps in many ways with the new :ref:`man-core-health` functionality. If you wish to disable
+    the admin health servlet, a new flag was introduced into the health check configuration
+    :re:`man-configuration-healthchecks` to allow disabling it.
+
+
 All Dropwizard applications ship with the ``deadlocks`` health check installed by default, which uses
 Java 1.6's built-in thread deadlock detection to determine if any threads are deadlocked.
 

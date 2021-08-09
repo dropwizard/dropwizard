@@ -118,7 +118,8 @@ public class SimpleServerFactory extends AbstractServerFactory {
         final Handler adminHandler = createAdminServlet(server,
                                                         environment.getAdminContext(),
                                                         environment.metrics(),
-                                                        environment.healthChecks());
+                                                        environment.healthChecks(),
+                                                        environment.admin());
 
         final Connector conn = connector.build(server,
                                                environment.metrics(),

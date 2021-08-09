@@ -608,6 +608,7 @@ Health checks
 
     admin:
       healthChecks:
+        servletEnabled: true
         minThreads: 1
         maxThreads: 4
         workQueueSize: 1
@@ -615,10 +616,11 @@ Health checks
 
 ============= ======= ==========================================================
 Name                   Default Description
-============= ======= ==========================================================
-minThreads    1       The minimum number of threads for executing health checks.
-maxThreads    4       The maximum number of threads for executing health checks.
-workQueueSize 1       The length of the work queue for health check executions.
+============== ======= ==========================================================
+servletEnabled true    Whether to enable or disable the health check servlet.
+minThreads     1       The minimum number of threads for executing health checks.
+maxThreads     4       The maximum number of threads for executing health checks.
+workQueueSize  1       The length of the work queue for health check executions.
 ============= ======= ==========================================================
 
 .. _man-configuration-logging:
