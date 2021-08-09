@@ -413,6 +413,7 @@ public class HealthCheckManagerTest {
         long beforeCount = check.getCount();
         shutdownThread.start();
         shutdownThread.join();
+        Thread.sleep(20);
         long afterCount = check.getCount();
 
         // then
