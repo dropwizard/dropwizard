@@ -9,6 +9,13 @@ import io.dropwizard.health.HealthStateView;
 import io.dropwizard.health.HealthStatusChecker;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.util.Resources;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import javax.ws.rs.core.MediaType;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -16,12 +23,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
-import javax.ws.rs.core.MediaType;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -46,7 +48,7 @@ class JsonHealthResponseProviderTest {
     @BeforeEach
     void setUp() {
         this.jsonHealthResponseProvider = new JsonHealthResponseProvider(healthStatusChecker,
-                healthStateAggregator, mapper);
+            healthStateAggregator, mapper);
     }
 
     @Test
@@ -54,7 +56,7 @@ class JsonHealthResponseProviderTest {
         // given
         final HealthStateView view = new HealthStateView("foo", true, HealthCheckType.READY, true);
         final Map<String, Collection<String>> queryParams = Collections.singletonMap(
-                JsonHealthResponseProvider.NAME_QUERY_PARAM, Collections.singleton(view.getName()));
+            JsonHealthResponseProvider.NAME_QUERY_PARAM, Collections.singleton(view.getName()));
 
         // when
         when(healthStateAggregator.healthStateView(eq(view.getName()))).thenReturn(Optional.of(view));
@@ -65,7 +67,6 @@ class JsonHealthResponseProviderTest {
         assertThat(response.isHealthy()).isTrue();
         assertThat(response.getContentType()).isEqualTo(MediaType.APPLICATION_JSON);
         assertThat(response.getMessage()).isEqualToIgnoringWhitespace(fixture("json/single-healthy-response.json"));
-        assertThat(response.getViews()).containsOnly(view);
     }
 
     @Test
@@ -79,7 +80,7 @@ class JsonHealthResponseProviderTest {
         names.add(barView.getName());
         names.add(bazView.getName());
         final Map<String, Collection<String>> queryParams = Collections.singletonMap(
-                JsonHealthResponseProvider.NAME_QUERY_PARAM, names);
+            JsonHealthResponseProvider.NAME_QUERY_PARAM, names);
 
         // when
         when(healthStateAggregator.healthStateView(fooView.getName())).thenReturn(Optional.of(fooView));
@@ -92,7 +93,6 @@ class JsonHealthResponseProviderTest {
         assertThat(response.isHealthy()).isTrue();
         assertThat(response.getContentType()).isEqualTo(MediaType.APPLICATION_JSON);
         assertThat(response.getMessage()).isEqualToIgnoringWhitespace(fixture("json/multiple-healthy-responses.json"));
-        assertThat(response.getViews()).containsExactly(fooView, barView, bazView);
     }
 
     @Test
@@ -114,21 +114,21 @@ class JsonHealthResponseProviderTest {
         // given
         final ObjectMapper mapperMock = mock(ObjectMapper.class);
         this.jsonHealthResponseProvider = new JsonHealthResponseProvider(healthStatusChecker,
-                healthStateAggregator, mapperMock);
+            healthStateAggregator, mapperMock);
         final HealthStateView view = new HealthStateView("foo", true, HealthCheckType.READY, true);
         final Map<String, Collection<String>> queryParams = Collections.singletonMap(
-                JsonHealthResponseProvider.NAME_QUERY_PARAM, Collections.singleton(view.getName()));
+            JsonHealthResponseProvider.NAME_QUERY_PARAM, Collections.singleton(view.getName()));
         final JsonMappingException exception = JsonMappingException.fromUnexpectedIOE(new IOException("uh oh"));
 
         // when
         when(healthStateAggregator.healthStateView(view.getName())).thenReturn(Optional.of(view));
         when(mapperMock.writeValueAsString(any()))
-                .thenThrow(exception);
+            .thenThrow(exception);
 
         // then
         assertThatThrownBy(() -> jsonHealthResponseProvider.healthResponse(queryParams))
-                .isInstanceOf(RuntimeException.class)
-                .hasCauseReference(exception);
+            .isInstanceOf(RuntimeException.class)
+            .hasCauseReference(exception);
         verifyNoInteractions(healthStatusChecker);
     }
 

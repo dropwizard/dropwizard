@@ -1,9 +1,7 @@
 package io.dropwizard.health.response;
 
-import io.dropwizard.health.HealthStateView;
-import java.util.Collection;
-import java.util.Objects;
 import javax.annotation.Nonnull;
+import java.util.Objects;
 
 public final class HealthResponse {
     private final boolean healthy;
@@ -11,15 +9,11 @@ public final class HealthResponse {
     private final String message;
     @Nonnull
     private final String contentType;
-    @Nonnull
-    private final Collection<HealthStateView> views;
 
-    public HealthResponse(boolean healthy, @Nonnull final String message, @Nonnull final String contentType,
-                          final Collection<HealthStateView> views) {
+    public HealthResponse(boolean healthy, @Nonnull final String message, @Nonnull final String contentType) {
         this.healthy = healthy;
-        this.message = message;
+        this.message = Objects.requireNonNull(message);
         this.contentType = Objects.requireNonNull(contentType);
-        this.views = Objects.requireNonNull(views);
     }
 
     public boolean isHealthy() {
@@ -36,32 +30,26 @@ public final class HealthResponse {
         return contentType;
     }
 
-    @Nonnull
-    public Collection<HealthStateView> getViews() {
-        return views;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof HealthResponse)) return false;
         HealthResponse that = (HealthResponse) o;
-        return healthy == that.healthy && Objects.equals(message, that.message) && contentType.equals(that.contentType) && views.equals(that.views);
+        return healthy == that.healthy && Objects.equals(message, that.message) && contentType.equals(that.contentType);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(healthy, message, contentType, views);
+        return Objects.hash(healthy, message, contentType);
     }
 
     @Override
     public String toString() {
         return "HealthResponse{" +
-                "healthy=" + healthy +
-                ", message='" + message + '\'' +
-                ", contentType='" + contentType + '\'' +
-                ", views=" + views +
-                '}';
+            "healthy=" + healthy +
+            ", message='" + message + '\'' +
+            ", contentType='" + contentType + '\'' +
+            '}';
     }
 }
 

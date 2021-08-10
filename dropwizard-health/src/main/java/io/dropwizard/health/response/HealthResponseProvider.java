@@ -1,8 +1,8 @@
 package io.dropwizard.health.response;
 
+import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Map;
-import javax.annotation.Nonnull;
 
 public interface HealthResponseProvider {
     @Nonnull

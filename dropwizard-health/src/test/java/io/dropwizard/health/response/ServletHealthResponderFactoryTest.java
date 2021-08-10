@@ -9,12 +9,6 @@ import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
 import io.dropwizard.jersey.validation.Validators;
 import io.dropwizard.jetty.setup.ServletEnvironment;
-import java.io.File;
-import java.util.Collections;
-import java.util.List;
-import javax.servlet.ServletRegistration;
-import javax.validation.Validator;
-import javax.ws.rs.core.MediaType;
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpMethod;
 import org.eclipse.jetty.http.HttpTester;
@@ -28,6 +22,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import javax.servlet.ServletRegistration;
+import javax.validation.Validator;
+import javax.ws.rs.core.MediaType;
+import java.io.File;
+import java.util.Collections;
+import java.util.List;
+
 import static io.dropwizard.health.response.ServletHealthResponderFactory.SERVLET_SUFFIX;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
@@ -37,15 +39,13 @@ import static org.mockito.Mockito.when;
 public class ServletHealthResponderFactoryTest {
     private static final String NAME = "tests";
     private static final String HEALTH_CHECK_URI = "/health-check";
-    private static final HealthResponse SUCCESS = new HealthResponse(true, "healthy",
-            MediaType.TEXT_PLAIN, Collections.emptyList());
-    private static final HealthResponse FAIL = new HealthResponse(false, "unhealthy",
-            MediaType.TEXT_PLAIN, Collections.emptyList());
+    private static final HealthResponse SUCCESS = new HealthResponse(true, "healthy", MediaType.TEXT_PLAIN);
+    private static final HealthResponse FAIL = new HealthResponse(false, "unhealthy", MediaType.TEXT_PLAIN);
 
     private final ObjectMapper mapper = Jackson.newObjectMapper();
     private final Validator validator = Validators.newValidator();
     private final YamlConfigurationFactory<HealthResponderFactory> configFactory =
-            new YamlConfigurationFactory<>(HealthResponderFactory.class, validator, mapper, "dw");
+        new YamlConfigurationFactory<>(HealthResponderFactory.class, validator, mapper, "dw");
     private final HttpTester.Request request = new HttpTester.Request();
 
     private ServletTester servletTester;
@@ -63,7 +63,7 @@ public class ServletHealthResponderFactoryTest {
     private HealthEnvironment health;
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() {
         servletTester = new ServletTester();
         servletCaptor = ArgumentCaptor.forClass(ServletHealthResponder.class);
 
@@ -100,7 +100,7 @@ public class ServletHealthResponderFactoryTest {
         when(healthResponseProvider.healthResponse(eq(Collections.emptyMap()))).thenReturn(SUCCESS, FAIL);
         HealthResponderFactory factory = configFactory.build(yml);
         factory.configure(NAME, Collections.singletonList(HEALTH_CHECK_URI), healthResponseProvider, health, jersey,
-                servlets, mapper);
+            servlets, mapper);
         servletTester.addServlet(new ServletHolder(servletCaptor.getValue()), HEALTH_CHECK_URI);
         servletTester.start();
         HttpTester.Response healthyResponse = executeRequest(request);
@@ -122,7 +122,7 @@ public class ServletHealthResponderFactoryTest {
         when(healthResponseProvider.healthResponse(eq(Collections.emptyMap()))).thenReturn(SUCCESS, FAIL);
         HealthResponderFactory factory = configFactory.build(yml);
         factory.configure(NAME, Collections.singletonList(HEALTH_CHECK_URI), healthResponseProvider, health, jersey,
-                servlets, mapper);
+            servlets, mapper);
         servletTester.addServlet(new ServletHolder(servletCaptor.getValue()), HEALTH_CHECK_URI);
         servletTester.start();
         HttpTester.Response healthyResponse = executeRequest(request);
@@ -141,8 +141,8 @@ public class ServletHealthResponderFactoryTest {
 
     private void setupServletStubbing() {
         when(servlets.addServlet(eq(NAME + SERVLET_SUFFIX), servletCaptor.capture()))
-                .thenReturn(servletRegistration);
+            .thenReturn(servletRegistration);
         when(servletRegistration.addMapping(eq(HEALTH_CHECK_URI)))
-                .thenReturn(Collections.singleton(HEALTH_CHECK_URI));
+            .thenReturn(Collections.singleton(HEALTH_CHECK_URI));
     }
 }
