@@ -2,14 +2,14 @@ package io.dropwizard.health;
 
 import com.codahale.metrics.Counter;
 import com.codahale.metrics.health.HealthCheck;
-import io.dropwizard.health.conf.HealthCheckType;
-import io.dropwizard.health.conf.Schedule;
-import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Objects;
+
 class ScheduledHealthCheck implements Runnable {
-    private static final Logger log = LoggerFactory.getLogger(ScheduledHealthCheck.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ScheduledHealthCheck.class);
+
     private final String name;
     private final HealthCheckType type;
     private final boolean critical;
@@ -59,25 +59,29 @@ class ScheduledHealthCheck implements Runnable {
 
     @Override
     public void run() {
-        log.trace("executing health check: name={}", name);
+        LOGGER.trace("executing health check: name={}", name);
 
         HealthCheck.Result result;
         try {
-           result = healthCheck.execute();
+            result = healthCheck.execute();
         } catch (final Exception e) {
-            log.warn("Check for name={} failed exceptionally", name, e);
+            LOGGER.warn("Check for name={} failed exceptionally", name, e);
             result = HealthCheck.Result.unhealthy(e);
         }
 
         if (result.isHealthy()) {
-            log.trace("health check result: name={} result=success", name);
+            LOGGER.trace("health check result: name={} result=success", name);
             state.success();
             healthyCheckCounter.inc();
         } else {
-            log.trace("health check result: name={} result=failure result={}", name, result);
+            LOGGER.trace("health check result: name={} result=failure result={}", name, result);
             state.failure();
             unhealthyCheckCounter.inc();
         }
+    }
+
+    public HealthStateView view() {
+        return new HealthStateView(name, isHealthy(), type, isCritical());
     }
 
     @Override
@@ -86,12 +90,12 @@ class ScheduledHealthCheck implements Runnable {
         if (!(o instanceof ScheduledHealthCheck)) return false;
         final ScheduledHealthCheck that = (ScheduledHealthCheck) o;
         return critical == that.critical &&
-                Objects.equals(name, that.name) &&
-                Objects.equals(healthCheck, that.healthCheck) &&
-                Objects.equals(schedule, that.schedule) &&
-                Objects.equals(state, that.state) &&
-                Objects.equals(healthyCheckCounter, that.healthyCheckCounter) &&
-                Objects.equals(unhealthyCheckCounter, that.unhealthyCheckCounter);
+            Objects.equals(name, that.name) &&
+            Objects.equals(healthCheck, that.healthCheck) &&
+            Objects.equals(schedule, that.schedule) &&
+            Objects.equals(state, that.state) &&
+            Objects.equals(healthyCheckCounter, that.healthyCheckCounter) &&
+            Objects.equals(unhealthyCheckCounter, that.unhealthyCheckCounter);
     }
 
     @Override

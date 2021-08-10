@@ -5,15 +5,7 @@ import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheck;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import io.dropwizard.health.conf.HealthCheckConfiguration;
-import io.dropwizard.health.conf.HealthCheckType;
-import io.dropwizard.health.conf.Schedule;
 import io.dropwizard.util.Duration;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.atomic.AtomicBoolean;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -21,6 +13,14 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -42,7 +42,7 @@ public class HealthCheckManagerTest {
     public void shouldIgnoreUnconfiguredAddedHealthChecks() {
         // given
         final HealthCheckManager manager = new HealthCheckManager(Collections.emptyList(), scheduler,
-                new MetricRegistry(), SHUTDOWN_WAIT, true);
+            new MetricRegistry(), SHUTDOWN_WAIT, true, Collections.emptyList());
 
         // when
         manager.onHealthCheckAdded(NAME, mock(HealthCheck.class));
@@ -59,13 +59,13 @@ public class HealthCheckManagerTest {
         config.setCritical(true);
         config.setSchedule(new Schedule());
         final HealthCheckManager manager = new HealthCheckManager(Collections.singletonList(config), scheduler,
-                new MetricRegistry(), SHUTDOWN_WAIT, true);
+            new MetricRegistry(), SHUTDOWN_WAIT, true, Collections.emptyList());
 
         // when
         manager.onHealthCheckAdded(NAME, mock(HealthCheck.class));
 
         // then
-        verifyCheckWasScheduled(scheduler, NAME, true);
+        verifyCheckWasScheduled(scheduler, true);
     }
 
     @Test
@@ -73,7 +73,8 @@ public class HealthCheckManagerTest {
         // given
         final ScheduledHealthCheck healthCheck = mock(ScheduledHealthCheck.class);
         final HealthCheckManager manager = new HealthCheckManager(Collections.emptyList(), scheduler,
-                new MetricRegistry(), SHUTDOWN_WAIT, true, ImmutableMap.of(NAME, healthCheck));
+            new MetricRegistry(), SHUTDOWN_WAIT, true, Collections.emptyList());
+        manager.setChecks(ImmutableMap.of(NAME, healthCheck));
 
         // when
         manager.onHealthCheckRemoved(NAME, mock(HealthCheck.class));
@@ -86,7 +87,7 @@ public class HealthCheckManagerTest {
     public void shouldDoNothingWhenStateChangesForUnconfiguredHealthCheck() {
         // given
         final HealthCheckManager manager = new HealthCheckManager(Collections.emptyList(), scheduler,
-                new MetricRegistry(), SHUTDOWN_WAIT, true);
+            new MetricRegistry(), SHUTDOWN_WAIT, true, Collections.emptyList());
 
         // when
         manager.onStateChanged(NAME, false);
@@ -104,7 +105,7 @@ public class HealthCheckManagerTest {
         config.setInitialState(false);
         config.setSchedule(new Schedule());
         final HealthCheckManager manager = new HealthCheckManager(Collections.singletonList(config), scheduler,
-                new MetricRegistry(), SHUTDOWN_WAIT, false);
+            new MetricRegistry(), SHUTDOWN_WAIT, false, Collections.emptyList());
         manager.initializeAppHealth();
         final HealthCheck check = mock(HealthCheck.class);
 
@@ -121,7 +122,7 @@ public class HealthCheckManagerTest {
         assertThat(beforeSuccessAliveStatus).isTrue();
         assertThat(afterSuccessReadyStatus).isTrue();
         assertThat(afterSuccessAliveStatus).isTrue();
-        verifyCheckWasScheduled(scheduler, NAME, true);
+        verifyCheckWasScheduled(scheduler, true);
     }
 
     @Test
@@ -132,7 +133,7 @@ public class HealthCheckManagerTest {
         config.setCritical(true);
         config.setSchedule(new Schedule());
         final HealthCheckManager manager = new HealthCheckManager(Collections.singletonList(config), scheduler,
-                new MetricRegistry(), SHUTDOWN_WAIT, true);
+            new MetricRegistry(), SHUTDOWN_WAIT, true, Collections.emptyList());
         manager.initializeAppHealth();
         final HealthCheck check = mock(HealthCheck.class);
 
@@ -149,7 +150,7 @@ public class HealthCheckManagerTest {
         assertThat(beforeFailureAliveStatus).isTrue();
         assertThat(afterFailureReadyStatus).isFalse();
         assertThat(afterFailureAliveStatus).isTrue();
-        verifyCheckWasScheduled(scheduler, NAME, true);
+        verifyCheckWasScheduled(scheduler, true);
     }
 
     @Test
@@ -160,7 +161,7 @@ public class HealthCheckManagerTest {
         config.setType(HealthCheckType.ALIVE);
         config.setSchedule(new Schedule());
         final HealthCheckManager manager = new HealthCheckManager(Collections.singletonList(config), scheduler,
-                new MetricRegistry(), SHUTDOWN_WAIT, true);
+            new MetricRegistry(), SHUTDOWN_WAIT, true, Collections.emptyList());
         manager.initializeAppHealth();
         final HealthCheck check = mock(HealthCheck.class);
 
@@ -177,7 +178,7 @@ public class HealthCheckManagerTest {
         assertThat(beforeFailureAliveStatus).isTrue();
         assertThat(afterFailureReadyStatus).isFalse();
         assertThat(afterFailureAliveStatus).isFalse();
-        verifyCheckWasScheduled(scheduler, NAME, true);
+        verifyCheckWasScheduled(scheduler, true);
     }
 
     @Test
@@ -188,7 +189,7 @@ public class HealthCheckManagerTest {
         config.setCritical(true);
         config.setSchedule(new Schedule());
         final HealthCheckManager manager = new HealthCheckManager(Collections.singletonList(config), scheduler,
-                new MetricRegistry(), SHUTDOWN_WAIT, true);
+            new MetricRegistry(), SHUTDOWN_WAIT, true, Collections.emptyList());
         final HealthCheck check = mock(HealthCheck.class);
 
         // when
@@ -200,29 +201,29 @@ public class HealthCheckManagerTest {
 
         // then
         assertThat(beforeRecovery)
-                .isFalse();
+            .isFalse();
         assertThat(afterRecovery)
-                .isTrue();
+            .isTrue();
         ArgumentCaptor<ScheduledHealthCheck> checkCaptor = ArgumentCaptor.forClass(ScheduledHealthCheck.class);
         ArgumentCaptor<Boolean> healthyCaptor = ArgumentCaptor.forClass(Boolean.class);
         verify(scheduler).scheduleInitial(checkCaptor.capture());
         verify(scheduler, times(2)).schedule(checkCaptor.capture(), healthyCaptor.capture());
         assertThat(checkCaptor.getAllValues().get(0).getName())
-                .isEqualTo(NAME);
+            .isEqualTo(NAME);
         assertThat(checkCaptor.getAllValues().get(0).isCritical())
-                .isTrue();
+            .isTrue();
         assertThat(checkCaptor.getAllValues().get(1).getName())
-                .isEqualTo(NAME);
+            .isEqualTo(NAME);
         assertThat(checkCaptor.getAllValues().get(1).isCritical())
-                .isTrue();
+            .isTrue();
         assertThat(healthyCaptor.getAllValues().get(0))
-                .isFalse();
+            .isFalse();
         assertThat(checkCaptor.getAllValues().get(2).getName())
-                .isEqualTo(NAME);
+            .isEqualTo(NAME);
         assertThat(checkCaptor.getAllValues().get(2).isCritical())
-                .isTrue();
+            .isTrue();
         assertThat(healthyCaptor.getAllValues().get(1))
-                .isTrue();
+            .isTrue();
     }
 
     @Test
@@ -234,7 +235,7 @@ public class HealthCheckManagerTest {
         config.setSchedule(new Schedule());
         final HealthCheck check = mock(HealthCheck.class);
         final HealthCheckManager manager = new HealthCheckManager(Collections.singletonList(config), scheduler,
-                new MetricRegistry(), SHUTDOWN_WAIT, true);
+            new MetricRegistry(), SHUTDOWN_WAIT, true, Collections.emptyList());
         manager.initializeAppHealth();
 
         // when
@@ -243,7 +244,7 @@ public class HealthCheckManagerTest {
         boolean afterFailure = manager.isHealthy();
 
         // then
-        verifyCheckWasScheduled(scheduler, NAME, false);
+        verifyCheckWasScheduled(scheduler, false);
         assertThat(afterFailure).isTrue();
     }
 
@@ -260,7 +261,7 @@ public class HealthCheckManagerTest {
         criticalConfig.setSchedule(new Schedule());
         final List<HealthCheckConfiguration> configs = ImmutableList.of(nonCriticalConfig, criticalConfig);
         final HealthCheckManager manager = new HealthCheckManager(configs, scheduler, new MetricRegistry(),
-                SHUTDOWN_WAIT, true);
+            SHUTDOWN_WAIT, true, Collections.emptyList());
         final HealthCheck check = mock(HealthCheck.class);
 
         // when
@@ -274,39 +275,39 @@ public class HealthCheckManagerTest {
 
         // then
         assertThat(beforeRecovery)
-                .isFalse();
+            .isFalse();
         assertThat(afterRecovery)
-                .isFalse();
+            .isFalse();
         ArgumentCaptor<ScheduledHealthCheck> checkCaptor = ArgumentCaptor.forClass(ScheduledHealthCheck.class);
         ArgumentCaptor<Boolean> healthyCaptor = ArgumentCaptor.forClass(Boolean.class);
         verify(scheduler, times(2)).scheduleInitial(checkCaptor.capture());
         verify(scheduler, times(3)).schedule(checkCaptor.capture(), healthyCaptor.capture());
         assertThat(checkCaptor.getAllValues().get(0).getName())
-                .isEqualTo(NAME);
+            .isEqualTo(NAME);
         assertThat(checkCaptor.getAllValues().get(0).isCritical())
-                .isFalse();
+            .isFalse();
         assertThat(checkCaptor.getAllValues().get(1).getName())
-                .isEqualTo(NAME_2);
+            .isEqualTo(NAME_2);
         assertThat(checkCaptor.getAllValues().get(1).isCritical())
-                .isTrue();
+            .isTrue();
         assertThat(checkCaptor.getAllValues().get(2).getName())
-                .isEqualTo(NAME);
+            .isEqualTo(NAME);
         assertThat(checkCaptor.getAllValues().get(2).isCritical())
-                .isFalse();
+            .isFalse();
         assertThat(healthyCaptor.getAllValues().get(0))
-                .isFalse();
+            .isFalse();
         assertThat(checkCaptor.getAllValues().get(3).getName())
-                .isEqualTo(NAME_2);
+            .isEqualTo(NAME_2);
         assertThat(checkCaptor.getAllValues().get(3).isCritical())
-                .isTrue();
+            .isTrue();
         assertThat(healthyCaptor.getAllValues().get(1))
-                .isFalse();
+            .isFalse();
         assertThat(checkCaptor.getAllValues().get(4).getName())
-                .isEqualTo(NAME);
+            .isEqualTo(NAME);
         assertThat(checkCaptor.getAllValues().get(4).isCritical())
-                .isFalse();
+            .isFalse();
         assertThat(healthyCaptor.getAllValues().get(2))
-                .isTrue();
+            .isTrue();
     }
 
     @Test
@@ -324,20 +325,40 @@ public class HealthCheckManagerTest {
         final List<HealthCheckConfiguration> configs = ImmutableList.of(nonCriticalConfig, criticalConfig);
         final HealthCheck check = mock(HealthCheck.class);
         final MetricRegistry metrics = new MetricRegistry();
-        final ScheduledHealthCheck check1 = new ScheduledHealthCheck(NAME, READY, nonCriticalConfig.isCritical(), check,
-                schedule, new State(NAME, schedule.getFailureAttempts(), schedule.getSuccessAttempts(), true,
-                (name, newState) -> {}), metrics.counter(NAME + ".healthy"), metrics.counter(NAME + ".unhealthy"));
-        final ScheduledHealthCheck check2 = new ScheduledHealthCheck(NAME_2, READY, criticalConfig.isCritical(), check,
-                schedule, new State(NAME, schedule.getFailureAttempts(), schedule.getSuccessAttempts(), true,
-                (name, newState) -> {}), metrics.counter(NAME_2 + ".healthy"), metrics.counter(NAME_2 + ".unhealthy"));
+        final AtomicInteger healthyCounter = new AtomicInteger();
+        final AtomicInteger unhealthyCounter = new AtomicInteger();
+
+        final HealthStateListener countingListener = new HealthStateListener() {
+            @Override
+            public void onHealthyCheck(String healthCheckName) {
+                healthyCounter.incrementAndGet();
+            }
+
+            @Override
+            public void onUnhealthyCheck(String healthCheckName) {
+                unhealthyCounter.incrementAndGet();
+            }
+
+            @Override
+            public void onStateChanged(String healthCheckName, boolean healthy) {
+            }
+        };
         final HealthCheckManager manager = new HealthCheckManager(configs, scheduler, metrics, SHUTDOWN_WAIT, true,
-                ImmutableMap.of(NAME, check1, NAME_2, check2));
+            Collections.singleton(countingListener));
+
+        final ScheduledHealthCheck check1 = new ScheduledHealthCheck(NAME, READY, nonCriticalConfig.isCritical(), check,
+            schedule, new State(NAME, schedule.getFailureAttempts(), schedule.getSuccessAttempts(), true, manager),
+            metrics.counter(NAME + ".healthy"), metrics.counter(NAME + ".unhealthy"));
+        final ScheduledHealthCheck check2 = new ScheduledHealthCheck(NAME_2, READY, criticalConfig.isCritical(), check,
+            schedule, new State(NAME, schedule.getFailureAttempts(), schedule.getSuccessAttempts(), true, manager),
+            metrics.counter(NAME_2 + ".healthy"), metrics.counter(NAME_2 + ".unhealthy"));
+        manager.setChecks(ImmutableMap.of(NAME, check1, NAME_2, check2));
 
         // then
         assertThat(metrics.gauge(manager.getAggregateHealthyName(), null).getValue())
-                .isEqualTo(2L);
+            .isEqualTo(2L);
         assertThat(metrics.gauge(manager.getAggregateUnhealthyName(), null).getValue())
-                .isEqualTo(0L);
+            .isEqualTo(0L);
 
         // when
         when(check.execute()).thenReturn(HealthCheck.Result.unhealthy("because"));
@@ -348,9 +369,11 @@ public class HealthCheckManagerTest {
 
         // then
         assertThat(metrics.gauge(manager.getAggregateHealthyName(), null).getValue())
-                .isEqualTo(1L);
+            .isEqualTo(1L);
         assertThat(metrics.gauge(manager.getAggregateUnhealthyName(), null).getValue())
-                .isEqualTo(1L);
+            .isEqualTo(1L);
+        assertThat(unhealthyCounter.get()).isEqualTo(3);
+        assertThat(healthyCounter.get()).isEqualTo(0);
     }
 
     @Test
@@ -374,7 +397,8 @@ public class HealthCheckManagerTest {
         final Duration shutdownWaitPeriod = Duration.milliseconds(shutdownWaitTimeMillis);
 
         // when
-        final HealthCheckManager manager = new HealthCheckManager(configs, scheduler, metrics, shutdownWaitPeriod, true);
+        final HealthCheckManager manager = new HealthCheckManager(configs, scheduler, metrics, shutdownWaitPeriod,
+            true, Collections.emptyList());
         manager.onHealthCheckAdded("check1", check);
         // simulate JVM shutdown hook
         final Thread shutdownThread = new Thread(() -> {
@@ -389,6 +413,7 @@ public class HealthCheckManagerTest {
         long beforeCount = check.getCount();
         shutdownThread.start();
         shutdownThread.join();
+        Thread.sleep(20);
         long afterCount = check.getCount();
 
         // then
@@ -396,13 +421,13 @@ public class HealthCheckManagerTest {
         assertThat(afterCount - beforeCount).isGreaterThanOrEqualTo(expectedCount);
     }
 
-    private void verifyCheckWasScheduled(HealthCheckScheduler scheduler, String name, boolean critical) {
+    private void verifyCheckWasScheduled(HealthCheckScheduler scheduler, boolean critical) {
         ArgumentCaptor<ScheduledHealthCheck> checkCaptor = ArgumentCaptor.forClass(ScheduledHealthCheck.class);
         verify(scheduler).scheduleInitial(checkCaptor.capture());
         assertThat(checkCaptor.getValue().getName())
-                .isEqualTo(name);
+            .isEqualTo(HealthCheckManagerTest.NAME);
         assertThat(checkCaptor.getValue().isCritical())
-                .isEqualTo(critical);
+            .isEqualTo(critical);
     }
 
     private static class CountingHealthCheck extends HealthCheck {

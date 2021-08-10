@@ -20,10 +20,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Response;
+import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
-
-import java.io.IOException;
 
 @ExtendWith(DropwizardExtensionsSupport.class)
 public class FormsAppTest {
@@ -48,7 +47,7 @@ public class FormsAppTest {
         try (final FormDataMultiPart fdmp = new FormDataMultiPart()) {
             final MultiPart mp = fdmp.bodyPart(new FormDataBodyPart(
                 FormDataContentDisposition.name("file").fileName("fileName").build(), "CONTENT"));
-    
+
             final String url = String.format("http://localhost:%d/uploadFile", RULE.getLocalPort());
             final String response = client.target(url).register(MultiPartFeature.class).request()
                 .post(Entity.entity(mp, mp.getMediaType()), String.class);
@@ -61,7 +60,7 @@ public class FormsAppTest {
      * sending forms to work. Maybe someday this requirement will be relaxed and
      * this test can be updated for the new behavior. For more info, see issues
      * #1013 and #1094
-     * 
+     *
      * @throws IOException
      */
     @Test

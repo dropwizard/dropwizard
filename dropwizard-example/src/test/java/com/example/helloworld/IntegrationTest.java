@@ -101,4 +101,16 @@ class IntegrationTest {
                 .contains("0.0.0.0:" + APP.getLocalPort(), "Starting hello-world", "Started application", "Started admin")
                 .doesNotContain("Exception", "ERROR", "FATAL");
     }
+
+    @Test
+    void healthCheckShouldSucceed() {
+        final Response healthCheckResponse =
+                APP.client().target("http://localhost:" + APP.getLocalPort() + "/health-check")
+                .request()
+                .get();
+
+        assertThat(healthCheckResponse)
+                .extracting(Response::getStatus)
+                .isEqualTo(Response.Status.OK.getStatusCode());
+    }
 }

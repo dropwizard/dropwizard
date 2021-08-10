@@ -263,7 +263,6 @@ Many, many thanks to:
 * :ghuser:`Michael McCarthy <mikeycmccarthy>`
 * :ghuser:`Michael Rice <mrice>`
 * :ghuser:`Michael Silvanovich <Silvmike>`
-* :ghuser:`Michael Zamani <mzamani1>`
 * :ghuser:`Michal Rutkowski <velocipedist>`
 * :ghuser:`Michel Decima <lehcim>`
 * :ghuser:`Michiel Leegwater <mleegwt>`
@@ -277,6 +276,7 @@ Many, many thanks to:
 * :ghuser:`Mårten Gustafson <chids>`
 * :ghuser:`nanreh <nanreh>`
 * :ghuser:`Nasir <mnrasul>`
+* :ghuser:`Natalie Zamani <natalie-zamani>`
 * :ghuser:`Natan Abolafya <natnan>`
 * :ghuser:`Nicholas Heitz <nheitz>`
 * :ghuser:`Nick Babcock <nickbabcock>`

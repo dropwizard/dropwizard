@@ -8,10 +8,11 @@ import io.dropwizard.metrics.MetricsFactory;
 import io.dropwizard.server.DefaultServerFactory;
 import io.dropwizard.server.ServerFactory;
 import io.dropwizard.setup.AdminFactory;
-import java.util.Optional;
+
 import javax.annotation.Nullable;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.Optional;
 
 /**
  * An object representation of the YAML configuration file. Extend this with your own configuration

@@ -4,20 +4,21 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.io.Resources;
 import io.dropwizard.configuration.YamlConfigurationFactory;
-import io.dropwizard.health.conf.HealthCheckConfiguration;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.validation.Validators;
+import org.junit.jupiter.api.Test;
+
+import javax.validation.Validator;
 import java.io.File;
 import java.util.stream.Collectors;
-import javax.validation.Validator;
-import org.junit.jupiter.api.Test;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class DefaultHealthFactoryTest {
     private final ObjectMapper objectMapper = Jackson.newObjectMapper();
     private final Validator validator = Validators.newValidator();
     private final YamlConfigurationFactory<DefaultHealthFactory> configFactory =
-            new YamlConfigurationFactory<>(DefaultHealthFactory.class, validator, objectMapper, "dw");
+        new YamlConfigurationFactory<>(DefaultHealthFactory.class, validator, objectMapper, "dw");
 
     @Test
     public void shouldBuildHealthFactoryFromYaml() throws Exception {
@@ -29,15 +30,15 @@ public class DefaultHealthFactoryTest {
         assertThat(healthFactory.getHealthCheckUrlPaths()).isEqualTo(ImmutableList.of("/health-check"));
 
         assertThat(healthFactory.getHealthCheckConfigurations()
-                        .stream()
-                        .map(HealthCheckConfiguration::getName)
-                        .collect(Collectors.toList()))
-                .contains("foundationdb", "kafka", "redis");
+            .stream()
+            .map(HealthCheckConfiguration::getName)
+            .collect(Collectors.toList()))
+            .contains("foundationdb", "kafka", "redis");
         assertThat(healthFactory.getHealthCheckConfigurations()
-                        .stream()
-                        .map(HealthCheckConfiguration::isCritical)
-                        .collect(Collectors.toList()))
-                .contains(true, false, false);
+            .stream()
+            .map(HealthCheckConfiguration::isCritical)
+            .collect(Collectors.toList()))
+            .contains(true, false, false);
         healthFactory.getHealthCheckConfigurations().forEach(healthCheckConfig -> {
             assertThat(healthCheckConfig.getSchedule().getCheckInterval().toSeconds()).isEqualTo(5L);
             assertThat(healthCheckConfig.getSchedule().getDowntimeInterval().toSeconds()).isEqualTo(30L);

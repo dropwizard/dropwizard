@@ -7,8 +7,6 @@ import ch.qos.logback.core.Appender;
 import com.codahale.metrics.health.HealthCheck;
 import com.codahale.metrics.health.HealthCheckRegistry;
 import com.google.common.collect.ImmutableList;
-import io.dropwizard.health.conf.HealthCheckConfiguration;
-import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,6 +16,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
+
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.mock;
@@ -33,14 +34,14 @@ public class HealthCheckConfigValidatorTest {
     @BeforeEach
     public void setUp() throws Exception {
         ch.qos.logback.classic.Logger logger = (ch.qos.logback.classic.Logger) LoggerFactory
-                .getLogger(HealthCheckConfigValidator.class);
+            .getLogger(HealthCheckConfigValidator.class);
         logger.addAppender(mockLogAppender);
     }
 
     @AfterEach
     public void tearDown() throws Exception {
         ch.qos.logback.classic.Logger logger = (ch.qos.logback.classic.Logger) LoggerFactory
-                .getLogger(HealthCheckConfigValidator.class);
+            .getLogger(HealthCheckConfigValidator.class);
         logger.detachAppender(mockLogAppender);
         MDC.clear();
     }
@@ -100,11 +101,11 @@ public class HealthCheckConfigValidatorTest {
         LoggingEvent logEvent = captor.getValue();
         assertThat(logEvent.getLevel()).isEqualTo(Level.INFO);
         assertThat(logEvent.getFormattedMessage())
-                .doesNotContain("  * check-1");
+            .doesNotContain("  * check-1");
         assertThat(logEvent.getFormattedMessage())
-                .contains("  * check-2");
+            .contains("  * check-2");
         assertThat(logEvent.getFormattedMessage())
-                .contains("  * check-3");
+            .contains("  * check-3");
     }
 
     @Test
@@ -131,15 +132,15 @@ public class HealthCheckConfigValidatorTest {
             verify(mockLogAppender).doAppend(captor.capture());
             LoggingEvent logEvent = captor.getValue();
             assertThat(logEvent.getLevel())
-                    .isEqualTo(Level.ERROR);
+                .isEqualTo(Level.ERROR);
             assertThat(logEvent.getFormattedMessage())
-                    .doesNotContain("  * check-1");
+                .doesNotContain("  * check-1");
             assertThat(logEvent.getFormattedMessage())
-                    .contains("  * check-3");
+                .contains("  * check-3");
             assertThat(logEvent.getFormattedMessage())
-                    .contains("  * check-3");
+                .contains("  * check-3");
             assertThat(e.getMessage())
-                    .contains("[check-3, check-2]");
+                .contains("[check-3, check-2]");
         }
     }
 }
