@@ -9,11 +9,14 @@ public final class HealthResponse {
     private final String message;
     @Nonnull
     private final String contentType;
+    private final int status;
 
-    public HealthResponse(boolean healthy, @Nonnull final String message, @Nonnull final String contentType) {
+    public HealthResponse(boolean healthy, @Nonnull final String message, @Nonnull final String contentType,
+                          int status) {
         this.healthy = healthy;
         this.message = Objects.requireNonNull(message);
         this.contentType = Objects.requireNonNull(contentType);
+        this.status = status;
     }
 
     public boolean isHealthy() {
@@ -30,17 +33,21 @@ public final class HealthResponse {
         return contentType;
     }
 
+    public int getStatus() {
+        return status;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof HealthResponse)) return false;
         HealthResponse that = (HealthResponse) o;
-        return healthy == that.healthy && Objects.equals(message, that.message) && contentType.equals(that.contentType);
+        return healthy == that.healthy && status == that.status && message.equals(that.message) && contentType.equals(that.contentType);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(healthy, message, contentType);
+        return Objects.hash(healthy, message, contentType, status);
     }
 
     @Override
@@ -49,6 +56,7 @@ public final class HealthResponse {
             "healthy=" + healthy +
             ", message='" + message + '\'' +
             ", contentType='" + contentType + '\'' +
+            ", status=" + status +
             '}';
     }
 }

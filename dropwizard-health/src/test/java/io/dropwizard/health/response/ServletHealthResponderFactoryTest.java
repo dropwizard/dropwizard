@@ -39,8 +39,10 @@ import static org.mockito.Mockito.when;
 public class ServletHealthResponderFactoryTest {
     private static final String NAME = "tests";
     private static final String HEALTH_CHECK_URI = "/health-check";
-    private static final HealthResponse SUCCESS = new HealthResponse(true, "healthy", MediaType.TEXT_PLAIN);
-    private static final HealthResponse FAIL = new HealthResponse(false, "unhealthy", MediaType.TEXT_PLAIN);
+    private static final HealthResponse SUCCESS = new HealthResponse(true, "healthy", MediaType.TEXT_PLAIN,
+        Response.SC_OK);
+    private static final HealthResponse FAIL = new HealthResponse(false, "unhealthy", MediaType.TEXT_PLAIN,
+        Response.SC_SERVICE_UNAVAILABLE);
 
     private final ObjectMapper mapper = Jackson.newObjectMapper();
     private final Validator validator = Validators.newValidator();

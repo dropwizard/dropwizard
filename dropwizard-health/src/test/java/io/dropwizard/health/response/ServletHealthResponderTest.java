@@ -28,8 +28,10 @@ import static org.mockito.Mockito.when;
 class ServletHealthResponderTest {
     private static final String NO_STORE = "no-store";
     private static final String HEALTH_CHECK_URI = "/health-check";
-    private static final HealthResponse SUCCESS = new HealthResponse(true, "healthy", MediaType.TEXT_PLAIN);
-    private static final HealthResponse FAIL = new HealthResponse(false, "unhealthy", MediaType.TEXT_PLAIN);
+    private static final HealthResponse SUCCESS = new HealthResponse(true, "healthy", MediaType.TEXT_PLAIN,
+        Response.SC_OK);
+    private static final HealthResponse FAIL = new HealthResponse(false, "unhealthy", MediaType.TEXT_PLAIN,
+        Response.SC_SERVICE_UNAVAILABLE);
 
     private final HttpTester.Request request = new HttpTester.Request();
 

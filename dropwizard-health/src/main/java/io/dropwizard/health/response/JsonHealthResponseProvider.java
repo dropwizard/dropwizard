@@ -60,7 +60,16 @@ public class JsonHealthResponseProvider implements HealthResponseProvider {
         }
         final boolean healthy = healthStatusChecker.isHealthy(type);
 
-        return new HealthResponse(healthy, responseBody, MEDIA_TYPE);
+        final int status;
+        if (healthy) {
+            // HTTP OK
+            status = 200;
+        } else {
+            // HTTP Service unavailable
+            status = 503;
+        }
+
+        return new HealthResponse(healthy, responseBody, MEDIA_TYPE, status);
     }
 
     private Set<String> getNamesFromQueryParams(final Map<String, Collection<String>> queryParams) {
