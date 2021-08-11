@@ -13,7 +13,6 @@ import org.eclipse.jetty.util.component.AbstractLifeCycle;
 import org.eclipse.jetty.util.component.LifeCycle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -24,6 +23,7 @@ public class AdminEnvironment extends ServletEnvironment {
 
     private final HealthCheckRegistry healthChecks;
     private final TaskServlet tasks;
+    private final boolean healthCheckServletEnabled;
 
     /**
      * Creates a new {@link AdminEnvironment}.
@@ -39,6 +39,7 @@ public class AdminEnvironment extends ServletEnvironment {
         this.healthChecks = healthChecks;
         this.healthChecks.register("deadlocks", new ThreadDeadlockHealthCheck());
         this.tasks = new TaskServlet(metricRegistry, adminFactory.getTasks());
+        this.healthCheckServletEnabled = adminFactory.getHealthChecks().isServletEnabled();
         tasks.add(new GarbageCollectionTask());
         tasks.add(new LogConfigurationTask());
         addServlet("tasks", tasks).addMapping("/tasks/*");
@@ -94,5 +95,9 @@ public class AdminEnvironment extends ServletEnvironment {
             ));
         }
         LOGGER.debug("health checks = {}", healthChecks.getNames());
+    }
+
+    public boolean isHealthCheckServletEnabled() {
+        return healthCheckServletEnabled;
     }
 }

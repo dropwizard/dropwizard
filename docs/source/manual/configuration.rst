@@ -608,6 +608,7 @@ Health checks
 
     admin:
       healthChecks:
+        servletEnabled: true
         minThreads: 1
         maxThreads: 4
         workQueueSize: 1
@@ -615,10 +616,11 @@ Health checks
 
 ============= ======= ==========================================================
 Name                   Default Description
-============= ======= ==========================================================
-minThreads    1       The minimum number of threads for executing health checks.
-maxThreads    4       The maximum number of threads for executing health checks.
-workQueueSize 1       The length of the work queue for health check executions.
+============== ======= ==========================================================
+servletEnabled true    Whether to enable or disable the health check servlet.
+minThreads     1       The minimum number of threads for executing health checks.
+maxThreads     4       The maximum number of threads for executing health checks.
+workQueueSize  1       The length of the work queue for health check executions.
 ============= ======= ==========================================================
 
 .. _man-configuration-logging:
@@ -1265,6 +1267,149 @@ logger                 metrics          The name of the logger to write metrics 
 markerName             (none)           The name of the marker to mark logged metrics with.
 ====================== ===============  ====================================================================================================
 
+
+.. _man-configuration-health:
+
+Health
+=======
+
+.. code-block:: yaml
+
+    health:
+      enabled: true
+      delayedShutdownHandlerEnabled: true
+      shutdownWaitPeriod: 5s
+      healthCheckUrlPaths: ["/health-check"]
+      healthChecks:
+        - <some health check config>
+        - <some other health check config>
+      initialOverallState: false
+      responseProvider:
+        type: json
+      responder:
+        type: servlet
+
+
+============================== =======================  ====================================================================================================
+Name                           Default                  Description
+============================== =======================  ====================================================================================================
+enabled                        true                     Flag indicating whether to enable health functionality or not.
+delayedShutdownHandlerEnabled  false                    Flag indicating whether to delay shutdown to allow already processing requests to complete.
+shutdownWaitPeriod             15 seconds               Amount of time to delay shutdown by to allow already processing requests to complete. Only applicable if ``delayedShutdownHandlerEnabled`` is true.
+healthCheckUrlPaths            \["/health-check"\]      URLs to expose the app's health check on.
+healthChecks                   []                       A list of configured health checks. See the [Health Check Configuration section](#health-check-configuration) for more details.
+initialOverallState            true                     Flag indicating whether the overall health state of the application should start as healthy or unhealthy. A value of ``true`` indicates an initial state of healthy while a value of ``false`` indicates an initial state of unhealthy.
+responseProvider               json            The health response provider that is used to respond to generate responses to return to health check requests. This can be implemented using Jersey, Jetty, or other technologies if desired. See the :ref:`detailed JSON health response provider section <man-configuration-health-responseprovider>` for more details.
+responder                      servlet                  The health responder that is used to respond to health check requests. This can be implemented using Jersey, Jetty, or other technologies if desired. See the :ref:`servlet health responder section <man-configuration-health-responder>` for more details.
+============================== =======================  ====================================================================================================
+
+
+.. _man-configuration-health-checks:
+
+Health Checks
+--------------
+
+Options around a particular health check which is registered in an Application
+
+  .. code-block:: yaml
+     
+      health:
+        healthChecks:
+          - name: file-system
+            type: alive
+            critical: true
+            initialState: true
+          - name: database
+            type: ready
+            critical: false
+            initialState: false
+
+
+============================== =======================  ====================================================================================================
+Name                           Default                  Description
+============================== =======================  ====================================================================================================
+name                           (none)                   The name of this health check. This must be unique, and match the name of the check registered in code. (On the application's ``HealthCheckRegistry``)
+type                           ready                    The type of this health check. This is either ``alive`` or ``ready``. See the :ref:`application status section <man-core-health-status>` for more details.
+critical                       false                    Flag indicating whether this dependency is critical to determine the health of the application. If ``true`` and this dependency is unhealthy, the application will also be marked as unhealthy.
+initialState                   true                     Flag indicating the initial state to use for this health check. A value of ``true`` indicates an initial state of healthy while a value of ``false`` indicates an initial state of unhealthy.
+schedule                       default schedule         The schedule that this health check will be run on. See the :ref:`schedule section <man-configuration-health-schedule>` for more details.
+============================== =======================  ====================================================================================================
+
+
+.. _man-configuration-health-schedule:
+
+Schedule
+-----------
+
+The schedule on which to execute a particular :ref:`health checks <man-configuration-health-checks>`
+
+.. code-block:: yaml
+
+    health:
+       healthChecks:
+       - name: file-system
+         schedule:
+           checkInterval: 10s
+           downtimeInterval: 2s
+           initialDelay: 5s
+           failureAttempts: 1
+           successAttempts: 2
+
+
+============================== ============================  ====================================================================================================
+Name                           Default                       Description
+============================== ============================  ====================================================================================================
+checkInterval                  5 seconds                     The interval on which to perform a health check for this dependency while the dependency is in a healthy state.
+downtimeInterval               30 seconds                    The interval on which to perform a health check for this dependency while the dependency is in an unhealthy state.
+initialDelay                   the value of `checkInterval`  The initial delay to use when first scheduling the health check.
+failureAttempts                3                             The threshold of consecutive failed attempts needed to mark a dependency as unhealthy (from a healthy state).
+successAttempts                2                             The threshold of consecutive successful attempts needed to mark a dependency as healthy (from an unhealthy state).
+============================== ============================  ====================================================================================================
+
+.. _man-configuration-health-responseprovider:
+
+Detailed JSON Health Response Provider
+--------------------------------------
+
+A detailed servlet used to handle health check requests, which returns a JSON response explaining the various
+registered health checks, their current status, and other metadata.
+
+.. code-block:: yaml
+
+    health:
+      responseProvider:
+        type: json
+
+============================== ============================  ====================================================================================================
+Name                           Default                       Description
+============================== ============================  ====================================================================================================
+type                           json                 - json
+============================== ============================  ====================================================================================================
+
+
+.. _man-configuration-health-responder:
+
+Servlet Health Responder
+-------------------------
+
+A servlet responder used to handle health check requests.
+
+.. code-block:: yaml
+
+    health:
+      responder:
+        type: servlet
+        cacheControlEnabled: true
+        cacheControlValue: "no-store"
+
+
+============================== ============================  ====================================================================================================
+Name                           Default                       Description
+============================== ============================  ====================================================================================================
+type                           servlet                       - servlet
+cacheControlEnabled            true                          Flag controlling whether a ``Cache-Control`` header will be included in the health check response or not. Set header value using ``cacheControlValue``.
+cacheControlValue              "no-store"                    The value to be set in the ``Cache-Control`` header in the health check response. Only used if ``cacheControlEnabled`` is set to ``true``.
+============================== ============================  ====================================================================================================
 
 .. _man-configuration-clients:
 

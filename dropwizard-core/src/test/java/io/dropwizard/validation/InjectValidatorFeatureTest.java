@@ -6,7 +6,6 @@ import io.dropwizard.jersey.validation.MutableValidatorFactory;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import org.hibernate.validator.internal.constraintvalidators.bv.number.bound.MinValidatorForInteger;
-import org.hibernate.validator.internal.constraintvalidators.bv.number.bound.MinValidatorForNumber;
 import org.hibernate.validator.internal.engine.constraintvalidation.ConstraintValidatorFactoryImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

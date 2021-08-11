@@ -1,4 +1,5 @@
 health:
+  enabled: true
   delayedShutdownHandlerEnabled: false
   initialOverallState: false
   healthChecks:
@@ -24,6 +25,11 @@ health:
         downtimeInterval: 10ms
         failureAttempts: 1
         successAttempts: 1
+  responseProvider:
+    type: json
+  responder:
+    type: servlet
+    cacheControlEnabled: true
 
 server:
   type: simple

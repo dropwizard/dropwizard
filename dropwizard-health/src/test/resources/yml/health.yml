@@ -1,5 +1,4 @@
 enabled: true
-name: test
 initialOverallState: true
 healthChecks:
   - name: foundationdb

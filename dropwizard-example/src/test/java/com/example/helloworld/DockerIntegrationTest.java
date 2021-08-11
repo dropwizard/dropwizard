@@ -104,4 +104,16 @@ public class DockerIntegrationTest {
         final String actual = new String(Files.readAllBytes(log), UTF_8);
         assertThat(actual).contains("0.0.0.0:" + APP.getLocalPort());
     }
+
+    @Test
+    void healthCheckShouldSucceed() {
+        final Response healthCheckResponse =
+                APP.client().target("http://localhost:" + APP.getLocalPort() + "/health-check")
+                        .request()
+                        .get();
+
+        assertThat(healthCheckResponse)
+                .extracting(Response::getStatus)
+                .isEqualTo(Response.Status.OK.getStatusCode());
+    }
 }
