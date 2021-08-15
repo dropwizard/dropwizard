@@ -197,7 +197,7 @@ and would output an error message describing the issues.
 Once your application has parsed the YAML file and constructed its ``Configuration`` instance,
 Dropwizard then calls your ``Application`` subclass to initialize your application's ``Environment``.
 
-.. note::
+.. note:: :name: config-override
 
     You can override configuration settings by passing special Java system properties when starting
     your application. Overrides must start with prefix ``dw.``, followed by the path to the
