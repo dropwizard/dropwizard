@@ -41,7 +41,7 @@ public abstract class HibernateBundle<T> extends io.dropwizard.hibernate.Hiberna
         final PooledDataSourceFactory primaryConfig = getDataSourceFactory(configuration);
         final SessionFactory primary = requireNonNull(sessionFactoryFactory.build(this, environment, primaryConfig,
             entities, name()));
-        final PooledDataSourceFactory readerConfig = getDataSourceFactory(configuration);
+        final PooledDataSourceFactory readerConfig = getReadSourceFactory(configuration);
         final SessionFactory reader = requireNonNull(sessionFactoryFactory.build(this, environment, readerConfig,
             entities, reader()));
         final DualSessionFactory factory = new DualSessionFactory(primary, reader);
