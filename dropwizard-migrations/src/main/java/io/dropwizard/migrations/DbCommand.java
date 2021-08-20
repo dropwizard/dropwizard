@@ -66,9 +66,12 @@ public class DbCommand<T extends Configuration> extends AbstractLiquibaseCommand
         }
         final AbstractLiquibaseCommand<T> subcommand =
             requireNonNull(subcommands.get(namespace.getString(COMMAND_NAME_ATTR)), "Unable find the command");
-        subcommand.run(namespace, liquibase);
-        if (scopeId != null) {
-            Scope.exit(scopeId);
+        try {
+            subcommand.run(namespace, liquibase);
+        } finally {
+            if (scopeId != null) {
+                Scope.exit(scopeId);
+            }
         }
     }
 }
