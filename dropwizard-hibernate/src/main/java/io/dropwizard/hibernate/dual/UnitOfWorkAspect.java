@@ -15,9 +15,7 @@ import static java.util.Objects.requireNonNull;
 /** Wrapper class for the operations to perform on a primary SessionFactory and a reader SessionFactory for
  *  a single UnitOfWork.
  * 
- * @author smalleyd
- * @version 2.1.13
- * @since 5/16/2016
+ * @since 2.1.13
  *
  */
 

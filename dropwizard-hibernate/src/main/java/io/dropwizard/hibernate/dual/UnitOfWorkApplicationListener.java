@@ -18,9 +18,7 @@ import java.util.concurrent.ConcurrentMap;
 
 /** Jersey server listener that wraps dual Hibernate session factories (writer & reader).
  * 
- * @author smalleyd
- * @version 2.1.13
- * @since 5/16/2016
+ * @since 2.1.13
  *
  */
 

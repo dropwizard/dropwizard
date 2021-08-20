@@ -32,9 +32,7 @@ import java.util.Set;
 /** Represents a wrapper/decorator class for a Hibernate session factory that can manage
  *  both a primary session factory and a read-only session factory.
  *
- * @author smalleyd2
- * @version 2.1
- * @since 11/25/2020
+ * @since 2.1
  *
  */
 

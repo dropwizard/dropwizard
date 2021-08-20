@@ -16,9 +16,7 @@ import static org.mockito.Mockito.when;
 
 /** Unit test class that verifies the DualSessionFactory wrapper.
  * 
- * @author smalleyd
- * @version 2.1
- * @since 11/25/2020
+ * @since 2.1
  *
  */
 
