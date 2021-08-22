@@ -47,6 +47,37 @@ Then, in your application's ``initialize`` method, add a new ``MigrationsBundle`
         });
     }
 
+If you are using :ref:`man-hibernate` or :ref:`man-jdbi3` in your application,
+you can use these techniques within a ``CustomChange`` to make bigger data migrations.
+Therefore you need to provide an instance of these to the ``MigrationsBundle`` like in the following example:
+
+.. code-block:: java
+
+    @Override
+    public void initialize(Bootstrap<ExampleConfiguration> bootstrap) {
+        bootstrap.addBundle(new MigrationsBundle<ExampleConfiguration>() {
+            @Override
+            public DataSourceFactory getDataSourceFactory(ExampleConfiguration configuration) {
+                return configuration.getDataSourceFactory();
+            }
+
+            @Override
+            public Map<String, Object> getScopedObjects() {
+                Map<String, Object> scopedObjects = new HashMap<>();
+                scopedObjects.put("hibernateSessionFactory", hibernateBundle.getSessionFactory());
+                return scopedObjects;
+            }
+        });
+    }
+
+In your ``CustomChange`` you can retrieve the registered ``SessionFactory`` with this code:
+
+.. code-block:: java
+
+    public void execute(Database database) throws CustomChangeException {
+        Scope.getCurrentScope().get("hibernateSessionFactory", SessionFactory.class);
+    }
+
 Defining Migrations
 ===================
 
