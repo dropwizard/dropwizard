@@ -82,7 +82,7 @@ public abstract class HibernateBundle<T> implements ConfiguredBundle<T>, Databas
                                                     dbConfig.getValidationQuery()));
     }
 
-    private UnitOfWorkApplicationListener registerUnitOfWorkListenerIfAbsent(Environment environment) {
+    protected UnitOfWorkApplicationListener registerUnitOfWorkListenerIfAbsent(Environment environment) {
         for (Object singleton : environment.jersey().getResourceConfig().getSingletons()) {
             if (singleton instanceof UnitOfWorkApplicationListener) {
                 return (UnitOfWorkApplicationListener) singleton;

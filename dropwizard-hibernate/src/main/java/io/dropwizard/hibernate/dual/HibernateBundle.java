@@ -10,11 +10,12 @@ import io.dropwizard.util.Duration;
 import org.hibernate.SessionFactory;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 
 public abstract class HibernateBundle<T> extends io.dropwizard.hibernate.HibernateBundle<T>
 {
-    public static final String PRIMARY = "hibernate-primary";
-    public static final String READER = "hibernate-reader";
+    public static final String PRIMARY = ":hibernate-primary";
+    public static final String READER = ":hibernate-reader";
 
     protected HibernateBundle(Class<?> entity, Class<?>... entities) {
         super(entity, entities);
@@ -25,58 +26,37 @@ public abstract class HibernateBundle<T> extends io.dropwizard.hibernate.Hiberna
         super(entities, sessionFactoryFactory);
     }
 
-    @Override
-    protected String name() {
-        return PRIMARY;
-    }
-
-    protected String reader() {
-        return READER;
-    }
-
     abstract public PooledDataSourceFactory getReadSourceFactory(T configuration);
 
     @Override
-    public final void run(T configuration, Environment environment) throws Exception {
+    public void run(T configuration, Environment environment) throws Exception {
+        final String name = name();
+        final String primaryName = name + PRIMARY;
+        final String readerName = name + READER;
         final PooledDataSourceFactory primaryConfig = getDataSourceFactory(configuration);
         final SessionFactory primary = requireNonNull(sessionFactoryFactory.build(this, environment, primaryConfig,
-            entities, name()));
+            entities, primaryName));
         final PooledDataSourceFactory readerConfig = getReadSourceFactory(configuration);
         final SessionFactory reader = requireNonNull(sessionFactoryFactory.build(this, environment, readerConfig,
-            entities, reader()));
+            entities, readerName));
+
         final DualSessionFactory factory = new DualSessionFactory(primary, reader);
-        registerUnitOfWorkListenerIfAbsent(environment).registerSessionFactory(name(), factory);
-        environment.healthChecks().register(name(),
+        registerUnitOfWorkListenerIfAbsent(environment).registerSessionFactory(name, factory);
+ 
+        final ExecutorService exec = environment.getHealthCheckExecutorService();
+        environment.healthChecks().register(primaryName,
                                             new SessionFactoryHealthCheck(
-                                                    environment.getHealthCheckExecutorService(),
+                                                    exec,
                                                     primaryConfig.getValidationQueryTimeout().orElse(Duration.seconds(5)),
-                                                    this.sessionFactory = factory,
+                                                    primary,
                                                     primaryConfig.getValidationQuery()));
-    }
+        environment.healthChecks().register(readerName,
+                                            new SessionFactoryHealthCheck(
+                                                    exec,
+                                                    readerConfig.getValidationQueryTimeout().orElse(Duration.seconds(5)),
+                                                    reader,
+                                                    readerConfig.getValidationQuery()));
 
-    private UnitOfWorkApplicationListener registerUnitOfWorkListenerIfAbsent(Environment environment) {
-        for (Object singleton : environment.jersey().getResourceConfig().getSingletons()) {
-            if (singleton instanceof UnitOfWorkApplicationListener) {
-                return (UnitOfWorkApplicationListener) singleton;
-            }
-        }
-        final UnitOfWorkApplicationListener listener = new UnitOfWorkApplicationListener();
-        environment.jersey().register(listener);
-        return listener;
-    }
-
-    public boolean isLazyLoadingEnabled() {
-        return lazyLoadingEnabled;
-    }
-
-    public void setLazyLoadingEnabled(boolean lazyLoadingEnabled) {
-        this.lazyLoadingEnabled = lazyLoadingEnabled;
-    }
-
-    public SessionFactory getSessionFactory() {
-        return requireNonNull(sessionFactory);
-    }
-
-    protected void configure(org.hibernate.cfg.Configuration configuration) {
+        this.sessionFactory = factory;
     }
 }

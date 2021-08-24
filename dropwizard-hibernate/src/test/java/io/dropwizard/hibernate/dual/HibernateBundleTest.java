@@ -22,6 +22,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static io.dropwizard.hibernate.HibernateBundle.DEFAULT_NAME;
+import static io.dropwizard.hibernate.dual.HibernateBundle.PRIMARY;
+import static io.dropwizard.hibernate.dual.HibernateBundle.READER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyList;
@@ -31,6 +34,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class HibernateBundleTest {
+    private static final String PREFIX = DEFAULT_NAME;
     private final DataSourceFactory dbConfig = new DataSourceFactory();
     private final DataSourceFactory readConfig = new DataSourceFactory();
     private final List<Class<?>> entities = Collections.singletonList(Person.class);
@@ -59,18 +63,17 @@ public class HibernateBundleTest {
         when(environment.jersey()).thenReturn(jerseyEnvironment);
         when(jerseyEnvironment.getResourceConfig()).thenReturn(new DropwizardResourceConfig());
 
+        when(factory.build(eq(bundle),
+                           any(Environment.class),
+                           any(DataSourceFactory.class),
+                           anyList(),
+                           eq(PREFIX + PRIMARY))).thenReturn(sessionFactory);
 
         when(factory.build(eq(bundle),
                            any(Environment.class),
                            any(DataSourceFactory.class),
                            anyList(),
-                           eq(HibernateBundle.PRIMARY))).thenReturn(sessionFactory);
-
-        when(factory.build(eq(bundle),
-                           any(Environment.class),
-                           any(DataSourceFactory.class),
-                           anyList(),
-                           eq(HibernateBundle.READER))).thenReturn(readFactory);
+                           eq(PREFIX + READER))).thenReturn(readFactory);
     }
 
     @Test
@@ -92,7 +95,7 @@ public class HibernateBundleTest {
     public void buildsASessionFactory() throws Exception {
         bundle.run(configuration, environment);
 
-        verify(factory).build(bundle, environment, dbConfig, entities, HibernateBundle.PRIMARY);
+        verify(factory).build(bundle, environment, dbConfig, entities, PREFIX + PRIMARY);
     }
 
     @Test
@@ -112,15 +115,19 @@ public class HibernateBundleTest {
 
         final ArgumentCaptor<SessionFactoryHealthCheck> captor =
                 ArgumentCaptor.forClass(SessionFactoryHealthCheck.class);
-        verify(healthChecks).register(eq(HibernateBundle.PRIMARY), captor.capture());
-
-        assertThat(captor.getValue().getSessionFactory()).isInstanceOf(DualSessionFactory.class);
-
+        verify(healthChecks).register(eq(PREFIX + PRIMARY), captor.capture());
+        assertThat(captor.getValue().getSessionFactory()).isInstanceOf(SessionFactory.class);
         assertThat(captor.getValue().getValidationQuery()).isEqualTo(Optional.of("SELECT something"));
+
+        verify(healthChecks).register(eq(PREFIX + READER), captor.capture());
+        assertThat(captor.getValue().getSessionFactory()).isInstanceOf(SessionFactory.class);
+        assertThat(captor.getValue().getValidationQuery()).isEqualTo(Optional.of("/* Health Check */ SELECT 1"));
     }
 
     @Test
     public void registersACustomNameOfHealthCheckAndDBPoolMetrics() throws Exception {
+        final String name = "custom-hibernate";
+
         final HibernateBundle<Configuration> customBundle = new HibernateBundle<Configuration>(entities, factory) {
             @Override
             public DataSourceFactory getDataSourceFactory(Configuration configuration) {
@@ -134,30 +141,25 @@ public class HibernateBundleTest {
 
             @Override
             protected String name() {
-                return "custom-hibernate";
-            }
-
-            @Override
-            protected String reader() {
-                return "custom-reader";
+                return name;
             }
         };
         when(factory.build(eq(customBundle),
                 any(Environment.class),
                 any(DataSourceFactory.class),
                 anyList(),
-                eq("custom-hibernate"))).thenReturn(sessionFactory);
+                eq(name + PRIMARY))).thenReturn(sessionFactory);
         when(factory.build(eq(customBundle),
                 any(Environment.class),
                 any(DataSourceFactory.class),
                 anyList(),
-                eq("custom-reader"))).thenReturn(readFactory);
+                eq(name + READER))).thenReturn(readFactory);
 
         customBundle.run(configuration, environment);
 
         final ArgumentCaptor<SessionFactoryHealthCheck> captor =
                 ArgumentCaptor.forClass(SessionFactoryHealthCheck.class);
-        verify(healthChecks).register(eq("custom-hibernate"), captor.capture());
+        verify(healthChecks).register(eq(name + READER), captor.capture());
     }
 
     @Test
