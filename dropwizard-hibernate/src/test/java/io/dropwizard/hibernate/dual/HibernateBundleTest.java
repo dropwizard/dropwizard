@@ -9,6 +9,7 @@ import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.hibernate.Person;
 import io.dropwizard.hibernate.SessionFactoryFactory;
 import io.dropwizard.hibernate.SessionFactoryHealthCheck;
+import io.dropwizard.hibernate.UnitOfWorkApplicationListener;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
 import io.dropwizard.setup.Bootstrap;

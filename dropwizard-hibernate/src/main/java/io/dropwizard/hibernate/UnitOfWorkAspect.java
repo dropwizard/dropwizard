@@ -1,5 +1,7 @@
 package io.dropwizard.hibernate;
 
+import io.dropwizard.hibernate.dual.DualSessionFactory;
+
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -72,6 +74,10 @@ public class UnitOfWorkAspect {
             } else {
                 throw new IllegalArgumentException("Unregistered Hibernate bundle: '" + unitOfWork.value() + "'");
             }
+        }
+
+        if (sessionFactory instanceof DualSessionFactory) {
+            ((DualSessionFactory) sessionFactory).prepare(unitOfWork.readOnly());
         }
 
         Session existingSession = null;
