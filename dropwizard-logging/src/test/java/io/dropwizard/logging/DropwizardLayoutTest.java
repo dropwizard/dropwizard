@@ -17,12 +17,28 @@ class DropwizardLayoutTest {
     void prefixesThrowables() throws Exception {
         assertThat(layout.getDefaultConverterMap())
                 .containsEntry("ex", PrefixedThrowableProxyConverter.class.getName());
+        assertThat(layout.getDefaultConverterMap())
+                .containsEntry("exception", PrefixedThrowableProxyConverter.class.getName());
+        assertThat(layout.getDefaultConverterMap())
+                .containsEntry("throwable", PrefixedThrowableProxyConverter.class.getName());
     }
 
     @Test
     void prefixesExtendedThrowables() throws Exception {
         assertThat(layout.getDefaultConverterMap())
                 .containsEntry("xEx", PrefixedExtendedThrowableProxyConverter.class.getName());
+        assertThat(layout.getDefaultConverterMap())
+                .containsEntry("xException", PrefixedExtendedThrowableProxyConverter.class.getName());
+        assertThat(layout.getDefaultConverterMap())
+                .containsEntry("xThrowable", PrefixedExtendedThrowableProxyConverter.class.getName());
+    }
+
+    @Test
+    void prefixesRootThrowables() throws Exception {
+        assertThat(layout.getDefaultConverterMap())
+                .containsEntry("rEx", PrefixedRootCauseFirstThrowableProxyConverter.class.getName());
+        assertThat(layout.getDefaultConverterMap())
+                .containsEntry("rootException", PrefixedRootCauseFirstThrowableProxyConverter.class.getName());
     }
 
     @Test
