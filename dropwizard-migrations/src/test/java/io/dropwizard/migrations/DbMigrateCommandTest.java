@@ -18,12 +18,13 @@ import java.io.PrintWriter;
 import java.util.Collections;
 import java.util.Map;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @NotThreadSafe
 class DbMigrateCommandTest extends AbstractMigrationTest {
 
-    private DbMigrateCommand<TestMigrationConfiguration> migrateCommand = new DbMigrateCommand<>(
+    private final DbMigrateCommand<TestMigrationConfiguration> migrateCommand = new DbMigrateCommand<>(
         TestMigrationConfiguration::getDataSource, TestMigrationConfiguration.class, "migrations.xml");
     private TestMigrationConfiguration conf;
     private String databaseUrl;
@@ -60,7 +61,7 @@ class DbMigrateCommandTest extends AbstractMigrationTest {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         migrateCommand.setOutputStream(new PrintStream(baos));
         migrateCommand.run(null, new Namespace(Collections.singletonMap("dry-run", true)), conf);
-        assertThat(baos.toString(UTF_8)).startsWith(String.format(
+        assertThat(baos.toString(UTF_8.name())).startsWith(String.format(
                 "-- *********************************************************************%n" +
                 "-- Update Database Script%n" +
                 "-- *********************************************************************%n"));
@@ -78,7 +79,7 @@ class DbMigrateCommandTest extends AbstractMigrationTest {
 
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         subparser.printHelp(new PrintWriter(new OutputStreamWriter(baos, UTF_8), true));
-        assertThat(baos.toString(UTF_8)).isEqualTo(String.format(
+        assertThat(baos.toString(UTF_8.name())).isEqualTo(String.format(
                         "usage: db migrate [-h] [--migrations MIGRATIONS-FILE] [--catalog CATALOG]%n" +
                         "          [--schema SCHEMA] [-n] [-c COUNT] [-i CONTEXTS] [file]%n" +
                         "%n" +

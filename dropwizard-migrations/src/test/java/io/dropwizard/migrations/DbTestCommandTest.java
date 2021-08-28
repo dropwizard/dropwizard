@@ -9,7 +9,9 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.Collections;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatNoException;
 
 @NotThreadSafe
 public class DbTestCommandTest extends AbstractMigrationTest {
@@ -21,16 +23,15 @@ public class DbTestCommandTest extends AbstractMigrationTest {
     void testRun() throws Exception {
         // Apply and rollback some DDL changes
         final TestMigrationConfiguration conf = createConfiguration(getDatabaseUrl());
-        dbTestCommand.run(null, new Namespace(Collections.emptyMap()), conf);
-
-        // No exception, the test passed
+        assertThatNoException()
+            .isThrownBy(() -> dbTestCommand.run(null, new Namespace(Collections.emptyMap()), conf));
     }
 
     @Test
     void testPrintHelp() throws Exception {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         createSubparser(dbTestCommand).printHelp(new PrintWriter(new OutputStreamWriter(baos, UTF_8), true));
-        assertThat(baos.toString(UTF_8)).isEqualTo(String.format(
+        assertThat(baos.toString(UTF_8.name())).isEqualTo(String.format(
             "usage: db test [-h] [--migrations MIGRATIONS-FILE] [--catalog CATALOG]%n" +
                 "          [--schema SCHEMA] [-i CONTEXTS] [file]%n" +
                 "%n" +
