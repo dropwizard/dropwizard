@@ -2,6 +2,7 @@ package io.dropwizard.auth.oauth;
 
 import io.dropwizard.auth.AuthFilter;
 import io.dropwizard.auth.Authenticator;
+import io.dropwizard.auth.AuthorizationException;
 
 import javax.annotation.Nullable;
 import javax.annotation.Priority;
@@ -36,7 +37,7 @@ public class OAuthCredentialAuthFilter<P extends Principal> extends AuthFilter<S
         }
 
         if (!authenticate(requestContext, credentials, SecurityContext.BASIC_AUTH)) {
-            throw new WebApplicationException(unauthorizedHandler.buildResponse(prefix, realm));
+            throw new AuthorizationException(unauthorizedHandler.buildResponse(prefix, realm));
         }
     }
 
