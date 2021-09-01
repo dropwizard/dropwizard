@@ -10,6 +10,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.AdditionalMatchers.or;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -171,6 +172,7 @@ public class HealthCheckSchedulerTest {
     public void unscheduleShouldDoNothingIfNoCheckScheduled() {
         final String name = "test";
 
-        scheduler.unschedule(name);
+        assertThatCode(() -> scheduler.unschedule(name))
+            .doesNotThrowAnyException();;
     }
 }
