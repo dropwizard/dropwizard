@@ -2,6 +2,7 @@ package io.dropwizard.servlets.assets;
 
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class ByteRangeTest {
@@ -48,5 +49,11 @@ public class ByteRangeTest {
         final ByteRange actual = ByteRange.parse("9000-20000", RESOURCE_LENGTH);
         assertThat(actual.getStart()).isEqualTo(9000);
         assertThat(actual.getEnd()).isEqualTo(9999);
+    }
+
+    @Test
+    public void nonASCIIDisallowed() {
+        assertThatExceptionOfType(NumberFormatException.class)
+            .isThrownBy(() -> ByteRange.parse("០-០", RESOURCE_LENGTH));
     }
 }
