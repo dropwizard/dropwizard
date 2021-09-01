@@ -11,7 +11,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2.3.4
     - name: Set up JDK
-      uses: joschi/setup-jdk@v2.3.0
+      uses: joschi/setup-jdk@v2.4.0
       with:
         java-version: '8'
         server-id: ossrh
