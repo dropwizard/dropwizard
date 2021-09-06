@@ -48,6 +48,7 @@ public class LoggingUtil {
             try {
                 Thread.sleep(LOGGER_CONTEXT_AWAITING_SLEEP_TIME.toMilliseconds());
             } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
                 throw new IllegalStateException(e);
             }
         }
