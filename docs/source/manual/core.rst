@@ -1961,11 +1961,6 @@ You can change this behavior by configuring Dropwizard's object mapper:
         bootstrap.getObjectMapper().enable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
     }
 
-.. note::
-
-    The YAML configuration parser will fail on unknown properties regardless of the object mapper
-    configuration.
-
 
 Streaming Output
 ----------------

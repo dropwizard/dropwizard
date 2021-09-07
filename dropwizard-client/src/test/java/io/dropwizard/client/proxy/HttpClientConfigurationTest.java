@@ -1,5 +1,6 @@
 package io.dropwizard.client.proxy;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.client.HttpClientConfiguration;
 import io.dropwizard.configuration.ConfigurationParsingException;
@@ -29,7 +30,8 @@ public class HttpClientConfigurationTest {
             .create(
                 HttpClientConfiguration.class,
                 Validators.newValidator(),
-                objectMapper, "dw"
+                objectMapper.enable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES),
+                "dw"
             ).build(new File(Resources.getResource(configLocation).toURI()));
     }
 

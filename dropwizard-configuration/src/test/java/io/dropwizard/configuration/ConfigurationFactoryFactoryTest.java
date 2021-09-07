@@ -32,35 +32,37 @@ public class ConfigurationFactoryFactoryTest {
     }
 
     @Test
-    void createDefaultFactoryFailsUnknownProperty() throws Exception {
+    void createDefaultFactoryAllowsUnknownProperty() throws Exception {
         File validFileWithUnknownProp = new File(
             Resources.getResource("factory-test-unknown-property.yml").toURI());
         ConfigurationFactory<Example> factory =
             factoryFactory.create(Example.class, validator, Jackson.newObjectMapper(), "dw");
+        Example example = factory.build(validFileWithUnknownProp);
 
-        assertThatExceptionOfType(ConfigurationException.class)
-            .isThrownBy(() -> factory.build(validFileWithUnknownProp))
-            .withMessageContaining("Unrecognized field at: trait");
+        assertThat(example.getName())
+            .isEqualTo("Mighty Wizard");
     }
 
     @Test
-    void createFactoryAllowingUnknownProperties() throws Exception {
-        ConfigurationFactoryFactory<Example> customFactory = new PassThroughConfigurationFactoryFactory();
+    void createFactoryNotAllowingUnknownProperties() throws Exception {
+        ConfigurationFactoryFactory<Example> customFactory = new UnknownPropertiesNotAllowedConfigurationFactoryFactory();
         File validFileWithUnknownProp = new File(
             Resources.getResource("factory-test-unknown-property.yml").toURI());
         ConfigurationFactory<Example> factory =
             customFactory.create(
                 Example.class,
                 validator,
-                Jackson.newObjectMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES),
+                Jackson.newObjectMapper().enable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES),
                 "dw");
-        Example example = factory.build(validFileWithUnknownProp);
-        assertThat(example.getName())
-            .isEqualTo("Mighty Wizard");
+
+        assertThatExceptionOfType(ConfigurationException.class)
+            .isThrownBy(() -> factory.build(validFileWithUnknownProp))
+            .withMessageContaining("Unrecognized field at: trait");
     }
 
-    private static final class PassThroughConfigurationFactoryFactory
-            extends DefaultConfigurationFactoryFactory<Example> {
+    private static final class UnknownPropertiesNotAllowedConfigurationFactoryFactory
+        extends DefaultConfigurationFactoryFactory<Example> {
+
         @Override
         protected ObjectMapper configureObjectMapper(ObjectMapper objectMapper) {
             return objectMapper;
