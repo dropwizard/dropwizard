@@ -174,8 +174,7 @@ public abstract class BaseConfigurationFactoryTest {
             new YamlConfigurationFactory<>(ExampleWithDefaults.class, validator, Jackson.newObjectMapper(), "dw")
                 .build();
         assertThat(example.cacheBuilderSpec)
-            .isNotNull();
-        assertThat(example.cacheBuilderSpec)
+            .isNotNull()
             .isEqualTo(CaffeineSpec.parse("initialCapacity=0,maximumSize=0"));
     }
 

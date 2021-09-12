@@ -144,8 +144,7 @@ class ResourceURLTest {
         final long lastModified = ResourceURL.getLastModified(url);
 
         assertThat(lastModified)
-                .isGreaterThan(0);
-        assertThat(lastModified)
+                .isGreaterThan(0)
                 .isEqualTo(tempDir.toFile().lastModified());
     }
 
@@ -158,8 +157,7 @@ class ResourceURLTest {
         final JarEntry entry = jarConnection.getJarEntry();
 
         assertThat(lastModified)
-                .isGreaterThan(0);
-        assertThat(lastModified)
+                .isGreaterThan(0)
                 .isEqualTo(entry.getTime());
     }
 
