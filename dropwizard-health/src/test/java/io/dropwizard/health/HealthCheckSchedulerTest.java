@@ -40,14 +40,14 @@ public class HealthCheckSchedulerTest {
         when(check.getName()).thenReturn(name);
         when(check.getSchedule()).thenReturn(schedule);
 
-        when(executor.scheduleWithFixedDelay(eq(check), eq(schedule.getCheckInterval().toMilliseconds()),
-            eq(schedule.getCheckInterval().toMilliseconds()), eq(TimeUnit.MILLISECONDS)))
+        when(executor.scheduleWithFixedDelay(check, schedule.getCheckInterval().toMilliseconds(),
+            schedule.getCheckInterval().toMilliseconds(), TimeUnit.MILLISECONDS))
             .thenReturn(mock(ScheduledFuture.class));
 
         scheduler.schedule(check, true);
 
-        verify(executor).scheduleWithFixedDelay(eq(check), eq(schedule.getCheckInterval().toMilliseconds()),
-            eq(schedule.getCheckInterval().toMilliseconds()), eq(TimeUnit.MILLISECONDS));
+        verify(executor).scheduleWithFixedDelay(check, schedule.getCheckInterval().toMilliseconds(),
+            schedule.getCheckInterval().toMilliseconds(), TimeUnit.MILLISECONDS);
     }
 
     @Test
@@ -61,14 +61,14 @@ public class HealthCheckSchedulerTest {
         when(check.getSchedule())
             .thenReturn(schedule);
 
-        when(executor.scheduleWithFixedDelay(eq(check), eq(schedule.getDowntimeInterval().toMilliseconds()),
-            eq(schedule.getDowntimeInterval().toMilliseconds()), eq(TimeUnit.MILLISECONDS)))
+        when(executor.scheduleWithFixedDelay(check, schedule.getDowntimeInterval().toMilliseconds(),
+            schedule.getDowntimeInterval().toMilliseconds(), TimeUnit.MILLISECONDS))
             .thenReturn(mock(ScheduledFuture.class));
 
         scheduler.schedule(check, false);
 
-        verify(executor).scheduleWithFixedDelay(eq(check), eq(schedule.getDowntimeInterval().toMilliseconds()),
-            eq(schedule.getDowntimeInterval().toMilliseconds()), eq(TimeUnit.MILLISECONDS));
+        verify(executor).scheduleWithFixedDelay(check, schedule.getDowntimeInterval().toMilliseconds(),
+            schedule.getDowntimeInterval().toMilliseconds(), TimeUnit.MILLISECONDS);
     }
 
     @Test
@@ -160,10 +160,10 @@ public class HealthCheckSchedulerTest {
         scheduler.unschedule(name);
 
         verify(executor).scheduleWithFixedDelay(
-            eq(check),
-            eq(schedule.getCheckInterval().toMilliseconds()),
-            eq(schedule.getCheckInterval().toMilliseconds()),
-            eq(TimeUnit.MILLISECONDS));
+            check,
+            schedule.getCheckInterval().toMilliseconds(),
+            schedule.getCheckInterval().toMilliseconds(),
+            TimeUnit.MILLISECONDS);
 
         verify(future).cancel(true);
     }

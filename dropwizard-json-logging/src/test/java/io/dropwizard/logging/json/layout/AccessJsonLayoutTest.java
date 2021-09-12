@@ -19,7 +19,6 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 public class AccessJsonLayoutTest {
@@ -207,9 +206,9 @@ public class AccessJsonLayoutTest {
                 attribute2, "value2",
                 attribute3, "value3");
 
-        when(event.getAttribute(eq(attribute1))).thenReturn(attributes.get(attribute1));
-        when(event.getAttribute(eq(attribute2))).thenReturn(attributes.get(attribute2));
-        when(event.getAttribute(eq(attribute3))).thenReturn(attributes.get(attribute3));
+        when(event.getAttribute(attribute1)).thenReturn(attributes.get(attribute1));
+        when(event.getAttribute(attribute2)).thenReturn(attributes.get(attribute2));
+        when(event.getAttribute(attribute3)).thenReturn(attributes.get(attribute3));
 
         accessJsonLayout.setRequestAttributes(attributes.keySet());
         assertThat(accessJsonLayout.toJsonMap(event))
@@ -235,9 +234,9 @@ public class AccessJsonLayoutTest {
                 attribute1, "value1",
                 attribute2, "value2");
 
-        when(event.getAttribute(eq(attribute1))).thenReturn(attributes.get(attribute1));
-        when(event.getAttribute(eq(attribute2))).thenReturn(attributes.get(attribute2));
-        when(event.getAttribute(eq(attribute3))).thenReturn(null);
+        when(event.getAttribute(attribute1)).thenReturn(attributes.get(attribute1));
+        when(event.getAttribute(attribute2)).thenReturn(attributes.get(attribute2));
+        when(event.getAttribute(attribute3)).thenReturn(null);
 
         accessJsonLayout.setRequestAttributes(Sets.of(attribute1, attribute2, attribute3));
         assertThat(accessJsonLayout.toJsonMap(event))
