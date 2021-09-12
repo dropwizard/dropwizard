@@ -21,7 +21,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class CachingAuthorizerTest {
+class CachingAuthorizerTest {
     @SuppressWarnings("unchecked")
     private final Authorizer<Principal> underlying = mock(Authorizer.class);
     private final CachingAuthorizer<Principal> cached = new CachingAuthorizer<>(

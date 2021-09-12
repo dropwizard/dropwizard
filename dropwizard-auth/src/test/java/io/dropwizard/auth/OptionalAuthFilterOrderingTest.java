@@ -24,7 +24,7 @@ import javax.ws.rs.container.DynamicFeature;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
-public class OptionalAuthFilterOrderingTest extends JerseyTest {
+class OptionalAuthFilterOrderingTest extends JerseyTest {
 
     @Override
     @BeforeEach
