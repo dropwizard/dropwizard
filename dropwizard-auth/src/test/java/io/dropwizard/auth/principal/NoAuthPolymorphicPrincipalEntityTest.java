@@ -28,7 +28,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * Testing that principal entity is not affected by authentication logic and can be injected as any other entity.
  */
-public class NoAuthPolymorphicPrincipalEntityTest extends JerseyTest {
+class NoAuthPolymorphicPrincipalEntityTest extends JerseyTest {
 
     static {
         BootstrapLogging.bootstrap();
