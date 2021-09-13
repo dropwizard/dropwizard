@@ -171,11 +171,11 @@ public class DefaultLoggingFactoryTest {
 
         // There should be exactly one appender configured, a ConsoleAppender
         final Logger logger = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
-        final List<Appender<ILoggingEvent>> appenders = Lists.of(logger.iteratorForAppenders());
-        assertThat(appenders).hasAtLeastOneElementOfType(ConsoleAppender.class);
-        assertThat(appenders).as("context").allMatch((Appender<?> a) -> a.getContext() != null);
-        assertThat(appenders).as("started").allMatch(LifeCycle::isStarted);
-        assertThat(appenders).hasSize(1);
+        assertThat(Lists.of(logger.iteratorForAppenders()))
+            .hasAtLeastOneElementOfType(ConsoleAppender.class)
+            .as("context").allMatch((Appender<?> a) -> a.getContext() != null)
+            .as("started").allMatch(LifeCycle::isStarted)
+            .hasSize(1);
     }
 
     @Test

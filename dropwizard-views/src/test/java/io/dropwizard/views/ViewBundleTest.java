@@ -22,7 +22,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class ViewBundleTest {
+class ViewBundleTest {
     private JerseyEnvironment jerseyEnvironment = mock(JerseyEnvironment.class);
     private Environment environment = mock(Environment.class);
 
@@ -96,8 +96,8 @@ public class ViewBundleTest {
         verify(jerseyEnvironment).register(captor.capture());
 
         final ViewMessageBodyWriter capturedRenderer = captor.getValue();
-        final Iterable<ViewRenderer> configuredRenderers = capturedRenderer.getRenderers();
-        assertThat(configuredRenderers).hasSize(1);
-        assertThat(configuredRenderers).contains(renderer);
+        assertThat(capturedRenderer.getRenderers())
+            .hasSize(1)
+            .contains(renderer);
     }
 }
