@@ -120,7 +120,7 @@ class CachingAuthorizerTest {
 
     @Test
     void calculatesTheSizeOfTheCache() throws Exception {
-        assertThat(cached.size()).isEqualTo(0);
+        assertThat(cached.size()).isZero();
         cached.authorize(principal, role, requestContext);
         assertThat(cached.size()).isEqualTo(1);
         cached.invalidateAll();

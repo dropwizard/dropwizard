@@ -36,7 +36,7 @@ public class OptionalCookieParamResourceTest extends AbstractJerseyTest {
     @Test
     void shouldReturnMessageWhenMessageIsBlank() {
         String response = target("/optional/message").request().cookie("message", "").get(String.class);
-        assertThat(response).isEqualTo("");
+        assertThat(response).isEmpty();
     }
 
     @Test

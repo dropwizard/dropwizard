@@ -373,7 +373,7 @@ public class HealthCheckManagerTest {
         assertThat(metrics.gauge(manager.getAggregateUnhealthyName(), null).getValue())
             .isEqualTo(1L);
         assertThat(unhealthyCounter.get()).isEqualTo(3);
-        assertThat(healthyCounter.get()).isEqualTo(0);
+        assertThat(healthyCounter.get()).isZero();
     }
 
     @Test

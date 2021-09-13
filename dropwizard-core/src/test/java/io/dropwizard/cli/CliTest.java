@@ -133,8 +133,8 @@ class CliTest {
         assertThat(cli.run("-v"))
                 .isEmpty();
 
-        assertThat(stdOut.toString())
-                .isEqualTo(String.format("1.0.0%n"));
+        assertThat(stdOut)
+                .hasToString(String.format("1.0.0%n"));
 
         assertThat(stdErr.toString())
                 .isEmpty();
@@ -145,8 +145,8 @@ class CliTest {
         assertThat(cli.run("--version"))
                 .isEmpty();
 
-        assertThat(stdOut.toString())
-                .isEqualTo(String.format("1.0.0%n"));
+        assertThat(stdOut)
+                .hasToString(String.format("1.0.0%n"));
 
         assertThat(stdErr.toString())
                 .isEmpty();
@@ -160,8 +160,8 @@ class CliTest {
         assertThat(newCli.run("--version"))
                 .isEmpty();
 
-        assertThat(stdOut.toString())
-                .isEqualTo(String.format("No application version detected. Add a Implementation-Version entry to your JAR's manifest to enable this.%n"));
+        assertThat(stdOut)
+                .hasToString(String.format("No application version detected. Add a Implementation-Version entry to your JAR's manifest to enable this.%n"));
 
         assertThat(stdErr.toString())
                 .isEmpty();
@@ -172,8 +172,8 @@ class CliTest {
         assertThat(cli.run())
                 .isEmpty();
 
-        assertThat(stdOut.toString())
-                .isEqualTo(String.format(
+        assertThat(stdOut)
+                .hasToString(String.format(
                         "usage: java -jar dw-thing.jar [-h] [-v] {check,custom} ...%n" +
                                 "%n" +
                                 "positional arguments:%n" +
@@ -193,8 +193,8 @@ class CliTest {
         assertThat(cli.run("-h"))
                 .isEmpty();
 
-        assertThat(stdOut.toString())
-                .isEqualTo(String.format(
+        assertThat(stdOut)
+                .hasToString(String.format(
                         "usage: java -jar dw-thing.jar [-h] [-v] {check,custom} ...%n" +
                                 "%n" +
                                 "positional arguments:%n" +
@@ -214,8 +214,8 @@ class CliTest {
         assertThat(cli.run("--help"))
                 .isEmpty();
 
-        assertThat(stdOut.toString())
-                .isEqualTo(String.format(
+        assertThat(stdOut)
+                .hasToString(String.format(
                         "usage: java -jar dw-thing.jar [-h] [-v] {check,custom} ...%n" +
                                 "%n" +
                                 "positional arguments:%n" +
@@ -235,8 +235,8 @@ class CliTest {
         assertThat(cli.run("check", "-h"))
                 .isEmpty();
 
-        assertThat(stdOut.toString())
-                .isEqualTo(String.format(
+        assertThat(stdOut)
+                .hasToString(String.format(
                         "usage: java -jar dw-thing.jar check [-h] [file]%n" +
                                 "%n" +
                                 "Parses and validates the configuration file%n" +
@@ -259,8 +259,8 @@ class CliTest {
         assertThat(cli.run("check", "--help"))
                 .isEmpty();
 
-        assertThat(stdOut.toString())
-                .isEqualTo(String.format(
+        assertThat(stdOut)
+                .hasToString(String.format(
                         "usage: java -jar dw-thing.jar check [-h] [file]%n" +
                                 "%n" +
                                 "Parses and validates the configuration file%n" +
@@ -286,8 +286,8 @@ class CliTest {
         assertThat(stdOut.toString())
                 .isEmpty();
 
-        assertThat(stdErr.toString())
-                .isEqualTo(String.format(
+        assertThat(stdErr)
+                .hasToString(String.format(
                         "unrecognized arguments: '--yes'%n" +
                                 "usage: java -jar dw-thing.jar [-h] [-v] {check,custom} ...%n" +
                                 "%n" +
@@ -308,8 +308,8 @@ class CliTest {
         assertThat(stdOut.toString())
                 .isEmpty();
 
-        assertThat(stdErr.toString())
-                .isEqualTo(String.format(
+        assertThat(stdErr)
+                .hasToString(String.format(
                         "unrecognized arguments: '--yes'%n" +
                                 "usage: java -jar dw-thing.jar check [-h] [file]%n" +
                                 "%n" +
@@ -331,8 +331,8 @@ class CliTest {
         assertThat(stdOut.toString())
                 .isEmpty();
 
-        assertThat(stdErr.toString())
-                .isEqualTo(String.format(
+        assertThat(stdErr)
+                .hasToString(String.format(
                         "invalid choice: 'plop' (choose from 'check', 'custom')%n" +
                                 "usage: java -jar dw-thing.jar [-h] [-v] {check,custom} ...%n" +
                                 "%n" +
@@ -369,8 +369,8 @@ class CliTest {
         assertThat(stdOut.toString())
                 .isEmpty();
 
-        assertThat(stdErr.toString())
-                .isEqualTo(String.format("I'm a bad exception%n"));
+        assertThat(stdErr)
+                .hasToString(String.format("I'm a bad exception%n"));
     }
 
     @Test
@@ -380,8 +380,8 @@ class CliTest {
         assertThat(cli.run("custom"))
                 .hasValueSatisfying(t -> assertThat(t).isInstanceOf(RuntimeException.class).hasMessage("I did not expect this!"));
 
-        assertThat(stdOut.toString())
-            .isEqualTo(String.format("I did not expect this!%n"));
+        assertThat(stdOut)
+            .hasToString(String.format("I did not expect this!%n"));
 
         assertThat(stdErr.toString())
             .isEmpty();

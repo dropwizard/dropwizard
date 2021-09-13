@@ -32,7 +32,7 @@ public class ConfiguredGZipEncoderTest {
 
         new ConfiguredGZipEncoder(true).filter(context);
 
-        assertThat(headers.getFirst(HttpHeaders.CONTENT_ENCODING).toString()).isEqualTo("gzip");
+        assertThat(headers.getFirst(HttpHeaders.CONTENT_ENCODING)).hasToString("gzip");
     }
 
     @Test

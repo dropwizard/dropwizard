@@ -51,7 +51,7 @@ public class ScheduledHealthCheckTest {
 
         assertThat(scheduledHealthCheck.isHealthy()).isTrue();
         assertThat(healthyCounter.getCount()).isEqualTo(1L);
-        assertThat(unhealthyCounter.getCount()).isEqualTo(0L);
+        assertThat(unhealthyCounter.getCount()).isZero();
     }
 
     @Test
@@ -70,7 +70,7 @@ public class ScheduledHealthCheckTest {
         scheduledHealthCheck.run();
 
         assertThat(scheduledHealthCheck.isHealthy()).isFalse();
-        assertThat(healthyCounter.getCount()).isEqualTo(0L);
+        assertThat(healthyCounter.getCount()).isZero();
         assertThat(unhealthyCounter.getCount()).isEqualTo(1L);
     }
 }

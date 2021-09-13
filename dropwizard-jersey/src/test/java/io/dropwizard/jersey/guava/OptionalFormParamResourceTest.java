@@ -42,7 +42,7 @@ public class OptionalFormParamResourceTest extends AbstractJerseyTest {
         final Form form = new Form("message", "");
         final Response response = target("/optional/message").request().post(Entity.form(form));
 
-        assertThat(response.readEntity(String.class)).isEqualTo("");
+        assertThat(response.readEntity(String.class)).isEmpty();
     }
 
     @Test

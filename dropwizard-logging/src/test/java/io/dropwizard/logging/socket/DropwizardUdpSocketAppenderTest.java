@@ -60,6 +60,6 @@ public class DropwizardUdpSocketAppenderTest {
         udpStreamAppender.getOutputStream().write("Test message".getBytes(UTF_8));
 
         countDownLatch.await(5, TimeUnit.SECONDS);
-        assertThat(countDownLatch.getCount()).isEqualTo(0);
+        assertThat(countDownLatch.getCount()).isZero();
     }
 }

@@ -36,7 +36,7 @@ public class OptionalHeaderParamResourceTest extends AbstractJerseyTest {
     @Test
     void shouldReturnMessageWhenMessageIsBlank() {
         String response = target("/optional/message").request().header("message", "").get(String.class);
-        assertThat(response).isEqualTo("");
+        assertThat(response).isEmpty();
     }
 
     @Test

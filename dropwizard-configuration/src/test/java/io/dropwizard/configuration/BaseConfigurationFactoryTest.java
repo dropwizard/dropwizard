@@ -213,16 +213,16 @@ public abstract class BaseConfigurationFactoryTest {
     void handlesExistingOverrideWithPeriod() throws Exception {
         System.setProperty("dw.my\\.logger.level", "debug");
         final Example example = factory.build(validFile);
-        assertThat(example.getLogger().get("level"))
-            .isEqualTo("debug");
+        assertThat(example.getLogger())
+            .containsEntry("level", "debug");
     }
 
     @Test
     void handlesNewOverrideWithPeriod() throws Exception {
         System.setProperty("dw.my\\.logger.com\\.example", "error");
         final Example example = factory.build(validFile);
-        assertThat(example.getLogger().get("com.example"))
-            .isEqualTo("error");
+        assertThat(example.getLogger())
+            .containsEntry("com.example", "error");
     }
 
     @Test

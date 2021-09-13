@@ -75,7 +75,7 @@ public class UdpSocketAppenderFactoryTest {
         }
 
         countDownLatch.await(5, TimeUnit.SECONDS);
-        assertThat(countDownLatch.getCount()).isEqualTo(0);
+        assertThat(countDownLatch.getCount()).isZero();
         loggingFactory.reset();
     }
 }
