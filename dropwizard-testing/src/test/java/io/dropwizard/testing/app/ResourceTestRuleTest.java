@@ -18,7 +18,6 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -50,7 +49,7 @@ public class ResourceTestRuleTest {
 
     @Before
     public void setup() {
-        when(peopleStore.fetchPerson(eq("blah"))).thenReturn(person);
+        when(peopleStore.fetchPerson("blah")).thenReturn(person);
     }
 
     @Test
