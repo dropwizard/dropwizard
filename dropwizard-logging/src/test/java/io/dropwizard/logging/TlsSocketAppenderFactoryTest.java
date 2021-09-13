@@ -80,7 +80,7 @@ public class TlsSocketAppenderFactoryTest {
         }
 
         tcpServer.getLatch().await(5, TimeUnit.SECONDS);
-        assertThat(tcpServer.getLatch().getCount()).isEqualTo(0);
+        assertThat(tcpServer.getLatch().getCount()).isZero();
         loggingFactory.reset();
     }
 

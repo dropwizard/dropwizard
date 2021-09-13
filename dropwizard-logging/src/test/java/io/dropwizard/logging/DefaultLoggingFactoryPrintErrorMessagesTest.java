@@ -90,7 +90,7 @@ public class DefaultLoggingFactoryPrintErrorMessagesTest {
 
         configureLoggingFactoryWithFileAppender(folderWithWritePermission);
 
-        assertThat(folderWithWritePermission.canWrite()).isTrue();
+        assertThat(folderWithWritePermission).canWrite();
         assertThat(configureAndGetOutputWrittenToErrorStream()).isEmpty();
     }
 

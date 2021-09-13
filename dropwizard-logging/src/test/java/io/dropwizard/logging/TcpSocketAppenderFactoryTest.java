@@ -84,7 +84,7 @@ class TcpSocketAppenderFactoryTest {
         }
 
         tcpServer.getLatch().await(5, TimeUnit.SECONDS);
-        assertThat(tcpServer.getLatch().getCount()).isEqualTo(0);
+        assertThat(tcpServer.getLatch().getCount()).isZero();
         loggingFactory.reset();
     }
 
@@ -104,6 +104,6 @@ class TcpSocketAppenderFactoryTest {
         loggingFactory.reset();
 
         tcpServer.getLatch().await(5, TimeUnit.SECONDS);
-        assertThat(tcpServer.getLatch().getCount()).isEqualTo(0);
+        assertThat(tcpServer.getLatch().getCount()).isZero();
     }
 }

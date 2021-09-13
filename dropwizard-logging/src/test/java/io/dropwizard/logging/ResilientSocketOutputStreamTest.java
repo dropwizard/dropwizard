@@ -71,7 +71,7 @@ class ResilientSocketOutputStreamTest {
         resilientSocketOutputStream.flush();
 
         latch.await(5, TimeUnit.SECONDS);
-        assertThat(latch.getCount()).isEqualTo(0);
+        assertThat(latch.getCount()).isZero();
     }
 
     @Test

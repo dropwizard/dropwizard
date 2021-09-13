@@ -43,7 +43,7 @@ public class OptionalQueryParamResourceTest extends AbstractJerseyTest {
     @Test
     void shouldReturnMessageWhenMessageIsBlank() {
         String response = target("/optional/message").queryParam("message", "").request().get(String.class);
-        assertThat(response).isEqualTo("");
+        assertThat(response).isEmpty();
     }
 
     @Test

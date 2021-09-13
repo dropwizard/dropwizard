@@ -46,8 +46,8 @@ class ExecutorServiceBuilderTest {
             .build();
 
         verify(log).warn(WARNING);
-        assertThat(metricRegistry.getMetrics().keySet())
-            .containsOnly("test.created", "test.terminated", "test.running");
+        assertThat(metricRegistry.getMetrics())
+            .containsOnlyKeys("test.created", "test.terminated", "test.running");
     }
 
     @Test

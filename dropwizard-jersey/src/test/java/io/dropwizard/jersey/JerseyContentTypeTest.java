@@ -30,6 +30,6 @@ public class JerseyContentTypeTest extends AbstractJerseyTest {
         final Response response = target("/").request("foo").get();
 
         assertThat(response.getStatus()).isEqualTo(406);
-        assertThat(response.hasEntity()).isEqualTo(false);
+        assertThat(response.hasEntity()).isFalse();
     }
 }

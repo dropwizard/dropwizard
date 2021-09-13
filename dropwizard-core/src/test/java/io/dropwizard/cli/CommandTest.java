@@ -60,8 +60,8 @@ class CommandTest {
         assertThat(cli.run("test", "-h"))
             .isEmpty();
 
-        assertThat(stdOut.toString())
-            .isEqualTo(String.format(
+        assertThat(stdOut)
+            .hasToString(String.format(
                 "usage: java -jar dw-thing.jar test [-h] {a,b,c}%n" +
                     "%n" +
                     "test%n" +
