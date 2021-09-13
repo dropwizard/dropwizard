@@ -20,7 +20,7 @@ import java.util.TimeZone;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class AppenderFactoryCustomTimeZone {
+public class AppenderFactoryCustomTimeZoneTest {
 
     static {
         BootstrapLogging.bootstrap();
