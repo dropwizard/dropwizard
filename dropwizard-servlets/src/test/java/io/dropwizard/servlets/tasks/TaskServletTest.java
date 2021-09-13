@@ -197,8 +197,8 @@ class TaskServletTest {
             servlet.service(request, response);
 
             final String newLine = System.lineSeparator();
-            assertThat(sw.toString())
-                .isEqualTo(gc.getName() + newLine + printJSON.getName() + newLine);
+            assertThat(sw)
+                .hasToString(gc.getName() + newLine + printJSON.getName() + newLine);
         }
     }
 
