@@ -22,7 +22,7 @@ import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
-public class DefaultLoggingFactoryPrintErrorMessagesTest {
+class DefaultLoggingFactoryPrintErrorMessagesTest {
     private DefaultLoggingFactory factory;
     private ByteArrayOutputStream output;
 

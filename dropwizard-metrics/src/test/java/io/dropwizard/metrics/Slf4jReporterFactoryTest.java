@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class Slf4jReporterFactoryTest {
+class Slf4jReporterFactoryTest {
     @Test
     void isDiscoverable() throws Exception {
         assertThat(new DiscoverableSubtypeResolver().getDiscoveredSubtypes())

@@ -16,7 +16,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @NotThreadSafe
-public class DbCalculateChecksumCommandTest extends AbstractMigrationTest {
+class DbCalculateChecksumCommandTest extends AbstractMigrationTest {
 
     private final DbCalculateChecksumCommand<TestMigrationConfiguration> migrateCommand = new DbCalculateChecksumCommand<>(
         TestMigrationConfiguration::getDataSource, TestMigrationConfiguration.class, "migrations.xml");

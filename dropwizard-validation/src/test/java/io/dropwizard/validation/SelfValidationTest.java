@@ -18,7 +18,7 @@ import java.util.Collections;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @NotThreadSafe
-public class SelfValidationTest {
+class SelfValidationTest {
 
     private static final String FAILED = "failed";
     private static final String FAILED_RESULT = " " + FAILED;

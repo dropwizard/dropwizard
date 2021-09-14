@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ViewTest {
+class ViewTest {
     private final View view = new View("/blah.tmp") {
     };
 

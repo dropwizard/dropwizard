@@ -23,7 +23,7 @@ import java.util.Collections;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
 
-public class MustacheViewRendererTest extends JerseyTest {
+class MustacheViewRendererTest extends JerseyTest {
     static {
         BootstrapLogging.bootstrap();
     }

@@ -9,7 +9,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class ServletsTest {
+class ServletsTest {
     private final HttpServletRequest request = mock(HttpServletRequest.class);
     private final HttpServletRequest fullRequest = mock(HttpServletRequest.class);
 

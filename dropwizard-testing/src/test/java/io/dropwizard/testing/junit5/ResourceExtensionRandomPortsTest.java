@@ -11,7 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class ResourceExtensionRandomPortsTest {
 
     @Test
-    public void eachTestShouldUseANewPort() throws Throwable {
+    void eachTestShouldUseANewPort() throws Throwable {
         final ResourceExtension resources = ResourceExtension.builder()
                 .setTestContainerFactory(new GrizzlyTestContainerFactory())
                 .build();

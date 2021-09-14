@@ -8,7 +8,7 @@ import java.util.TimeZone;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
-public class DropwizardLayoutTest {
+class DropwizardLayoutTest {
     private final LoggerContext context = mock(LoggerContext.class);
     private final TimeZone timeZone = TimeZone.getTimeZone("UTC");
     private final DropwizardLayout layout = new DropwizardLayout(context, timeZone);

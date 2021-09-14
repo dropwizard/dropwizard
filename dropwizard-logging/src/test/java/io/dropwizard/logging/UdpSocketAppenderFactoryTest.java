@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class UdpSocketAppenderFactoryTest {
+class UdpSocketAppenderFactoryTest {
 
     private static final int UDP_PORT = 32144;
 

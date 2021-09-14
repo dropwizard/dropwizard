@@ -12,7 +12,7 @@ import java.util.Locale;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assumptions.assumeThat;
 
-public class PortRangeValidatorTest {
+class PortRangeValidatorTest {
     @SuppressWarnings("PublicField")
     public static class Example {
         @PortRange

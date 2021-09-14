@@ -29,7 +29,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-public class ViewMessageBodyWriterTest {
+class ViewMessageBodyWriterTest {
 
     public ContainerRequest headers = mock(ContainerRequest.class);
     public MetricRegistry metricRegistry = mock(MetricRegistry.class);

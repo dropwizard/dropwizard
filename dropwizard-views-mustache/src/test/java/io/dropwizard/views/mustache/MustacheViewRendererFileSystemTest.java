@@ -29,7 +29,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
  *
  * @since 1.1.0
  */
-public class MustacheViewRendererFileSystemTest extends JerseyTest {
+class MustacheViewRendererFileSystemTest extends JerseyTest {
     static {
         BootstrapLogging.bootstrap();
     }

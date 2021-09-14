@@ -26,7 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class EventJsonLayoutTest {
+class EventJsonLayoutTest {
     private static final String timestamp = "2018-01-02T15:19:21.000+0000";
     private static final String logger = "com.example.user.service";
     private static final String message = "User[18] has been registered";

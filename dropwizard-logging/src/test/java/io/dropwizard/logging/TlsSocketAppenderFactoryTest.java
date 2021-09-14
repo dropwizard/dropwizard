@@ -25,7 +25,7 @@ import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class TlsSocketAppenderFactoryTest {
+class TlsSocketAppenderFactoryTest {
 
     public TcpServer tcpServer = new TcpServer(createServerSocket());
 

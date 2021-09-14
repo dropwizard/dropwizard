@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 // Dropwizard used to supply its own Java 8 optional validator but since
 // Hibernate Validator 5.2, it's built in, so the class was removed but
 // the test class stays to ensure behavior remains
-public class OptionalValidatedValueUnwrapperTest {
+class OptionalValidatedValueUnwrapperTest {
 
     public static class Example {
 

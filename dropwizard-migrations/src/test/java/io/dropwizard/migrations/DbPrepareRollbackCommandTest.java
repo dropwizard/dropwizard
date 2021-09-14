@@ -15,7 +15,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @NotThreadSafe
-public class DbPrepareRollbackCommandTest extends AbstractMigrationTest {
+class DbPrepareRollbackCommandTest extends AbstractMigrationTest {
 
     private final DbPrepareRollbackCommand<TestMigrationConfiguration> prepareRollbackCommand =
         new DbPrepareRollbackCommand<>(new TestMigrationDatabaseConfiguration(), TestMigrationConfiguration.class,

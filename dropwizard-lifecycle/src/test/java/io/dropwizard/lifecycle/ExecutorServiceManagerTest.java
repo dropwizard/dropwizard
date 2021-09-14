@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 
 import io.dropwizard.util.Duration;
 
-public class ExecutorServiceManagerTest {
+class ExecutorServiceManagerTest {
 
     private static final Duration TEST_DURATION = Duration.seconds(1L);
     private final ExecutorService exec = mock(ExecutorService.class);

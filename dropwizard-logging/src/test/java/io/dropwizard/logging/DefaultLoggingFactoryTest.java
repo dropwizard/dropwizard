@@ -35,7 +35,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class DefaultLoggingFactoryTest {
+class DefaultLoggingFactoryTest {
     private final ObjectMapper objectMapper = Jackson.newObjectMapper();
     private final YamlConfigurationFactory<DefaultLoggingFactory> factory = new YamlConfigurationFactory<>(
             DefaultLoggingFactory.class,

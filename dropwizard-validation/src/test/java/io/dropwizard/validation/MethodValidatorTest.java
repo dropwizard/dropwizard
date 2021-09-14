@@ -9,7 +9,7 @@ import java.util.Collection;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SuppressWarnings({"FieldMayBeFinal", "MethodMayBeStatic", "UnusedDeclaration"})
-public class MethodValidatorTest {
+class MethodValidatorTest {
     public static class SubExample {
         @ValidationMethod(message = "also needs something special")
         public boolean isOK() {
