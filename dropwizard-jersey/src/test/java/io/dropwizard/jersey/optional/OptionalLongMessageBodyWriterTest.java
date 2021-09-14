@@ -21,7 +21,7 @@ import java.util.OptionalLong;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class OptionalLongMessageBodyWriterTest extends AbstractJerseyTest {
+class OptionalLongMessageBodyWriterTest extends AbstractJerseyTest {
 
     @Override
     protected Application configure() {

@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class RuntimeFilterTest {
+class RuntimeFilterTest {
 
     private ContainerRequestContext request = mock(ContainerRequestContext.class);
     private ContainerResponseContext response = mock(ContainerResponseContext.class);

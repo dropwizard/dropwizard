@@ -23,7 +23,7 @@ import java.net.URISyntaxException;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SuppressWarnings("unchecked")
-public class AppenderFactoryCustomLayoutTest {
+class AppenderFactoryCustomLayoutTest {
 
     static {
         BootstrapLogging.bootstrap();

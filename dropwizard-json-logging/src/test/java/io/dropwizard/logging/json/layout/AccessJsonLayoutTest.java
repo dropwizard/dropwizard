@@ -216,7 +216,7 @@ class AccessJsonLayoutTest {
     }
 
     @Test
-    public void testStartAndStop() {
+    void testStartAndStop() {
         accessJsonLayout.start();
         assertThat(accessJsonLayout.isStarted()).isTrue();
         accessJsonLayout.stop();
