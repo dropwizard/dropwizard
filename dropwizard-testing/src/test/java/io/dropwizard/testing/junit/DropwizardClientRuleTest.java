@@ -23,7 +23,7 @@ public class DropwizardClientRuleTest {
     @Test
     public void shouldGetStringBodyFromDropWizard() throws IOException {
         final URL url = new URL(RULE_WITH_INSTANCE.baseUri() + "/test");
-        assertThat("foo").isEqualTo(Resources.toString(url, StandardCharsets.UTF_8));
+        assertThat(Resources.toString(url, StandardCharsets.UTF_8)).isEqualTo("foo");
     }
 
     @Test

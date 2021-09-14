@@ -35,7 +35,7 @@ public class RenderCommand extends ConfiguredCommand<HelloWorldConfiguration> {
                        HelloWorldConfiguration configuration) throws Exception {
         final Template template = configuration.buildTemplate();
 
-        if (namespace.getBoolean("include-default")) {
+        if (Boolean.TRUE.equals(namespace.getBoolean("include-default"))) {
             LOGGER.info("DEFAULT => {}", template.render(Optional.empty()));
         }
 

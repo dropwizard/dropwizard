@@ -177,7 +177,7 @@ public class ConstraintMessage {
      * are invalid means a bad request
      */
     public static <T extends ConstraintViolation<?>> int determineStatus(Set<T> violations, Invocable invocable) {
-        if (violations.size() > 0) {
+        if (!violations.isEmpty()) {
             final ConstraintViolation<?> violation = violations.iterator().next();
             for (Path.Node node : violation.getPropertyPath()) {
                 switch (node.getKind()) {

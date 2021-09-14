@@ -84,8 +84,7 @@ public class NetUtil {
     }
 
     public static boolean isWindows() {
-        final boolean windows = System.getProperty("os.name", "").toLowerCase(Locale.US).contains("win");
-        return windows;
+        return System.getProperty("os.name", "").toLowerCase(Locale.US).contains("win");
     }
 
     public static int getDefaultTcpBacklog() {

@@ -18,7 +18,7 @@ class ReuseDropwizardAppExtensionTestSuite {
 }
 
 @ExtendWith(DropwizardExtensionsSupport.class)
-class DropwizardAppExtensionTestSuiteFoo {
+class DropwizardAppExtensionTestSuiteFooTest {
     static final DropwizardAppExtension<TestConfiguration> EXTENSION = ReuseDropwizardAppExtensionTestSuite.EXTENSION;
 
     @Test
@@ -33,7 +33,7 @@ class DropwizardAppExtensionTestSuiteFoo {
 }
 
 @ExtendWith(DropwizardExtensionsSupport.class)
-class DropwizardAppExtensionTestSuiteBar {
+class DropwizardAppExtensionTestSuiteBarTest {
     static final DropwizardAppExtension<TestConfiguration> EXTENSION = ReuseDropwizardAppExtensionTestSuite.EXTENSION;
 
     @Test

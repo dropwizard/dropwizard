@@ -1,6 +1,7 @@
 package com.example.helloworld.core;
 
 import java.security.Principal;
+import java.util.Random;
 import java.util.Set;
 
 public class User implements Principal {
@@ -23,7 +24,7 @@ public class User implements Principal {
     }
 
     public int getId() {
-        return (int) (Math.random() * 100);
+        return new Random().nextInt(100);
     }
 
     public Set<String> getRoles() {
