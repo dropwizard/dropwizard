@@ -63,7 +63,7 @@ public class NetUtilTest {
         NetUtil.setLocalIpFilter((nif, adr) ->
             (adr != null) && !adr.isLoopbackAddress() && (nif.isPointToPoint() || !adr.isLinkLocalAddress()));
         final Collection<InetAddress> addresses = NetUtil.getAllLocalIPs();
-        assertThat(addresses.size()).isPositive();
+        assertThat(addresses).isNotEmpty();
         assertThat(addresses).doesNotContain(InetAddress.getLoopbackAddress());
     }
 
@@ -71,7 +71,7 @@ public class NetUtilTest {
     void testLocalIpsWithLocalFilter() throws Exception {
         NetUtil.setLocalIpFilter((inf, adr) -> adr != null);
         final Collection<InetAddress> addresses = NetUtil.getAllLocalIPs();
-        assertThat(addresses.size()).isPositive();
+        assertThat(addresses).isNotEmpty();
         assertThat(addresses).contains(InetAddress.getLoopbackAddress());
     }
 

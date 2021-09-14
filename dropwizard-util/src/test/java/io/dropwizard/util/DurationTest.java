@@ -171,11 +171,11 @@ public class DurationTest {
 
     @Test
     void isHumanReadable() throws Exception {
-        assertThat(Duration.microseconds(1).toString())
-            .isEqualTo("1 microsecond");
+        assertThat(Duration.microseconds(1))
+            .hasToString("1 microsecond");
 
-        assertThat(Duration.microseconds(3).toString())
-            .isEqualTo("3 microseconds");
+        assertThat(Duration.microseconds(3))
+            .hasToString("3 microseconds");
     }
 
     @Test
@@ -193,61 +193,61 @@ public class DurationTest {
     @Test
     void isComparable() throws Exception {
         // both zero
-        assertThat(Duration.nanoseconds(0).compareTo(Duration.nanoseconds(0))).isEqualTo(0);
-        assertThat(Duration.nanoseconds(0).compareTo(Duration.microseconds(0))).isEqualTo(0);
-        assertThat(Duration.nanoseconds(0).compareTo(Duration.milliseconds(0))).isEqualTo(0);
-        assertThat(Duration.nanoseconds(0).compareTo(Duration.seconds(0))).isEqualTo(0);
-        assertThat(Duration.nanoseconds(0).compareTo(Duration.minutes(0))).isEqualTo(0);
-        assertThat(Duration.nanoseconds(0).compareTo(Duration.hours(0))).isEqualTo(0);
-        assertThat(Duration.nanoseconds(0).compareTo(Duration.days(0))).isEqualTo(0);
+        assertThat(Duration.nanoseconds(0).compareTo(Duration.nanoseconds(0))).isZero();
+        assertThat(Duration.nanoseconds(0).compareTo(Duration.microseconds(0))).isZero();
+        assertThat(Duration.nanoseconds(0).compareTo(Duration.milliseconds(0))).isZero();
+        assertThat(Duration.nanoseconds(0).compareTo(Duration.seconds(0))).isZero();
+        assertThat(Duration.nanoseconds(0).compareTo(Duration.minutes(0))).isZero();
+        assertThat(Duration.nanoseconds(0).compareTo(Duration.hours(0))).isZero();
+        assertThat(Duration.nanoseconds(0).compareTo(Duration.days(0))).isZero();
 
-        assertThat(Duration.microseconds(0).compareTo(Duration.nanoseconds(0))).isEqualTo(0);
-        assertThat(Duration.microseconds(0).compareTo(Duration.microseconds(0))).isEqualTo(0);
-        assertThat(Duration.microseconds(0).compareTo(Duration.milliseconds(0))).isEqualTo(0);
-        assertThat(Duration.microseconds(0).compareTo(Duration.seconds(0))).isEqualTo(0);
-        assertThat(Duration.microseconds(0).compareTo(Duration.minutes(0))).isEqualTo(0);
-        assertThat(Duration.microseconds(0).compareTo(Duration.hours(0))).isEqualTo(0);
-        assertThat(Duration.microseconds(0).compareTo(Duration.days(0))).isEqualTo(0);
+        assertThat(Duration.microseconds(0).compareTo(Duration.nanoseconds(0))).isZero();
+        assertThat(Duration.microseconds(0).compareTo(Duration.microseconds(0))).isZero();
+        assertThat(Duration.microseconds(0).compareTo(Duration.milliseconds(0))).isZero();
+        assertThat(Duration.microseconds(0).compareTo(Duration.seconds(0))).isZero();
+        assertThat(Duration.microseconds(0).compareTo(Duration.minutes(0))).isZero();
+        assertThat(Duration.microseconds(0).compareTo(Duration.hours(0))).isZero();
+        assertThat(Duration.microseconds(0).compareTo(Duration.days(0))).isZero();
 
-        assertThat(Duration.milliseconds(0).compareTo(Duration.nanoseconds(0))).isEqualTo(0);
-        assertThat(Duration.milliseconds(0).compareTo(Duration.microseconds(0))).isEqualTo(0);
-        assertThat(Duration.milliseconds(0).compareTo(Duration.milliseconds(0))).isEqualTo(0);
-        assertThat(Duration.milliseconds(0).compareTo(Duration.seconds(0))).isEqualTo(0);
-        assertThat(Duration.milliseconds(0).compareTo(Duration.minutes(0))).isEqualTo(0);
-        assertThat(Duration.milliseconds(0).compareTo(Duration.hours(0))).isEqualTo(0);
-        assertThat(Duration.milliseconds(0).compareTo(Duration.days(0))).isEqualTo(0);
+        assertThat(Duration.milliseconds(0).compareTo(Duration.nanoseconds(0))).isZero();
+        assertThat(Duration.milliseconds(0).compareTo(Duration.microseconds(0))).isZero();
+        assertThat(Duration.milliseconds(0).compareTo(Duration.milliseconds(0))).isZero();
+        assertThat(Duration.milliseconds(0).compareTo(Duration.seconds(0))).isZero();
+        assertThat(Duration.milliseconds(0).compareTo(Duration.minutes(0))).isZero();
+        assertThat(Duration.milliseconds(0).compareTo(Duration.hours(0))).isZero();
+        assertThat(Duration.milliseconds(0).compareTo(Duration.days(0))).isZero();
 
-        assertThat(Duration.seconds(0).compareTo(Duration.nanoseconds(0))).isEqualTo(0);
-        assertThat(Duration.seconds(0).compareTo(Duration.microseconds(0))).isEqualTo(0);
-        assertThat(Duration.seconds(0).compareTo(Duration.milliseconds(0))).isEqualTo(0);
-        assertThat(Duration.seconds(0).compareTo(Duration.seconds(0))).isEqualTo(0);
-        assertThat(Duration.seconds(0).compareTo(Duration.minutes(0))).isEqualTo(0);
-        assertThat(Duration.seconds(0).compareTo(Duration.hours(0))).isEqualTo(0);
-        assertThat(Duration.seconds(0).compareTo(Duration.days(0))).isEqualTo(0);
+        assertThat(Duration.seconds(0).compareTo(Duration.nanoseconds(0))).isZero();
+        assertThat(Duration.seconds(0).compareTo(Duration.microseconds(0))).isZero();
+        assertThat(Duration.seconds(0).compareTo(Duration.milliseconds(0))).isZero();
+        assertThat(Duration.seconds(0).compareTo(Duration.seconds(0))).isZero();
+        assertThat(Duration.seconds(0).compareTo(Duration.minutes(0))).isZero();
+        assertThat(Duration.seconds(0).compareTo(Duration.hours(0))).isZero();
+        assertThat(Duration.seconds(0).compareTo(Duration.days(0))).isZero();
 
-        assertThat(Duration.minutes(0).compareTo(Duration.nanoseconds(0))).isEqualTo(0);
-        assertThat(Duration.minutes(0).compareTo(Duration.microseconds(0))).isEqualTo(0);
-        assertThat(Duration.minutes(0).compareTo(Duration.milliseconds(0))).isEqualTo(0);
-        assertThat(Duration.minutes(0).compareTo(Duration.seconds(0))).isEqualTo(0);
-        assertThat(Duration.minutes(0).compareTo(Duration.minutes(0))).isEqualTo(0);
-        assertThat(Duration.minutes(0).compareTo(Duration.hours(0))).isEqualTo(0);
-        assertThat(Duration.minutes(0).compareTo(Duration.days(0))).isEqualTo(0);
+        assertThat(Duration.minutes(0).compareTo(Duration.nanoseconds(0))).isZero();
+        assertThat(Duration.minutes(0).compareTo(Duration.microseconds(0))).isZero();
+        assertThat(Duration.minutes(0).compareTo(Duration.milliseconds(0))).isZero();
+        assertThat(Duration.minutes(0).compareTo(Duration.seconds(0))).isZero();
+        assertThat(Duration.minutes(0).compareTo(Duration.minutes(0))).isZero();
+        assertThat(Duration.minutes(0).compareTo(Duration.hours(0))).isZero();
+        assertThat(Duration.minutes(0).compareTo(Duration.days(0))).isZero();
 
-        assertThat(Duration.hours(0).compareTo(Duration.nanoseconds(0))).isEqualTo(0);
-        assertThat(Duration.hours(0).compareTo(Duration.microseconds(0))).isEqualTo(0);
-        assertThat(Duration.hours(0).compareTo(Duration.milliseconds(0))).isEqualTo(0);
-        assertThat(Duration.hours(0).compareTo(Duration.seconds(0))).isEqualTo(0);
-        assertThat(Duration.hours(0).compareTo(Duration.minutes(0))).isEqualTo(0);
-        assertThat(Duration.hours(0).compareTo(Duration.hours(0))).isEqualTo(0);
-        assertThat(Duration.hours(0).compareTo(Duration.days(0))).isEqualTo(0);
+        assertThat(Duration.hours(0).compareTo(Duration.nanoseconds(0))).isZero();
+        assertThat(Duration.hours(0).compareTo(Duration.microseconds(0))).isZero();
+        assertThat(Duration.hours(0).compareTo(Duration.milliseconds(0))).isZero();
+        assertThat(Duration.hours(0).compareTo(Duration.seconds(0))).isZero();
+        assertThat(Duration.hours(0).compareTo(Duration.minutes(0))).isZero();
+        assertThat(Duration.hours(0).compareTo(Duration.hours(0))).isZero();
+        assertThat(Duration.hours(0).compareTo(Duration.days(0))).isZero();
 
-        assertThat(Duration.days(0).compareTo(Duration.nanoseconds(0))).isEqualTo(0);
-        assertThat(Duration.days(0).compareTo(Duration.microseconds(0))).isEqualTo(0);
-        assertThat(Duration.days(0).compareTo(Duration.milliseconds(0))).isEqualTo(0);
-        assertThat(Duration.days(0).compareTo(Duration.seconds(0))).isEqualTo(0);
-        assertThat(Duration.days(0).compareTo(Duration.minutes(0))).isEqualTo(0);
-        assertThat(Duration.days(0).compareTo(Duration.hours(0))).isEqualTo(0);
-        assertThat(Duration.days(0).compareTo(Duration.days(0))).isEqualTo(0);
+        assertThat(Duration.days(0).compareTo(Duration.nanoseconds(0))).isZero();
+        assertThat(Duration.days(0).compareTo(Duration.microseconds(0))).isZero();
+        assertThat(Duration.days(0).compareTo(Duration.milliseconds(0))).isZero();
+        assertThat(Duration.days(0).compareTo(Duration.seconds(0))).isZero();
+        assertThat(Duration.days(0).compareTo(Duration.minutes(0))).isZero();
+        assertThat(Duration.days(0).compareTo(Duration.hours(0))).isZero();
+        assertThat(Duration.days(0).compareTo(Duration.days(0))).isZero();
 
         // one zero, one negative
         assertThat(Duration.nanoseconds(0)).isGreaterThan(Duration.nanoseconds(-1));

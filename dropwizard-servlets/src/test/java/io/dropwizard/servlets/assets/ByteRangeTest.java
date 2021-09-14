@@ -12,7 +12,7 @@ public class ByteRangeTest {
     @Test
     void firstBytes() {
         final ByteRange actual = ByteRange.parse("0-499", RESOURCE_LENGTH);
-        assertThat(actual.getStart()).isEqualTo(0);
+        assertThat(actual.getStart()).isZero();
         assertThat(actual.getEnd()).isEqualTo(499);
     }
 
