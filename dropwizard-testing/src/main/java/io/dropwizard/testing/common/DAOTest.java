@@ -18,7 +18,7 @@ import java.util.function.Consumer;
 
 public class DAOTest {
     @SuppressWarnings("unchecked")
-    public static abstract class Builder<B extends Builder<B>> {
+    public abstract static class Builder<B extends Builder<B>> {
         private String url = "jdbc:h2:mem:" + UUID.randomUUID();
         private String username = "sa";
         private String password = "";
