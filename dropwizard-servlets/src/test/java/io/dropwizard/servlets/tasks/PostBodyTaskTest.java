@@ -11,7 +11,7 @@ import java.util.Map;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class PostBodyTaskTest {
+class PostBodyTaskTest {
     private final PostBodyTask task = new PostBodyTask("test") {
         @Override
         public void execute(Map<String, List<String>> parameters, String body, PrintWriter output) throws Exception {

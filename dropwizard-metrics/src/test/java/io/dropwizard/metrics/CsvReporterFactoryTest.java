@@ -15,7 +15,7 @@ import java.io.File;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class CsvReporterFactoryTest {
+class CsvReporterFactoryTest {
     private final ObjectMapper objectMapper = Jackson.newObjectMapper();
     private final YamlConfigurationFactory<MetricsFactory> factory =
             new YamlConfigurationFactory<>(MetricsFactory.class,

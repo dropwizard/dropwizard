@@ -13,7 +13,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @NotThreadSafe
-public class DbTagCommandTest extends AbstractMigrationTest {
+class DbTagCommandTest extends AbstractMigrationTest {
 
     private final String migrationsFileName = "migrations-ddl.xml";
     private final DbTagCommand<TestMigrationConfiguration> dbTagCommand = new DbTagCommand<>(

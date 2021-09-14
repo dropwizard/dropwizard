@@ -21,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 import static org.mockito.Mockito.when;
 
-public class AccessJsonLayoutTest {
+class AccessJsonLayoutTest {
 
     private String remoteHost = "nw-4.us.crawl.io";
     private String serverName = "sw-2.us.api.example.io";

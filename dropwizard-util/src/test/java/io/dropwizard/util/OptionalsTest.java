@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class OptionalsTest {
+class OptionalsTest {
     @Test
     void testFromGuavaOptional() throws Exception {
         assertFalse(Optionals.fromGuavaOptional(com.google.common.base.Optional.absent()).isPresent());

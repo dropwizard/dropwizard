@@ -19,7 +19,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
-public class LifecycleEnvironmentTest {
+class LifecycleEnvironmentTest {
 
     private final LifecycleEnvironment environment = new LifecycleEnvironment(new MetricRegistry());
 

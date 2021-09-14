@@ -16,7 +16,7 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class LogConfigurationTaskTest {
+class LogConfigurationTaskTest {
 
     private final LoggerContext loggerContext = new LoggerContext();
     private final Logger logger1 = loggerContext.getLogger("logger.one");

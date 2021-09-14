@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
-public class DurationValidatorTest {
+class DurationValidatorTest {
     @SuppressWarnings("unused")
     public static class Example {
         @MaxDuration(value = 30, unit = TimeUnit.SECONDS)

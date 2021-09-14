@@ -9,7 +9,7 @@ import java.util.TimeZone;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
-public class LogbackAccessRequestLayoutTest {
+class LogbackAccessRequestLayoutTest {
     final Context context = mock(LoggerContext.class);
     private final TimeZone timeZone = TimeZone.getTimeZone("UTC");
     final LogbackAccessRequestLayout layout = new LogbackAccessRequestLayout(context, timeZone);

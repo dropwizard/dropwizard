@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @NotThreadSafe
-public class CloseableLiquibaseTest {
+class CloseableLiquibaseTest {
 
     CloseableLiquibase liquibase;
     ManagedPooledDataSource dataSource;

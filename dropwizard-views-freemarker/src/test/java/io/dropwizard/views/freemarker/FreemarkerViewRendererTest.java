@@ -30,7 +30,7 @@ import java.util.Collections;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class FreemarkerViewRendererTest extends JerseyTest {
+class FreemarkerViewRendererTest extends JerseyTest {
     static {
         BootstrapLogging.bootstrap();
     }
@@ -116,7 +116,7 @@ public class FreemarkerViewRendererTest extends JerseyTest {
 
     @Test
     @Disabled("Flaky on JUnit5")
-    public void returnsA500ForViewsThatCantCompile() {
+    void returnsA500ForViewsThatCantCompile() {
         assertThatExceptionOfType(WebApplicationException.class)
             .isThrownBy(() -> target("/test/error").request().get(String.class))
             .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(500))

@@ -33,7 +33,7 @@ import java.util.StringJoiner;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MultipleContentTypeTest extends JerseyTest {
+class MultipleContentTypeTest extends JerseyTest {
     static {
         BootstrapLogging.bootstrap();
     }

@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
-public class DurationTest {
+class DurationTest {
     @Test
     void convertsDays() throws Exception {
         assertThat(Duration.days(2).toDays())

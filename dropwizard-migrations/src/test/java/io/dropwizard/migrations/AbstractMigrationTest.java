@@ -10,7 +10,7 @@ import org.jdbi.v3.core.Handle;
 import java.sql.SQLException;
 import java.util.UUID;
 
-public class AbstractMigrationTest {
+class AbstractMigrationTest {
 
     static {
         SqlGeneratorFactory.getInstance().unregister(AddColumnGeneratorSQLite.class);

@@ -9,7 +9,7 @@ import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class PrefixedThrowableProxyConverterTest {
+class PrefixedThrowableProxyConverterTest {
     private final PrefixedThrowableProxyConverter converter = new PrefixedThrowableProxyConverter();
     private final ThrowableProxy proxy = new ThrowableProxy(new IOException("noo"));
 

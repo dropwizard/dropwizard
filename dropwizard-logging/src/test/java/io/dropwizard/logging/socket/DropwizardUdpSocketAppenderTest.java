@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class DropwizardUdpSocketAppenderTest {
+class DropwizardUdpSocketAppenderTest {
 
     private OutputStreamAppender<ILoggingEvent> udpStreamAppender;
 

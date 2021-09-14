@@ -6,7 +6,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class JarLocationTest {
+class JarLocationTest {
     @Test
     void isHumanReadable() throws Exception {
         assertThat(new JarLocation(JarLocationTest.class))

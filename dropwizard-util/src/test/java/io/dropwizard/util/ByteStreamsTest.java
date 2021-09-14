@@ -8,7 +8,7 @@ import java.io.IOException;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
-public class ByteStreamsTest {
+class ByteStreamsTest {
 
     @Test
     void testToByteArray() throws IOException {

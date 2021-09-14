@@ -16,7 +16,7 @@ import java.util.EnumSet;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MetricsFactoryTest {
+class MetricsFactoryTest {
     static {
         BootstrapLogging.bootstrap();
     }

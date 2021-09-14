@@ -16,7 +16,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.*;
 
 @NotThreadSafe
-public class DbLocksCommandTest extends AbstractMigrationTest {
+class DbLocksCommandTest extends AbstractMigrationTest {
 
     private final DbLocksCommand<TestMigrationConfiguration> locksCommand = new DbLocksCommand<>(
         TestMigrationConfiguration::getDataSource, TestMigrationConfiguration.class, "migrations.xml");

@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 @SuppressWarnings("serial")
-public class GenericsTest<T> {
+class GenericsTest<T> {
 
     public static Stream<Arguments> data() {
         return Stream.of(

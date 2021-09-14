@@ -16,7 +16,7 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class SelfValidatingValidatorTest {
+class SelfValidatingValidatorTest {
     private SelfValidatingValidator selfValidatingValidator = new SelfValidatingValidator();
 
     @Test

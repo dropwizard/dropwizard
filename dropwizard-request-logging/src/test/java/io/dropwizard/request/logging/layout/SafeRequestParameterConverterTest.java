@@ -13,7 +13,7 @@ import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class SafeRequestParameterConverterTest {
+class SafeRequestParameterConverterTest {
 
     private final SafeRequestParameterConverter safeRequestParameterConverter = new SafeRequestParameterConverter();
     private final HttpServletRequest httpServletRequest = Mockito.mock(HttpServletRequest.class);
