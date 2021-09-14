@@ -33,7 +33,7 @@ import java.io.OutputStream;
 @SuppressWarnings("NullAway")
 abstract class ResilientOutputStreamBase extends OutputStream {
 
-    private final static int STATUS_COUNT_LIMIT = 2 * 4;
+    private static final int STATUS_COUNT_LIMIT = 2 * 4;
 
     private int noContextWarning = 0;
     private int statusCount = 0;

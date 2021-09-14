@@ -183,34 +183,6 @@ public class DropwizardResourceConfig extends ResourceConfig {
         return PATH_DIRTY_SLASHES.matcher(path).replaceAll("/").trim();
     }
 
-    private static String mergePaths(@NotNull String context, String... pathSegments) {
-        if (pathSegments == null || pathSegments.length == 0) {
-            return cleanUpPath(context);
-        }
-
-        final StringBuilder path = new StringBuilder();
-        if (context.endsWith("/")) {
-            path.append(context, 0, context.length() - 1);
-        } else {
-            path.append(context);
-        }
-
-        for (String segment : pathSegments) {
-            if (Strings.isNullOrEmpty(segment)) {
-                continue;
-            }
-            if ("/".equals(segment)) {
-                path.append('/');
-            } else {
-                final int startIndex = segment.startsWith("/") ? 1 : 0;
-                final int endIndex = segment.endsWith("/") ? segment.length() - 1 : segment.length();
-                path.append('/').append(segment, startIndex, endIndex);
-            }
-        }
-
-        return cleanUpPath(path.toString());
-    }
-
     /**
      * @since 2.0
      */
@@ -322,6 +294,34 @@ public class DropwizardResourceConfig extends ResourceConfig {
             }
 
             return methodLines;
+        }
+
+        private static String mergePaths(@NotNull String context, String... pathSegments) {
+            if (pathSegments == null || pathSegments.length == 0) {
+                return cleanUpPath(context);
+            }
+
+            final StringBuilder path = new StringBuilder();
+            if (context.endsWith("/")) {
+                path.append(context, 0, context.length() - 1);
+            } else {
+                path.append(context);
+            }
+
+            for (String segment : pathSegments) {
+                if (Strings.isNullOrEmpty(segment)) {
+                    continue;
+                }
+                if ("/".equals(segment)) {
+                    path.append('/');
+                } else {
+                    final int startIndex = segment.startsWith("/") ? 1 : 0;
+                    final int endIndex = segment.endsWith("/") ? segment.length() - 1 : segment.length();
+                    path.append('/').append(segment, startIndex, endIndex);
+                }
+            }
+
+            return cleanUpPath(path.toString());
         }
 
         private List<EndpointLogLine> logResourceLines(Resource resource, String contextPath) {

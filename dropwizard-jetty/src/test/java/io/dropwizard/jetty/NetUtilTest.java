@@ -62,17 +62,17 @@ class NetUtilTest {
     void testAllLocalIps() throws Exception {
         NetUtil.setLocalIpFilter((nif, adr) ->
             (adr != null) && !adr.isLoopbackAddress() && (nif.isPointToPoint() || !adr.isLinkLocalAddress()));
-        final Collection<InetAddress> addresses = NetUtil.getAllLocalIPs();
-        assertThat(addresses).isNotEmpty();
-        assertThat(addresses).doesNotContain(InetAddress.getLoopbackAddress());
+        assertThat(NetUtil.getAllLocalIPs())
+                .isNotEmpty()
+                .doesNotContain(InetAddress.getLoopbackAddress());
     }
 
     @Test
     void testLocalIpsWithLocalFilter() throws Exception {
         NetUtil.setLocalIpFilter((inf, adr) -> adr != null);
-        final Collection<InetAddress> addresses = NetUtil.getAllLocalIPs();
-        assertThat(addresses).isNotEmpty();
-        assertThat(addresses).contains(InetAddress.getLoopbackAddress());
+        assertThat(NetUtil.getAllLocalIPs())
+                .isNotEmpty()
+                .contains(InetAddress.getLoopbackAddress());
     }
 
     private boolean isTcpBacklogSettingReadable() {
