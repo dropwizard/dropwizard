@@ -13,7 +13,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 
-public class ConfiguredCommandTest {
+class ConfiguredCommandTest {
     private static class TestCommand extends ConfiguredCommand<Configuration> {
         protected TestCommand() {
             super("test", "test");

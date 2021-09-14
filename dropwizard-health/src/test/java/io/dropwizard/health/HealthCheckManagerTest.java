@@ -29,7 +29,7 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class HealthCheckManagerTest {
+class HealthCheckManagerTest {
     private static final String NAME = "test";
     private static final String NAME_2 = "test2";
     private static final HealthCheckType READY = HealthCheckType.READY;
@@ -39,7 +39,7 @@ public class HealthCheckManagerTest {
     private HealthCheckScheduler scheduler;
 
     @Test
-    public void shouldIgnoreUnconfiguredAddedHealthChecks() {
+    void shouldIgnoreUnconfiguredAddedHealthChecks() {
         // given
         final HealthCheckManager manager = new HealthCheckManager(Collections.emptyList(), scheduler,
             new MetricRegistry(), SHUTDOWN_WAIT, true, Collections.emptyList());
@@ -52,7 +52,7 @@ public class HealthCheckManagerTest {
     }
 
     @Test
-    public void shouldScheduleHealthCheckWhenConfiguredHealthCheckAdded() {
+    void shouldScheduleHealthCheckWhenConfiguredHealthCheckAdded() {
         // given
         final HealthCheckConfiguration config = new HealthCheckConfiguration();
         config.setName(NAME);
@@ -69,7 +69,7 @@ public class HealthCheckManagerTest {
     }
 
     @Test
-    public void shouldUnscheduleTaskWhenHealthCheckRemoved() {
+    void shouldUnscheduleTaskWhenHealthCheckRemoved() {
         // given
         final ScheduledHealthCheck healthCheck = mock(ScheduledHealthCheck.class);
         final HealthCheckManager manager = new HealthCheckManager(Collections.emptyList(), scheduler,
@@ -84,7 +84,7 @@ public class HealthCheckManagerTest {
     }
 
     @Test
-    public void shouldDoNothingWhenStateChangesForUnconfiguredHealthCheck() {
+    void shouldDoNothingWhenStateChangesForUnconfiguredHealthCheck() {
         // given
         final HealthCheckManager manager = new HealthCheckManager(Collections.emptyList(), scheduler,
             new MetricRegistry(), SHUTDOWN_WAIT, true, Collections.emptyList());
@@ -97,7 +97,7 @@ public class HealthCheckManagerTest {
     }
 
     @Test
-    public void shouldReportUnhealthyWhenInitialOverallStateIsFalse() {
+    void shouldReportUnhealthyWhenInitialOverallStateIsFalse() {
         // given
         final HealthCheckConfiguration config = new HealthCheckConfiguration();
         config.setName(NAME);
@@ -126,7 +126,7 @@ public class HealthCheckManagerTest {
     }
 
     @Test
-    public void shouldMarkServerUnhealthyWhenCriticalHealthCheckFails() {
+    void shouldMarkServerUnhealthyWhenCriticalHealthCheckFails() {
         // given
         final HealthCheckConfiguration config = new HealthCheckConfiguration();
         config.setName(NAME);
@@ -154,7 +154,7 @@ public class HealthCheckManagerTest {
     }
 
     @Test
-    public void shouldMarkServerNotAliveAndUnhealthyWhenCriticalAliveCheckFails() {
+    void shouldMarkServerNotAliveAndUnhealthyWhenCriticalAliveCheckFails() {
         // given
         final HealthCheckConfiguration config = new HealthCheckConfiguration();
         config.setName(NAME);
@@ -182,7 +182,7 @@ public class HealthCheckManagerTest {
     }
 
     @Test
-    public void shouldMarkServerHealthyWhenCriticalHealthCheckRecovers() {
+    void shouldMarkServerHealthyWhenCriticalHealthCheckRecovers() {
         // given
         final HealthCheckConfiguration config = new HealthCheckConfiguration();
         config.setName(NAME);
@@ -227,7 +227,7 @@ public class HealthCheckManagerTest {
     }
 
     @Test
-    public void shouldNotChangeServerStateWhenNonCriticalHealthCheckFails() {
+    void shouldNotChangeServerStateWhenNonCriticalHealthCheckFails() {
         // given
         final HealthCheckConfiguration config = new HealthCheckConfiguration();
         config.setName(NAME);
@@ -249,7 +249,7 @@ public class HealthCheckManagerTest {
     }
 
     @Test
-    public void shouldNotChangeServerStateWhenNonCriticalHealthCheckRecovers() {
+    void shouldNotChangeServerStateWhenNonCriticalHealthCheckRecovers() {
         // given
         final HealthCheckConfiguration nonCriticalConfig = new HealthCheckConfiguration();
         nonCriticalConfig.setName(NAME);
@@ -311,7 +311,7 @@ public class HealthCheckManagerTest {
     }
 
     @Test
-    public void shouldRecordNumberOfHealthyAndUnhealthyHealthChecks() {
+    void shouldRecordNumberOfHealthyAndUnhealthyHealthChecks() {
         // given
         final Schedule schedule = new Schedule();
         final HealthCheckConfiguration nonCriticalConfig = new HealthCheckConfiguration();
@@ -377,7 +377,7 @@ public class HealthCheckManagerTest {
     }
 
     @Test
-    public void shouldContinueScheduledCheckingWhileDelayingShutdown() throws Exception {
+    void shouldContinueScheduledCheckingWhileDelayingShutdown() throws Exception {
         // given
         final int checkIntervalMillis = 10;
         final int shutdownWaitTimeMillis = 50;

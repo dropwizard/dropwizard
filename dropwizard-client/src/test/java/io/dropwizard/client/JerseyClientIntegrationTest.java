@@ -44,7 +44,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Integration test of {@link org.glassfish.jersey.client.JerseyClient}
  * with {@link io.dropwizard.client.DropwizardApacheConnector}
  */
-public class JerseyClientIntegrationTest {
+class JerseyClientIntegrationTest {
 
     private static final String TRANSFER_ENCODING = "Transfer-Encoding";
     private static final String CHUNKED = "chunked";

@@ -27,7 +27,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class HibernateBundleTest {
+class HibernateBundleTest {
     private final DataSourceFactory dbConfig = new DataSourceFactory();
     private final List<Class<?>> entities = Collections.singletonList(Person.class);
     private final SessionFactoryFactory factory = mock(SessionFactoryFactory.class);

@@ -7,7 +7,7 @@ import java.util.Arrays;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
 
-public class LevenshteinComparatorTest {
+class LevenshteinComparatorTest {
     private final ConfigurationParsingException.Builder.LevenshteinComparator c = new ConfigurationParsingException.Builder.LevenshteinComparator("base");
 
     /**

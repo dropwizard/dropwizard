@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class ScheduledHealthCheckTest {
+class ScheduledHealthCheckTest {
     private static final HealthStateListener LISTENER = new HealthStateListener() {
         @Override
         public void onHealthyCheck(String healthCheckName) {
@@ -33,7 +33,7 @@ public class ScheduledHealthCheckTest {
     private Schedule schedule;
 
     @Test
-    public void healthyCheckShouldResultInSuccess() {
+    void healthyCheckShouldResultInSuccess() {
         when(schedule.getSuccessAttempts()).thenReturn(1);
         when(schedule.getFailureAttempts()).thenReturn(1);
 
@@ -55,7 +55,7 @@ public class ScheduledHealthCheckTest {
     }
 
     @Test
-    public void unhealthyCheckShouldResultInFail() {
+    void unhealthyCheckShouldResultInFail() {
         when(schedule.getSuccessAttempts()).thenReturn(1);
         when(schedule.getFailureAttempts()).thenReturn(1);
 

@@ -8,7 +8,7 @@ import java.sql.SQLFeatureNotSupportedException;
 
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class ManagedPooledDataSourceTest {
+class ManagedPooledDataSourceTest {
     private final PoolProperties config = new PoolProperties();
     private final MetricRegistry metricRegistry = new MetricRegistry();
     private final ManagedPooledDataSource dataSource = new ManagedPooledDataSource(config, metricRegistry);

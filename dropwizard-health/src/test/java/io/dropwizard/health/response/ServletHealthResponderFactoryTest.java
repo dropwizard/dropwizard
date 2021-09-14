@@ -36,7 +36,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class ServletHealthResponderFactoryTest {
+class ServletHealthResponderFactoryTest {
     private static final String NAME = "tests";
     private static final String HEALTH_CHECK_URI = "/health-check";
     private static final HealthResponse SUCCESS = new HealthResponse(true, "healthy", MediaType.TEXT_PLAIN,
