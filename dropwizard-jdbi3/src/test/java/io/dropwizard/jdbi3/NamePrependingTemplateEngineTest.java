@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class NamePrependingTemplateEngineTest {
+class NamePrependingTemplateEngineTest {
     private static final String TEMPLATE = UUID.randomUUID().toString();
     private static final String ORIGINAL_RENDERED = UUID.randomUUID().toString();
 

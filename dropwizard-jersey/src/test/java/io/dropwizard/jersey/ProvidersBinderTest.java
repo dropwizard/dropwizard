@@ -9,7 +9,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Demonstrates that DropwizardResourceConfig.register needs to include an extra condition for hk2 binder, but not for
  * jersey Binder as it will be picked up as a Provider
  */
-public class ProvidersBinderTest {
+class ProvidersBinderTest {
 
     @Test
     void demonstrateThatHk2BinderIsNotPickedUpAsProvider() {

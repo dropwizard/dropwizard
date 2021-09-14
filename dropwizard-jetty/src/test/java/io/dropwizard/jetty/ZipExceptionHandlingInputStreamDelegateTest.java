@@ -13,7 +13,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
-public class ZipExceptionHandlingInputStreamDelegateTest {
+class ZipExceptionHandlingInputStreamDelegateTest {
 
     private final InputStream delegate = Mockito.mock(InputStream.class);
     private final ZipExceptionHandlingInputStream in = new ZipExceptionHandlingInputStream(delegate, "gzip");

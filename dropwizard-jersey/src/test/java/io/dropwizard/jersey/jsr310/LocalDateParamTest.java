@@ -6,7 +6,7 @@ import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class LocalDateParamTest {
+class LocalDateParamTest {
     @Test
     void parsesDateTimes() throws Exception {
         final LocalDateParam param = new LocalDateParam("2012-11-19");

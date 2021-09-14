@@ -9,7 +9,7 @@ import javax.ws.rs.core.Response;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class JerseyContentTypeTest extends AbstractJerseyTest {
+class JerseyContentTypeTest extends AbstractJerseyTest {
 
     @Override
     protected Application configure() {

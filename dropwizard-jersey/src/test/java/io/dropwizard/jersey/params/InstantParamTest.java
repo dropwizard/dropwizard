@@ -11,7 +11,7 @@ import javax.ws.rs.WebApplicationException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class InstantParamTest {
+class InstantParamTest {
     @Test
     void parsesDateTimes() {
         final InstantParam param = new InstantParam("2012-11-19T00:00:00Z");

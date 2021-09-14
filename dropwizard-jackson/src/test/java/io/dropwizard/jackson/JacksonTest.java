@@ -13,7 +13,7 @@ import java.nio.file.Paths;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatCode;
 
-public class JacksonTest {
+class JacksonTest {
     @Test
     void objectMapperUsesGivenCustomJsonFactory() {
         JsonFactory factory = Mockito.mock(JsonFactory.class);

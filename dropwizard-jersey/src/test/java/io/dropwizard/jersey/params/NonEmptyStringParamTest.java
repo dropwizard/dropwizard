@@ -6,7 +6,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class NonEmptyStringParamTest {
+class NonEmptyStringParamTest {
     @Test
     void aBlankStringIsAnAbsentString() {
         final NonEmptyStringParam param = new NonEmptyStringParam("");

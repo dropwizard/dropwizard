@@ -17,7 +17,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class RequestIdFilterTest {
+class RequestIdFilterTest {
 
     private ContainerRequestContext request = mock(ContainerRequestContext.class);
     private ContainerResponseContext response = mock(ContainerResponseContext.class);

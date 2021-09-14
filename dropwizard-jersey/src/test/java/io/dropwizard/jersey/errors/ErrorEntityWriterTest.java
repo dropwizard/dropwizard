@@ -19,7 +19,7 @@ import javax.ws.rs.core.Response;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class ErrorEntityWriterTest extends AbstractJerseyTest {
+class ErrorEntityWriterTest extends AbstractJerseyTest {
 
     public static class ErrorEntityWriterTestResourceConfig extends DropwizardResourceConfig {
         public ErrorEntityWriterTestResourceConfig() {

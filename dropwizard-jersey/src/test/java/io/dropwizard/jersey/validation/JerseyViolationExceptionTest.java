@@ -12,7 +12,7 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.Mockito.mock;
 
-public class JerseyViolationExceptionTest {
+class JerseyViolationExceptionTest {
 
     @Test
     void testAccessors() {

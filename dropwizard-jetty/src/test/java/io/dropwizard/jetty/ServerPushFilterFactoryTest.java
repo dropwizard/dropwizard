@@ -21,7 +21,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
-public class ServerPushFilterFactoryTest {
+class ServerPushFilterFactoryTest {
 
     @Test
     void testLoadConfiguration() throws Exception {
