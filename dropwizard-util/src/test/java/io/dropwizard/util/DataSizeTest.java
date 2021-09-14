@@ -265,35 +265,35 @@ class DataSizeTest {
     @Test
     void isComparable() {
         // both zero
-        assertThat(DataSize.bytes(0).compareTo(DataSize.bytes(0))).isZero();
-        assertThat(DataSize.bytes(0).compareTo(DataSize.kilobytes(0))).isZero();
-        assertThat(DataSize.bytes(0).compareTo(DataSize.megabytes(0))).isZero();
-        assertThat(DataSize.bytes(0).compareTo(DataSize.gigabytes(0))).isZero();
-        assertThat(DataSize.bytes(0).compareTo(DataSize.terabytes(0))).isZero();
+        assertThat(DataSize.bytes(0)).isEqualByComparingTo(DataSize.bytes(0));
+        assertThat(DataSize.bytes(0)).isEqualByComparingTo(DataSize.kilobytes(0));
+        assertThat(DataSize.bytes(0)).isEqualByComparingTo(DataSize.megabytes(0));
+        assertThat(DataSize.bytes(0)).isEqualByComparingTo(DataSize.gigabytes(0));
+        assertThat(DataSize.bytes(0)).isEqualByComparingTo(DataSize.terabytes(0));
 
-        assertThat(DataSize.kilobytes(0).compareTo(DataSize.bytes(0))).isZero();
-        assertThat(DataSize.kilobytes(0).compareTo(DataSize.kilobytes(0))).isZero();
-        assertThat(DataSize.kilobytes(0).compareTo(DataSize.megabytes(0))).isZero();
-        assertThat(DataSize.kilobytes(0).compareTo(DataSize.gigabytes(0))).isZero();
-        assertThat(DataSize.kilobytes(0).compareTo(DataSize.terabytes(0))).isZero();
+        assertThat(DataSize.kilobytes(0)).isEqualByComparingTo(DataSize.bytes(0));
+        assertThat(DataSize.kilobytes(0)).isEqualByComparingTo(DataSize.kilobytes(0));
+        assertThat(DataSize.kilobytes(0)).isEqualByComparingTo(DataSize.megabytes(0));
+        assertThat(DataSize.kilobytes(0)).isEqualByComparingTo(DataSize.gigabytes(0));
+        assertThat(DataSize.kilobytes(0)).isEqualByComparingTo(DataSize.terabytes(0));
 
-        assertThat(DataSize.megabytes(0).compareTo(DataSize.bytes(0))).isZero();
-        assertThat(DataSize.megabytes(0).compareTo(DataSize.kilobytes(0))).isZero();
-        assertThat(DataSize.megabytes(0).compareTo(DataSize.megabytes(0))).isZero();
-        assertThat(DataSize.megabytes(0).compareTo(DataSize.gigabytes(0))).isZero();
-        assertThat(DataSize.megabytes(0).compareTo(DataSize.terabytes(0))).isZero();
+        assertThat(DataSize.megabytes(0)).isEqualByComparingTo(DataSize.bytes(0));
+        assertThat(DataSize.megabytes(0)).isEqualByComparingTo(DataSize.kilobytes(0));
+        assertThat(DataSize.megabytes(0)).isEqualByComparingTo(DataSize.megabytes(0));
+        assertThat(DataSize.megabytes(0)).isEqualByComparingTo(DataSize.gigabytes(0));
+        assertThat(DataSize.megabytes(0)).isEqualByComparingTo(DataSize.terabytes(0));
 
-        assertThat(DataSize.gigabytes(0).compareTo(DataSize.bytes(0))).isZero();
-        assertThat(DataSize.gigabytes(0).compareTo(DataSize.kilobytes(0))).isZero();
-        assertThat(DataSize.gigabytes(0).compareTo(DataSize.megabytes(0))).isZero();
-        assertThat(DataSize.gigabytes(0).compareTo(DataSize.gigabytes(0))).isZero();
-        assertThat(DataSize.gigabytes(0).compareTo(DataSize.terabytes(0))).isZero();
+        assertThat(DataSize.gigabytes(0)).isEqualByComparingTo(DataSize.bytes(0));
+        assertThat(DataSize.gigabytes(0)).isEqualByComparingTo(DataSize.kilobytes(0));
+        assertThat(DataSize.gigabytes(0)).isEqualByComparingTo(DataSize.megabytes(0));
+        assertThat(DataSize.gigabytes(0)).isEqualByComparingTo(DataSize.gigabytes(0));
+        assertThat(DataSize.gigabytes(0)).isEqualByComparingTo(DataSize.terabytes(0));
 
-        assertThat(DataSize.terabytes(0).compareTo(DataSize.bytes(0))).isZero();
-        assertThat(DataSize.terabytes(0).compareTo(DataSize.kilobytes(0))).isZero();
-        assertThat(DataSize.terabytes(0).compareTo(DataSize.megabytes(0))).isZero();
-        assertThat(DataSize.terabytes(0).compareTo(DataSize.gigabytes(0))).isZero();
-        assertThat(DataSize.terabytes(0).compareTo(DataSize.terabytes(0))).isZero();
+        assertThat(DataSize.terabytes(0)).isEqualByComparingTo(DataSize.bytes(0));
+        assertThat(DataSize.terabytes(0)).isEqualByComparingTo(DataSize.kilobytes(0));
+        assertThat(DataSize.terabytes(0)).isEqualByComparingTo(DataSize.megabytes(0));
+        assertThat(DataSize.terabytes(0)).isEqualByComparingTo(DataSize.gigabytes(0));
+        assertThat(DataSize.terabytes(0)).isEqualByComparingTo(DataSize.terabytes(0));
 
         // one zero, one negative
         assertThat(DataSize.bytes(0)).isGreaterThan(DataSize.bytes(-1));
