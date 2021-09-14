@@ -175,35 +175,35 @@ class SizeTest {
     @Test
     void isComparable() {
         // both zero
-        assertThat(Size.bytes(0).compareTo(Size.bytes(0))).isZero();
-        assertThat(Size.bytes(0).compareTo(Size.kilobytes(0))).isZero();
-        assertThat(Size.bytes(0).compareTo(Size.megabytes(0))).isZero();
-        assertThat(Size.bytes(0).compareTo(Size.gigabytes(0))).isZero();
-        assertThat(Size.bytes(0).compareTo(Size.terabytes(0))).isZero();
+        assertThat(Size.bytes(0)).isEqualByComparingTo(Size.bytes(0));
+        assertThat(Size.bytes(0)).isEqualByComparingTo(Size.kilobytes(0));
+        assertThat(Size.bytes(0)).isEqualByComparingTo(Size.megabytes(0));
+        assertThat(Size.bytes(0)).isEqualByComparingTo(Size.gigabytes(0));
+        assertThat(Size.bytes(0)).isEqualByComparingTo(Size.terabytes(0));
 
-        assertThat(Size.kilobytes(0).compareTo(Size.bytes(0))).isZero();
-        assertThat(Size.kilobytes(0).compareTo(Size.kilobytes(0))).isZero();
-        assertThat(Size.kilobytes(0).compareTo(Size.megabytes(0))).isZero();
-        assertThat(Size.kilobytes(0).compareTo(Size.gigabytes(0))).isZero();
-        assertThat(Size.kilobytes(0).compareTo(Size.terabytes(0))).isZero();
+        assertThat(Size.kilobytes(0)).isEqualByComparingTo(Size.bytes(0));
+        assertThat(Size.kilobytes(0)).isEqualByComparingTo(Size.kilobytes(0));
+        assertThat(Size.kilobytes(0)).isEqualByComparingTo(Size.megabytes(0));
+        assertThat(Size.kilobytes(0)).isEqualByComparingTo(Size.gigabytes(0));
+        assertThat(Size.kilobytes(0)).isEqualByComparingTo(Size.terabytes(0));
 
-        assertThat(Size.megabytes(0).compareTo(Size.bytes(0))).isZero();
-        assertThat(Size.megabytes(0).compareTo(Size.kilobytes(0))).isZero();
-        assertThat(Size.megabytes(0).compareTo(Size.megabytes(0))).isZero();
-        assertThat(Size.megabytes(0).compareTo(Size.gigabytes(0))).isZero();
-        assertThat(Size.megabytes(0).compareTo(Size.terabytes(0))).isZero();
+        assertThat(Size.megabytes(0)).isEqualByComparingTo(Size.bytes(0));
+        assertThat(Size.megabytes(0)).isEqualByComparingTo(Size.kilobytes(0));
+        assertThat(Size.megabytes(0)).isEqualByComparingTo(Size.megabytes(0));
+        assertThat(Size.megabytes(0)).isEqualByComparingTo(Size.gigabytes(0));
+        assertThat(Size.megabytes(0)).isEqualByComparingTo(Size.terabytes(0));
 
-        assertThat(Size.gigabytes(0).compareTo(Size.bytes(0))).isZero();
-        assertThat(Size.gigabytes(0).compareTo(Size.kilobytes(0))).isZero();
-        assertThat(Size.gigabytes(0).compareTo(Size.megabytes(0))).isZero();
-        assertThat(Size.gigabytes(0).compareTo(Size.gigabytes(0))).isZero();
-        assertThat(Size.gigabytes(0).compareTo(Size.terabytes(0))).isZero();
+        assertThat(Size.gigabytes(0)).isEqualByComparingTo(Size.bytes(0));
+        assertThat(Size.gigabytes(0)).isEqualByComparingTo(Size.kilobytes(0));
+        assertThat(Size.gigabytes(0)).isEqualByComparingTo(Size.megabytes(0));
+        assertThat(Size.gigabytes(0)).isEqualByComparingTo(Size.gigabytes(0));
+        assertThat(Size.gigabytes(0)).isEqualByComparingTo(Size.terabytes(0));
 
-        assertThat(Size.terabytes(0).compareTo(Size.bytes(0))).isZero();
-        assertThat(Size.terabytes(0).compareTo(Size.kilobytes(0))).isZero();
-        assertThat(Size.terabytes(0).compareTo(Size.megabytes(0))).isZero();
-        assertThat(Size.terabytes(0).compareTo(Size.gigabytes(0))).isZero();
-        assertThat(Size.terabytes(0).compareTo(Size.terabytes(0))).isZero();
+        assertThat(Size.terabytes(0)).isEqualByComparingTo(Size.bytes(0));
+        assertThat(Size.terabytes(0)).isEqualByComparingTo(Size.kilobytes(0));
+        assertThat(Size.terabytes(0)).isEqualByComparingTo(Size.megabytes(0));
+        assertThat(Size.terabytes(0)).isEqualByComparingTo(Size.gigabytes(0));
+        assertThat(Size.terabytes(0)).isEqualByComparingTo(Size.terabytes(0));
 
         // one zero, one negative
         assertThat(Size.bytes(0)).isGreaterThan(Size.bytes(-1));
@@ -558,8 +558,8 @@ class SizeTest {
         final Size kb = Size.kilobytes(1024L);
         final Size bytes = Size.bytes(kb.toBytes());
 
-        assertThat(bytes.compareTo(kb)).isZero();
-        assertThat(kb.compareTo(bytes)).isZero();
+        assertThat(bytes).isEqualByComparingTo(kb);
+        assertThat(kb).isEqualByComparingTo(bytes);
 
         // If comparator == 0, then the following must be true
         assertThat(bytes).isEqualTo(kb);
