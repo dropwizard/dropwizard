@@ -11,7 +11,7 @@ import java.util.Collection;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assumptions.assumeThat;
 
-public class NetUtilTest {
+class NetUtilTest {
 
     private static final String OS_NAME_PROPERTY = "os.name";
 

@@ -21,7 +21,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
-public class ZipExceptionHandlingInputStreamExceptionTest {
+class ZipExceptionHandlingInputStreamExceptionTest {
 
     public static Stream<Arguments> parameters() {
         return Stream.of(
@@ -36,7 +36,7 @@ public class ZipExceptionHandlingInputStreamExceptionTest {
 
     @ParameterizedTest
     @MethodSource("parameters")
-    public void testReadBytes(Exception t, Class<? extends Exception> expected) throws Exception {
+    void testReadBytes(Exception t, Class<? extends Exception> expected) throws Exception {
         doThrow(t).when(delegate).read(Mockito.any(byte[].class), anyInt(), anyInt());
         byte[] buffer = new byte[20];
         assertThatExceptionOfType(expected).isThrownBy(() -> in.read(buffer, 4, 16));
@@ -46,7 +46,7 @@ public class ZipExceptionHandlingInputStreamExceptionTest {
 
     @ParameterizedTest
     @MethodSource("parameters")
-    public void testReadByte(Exception t, Class<? extends Exception> expected) throws Exception {
+    void testReadByte(Exception t, Class<? extends Exception> expected) throws Exception {
         doThrow(t).when(delegate).read();
         assertThatExceptionOfType(expected).isThrownBy(() -> in.read());
         verify(delegate).read();
@@ -55,7 +55,7 @@ public class ZipExceptionHandlingInputStreamExceptionTest {
 
     @ParameterizedTest
     @MethodSource("parameters")
-    public void testSkip(Exception t, Class<? extends Exception> expected) throws Exception {
+    void testSkip(Exception t, Class<? extends Exception> expected) throws Exception {
         doThrow(t).when(delegate).skip(anyLong());
         assertThatExceptionOfType(expected).isThrownBy(() -> in.skip(42L));
         verify(delegate).skip(42L);
@@ -64,7 +64,7 @@ public class ZipExceptionHandlingInputStreamExceptionTest {
 
     @ParameterizedTest
     @MethodSource("parameters")
-    public void testAvailable(Exception t, Class<? extends Exception> expected) throws Exception {
+    void testAvailable(Exception t, Class<? extends Exception> expected) throws Exception {
         doThrow(t).when(delegate).available();
         assertThatExceptionOfType(expected).isThrownBy(() -> in.available());
         verify(delegate).available();
@@ -73,7 +73,7 @@ public class ZipExceptionHandlingInputStreamExceptionTest {
 
     @ParameterizedTest
     @MethodSource("parameters")
-    public void testClose(Exception t, Class<? extends Exception> expected) throws Exception {
+    void testClose(Exception t, Class<? extends Exception> expected) throws Exception {
         doThrow(t).when(delegate).close();
         assertThatExceptionOfType(expected).isThrownBy(() -> in.close());
         verify(delegate).close();
@@ -82,7 +82,7 @@ public class ZipExceptionHandlingInputStreamExceptionTest {
 
     @ParameterizedTest
     @MethodSource("parameters")
-    public void testReset(Exception t, Class<? extends Exception> expected) throws Exception {
+    void testReset(Exception t, Class<? extends Exception> expected) throws Exception {
         doThrow(t).when(delegate).reset();
         assertThatExceptionOfType(expected).isThrownBy(() -> in.reset());
         verify(delegate).reset();

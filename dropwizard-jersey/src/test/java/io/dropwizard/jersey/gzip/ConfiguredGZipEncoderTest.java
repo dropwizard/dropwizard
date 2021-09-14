@@ -21,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class ConfiguredGZipEncoderTest {
+class ConfiguredGZipEncoderTest {
     @Test
     void gzipParametersSpec() throws IOException {
         ClientRequestContext context = mock(ClientRequestContext.class);

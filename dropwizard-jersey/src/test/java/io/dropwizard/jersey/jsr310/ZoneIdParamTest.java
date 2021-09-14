@@ -6,7 +6,7 @@ import java.time.ZoneId;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ZoneIdParamTest {
+class ZoneIdParamTest {
     @Test
     void parsesDateTimes() throws Exception {
         final ZoneIdParam param = new ZoneIdParam("Europe/Berlin");

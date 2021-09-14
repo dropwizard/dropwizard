@@ -20,7 +20,7 @@ import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class OptionalFormParamResourceTest extends AbstractJerseyTest {
+class OptionalFormParamResourceTest extends AbstractJerseyTest {
 
     @Override
     protected Application configure() {

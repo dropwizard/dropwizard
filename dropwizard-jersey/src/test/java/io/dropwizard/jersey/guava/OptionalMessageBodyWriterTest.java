@@ -19,7 +19,7 @@ import javax.ws.rs.core.MediaType;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class OptionalMessageBodyWriterTest extends AbstractJerseyTest {
+class OptionalMessageBodyWriterTest extends AbstractJerseyTest {
 
     @Override
     protected Application configure() {

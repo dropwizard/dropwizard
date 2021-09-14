@@ -21,7 +21,7 @@ import java.util.OptionalInt;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class OptionalIntMessageBodyWriterTest extends AbstractJerseyTest {
+class OptionalIntMessageBodyWriterTest extends AbstractJerseyTest {
 
     @Override
     protected Application configure() {

@@ -15,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 @ExtendWith(DropwizardExtensionsSupport.class)
-public class PersonDAOTest {
+class PersonDAOTest {
 
     public DAOTestExtension daoTestRule = DAOTestExtension.newBuilder()
         .addEntityClass(Person.class)

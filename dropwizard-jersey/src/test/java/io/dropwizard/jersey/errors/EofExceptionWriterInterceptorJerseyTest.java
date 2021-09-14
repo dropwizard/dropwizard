@@ -23,7 +23,7 @@ import java.util.concurrent.atomic.LongAdder;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class EofExceptionWriterInterceptorJerseyTest extends AbstractJerseyTest {
+class EofExceptionWriterInterceptorJerseyTest extends AbstractJerseyTest {
     @Override
     protected TestContainerFactory getTestContainerFactory() throws TestContainerException {
         return new JettyTestContainerFactory();

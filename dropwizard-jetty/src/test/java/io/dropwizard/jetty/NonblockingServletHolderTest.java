@@ -18,7 +18,7 @@ import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-public class NonblockingServletHolderTest {
+class NonblockingServletHolderTest {
     private final Servlet servlet = mock(Servlet.class);
     @SuppressWarnings("deprecation")
     private final NonblockingServletHolder holder = new NonblockingServletHolder(servlet);

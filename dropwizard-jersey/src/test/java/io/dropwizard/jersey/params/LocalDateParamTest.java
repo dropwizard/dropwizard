@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class LocalDateParamTest {
+class LocalDateParamTest {
     @Test
     void parsesLocalDates() {
         final LocalDateParam param = new LocalDateParam("2012-11-20");

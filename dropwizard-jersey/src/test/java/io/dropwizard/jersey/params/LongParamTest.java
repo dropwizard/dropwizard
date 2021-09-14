@@ -8,7 +8,7 @@ import javax.ws.rs.WebApplicationException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class LongParamTest {
+class LongParamTest {
     @Test
     void aLongReturnsALong() {
         final LongParam param = new LongParam("200");

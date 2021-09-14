@@ -14,7 +14,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
-public class LoggingJdbiExceptionMapperTest {
+class LoggingJdbiExceptionMapperTest {
     private LoggingJdbiExceptionMapper jdbiExceptionMapper;
     private Logger logger;
 
