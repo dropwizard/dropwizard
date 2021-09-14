@@ -27,7 +27,6 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -59,7 +58,7 @@ class JsonHealthResponseProviderTest {
             JsonHealthResponseProvider.NAME_QUERY_PARAM, Collections.singleton(view.getName()));
 
         // when
-        when(healthStateAggregator.healthStateView(eq(view.getName()))).thenReturn(Optional.of(view));
+        when(healthStateAggregator.healthStateView(view.getName())).thenReturn(Optional.of(view));
         when(healthStatusChecker.isHealthy(isNull())).thenReturn(true);
         final HealthResponse response = jsonHealthResponseProvider.healthResponse(queryParams);
 
