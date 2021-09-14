@@ -11,7 +11,7 @@ import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class BundleTest {
+class BundleTest {
     @Test
     void deprecatedBundleWillBeInitializedAndRun() throws Exception {
         final DeprecatedBundle deprecatedBundle = new DeprecatedBundle();

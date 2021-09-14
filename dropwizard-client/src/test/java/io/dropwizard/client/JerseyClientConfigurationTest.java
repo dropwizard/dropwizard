@@ -10,7 +10,7 @@ import java.io.File;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class JerseyClientConfigurationTest {
+class JerseyClientConfigurationTest {
 
     @Test
     void testBasicJerseyClient() throws Exception {

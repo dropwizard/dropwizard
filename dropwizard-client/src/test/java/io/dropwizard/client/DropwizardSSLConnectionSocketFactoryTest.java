@@ -39,7 +39,7 @@ import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.bouncycastle.jce.provider.BouncyCastleProvider.PROVIDER_NAME;
 
 @ExtendWith(DropwizardExtensionsSupport.class)
-public class DropwizardSSLConnectionSocketFactoryTest {
+class DropwizardSSLConnectionSocketFactoryTest {
     private TlsConfiguration tlsConfiguration;
     private JerseyClientConfiguration jerseyClientConfiguration;
 

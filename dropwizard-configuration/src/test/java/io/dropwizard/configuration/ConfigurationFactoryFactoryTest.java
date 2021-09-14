@@ -16,7 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 
-public class ConfigurationFactoryFactoryTest {
+class ConfigurationFactoryFactoryTest {
 
     private final ConfigurationFactoryFactory<Example> factoryFactory = new DefaultConfigurationFactoryFactory<>();
     private final Validator validator = BaseValidator.newValidator();

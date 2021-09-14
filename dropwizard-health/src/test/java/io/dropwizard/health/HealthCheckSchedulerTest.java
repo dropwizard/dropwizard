@@ -19,7 +19,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class HealthCheckSchedulerTest {
+class HealthCheckSchedulerTest {
 
     @Mock
     private ScheduledExecutorService executor;
@@ -27,12 +27,12 @@ public class HealthCheckSchedulerTest {
     private HealthCheckScheduler scheduler;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         this.scheduler = new HealthCheckScheduler(executor);
     }
 
     @Test
-    public void shouldScheduleCheckForNotAlreadyScheduledHealthyDependency() {
+    void shouldScheduleCheckForNotAlreadyScheduledHealthyDependency() {
         final String name = "test";
         final Schedule schedule = new Schedule();
 
@@ -51,7 +51,7 @@ public class HealthCheckSchedulerTest {
     }
 
     @Test
-    public void shouldScheduleCheckForNotAlreadyScheduledUnhealthyDependency() {
+    void shouldScheduleCheckForNotAlreadyScheduledUnhealthyDependency() {
         final String name = "test";
         final Schedule schedule = new Schedule();
 
@@ -72,7 +72,7 @@ public class HealthCheckSchedulerTest {
     }
 
     @Test
-    public void shouldRescheduleCheckForHealthyDependency() {
+    void shouldRescheduleCheckForHealthyDependency() {
         final String name = "test";
         final Schedule schedule = new Schedule();
         final ScheduledFuture future = mock(ScheduledFuture.class);
@@ -105,7 +105,7 @@ public class HealthCheckSchedulerTest {
     }
 
     @Test
-    public void shouldRescheduleCheckForUnhealthyDependency() {
+    void shouldRescheduleCheckForUnhealthyDependency() {
         final String name = "test";
         final Schedule schedule = new Schedule();
         final ScheduledFuture future = mock(ScheduledFuture.class);
@@ -138,7 +138,7 @@ public class HealthCheckSchedulerTest {
     }
 
     @Test
-    public void shouldUnscheduleExistingCheck() {
+    void shouldUnscheduleExistingCheck() {
         final String name = "test";
         final Schedule schedule = new Schedule();
         final ScheduledFuture future = mock(ScheduledFuture.class);
@@ -169,7 +169,7 @@ public class HealthCheckSchedulerTest {
     }
 
     @Test
-    public void unscheduleShouldDoNothingIfNoCheckScheduled() {
+    void unscheduleShouldDoNothingIfNoCheckScheduled() {
         final String name = "test";
 
         assertThatCode(() -> scheduler.unschedule(name))

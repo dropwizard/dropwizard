@@ -137,7 +137,7 @@ class ConfigurationMetadataTest {
 
     @ParameterizedTest
     @MethodSource("provideArgsForShouldDiscoverAllFields")
-    public void shouldDiscoverAllFields(String name, boolean isPrimitive,
+    void shouldDiscoverAllFields(String name, boolean isPrimitive,
                                         boolean isCollectionOrArrayType,
                                         Class<?> klass) {
         final ConfigurationMetadata metadata = new ConfigurationMetadata(
@@ -171,7 +171,7 @@ class ConfigurationMetadataTest {
 
     @ParameterizedTest
     @MethodSource("provideArgsForIsCollectionOfStringsShouldWork")
-    public void isCollectionOfStringsShouldWork(String name, boolean isCollectionOfStrings) {
+    void isCollectionOfStringsShouldWork(String name, boolean isCollectionOfStrings) {
         final ConfigurationMetadata metadata = new ConfigurationMetadata(
                 Jackson.newObjectMapper(), ExampleConfiguration.class);
 

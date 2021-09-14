@@ -11,7 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verifyNoInteractions;
 
-public class CheckCommandTest {
+class CheckCommandTest {
     private static class MyApplication extends Application<Configuration> {
         @Override
         public void run(Configuration configuration, Environment environment) throws Exception {

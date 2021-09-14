@@ -12,7 +12,7 @@ import java.util.stream.StreamSupport;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ConfigurationTest {
+class ConfigurationTest {
     private final Configuration configuration = new Configuration();
 
     @Test

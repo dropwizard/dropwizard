@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-public class StateTest {
+class StateTest {
     private static final String NAME = "test";
 
     private final AtomicBoolean didStateChange = new AtomicBoolean(false);
@@ -33,12 +33,12 @@ public class StateTest {
     private HealthStateListener listenerMock;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         didStateChange.set(false);
     }
 
     @Test
-    public void singleFailureShouldNotChangeStateIfThresholdNotExceeded() {
+    void singleFailureShouldNotChangeStateIfThresholdNotExceeded() {
         final State state = new State(NAME, 2, 1, true, listener);
         state.failure();
 
@@ -47,7 +47,7 @@ public class StateTest {
     }
 
     @Test
-    public void singleFailureShouldChangeStateIfThresholdExceeded() {
+    void singleFailureShouldChangeStateIfThresholdExceeded() {
         final State state = new State(NAME, 1, 1, true, listener);
         assertThat(state.getHealthy().get()).isTrue();
 
@@ -58,7 +58,7 @@ public class StateTest {
     }
 
     @Test
-    public void singleSuccessShouldNotChangeStateIfThresholdNotExceeded() {
+    void singleSuccessShouldNotChangeStateIfThresholdNotExceeded() {
         final State state = new State(NAME, 1, 2, false, listener);
         assertThat(state.getHealthy().get()).isFalse();
 
@@ -69,7 +69,7 @@ public class StateTest {
     }
 
     @Test
-    public void singleSuccessShouldChangeStateIfThresholdExceeded() {
+    void singleSuccessShouldChangeStateIfThresholdExceeded() {
         final State state = new State(NAME, 1, 1, false, listener);
         assertThat(state.getHealthy().get()).isFalse();
 
@@ -80,7 +80,7 @@ public class StateTest {
     }
 
     @Test
-    public void failureFollowedByRecoveryShouldAllowAStateChangeToUnhealthyAfterAnotherFailureOccurs() {
+    void failureFollowedByRecoveryShouldAllowAStateChangeToUnhealthyAfterAnotherFailureOccurs() {
         final State state = new State(NAME, 1, 1, true, listener);
 
         state.failure();
@@ -104,7 +104,7 @@ public class StateTest {
     }
 
     @Test
-    public void successFollowedByFailureShouldAllowAStateChangeToHealthyAfterAnotherSuccessOccurs() {
+    void successFollowedByFailureShouldAllowAStateChangeToHealthyAfterAnotherSuccessOccurs() {
         final State state = new State(NAME, 1, 1, false, listener);
         assertThat(state.getHealthy().get()).isFalse();
 
@@ -129,7 +129,7 @@ public class StateTest {
     }
 
     @Test
-    public void dependencyFailingThenRecoveringTriggersStateChangeEventsCorrectly() {
+    void dependencyFailingThenRecoveringTriggersStateChangeEventsCorrectly() {
         // given
         final State state = new State(NAME, 3, 2, true, listenerMock);
 

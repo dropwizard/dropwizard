@@ -23,7 +23,7 @@ import static org.mockito.AdditionalAnswers.delegatesTo;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-public class InjectValidatorFeatureTest {
+class InjectValidatorFeatureTest {
 
     private final Application<Configuration> application = new Application<Configuration>() {
         @Override
