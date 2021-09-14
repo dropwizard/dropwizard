@@ -23,7 +23,7 @@
         <maven.site.deploy.skip>true</maven.site.deploy.skip>
         <skipNexusStagingDeployMojo>true</skipNexusStagingDeployMojo>
 
-        <junit5.version>5.7.2</junit5.version>
+        <junit5.version>5.8.0</junit5.version>
     </properties>
 
     <dependencyManagement>
@@ -38,14 +38,14 @@
             <dependency>
                 <groupId>org.testcontainers</groupId>
                 <artifactId>testcontainers-bom</artifactId>
-                <version>1.15.3</version>
+                <version>1.16.0</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>net.java.dev.jna</groupId>
                 <artifactId>jna</artifactId>
-                <version>5.8.0</version>
+                <version>5.9.0</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -121,7 +121,7 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.25</version>
+            <version>8.0.26</version>
             <scope>test</scope>
         </dependency>
         <dependency>

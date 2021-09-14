@@ -61,7 +61,7 @@ class HttpConnectorFactoryTest {
 
         assertThat(http.getPort()).isEqualTo(8080);
         assertThat(http.getBindHost()).isNull();
-        assertThat(http.isInheritChannel()).isEqualTo(false);
+        assertThat(http.isInheritChannel()).isFalse();
         assertThat(http.getHeaderCacheSize()).isEqualTo(DataSize.bytes(512));
         assertThat(http.getOutputBufferSize()).isEqualTo(DataSize.kibibytes(32));
         assertThat(http.getMaxRequestHeaderSize()).isEqualTo(DataSize.kibibytes(8));
@@ -93,7 +93,7 @@ class HttpConnectorFactoryTest {
 
         assertThat(http.getPort()).isEqualTo(9090);
         assertThat(http.getBindHost()).isEqualTo("127.0.0.1");
-        assertThat(http.isInheritChannel()).isEqualTo(true);
+        assertThat(http.isInheritChannel()).isTrue();
         assertThat(http.getHeaderCacheSize()).isEqualTo(DataSize.bytes(256));
         assertThat(http.getOutputBufferSize()).isEqualTo(DataSize.kibibytes(128));
         assertThat(http.getMaxRequestHeaderSize()).isEqualTo(DataSize.kibibytes(4));

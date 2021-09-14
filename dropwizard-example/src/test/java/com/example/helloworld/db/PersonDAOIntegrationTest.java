@@ -50,7 +50,7 @@ public class PersonDAOIntegrationTest {
     @Test
     void createPerson() {
         final Person jeff = daoTestRule.inTransaction(() -> personDAO.create(new Person("Jeff", "The plumber", 1995)));
-        assertThat(jeff.getId()).isGreaterThan(0);
+        assertThat(jeff.getId()).isPositive();
         assertThat(jeff.getFullName()).isEqualTo("Jeff");
         assertThat(jeff.getJobTitle()).isEqualTo("The plumber");
         assertThat(jeff.getYearBorn()).isEqualTo(1995);

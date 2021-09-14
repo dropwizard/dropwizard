@@ -32,7 +32,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 /**
  * Testing that polymorphic principal entity injection works.
  */
-public class PolymorphicPrincipalEntityTest extends JerseyTest {
+class PolymorphicPrincipalEntityTest extends JerseyTest {
     private static final String JSON_USERNAME = "good-guy";
     private static final String NULL_USERNAME = "bad-guy";
     private static final String JSON_USERNAME_ENCODED_TOKEN = "Z29vZC1ndXk6c2VjcmV0";

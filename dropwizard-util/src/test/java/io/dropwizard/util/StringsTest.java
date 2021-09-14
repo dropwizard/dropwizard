@@ -24,8 +24,8 @@ public class StringsTest {
 
   @Test
   void nullToEmpty() {
-      assertThat(Strings.nullToEmpty("")).isEqualTo("");
-      assertThat(Strings.nullToEmpty(null)).isEqualTo("");
+      assertThat(Strings.nullToEmpty("")).isEmpty();
+      assertThat(Strings.nullToEmpty(null)).isEmpty();
       assertThat(Strings.nullToEmpty("foo")).isEqualTo("foo");
   }
 
@@ -40,7 +40,7 @@ public class StringsTest {
 
   @Test
   void repeat() {
-      assertThat(Strings.repeat("", 0)).isEqualTo("");
+      assertThat(Strings.repeat("", 0)).isEmpty();
       assertThat(Strings.repeat("0", 6)).isEqualTo("000000");
   }
 }

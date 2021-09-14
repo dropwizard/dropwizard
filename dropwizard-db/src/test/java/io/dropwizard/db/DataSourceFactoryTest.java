@@ -87,7 +87,7 @@ class DataSourceFactoryTest {
     void testNoValidationQueryTimeout() throws Exception {
         try (Connection connection = dataSource().getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement("select 1")) {
-                assertThat(statement.getQueryTimeout()).isEqualTo(0);
+                assertThat(statement.getQueryTimeout()).isZero();
             }
         }
     }
@@ -147,25 +147,25 @@ class DataSourceFactoryTest {
         assertThat(factory.getPassword()).isEqualTo("iAMs00perSecrEET");
         assertThat(factory.getUrl()).isEqualTo("jdbc:postgresql://db.example.com/db-prod");
         assertThat(factory.getValidationQuery()).isEqualTo(Optional.of("/* Health Check */ SELECT 1"));
-        assertThat(factory.getValidationQueryTimeout()).isEqualTo(Optional.empty());
+        assertThat(factory.getValidationQueryTimeout()).isNotPresent();
     }
 
     @Test
     void metricsRecorded() throws Exception {
         dataSource();
         Map<String, Gauge> poolMetrics = metricRegistry.getGauges(MetricFilter.startsWith("io.dropwizard.db.ManagedPooledDataSource.test."));
-        assertThat(poolMetrics.keySet()).contains(
-            "io.dropwizard.db.ManagedPooledDataSource.test.active",
-            "io.dropwizard.db.ManagedPooledDataSource.test.idle",
-            "io.dropwizard.db.ManagedPooledDataSource.test.waiting",
-            "io.dropwizard.db.ManagedPooledDataSource.test.size",
-            "io.dropwizard.db.ManagedPooledDataSource.test.created",
-            "io.dropwizard.db.ManagedPooledDataSource.test.borrowed",
-            "io.dropwizard.db.ManagedPooledDataSource.test.reconnected",
-            "io.dropwizard.db.ManagedPooledDataSource.test.released",
-            "io.dropwizard.db.ManagedPooledDataSource.test.releasedIdle",
-            "io.dropwizard.db.ManagedPooledDataSource.test.returned",
-            "io.dropwizard.db.ManagedPooledDataSource.test.removeAbandoned");
+        assertThat(poolMetrics)
+            .containsKey("io.dropwizard.db.ManagedPooledDataSource.test.active")
+            .containsKey("io.dropwizard.db.ManagedPooledDataSource.test.idle")
+            .containsKey("io.dropwizard.db.ManagedPooledDataSource.test.waiting")
+            .containsKey("io.dropwizard.db.ManagedPooledDataSource.test.size")
+            .containsKey("io.dropwizard.db.ManagedPooledDataSource.test.created")
+            .containsKey("io.dropwizard.db.ManagedPooledDataSource.test.borrowed")
+            .containsKey("io.dropwizard.db.ManagedPooledDataSource.test.reconnected")
+            .containsKey("io.dropwizard.db.ManagedPooledDataSource.test.released")
+            .containsKey("io.dropwizard.db.ManagedPooledDataSource.test.releasedIdle")
+            .containsKey("io.dropwizard.db.ManagedPooledDataSource.test.returned")
+            .containsKey("io.dropwizard.db.ManagedPooledDataSource.test.removeAbandoned");
     }
 
 }

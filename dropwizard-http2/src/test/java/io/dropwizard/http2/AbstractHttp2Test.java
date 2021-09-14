@@ -53,13 +53,13 @@ class AbstractHttp2Test {
         sslContextFactory.stop();
     }
 
-    protected static void assertResponse(ContentResponse response, HttpVersion httpVersion) {
+    static void assertResponse(ContentResponse response, HttpVersion httpVersion) {
         assertThat(response.getVersion()).isEqualTo(httpVersion);
         assertThat(response.getStatus()).isEqualTo(200);
         assertThat(response.getContentAsString()).isEqualTo(FakeApplication.HELLO_WORLD);
     }
 
-    protected void performManyAsyncRequests(HttpClient client, String url) throws InterruptedException {
+    static boolean performManyAsyncRequests(HttpClient client, String url) throws InterruptedException {
         final int amount = 100;
         final CountDownLatch latch = new CountDownLatch(amount);
         for (int i = 0; i < amount; i++) {
@@ -75,6 +75,6 @@ class AbstractHttp2Test {
                     });
         }
 
-        assertThat(latch.await(30, TimeUnit.SECONDS)).isTrue();
+        return latch.await(30, TimeUnit.SECONDS);
     }
 }

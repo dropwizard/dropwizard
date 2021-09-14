@@ -34,7 +34,7 @@ public class LevenshteinComparatorTest {
 
     @Test
     void testLevenshteinCompare() {
-        assertThat(c.compare("z", "v")).isEqualTo(0);
+        assertThat(c.compare("z", "v")).isZero();
         assertThat(c.compare("b", "v")).isEqualTo(-1);
         assertThat(c.compare("v", "b")).isEqualTo(1);
     }

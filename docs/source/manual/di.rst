@@ -7,7 +7,7 @@ Dropwizard Dependency Injection
 .. highlight:: text
 
 .. rubric:: Dropwizard provides you with simple dependency injection mechanism, using HK2,
-            out-of-the-box, and you can add support for more advanced DI by using Guice bundle.
+            out-of-the-box, and you can add support for more advanced DI by using `Guice bundle <https://github.com/xvik/dropwizard-guicey>`_.
 
 .. _man-di-hk2:
 
@@ -156,3 +156,6 @@ Then you can provide alternate configuration for testing purposes:
     public class UserControllerTests {
         public static final DropwizardAppExtension<TestConfiguration> app = new DropwizardAppExtension<>(ExampleApplication.class, new TestConfiguration());
     }
+
+Note: the ``@Singleton`` annotation is only effective for Dropwizard resources. For custom classes, don't forget
+to register them as shown above with ``bindAsContract(singletonClass).in(Singleton.class)``.

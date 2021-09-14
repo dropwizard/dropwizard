@@ -40,7 +40,7 @@ public class GraphiteReporterFactoryTest {
         final GraphiteReporterFactory factory = new YamlConfigurationFactory<>(GraphiteReporterFactory.class,
              BaseValidator.newValidator(), Jackson.newObjectMapper(), "dw")
             .build();
-        assertThat(factory.getFrequency()).isEqualTo(Optional.empty());
+        assertThat(factory.getFrequency()).isNotPresent();
     }
 
     @Test

@@ -9,6 +9,8 @@ import org.eclipse.jetty.http.HttpVersion;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @ExtendWith(DropwizardExtensionsSupport.class)
 class Http2IntegrationTest extends AbstractHttp2Test {
 
@@ -23,16 +25,17 @@ class Http2IntegrationTest extends AbstractHttp2Test {
 
     @Test
     void testHttp1() throws Exception {
-        assertResponse(http1Client.GET("https://localhost:" + appRule.getLocalPort() + "/api/test"), HttpVersion.HTTP_1_1);
+        AbstractHttp2Test.assertResponse(http1Client.GET("https://localhost:" + appRule.getLocalPort() + "/api/test"), HttpVersion.HTTP_1_1);
     }
 
     @Test
     void testHttp2() throws Exception {
-        assertResponse(http2Client.GET("https://localhost:" + appRule.getLocalPort() + "/api/test"), HttpVersion.HTTP_2);
+        AbstractHttp2Test.assertResponse(http2Client.GET("https://localhost:" + appRule.getLocalPort() + "/api/test"), HttpVersion.HTTP_2);
     }
 
     @Test
     void testHttp2ManyRequests() throws Exception {
-        performManyAsyncRequests(http2Client, "https://localhost:" + appRule.getLocalPort() + "/api/test");
+        assertThat(AbstractHttp2Test.performManyAsyncRequests(http2Client, "https://localhost:" + appRule.getLocalPort() + "/api/test"))
+            .isTrue();
     }
 }

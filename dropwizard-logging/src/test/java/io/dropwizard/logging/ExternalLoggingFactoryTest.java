@@ -18,8 +18,9 @@ public class ExternalLoggingFactoryTest {
         LoggingFactory externalRequestLogFactory = new YamlConfigurationFactory<>(LoggingFactory.class,
             BaseValidator.newValidator(), Jackson.newObjectMapper(), "dw")
             .build(new File(Resources.getResource("yaml/logging_external.yml").toURI()));
-        assertThat(externalRequestLogFactory).isNotNull();
-        assertThat(externalRequestLogFactory).isInstanceOf(ExternalLoggingFactory.class);
+        assertThat(externalRequestLogFactory)
+            .isNotNull()
+            .isInstanceOf(ExternalLoggingFactory.class);
     }
 
     @Test

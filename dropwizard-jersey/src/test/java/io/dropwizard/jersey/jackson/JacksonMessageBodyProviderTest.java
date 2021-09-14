@@ -247,8 +247,8 @@ public class JacksonMessageBodyProviderTest {
                          new MultivaluedHashMap<>(),
                          output);
 
-        assertThat(output.toString())
-                .isEqualTo("{\"id\":500}");
+        assertThat(output)
+                .hasToString("{\"id\":500}");
     }
 
     @Test

@@ -21,7 +21,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class CachingAuthorizerTest {
+class CachingAuthorizerTest {
     @SuppressWarnings("unchecked")
     private final Authorizer<Principal> underlying = mock(Authorizer.class);
     private final CachingAuthorizer<Principal> cached = new CachingAuthorizer<>(
@@ -120,7 +120,7 @@ public class CachingAuthorizerTest {
 
     @Test
     void calculatesTheSizeOfTheCache() throws Exception {
-        assertThat(cached.size()).isEqualTo(0);
+        assertThat(cached.size()).isZero();
         cached.authorize(principal, role, requestContext);
         assertThat(cached.size()).isEqualTo(1);
         cached.invalidateAll();

@@ -11,12 +11,13 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.Collections;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @NotThreadSafe
 public class DbGenerateDocsCommandTest extends AbstractMigrationTest {
 
-    private DbGenerateDocsCommand<TestMigrationConfiguration> generateDocsCommand = new DbGenerateDocsCommand<>(
+    private final DbGenerateDocsCommand<TestMigrationConfiguration> generateDocsCommand = new DbGenerateDocsCommand<>(
         TestMigrationConfiguration::getDataSource, TestMigrationConfiguration.class, "migrations.xml");
 
     @Test
@@ -30,7 +31,7 @@ public class DbGenerateDocsCommandTest extends AbstractMigrationTest {
     void testHelpPage() throws Exception {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         createSubparser(generateDocsCommand).printHelp(new PrintWriter(new OutputStreamWriter(baos, UTF_8), true));
-        assertThat(baos.toString(UTF_8)).isEqualTo(String.format(
+        assertThat(baos.toString(UTF_8.name())).isEqualTo(String.format(
             "usage: db generate-docs [-h] [--migrations MIGRATIONS-FILE]%n" +
                 "          [--catalog CATALOG] [--schema SCHEMA] [file] output%n" +
                 "%n" +

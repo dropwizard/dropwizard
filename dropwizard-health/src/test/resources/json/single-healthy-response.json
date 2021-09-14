@@ -1,0 +1,8 @@
+[
+    {
+        "name": "foo",
+        "healthy": true,
+        "type": "READY",
+        "critical": true
+    }
+]

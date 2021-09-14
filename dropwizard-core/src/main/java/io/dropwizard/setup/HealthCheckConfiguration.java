@@ -1,7 +1,6 @@
 package io.dropwizard.setup;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.StringJoiner;
 
 /**
@@ -13,6 +12,11 @@ import java.util.StringJoiner;
  *         <td>Name</td>
  *         <td>Default</td>
  *         <td>Description</td>
+ *     </tr>
+ *     <tr>
+ *         <td>servletEnabled</td>
+ *         <td>true</td>
+ *         <td>Whether to enable the admin health check servlet.</td>
  *     </tr>
  *     <tr>
  *         <td>minThreads</td>
@@ -34,9 +38,20 @@ import java.util.StringJoiner;
  * @since 2.0
  */
 public class HealthCheckConfiguration {
+    private boolean servletEnabled = true;
     private int minThreads = 1;
     private int maxThreads = 4;
     private int workQueueSize = 1;
+
+    @JsonProperty("servletEnabled")
+    public boolean isServletEnabled() {
+        return servletEnabled;
+    }
+
+    @JsonProperty("servletEnabled")
+    public void setServletEnabled(boolean servletEnabled) {
+        this.servletEnabled = servletEnabled;
+    }
 
     @JsonProperty("minThreads")
     public int getMinThreads() {
@@ -71,6 +86,7 @@ public class HealthCheckConfiguration {
     @Override
     public String toString() {
         return new StringJoiner(", ", HealthCheckConfiguration.class.getSimpleName() + "[", "]")
+                .add("servletEnabled= " + servletEnabled)
                 .add("minThreads=" + minThreads)
                 .add("maxThreads=" + maxThreads)
                 .add("workQueueSize=" + workQueueSize)

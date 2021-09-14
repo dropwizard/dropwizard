@@ -16,6 +16,9 @@ release.properties
 .classpath
 .project
 
+# VSCode
+.vscode
+
 nb-configuration.xml
 atlassian-ide-plugin.xml
 

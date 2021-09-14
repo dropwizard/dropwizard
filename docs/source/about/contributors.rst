@@ -136,6 +136,7 @@ Many, many thanks to:
 * :ghuser:`Drew Stephens <dinomite>`
 * :ghuser:`Dylan Scott <dylanscott>`
 * :ghuser:`Eduardo Caceres <nedcg>`
+* :ghuser:`egginbag <egginbag>`
 * :ghuser:`Emeka Mosanya <emeka>`
 * :ghuser:`Emrullah YILDIRIM <Sangaibisi>`
 * :ghuser:`eocantu <eocantu>`
@@ -206,6 +207,7 @@ Many, many thanks to:
 * :ghuser:`Jonathan Monette <jmoney>`
 * :ghuser:`Jonathan Ruckwood <jon-ruckwood>`
 * :ghuser:`Jonathan Welzel <jnwelzel>`
+* :ghuser:`Jordan Moore <OneCricketeer>`
 * :ghuser:`Jordan Zimmerman <Randgalt>`
 * :ghuser:`Joshua Spiewak <jspiewak>`
 * :ghuser:`Julien <neurodesign>`
@@ -261,7 +263,6 @@ Many, many thanks to:
 * :ghuser:`Michael McCarthy <mikeycmccarthy>`
 * :ghuser:`Michael Rice <mrice>`
 * :ghuser:`Michael Silvanovich <Silvmike>`
-* :ghuser:`Michael Zamani <mzamani1>`
 * :ghuser:`Michal Rutkowski <velocipedist>`
 * :ghuser:`Michel Decima <lehcim>`
 * :ghuser:`Michiel Leegwater <mleegwt>`
@@ -275,6 +276,7 @@ Many, many thanks to:
 * :ghuser:`Mårten Gustafson <chids>`
 * :ghuser:`nanreh <nanreh>`
 * :ghuser:`Nasir <mnrasul>`
+* :ghuser:`Natalie Zamani <natalie-zamani>`
 * :ghuser:`Natan Abolafya <natnan>`
 * :ghuser:`Nicholas Heitz <nheitz>`
 * :ghuser:`Nick Babcock <nickbabcock>`
@@ -362,8 +364,8 @@ Many, many thanks to:
 * :ghuser:`Tom Lee <thomaslee>`
 * :ghuser:`Tom Morris <tommorris>`
 * :ghuser:`Tom Shen <tomshen>`
+* :ghuser:`Tomas Crhak <tomcrhak-bb>`
 * :ghuser:`Tomasz Adamski <tmszdmsk>`
-* :ghuser:`tomcrhak-bb <tomcrhak-bb>`
 * :ghuser:`Tony Gaetani <tonygaetani>`
 * :ghuser:`Trevor Mack <tmack8001>`
 * :ghuser:`Tristan Buckner <tristanbuckner>`

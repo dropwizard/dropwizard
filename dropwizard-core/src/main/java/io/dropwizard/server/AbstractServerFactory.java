@@ -18,6 +18,7 @@ import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import io.dropwizard.request.logging.LogbackAccessRequestLogFactory;
 import io.dropwizard.request.logging.RequestLogFactory;
 import io.dropwizard.servlets.ThreadNameFilter;
+import io.dropwizard.setup.AdminEnvironment;
 import io.dropwizard.setup.ExceptionMapperBinder;
 import io.dropwizard.util.Duration;
 import io.dropwizard.validation.MinDuration;
@@ -564,10 +565,14 @@ public abstract class AbstractServerFactory implements ServerFactory {
     protected Handler createAdminServlet(Server server,
                                          MutableServletContextHandler handler,
                                          MetricRegistry metrics,
-                                         HealthCheckRegistry healthChecks) {
+                                         HealthCheckRegistry healthChecks,
+                                         AdminEnvironment admin) {
         configureSessionsAndSecurity(handler, server);
         handler.setServer(server);
-        adminServlet.addServlet(handler, metrics, healthChecks);
+        handler.getServletContext().setAttribute(MetricsServlet.METRICS_REGISTRY, metrics);
+        handler.getServletContext().setAttribute(HealthCheckServlet.HEALTH_CHECK_REGISTRY, healthChecks);
+        handler.getServletContext().setAttribute(AdminServlet.HEALTHCHECK_ENABLED_PARAM_KEY, admin.isHealthCheckServletEnabled());
+        handler.addServlet(AdminServlet.class, "/*");
         final String allowedMethodsParam = String.join(",", allowedMethods);
         handler.addFilter(AllowedMethodsFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST))
                 .setInitParameter(AllowedMethodsFilter.ALLOWED_METHODS_PARAM, allowedMethodsParam);
