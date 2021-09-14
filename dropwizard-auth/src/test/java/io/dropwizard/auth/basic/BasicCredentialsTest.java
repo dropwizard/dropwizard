@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class BasicCredentialsTest {
+class BasicCredentialsTest {
     private final BasicCredentials credentials = new BasicCredentials("u", "p");
 
     @Test
@@ -19,7 +19,7 @@ public class BasicCredentialsTest {
 
     @Test
     @SuppressWarnings({ "ObjectEqualsNull", "LiteralAsArgToStringEquals" })
-    public void hasAWorkingEqualsMethod() {
+    void hasAWorkingEqualsMethod() {
         assertThat(credentials)
             .isEqualTo(credentials)
             .isEqualTo(new BasicCredentials("u", "p"))

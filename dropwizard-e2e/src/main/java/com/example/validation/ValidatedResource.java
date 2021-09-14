@@ -34,7 +34,7 @@ public class ValidatedResource {
         if (bean == null
             || bean.getString() == null || bean.getString().trim().isEmpty()
             || bean.getNumber() < 0
-            || bean.getList().size() < 1) {
+            || bean.getList().isEmpty()) {
             throw new IllegalArgumentException();
         }
     }

@@ -6,7 +6,7 @@ import java.time.ZoneId;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class TimestampFormatterTest {
+class TimestampFormatterTest {
 
     private final long timestamp = 1513956631000L;
 

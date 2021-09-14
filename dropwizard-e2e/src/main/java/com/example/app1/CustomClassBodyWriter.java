@@ -14,7 +14,7 @@ import java.nio.charset.StandardCharsets;
 /** Demonstration that one can provider their own message body writers (see issue #1005) */
 @Produces(MediaType.APPLICATION_JSON)
 public class CustomClassBodyWriter implements MessageBodyWriter<CustomClass> {
-    private final static byte[] RESPONSE = "I'm a custom class".getBytes(StandardCharsets.UTF_8);
+    private static final byte[] RESPONSE = "I'm a custom class".getBytes(StandardCharsets.UTF_8);
 
     @Override
     public boolean isWriteable(Class<?> aClass, Type type, Annotation[] annotations, MediaType mediaType) {

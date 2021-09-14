@@ -10,6 +10,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.AdditionalMatchers.or;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -18,7 +19,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class HealthCheckSchedulerTest {
+class HealthCheckSchedulerTest {
 
     @Mock
     private ScheduledExecutorService executor;
@@ -26,12 +27,12 @@ public class HealthCheckSchedulerTest {
     private HealthCheckScheduler scheduler;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         this.scheduler = new HealthCheckScheduler(executor);
     }
 
     @Test
-    public void shouldScheduleCheckForNotAlreadyScheduledHealthyDependency() {
+    void shouldScheduleCheckForNotAlreadyScheduledHealthyDependency() {
         final String name = "test";
         final Schedule schedule = new Schedule();
 
@@ -39,18 +40,18 @@ public class HealthCheckSchedulerTest {
         when(check.getName()).thenReturn(name);
         when(check.getSchedule()).thenReturn(schedule);
 
-        when(executor.scheduleWithFixedDelay(eq(check), eq(schedule.getCheckInterval().toMilliseconds()),
-            eq(schedule.getCheckInterval().toMilliseconds()), eq(TimeUnit.MILLISECONDS)))
+        when(executor.scheduleWithFixedDelay(check, schedule.getCheckInterval().toMilliseconds(),
+            schedule.getCheckInterval().toMilliseconds(), TimeUnit.MILLISECONDS))
             .thenReturn(mock(ScheduledFuture.class));
 
         scheduler.schedule(check, true);
 
-        verify(executor).scheduleWithFixedDelay(eq(check), eq(schedule.getCheckInterval().toMilliseconds()),
-            eq(schedule.getCheckInterval().toMilliseconds()), eq(TimeUnit.MILLISECONDS));
+        verify(executor).scheduleWithFixedDelay(check, schedule.getCheckInterval().toMilliseconds(),
+            schedule.getCheckInterval().toMilliseconds(), TimeUnit.MILLISECONDS);
     }
 
     @Test
-    public void shouldScheduleCheckForNotAlreadyScheduledUnhealthyDependency() {
+    void shouldScheduleCheckForNotAlreadyScheduledUnhealthyDependency() {
         final String name = "test";
         final Schedule schedule = new Schedule();
 
@@ -60,18 +61,18 @@ public class HealthCheckSchedulerTest {
         when(check.getSchedule())
             .thenReturn(schedule);
 
-        when(executor.scheduleWithFixedDelay(eq(check), eq(schedule.getDowntimeInterval().toMilliseconds()),
-            eq(schedule.getDowntimeInterval().toMilliseconds()), eq(TimeUnit.MILLISECONDS)))
+        when(executor.scheduleWithFixedDelay(check, schedule.getDowntimeInterval().toMilliseconds(),
+            schedule.getDowntimeInterval().toMilliseconds(), TimeUnit.MILLISECONDS))
             .thenReturn(mock(ScheduledFuture.class));
 
         scheduler.schedule(check, false);
 
-        verify(executor).scheduleWithFixedDelay(eq(check), eq(schedule.getDowntimeInterval().toMilliseconds()),
-            eq(schedule.getDowntimeInterval().toMilliseconds()), eq(TimeUnit.MILLISECONDS));
+        verify(executor).scheduleWithFixedDelay(check, schedule.getDowntimeInterval().toMilliseconds(),
+            schedule.getDowntimeInterval().toMilliseconds(), TimeUnit.MILLISECONDS);
     }
 
     @Test
-    public void shouldRescheduleCheckForHealthyDependency() {
+    void shouldRescheduleCheckForHealthyDependency() {
         final String name = "test";
         final Schedule schedule = new Schedule();
         final ScheduledFuture future = mock(ScheduledFuture.class);
@@ -104,7 +105,7 @@ public class HealthCheckSchedulerTest {
     }
 
     @Test
-    public void shouldRescheduleCheckForUnhealthyDependency() {
+    void shouldRescheduleCheckForUnhealthyDependency() {
         final String name = "test";
         final Schedule schedule = new Schedule();
         final ScheduledFuture future = mock(ScheduledFuture.class);
@@ -137,7 +138,7 @@ public class HealthCheckSchedulerTest {
     }
 
     @Test
-    public void shouldUnscheduleExistingCheck() {
+    void shouldUnscheduleExistingCheck() {
         final String name = "test";
         final Schedule schedule = new Schedule();
         final ScheduledFuture future = mock(ScheduledFuture.class);
@@ -159,18 +160,19 @@ public class HealthCheckSchedulerTest {
         scheduler.unschedule(name);
 
         verify(executor).scheduleWithFixedDelay(
-            eq(check),
-            eq(schedule.getCheckInterval().toMilliseconds()),
-            eq(schedule.getCheckInterval().toMilliseconds()),
-            eq(TimeUnit.MILLISECONDS));
+            check,
+            schedule.getCheckInterval().toMilliseconds(),
+            schedule.getCheckInterval().toMilliseconds(),
+            TimeUnit.MILLISECONDS);
 
         verify(future).cancel(true);
     }
 
     @Test
-    public void unscheduleShouldDoNothingIfNoCheckScheduled() {
+    void unscheduleShouldDoNothingIfNoCheckScheduled() {
         final String name = "test";
 
-        scheduler.unschedule(name);
+        assertThatCode(() -> scheduler.unschedule(name))
+            .doesNotThrowAnyException();;
     }
 }

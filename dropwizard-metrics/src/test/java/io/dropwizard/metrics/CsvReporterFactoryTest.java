@@ -15,7 +15,7 @@ import java.io.File;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class CsvReporterFactoryTest {
+class CsvReporterFactoryTest {
     private final ObjectMapper objectMapper = Jackson.newObjectMapper();
     private final YamlConfigurationFactory<MetricsFactory> factory =
             new YamlConfigurationFactory<>(MetricsFactory.class,
@@ -43,6 +43,6 @@ public class CsvReporterFactoryTest {
         MetricsFactory config = factory.build(new File(Resources.getResource("yaml/metrics.yml").toURI()));
         MetricRegistry metricRegistry = new MetricRegistry();
         config.configure(new LifecycleEnvironment(metricRegistry), metricRegistry);
-        assertThat(dir.exists()).isEqualTo(true);
+        assertThat(dir).exists();
     }
 }

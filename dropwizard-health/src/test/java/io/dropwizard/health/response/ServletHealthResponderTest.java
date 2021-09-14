@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -61,7 +60,7 @@ class ServletHealthResponderTest {
             "no-store");
 
         // when
-        when(healthResponseProvider.healthResponse(eq(Collections.emptyMap()))).thenReturn(SUCCESS);
+        when(healthResponseProvider.healthResponse(Collections.emptyMap())).thenReturn(SUCCESS);
         servletTester.addServlet(new ServletHolder(servletHealthResponder), HEALTH_CHECK_URI);
         servletTester.start();
         final HttpTester.Response response = executeRequest(request);
@@ -78,7 +77,7 @@ class ServletHealthResponderTest {
             "no-store");
 
         // when
-        when(healthResponseProvider.healthResponse(eq(Collections.emptyMap()))).thenReturn(SUCCESS);
+        when(healthResponseProvider.healthResponse(Collections.emptyMap())).thenReturn(SUCCESS);
         servletTester.addServlet(new ServletHolder(servletHealthResponder), HEALTH_CHECK_URI);
         servletTester.start();
         final HttpTester.Response response = executeRequest(request);
@@ -97,7 +96,7 @@ class ServletHealthResponderTest {
             "no-store");
 
         // when
-        when(healthResponseProvider.healthResponse(eq(Collections.emptyMap()))).thenReturn(FAIL);
+        when(healthResponseProvider.healthResponse(Collections.emptyMap())).thenReturn(FAIL);
         servletTester.addServlet(new ServletHolder(servletHealthResponder), HEALTH_CHECK_URI);
         servletTester.start();
         final HttpTester.Response response = executeRequest(request);
@@ -124,7 +123,7 @@ class ServletHealthResponderTest {
         queryParams.put(nameQueryParam, ImmutableList.of(name, anotherName));
 
         // when
-        when(healthResponseProvider.healthResponse(eq(queryParams))).thenReturn(SUCCESS);
+        when(healthResponseProvider.healthResponse(queryParams)).thenReturn(SUCCESS);
         servletTester.addServlet(new ServletHolder(servletHealthResponder), HEALTH_CHECK_URI);
         servletTester.start();
         final String uri = String.format("%s?%s=%s&%s=%s&%s=%s", HEALTH_CHECK_URI, typeQueryParam, type, nameQueryParam,

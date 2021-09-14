@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class GuavaExtrasModuleTest {
+class GuavaExtrasModuleTest {
     private final ObjectMapper mapper = new ObjectMapper();
 
     @BeforeEach

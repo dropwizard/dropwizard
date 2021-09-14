@@ -78,9 +78,9 @@ public class HealthIntegrationTest {
                 .pollDelay(POLL_DELAY)
                 .until(this::isAppHealthy);
 
-        assertThat(app.getStateChangeCounter().get()).isGreaterThanOrEqualTo(1);
-        assertThat(app.getHealthyCheckCounter().get()).isGreaterThanOrEqualTo(1);
-        assertThat(app.getUnhealthyCheckCounter().get()).isGreaterThanOrEqualTo(1);
+        assertThat(app.getStateChangeCounter().get()).isPositive();
+        assertThat(app.getHealthyCheckCounter().get()).isPositive();
+        assertThat(app.getUnhealthyCheckCounter().get()).isPositive();
     }
 
     @Test
@@ -95,9 +95,9 @@ public class HealthIntegrationTest {
                 .atMost(testTimeout)
                 .pollDelay(POLL_DELAY)
                 .until(this::isAppHealthy);
-        assertThat(app.getStateChangeCounter().get()).isGreaterThanOrEqualTo(1);
-        assertThat(app.getHealthyCheckCounter().get()).isGreaterThanOrEqualTo(1);
-        assertThat(app.getUnhealthyCheckCounter().get()).isGreaterThanOrEqualTo(1);
+        assertThat(app.getStateChangeCounter().get()).isPositive();
+        assertThat(app.getHealthyCheckCounter().get()).isPositive();
+        assertThat(app.getUnhealthyCheckCounter().get()).isPositive();
     }
 
     @Test
@@ -113,9 +113,9 @@ public class HealthIntegrationTest {
                 .pollDelay(POLL_DELAY)
                 .until(this::isAppHealthy);
 
-        assertThat(app.getStateChangeCounter().get()).isGreaterThanOrEqualTo(1);
-        assertThat(app.getHealthyCheckCounter().get()).isGreaterThanOrEqualTo(1);
-        assertThat(app.getUnhealthyCheckCounter().get()).isGreaterThanOrEqualTo(1);
+        assertThat(app.getStateChangeCounter().get()).isPositive();
+        assertThat(app.getHealthyCheckCounter().get()).isPositive();
+        assertThat(app.getUnhealthyCheckCounter().get()).isPositive();
     }
 
     @Test
@@ -128,9 +128,9 @@ public class HealthIntegrationTest {
                 .pollDelay(POLL_DELAY)
                 .until(() -> !isAppHealthy());
         // 2 state changes (to unhealthy) for critical checks, because of initial value of false
-        assertThat(app.getStateChangeCounter().get()).isGreaterThanOrEqualTo(1);
-        assertThat(app.getHealthyCheckCounter().get()).isEqualTo(0);
-        assertThat(app.getUnhealthyCheckCounter().get()).isGreaterThanOrEqualTo(1);
+        assertThat(app.getStateChangeCounter().get()).isPositive();
+        assertThat(app.getHealthyCheckCounter().get()).isZero();
+        assertThat(app.getUnhealthyCheckCounter().get()).isPositive();
     }
 
     @Test
@@ -151,9 +151,9 @@ public class HealthIntegrationTest {
                 .pollDelay(POLL_DELAY)
                 .until(this::isAppHealthy);
 
-        assertThat(app.getStateChangeCounter().get()).isGreaterThanOrEqualTo(1);
-        assertThat(app.getHealthyCheckCounter().get()).isGreaterThanOrEqualTo(1);
-        assertThat(app.getUnhealthyCheckCounter().get()).isGreaterThanOrEqualTo(1);
+        assertThat(app.getStateChangeCounter().get()).isPositive();
+        assertThat(app.getHealthyCheckCounter().get()).isPositive();
+        assertThat(app.getUnhealthyCheckCounter().get()).isPositive();
     }
 
     private boolean isAppHealthy() {

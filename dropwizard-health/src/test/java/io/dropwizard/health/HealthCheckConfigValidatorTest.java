@@ -26,20 +26,20 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 
 @ExtendWith(MockitoExtension.class)
-public class HealthCheckConfigValidatorTest {
+class HealthCheckConfigValidatorTest {
 
     @Mock
     private Appender<ILoggingEvent> mockLogAppender;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         ch.qos.logback.classic.Logger logger = (ch.qos.logback.classic.Logger) LoggerFactory
             .getLogger(HealthCheckConfigValidator.class);
         logger.addAppender(mockLogAppender);
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    void tearDown() throws Exception {
         ch.qos.logback.classic.Logger logger = (ch.qos.logback.classic.Logger) LoggerFactory
             .getLogger(HealthCheckConfigValidator.class);
         logger.detachAppender(mockLogAppender);
@@ -47,7 +47,7 @@ public class HealthCheckConfigValidatorTest {
     }
 
     @Test
-    public void startValidationsShouldSucceedWhenNoHealthChecksConfigured() throws Exception {
+    void startValidationsShouldSucceedWhenNoHealthChecksConfigured() throws Exception {
         // given
         List<HealthCheckConfiguration> configs = ImmutableList.of();
         HealthCheckRegistry registry = new HealthCheckRegistry();
@@ -61,7 +61,7 @@ public class HealthCheckConfigValidatorTest {
     }
 
     @Test
-    public void startValidationsShouldSucceedForConfiguredAndRegisteredHealthCheck() throws Exception {
+    void startValidationsShouldSucceedForConfiguredAndRegisteredHealthCheck() throws Exception {
         // given
         HealthCheckConfiguration check1 = new HealthCheckConfiguration();
         check1.setName("check-1");
@@ -81,7 +81,7 @@ public class HealthCheckConfigValidatorTest {
     }
 
     @Test
-    public void startValidationsShouldSucceedButLogWhenNotAllHealthChecksAreConfigured() throws Exception {
+    void startValidationsShouldSucceedButLogWhenNotAllHealthChecksAreConfigured() throws Exception {
         // given
         ArgumentCaptor<LoggingEvent> captor = ArgumentCaptor.forClass(LoggingEvent.class);
         HealthCheckConfiguration check1 = new HealthCheckConfiguration();
@@ -109,7 +109,7 @@ public class HealthCheckConfigValidatorTest {
     }
 
     @Test
-    public void startValidationsShouldFailIfAHealthCheckConfiguredButNotRegistered() throws Exception {
+    void startValidationsShouldFailIfAHealthCheckConfiguredButNotRegistered() throws Exception {
         // given
         ArgumentCaptor<LoggingEvent> captor = ArgumentCaptor.forClass(LoggingEvent.class);
         HealthCheckConfiguration check1 = new HealthCheckConfiguration();

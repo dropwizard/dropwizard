@@ -12,7 +12,7 @@ import java.io.File;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ExternalRequestLogFactoryTest {
+class ExternalRequestLogFactoryTest {
 
     static {
         BootstrapLogging.bootstrap();
@@ -23,8 +23,9 @@ public class ExternalRequestLogFactoryTest {
         RequestLogFactory<?> externalRequestLogFactory = new YamlConfigurationFactory<>(RequestLogFactory.class,
             BaseValidator.newValidator(), Jackson.newObjectMapper(), "dw")
             .build(new File(Resources.getResource("yaml/externalRequestLog.yml").toURI()));
-        assertThat(externalRequestLogFactory).isNotNull();
-        assertThat(externalRequestLogFactory).isInstanceOf(ExternalRequestLogFactory.class);
+        assertThat(externalRequestLogFactory)
+            .isNotNull()
+            .isInstanceOf(ExternalRequestLogFactory.class);
         assertThat(externalRequestLogFactory.isEnabled()).isTrue();
     }
 

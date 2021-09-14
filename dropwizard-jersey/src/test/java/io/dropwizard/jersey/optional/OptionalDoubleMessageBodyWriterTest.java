@@ -21,7 +21,7 @@ import java.util.OptionalDouble;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class OptionalDoubleMessageBodyWriterTest extends AbstractJerseyTest {
+class OptionalDoubleMessageBodyWriterTest extends AbstractJerseyTest {
 
     @Override
     protected Application configure() {

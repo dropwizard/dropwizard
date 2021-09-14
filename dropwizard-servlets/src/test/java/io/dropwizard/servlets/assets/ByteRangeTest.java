@@ -5,14 +5,14 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ByteRangeTest {
+class ByteRangeTest {
 
     private static final int RESOURCE_LENGTH = 10000;
 
     @Test
     void firstBytes() {
         final ByteRange actual = ByteRange.parse("0-499", RESOURCE_LENGTH);
-        assertThat(actual.getStart()).isEqualTo(0);
+        assertThat(actual.getStart()).isZero();
         assertThat(actual.getEnd()).isEqualTo(499);
     }
 
@@ -52,7 +52,7 @@ public class ByteRangeTest {
     }
 
     @Test
-    public void nonASCIIDisallowed() {
+    void nonASCIIDisallowed() {
         assertThatExceptionOfType(NumberFormatException.class)
             .isThrownBy(() -> ByteRange.parse("០-០", RESOURCE_LENGTH));
     }

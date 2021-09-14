@@ -12,7 +12,7 @@ import javax.ws.rs.core.Application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class NonEmptyStringParamProviderTest extends AbstractJerseyTest {
+class NonEmptyStringParamProviderTest extends AbstractJerseyTest {
 
     @Override
     protected Application configure() {

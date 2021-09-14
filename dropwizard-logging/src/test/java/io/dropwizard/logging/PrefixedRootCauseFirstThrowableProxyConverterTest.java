@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * Tests {@link PrefixedRootCauseFirstThrowableProxyConverter}.
  */
-public class PrefixedRootCauseFirstThrowableProxyConverterTest {
+class PrefixedRootCauseFirstThrowableProxyConverterTest {
 
     private final PrefixedRootCauseFirstThrowableProxyConverter converter
             = new PrefixedRootCauseFirstThrowableProxyConverter();

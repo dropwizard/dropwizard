@@ -10,7 +10,7 @@ import static javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR;
 import static javax.ws.rs.core.Response.Status.UNSUPPORTED_MEDIA_TYPE;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class IllegalStateExceptionMapperTest {
+class IllegalStateExceptionMapperTest {
 
     private final IllegalStateExceptionMapper mapper = new IllegalStateExceptionMapper();
 

@@ -22,7 +22,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class UnitOfWorkAwareProxyFactoryTest {
+class UnitOfWorkAwareProxyFactoryTest {
 
     static {
         BootstrapLogging.bootstrap();

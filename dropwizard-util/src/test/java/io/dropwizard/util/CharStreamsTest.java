@@ -7,7 +7,7 @@ import java.io.StringReader;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class CharStreamsTest {
+class CharStreamsTest {
 
     @Test
     void testToString() throws IOException {

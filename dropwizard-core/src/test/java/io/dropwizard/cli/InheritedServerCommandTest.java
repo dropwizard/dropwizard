@@ -25,7 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class InheritedServerCommandTest {
+class InheritedServerCommandTest {
     private static class ApiCommand extends ServerCommand<Configuration> {
 
         protected ApiCommand(final Application<Configuration> application) {

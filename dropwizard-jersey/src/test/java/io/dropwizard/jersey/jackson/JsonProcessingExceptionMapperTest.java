@@ -18,7 +18,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class JsonProcessingExceptionMapperTest extends AbstractJerseyTest {
+class JsonProcessingExceptionMapperTest extends AbstractJerseyTest {
 
     @Override
     protected Application configure() {

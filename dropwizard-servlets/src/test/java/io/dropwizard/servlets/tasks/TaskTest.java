@@ -8,7 +8,7 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class TaskTest {
+class TaskTest {
     private final Task task = new Task("test") {
         @Override
         public void execute(Map<String, List<String>> parameters,

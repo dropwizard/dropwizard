@@ -41,7 +41,7 @@ import static org.awaitility.Awaitility.await;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class LayoutIntegrationTests {
+class LayoutIntegrationTests {
 
     static {
         BootstrapLogging.bootstrap(Level.INFO, new EventJsonLayoutBaseFactory());

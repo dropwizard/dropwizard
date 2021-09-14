@@ -20,11 +20,10 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.AdditionalAnswers.delegatesTo;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-public class InjectValidatorFeatureTest {
+class InjectValidatorFeatureTest {
 
     private final Application<Configuration> application = new Application<Configuration>() {
         @Override
@@ -85,7 +84,7 @@ public class InjectValidatorFeatureTest {
         Validator validator = validatorFactory.getValidator();
         validator.validate(new Bean(1));
 
-        verify(mockedFactory).getInstance(eq(MinValidatorForInteger.class));
+        verify(mockedFactory).getInstance(MinValidatorForInteger.class);
     }
 
     static class Bean {

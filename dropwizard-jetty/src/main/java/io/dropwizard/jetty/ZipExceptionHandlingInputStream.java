@@ -77,7 +77,7 @@ class ZipExceptionHandlingInputStream extends InputStream {
     }
 
     @Override
-    synchronized public void reset() throws IOException {
+    public synchronized void reset() throws IOException {
         try {
             delegate.reset();
         } catch (IOException e) {

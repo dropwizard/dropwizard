@@ -19,7 +19,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class ScheduledExecutorServiceBuilderTest {
+class ScheduledExecutorServiceBuilderTest {
 
     private static final Duration DEFAULT_SHUTDOWN_PERIOD = Duration.seconds(5L);
 

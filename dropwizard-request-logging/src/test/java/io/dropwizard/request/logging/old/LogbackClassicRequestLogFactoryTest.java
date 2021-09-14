@@ -33,7 +33,7 @@ import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class LogbackClassicRequestLogFactoryTest {
+class LogbackClassicRequestLogFactoryTest {
 
     static {
         BootstrapLogging.bootstrap();

@@ -47,7 +47,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(DropwizardExtensionsSupport.class)
-public class DropwizardApacheConnectorTest {
+class DropwizardApacheConnectorTest {
 
     private static final int SLEEP_TIME_IN_MILLIS = 1000;
     private static final int DEFAULT_CONNECT_TIMEOUT_IN_MILLIS = 500;

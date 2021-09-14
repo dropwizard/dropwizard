@@ -9,7 +9,7 @@ import java.nio.charset.StandardCharsets;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ResourceConfigurationSourceProviderTest {
+class ResourceConfigurationSourceProviderTest {
     private final ConfigurationSourceProvider provider = new ResourceConfigurationSourceProvider();
 
     @Test

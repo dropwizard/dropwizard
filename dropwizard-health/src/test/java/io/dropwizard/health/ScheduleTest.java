@@ -12,14 +12,14 @@ import java.io.File;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ScheduleTest {
+class ScheduleTest {
     private final ObjectMapper objectMapper = Jackson.newObjectMapper();
     private final Validator validator = Validators.newValidator();
     private final YamlConfigurationFactory<Schedule> configFactory =
         new YamlConfigurationFactory<>(Schedule.class, validator, objectMapper, "dw");
 
     @Test
-    public void shouldBuildAScheduleFromYaml() throws Exception {
+    void shouldBuildAScheduleFromYaml() throws Exception {
         final File yml = new File(Resources.getResource("yml/schedule.yml").toURI());
         final Schedule schedule = configFactory.build(yml);
 

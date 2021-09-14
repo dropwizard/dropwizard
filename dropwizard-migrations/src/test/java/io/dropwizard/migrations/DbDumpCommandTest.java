@@ -32,7 +32,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @NotThreadSafe
-public class DbDumpCommandTest extends AbstractMigrationTest {
+class DbDumpCommandTest extends AbstractMigrationTest {
 
     private static final List<String> ATTRIBUTE_NAMES = Arrays.asList("columns", "foreign-keys", "indexes",
             "primary-keys", "sequences", "tables", "unique-constraints", "views");

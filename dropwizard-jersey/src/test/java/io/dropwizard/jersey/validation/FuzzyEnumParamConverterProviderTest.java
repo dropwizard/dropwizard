@@ -13,7 +13,7 @@ import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
 
-public class FuzzyEnumParamConverterProviderTest {
+class FuzzyEnumParamConverterProviderTest {
     private final FuzzyEnumParamConverterProvider paramConverterProvider = new FuzzyEnumParamConverterProvider();
 
     private enum Fuzzy {

@@ -16,23 +16,23 @@ import java.util.concurrent.TimeUnit;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class TcpHealthCheckTest {
+class TcpHealthCheckTest {
     private ServerSocket serverSocket;
     private TcpHealthCheck tcpHealthCheck;
 
     @BeforeEach
-    public void setUp() throws IOException {
+    void setUp() throws IOException {
         serverSocket = new ServerSocket(0);
         tcpHealthCheck = new TcpHealthCheck("127.0.0.1", serverSocket.getLocalPort());
     }
 
     @AfterEach
-    public void tearDown() throws IOException {
+    void tearDown() throws IOException {
         serverSocket.close();
     }
 
     @Test
-    public void tcpHealthCheckShouldReturnHealthyIfCanConnect() throws IOException {
+    void tcpHealthCheckShouldReturnHealthyIfCanConnect() throws IOException {
         final ExecutorService executorService = Executors.newSingleThreadExecutor();
         executorService.submit(() -> serverSocket.accept());
         assertThat(tcpHealthCheck.check().isHealthy())
@@ -40,13 +40,13 @@ public class TcpHealthCheckTest {
     }
 
     @Test
-    public void tcpHealthCheckShouldReturnUnhealthyIfCannotConnect() throws IOException {
+    void tcpHealthCheckShouldReturnUnhealthyIfCannotConnect() throws IOException {
         serverSocket.close();
         assertThrows(ConnectException.class, () -> tcpHealthCheck.check());
     }
 
     @Test
-    public void tcpHealthCheckShouldReturnUnhealthyIfCannotConnectWithinConfiguredTimeout() throws IOException {
+    void tcpHealthCheckShouldReturnUnhealthyIfCannotConnectWithinConfiguredTimeout() throws IOException {
         final int port = serverSocket.getLocalPort();
         serverSocket.setReuseAddress(true);
         serverSocket.close();

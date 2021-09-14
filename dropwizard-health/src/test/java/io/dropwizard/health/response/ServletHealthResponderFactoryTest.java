@@ -36,7 +36,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class ServletHealthResponderFactoryTest {
+class ServletHealthResponderFactoryTest {
     private static final String NAME = "tests";
     private static final String HEALTH_CHECK_URI = "/health-check";
     private static final HealthResponse SUCCESS = new HealthResponse(true, "healthy", MediaType.TEXT_PLAIN,
@@ -99,7 +99,7 @@ public class ServletHealthResponderFactoryTest {
 
         // when
         // succeed first, fail second
-        when(healthResponseProvider.healthResponse(eq(Collections.emptyMap()))).thenReturn(SUCCESS, FAIL);
+        when(healthResponseProvider.healthResponse(Collections.emptyMap())).thenReturn(SUCCESS, FAIL);
         HealthResponderFactory factory = configFactory.build(yml);
         factory.configure(NAME, Collections.singletonList(HEALTH_CHECK_URI), healthResponseProvider, health, jersey,
             servlets, mapper);
@@ -121,7 +121,7 @@ public class ServletHealthResponderFactoryTest {
 
         // when
         // succeed first, fail second
-        when(healthResponseProvider.healthResponse(eq(Collections.emptyMap()))).thenReturn(SUCCESS, FAIL);
+        when(healthResponseProvider.healthResponse(Collections.emptyMap())).thenReturn(SUCCESS, FAIL);
         HealthResponderFactory factory = configFactory.build(yml);
         factory.configure(NAME, Collections.singletonList(HEALTH_CHECK_URI), healthResponseProvider, health, jersey,
             servlets, mapper);
@@ -144,7 +144,7 @@ public class ServletHealthResponderFactoryTest {
     private void setupServletStubbing() {
         when(servlets.addServlet(eq(NAME + SERVLET_SUFFIX), servletCaptor.capture()))
             .thenReturn(servletRegistration);
-        when(servletRegistration.addMapping(eq(HEALTH_CHECK_URI)))
+        when(servletRegistration.addMapping(HEALTH_CHECK_URI))
             .thenReturn(Collections.singleton(HEALTH_CHECK_URI));
     }
 }

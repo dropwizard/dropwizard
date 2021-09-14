@@ -232,12 +232,10 @@ public abstract class BaseReporterFactory implements ReporterFactory {
         final StringMatchingStrategy stringMatchingStrategy = getUseRegexFilters() ?
                 REGEX_STRING_MATCHING_STRATEGY : (getUseSubstringMatching() ? SUBSTRING_MATCHING_STRATEGY : DEFAULT_STRING_MATCHING_STRATEGY);
 
-        return (name, metric) -> {
-            // Include the metric if its name is not excluded and its name is included
-            // Where, by default, with no includes setting, all names are included.
-            return !stringMatchingStrategy.containsMatch(getExcludes(), name) &&
-                    (getIncludes().isEmpty() || stringMatchingStrategy.containsMatch(getIncludes(), name));
-        };
+        // Include the metric if its name is not excluded and its name is included
+        // Where, by default, with no includes setting, all names are included.
+        return (name, metric) -> !stringMatchingStrategy.containsMatch(getExcludes(), name) &&
+                (getIncludes().isEmpty() || stringMatchingStrategy.containsMatch(getIncludes(), name));
     }
 
     protected Set<MetricAttribute> getDisabledAttributes() {

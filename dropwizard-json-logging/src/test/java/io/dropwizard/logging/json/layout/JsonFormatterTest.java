@@ -13,7 +13,7 @@ import java.util.TreeMap;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class JsonFormatterTest {
+class JsonFormatterTest {
 
     private final SortedMap<String, Object> map = new TreeMap<>(Maps.of(
             "name", "Jim",

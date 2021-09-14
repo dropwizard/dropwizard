@@ -249,18 +249,18 @@ class HttpsConnectorFactoryTest {
     @Test
     void nonWindowsKeyStoreValidation() {
         HttpsConnectorFactory factory = new HttpsConnectorFactory();
-        Collection<String> properties = getViolationProperties(validator.validate(factory));
-        assertThat(properties.contains("validKeyStorePassword")).isEqualTo(true);
-        assertThat(properties.contains("validKeyStorePath")).isEqualTo(true);
+        assertThat(getViolationProperties(validator.validate(factory)))
+                .contains("validKeyStorePassword")
+                .contains("validKeyStorePath");
     }
 
     @Test
     void windowsKeyStoreValidation() {
         HttpsConnectorFactory factory = new HttpsConnectorFactory();
         factory.setKeyStoreType(WINDOWS_MY_KEYSTORE_NAME);
-        Collection<String> properties = getViolationProperties(validator.validate(factory));
-        assertThat(properties.contains("validKeyStorePassword")).isEqualTo(false);
-        assertThat(properties.contains("validKeyStorePath")).isEqualTo(false);
+        assertThat(getViolationProperties(validator.validate(factory)))
+                .doesNotContain("validKeyStorePassword")
+                .doesNotContain("validKeyStorePath");
     }
 
     @Test

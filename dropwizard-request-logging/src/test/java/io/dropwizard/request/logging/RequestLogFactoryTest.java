@@ -16,7 +16,7 @@ import java.io.File;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class RequestLogFactoryTest {
+class RequestLogFactoryTest {
     private LogbackAccessRequestLogFactory logbackAccessRequestLogFactory;
 
     @BeforeEach

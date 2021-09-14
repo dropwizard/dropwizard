@@ -25,7 +25,7 @@ import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assumptions.assumeThat;
 
-public class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
+class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
     private static final Locale DEFAULT_LOCALE = Locale.getDefault();
 
     @Override
@@ -37,13 +37,13 @@ public class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
     }
 
     @BeforeAll
-    public static void init() {
+    static void init() {
         // Set default locale to English because some tests assert localized error messages
         Locale.setDefault(Locale.ENGLISH);
     }
 
     @AfterAll
-    public static void shutdown() {
+    static void shutdown() {
         Locale.setDefault(DEFAULT_LOCALE);
     }
 

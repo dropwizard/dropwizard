@@ -10,7 +10,7 @@ import java.util.Arrays;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
-public class NonProxyListProxyRoutePlannerTest {
+class NonProxyListProxyRoutePlannerTest {
 
     private HttpHost proxy = new HttpHost("192.168.52.15");
     private NonProxyListProxyRoutePlanner routePlanner = new NonProxyListProxyRoutePlanner(proxy,

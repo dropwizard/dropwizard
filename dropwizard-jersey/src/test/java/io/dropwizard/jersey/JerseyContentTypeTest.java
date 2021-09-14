@@ -9,7 +9,7 @@ import javax.ws.rs.core.Response;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class JerseyContentTypeTest extends AbstractJerseyTest {
+class JerseyContentTypeTest extends AbstractJerseyTest {
 
     @Override
     protected Application configure() {
@@ -30,6 +30,6 @@ public class JerseyContentTypeTest extends AbstractJerseyTest {
         final Response response = target("/").request("foo").get();
 
         assertThat(response.getStatus()).isEqualTo(406);
-        assertThat(response.hasEntity()).isEqualTo(false);
+        assertThat(response.hasEntity()).isFalse();
     }
 }

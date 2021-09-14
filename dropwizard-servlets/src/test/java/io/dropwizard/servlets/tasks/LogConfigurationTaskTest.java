@@ -16,7 +16,7 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class LogConfigurationTaskTest {
+class LogConfigurationTaskTest {
 
     private final LoggerContext loggerContext = new LoggerContext();
     private final Logger logger1 = loggerContext.getLogger("logger.one");
@@ -43,7 +43,7 @@ public class LogConfigurationTaskTest {
         assertThat(logger1.getEffectiveLevel()).isEqualTo(Level.DEBUG);
         assertThat(logger2.getEffectiveLevel()).isEqualTo(twoEffectiveBefore);
 
-        assertThat(stringWriter.toString()).isEqualTo(String.format("Configured logging level for logger.one to DEBUG%n"));
+        assertThat(stringWriter).hasToString(String.format("Configured logging level for logger.one to DEBUG%n"));
     }
 
     @Test
@@ -62,7 +62,7 @@ public class LogConfigurationTaskTest {
 
         // then
         assertThat(logger1.getLevel()).isEqualTo(Level.DEBUG);
-        assertThat(stringWriter.toString()).isEqualTo(String.format("Configured logging level for logger.one to DEBUG for %d milliseconds%n", millis));
+        assertThat(stringWriter).hasToString(String.format("Configured logging level for logger.one to DEBUG for %d milliseconds%n", millis));
 
         // after
         Thread.sleep(4000);
@@ -84,7 +84,7 @@ public class LogConfigurationTaskTest {
         assertThat(logger1.getEffectiveLevel()).isEqualTo(oneEffectiveBefore);
         assertThat(logger2.getEffectiveLevel()).isEqualTo(twoEffectiveBefore);
 
-        assertThat(stringWriter.toString()).isEqualTo(String.format("Configured logging level for logger.one to null%n"));
+        assertThat(stringWriter).hasToString(String.format("Configured logging level for logger.one to null%n"));
     }
 
     @Test
@@ -101,7 +101,7 @@ public class LogConfigurationTaskTest {
         assertThat(logger1.getEffectiveLevel()).isEqualTo(Level.INFO);
         assertThat(logger2.getEffectiveLevel()).isEqualTo(Level.INFO);
 
-        assertThat(stringWriter.toString())
-                .isEqualTo(String.format("Configured logging level for logger.one to INFO%nConfigured logging level for logger.two to INFO%n"));
+        assertThat(stringWriter)
+                .hasToString(String.format("Configured logging level for logger.one to INFO%nConfigured logging level for logger.two to INFO%n"));
     }
 }

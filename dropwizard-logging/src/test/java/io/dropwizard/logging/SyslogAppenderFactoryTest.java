@@ -18,7 +18,7 @@ import java.util.Locale;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 
-public class SyslogAppenderFactoryTest {
+class SyslogAppenderFactoryTest {
 
     static {
         BootstrapLogging.bootstrap();

@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 
-public class HttpClientConfigurationTest {
+class HttpClientConfigurationTest {
 
     private final ObjectMapper objectMapper = Jackson.newObjectMapper();
     private HttpClientConfiguration configuration = new HttpClientConfiguration();

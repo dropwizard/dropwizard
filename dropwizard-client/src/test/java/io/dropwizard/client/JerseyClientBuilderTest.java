@@ -73,7 +73,7 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class JerseyClientBuilderTest {
+class JerseyClientBuilderTest {
     private final MetricRegistry metricRegistry = new MetricRegistry();
     private final JerseyClientBuilder builder = new JerseyClientBuilder(metricRegistry);
     private final LifecycleEnvironment lifecycleEnvironment = spy(new LifecycleEnvironment(metricRegistry));
@@ -234,7 +234,7 @@ public class JerseyClientBuilderTest {
 
     @Test
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public void usesAnExecutorServiceFromTheEnvironment() {
+    void usesAnExecutorServiceFromTheEnvironment() {
         final JerseyClientConfiguration configuration = new JerseyClientConfiguration();
         configuration.setMinThreads(7);
         configuration.setMaxThreads(532);

@@ -14,7 +14,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 
-public class EofExceptionWriterInterceptorTest {
+class EofExceptionWriterInterceptorTest {
     @SuppressWarnings("NullAway")
     @Test
     void shouldSwallowEofException() throws IOException {

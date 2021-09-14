@@ -8,7 +8,7 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class EnumsTest {
+class EnumsTest {
 
     enum VideoFormat {
         OGG,

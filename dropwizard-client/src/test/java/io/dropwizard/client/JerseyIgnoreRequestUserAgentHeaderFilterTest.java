@@ -23,7 +23,7 @@ import java.util.concurrent.Executors;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(DropwizardExtensionsSupport.class)
-public class JerseyIgnoreRequestUserAgentHeaderFilterTest {
+class JerseyIgnoreRequestUserAgentHeaderFilterTest {
     public static final DropwizardAppExtension<Configuration> APP_RULE =
             new DropwizardAppExtension<>(TestApplication.class, Resources.getResource("yaml/jerseyIgnoreRequestUserAgentHeaderFilterTest.yml").getPath());
 

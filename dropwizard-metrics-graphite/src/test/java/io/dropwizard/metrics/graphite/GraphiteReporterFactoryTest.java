@@ -18,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-public class GraphiteReporterFactoryTest {
+class GraphiteReporterFactoryTest {
 
     private final GraphiteReporter.Builder builderSpy = mock(GraphiteReporter.Builder.class);
 
@@ -40,7 +40,7 @@ public class GraphiteReporterFactoryTest {
         final GraphiteReporterFactory factory = new YamlConfigurationFactory<>(GraphiteReporterFactory.class,
              BaseValidator.newValidator(), Jackson.newObjectMapper(), "dw")
             .build();
-        assertThat(factory.getFrequency()).isEqualTo(Optional.empty());
+        assertThat(factory.getFrequency()).isNotPresent();
     }
 
     @Test

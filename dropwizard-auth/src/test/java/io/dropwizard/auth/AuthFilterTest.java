@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class AuthFilterTest {
+class AuthFilterTest {
 
     @Test
     void isSecureShouldStayTheSame() throws Exception {

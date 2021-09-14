@@ -13,7 +13,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @SuppressWarnings("CallToSystemGC")
-public class GarbageCollectionTaskTest {
+class GarbageCollectionTaskTest {
     private final Runtime runtime = mock(Runtime.class);
     private final PrintWriter output = mock(PrintWriter.class);
     private final GarbageCollectionTask task = new GarbageCollectionTask(runtime);

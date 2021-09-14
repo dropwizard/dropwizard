@@ -26,13 +26,12 @@ import java.util.Collections;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class AllowedMethodsFilterTest extends AbstractJerseyTest {
+class AllowedMethodsFilterTest extends AbstractJerseyTest {
 
     private static final int DISALLOWED_STATUS_CODE = Response.Status.METHOD_NOT_ALLOWED.getStatusCode();
     private static final int OK_STATUS_CODE = Response.Status.OK.getStatusCode();
@@ -125,6 +124,6 @@ public class AllowedMethodsFilterTest extends AbstractJerseyTest {
     void disallowedMethodCausesMethodNotAllowedResponse() throws IOException, ServletException {
         when(request.getMethod()).thenReturn("TRACE");
         filter.doFilter(request, response, chain);
-        verify(response).sendError(eq(DISALLOWED_STATUS_CODE));
+        verify(response).sendError(DISALLOWED_STATUS_CODE);
     }
 }

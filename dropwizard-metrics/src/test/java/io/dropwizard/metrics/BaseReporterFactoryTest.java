@@ -16,12 +16,12 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
-public class BaseReporterFactoryTest {
+class BaseReporterFactoryTest {
     private static final Set<String> INCLUDES = Sets.of("inc", "both", "inc.+");
     private static final Set<String> EXCLUDES = Sets.of("exc", "both", "exc.+");
     private static final Set<String> EMPTY = Collections.emptySet();
 
-    public static Stream<Arguments> data() {
+    static Stream<Arguments> data() {
 
         return Stream.of(
                 /*
@@ -85,7 +85,7 @@ public class BaseReporterFactoryTest {
 
     @ParameterizedTest
     @MethodSource("data")
-    public void testDefaultMatching(Set<String> includes, Set<String> excludes, String name,
+    void testDefaultMatching(Set<String> includes, Set<String> excludes, String name,
                                     boolean expectedDefaultResult, boolean expectedRegexResult,
                                     boolean expectedSubstringResult, String msg) {
         factory.setIncludes(includes);
@@ -100,7 +100,7 @@ public class BaseReporterFactoryTest {
 
     @ParameterizedTest
     @MethodSource("data")
-    public void testRegexMatching(Set<String> includes, Set<String> excludes, String name,
+    void testRegexMatching(Set<String> includes, Set<String> excludes, String name,
                                   boolean expectedDefaultResult, boolean expectedRegexResult,
                                   boolean expectedSubstringResult, String msg) {
         factory.setIncludes(includes);
@@ -115,7 +115,7 @@ public class BaseReporterFactoryTest {
 
     @ParameterizedTest
     @MethodSource("data")
-    public void tesSubstringMatching(Set<String> includes, Set<String> excludes, String name,
+    void tesSubstringMatching(Set<String> includes, Set<String> excludes, String name,
                                      boolean expectedDefaultResult, boolean expectedRegexResult,
                                      boolean expectedSubstringResult, String msg) {
         factory.setIncludes(includes);

@@ -24,7 +24,7 @@ import static org.mockito.Mockito.when;
  *     <li>Default value defined by {@link DropwizardResourceConfig#urlPattern}</li>
  * </ol>
  */
-public class AbstractServerFactoryTest {
+class AbstractServerFactoryTest {
 
     private final JerseyContainerHolder holder = mock(JerseyContainerHolder.class);
     private final DropwizardResourceConfig config = new DropwizardResourceConfig();

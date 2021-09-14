@@ -19,7 +19,7 @@ import javax.validation.ValidatorFactory;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class BootstrapTest {
+class BootstrapTest {
     private final Application<Configuration> application = new Application<Configuration>() {
         @Override
         public void run(Configuration configuration, Environment environment) throws Exception {

@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-public class JsonConfigurationFactoryTest extends BaseConfigurationFactoryTest {
+class JsonConfigurationFactoryTest extends BaseConfigurationFactoryTest {
 
     private File commentFile;
 

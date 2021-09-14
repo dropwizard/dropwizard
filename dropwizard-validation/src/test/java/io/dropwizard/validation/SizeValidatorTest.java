@@ -13,7 +13,7 @@ import java.util.Locale;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
-public class SizeValidatorTest {
+class SizeValidatorTest {
     @SuppressWarnings("unused")
     public static class Example {
         @MaxSize(value = 30, unit = SizeUnit.KILOBYTES)

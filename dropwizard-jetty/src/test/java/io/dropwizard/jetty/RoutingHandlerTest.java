@@ -24,7 +24,7 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class RoutingHandlerTest {
+class RoutingHandlerTest {
     private final Connector connector1 = mock(Connector.class);
     private final Connector connector2 = mock(Connector.class);
     private final Handler handler1 = spy(new ContextHandler());

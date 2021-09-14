@@ -17,7 +17,7 @@ import javax.ws.rs.core.Application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class OptionalHeaderParamResourceTest extends AbstractJerseyTest {
+class OptionalHeaderParamResourceTest extends AbstractJerseyTest {
 
     @Override
     protected Application configure() {
@@ -36,7 +36,7 @@ public class OptionalHeaderParamResourceTest extends AbstractJerseyTest {
     @Test
     void shouldReturnMessageWhenMessageIsBlank() {
         String response = target("/optional/message").request().header("message", "").get(String.class);
-        assertThat(response).isEqualTo("");
+        assertThat(response).isEmpty();
     }
 
     @Test

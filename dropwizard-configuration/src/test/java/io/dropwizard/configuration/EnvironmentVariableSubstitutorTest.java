@@ -6,7 +6,7 @@ import static org.assertj.core.api.Assumptions.assumeThat;
 
 import org.junit.jupiter.api.Test;
 
-public class EnvironmentVariableSubstitutorTest {
+class EnvironmentVariableSubstitutorTest {
 
     @Test
     void defaultConstructorDisablesSubstitutionInVariables() {

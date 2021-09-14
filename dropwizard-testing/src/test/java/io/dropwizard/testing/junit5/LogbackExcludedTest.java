@@ -22,7 +22,7 @@ import static org.assertj.core.api.Assertions.fail;
 /**
  * Verify that Logback can be excluded from the classpath without generating any noise.
  */
-public class LogbackExcludedTest {
+class LogbackExcludedTest {
 
     @Test
     void testLogbackExcludedClassNotFound() throws Exception {

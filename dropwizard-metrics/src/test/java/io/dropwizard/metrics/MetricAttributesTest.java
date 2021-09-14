@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MetricAttributesTest {
+class MetricAttributesTest {
 
     private static final EnumSet<MetricAttribute> ALL = EnumSet.allOf(MetricAttribute.class);
     private static final EnumSet<MetricAttribute> NONE = EnumSet.noneOf(MetricAttribute.class);
@@ -36,7 +36,7 @@ public class MetricAttributesTest {
 
     @ParameterizedTest
     @MethodSource("data")
-    public void testGetDisabledAttributes(EnumSet<MetricAttribute> includes, EnumSet<MetricAttribute> excludes,
+    void testGetDisabledAttributes(EnumSet<MetricAttribute> includes, EnumSet<MetricAttribute> excludes,
                                           EnumSet<MetricAttribute> expectedResult) {
         factory.setIncludesAttributes(includes);
         factory.setExcludesAttributes(excludes);

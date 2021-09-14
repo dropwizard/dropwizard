@@ -29,7 +29,7 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @SuppressWarnings("HibernateResourceOpenedButNotSafelyClosed")
-public class UnitOfWorkApplicationListenerTest {
+class UnitOfWorkApplicationListenerTest {
     private final SessionFactory sessionFactory = mock(SessionFactory.class);
     private final SessionFactory analyticsSessionFactory = mock(SessionFactory.class);
     private final UnitOfWorkApplicationListener listener = new UnitOfWorkApplicationListener();

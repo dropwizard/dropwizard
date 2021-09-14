@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
 
 @NotThreadSafe
-public class DbTestCommandTest extends AbstractMigrationTest {
+class DbTestCommandTest extends AbstractMigrationTest {
 
     private final DbTestCommand<TestMigrationConfiguration> dbTestCommand = new DbTestCommand<>(
         new TestMigrationDatabaseConfiguration(), TestMigrationConfiguration.class, "migrations-ddl.xml");

@@ -25,7 +25,7 @@ import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class TlsSocketAppenderFactoryTest {
+class TlsSocketAppenderFactoryTest {
 
     public TcpServer tcpServer = new TcpServer(createServerSocket());
 
@@ -80,7 +80,7 @@ public class TlsSocketAppenderFactoryTest {
         }
 
         tcpServer.getLatch().await(5, TimeUnit.SECONDS);
-        assertThat(tcpServer.getLatch().getCount()).isEqualTo(0);
+        assertThat(tcpServer.getLatch().getCount()).isZero();
         loggingFactory.reset();
     }
 

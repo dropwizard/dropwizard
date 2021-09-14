@@ -84,7 +84,7 @@ class AnotherHttpClientBuilder extends org.apache.http.impl.client.HttpClientBui
     }
 }
 
-public class HttpClientBuilderTest {
+class HttpClientBuilderTest {
     static class CustomRequestExecutor extends HttpRequestExecutor {
     }
 
@@ -367,7 +367,7 @@ public class HttpClientBuilderTest {
         assertThat(builder.using(configuration).createClient(apacheBuilder, connectionManager, "test")).isNotNull();
 
         assertThat(((RequestConfig) spyHttpClientBuilderField("defaultRequestConfig", apacheBuilder)).isNormalizeUri())
-            .isEqualTo(true);
+            .isTrue();
     }
 
     @Test
@@ -376,7 +376,7 @@ public class HttpClientBuilderTest {
         assertThat(builder.using(configuration).createClient(apacheBuilder, connectionManager, "test")).isNotNull();
 
         assertThat(((RequestConfig) spyHttpClientBuilderField("defaultRequestConfig", apacheBuilder)).isNormalizeUri())
-            .isEqualTo(false);
+            .isFalse();
     }
 
     @Test

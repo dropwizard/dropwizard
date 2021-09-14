@@ -19,7 +19,7 @@ import static org.mockito.Mockito.*;
  * Unit tests for {@link PersonResource}.
  */
 @ExtendWith(DropwizardExtensionsSupport.class)
-public class PersonResourceTest {
+class PersonResourceTest {
     private static final PersonDAO DAO = mock(PersonDAO.class);
     public static final ResourceExtension RULE = ResourceExtension.builder()
             .addResource(new PersonResource(DAO))

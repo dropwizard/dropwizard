@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class DropwizardUdpSocketAppenderTest {
+class DropwizardUdpSocketAppenderTest {
 
     private OutputStreamAppender<ILoggingEvent> udpStreamAppender;
 
@@ -60,6 +60,6 @@ public class DropwizardUdpSocketAppenderTest {
         udpStreamAppender.getOutputStream().write("Test message".getBytes(UTF_8));
 
         countDownLatch.await(5, TimeUnit.SECONDS);
-        assertThat(countDownLatch.getCount()).isEqualTo(0);
+        assertThat(countDownLatch.getCount()).isZero();
     }
 }

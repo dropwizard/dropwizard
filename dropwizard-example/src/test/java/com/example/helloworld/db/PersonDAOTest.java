@@ -15,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 @ExtendWith(DropwizardExtensionsSupport.class)
-public class PersonDAOTest {
+class PersonDAOTest {
 
     public DAOTestExtension daoTestRule = DAOTestExtension.newBuilder()
         .addEntityClass(Person.class)
@@ -31,7 +31,7 @@ public class PersonDAOTest {
     @Test
     void createPerson() {
         final Person jeff = daoTestRule.inTransaction(() -> personDAO.create(new Person("Jeff", "The plumber", 1995)));
-        assertThat(jeff.getId()).isGreaterThan(0);
+        assertThat(jeff.getId()).isPositive();
         assertThat(jeff.getFullName()).isEqualTo("Jeff");
         assertThat(jeff.getJobTitle()).isEqualTo("The plumber");
         assertThat(jeff.getYearBorn()).isEqualTo(1995);

@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.jupiter.api.Assertions.assertTimeout;
 
-public class JacksonDeserializationOfBigNumbersToInstantTest {
+class JacksonDeserializationOfBigNumbersToInstantTest {
 
     private final ObjectMapper objectMapper = Jackson.newObjectMapper();
 

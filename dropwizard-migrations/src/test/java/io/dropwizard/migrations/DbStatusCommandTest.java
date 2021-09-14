@@ -17,7 +17,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @NotThreadSafe
-public class DbStatusCommandTest extends AbstractMigrationTest {
+class DbStatusCommandTest extends AbstractMigrationTest {
 
     private final DbStatusCommand<TestMigrationConfiguration> statusCommand =
             new DbStatusCommand<>(new TestMigrationDatabaseConfiguration(), TestMigrationConfiguration.class, "migrations.xml");

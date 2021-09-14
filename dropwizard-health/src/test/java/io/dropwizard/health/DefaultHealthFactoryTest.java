@@ -14,14 +14,14 @@ import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class DefaultHealthFactoryTest {
+class DefaultHealthFactoryTest {
     private final ObjectMapper objectMapper = Jackson.newObjectMapper();
     private final Validator validator = Validators.newValidator();
     private final YamlConfigurationFactory<DefaultHealthFactory> configFactory =
         new YamlConfigurationFactory<>(DefaultHealthFactory.class, validator, objectMapper, "dw");
 
     @Test
-    public void shouldBuildHealthFactoryFromYaml() throws Exception {
+    void shouldBuildHealthFactoryFromYaml() throws Exception {
         final File yml = new File(Resources.getResource("yml/health.yml").toURI());
         final DefaultHealthFactory healthFactory = configFactory.build(yml);
 

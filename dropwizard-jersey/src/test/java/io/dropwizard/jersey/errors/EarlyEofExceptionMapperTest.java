@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.core.Response;
 
-public class EarlyEofExceptionMapperTest {
+class EarlyEofExceptionMapperTest {
 
     private final EarlyEofExceptionMapper mapper = new EarlyEofExceptionMapper();
 

@@ -9,7 +9,7 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class UUIDParamTest {
+class UUIDParamTest {
     private void UuidParamNegativeTest(String input) {
         assertThatExceptionOfType(WebApplicationException.class)
             .isThrownBy(() -> new UUIDParam(input))

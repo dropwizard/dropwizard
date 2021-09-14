@@ -82,7 +82,7 @@ public class SelfValidatingValidator implements ConstraintValidator<SelfValidati
         return true;
     }
 
-    final static class ProxyValidationCaller<T> extends ValidationCaller<T> {
+    static final class ProxyValidationCaller<T> extends ValidationCaller<T> {
         private final Class<T> cls;
         private final ResolvedMethod resolvedMethod;
 
