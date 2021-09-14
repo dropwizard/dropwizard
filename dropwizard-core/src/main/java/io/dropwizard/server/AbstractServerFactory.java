@@ -569,10 +569,7 @@ public abstract class AbstractServerFactory implements ServerFactory {
                                          AdminEnvironment admin) {
         configureSessionsAndSecurity(handler, server);
         handler.setServer(server);
-        handler.getServletContext().setAttribute(MetricsServlet.METRICS_REGISTRY, metrics);
-        handler.getServletContext().setAttribute(HealthCheckServlet.HEALTH_CHECK_REGISTRY, healthChecks);
-        handler.getServletContext().setAttribute(AdminServlet.HEALTHCHECK_ENABLED_PARAM_KEY, admin.isHealthCheckServletEnabled());
-        handler.addServlet(AdminServlet.class, "/*");
+        adminServlet.addServlet(handler, metrics, healthChecks);
         final String allowedMethodsParam = String.join(",", allowedMethods);
         handler.addFilter(AllowedMethodsFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST))
                 .setInitParameter(AllowedMethodsFilter.ALLOWED_METHODS_PARAM, allowedMethodsParam);
