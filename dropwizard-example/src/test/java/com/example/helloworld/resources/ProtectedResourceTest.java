@@ -15,6 +15,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.NotAuthorizedException;
+import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.HttpHeaders;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -48,9 +49,9 @@ class ProtectedResourceTest {
 
     @Test
     void testProtectedEndpointNoCredentials401() {
+        Invocation.Builder request = RULE.target("/protected").request();
         assertThatExceptionOfType(NotAuthorizedException.class)
-            .isThrownBy(() -> RULE.target("/protected").request()
-                .get(String.class))
+            .isThrownBy(() -> request.get(String.class))
             .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(401))
             .satisfies(e -> assertThat(e.getResponse().getHeaders().get(HttpHeaders.WWW_AUTHENTICATE))
             .containsOnly("Basic realm=\"SUPER SECRET STUFF\""));
@@ -58,10 +59,10 @@ class ProtectedResourceTest {
 
     @Test
     void testProtectedEndpointBadCredentials401() {
+        Invocation.Builder request = RULE.target("/protected").request()
+            .header(HttpHeaders.AUTHORIZATION, "Basic c25lYWt5LWJhc3RhcmQ6YXNkZg==");
         assertThatExceptionOfType(NotAuthorizedException.class)
-            .isThrownBy(() -> RULE.target("/protected").request()
-                .header(HttpHeaders.AUTHORIZATION, "Basic c25lYWt5LWJhc3RhcmQ6YXNkZg==")
-                .get(String.class))
+            .isThrownBy(() -> request.get(String.class))
             .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(401))
             .satisfies(e -> assertThat(e.getResponse().getHeaders().get(HttpHeaders.WWW_AUTHENTICATE))
                 .containsOnly("Basic realm=\"SUPER SECRET STUFF\""));
@@ -77,10 +78,10 @@ class ProtectedResourceTest {
 
     @Test
     void testProtectedAdminEndpointPrincipalIsNotAuthorized403() {
+        Invocation.Builder request = RULE.target("/protected/admin").request()
+            .header(HttpHeaders.AUTHORIZATION, "Basic Z29vZC1ndXk6c2VjcmV0");
         assertThatExceptionOfType(ForbiddenException.class)
-            .isThrownBy(() -> RULE.target("/protected/admin").request()
-                    .header(HttpHeaders.AUTHORIZATION, "Basic Z29vZC1ndXk6c2VjcmV0")
-                    .get(String.class))
+            .isThrownBy(() -> request.get(String.class))
             .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(403));
     }
 }
