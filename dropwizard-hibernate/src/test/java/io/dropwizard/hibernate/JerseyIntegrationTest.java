@@ -29,6 +29,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
@@ -169,9 +170,9 @@ class JerseyIntegrationTest extends JerseyTest {
 
     @Test
     void doesNotFindMissingData() {
+        Invocation.Builder request = target("/people/Poof").request(MediaType.APPLICATION_JSON);
         assertThatExceptionOfType(WebApplicationException.class)
-            .isThrownBy(() -> target("/people/Poof").request(MediaType.APPLICATION_JSON)
-                    .get(Person.class))
+            .isThrownBy(() -> request.get(Person.class))
             .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(404));
     }
 

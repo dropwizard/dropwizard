@@ -16,6 +16,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
 import java.util.Collections;
@@ -99,8 +100,9 @@ class MustacheViewRendererFileSystemTest extends JerseyTest {
 
     @Test
     void returnsA500ForViewsWithBadTemplatePaths() {
+        Invocation.Builder request = target("/test/bad").request();
         assertThatExceptionOfType(WebApplicationException.class)
-            .isThrownBy(() -> target("/test/bad").request().get(String.class))
+            .isThrownBy(() -> request.get(String.class))
             .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(500))
             .satisfies(e -> assertThat(e.getResponse().readEntity(String.class))
                 .isEqualTo(ViewRenderExceptionMapper.TEMPLATE_ERROR_MSG));
@@ -108,8 +110,9 @@ class MustacheViewRendererFileSystemTest extends JerseyTest {
 
     @Test
     void returnsA500ForViewsThatCantCompile() {
+        Invocation.Builder request = target("/test/error").request();
         assertThatExceptionOfType(WebApplicationException.class)
-            .isThrownBy(() -> target("/test/error").request().get(String.class))
+            .isThrownBy(() -> request.get(String.class))
             .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(500))
             .satisfies(e -> assertThat(e.getResponse().readEntity(String.class))
                 .isEqualTo(ViewRenderExceptionMapper.TEMPLATE_ERROR_MSG));

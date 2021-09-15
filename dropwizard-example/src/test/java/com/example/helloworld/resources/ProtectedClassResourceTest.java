@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import javax.ws.rs.ForbiddenException;
+import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.HttpHeaders;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -72,10 +73,10 @@ final class ProtectedClassResourceTest {
 
     @Test
     void testProtectedBasicUserEndpointPrincipalIsNotAuthorized403() {
+        Invocation.Builder request = RULE.target("/protected").request()
+            .header(HttpHeaders.AUTHORIZATION, "Basic Z3Vlc3Q6c2VjcmV0");
         assertThatExceptionOfType(ForbiddenException.class)
-            .isThrownBy(() -> RULE.target("/protected").request()
-            .header(HttpHeaders.AUTHORIZATION, "Basic Z3Vlc3Q6c2VjcmV0")
-            .get(String.class))
+            .isThrownBy(() -> request.get(String.class))
             .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(403));
     }
 

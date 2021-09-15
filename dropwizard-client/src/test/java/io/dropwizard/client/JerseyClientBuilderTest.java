@@ -105,15 +105,17 @@ class JerseyClientBuilderTest {
 
     @Test
     void throwsAnExceptionWithoutAnEnvironmentAndOnlyObjectMapper() {
+        JerseyClientBuilder configuredBuilder = builder.using(objectMapper);
         assertThatExceptionOfType(IllegalStateException.class)
-            .isThrownBy(() -> builder.using(objectMapper).build("test"))
+            .isThrownBy(() -> configuredBuilder.build("test"))
             .withMessage("Must have either an environment or both an executor service and an object mapper");
     }
 
     @Test
     void throwsAnExceptionWithoutAnEnvironmentAndOnlyAThreadPool() {
+        JerseyClientBuilder configuredBuilder = builder.using(executorService);
         assertThatExceptionOfType(IllegalStateException.class)
-            .isThrownBy(() -> builder.using(executorService).build("test"))
+            .isThrownBy(() -> configuredBuilder.build("test"))
             .withMessage("Must have either an environment or both an executor service and an object mapper");
     }
 
