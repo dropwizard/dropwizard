@@ -33,6 +33,7 @@ import org.mockito.Mockito;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.ProcessingException;
+import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.Response;
@@ -90,8 +91,9 @@ class DropwizardApacheConnectorTest {
 
     @Test
     void when_no_read_timeout_override_then_client_request_times_out() {
+        Invocation.Builder request = client.target(testUri + "/long_running").request();
         assertThatExceptionOfType(ProcessingException.class)
-            .isThrownBy(() ->client.target(testUri + "/long_running").request().get())
+            .isThrownBy(request::get)
             .withCauseInstanceOf(SocketTimeoutException.class);
     }
 
