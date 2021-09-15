@@ -13,6 +13,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -48,8 +49,9 @@ class OptionalIntMessageBodyWriterTest extends AbstractJerseyTest {
 
     @Test
     void absentOptionalsThrowANotFound() {
+        Invocation.Builder request = target("optional-return").request();
         assertThatExceptionOfType(WebApplicationException.class)
-            .isThrownBy(() -> target("optional-return").request().get(Integer.class))
+            .isThrownBy(() -> request.get(Integer.class))
             .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(404));
     }
 
@@ -80,19 +82,22 @@ class OptionalIntMessageBodyWriterTest extends AbstractJerseyTest {
 
     @Test
     void valueInvalidReturns404() {
+        Invocation.Builder request = target("optional-return/default").queryParam("id", "invalid")
+            .request();
         assertThatExceptionOfType(NotFoundException.class)
-            .isThrownBy(() -> target("optional-return/default").queryParam("id", "invalid")
-                .request().get(Integer.class));
+            .isThrownBy(() -> request.get(Integer.class));
+        Invocation.Builder intRequest = target("optional-return/int/default").queryParam("id", "invalid")
+            .request();
         assertThatExceptionOfType(NotFoundException.class)
-            .isThrownBy(() -> target("optional-return/int/default").queryParam("id", "invalid")
-                .request().get(Integer.class));
+            .isThrownBy(() -> intRequest.get(Integer.class));
     }
 
     @Test
     void verifyInvalidDefaultValueFailsFast() {
+        OptionalIntParamConverterProvider.OptionalIntParamConverter converter =
+            new OptionalIntParamConverterProvider.OptionalIntParamConverter("invalid");
         assertThatExceptionOfType(NumberFormatException.class)
-            .isThrownBy(() -> new OptionalIntParamConverterProvider.OptionalIntParamConverter("invalid")
-                .fromString("invalid"));
+            .isThrownBy(() -> converter.fromString("invalid"));
     }
 
     @Path("optional-return")
