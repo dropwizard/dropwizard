@@ -19,10 +19,9 @@ public class ResourceHelpers {
     public static String resourceFilePath(final String resourceClassPathLocation) {
         try {
             return new File(Resources.getResource(resourceClassPathLocation).toURI()).getAbsolutePath();
+        } catch (RuntimeException e) {
+            throw (RuntimeException) e;
         } catch (Exception e) {
-            if (e instanceof RuntimeException) {
-                throw (RuntimeException) e;
-            }
             throw new RuntimeException(e);
         }
     }
