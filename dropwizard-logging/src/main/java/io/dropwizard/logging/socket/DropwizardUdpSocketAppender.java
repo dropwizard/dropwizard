@@ -30,28 +30,28 @@ public class DropwizardUdpSocketAppender<E extends DeferredProcessingAware> exte
     }
 
     protected OutputStream datagramSocketOutputStream(String host, int port) {
-        final DatagramSocket datagramSocket;
         try {
-            datagramSocket = new DatagramSocket();
+            return new OutputStream() {
+                private final DatagramSocket datagramSocket = new DatagramSocket();
+
+                @Override
+                public void write(int b) throws IOException {
+                    throw new UnsupportedOperationException("Datagram doesn't work at byte level");
+                }
+
+                @Override
+                public void write(byte[] b, int off, int len) throws IOException {
+                    // Important not to cache InetAddress and let the JVM/OS to handle DNS caching.
+                    datagramSocket.send(new DatagramPacket(b, off, len, InetAddress.getByName(host), port));
+                }
+
+                @Override
+                public void close() throws IOException {
+                    datagramSocket.close();
+                }
+            };
         } catch (SocketException e) {
             throw new IllegalStateException("Unable to create a datagram socket", e);
         }
-        return new OutputStream() {
-            @Override
-            public void write(int b) throws IOException {
-                throw new UnsupportedOperationException("Datagram doesn't work at byte level");
-            }
-
-            @Override
-            public void write(byte[] b, int off, int len) throws IOException {
-                // Important not to cache InetAddress and let the JVM/OS to handle DNS caching.
-                datagramSocket.send(new DatagramPacket(b, off, len, InetAddress.getByName(host), port));
-            }
-
-            @Override
-            public void close() throws IOException {
-                datagramSocket.close();
-            }
-        };
     }
 }
