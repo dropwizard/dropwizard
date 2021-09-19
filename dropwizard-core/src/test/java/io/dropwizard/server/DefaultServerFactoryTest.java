@@ -3,6 +3,7 @@ package io.dropwizard.server;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.dropwizard.configuration.ConfigurationException;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.DiscoverableSubtypeResolver;
 import io.dropwizard.jackson.Jackson;
@@ -28,6 +29,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import java.io.File;
 import java.io.InputStreamReader;
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
@@ -39,7 +42,6 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class DefaultServerFactoryTest {
@@ -243,17 +245,18 @@ class DefaultServerFactoryTest {
     }
 
     @Test
-    void testDeserializeWithoutJsonAutoDetect() {
+    void testDeserializeWithoutJsonAutoDetect() throws ConfigurationException, IOException, URISyntaxException {
         final ObjectMapper objectMapper = Jackson.newObjectMapper()
             .setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE);
 
-        assertThatCode(() -> new YamlConfigurationFactory<>(
-            DefaultServerFactory.class,
-            BaseValidator.newValidator(),
-            objectMapper,
-            "dw"
-            ).build(new File(Resources.getResource("yaml/server.yml").toURI()))
-        ).doesNotThrowAnyException();
+        assertThat(new YamlConfigurationFactory<>(
+                DefaultServerFactory.class,
+                BaseValidator.newValidator(),
+                objectMapper,
+                "dw"
+                ).build(new File(Resources.getResource("yaml/server.yml").toURI()))
+                .getMaxThreads())
+            .isEqualTo(101);
     }
 
     @Path("/test")
