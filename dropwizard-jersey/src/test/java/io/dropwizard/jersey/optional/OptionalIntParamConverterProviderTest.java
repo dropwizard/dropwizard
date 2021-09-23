@@ -8,8 +8,10 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 class OptionalIntParamConverterProviderTest {
     @Test
     void verifyInvalidDefaultValueFailsFast() {
+        OptionalIntParamConverterProvider.OptionalIntParamConverter converter =
+            new OptionalIntParamConverterProvider.OptionalIntParamConverter("invalid");
         assertThatExceptionOfType(NumberFormatException.class)
-            .isThrownBy(() -> new OptionalIntParamConverterProvider.OptionalIntParamConverter("invalid").fromString("invalid"));
+            .isThrownBy(() -> converter.fromString("invalid"));
     }
 
     @Test

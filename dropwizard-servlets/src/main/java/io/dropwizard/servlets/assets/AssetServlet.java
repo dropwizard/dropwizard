@@ -211,13 +211,7 @@ public class AssetServlet extends HttpServlet {
                 final String ifRange = req.getHeader(IF_RANGE);
 
                 if (ifRange == null || cachedAsset.getETag().equals(ifRange)) {
-
-                    try {
-                        ranges = parseRangeHeader(rangeHeader, resourceLength);
-                    } catch (NumberFormatException e) {
-                        resp.sendError(HttpServletResponse.SC_REQUESTED_RANGE_NOT_SATISFIABLE);
-                        return;
-                    }
+                    ranges = parseRangeHeader(rangeHeader, resourceLength);
 
                     if (ranges.isEmpty()) {
                         resp.sendError(HttpServletResponse.SC_REQUESTED_RANGE_NOT_SATISFIABLE);
@@ -322,20 +316,24 @@ public class AssetServlet extends HttpServlet {
      * @return List of parsed ranges
      */
     private List<ByteRange> parseRangeHeader(final String rangeHeader, final int resourceLength) {
-        final List<ByteRange> byteRanges;
-        if (rangeHeader.contains("=")) {
-            final String[] parts = rangeHeader.split("=", -1);
-            if (parts.length > 1) {
-                byteRanges = Arrays.stream(parts[1].split(",", -1))
-                        .map(String::trim)
-                        .map(s -> ByteRange.parse(s, resourceLength))
-                        .collect(Collectors.toList());
-            } else {
-                byteRanges = Collections.emptyList();
-            }
-        } else {
-            byteRanges = Collections.emptyList();
+        try {
+			final List<ByteRange> byteRanges;
+			if (rangeHeader.contains("=")) {
+				final String[] parts = rangeHeader.split("=", -1);
+				if (parts.length > 1) {
+					byteRanges = Arrays.stream(parts[1].split(",", -1))
+							.map(String::trim)
+							.map(s -> ByteRange.parse(s, resourceLength))
+							.collect(Collectors.toList());
+				} else {
+					byteRanges = Collections.emptyList();
+				}
+			} else {
+				byteRanges = Collections.emptyList();
+			}
+			return byteRanges;
+        } catch (NumberFormatException e) {
+            return Collections.emptyList();
         }
-        return byteRanges;
     }
 }

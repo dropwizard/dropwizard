@@ -20,7 +20,7 @@
         <!-- External dependencies -->
         <activation-api.version>1.2.2</activation-api.version>
         <argparse4j.version>0.9.0</argparse4j.version>
-        <byte-buddy.version>1.11.15</byte-buddy.version>
+        <byte-buddy.version>1.11.18</byte-buddy.version>
         <caffeine.version>2.9.2</caffeine.version>
         <checker-qual.version>3.18.0</checker-qual.version>
         <classmate.version>1.5.1</classmate.version>
@@ -50,7 +50,7 @@
         <jersey.version>2.33</jersey.version>
         <jetty-setuid-java.version>1.0.4</jetty-setuid-java.version>
         <jetty.version>9.4.43.v20210629</jetty.version>
-        <joda-time.version>2.10.10</joda-time.version>
+        <joda-time.version>2.10.11</joda-time.version>
         <jsr305.version>3.0.2</jsr305.version>
         <liquibase-core.version>4.4.3</liquibase-core.version>
         <liquibase-slf4j.version>4.0.0</liquibase-slf4j.version>
@@ -64,13 +64,13 @@
         <usertype.core.version>7.0.0.CR1</usertype.core.version>
 
         <!-- Test dependencies -->
-        <assertj.version>3.20.2</assertj.version>
+        <assertj.version>3.21.0</assertj.version>
         <awaitility.version>4.1.0</awaitility.version>
         <bcprov-jdk15on.version>1.69</bcprov-jdk15on.version>
         <h2.version>1.4.200</h2.version>
         <hsqldb.version>2.5.1</hsqldb.version>
         <junit.version>4.13.2</junit.version>
-        <junit5.version>5.8.0</junit5.version>
+        <junit5.version>5.8.1</junit5.version>
         <mockito.version>3.12.4</mockito.version>
 
         <!-- Plugin versions -->

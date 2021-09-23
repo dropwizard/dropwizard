@@ -21,7 +21,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(DropwizardExtensionsSupport.class)
-public class HealthIntegrationTest {
+class HealthIntegrationTest {
     private static final String CONFIG_PATH = "health/config.yml";
     private static final String HOST = "localhost";
     private static final String APP_PORT_KEY = "server.connector.port";
@@ -60,12 +60,12 @@ public class HealthIntegrationTest {
     }
 
     @Test
-    public void healthCheckShouldReportUnhealthyOnInitialStart() {
+    void healthCheckShouldReportUnhealthyOnInitialStart() {
         assertThat(isAppHealthy()).isFalse();
     }
 
     @Test
-    public void healthCheckShouldReportHealthyWhenInitialStateFalseCriticalCheckGoesHealthy() {
+    void healthCheckShouldReportHealthyWhenInitialStateFalseCriticalCheckGoesHealthy() {
         final HealthApp app = TEST_APP_RULE.getApplication();
 
         assertThat(isAppHealthy()).isFalse();
@@ -84,7 +84,7 @@ public class HealthIntegrationTest {
     }
 
     @Test
-    public void healthCheckShouldReportHealthyWhenAllHealthChecksHealthy() {
+    void healthCheckShouldReportHealthyWhenAllHealthChecksHealthy() {
         final HealthApp app = TEST_APP_RULE.getApplication();
         app.getCriticalCheckHealthy1().set(true);
         app.getCriticalCheckHealthy2().set(true);
@@ -101,7 +101,7 @@ public class HealthIntegrationTest {
     }
 
     @Test
-    public void nonCriticalHealthCheckFailureShouldNotResultInUnhealthyApp() {
+    void nonCriticalHealthCheckFailureShouldNotResultInUnhealthyApp() {
         final HealthApp app = TEST_APP_RULE.getApplication();
         app.getCriticalCheckHealthy1().set(true);
         app.getCriticalCheckHealthy2().set(true);
@@ -119,7 +119,7 @@ public class HealthIntegrationTest {
     }
 
     @Test
-    public void criticalHealthCheckFailureShouldResultInUnhealthyApp() {
+    void criticalHealthCheckFailureShouldResultInUnhealthyApp() {
         final HealthApp app = TEST_APP_RULE.getApplication();
         app.getCriticalCheckHealthy1().set(false);
 
@@ -134,7 +134,7 @@ public class HealthIntegrationTest {
     }
 
     @Test
-    public void appShouldRecoverOnceCriticalCheckReturnsToHealthyStatus() {
+    void appShouldRecoverOnceCriticalCheckReturnsToHealthyStatus() {
         final HealthApp app = TEST_APP_RULE.getApplication();
         app.getCriticalCheckHealthy1().set(false);
 

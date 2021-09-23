@@ -25,7 +25,7 @@ import com.codahale.metrics.health.HealthCheck;
 
 import io.dropwizard.util.Duration;
 
-public class JdbiHealthCheckTest {
+class JdbiHealthCheckTest {
     private static final String VALIDATION_QUERY = "select 1";
 
     private Jdbi jdbi;

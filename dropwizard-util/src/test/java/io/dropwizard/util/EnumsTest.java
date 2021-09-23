@@ -45,7 +45,7 @@ class EnumsTest {
 
     @ParameterizedTest
     @MethodSource("data")
-    public void canGuess(String text, VideoFormat result) {
+    void canGuess(String text, VideoFormat result) {
         assertThat(Enums.fromStringFuzzy(text, VideoFormat.values())).isEqualTo(result);
     }
 }

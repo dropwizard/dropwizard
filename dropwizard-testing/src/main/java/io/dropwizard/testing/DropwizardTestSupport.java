@@ -252,10 +252,9 @@ public class DropwizardTestSupport<C extends Configuration> {
             }
             try {
                 jettyServer.stop();
+            } catch (RuntimeException e) {
+                throw (RuntimeException) e;
             } catch (Exception e) {
-                if (e instanceof RuntimeException) {
-                  throw (RuntimeException) e;
-                }
                 throw new RuntimeException(e);
             } finally {
                 jettyServer = null;

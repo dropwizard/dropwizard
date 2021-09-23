@@ -26,8 +26,12 @@ class DefaultHealthFactoryTest {
         final DefaultHealthFactory healthFactory = configFactory.build(yml);
 
         assertThat(healthFactory.isDelayedShutdownHandlerEnabled()).isTrue();
+        assertThat(healthFactory.isEnabled()).isTrue();
+        assertThat(healthFactory.isInitialOverallState()).isTrue();
         assertThat(healthFactory.getShutdownWaitPeriod().toMilliseconds()).isEqualTo(1L);
         assertThat(healthFactory.getHealthCheckUrlPaths()).isEqualTo(ImmutableList.of("/health-check"));
+
+        assertThat(healthFactory.getHealthChecks()).isEqualTo(healthFactory.getHealthCheckConfigurations());
 
         assertThat(healthFactory.getHealthCheckConfigurations()
             .stream()

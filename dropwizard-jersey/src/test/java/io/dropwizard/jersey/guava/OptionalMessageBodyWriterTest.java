@@ -13,6 +13,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
 
@@ -38,8 +39,9 @@ class OptionalMessageBodyWriterTest extends AbstractJerseyTest {
 
     @Test
     void absentOptionalsThrowANotFound() {
+        Invocation.Builder request = target("/optional-return/").request();
         assertThatExceptionOfType(WebApplicationException.class)
-            .isThrownBy(() -> target("/optional-return/").request().get(String.class))
+            .isThrownBy(() -> request.get(String.class))
             .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(404));
     }
 

@@ -30,6 +30,7 @@ class ExecutorServiceManagerTest {
         assertThat(test.getShutdownPeriod()).isSameAs(TEST_DURATION);
         assertThat(test.getPoolName()).isSameAs(poolName);
         assertThat(test.getExecutor()).isSameAs(this.exec);
+        assertThat(test.toString()).contains(String.format("(%s)", poolName));
     }
 
     @Test
