@@ -10,6 +10,13 @@ Dropwizard Client
             instrumented HTTP clients so you can integrate your service with other web
             services: :ref:`man-client-apache` and :ref:`man-client-jersey`.
 
+.. code-block:: xml
+
+    <dependency>
+        <groupId>io.dropwizard</groupId>
+        <artifactId>dropwizard-client</artifactId>
+    </dependency>
+
 .. _man-client-apache:
 
 Apache HttpClient
@@ -191,7 +198,7 @@ Rx Usage
 --------
 
 To increase the ergonomics of asynchronous client requests, Jersey allows creation of `rx-clients`_.
-You can instruct Dropwizard to create such a client:
+You can instruct Dropwizard to create such a client (RxJava2):
 
 .. code-block:: java
 
@@ -199,20 +206,21 @@ You can instruct Dropwizard to create such a client:
     public void run(ExampleConfiguration config,
                     Environment environment) {
 
-        final RxClient<RxCompletionStageInvoker> client =
+        final Client client =
             new JerseyClientBuilder(environment)
                 .using(config.getJerseyClientConfiguration())
-                .buildRx(getName(), RxCompletionStageInvoker.class);
+                .buildRx(getName(), RxFlowableInvokerProvider.class);
+        //Any custom Service Resource that waits for Client in constructor      
         environment.jersey().register(new ExternalServiceResource(client));
     }
 
-``RxCompletionStageInvoker.class`` is the Java 8 implementation and can be added to the pom:
+``RxFlowableInvokerProvider.class`` is the JavaRx implementation and can be added to the pom:
 
 .. code-block:: xml
 
     <dependency>
         <groupId>org.glassfish.jersey.ext.rx</groupId>
-        <artifactId>jersey-rx-client-java8</artifactId>
+        <artifactId>jersey-rx-client-rxjava2</artifactId>
     </dependency>
 
 Alternatively, there are RxJava, Guava, and JSR-166e implementations.
