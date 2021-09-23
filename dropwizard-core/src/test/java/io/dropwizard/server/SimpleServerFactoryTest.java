@@ -3,6 +3,7 @@ package io.dropwizard.server;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.dropwizard.configuration.ConfigurationException;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.DiscoverableSubtypeResolver;
 import io.dropwizard.jackson.Jackson;
@@ -27,8 +28,10 @@ import javax.ws.rs.Produces;
 import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
@@ -36,7 +39,6 @@ import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SimpleServerFactoryTest {
@@ -102,17 +104,18 @@ public class SimpleServerFactoryTest {
     }
 
     @Test
-    void testDeserializeWithoutJsonAutoDetect() {
+    void testDeserializeWithoutJsonAutoDetect() throws ConfigurationException, IOException, URISyntaxException {
         final ObjectMapper objectMapper = Jackson.newObjectMapper()
             .setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE);
 
-        assertThatCode(() -> new YamlConfigurationFactory<>(
-            SimpleServerFactory.class,
-            BaseValidator.newValidator(),
-            objectMapper,
-            "dw"
-            ).build(new File(Resources.getResource("yaml/simple_server.yml").toURI()))
-        ).doesNotThrowAnyException();
+        assertThat(new YamlConfigurationFactory<>(
+                SimpleServerFactory.class,
+                BaseValidator.newValidator(),
+                objectMapper,
+                "dw"
+                ).build(new File(Resources.getResource("yaml/simple_server.yml").toURI()))
+                .getApplicationContextPath())
+            .isEqualTo("/service");
     }
 
     public static String httpRequest(String requestMethod, String url) throws Exception {
