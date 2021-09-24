@@ -15,6 +15,8 @@ import org.glassfish.jersey.client.ClientResponse;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledForJreRange;
+import org.junit.jupiter.api.condition.JRE;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import javax.net.ssl.HostnameVerifier;
@@ -40,6 +42,7 @@ import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.bouncycastle.jce.provider.BouncyCastleProvider.PROVIDER_NAME;
 
 @ExtendWith(DropwizardExtensionsSupport.class)
+@DisabledForJreRange(min = JRE.JAVA_17)
 class DropwizardSSLConnectionSocketFactoryTest {
     private TlsConfiguration tlsConfiguration;
     private JerseyClientConfiguration jerseyClientConfiguration;
