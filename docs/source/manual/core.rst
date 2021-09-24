@@ -454,7 +454,7 @@ exception was thrown).
 
     This behavior overlaps in many ways with the new :ref:`man-core-health` functionality. If you wish to disable
     the admin health servlet, a new flag was introduced into the health check configuration
-    :re:`man-configuration-healthchecks` to allow disabling it.
+    :ref:`man-configuration-healthchecks` to allow disabling it.
 
 
 All Dropwizard applications ship with the ``deadlocks`` health check installed by default, which uses
@@ -497,12 +497,12 @@ Define the following health check configurations in your `config.yml` file:
 
 .. note::
 
-    This behavior was integrated from the `Dropwizard Health module`__. If you are migrating from that module
+    This behavior was integrated from the `Dropwizard Health module`_. If you are migrating from that module
     to the new Dropwizard core framework health code, you will want to refer to :ref:`upgrade-notes-dropwizard-2_1_x-health` the migration guide.
 
 
 .. _`Kubernetes readiness & liveness checks`: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
-.. __`Dropwizard Health module`: https://github.com/dropwizard/dropwizard-health
+.. _`Dropwizard Health module`: https://github.com/dropwizard/dropwizard-health
 
 .. _man-core-health-status:
 
