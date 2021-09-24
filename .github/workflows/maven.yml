@@ -38,10 +38,10 @@ jobs:
         key: ${{ runner.os }}-sonar
         restore-keys: ${{ runner.os }}-sonar
     - name: Build
-      run: ./mvnw --no-transfer-progress -Pjakarta-apis -V -B -ff -s .github/settings.xml install
+      run: ./mvnw --no-transfer-progress -V -B -ff -s .github/settings.xml install
     - name: Analyze with SonarCloud
       if: ${{ env.SONAR_TOKEN != null && env.SONAR_TOKEN != '' && matrix.java_version == '11' }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      run: ./mvnw --no-transfer-progress -Pjakarta-apis -V -B -ff -s .github/settings.xml -Dsonar.projectKey=dropwizard_dropwizard -Dsonar.organization=dropwizard -Dsonar.host.url=https://sonarcloud.io org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
+      run: ./mvnw --no-transfer-progress -V -B -ff -s .github/settings.xml -Dsonar.projectKey=dropwizard_dropwizard -Dsonar.organization=dropwizard -Dsonar.host.url=https://sonarcloud.io org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
