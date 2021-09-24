@@ -207,7 +207,7 @@ public class DbDumpCommand<T extends Configuration> extends AbstractLiquibaseCom
             throws DatabaseException, IOException, ParserConfigurationException {
         @SuppressWarnings("unchecked")
         final SnapshotControl snapshotControl = new SnapshotControl(database,
-                compareTypes.toArray(new Class[compareTypes.size()]));
+                compareTypes.toArray(new Class[0]));
         final CompareControl compareControl = new CompareControl(new CompareControl.SchemaComparison[]{
             new CompareControl.SchemaComparison(catalogAndSchema, catalogAndSchema)}, compareTypes);
         final CatalogAndSchema[] compareControlSchemas = compareControl

@@ -37,7 +37,7 @@ public class RoutingHandler extends HandlerCollection {
             this.entries[i++] = new Entry(entry.getKey(), entry.getValue());
             addBean(entry.getValue());
         }
-        setHandlers(handlers.values().toArray(new Handler[handlers.size()]));
+        setHandlers(handlers.values().toArray(new Handler[0]));
     }
 
     @Override
