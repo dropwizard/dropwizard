@@ -319,6 +319,14 @@
                                 <DependencyConvergence />
                                 <bannedDependencies>
                                     <excludes>
+                                        <!-- Replaced with jakarta.activation:jakarta.activation-api -->
+                                        <exclude>javax.activation:javax.activation-api</exclude>
+                                        <!-- Replaced with jakarta.servlet:jakarta.servlet-api -->
+                                        <exclude>javax.servlet:javax.servlet-api</exclude>
+                                        <!-- Replaced with jakarta.validation:jakarta.validation-api -->
+                                        <exclude>javax.validation:validation-api</exclude>
+                                        <!-- Replaced with jakarta.xml.bind:jakarta.xml.bind-api -->
+                                        <exclude>javax.xml.bind:jaxb-api</exclude>
                                         <!-- This should not exist as it will force SLF4J calls to be delegated to log4j -->
                                         <exclude>org.slf4j:slf4j-log4j12</exclude>
                                         <!-- This should not exist as it will force SLF4J calls to be delegated to jul -->
