@@ -92,7 +92,7 @@ class LogbackExcludedTest {
         return byteStream;
     }
 
-    private static interface CheckedConsumer<T> {
+    private interface CheckedConsumer<T> {
 
         void accept(T t) throws ClassNotFoundException;
     }
