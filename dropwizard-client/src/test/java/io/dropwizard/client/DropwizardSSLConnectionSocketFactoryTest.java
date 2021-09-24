@@ -64,7 +64,7 @@ class DropwizardSSLConnectionSocketFactoryTest {
     }
 
     static {
-        Security.addProvider(new BouncyCastleProvider());
+        Security.insertProviderAt(new BouncyCastleProvider(), 1);
     }
 
     @AfterAll
