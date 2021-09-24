@@ -49,11 +49,6 @@ jobs:
         path: ~/.sonar/cache
         key: ${{ runner.os }}-sonar
         restore-keys: ${{ runner.os }}-sonar
-    - name: Initialize CodeQL
-      uses: github/codeql-action/init@v1
-      if: matrix.java_version == '8'
-      with:
-        languages: java
     - name: Build
       run: ./mvnw --no-transfer-progress -Pjakarta-apis -V -B -ff -s .github/settings.xml install
     - name: Analyze with SonarCloud
@@ -62,6 +57,3 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       run: ./mvnw --no-transfer-progress -Pjakarta-apis -V -B -ff -s .github/settings.xml -Dsonar.projectKey=dropwizard_dropwizard -Dsonar.organization=dropwizard -Dsonar.host.url=https://sonarcloud.io org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
-    - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v1
-      if: matrix.java_version == '8'
