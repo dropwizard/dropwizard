@@ -136,7 +136,7 @@ class LogbackExcludedTest {
             return ClassLoader.getSystemClassLoader().loadClass(name);
         }
 
-        private static Optional<URL> getUrl(Class<?> clazz) throws ClassNotFoundException {
+        private static Optional<URL> getUrl(Class<?> clazz) {
             return Optional.ofNullable(clazz.getProtectionDomain().getCodeSource()).map(CodeSource::getLocation);
         }
     }

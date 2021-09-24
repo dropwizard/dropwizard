@@ -48,7 +48,7 @@ class SubstitutingSourceProviderTest {
         InputStream lastStream = new ByteArrayInputStream(new byte[0]);
 
         @Override
-        public InputStream open(String s) throws IOException {
+        public InputStream open(String s) {
             // used to test that the stream is properly closed
             lastStream = new BufferedInputStream(new ByteArrayInputStream(s.getBytes(StandardCharsets.UTF_8)));
             return lastStream;
