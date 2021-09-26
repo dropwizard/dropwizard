@@ -40,11 +40,8 @@ public class AbstractParamConverter<T> implements ParamConverter<T> {
     @Nullable
     public T fromString(String value) {
         try {
-            if (Strings.isNullOrEmpty(value) && defaultValue != null && !defaultValue.equals(value)) {
-                return _fromString(defaultValue);
-            } else {
-                return _fromString(value);
-            }
+            final String defaultedValue = Strings.isNullOrEmpty(value) && defaultValue != null ? defaultValue : value;
+            return constructor.newInstance(defaultedValue, parameterName);
         } catch (InvocationTargetException ex) {
             final Throwable cause = ex.getCause();
             if (cause instanceof WebApplicationException) {
@@ -55,10 +52,6 @@ public class AbstractParamConverter<T> implements ParamConverter<T> {
         } catch (final Exception ex) {
             throw new ProcessingException(ex);
         }
-    }
-
-    private T _fromString(String value) throws Exception {
-        return constructor.newInstance(value, parameterName);
     }
 
     /**
