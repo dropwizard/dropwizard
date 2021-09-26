@@ -173,6 +173,6 @@ class HealthCheckSchedulerTest {
         final String name = "test";
 
         assertThatCode(() -> scheduler.unschedule(name))
-            .doesNotThrowAnyException();;
+            .doesNotThrowAnyException();
     }
 }

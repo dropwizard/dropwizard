@@ -10,7 +10,6 @@ import org.mockito.ArgumentCaptor;
 
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.WebApplicationException;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Collections;
 import java.util.Locale;
@@ -70,7 +69,7 @@ class ViewBundleTest {
             }
 
             @Override
-            public void render(View view, Locale locale, OutputStream output) throws IOException, WebApplicationException {
+            public void render(View view, Locale locale, OutputStream output) throws WebApplicationException {
                 //nothing to do
             }
 
