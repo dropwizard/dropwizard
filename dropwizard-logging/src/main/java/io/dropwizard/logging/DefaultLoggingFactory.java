@@ -70,17 +70,12 @@ public class DefaultLoggingFactory implements LoggingFactory {
     @JsonIgnore
     private final PrintStream configurationErrorsStream;
 
-    @JsonIgnore
-    @Nullable
-    private volatile String loggerName;
-
     public DefaultLoggingFactory() {
         this(LoggingUtil.getLoggerContext(), System.err);
     }
 
     DefaultLoggingFactory(LoggerContext loggerContext, PrintStream configurationErrorsStream) {
         super();
-        this.loggerName = null;
         this.loggerContext = requireNonNull(loggerContext);
         this.configurationErrorsStream = requireNonNull(configurationErrorsStream);
     }
@@ -91,31 +86,6 @@ public class DefaultLoggingFactory implements LoggingFactory {
 
     PrintStream getConfigurationErrorsStream() {
         return configurationErrorsStream;
-    }
-
-    /**
-     * This method is designed to be used by unit tests only.
-     */
-    void clear() {
-
-        // This is volatile, read once for performance.
-        final String name = loggerName;
-        if (name != null) {
-            CHANGE_LOGGER_CONTEXT_LOCK.lock();
-            try {
-                loggerContext.stop();
-
-                final Logger logger = loggerContext.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
-                logger.detachAndStopAllAppenders();
-
-                // Additional cleanup/reset for this name
-                configureLoggers(name);
-            } finally {
-                CHANGE_LOGGER_CONTEXT_LOCK.unlock();
-            }
-
-            StatusPrinter.setPrintStream(System.out);
-        }
     }
 
     @JsonProperty
@@ -159,8 +129,6 @@ public class DefaultLoggingFactory implements LoggingFactory {
         } finally {
             CHANGE_LOGGER_CONTEXT_LOCK.unlock();
         }
-
-        loggerName = name;
 
         final LevelFilterFactory<ILoggingEvent> levelFilterFactory = new ThresholdLevelFilterFactory();
         final AsyncAppenderFactory<ILoggingEvent> asyncAppenderFactory = new AsyncLoggingEventAppenderFactory();
