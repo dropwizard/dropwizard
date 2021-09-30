@@ -38,7 +38,7 @@ public class DropwizardUdpSocketAppender<E extends DeferredProcessingAware> exte
         }
         return new OutputStream() {
             @Override
-            public void write(int b) throws IOException {
+            public void write(int b) {
                 throw new UnsupportedOperationException("Datagram doesn't work at byte level");
             }
 
@@ -49,7 +49,7 @@ public class DropwizardUdpSocketAppender<E extends DeferredProcessingAware> exte
             }
 
             @Override
-            public void close() throws IOException {
+            public void close() {
                 datagramSocket.close();
             }
         };

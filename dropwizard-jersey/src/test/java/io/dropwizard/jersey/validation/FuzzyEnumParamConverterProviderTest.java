@@ -18,7 +18,7 @@ class FuzzyEnumParamConverterProviderTest {
 
     private enum Fuzzy {
         A_1,
-        A_2;
+        A_2
     }
 
     private enum WithToString {

@@ -36,7 +36,7 @@ public class SubstitutingSourceProvider implements ConfigurationSourceProvider {
      */
     @Override
     public InputStream open(String path) throws IOException {
-        try (InputStream in = delegate.open(path);) {
+        try (InputStream in = delegate.open(path)) {
             final String config = new String(ByteStreams.toByteArray(in), StandardCharsets.UTF_8);
             final String substituted = substitutor.replace(config);
 

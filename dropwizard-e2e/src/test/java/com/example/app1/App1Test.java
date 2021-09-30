@@ -64,7 +64,7 @@ public class App1Test {
     }
 
     @Test
-    void earlyEofTest() throws IOException, InterruptedException {
+    void earlyEofTest() throws IOException {
         // Only eof test so we ensure it's false before test
         ((App1)RULE.getApplication()).wasEofExceptionHit = false;
 

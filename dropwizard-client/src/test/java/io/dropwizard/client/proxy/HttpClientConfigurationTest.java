@@ -5,7 +5,6 @@ import io.dropwizard.client.HttpClientConfiguration;
 import io.dropwizard.configuration.ConfigurationParsingException;
 import io.dropwizard.configuration.ConfigurationValidationException;
 import io.dropwizard.configuration.DefaultConfigurationFactoryFactory;
-import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.validation.Validators;
 import io.dropwizard.util.Resources;

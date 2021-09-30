@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.sql.SQLException;
 import java.util.Collections;
 
 import static java.nio.charset.StandardCharsets.UTF_8;

@@ -76,7 +76,7 @@ class ConfiguredGZipEncoderTest {
         private final MultivaluedMap<String, Object> headers;
         private OutputStream os = new OutputStream() {
             @Override
-            public void write(int i) throws IOException {
+            public void write(int i) {
                 //void
             }
         };
@@ -87,7 +87,7 @@ class ConfiguredGZipEncoderTest {
         }
 
         @Override
-        public void proceed() throws IOException, WebApplicationException {
+        public void proceed() throws WebApplicationException {
             proceedCalled = true;
         }
 

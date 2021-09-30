@@ -6,7 +6,6 @@ import liquibase.database.Database;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.exception.CustomChangeException;
 import liquibase.exception.LiquibaseException;
-import liquibase.exception.SetupException;
 import liquibase.exception.ValidationErrors;
 import liquibase.resource.ResourceAccessor;
 import net.sourceforge.argparse4j.inf.Namespace;
@@ -112,7 +111,7 @@ public class LiquibaseScopingTest extends AbstractMigrationTest implements Custo
         return "";
     }
     @Override
-    public void setUp() throws SetupException {
+    public void setUp() {
     }
     @Override
     public void setFileOpener(ResourceAccessor resourceAccessor) {
