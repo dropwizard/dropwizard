@@ -20,7 +20,7 @@ class ParanamerModuleTest {
     }
 
     @Test
-    void deserializePersonWithoutAnnotations() throws IOException {
+    void deserializePerson() throws IOException {
         final ObjectReader reader = mapper.readerFor(Person.class);
         final Person person = reader.readValue("{ \"name\": \"Foo\", \"surname\": \"Bar\" }");
         assertThat(person.getName()).isEqualTo("Foo");
@@ -28,7 +28,7 @@ class ParanamerModuleTest {
     }
 
     @Test
-    void serializePersonWithoutAnnotations() throws IOException {
+    void serializePerson() throws IOException {
         final ObjectWriter reader = mapper.writerFor(Person.class);
         final String person = reader.writeValueAsString(new Person("Foo", "Bar"));
         assertThat(person)
