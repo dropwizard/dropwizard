@@ -212,10 +212,18 @@ public class GzipHandlerFactory {
         this.gzipCompatibleInflation = gzipCompatibleInflation;
     }
 
+    /**
+     * @deprecated
+     */
+    @Deprecated
     public Set<String> getExcludedUserAgentPatterns() {
         return excludedUserAgentPatterns;
     }
 
+    /**
+     * @deprecated
+     */
+    @Deprecated
     public void setExcludedUserAgentPatterns(Set<String> excludedUserAgentPatterns) {
         this.excludedUserAgentPatterns = excludedUserAgentPatterns;
     }
