@@ -7,7 +7,6 @@ import com.codahale.metrics.annotation.ExceptionMetered;
 import com.codahale.metrics.annotation.Metered;
 import com.codahale.metrics.annotation.Timed;
 import io.dropwizard.util.CharStreams;
-import io.dropwizard.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,6 +25,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -109,7 +109,7 @@ public class TaskServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req,
                          HttpServletResponse resp) throws ServletException, IOException {
-        if (Strings.isNullOrEmpty(req.getPathInfo())) {
+        if (!Optional.ofNullable(req.getPathInfo()).filter(s -> !s.isEmpty()).isPresent()) {
             try (final PrintWriter output = resp.getWriter()) {
                 resp.setContentType(DEFAULT_CONTENT_TYPE);
                 getTasks().stream()
