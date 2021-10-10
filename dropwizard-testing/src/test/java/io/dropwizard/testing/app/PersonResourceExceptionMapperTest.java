@@ -5,7 +5,6 @@ import com.fasterxml.jackson.datatype.guava.GuavaModule;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.validation.JerseyViolationException;
 import io.dropwizard.testing.junit.ResourceTestRule;
-import io.dropwizard.util.Strings;
 import org.glassfish.jersey.spi.ExtendedExceptionMapper;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -88,7 +87,7 @@ public class PersonResourceExceptionMapperTest {
         public Response toResponse(Throwable exception) {
             return Response.status(Response.Status.BAD_REQUEST)
                 .type(MediaType.TEXT_PLAIN)
-                .entity("Something went wrong: " + Strings.nullToEmpty(exception.getMessage()))
+                .entity(String.format("Something went wrong: %s", exception.getMessage()))
                 .build();
         }
     }

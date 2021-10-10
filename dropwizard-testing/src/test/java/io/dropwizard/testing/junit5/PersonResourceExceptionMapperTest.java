@@ -6,7 +6,6 @@ import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.validation.JerseyViolationException;
 import io.dropwizard.testing.app.PeopleStore;
 import io.dropwizard.testing.app.PersonResource;
-import io.dropwizard.util.Strings;
 import org.glassfish.jersey.spi.ExtendedExceptionMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -88,7 +87,7 @@ class PersonResourceExceptionMapperTest {
         public Response toResponse(Throwable exception) {
             return Response.status(Response.Status.BAD_REQUEST)
                 .type(MediaType.TEXT_PLAIN)
-                .entity("Something went wrong: " + Strings.nullToEmpty(exception.getMessage()))
+                .entity(String.format("Something went wrong: %s", exception.getMessage()))
                 .build();
         }
     }
