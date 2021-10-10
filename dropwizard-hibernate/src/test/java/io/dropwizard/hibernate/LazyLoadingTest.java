@@ -12,7 +12,6 @@ import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
-import io.dropwizard.util.Strings;
 import org.hibernate.FlushMode;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -187,7 +186,7 @@ class LazyLoadingTest {
         @Override
         public Response toResponse(ConstraintViolationException e) {
             return Response.status(Response.Status.BAD_REQUEST)
-                .entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(), Strings.nullToEmpty(e.getCause().getMessage())))
+                .entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(), Optional.ofNullable(e.getCause().getMessage()).orElse("")))
                 .build();
         }
     }
