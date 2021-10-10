@@ -2,7 +2,6 @@ package io.dropwizard.jersey.validation;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import io.dropwizard.util.Strings;
 import io.dropwizard.validation.ValidationMethod;
 import io.dropwizard.validation.selfvalidating.SelfValidating;
 import org.apache.commons.lang3.StringUtils;
@@ -71,8 +70,9 @@ public class ConstraintMessage {
             // A present entity means that the request body failed validation but
             // if the request entity is simple (eg. byte[], String, etc), the entity
             // string will be empty, so prepend a message about the request body
-            final String prefix = Strings.isNullOrEmpty(entity.get()) ? "The request body" : entity.get();
-            return prefix + " " ;
+            return entity.filter(e -> !e.isEmpty())
+                .orElse("The request body")
+                + " ";
         }
 
         // Check if the violation occurred on a *Param annotation and if so,
