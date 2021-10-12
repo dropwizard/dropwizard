@@ -20,7 +20,7 @@
         <!-- External dependencies -->
         <activation-api.version>1.2.2</activation-api.version>
         <argparse4j.version>0.9.0</argparse4j.version>
-        <byte-buddy.version>1.11.19</byte-buddy.version>
+        <byte-buddy.version>1.11.20</byte-buddy.version>
         <caffeine.version>2.9.2</caffeine.version>
         <checker-qual.version>3.18.1</checker-qual.version>
         <classmate.version>1.5.1</classmate.version>
@@ -31,7 +31,7 @@
         <error_prone.version>2.9.0</error_prone.version>
         <freemarker.version>2.3.31</freemarker.version>
         <guava.version>31.0.1-jre</guava.version>
-        <hibernate-core.version>5.5.7.Final</hibernate-core.version>
+        <hibernate-core.version>5.6.0.Final</hibernate-core.version>
         <hibernate-validator.version>6.2.0.Final</hibernate-validator.version>
         <hk2.version>2.6.1</hk2.version>
         <httpclient.version>4.5.13</httpclient.version>
@@ -46,7 +46,7 @@
         <javax.persistence-api.version>2.2</javax.persistence-api.version>
         <jaxb-api.version>2.3.3</jaxb-api.version>
         <jcip-annotations.version>1.0</jcip-annotations.version>
-        <jdbi3.version>3.22.0</jdbi3.version>
+        <jdbi3.version>3.23.0</jdbi3.version>
         <jersey.version>2.33</jersey.version>
         <jetty-setuid-java.version>1.0.4</jetty-setuid-java.version>
         <jetty.version>9.4.44.v20210927</jetty.version>
