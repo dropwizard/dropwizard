@@ -6,7 +6,7 @@ import com.codahale.metrics.Timer;
 import com.codahale.metrics.annotation.ExceptionMetered;
 import com.codahale.metrics.annotation.Metered;
 import com.codahale.metrics.annotation.Timed;
-import io.dropwizard.util.CharStreams;
+import io.dropwizard.util.ByteStreams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
@@ -164,7 +164,9 @@ public class TaskServlet extends HttpServlet {
     }
 
     private String getBody(HttpServletRequest req) throws IOException {
-        return CharStreams.toString(new InputStreamReader(req.getInputStream(), StandardCharsets.UTF_8));
+        try (InputStream in = req.getInputStream()) {
+            return new String(ByteStreams.toByteArray(in), StandardCharsets.UTF_8);
+        }
     }
 
     public Collection<Task> getTasks() {

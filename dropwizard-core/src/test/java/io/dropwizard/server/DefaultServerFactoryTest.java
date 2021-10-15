@@ -14,7 +14,7 @@ import io.dropwizard.logging.FileAppenderFactory;
 import io.dropwizard.logging.SyslogAppenderFactory;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.setup.ExceptionMapperBinder;
-import io.dropwizard.util.CharStreams;
+import io.dropwizard.util.ByteStreams;
 import io.dropwizard.util.Resources;
 import io.dropwizard.validation.BaseValidator;
 import org.eclipse.jetty.server.AbstractNetworkConnector;
@@ -28,7 +28,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import java.io.File;
-import java.io.InputStreamReader;
+import java.io.InputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -201,8 +201,9 @@ class DefaultServerFactoryTest {
             URL url = new URL("http://localhost:" + port + "/app/test");
             URLConnection connection = url.openConnection();
             connection.connect();
-
-            return CharStreams.toString(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8));
+            try (InputStream in = connection.getInputStream()) {
+                return new String(ByteStreams.toByteArray(in), StandardCharsets.UTF_8);
+            }
         });
 
         requestReceived.await(10, TimeUnit.SECONDS);

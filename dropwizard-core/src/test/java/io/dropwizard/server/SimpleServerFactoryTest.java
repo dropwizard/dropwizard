@@ -13,7 +13,7 @@ import io.dropwizard.logging.FileAppenderFactory;
 import io.dropwizard.logging.SyslogAppenderFactory;
 import io.dropwizard.servlets.tasks.Task;
 import io.dropwizard.setup.Environment;
-import io.dropwizard.util.CharStreams;
+import io.dropwizard.util.ByteStreams;
 import io.dropwizard.util.Resources;
 import io.dropwizard.validation.BaseValidator;
 import org.eclipse.jetty.server.AbstractNetworkConnector;
@@ -27,7 +27,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import java.io.File;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
@@ -122,8 +121,8 @@ public class SimpleServerFactoryTest {
         final HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
         connection.setRequestMethod(requestMethod);
         connection.connect();
-        try (InputStream inputStream = connection.getInputStream()) {
-            return CharStreams.toString(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+        try (InputStream in = connection.getInputStream()) {
+            return new String(ByteStreams.toByteArray(in), StandardCharsets.UTF_8);
         }
     }
 
