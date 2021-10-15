@@ -1,6 +1,5 @@
 package io.dropwizard.configuration;
 
-import io.dropwizard.util.Resources;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
@@ -14,7 +13,7 @@ class FileConfigurationSourceProviderTest {
 
     @Test
     void readsFileContents() throws Exception {
-        try (InputStream input = provider.open(Resources.getResource("example.txt").getFile());
+        try (InputStream input = provider.open(getClass().getResource("/example.txt").getFile());
              ByteArrayOutputStream output = new ByteArrayOutputStream()) {
             byte[] buffer = new byte[1024];
             int length;

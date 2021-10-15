@@ -2,11 +2,11 @@ package io.dropwizard.metrics;
 
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.DiscoverableSubtypeResolver;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
-import io.dropwizard.util.Resources;
 import io.dropwizard.validation.BaseValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,14 +23,14 @@ class CsvReporterFactoryTest {
                                            objectMapper, "dw");
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() {
         objectMapper.getSubtypeResolver().registerSubtypes(ConsoleReporterFactory.class,
                                                            CsvReporterFactory.class,
                                                            Slf4jReporterFactory.class);
     }
 
     @Test
-    void isDiscoverable() throws Exception {
+    void isDiscoverable() {
         assertThat(new DiscoverableSubtypeResolver().getDiscoveredSubtypes())
                 .contains(CsvReporterFactory.class);
     }
@@ -39,8 +39,9 @@ class CsvReporterFactoryTest {
     void directoryCreatedOnStartup() throws Exception {
         File dir = new File("metrics");
         dir.delete();
+        assertThat(dir).doesNotExist();
 
-        MetricsFactory config = factory.build(new File(Resources.getResource("yaml/metrics.yml").toURI()));
+        MetricsFactory config = factory.build(new ResourceConfigurationSourceProvider(), "yaml/metrics.yml");
         MetricRegistry metricRegistry = new MetricRegistry();
         config.configure(new LifecycleEnvironment(metricRegistry), metricRegistry);
         assertThat(dir).exists();
