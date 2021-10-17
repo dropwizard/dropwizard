@@ -5,7 +5,6 @@ import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
-import io.dropwizard.util.CharStreams;
 import io.dropwizard.util.Resources;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -19,13 +18,12 @@ import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.cert.X509Certificate;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(DropwizardExtensionsSupport.class)
@@ -122,11 +120,9 @@ public class SslReloadAppTest {
 
             assertThat(conn.getResponseCode()).isEqualTo(code);
             if (code == 200) {
-                assertThat(CharStreams.toString(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8)))
-                    .isEqualTo(content);
+                assertThat(conn.getInputStream()).asString(UTF_8).isEqualTo(content);
             } else {
-                assertThat(CharStreams.toString(new InputStreamReader(conn.getErrorStream(), StandardCharsets.UTF_8)))
-                    .contains(content);
+                assertThat(conn.getErrorStream()).asString(UTF_8).contains(content);
             }
 
             // The certificates are self signed, so are the only cert in the chain.
