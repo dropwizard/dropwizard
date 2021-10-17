@@ -1,7 +1,6 @@
 package io.dropwizard.health.response;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.io.Resources;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.health.HealthStateAggregator;
 import io.dropwizard.health.HealthStatusChecker;
@@ -49,7 +48,7 @@ class JsonHealthResponseProviderFactoryTest {
     @Test
     void testBuildJsonHealthResponseProvider() throws Exception {
         // given
-        final File yml = new File(Resources.getResource("yml/json-response-provider.yml").toURI());
+        final File yml = new File(getClass().getResource("/yml/json-response-provider.yml").toURI());
 
         // when
         when(healthStatusChecker.isHealthy(isNull())).thenReturn(true);

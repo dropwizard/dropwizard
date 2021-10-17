@@ -1,7 +1,6 @@
 package io.dropwizard.health.check.http;
 
 import com.codahale.metrics.health.HealthCheck;
-import com.google.common.base.Preconditions;
 import org.glassfish.jersey.client.ClientProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,8 +29,9 @@ public class HttpHealthCheck extends HealthCheck {
                            final Duration readTimeout,
                            final Duration connectionTimeout) {
         this.url = Objects.requireNonNull(url);
-        Preconditions.checkState(readTimeout.toMillis() > 0L);
-        Preconditions.checkState(connectionTimeout.toMillis() > 0L);
+        if (readTimeout.toMillis() <= 0L || connectionTimeout.toMillis() <= 0L) {
+            throw new IllegalStateException();
+        }
         this.client = ClientBuilder.newClient()
             .property(ClientProperties.CONNECT_TIMEOUT, (int) connectionTimeout.toMillis())
             .property(ClientProperties.READ_TIMEOUT, (int) readTimeout.toMillis());

@@ -1,7 +1,6 @@
 package io.dropwizard.health;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.io.Resources;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.validation.Validators;
@@ -20,7 +19,7 @@ class HealthCheckConfigurationTest {
 
     @Test
     void shouldBuildHealthCheckConfigurationFromYaml() throws Exception {
-        final File yml = new File(Resources.getResource("yml/healthCheck.yml").toURI());
+        final File yml = new File(getClass().getResource("/yml/healthCheck.yml").toURI());
         final HealthCheckConfiguration healthCheckConfig = configFactory.build(yml);
 
         assertThat(healthCheckConfig.getName()).isEqualTo("cassandra");

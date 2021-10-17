@@ -1,6 +1,5 @@
 package com.example.health;
 
-import com.google.common.primitives.Longs;
 import io.dropwizard.Configuration;
 import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.ResourceHelpers;
@@ -32,7 +31,7 @@ class HealthIntegrationTest {
     private static final Duration POLL_DELAY = Duration.ofMillis(10);
 
     private static final Duration testTimeout = Optional.ofNullable(System.getenv(TEST_TIMEOUT_MS_OVERRIDE_ENV_VAR))
-            .map(Longs::tryParse)
+            .map(Long::parseLong)
             .map(Duration::ofMillis)
             // Default to 5 seconds
             .orElse(Duration.ofSeconds(5));
