@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
@@ -126,7 +127,7 @@ public class DataSize implements Comparable<DataSize>, Serializable {
 
         final long count = Long.parseLong(matcher.group(1));
         final String unit = matcher.group(2);
-        final DataSizeUnit dataSizeUnit = Strings.isNullOrEmpty(unit) ? defaultUnit : SUFFIXES.get(unit);
+        final DataSizeUnit dataSizeUnit = unit == null || unit.isEmpty() ? defaultUnit : SUFFIXES.get(unit);
         if (dataSizeUnit == null) {
             throw new IllegalArgumentException("Invalid size: " + size + ". Wrong size unit");
         }

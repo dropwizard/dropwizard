@@ -1,7 +1,6 @@
 package io.dropwizard.logging;
 
 import ch.qos.logback.classic.spi.ThrowableProxy;
-import io.dropwizard.util.Strings;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -10,9 +9,8 @@ import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
+import java.util.Objects;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -65,11 +63,9 @@ class PrefixedRootCauseFirstThrowableProxyConverterTest {
 
     @Test
     void prefixesExceptionsWithExclamationMarks()  {
-        final List<String> stackTrace = Arrays.stream(converter.throwableProxyToString(proxy).split(System.lineSeparator()))
-                .filter(s -> !Strings.isNullOrEmpty(s))
-                .collect(Collectors.toList());
-
-        assertThat(stackTrace)
+        assertThat(Arrays.stream(converter.throwableProxyToString(proxy).split(System.lineSeparator()))
+                .filter(Objects::nonNull)
+                .filter(s -> !s.isEmpty()))
                 .isNotEmpty()
                 .allSatisfy(line -> assertThat(line).startsWith("!"));
     }

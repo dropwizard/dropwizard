@@ -15,7 +15,6 @@ import io.dropwizard.logging.async.AsyncAppenderFactory;
 import io.dropwizard.logging.filter.FilterFactory;
 import io.dropwizard.logging.layout.DiscoverableLayoutFactory;
 import io.dropwizard.logging.layout.LayoutFactory;
-import io.dropwizard.util.Strings;
 import io.dropwizard.util.Duration;
 import io.dropwizard.validation.MaxDuration;
 import io.dropwizard.validation.MinDuration;
@@ -200,7 +199,7 @@ public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware>
 
     @JsonProperty
     public void setTimeZone(String zoneId) {
-        this.timeZone = Strings.nullToEmpty(zoneId).equalsIgnoreCase("system") ? TimeZone.getDefault() :
+        this.timeZone = "system".equalsIgnoreCase(zoneId) ? TimeZone.getDefault() :
             TimeZone.getTimeZone(zoneId);
     }
 
@@ -275,7 +274,7 @@ public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware>
         } else {
             layoutBase = layout.build(context, timeZone);
         }
-        if (!Strings.isNullOrEmpty(logFormat)) {
+        if (!(logFormat == null || logFormat.isEmpty())) {
             if (layoutBase instanceof PatternLayoutBase) {
                 @SuppressWarnings("NullAway")
                 String logFormatWithTimeZone = logFormat.replace("%dwTimeZone", timeZone.getID());

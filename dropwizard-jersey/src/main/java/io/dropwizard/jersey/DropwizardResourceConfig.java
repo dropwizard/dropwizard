@@ -10,7 +10,6 @@ import io.dropwizard.jersey.params.AbstractParamConverterProvider;
 import io.dropwizard.jersey.sessions.SessionFactoryProvider;
 import io.dropwizard.jersey.validation.FuzzyEnumParamConverterProvider;
 import io.dropwizard.util.JavaVersion;
-import io.dropwizard.util.Strings;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.LoaderClassPath;
@@ -296,29 +295,19 @@ public class DropwizardResourceConfig extends ResourceConfig {
             return methodLines;
         }
 
-        private static String mergePaths(@NotNull String context, String... pathSegments) {
-            if (pathSegments == null || pathSegments.length == 0) {
+        private static String mergePaths(@NotNull String context, String subPath) {
+            if (subPath == null || subPath.isEmpty()) {
                 return cleanUpPath(context);
             }
 
-            final StringBuilder path = new StringBuilder();
-            if (context.endsWith("/")) {
-                path.append(context, 0, context.length() - 1);
-            } else {
-                path.append(context);
+            final StringBuilder path = new StringBuilder(context);
+            if (!context.endsWith("/")) {
+                path.append('/');
             }
-
-            for (String segment : pathSegments) {
-                if (Strings.isNullOrEmpty(segment)) {
-                    continue;
-                }
-                if ("/".equals(segment)) {
-                    path.append('/');
-                } else {
-                    final int startIndex = segment.startsWith("/") ? 1 : 0;
-                    final int endIndex = segment.endsWith("/") ? segment.length() - 1 : segment.length();
-                    path.append('/').append(segment, startIndex, endIndex);
-                }
+            if (!"/".equals(subPath)) {
+                final int startIndex = subPath.startsWith("/") ? 1 : 0;
+                final int endIndex = subPath.endsWith("/") ? subPath.length() - 1 : subPath.length();
+                path.append(subPath, startIndex, endIndex);
             }
 
             return cleanUpPath(path.toString());

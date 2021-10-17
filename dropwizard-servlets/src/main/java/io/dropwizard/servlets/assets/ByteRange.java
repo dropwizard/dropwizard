@@ -1,7 +1,5 @@
 package io.dropwizard.servlets.assets;
 
-import io.dropwizard.util.Strings;
-
 import javax.annotation.concurrent.Immutable;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -43,17 +41,17 @@ public final class ByteRange {
         }
         final List<String> parts = Arrays.stream(asciiString.split("-", -1))
                 .map(String::trim)
-                .filter(s -> !Strings.isNullOrEmpty(s))
+                .filter(s -> !s.isEmpty())
                 .collect(Collectors.toList());
+
+        final int start = Integer.parseInt(parts.get(0));
         if (parts.size() == 2) {
-            final int start = Integer.parseInt(parts.get(0));
             int end = Integer.parseInt(parts.get(1));
             if (end > resourceLength) {
                 end = resourceLength - 1;
             }
             return new ByteRange(start, end);
         } else {
-            final int start = Integer.parseInt(parts.get(0));
             return new ByteRange(start, resourceLength - 1);
         }
     }
