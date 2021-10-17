@@ -1,6 +1,5 @@
 package io.dropwizard.health.check.tcp;
 
-import com.google.common.util.concurrent.Uninterruptibles;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,7 +10,6 @@ import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -54,7 +52,7 @@ class TcpHealthCheckTest {
         serverSocket = new ServerSocket();
         final ExecutorService executorService = Executors.newSingleThreadExecutor();
         executorService.submit(() -> {
-            Uninterruptibles.sleepUninterruptibly(tcpHealthCheck.getConnectionTimeout().toMillis() * 3, TimeUnit.MILLISECONDS);
+            Thread.sleep(tcpHealthCheck.getConnectionTimeout().toMillis() * 3);
             serverSocket.bind(new InetSocketAddress("127.0.0.1", port));
             return true;
         });
