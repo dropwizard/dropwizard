@@ -2,6 +2,7 @@ package io.dropwizard.util;
 
 import java.util.Optional;
 
+@Deprecated
 public abstract class Optionals {
     /**
      * Convert a Guava {@link com.google.common.base.Optional} to an {@link Optional}.
