@@ -71,6 +71,7 @@ public final class Resources {
      * @param to the output stream
      * @throws IOException if an I/O error occurs
      */
+    @Deprecated
     public static void copy(URL from, OutputStream to) throws IOException {
         try (InputStream inputStream = from.openStream()) {
             ByteStreams.copy(inputStream, to);
