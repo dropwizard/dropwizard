@@ -78,7 +78,7 @@ class GzipHandlerTest {
     void testDecompressRequest() throws Exception {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try (GZIPOutputStream gz = new GZIPOutputStream(baos)) {
-            Resources.copy(Resources.getResource("assets/new-banner.txt"), gz);
+            gz.write(Resources.toByteArray(getClass().getResource("/assets/new-banner.txt")));
         }
 
         setRequestPostGzipPlainText(baos.toByteArray());
