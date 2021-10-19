@@ -6,7 +6,6 @@ import ch.qos.logback.classic.spi.LoggingEvent;
 import ch.qos.logback.core.Appender;
 import com.codahale.metrics.health.HealthCheck;
 import com.codahale.metrics.health.HealthCheckRegistry;
-import com.google.common.collect.ImmutableList;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,8 +16,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
+import static java.util.Collections.unmodifiableList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.mock;
@@ -49,7 +52,7 @@ class HealthCheckConfigValidatorTest {
     @Test
     void startValidationsShouldSucceedWhenNoHealthChecksConfigured() throws Exception {
         // given
-        List<HealthCheckConfiguration> configs = ImmutableList.of();
+        List<HealthCheckConfiguration> configs = emptyList();
         HealthCheckRegistry registry = new HealthCheckRegistry();
 
         // when
@@ -63,17 +66,19 @@ class HealthCheckConfigValidatorTest {
     @Test
     void startValidationsShouldSucceedForConfiguredAndRegisteredHealthCheck() throws Exception {
         // given
+        List<HealthCheckConfiguration> configs = new ArrayList<>();
         HealthCheckConfiguration check1 = new HealthCheckConfiguration();
         check1.setName("check-1");
+        configs.add(check1);
         HealthCheckConfiguration check2 = new HealthCheckConfiguration();
         check2.setName("check-2");
-        List<HealthCheckConfiguration> configs = ImmutableList.of(check1, check2);
+        configs.add(check2);
         HealthCheckRegistry registry = new HealthCheckRegistry();
         registry.register("check-1", mock(HealthCheck.class));
         registry.register("check-2", mock(HealthCheck.class));
 
         // when
-        HealthCheckConfigValidator validator = new HealthCheckConfigValidator(configs, registry);
+        HealthCheckConfigValidator validator = new HealthCheckConfigValidator(unmodifiableList(configs), registry);
         validator.start();
 
         // then
@@ -86,7 +91,7 @@ class HealthCheckConfigValidatorTest {
         ArgumentCaptor<LoggingEvent> captor = ArgumentCaptor.forClass(LoggingEvent.class);
         HealthCheckConfiguration check1 = new HealthCheckConfiguration();
         check1.setName("check-1");
-        List<HealthCheckConfiguration> configs = ImmutableList.of(check1);
+        List<HealthCheckConfiguration> configs = singletonList(check1);
         HealthCheckRegistry registry = new HealthCheckRegistry();
         registry.register("check-1", mock(HealthCheck.class));
         registry.register("check-2", mock(HealthCheck.class));
@@ -112,19 +117,22 @@ class HealthCheckConfigValidatorTest {
     void startValidationsShouldFailIfAHealthCheckConfiguredButNotRegistered() throws Exception {
         // given
         ArgumentCaptor<LoggingEvent> captor = ArgumentCaptor.forClass(LoggingEvent.class);
+        List<HealthCheckConfiguration> configs = new ArrayList<>();
         HealthCheckConfiguration check1 = new HealthCheckConfiguration();
         check1.setName("check-1");
+        configs.add(check1);
         HealthCheckConfiguration check2 = new HealthCheckConfiguration();
         check2.setName("check-2");
+        configs.add(check2);
         HealthCheckConfiguration check3 = new HealthCheckConfiguration();
         check3.setName("check-3");
-        List<HealthCheckConfiguration> configs = ImmutableList.of(check1, check2, check3);
+        configs.add(check3);
         HealthCheckRegistry registry = new HealthCheckRegistry();
         registry.register("check-1", mock(HealthCheck.class));
 
         // when
         try {
-            HealthCheckConfigValidator validator = new HealthCheckConfigValidator(configs, registry);
+            HealthCheckConfigValidator validator = new HealthCheckConfigValidator(unmodifiableList(configs), registry);
             validator.start();
             fail("configured health checks that aren't registered should fail");
         } catch (IllegalStateException e) {

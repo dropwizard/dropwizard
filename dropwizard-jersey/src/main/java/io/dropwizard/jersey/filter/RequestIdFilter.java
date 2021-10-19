@@ -1,6 +1,5 @@
 package io.dropwizard.jersey.filter;
 
-import io.dropwizard.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,6 +10,7 @@ import javax.ws.rs.container.ContainerResponseContext;
 import javax.ws.rs.container.ContainerResponseFilter;
 import javax.ws.rs.ext.Provider;
 import java.io.IOException;
+import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
@@ -38,10 +38,9 @@ public class RequestIdFilter implements ContainerResponseFilter {
     public void filter(final ContainerRequestContext request,
             final ContainerResponseContext response) throws IOException {
 
-        String id = request.getHeaderString(REQUEST_ID);
-        if (Strings.isNullOrEmpty(id)) {
-            id = generateRandomUuid().toString();
-        }
+        String id = Optional.ofNullable(request.getHeaderString(REQUEST_ID))
+            .filter(header -> !header.isEmpty())
+            .orElseGet(() -> generateRandomUuid().toString());
 
         logger.trace("method={} path={} request_id={} status={} length={}",
                 request.getMethod(), request.getUriInfo().getPath(), id,

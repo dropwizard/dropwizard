@@ -26,7 +26,6 @@ import io.dropwizard.logging.filter.LevelFilterFactory;
 import io.dropwizard.logging.filter.ThresholdLevelFilterFactory;
 import io.dropwizard.logging.layout.DropwizardLayoutFactory;
 import io.dropwizard.logging.layout.LayoutFactory;
-import io.dropwizard.util.Lists;
 
 import javax.annotation.Nullable;
 import javax.management.InstanceAlreadyExistsException;
@@ -42,6 +41,7 @@ import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
@@ -175,8 +175,9 @@ public class DefaultLoggingFactory implements LoggingFactory {
             // mechanism built into logback, we wait for a short period of time before
             // giving up that the appender will be completely flushed.
             final Logger logger = loggerContext.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
-            final List<Appender<ILoggingEvent>> appenders = Lists.of(logger.iteratorForAppenders());
-            for (Appender<ILoggingEvent> appender : appenders) {
+            final Iterator<Appender<ILoggingEvent>> appenders = logger.iteratorForAppenders();
+            while (appenders.hasNext()) {
+                final Appender<ILoggingEvent> appender = appenders.next();
                 if (appender instanceof AsyncAppenderBase) {
                     flushAppender((AsyncAppenderBase<?>) appender);
                 } else if (appender instanceof AsyncAppenderBaseProxy) {

@@ -13,7 +13,6 @@ import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.util.Sets;
-import io.dropwizard.util.Strings;
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
@@ -313,12 +312,10 @@ public class DropwizardTestSupport<C extends Configuration> {
         }
 
 
-        final Map<String, Object> namespaceAttributes;
-        if (!Strings.isNullOrEmpty(configPath)) {
-            namespaceAttributes = Collections.singletonMap("file", configPath);
-        } else {
-            namespaceAttributes = Collections.emptyMap();
-        }
+        final Map<String, Object> namespaceAttributes = Optional.ofNullable(configPath)
+            .filter(path -> !path.isEmpty())
+            .map(path -> Collections.singletonMap("file", (Object)path))
+            .orElse(Collections.emptyMap());
 
         final Namespace namespace = new Namespace(namespaceAttributes);
         final Command command = commandInstantiator.apply(application);

@@ -1,6 +1,5 @@
 package io.dropwizard.jersey.params;
 
-import io.dropwizard.util.Strings;
 import org.glassfish.jersey.internal.inject.ExtractorException;
 import org.glassfish.jersey.server.internal.LocalizationMessages;
 
@@ -40,7 +39,7 @@ public class AbstractParamConverter<T> implements ParamConverter<T> {
     @Nullable
     public T fromString(String value) {
         try {
-            final String defaultedValue = Strings.isNullOrEmpty(value) && defaultValue != null ? defaultValue : value;
+            final String defaultedValue = (value == null || value.isEmpty()) && defaultValue != null ? defaultValue : value;
             return constructor.newInstance(defaultedValue, parameterName);
         } catch (InvocationTargetException ex) {
             final Throwable cause = ex.getCause();

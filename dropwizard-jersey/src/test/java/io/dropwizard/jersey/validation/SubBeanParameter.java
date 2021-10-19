@@ -1,7 +1,6 @@
 package io.dropwizard.jersey.validation;
 
 import io.dropwizard.jersey.jackson.JacksonMessageBodyProviderTest;
-import io.dropwizard.util.Strings;
 import io.dropwizard.validation.ValidationMethod;
 import javax.validation.constraints.NotEmpty;
 
@@ -17,7 +16,7 @@ public class SubBeanParameter extends BeanParameter {
     @ValidationMethod(message = "address must not be uppercase",
         groups = JacksonMessageBodyProviderTest.Partial1.class)
     public boolean isAddressNotUppercase() {
-        return Strings.isNullOrEmpty(address) || (!address.toUpperCase(Locale.US).equals(address));
+        return address == null || address.isEmpty() || (!address.toUpperCase(Locale.US).equals(address));
     }
 
     public String getAddress() {

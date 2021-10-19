@@ -8,7 +8,11 @@ import static java.util.Collections.unmodifiableList;
 
 /**
  * @since 2.0
+ *
+ * @deprecated use Java 8+ JCL methods instead
  */
+
+@Deprecated
 public final class Lists {
     private Lists() {
     }

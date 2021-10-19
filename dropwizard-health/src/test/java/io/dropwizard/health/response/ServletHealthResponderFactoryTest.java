@@ -1,7 +1,6 @@
 package io.dropwizard.health.response;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.io.Resources;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.health.HealthEnvironment;
 import io.dropwizard.jackson.DiscoverableSubtypeResolver;
@@ -94,7 +93,7 @@ class ServletHealthResponderFactoryTest {
     @Test
     void testBuildHealthServlet() throws Exception {
         // given
-        File yml = new File(Resources.getResource("yml/servlet-responder-factory-caching.yml").toURI());
+        File yml = new File(getClass().getResource("/yml/servlet-responder-factory-caching.yml").toURI());
         setupServletStubbing();
 
         // when
@@ -116,7 +115,7 @@ class ServletHealthResponderFactoryTest {
     @Test
     void testBuildHealthServletWithCacheControlDisabled() throws Exception {
         // given
-        File yml = new File(Resources.getResource("yml/servlet-responder-factory-caching-header-disabled.yml").toURI());
+        File yml = new File(getClass().getResource("/yml/servlet-responder-factory-caching-header-disabled.yml").toURI());
         setupServletStubbing();
 
         // when

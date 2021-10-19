@@ -18,12 +18,15 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class JsonProcessingExceptionMapperTest extends AbstractJerseyTest {
+abstract class JsonProcessingExceptionMapperTest extends AbstractJerseyTest {
+
+    abstract boolean showDetails();
 
     @Override
     protected Application configure() {
         return DropwizardResourceConfig.forTesting()
                 .packages("io.dropwizard.jersey.jackson")
+                .register(new JsonProcessingExceptionMapper(showDetails()))
                 .register(new LoggingExceptionMapper<Throwable>() { });
     }
 
@@ -36,10 +39,7 @@ class JsonProcessingExceptionMapperTest extends AbstractJerseyTest {
 
     @Test
     void returnsA500ForNonDeserializableRepresentationClasses() throws Exception {
-        Response response = target("/json/broken").request(MediaType.APPLICATION_JSON)
-                .post(Entity.entity(new BrokenRepresentation(Collections.singletonList("whee")), MediaType.APPLICATION_JSON));
-        assertThat(response.getStatus()).isEqualTo(500);
-        assertThat(response.getMediaType()).isEqualTo(MediaType.APPLICATION_JSON_TYPE);
+        assertEndpointReturns500("broken", new BrokenRepresentation(Collections.singletonList("whee")));
     }
 
     @Test
@@ -48,10 +48,7 @@ class JsonProcessingExceptionMapperTest extends AbstractJerseyTest {
                 Arrays.asList(new BrokenRepresentation(Collections.emptyList()),
                 new BrokenRepresentation(Collections.singletonList("whoo")));
 
-        Response response = target("/json/brokenList").request(MediaType.APPLICATION_JSON)
-            .post(Entity.entity(ent, MediaType.APPLICATION_JSON));
-        assertThat(response.getStatus()).isEqualTo(500);
-        assertThat(response.getMediaType()).isEqualTo(MediaType.APPLICATION_JSON_TYPE);
+        assertEndpointReturns500("brokenList", ent);
     }
 
     @Test
@@ -63,36 +60,23 @@ class JsonProcessingExceptionMapperTest extends AbstractJerseyTest {
 
     @Test
     void returnsA500ForAbstractEntity() throws Exception {
-        Response response = target("/json/interface").request(MediaType.APPLICATION_JSON)
-            .post(Entity.entity("\"hello\"", MediaType.APPLICATION_JSON));
-        assertThat(response.getStatus()).isEqualTo(500);
-        assertThat(response.getMediaType()).isEqualTo(MediaType.APPLICATION_JSON_TYPE);
+        assertEndpointReturns500("interface", "\"hello\"");
     }
 
     @Test
     void returnsA500ForAbstractEntities() throws Exception {
-        Response response = target("/json/interfaceList").request(MediaType.APPLICATION_JSON)
-            .post(Entity.entity("[\"hello\"]", MediaType.APPLICATION_JSON));
-        assertThat(response.getStatus()).isEqualTo(500);
-        assertThat(response.getMediaType()).isEqualTo(MediaType.APPLICATION_JSON_TYPE);
+        assertEndpointReturns500("interfaceList", "[\"hello\"]");
     }
 
     @Test
     void returnsA400ForCustomDeserializer() throws Exception {
-        Response response = target("/json/custom").request(MediaType.APPLICATION_JSON)
-            .post(Entity.entity("{}", MediaType.APPLICATION_JSON));
-        assertThat(response.getStatus()).isEqualTo(400);
-        assertThat(response.getMediaType()).isEqualTo(MediaType.APPLICATION_JSON_TYPE);
-        assertThat(response.readEntity(String.class)).contains("Unable to process JSON");
+        assertEndpointReturns400WithoutDetails("custom", "{}");
     }
 
     @Test
     void returnsA500ForCustomDeserializerUnexpected() throws Exception {
-        Response response = target("/json/custom").request(MediaType.APPLICATION_JSON)
-            .post(Entity.entity("\"SQL_INECTION\"", MediaType.APPLICATION_JSON));
-        assertThat(response.getStatus()).isEqualTo(500);
-        assertThat(response.getMediaType()).isEqualTo(MediaType.APPLICATION_JSON_TYPE);
-        assertThat(response.readEntity(String.class)).contains("There was an error processing your request.");
+        assertEndpointReturns500("custom", "\"SQL_INECTION\"");
+
     }
 
     @Test
@@ -135,6 +119,18 @@ class JsonProcessingExceptionMapperTest extends AbstractJerseyTest {
         assertEndpointReturns400("ok", "{\"message\": \"1\", \"date\": [-1,-1,-1]}");
     }
 
+    private <T> void assertEndpointReturns400WithoutDetails(String endpoint, T entity) {
+        Response response = target(String.format("/json/%s", endpoint))
+            .request(MediaType.APPLICATION_JSON)
+            .post(Entity.entity(entity, MediaType.APPLICATION_JSON));
+        assertThat(response.getStatus()).isEqualTo(400);
+
+        JsonNode errorMessage = response.readEntity(JsonNode.class);
+        assertThat(errorMessage.path("code").asInt()).isEqualTo(400);
+        assertThat(errorMessage.path("message").asText()).isEqualTo("Unable to process JSON");
+        assertThat(errorMessage.has("details")).isFalse();
+    }
+
     private <T> void assertEndpointReturns400(String endpoint, T entity) {
         Response response = target(String.format("/json/%s", endpoint))
             .request(MediaType.APPLICATION_JSON)
@@ -142,8 +138,25 @@ class JsonProcessingExceptionMapperTest extends AbstractJerseyTest {
         assertThat(response.getStatus()).isEqualTo(400);
 
         JsonNode errorMessage = response.readEntity(JsonNode.class);
-        assertThat(errorMessage.get("code").asInt()).isEqualTo(400);
-        assertThat(errorMessage.get("message").asText()).isEqualTo("Unable to process JSON");
+        assertThat(errorMessage.path("code").asInt()).isEqualTo(400);
+        assertThat(errorMessage.path("message").asText()).isEqualTo("Unable to process JSON");
+        assertThat(errorMessage.has("details")).isEqualTo(showDetails());
+
+        if (showDetails()) {
+            assertThat(errorMessage.get("details").asText()).isNotBlank();
+        }
+    }
+
+    private <T> void assertEndpointReturns500(String endpoint, T entity) {
+        Response response = target(String.format("/json/%s", endpoint))
+            .request(MediaType.APPLICATION_JSON)
+            .post(Entity.entity(entity, MediaType.APPLICATION_JSON));
+        assertThat(response.getStatus()).isEqualTo(500);
+
+        JsonNode errorMessage = response.readEntity(JsonNode.class);
+        assertThat(errorMessage.path("code").asInt()).isEqualTo(500);
+        assertThat(errorMessage.path("message").asText())
+            .matches("There was an error processing your request. It has been logged \\(ID \\w+\\).");
         assertThat(errorMessage.has("details")).isFalse();
     }
 }

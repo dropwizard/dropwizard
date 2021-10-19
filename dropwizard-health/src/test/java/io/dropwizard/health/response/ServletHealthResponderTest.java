@@ -1,6 +1,5 @@
 package io.dropwizard.health.response;
 
-import com.google.common.collect.ImmutableList;
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpMethod;
 import org.eclipse.jetty.http.HttpTester;
@@ -15,11 +14,14 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.ws.rs.core.MediaType;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import static java.util.Collections.unmodifiableList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
@@ -119,8 +121,11 @@ class ServletHealthResponderTest {
         final String name = "all";
         final String anotherName = "foo";
         final Map<String, Collection<String>> queryParams = new HashMap<>();
+        final List<String> nameQueryParams = new ArrayList<>();
+        nameQueryParams.add(name);
+        nameQueryParams.add(anotherName);
         queryParams.put(typeQueryParam, Collections.singletonList(type));
-        queryParams.put(nameQueryParam, ImmutableList.of(name, anotherName));
+        queryParams.put(nameQueryParam, unmodifiableList(nameQueryParams));
 
         // when
         when(healthResponseProvider.healthResponse(queryParams)).thenReturn(SUCCESS);

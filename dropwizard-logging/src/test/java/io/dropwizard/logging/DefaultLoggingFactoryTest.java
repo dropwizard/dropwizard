@@ -16,7 +16,6 @@ import io.dropwizard.configuration.SubstitutingSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.logging.filter.FilterFactory;
-import io.dropwizard.util.Lists;
 import io.dropwizard.util.Maps;
 import io.dropwizard.util.Resources;
 import io.dropwizard.validation.BaseValidator;
@@ -31,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -171,7 +171,8 @@ class DefaultLoggingFactoryTest {
 
         // There should be exactly one appender configured, a ConsoleAppender
         final Logger logger = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
-        assertThat(Lists.of(logger.iteratorForAppenders()))
+        assertThat(logger.iteratorForAppenders())
+            .toIterable()
             .hasAtLeastOneElementOfType(ConsoleAppender.class)
             .as("context").allMatch((Appender<?> a) -> a.getContext() != null)
             .as("started").allMatch(LifeCycle::isStarted)

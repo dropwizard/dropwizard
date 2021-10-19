@@ -4,7 +4,6 @@ import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.jetty9.InstrumentedConnectionFactory;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import io.dropwizard.util.Strings;
 import io.dropwizard.validation.ValidationMethod;
 import org.eclipse.jetty.http.HttpVersion;
 import org.eclipse.jetty.io.ByteBufferPool;
@@ -33,6 +32,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -590,7 +590,7 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
     @ValidationMethod(message = "keyStorePassword should not be null or empty")
     public boolean isValidKeyStorePassword() {
         return keyStoreType.startsWith("Windows-") ||
-                !Strings.isNullOrEmpty(keyStorePassword);
+                Optional.ofNullable(keyStorePassword).filter(s -> !s.isEmpty()).isPresent();
     }
 
     @Override

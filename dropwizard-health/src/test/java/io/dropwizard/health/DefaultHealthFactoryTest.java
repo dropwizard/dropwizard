@@ -1,8 +1,6 @@
 package io.dropwizard.health;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.ImmutableList;
-import com.google.common.io.Resources;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.validation.Validators;
@@ -12,6 +10,7 @@ import javax.validation.Validator;
 import java.io.File;
 import java.util.stream.Collectors;
 
+import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class DefaultHealthFactoryTest {
@@ -22,14 +21,14 @@ class DefaultHealthFactoryTest {
 
     @Test
     void shouldBuildHealthFactoryFromYaml() throws Exception {
-        final File yml = new File(Resources.getResource("yml/health.yml").toURI());
+        final File yml = new File(getClass().getResource("/yml/health.yml").toURI());
         final DefaultHealthFactory healthFactory = configFactory.build(yml);
 
         assertThat(healthFactory.isDelayedShutdownHandlerEnabled()).isTrue();
         assertThat(healthFactory.isEnabled()).isTrue();
         assertThat(healthFactory.isInitialOverallState()).isTrue();
         assertThat(healthFactory.getShutdownWaitPeriod().toMilliseconds()).isEqualTo(1L);
-        assertThat(healthFactory.getHealthCheckUrlPaths()).isEqualTo(ImmutableList.of("/health-check"));
+        assertThat(healthFactory.getHealthCheckUrlPaths()).isEqualTo(singletonList("/health-check"));
 
         assertThat(healthFactory.getHealthChecks()).isEqualTo(healthFactory.getHealthCheckConfigurations());
 

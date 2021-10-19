@@ -2,7 +2,6 @@ package io.dropwizard.configuration;
 
 import com.fasterxml.jackson.core.JsonLocation;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import io.dropwizard.util.Strings;
 import org.apache.commons.text.similarity.LevenshteinDistance;
 
 import javax.annotation.Nullable;
@@ -203,7 +202,7 @@ public class ConfigurationParsingException extends ConfigurationException {
         }
 
         Builder setDetail(@Nullable String detail) {
-            this.detail = Strings.nullToEmpty(detail);
+            this.detail = detail == null ? "" : detail;
             return this;
         }
 

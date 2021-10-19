@@ -1,7 +1,6 @@
 package io.dropwizard.health;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.io.Resources;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.validation.Validators;
@@ -20,7 +19,7 @@ class ScheduleTest {
 
     @Test
     void shouldBuildAScheduleFromYaml() throws Exception {
-        final File yml = new File(Resources.getResource("yml/schedule.yml").toURI());
+        final File yml = new File(getClass().getResource("/yml/schedule.yml").toURI());
         final Schedule schedule = configFactory.build(yml);
 
         assertThat(schedule.getCheckInterval().toMilliseconds()).isEqualTo(2500L);

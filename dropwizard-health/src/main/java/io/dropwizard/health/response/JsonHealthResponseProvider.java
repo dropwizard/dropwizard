@@ -1,7 +1,6 @@
 package io.dropwizard.health.response;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.ImmutableList;
 import io.dropwizard.health.HealthStateAggregator;
 import io.dropwizard.health.HealthStateView;
 import io.dropwizard.health.HealthStatusChecker;
@@ -10,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.ws.rs.core.MediaType;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -18,6 +18,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static java.util.Collections.unmodifiableList;
 
 public class JsonHealthResponseProvider implements HealthResponseProvider {
     public static final String CHECK_TYPE_QUERY_PARAM = "type";
@@ -86,19 +88,16 @@ public class JsonHealthResponseProvider implements HealthResponseProvider {
 
         final Collection<HealthStateView> views;
         if (shouldReturnAllViews(names)) {
-            views = healthStateAggregator.healthStateViews();
+            return unmodifiableList(new ArrayList<>(healthStateAggregator.healthStateViews()));
         } else {
-            views = names.stream()
+            return unmodifiableList(names.stream()
                 .map(healthStateAggregator::healthStateView)
                 // replace with .flatMap(Optional::stream) in Java 9+
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 // replace with Collector.toUnmodifiableList in Java 10+
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()));
         }
-
-        // ensure views are immutable
-        return ImmutableList.copyOf(views);
     }
 
     private boolean shouldReturnAllViews(final Set<String> names) {

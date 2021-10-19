@@ -2,7 +2,6 @@ package io.dropwizard.health.response;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Charsets;
 import io.dropwizard.health.HealthCheckType;
 import io.dropwizard.health.HealthStateAggregator;
 import io.dropwizard.health.HealthStateView;
@@ -24,6 +23,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -34,9 +34,6 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class JsonHealthResponseProviderTest {
-    private static final String READY_TYPE = HealthCheckType.READY.name().toLowerCase();
-    private static final String ALIVE_TYPE = HealthCheckType.ALIVE.name().toLowerCase();
-
     private final ObjectMapper mapper = Jackson.newObjectMapper();
     @Mock
     private HealthStatusChecker healthStatusChecker;
@@ -135,7 +132,7 @@ class JsonHealthResponseProviderTest {
     private String fixture(final String filename) {
         final URL resource = Resources.getResource(filename);
         try {
-            return Resources.toString(resource, Charsets.UTF_8).trim();
+            return Resources.toString(resource, UTF_8).trim();
         } catch (final IOException e) {
             throw new IllegalArgumentException(e);
         }
