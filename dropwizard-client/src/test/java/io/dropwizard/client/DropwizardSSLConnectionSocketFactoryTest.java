@@ -38,7 +38,7 @@ import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.assertj.core.api.Assertions.catchThrowable;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.bouncycastle.jce.provider.BouncyCastleProvider.PROVIDER_NAME;
 
 @ExtendWith(DropwizardExtensionsSupport.class)
@@ -212,17 +212,17 @@ class DropwizardSSLConnectionSocketFactoryTest {
     @Test
     void shouldErrorIfHostnameVerificationOnAndServerHostnameDoesntMatch() {
         final Client client = new JerseyClientBuilder(TLS_APP_RULE.getEnvironment()).using(jerseyClientConfiguration).build("bad_host_broken");
-        final Throwable exn = catchThrowable(() -> client.target(String.format("https://localhost:%d", TLS_APP_RULE.getPort(3))).request().get());
-        assertThat(exn).hasCauseExactlyInstanceOf(SSLPeerUnverifiedException.class);
-        assertThat(exn.getCause()).hasMessage("Certificate for <localhost> doesn't match any of the subject alternative names: []");
+        assertThatThrownBy(() -> client.target(String.format("https://localhost:%d", TLS_APP_RULE.getPort(3))).request().get())
+            .hasCauseExactlyInstanceOf(SSLPeerUnverifiedException.class)
+            .hasRootCauseMessage("Certificate for <localhost> doesn't match any of the subject alternative names: []");
     }
 
     @Test
     void shouldErrorIfHostnameVerificationOnAndServerHostnameMatchesAndFailVerifierSpecified() {
         final Client client = new JerseyClientBuilder(TLS_APP_RULE.getEnvironment()).using(jerseyClientConfiguration).using(new FailVerifier()).build("bad_host_broken_fail_verifier");
-        final Throwable exn = catchThrowable(() -> client.target(String.format("https://localhost:%d", TLS_APP_RULE.getLocalPort())).request().get());
-        assertThat(exn).hasCauseExactlyInstanceOf(SSLPeerUnverifiedException.class);
-        assertThat(exn.getCause()).hasMessage("Certificate for <localhost> doesn't match any of the subject alternative names: []");
+        assertThatThrownBy(() -> client.target(String.format("https://localhost:%d", TLS_APP_RULE.getLocalPort())).request().get())
+            .hasCauseExactlyInstanceOf(SSLPeerUnverifiedException.class)
+            .hasRootCauseMessage("Certificate for <localhost> doesn't match any of the subject alternative names: []");
     }
 
     @Test
@@ -241,7 +241,7 @@ class DropwizardSSLConnectionSocketFactoryTest {
     }
 
     @Test
-    void shouldBeOkIfHostnameVerificationOffAndServerHostnameMatchesAndFailVerfierSpecified() {
+    void shouldBeOkIfHostnameVerificationOffAndServerHostnameMatchesAndFailVerifierSpecified() {
         tlsConfiguration.setVerifyHostname(false);
         final Client client = new JerseyClientBuilder(TLS_APP_RULE.getEnvironment()).using(jerseyClientConfiguration).using(new FailVerifier()).build("bad_host_fail_verifier_working");
         final Response response = client.target(String.format("https://localhost:%d", TLS_APP_RULE.getLocalPort())).request().get();

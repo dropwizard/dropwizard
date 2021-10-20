@@ -11,7 +11,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.assertThatIOException;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
@@ -48,9 +48,8 @@ class NonblockingServletHolderTest {
     @Test
     void servicesRequestException() throws Exception {
         doThrow(new IOException()).when(servlet).service(request, response);
-        assertThatExceptionOfType(IOException.class).isThrownBy(() -> {
-            holder.handle(baseRequest, request, response);
-        });
+        assertThatIOException()
+            .isThrownBy(() -> holder.handle(baseRequest, request, response));
     }
 
     @Test

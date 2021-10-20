@@ -11,7 +11,7 @@ import org.apache.commons.text.lookup.StringLookup;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.assertThatIOException;
 
 class SubstitutingSourceProviderTest {
     @Test
@@ -23,7 +23,7 @@ class SubstitutingSourceProviderTest {
         assertThat(provider.open("foo: ${bar}")).hasSameContentAs(new ByteArrayInputStream("foo: baz".getBytes(StandardCharsets.UTF_8)));
 
         // ensure that opened streams are closed
-        assertThatExceptionOfType(IOException.class)
+        assertThatIOException()
             .isThrownBy(() -> dummyProvider.lastStream.read())
             .withMessage("Stream closed");
     }

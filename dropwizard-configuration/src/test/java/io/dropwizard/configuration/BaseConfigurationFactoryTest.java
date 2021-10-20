@@ -26,6 +26,7 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 public abstract class BaseConfigurationFactoryTest {
 
@@ -313,7 +314,7 @@ public abstract class BaseConfigurationFactoryTest {
     @Test
     void throwsAnExceptionOnUnexpectedArrayOverride() {
         System.setProperty("dw.servers.port", "9000");
-        assertThatExceptionOfType(IllegalArgumentException.class)
+        assertThatIllegalArgumentException()
             .isThrownBy(() -> factory.build(validFile))
             .withMessageContaining("target is an array but no index specified");
     }
@@ -405,7 +406,7 @@ public abstract class BaseConfigurationFactoryTest {
         System.setProperty("dw.name", "Coda Hale Overridden");
         final YamlConfigurationFactory<NonInsatiableExample> factory =
             new YamlConfigurationFactory<>(NonInsatiableExample.class, validator, Jackson.newObjectMapper(), "dw");
-        assertThatExceptionOfType(IllegalArgumentException.class)
+        assertThatIllegalArgumentException()
             .isThrownBy(factory::build)
             .withMessage("Unable to create an instance of the configuration class: " +
                 "'io.dropwizard.configuration.BaseConfigurationFactoryTest.NonInsatiableExample'");
