@@ -2,11 +2,11 @@ package io.dropwizard.metrics;
 
 import com.codahale.metrics.MetricAttribute;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.logging.BootstrapLogging;
 import io.dropwizard.util.Duration;
-import io.dropwizard.util.Resources;
 import io.dropwizard.validation.BaseValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,7 +31,7 @@ class MetricsFactoryTest {
         objectMapper.getSubtypeResolver().registerSubtypes(ConsoleReporterFactory.class, CsvReporterFactory.class,
             Slf4jReporterFactory.class);
 
-        this.config = factory.build(new File(Resources.getResource("yaml/metrics.yml").toURI()));
+        this.config = factory.build(new ResourceConfigurationSourceProvider(), "yaml/metrics.yml");
     }
 
     @Test
@@ -74,7 +74,7 @@ class MetricsFactoryTest {
 
     @Test
     void reportOnStopCanBeTrue() throws Exception {
-        config = factory.build(new File(Resources.getResource("yaml/metrics-report-on-stop.yml").toURI()));
+        config = factory.build(new ResourceConfigurationSourceProvider(), "yaml/metrics-report-on-stop.yml");
         assertThat(config.isReportOnStop()).isTrue();
     }
 

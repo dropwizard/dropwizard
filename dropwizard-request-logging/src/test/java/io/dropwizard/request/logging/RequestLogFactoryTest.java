@@ -1,18 +1,16 @@
 package io.dropwizard.request.logging;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.DiscoverableSubtypeResolver;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.logging.ConsoleAppenderFactory;
 import io.dropwizard.logging.FileAppenderFactory;
 import io.dropwizard.logging.SyslogAppenderFactory;
-import io.dropwizard.util.Resources;
 import io.dropwizard.validation.BaseValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.io.File;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -28,7 +26,7 @@ class RequestLogFactoryTest {
         this.logbackAccessRequestLogFactory = new YamlConfigurationFactory<>(LogbackAccessRequestLogFactory.class,
                                                      BaseValidator.newValidator(),
                                                      objectMapper, "dw")
-                .build(new File(Resources.getResource("yaml/requestLog.yml").toURI()));
+                .build(new ResourceConfigurationSourceProvider(), "yaml/requestLog.yml");
     }
 
     @Test
@@ -41,7 +39,7 @@ class RequestLogFactoryTest {
     }
 
     @Test
-    void isDiscoverable() throws Exception {
+    void isDiscoverable() {
         assertThat(new DiscoverableSubtypeResolver().getDiscoveredSubtypes())
             .contains(LogbackAccessRequestLogFactory.class);
     }

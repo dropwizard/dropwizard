@@ -9,7 +9,6 @@ import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.util.DataSize;
 import io.dropwizard.util.Duration;
-import io.dropwizard.util.Resources;
 import io.dropwizard.validation.BaseValidator;
 import org.apache.commons.text.StringSubstitutor;
 import org.junit.jupiter.api.AfterEach;
@@ -18,10 +17,8 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
@@ -53,13 +50,9 @@ class TcpSocketAppenderFactoryTest {
         }
     }
 
-    private static File resourcePath(String path) throws URISyntaxException {
-        return new File(Resources.getResource(path).toURI());
-    }
-
     @Test
     void testParseConfig() throws Exception {
-        DefaultLoggingFactory loggingFactory = yamlConfigurationFactory.build(resourcePath("yaml/logging-tcp-custom.yml"));
+        DefaultLoggingFactory loggingFactory = yamlConfigurationFactory.build(new ResourceConfigurationSourceProvider(), "/yaml/logging-tcp-custom.yml");
         assertThat(loggingFactory.getAppenders()).hasSize(1);
         TcpSocketAppenderFactory<ILoggingEvent> tcpAppenderFactory = (TcpSocketAppenderFactory<ILoggingEvent>)
             loggingFactory.getAppenders().get(0);

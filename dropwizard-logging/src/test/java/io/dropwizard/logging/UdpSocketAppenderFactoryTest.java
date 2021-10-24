@@ -2,9 +2,9 @@ package io.dropwizard.logging;
 
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
-import io.dropwizard.util.Resources;
 import io.dropwizard.validation.BaseValidator;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,7 +12,6 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -54,7 +53,7 @@ class UdpSocketAppenderFactoryTest {
     }
 
     @AfterEach
-    void tearDown() throws Exception {
+    void tearDown() {
         thread.interrupt();
         datagramSocket.close();
     }
@@ -66,7 +65,7 @@ class UdpSocketAppenderFactoryTest {
 
         DefaultLoggingFactory loggingFactory = new YamlConfigurationFactory<>(DefaultLoggingFactory.class,
             BaseValidator.newValidator(), objectMapper, "dw-udp")
-            .build(new File(Resources.getResource("yaml/logging-udp.yml").toURI()));
+            .build(new ResourceConfigurationSourceProvider(), "yaml/logging-udp.yml");
         loggingFactory.configure(new MetricRegistry(), "udp-test");
 
         Logger logger = LoggerFactory.getLogger("com.example.app");

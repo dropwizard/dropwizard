@@ -1,13 +1,13 @@
 package io.dropwizard.health.response;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.health.HealthStateAggregator;
 import io.dropwizard.health.HealthStatusChecker;
 import io.dropwizard.jackson.DiscoverableSubtypeResolver;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.validation.Validators;
-import java.io.File;
 import java.util.Collections;
 import java.util.List;
 import javax.validation.Validator;
@@ -48,11 +48,10 @@ class JsonHealthResponseProviderFactoryTest {
     @Test
     void testBuildJsonHealthResponseProvider() throws Exception {
         // given
-        final File yml = new File(getClass().getResource("/yml/json-response-provider.yml").toURI());
+        final HealthResponseProviderFactory factory = configFactory.build(new ResourceConfigurationSourceProvider(), "/yml/json-response-provider.yml");
 
         // when
         when(healthStatusChecker.isHealthy(isNull())).thenReturn(true);
-        final HealthResponseProviderFactory factory = configFactory.build(yml);
         final HealthResponseProvider responseProvider = factory.build(healthStatusChecker, healthStateAggregator,
                 mapper);
         final HealthResponse response = responseProvider.healthResponse(Collections.emptyMap());

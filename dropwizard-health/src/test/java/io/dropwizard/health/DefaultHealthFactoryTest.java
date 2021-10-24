@@ -1,13 +1,13 @@
 package io.dropwizard.health;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.validation.Validators;
 import org.junit.jupiter.api.Test;
 
 import javax.validation.Validator;
-import java.io.File;
 import java.util.stream.Collectors;
 
 import static java.util.Collections.singletonList;
@@ -21,8 +21,7 @@ class DefaultHealthFactoryTest {
 
     @Test
     void shouldBuildHealthFactoryFromYaml() throws Exception {
-        final File yml = new File(getClass().getResource("/yml/health.yml").toURI());
-        final DefaultHealthFactory healthFactory = configFactory.build(yml);
+        final DefaultHealthFactory healthFactory = configFactory.build(new ResourceConfigurationSourceProvider(), "/yml/health.yml");
 
         assertThat(healthFactory.isDelayedShutdownHandlerEnabled()).isTrue();
         assertThat(healthFactory.isEnabled()).isTrue();
