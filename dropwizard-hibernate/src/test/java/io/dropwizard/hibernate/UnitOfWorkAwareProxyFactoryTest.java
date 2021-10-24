@@ -18,7 +18,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -80,7 +80,7 @@ class UnitOfWorkAwareProxyFactoryTest {
 
     @Test
     void testProxyHandlesErrors() {
-        assertThatExceptionOfType(IllegalStateException.class).isThrownBy(()->
+        assertThatIllegalStateException().isThrownBy(()->
             new UnitOfWorkAwareProxyFactory("default", sessionFactory)
                 .create(BrokenAuthenticator.class)
                 .authenticate("b812ae4"))
@@ -137,9 +137,7 @@ class UnitOfWorkAwareProxyFactoryTest {
         final NestedCall nestedCall = unitOfWorkAwareProxyFactory
                 .create(NestedCall.class, SessionFactory.class, sessionFactory);
 
-        assertThatExceptionOfType(IllegalStateException.class).isThrownBy(()-> {
-            nestedCall.invalidNestedCall();
-        });
+        assertThatIllegalStateException().isThrownBy(nestedCall::invalidNestedCall);
     }
 
     static class SessionDao {
