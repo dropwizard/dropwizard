@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Supplier;
 
 /**
  * Sets the logging level for a number of loggers
@@ -45,6 +46,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class LogConfigurationTask extends Task {
 
     private final ILoggerFactory loggerContext;
+    private final Supplier<Timer> timerSupplier;
     private final AtomicReference<Timer> timerReference = new AtomicReference<>();
 
     /**
@@ -62,8 +64,21 @@ public class LogConfigurationTask extends Task {
      * @param loggerContext a {@link ILoggerFactory} instance
      */
     public LogConfigurationTask(ILoggerFactory loggerContext) {
+        this(loggerContext, () -> new Timer(LogConfigurationTask.class.getSimpleName(), true));
+    }
+
+    /**
+     * Creates a new LogConfigurationTask with the given {@link ILoggerFactory} instance and a custom {@link Timer}.
+     * <p/>
+     * <b>Use {@link LogConfigurationTask#LogConfigurationTask()} instead.</b>
+     *
+     * @param loggerContext a {@link ILoggerFactory} instance
+     * @param timerSupplier a {@link Supplier} supplying a {@link Timer}
+     */
+    LogConfigurationTask(ILoggerFactory loggerContext, Supplier<Timer> timerSupplier) {
         super("log-level");
         this.loggerContext = loggerContext;
+        this.timerSupplier = timerSupplier;
     }
 
     @Override
@@ -116,6 +131,6 @@ public class LogConfigurationTask extends Task {
      */
     @Nonnull
     private Timer getTimer() {
-        return timerReference.updateAndGet(timer -> timer == null ? new Timer(LogConfigurationTask.class.getSimpleName(), true) : timer);
+        return timerReference.updateAndGet(timer -> timer == null ? timerSupplier.get() : timer);
     }
 }
