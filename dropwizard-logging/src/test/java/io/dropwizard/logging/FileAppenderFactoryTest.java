@@ -16,6 +16,7 @@ import ch.qos.logback.core.util.FileSize;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.configuration.ConfigurationException;
 import io.dropwizard.configuration.ConfigurationValidationException;
+import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.DiscoverableSubtypeResolver;
 import io.dropwizard.jackson.Jackson;
@@ -23,7 +24,6 @@ import io.dropwizard.logging.async.AsyncLoggingEventAppenderFactory;
 import io.dropwizard.logging.filter.NullLevelFilterFactory;
 import io.dropwizard.logging.layout.DropwizardLayoutFactory;
 import io.dropwizard.util.DataSize;
-import io.dropwizard.util.Resources;
 import io.dropwizard.validation.BaseValidator;
 import io.dropwizard.validation.ConstraintViolations;
 import org.junit.jupiter.api.Test;
@@ -31,7 +31,6 @@ import org.junit.jupiter.api.io.TempDir;
 import org.slf4j.LoggerFactory;
 
 import javax.validation.Validator;
-import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.nio.file.Path;
@@ -337,8 +336,8 @@ class FileAppenderFactoryTest {
         final YamlConfigurationFactory<FileAppenderFactory> factory =
             new YamlConfigurationFactory<>(FileAppenderFactory.class, validator, mapper, "dw");
 
-        final FileAppenderFactory appenderFactory = factory.build(new File(Resources.getResource("yaml/appender_file_cap.yaml").getFile()));
-        final FileAppender appender = appenderFactory.buildAppender(new LoggerContext());
+        final FileAppender appender = factory.build(new ResourceConfigurationSourceProvider(), "yaml/appender_file_cap.yaml")
+            .buildAppender(new LoggerContext());
         assertThat(appender).isInstanceOfSatisfying(RollingFileAppender.class, roller -> {
             assertThat(roller.getRollingPolicy()).isInstanceOfSatisfying(SizeAndTimeBasedRollingPolicy.class, policy -> {
                 try {
@@ -366,8 +365,8 @@ class FileAppenderFactoryTest {
         final YamlConfigurationFactory<FileAppenderFactory> factory =
             new YamlConfigurationFactory<>(FileAppenderFactory.class, validator, mapper, "dw");
 
-        final FileAppenderFactory appenderFactory = factory.build(new File(Resources.getResource("yaml/appender_file_cap2.yaml").getFile()));
-        final FileAppender appender = appenderFactory.buildAppender(new LoggerContext());
+        final FileAppender appender = factory.build(new ResourceConfigurationSourceProvider(), "yaml/appender_file_cap2.yaml")
+            .buildAppender(new LoggerContext());
         assertThat(appender).isInstanceOfSatisfying(RollingFileAppender.class, roller -> {
             assertThat(roller.getRollingPolicy()).isInstanceOfSatisfying(TimeBasedRollingPolicy.class, policy -> {
                 try {
@@ -389,7 +388,7 @@ class FileAppenderFactoryTest {
             new YamlConfigurationFactory<>(FileAppenderFactory.class, validator, mapper, "dw");
 
         assertThatExceptionOfType(ConfigurationValidationException.class)
-            .isThrownBy(() -> factory.build(new File(Resources.getResource("yaml/appender_file_cap_invalid.yaml").getFile())))
+            .isThrownBy(() -> factory.build(new ResourceConfigurationSourceProvider(), "yaml/appender_file_cap_invalid.yaml"))
             .withMessageContaining("totalSizeCap has no effect when using maxFileSize and an archivedLogFilenamePattern " +
                 "without %d, as archivedFileCount implicitly controls the total size cap");
     }

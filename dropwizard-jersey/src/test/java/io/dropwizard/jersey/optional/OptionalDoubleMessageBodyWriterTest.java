@@ -16,6 +16,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 import java.util.OptionalDouble;
 
@@ -70,12 +71,10 @@ class OptionalDoubleMessageBodyWriterTest extends AbstractJerseyTest {
     }
 
     @Test
-    void valueEmptyReturnsDefault() {
-        assertThat(target("optional-return/default").queryParam("id", "")
-            .request().get(Double.class))
-            .isEqualTo(target("optional-return/double/default").queryParam("id", "")
-                .request().get(Double.class))
-            .isEqualTo(0);
+    void valueEmptyReturns404() {
+        assertThat(target("optional-return/default").queryParam("id", "").request().get())
+            .extracting(Response::getStatus)
+            .isEqualTo(404);
     }
 
     @Test

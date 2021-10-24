@@ -7,6 +7,7 @@ import ch.qos.logback.core.spi.DeferredProcessingAware;
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.logging.BootstrapLogging;
@@ -15,7 +16,6 @@ import io.dropwizard.logging.DefaultLoggingFactory;
 import io.dropwizard.logging.json.layout.ExceptionFormat;
 import io.dropwizard.logging.layout.DiscoverableLayoutFactory;
 import io.dropwizard.request.logging.LogbackAccessRequestLogFactory;
-import io.dropwizard.util.Resources;
 import io.dropwizard.validation.BaseValidator;
 import org.eclipse.jetty.http.HttpFields;
 import org.eclipse.jetty.server.Request;
@@ -28,7 +28,6 @@ import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.Collections;
@@ -60,7 +59,7 @@ class LayoutIntegrationTests {
 
     @SuppressWarnings("unchecked")
     private <T extends DeferredProcessingAware> ConsoleAppenderFactory<T> getAppenderFactory(String s) throws Exception {
-        return yamlFactory.build(new File(Resources.getResource(s).toURI()));
+        return yamlFactory.build(new ResourceConfigurationSourceProvider(), s);
     }
 
     @Test

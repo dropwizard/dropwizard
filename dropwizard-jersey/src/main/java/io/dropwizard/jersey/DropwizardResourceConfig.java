@@ -77,7 +77,6 @@ public class DropwizardResourceConfig extends ResourceConfig {
         register(io.dropwizard.jersey.optional.OptionalDoubleMessageBodyWriter.class);
         register(io.dropwizard.jersey.optional.OptionalIntMessageBodyWriter.class);
         register(io.dropwizard.jersey.optional.OptionalLongMessageBodyWriter.class);
-        register(new io.dropwizard.jersey.optional.OptionalParamBinder());
         register(AbstractParamConverterProvider.class);
         register(new FuzzyEnumParamConverterProvider());
         register(new SessionFactoryProvider.Binder());
