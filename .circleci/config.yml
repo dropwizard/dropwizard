@@ -10,7 +10,7 @@ jobs:
       - checkout
       - restore_cache:
           key: dropwizard-{{ checksum "pom.xml" }}
-      - run: ./mvnw --no-transfer-progress -Pjakarta-apis -V -B -ff install
+      - run: ./mvnw --no-transfer-progress --threads 1C -Pjakarta-apis -V -B -ff install
       - save_cache:
           paths:
             - ~/.m2

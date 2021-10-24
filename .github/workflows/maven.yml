@@ -38,7 +38,7 @@ jobs:
         key: ${{ runner.os }}-sonar
         restore-keys: ${{ runner.os }}-sonar
     - name: Build
-      run: ./mvnw --no-transfer-progress -V -B -ff -s .github/settings.xml install
+      run: ./mvnw --no-transfer-progress --threads 1C -V -B -ff -s .github/settings.xml install
     - name: Analyze with SonarCloud
       if: ${{ env.SONAR_TOKEN != null && env.SONAR_TOKEN != '' && matrix.java_version == '11' }}
       env:
