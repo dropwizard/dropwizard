@@ -3,6 +3,7 @@ package io.dropwizard.jetty;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.jetty9.InstrumentedConnectionFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.DiscoverableSubtypeResolver;
 import io.dropwizard.jackson.Jackson;
@@ -11,7 +12,6 @@ import io.dropwizard.logging.FileAppenderFactory;
 import io.dropwizard.logging.SyslogAppenderFactory;
 import io.dropwizard.util.DataSize;
 import io.dropwizard.util.Duration;
-import io.dropwizard.util.Resources;
 import io.dropwizard.validation.BaseValidator;
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.eclipse.jetty.http.CookieCompliance;
@@ -29,7 +29,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.validation.Validator;
-import java.io.File;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -57,7 +56,7 @@ class HttpConnectorFactoryTest {
     void testParseMinimalConfiguration() throws Exception {
         HttpConnectorFactory http =
                 new YamlConfigurationFactory<>(HttpConnectorFactory.class, validator, objectMapper, "dw")
-                        .build(new File(Resources.getResource("yaml/http-connector-minimal.yml").toURI()));
+                        .build(new ResourceConfigurationSourceProvider(), "yaml/http-connector-minimal.yml");
 
         assertThat(http.getPort()).isEqualTo(8080);
         assertThat(http.getBindHost()).isNull();
@@ -89,7 +88,7 @@ class HttpConnectorFactoryTest {
     void testParseFullConfiguration() throws Exception {
         HttpConnectorFactory http =
                 new YamlConfigurationFactory<>(HttpConnectorFactory.class, validator, objectMapper, "dw")
-                        .build(new File(Resources.getResource("yaml/http-connector.yml").toURI()));
+                        .build(new ResourceConfigurationSourceProvider(), "yaml/http-connector.yml");
 
         assertThat(http.getPort()).isEqualTo(9090);
         assertThat(http.getBindHost()).isEqualTo("127.0.0.1");

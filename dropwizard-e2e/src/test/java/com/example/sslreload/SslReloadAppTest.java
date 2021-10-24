@@ -5,7 +5,7 @@ import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
-import io.dropwizard.util.Resources;
+import io.dropwizard.util.ByteStreams;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -18,6 +18,7 @@ import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -56,23 +57,22 @@ public class SslReloadAppTest {
     @BeforeAll
     public static void setupClass(@TempDir Path tempDir) throws IOException {
         keystore = tempDir.resolve("keystore.jks");
-        final byte[] keystoreBytes = Resources.toByteArray(Resources.getResource("sslreload/keystore.jks"));
-        Files.write(keystore, keystoreBytes);
+        try (InputStream inputStream = SslReloadAppTest.class.getResourceAsStream("/sslreload/keystore.jks")) {
+            Files.write(keystore, ByteStreams.toByteArray(inputStream));
+        }
     }
 
     @AfterEach
     void after() throws IOException {
         // Reset keystore to known good keystore
-        final byte[] keystoreBytes = Resources.toByteArray(Resources.getResource("sslreload/keystore.jks"));
-        Files.write(keystore, keystoreBytes);
+        writeKeystore("/sslreload/keystore.jks");
     }
 
     @Test
     void reloadCertificateChangesTheServerCertificate() throws Exception {
         // Copy over our new keystore that has our new certificate to the current
         // location of our keystore
-        final byte[] keystore2Bytes = Resources.toByteArray(Resources.getResource("sslreload/keystore2.jks"));
-        Files.write(keystore, keystore2Bytes);
+        writeKeystore("/sslreload/keystore2.jks");
 
         // Get the bytes for the first certificate, and trigger a reload
         byte[] firstCertBytes = certBytes(200, "Reloaded certificate configuration\n");
@@ -92,8 +92,7 @@ public class SslReloadAppTest {
     void badReloadDoesNotChangeTheServerCertificate() throws Exception {
         // This keystore has a different password than what jetty has been configured with
         // the password is "password2"
-        final byte[] badKeystore = Resources.toByteArray(Resources.getResource("sslreload/keystore-diff-pwd.jks"));
-        Files.write(keystore, badKeystore);
+        writeKeystore("/sslreload/keystore-diff-pwd.jks");
 
         // Get the bytes for the first certificate. The reload should fail
         byte[] firstCertBytes = certBytes(500, "Keystore was tampered with, or password was incorrect");
@@ -144,5 +143,11 @@ public class SslReloadAppTest {
         // Make it a POST
         conn.setDoOutput(true);
         conn.getOutputStream().write(new byte[]{});
+    }
+
+    private void writeKeystore(String source) throws IOException {
+        try (final InputStream inputStream = getClass().getResourceAsStream(source)) {
+            Files.write(keystore, ByteStreams.toByteArray(inputStream));
+        }
     }
 }

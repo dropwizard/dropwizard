@@ -72,12 +72,10 @@ class OptionalIntMessageBodyWriterTest extends AbstractJerseyTest {
     }
 
     @Test
-    void valueEmptyReturnsDefault() {
-        assertThat(target("optional-return/default").queryParam("id", "")
-            .request().get(Integer.class))
-            .isEqualTo(target("optional-return/int/default").queryParam("id", "")
-                .request().get(Integer.class))
-            .isEqualTo(0);
+    void valueEmptyReturns404() {
+        assertThat(target("optional-return/default").queryParam("id", "").request().get())
+            .extracting(Response::getStatus)
+            .isEqualTo(404);
     }
 
     @Test
@@ -90,14 +88,6 @@ class OptionalIntMessageBodyWriterTest extends AbstractJerseyTest {
             .request();
         assertThatExceptionOfType(NotFoundException.class)
             .isThrownBy(() -> intRequest.get(Integer.class));
-    }
-
-    @Test
-    void verifyInvalidDefaultValueFailsFast() {
-        OptionalIntParamConverterProvider.OptionalIntParamConverter converter =
-            new OptionalIntParamConverterProvider.OptionalIntParamConverter("invalid");
-        assertThatExceptionOfType(NumberFormatException.class)
-            .isThrownBy(() -> converter.fromString("invalid"));
     }
 
     @Path("optional-return")

@@ -8,7 +8,6 @@ import io.dropwizard.configuration.SubstitutingSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.util.Maps;
-import io.dropwizard.util.Resources;
 import io.dropwizard.validation.BaseValidator;
 import org.apache.commons.text.StringSubstitutor;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
@@ -29,8 +28,8 @@ class TlsSocketAppenderFactoryTest {
 
     public TcpServer tcpServer = new TcpServer(createServerSocket());
 
-    private ObjectMapper objectMapper = Jackson.newObjectMapper();
-    private YamlConfigurationFactory<DefaultLoggingFactory> yamlConfigurationFactory = new YamlConfigurationFactory<>(
+    private final ObjectMapper objectMapper = Jackson.newObjectMapper();
+    private final YamlConfigurationFactory<DefaultLoggingFactory> yamlConfigurationFactory = new YamlConfigurationFactory<>(
         DefaultLoggingFactory.class, BaseValidator.newValidator(), objectMapper, "dw-ssl");
 
     @BeforeEach
@@ -54,24 +53,24 @@ class TlsSocketAppenderFactoryTest {
 
     private SslContextFactory createSslContextFactory() throws Exception {
         SslContextFactory sslContextFactory = new SslContextFactory.Server();
-        sslContextFactory.setKeyStorePath(resourcePath("stores/tls_server.jks").getAbsolutePath());
+        sslContextFactory.setKeyStorePath(resourcePath("/stores/tls_server.jks"));
         sslContextFactory.setKeyStorePassword("server_pass");
         sslContextFactory.start();
         return sslContextFactory;
     }
 
-    private static File resourcePath(String path) throws URISyntaxException {
-        return new File(Resources.getResource(path).toURI());
+    private String resourcePath(String path) throws URISyntaxException {
+        return new File(getClass().getResource(path).toURI()).getAbsolutePath();
     }
 
     @Test
     void testTlsLogging() throws Exception {
         DefaultLoggingFactory loggingFactory = yamlConfigurationFactory.build(new SubstitutingSourceProvider(
             new ResourceConfigurationSourceProvider(), new StringSubstitutor(Maps.of(
-            "tls.trust_store.path", resourcePath("stores/tls_client.jks").getAbsolutePath(),
+            "tls.trust_store.path", resourcePath("/stores/tls_client.jks"),
             "tls.trust_store.pass", "client_pass",
             "tls.server_port", tcpServer.getPort()
-        ))), "yaml/logging-tls.yml");
+        ))), "/yaml/logging-tls.yml");
         loggingFactory.configure(new MetricRegistry(), "tls-appender-test");
 
         Logger logger = LoggerFactory.getLogger("com.example.app");
@@ -86,8 +85,8 @@ class TlsSocketAppenderFactoryTest {
 
     @Test
     void testParseCustomConfiguration() throws Exception {
-        DefaultLoggingFactory loggingFactory = yamlConfigurationFactory.build(
-            resourcePath("yaml/logging-tls-custom.yml"));
+        DefaultLoggingFactory loggingFactory = yamlConfigurationFactory
+            .build(new ResourceConfigurationSourceProvider(), "yaml/logging-tls-custom.yml");
         assertThat(loggingFactory.getAppenders()).hasSize(1);
         TlsSocketAppenderFactory<ILoggingEvent> appenderFactory = (TlsSocketAppenderFactory<ILoggingEvent>)
             loggingFactory.getAppenders().get(0);

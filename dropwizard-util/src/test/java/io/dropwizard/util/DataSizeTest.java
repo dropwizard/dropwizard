@@ -10,7 +10,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 class DataSizeTest {
     @Test
@@ -222,21 +222,21 @@ class DataSizeTest {
 
     @Test
     void unableParseWrongDataSizeCount() {
-        assertThatExceptionOfType(IllegalArgumentException.class)
+        assertThatIllegalArgumentException()
             .isThrownBy(() -> DataSize.parse("three bytes"))
             .withMessage("Invalid size: three bytes");
     }
 
     @Test
     void unableParseWrongDataSizeUnit() {
-        assertThatExceptionOfType(IllegalArgumentException.class)
+        assertThatIllegalArgumentException()
             .isThrownBy(() -> DataSize.parse("1EB"))
             .withMessage("Invalid size: 1EB. Wrong size unit");
     }
 
     @Test
     void unableParseWrongDataSizeFormat() {
-        assertThatExceptionOfType(IllegalArgumentException.class)
+        assertThatIllegalArgumentException()
             .isThrownBy(() -> DataSize.parse("1 mega byte"))
             .withMessage("Invalid size: 1 mega byte");
     }

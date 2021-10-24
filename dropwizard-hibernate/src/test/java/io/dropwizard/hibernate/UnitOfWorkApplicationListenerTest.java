@@ -18,6 +18,7 @@ import java.lang.reflect.Method;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.hibernate.resource.transaction.spi.TransactionStatus.ACTIVE;
 import static org.hibernate.resource.transaction.spi.TransactionStatus.NOT_ACTIVE;
 import static org.mockito.Mockito.doAnswer;
@@ -235,7 +236,7 @@ class UnitOfWorkApplicationListenerTest {
     @Test
     void throwsExceptionOnNotRegisteredDatabase() throws Exception {
         prepareResourceMethod("methodWithUnitOfWorkOnNotRegisteredDatabase");
-        assertThatExceptionOfType(IllegalArgumentException.class)
+        assertThatIllegalArgumentException()
             .isThrownBy(this::execute)
             .withMessage("Unregistered Hibernate bundle: 'warehouse'");
     }

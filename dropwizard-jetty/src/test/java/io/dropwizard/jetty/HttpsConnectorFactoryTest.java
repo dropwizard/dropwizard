@@ -2,10 +2,10 @@ package io.dropwizard.jetty;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.jetty9.InstrumentedConnectionFactory;
+import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.DiscoverableSubtypeResolver;
 import io.dropwizard.jackson.Jackson;
-import io.dropwizard.util.Resources;
 import io.dropwizard.validation.BaseValidator;
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.eclipse.jetty.server.ConnectionFactory;
@@ -63,7 +63,7 @@ class HttpsConnectorFactoryTest {
     void testParsingConfiguration() throws Exception {
         HttpsConnectorFactory https = new YamlConfigurationFactory<>(HttpsConnectorFactory.class, validator,
                 Jackson.newObjectMapper(), "dw-https")
-                .build(new File(Resources.getResource("yaml/https-connector.yml").toURI()));
+                .build(new ResourceConfigurationSourceProvider(), "yaml/https-connector.yml");
 
         assertThat(https.getPort()).isEqualTo(8443);
         assertThat(https.getKeyStorePath()).isEqualTo("/path/to/ks_file");

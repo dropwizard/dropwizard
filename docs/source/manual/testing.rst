@@ -583,8 +583,7 @@ assert the expected widget is deserialized based on the ``type`` field.
 
         @Test
         public void testBuildAHammer() throws Exception {
-            final File yml = new File(Resources.getResource("yaml/hammer.yml").toURI());
-            final WidgetFactory wid = factory.build(yml);
+            final WidgetFactory wid = factory.build(new ResourceConfigurationSourceProvider(), "yaml/hammer.yml");
             assertThat(wid).isInstanceOf(HammerFactory.class);
             assertThat(((HammerFactory) wid).createWidget().getWeight()).isEqualTo(10);
         }

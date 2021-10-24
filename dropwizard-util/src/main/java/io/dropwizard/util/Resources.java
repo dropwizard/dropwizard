@@ -42,6 +42,7 @@ public final class Resources {
      * @return a byte array containing all the bytes from the URL
      * @throws IOException if an I/O error occurs
      */
+    @Deprecated
     public static byte[] toByteArray(URL url) throws IOException {
         try (InputStream inputStream = url.openStream()) {
             return ByteStreams.toByteArray(inputStream);
@@ -57,6 +58,7 @@ public final class Resources {
      * @return a string containing all the characters from the URL
      * @throws IOException if an I/O error occurs.
      */
+    @Deprecated
     public static String toString(URL url, Charset charset) throws IOException {
         try (InputStream inputStream = url.openStream()) {
             return new String(ByteStreams.toByteArray(inputStream), charset);

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.configuration.ConfigurationException;
+import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.DiscoverableSubtypeResolver;
 import io.dropwizard.jackson.Jackson;
@@ -14,7 +15,6 @@ import io.dropwizard.logging.SyslogAppenderFactory;
 import io.dropwizard.servlets.tasks.Task;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.util.ByteStreams;
-import io.dropwizard.util.Resources;
 import io.dropwizard.validation.BaseValidator;
 import org.eclipse.jetty.server.AbstractNetworkConnector;
 import org.eclipse.jetty.server.Server;
@@ -25,12 +25,10 @@ import javax.validation.Validator;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import java.io.File;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
@@ -43,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class SimpleServerFactoryTest {
 
     private SimpleServerFactory http;
-    private Environment environment = new Environment("testEnvironment");
+    private final Environment environment = new Environment("testEnvironment");
 
     @BeforeEach
     void setUp() throws Exception {
@@ -52,11 +50,11 @@ public class SimpleServerFactoryTest {
         objectMapper.getSubtypeResolver().registerSubtypes(ConsoleAppenderFactory.class,
                 FileAppenderFactory.class, SyslogAppenderFactory.class, HttpConnectorFactory.class);
         http = (SimpleServerFactory) new YamlConfigurationFactory<>(ServerFactory.class, validator, objectMapper, "dw")
-                .build(new File(Resources.getResource("yaml/simple_server.yml").toURI()));
+                .build(new ResourceConfigurationSourceProvider(), "yaml/simple_server.yml");
     }
 
     @Test
-    void isDiscoverable() throws Exception {
+    void isDiscoverable() {
         assertThat(new DiscoverableSubtypeResolver().getDiscoveredSubtypes())
                 .contains(SimpleServerFactory.class);
     }
@@ -103,7 +101,7 @@ public class SimpleServerFactoryTest {
     }
 
     @Test
-    void testDeserializeWithoutJsonAutoDetect() throws ConfigurationException, IOException, URISyntaxException {
+    void testDeserializeWithoutJsonAutoDetect() throws ConfigurationException, IOException {
         final ObjectMapper objectMapper = Jackson.newObjectMapper()
             .setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE);
 
@@ -112,7 +110,7 @@ public class SimpleServerFactoryTest {
                 BaseValidator.newValidator(),
                 objectMapper,
                 "dw"
-                ).build(new File(Resources.getResource("yaml/simple_server.yml").toURI()))
+                ).build(new ResourceConfigurationSourceProvider(), "yaml/simple_server.yml")
                 .getApplicationContextPath())
             .isEqualTo("/service");
     }
