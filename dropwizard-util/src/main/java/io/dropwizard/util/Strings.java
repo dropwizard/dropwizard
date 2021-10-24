@@ -6,7 +6,10 @@ import static java.util.Objects.requireNonNull;
 
 /**
  * @since 2.0
+ *
+ * @deprecated 
  */
+@Deprecated
 public final class Strings {
     private Strings() {
     }

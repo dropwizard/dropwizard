@@ -11,14 +11,13 @@ import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.TextNode;
-import io.dropwizard.configuration.FileConfigurationSourceProvider;
+import io.dropwizard.configuration.ConfigurationSourceProvider;
+import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.configuration.SubstitutingSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.logging.filter.FilterFactory;
-import io.dropwizard.util.Lists;
 import io.dropwizard.util.Maps;
-import io.dropwizard.util.Resources;
 import io.dropwizard.validation.BaseValidator;
 import org.apache.commons.text.StringSubstitutor;
 import org.assertj.core.data.MapEntry;
@@ -28,7 +27,6 @@ import org.junit.jupiter.api.io.TempDir;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -37,6 +35,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class DefaultLoggingFactoryTest {
     private final ObjectMapper objectMapper = Jackson.newObjectMapper();
+    private final ConfigurationSourceProvider configurationSourceProvider = new ResourceConfigurationSourceProvider();
     private final YamlConfigurationFactory<DefaultLoggingFactory> factory = new YamlConfigurationFactory<>(
             DefaultLoggingFactory.class,
             BaseValidator.newValidator(),
@@ -50,7 +49,7 @@ class DefaultLoggingFactoryTest {
                 FileAppenderFactory.class,
                 SyslogAppenderFactory.class);
 
-        config = factory.build(new File(Resources.getResource("yaml/logging.yml").toURI()));
+        config = factory.build(configurationSourceProvider, "yaml/logging.yml");
     }
 
     @Test
@@ -62,7 +61,7 @@ class DefaultLoggingFactoryTest {
     void loggerLevelsCanBeOff() throws Exception {
         DefaultLoggingFactory config = null;
         try {
-            config = factory.build(new File(Resources.getResource("yaml/logging_level_off.yml").toURI()));
+            config = factory.build(configurationSourceProvider, "yaml/logging_level_off.yml");
             config.configure(new MetricRegistry(), "test-logger");
 
             final ILoggerFactory loggerContext = LoggerFactory.getILoggerFactory();
@@ -84,8 +83,7 @@ class DefaultLoggingFactoryTest {
 
     @Test
     void canParseNewLoggerFormat() throws Exception {
-        final DefaultLoggingFactory config = factory.build(
-                new File(Resources.getResource("yaml/logging_advanced.yml").toURI()));
+        final DefaultLoggingFactory config = factory.build(configurationSourceProvider, "yaml/logging_advanced.yml");
 
         assertThat(config.getLoggers()).contains(MapEntry.entry("com.example.app", new TextNode("INFO")));
 
@@ -122,10 +120,9 @@ class DefaultLoggingFactoryTest {
                 "default", tempDir.resolve("example").toFile().getAbsolutePath()
         ));
 
-        final String configPath = Resources.getResource("yaml/logging_advanced.yml").getFile();
         DefaultLoggingFactory config = null;
         try {
-            config = factory.build(new SubstitutingSourceProvider(new FileConfigurationSourceProvider(), substitutor), configPath);
+            config = factory.build(new SubstitutingSourceProvider(configurationSourceProvider, substitutor), "yaml/logging_advanced.yml");
             config.configure(new MetricRegistry(), "test-logger");
 
             LoggerFactory.getLogger("com.example.app").debug("Application debug log");
@@ -163,15 +160,15 @@ class DefaultLoggingFactoryTest {
 
     @Test
     void testResetAppenders() throws Exception {
-        final String configPath = Resources.getResource("yaml/logging.yml").getFile();
-        final DefaultLoggingFactory config = factory.build(new FileConfigurationSourceProvider(), configPath);
+        final DefaultLoggingFactory config = factory.build(configurationSourceProvider, "yaml/logging.yml");
         config.configure(new MetricRegistry(), "test-logger");
 
         config.reset();
 
         // There should be exactly one appender configured, a ConsoleAppender
         final Logger logger = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
-        assertThat(Lists.of(logger.iteratorForAppenders()))
+        assertThat(logger.iteratorForAppenders())
+            .toIterable()
             .hasAtLeastOneElementOfType(ConsoleAppender.class)
             .as("context").allMatch((Appender<?> a) -> a.getContext() != null)
             .as("started").allMatch(LifeCycle::isStarted)

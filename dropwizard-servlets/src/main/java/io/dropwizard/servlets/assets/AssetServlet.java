@@ -1,5 +1,6 @@
 package io.dropwizard.servlets.assets;
 
+import io.dropwizard.util.ByteStreams;
 import io.dropwizard.util.Resources;
 
 import javax.annotation.Nullable;
@@ -9,6 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
@@ -294,11 +296,13 @@ public class AssetServlet extends HttpServlet {
     }
 
     protected byte[] readResource(URL requestedResourceURL) throws IOException {
-        return Resources.toByteArray(requestedResourceURL);
+        try (InputStream inputStream = requestedResourceURL.openStream()) {
+            return ByteStreams.toByteArray(inputStream);
+        }
     }
 
     private boolean isCachedClientSide(HttpServletRequest req, CachedAsset cachedAsset) {
-        // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/If-Modified-Since 
+        // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/If-Modified-Since
         // Indicates that with the presense of If-None-Match If-Modified-Since should be ignored.
         String ifNoneMatchHeader = req.getHeader(IF_NONE_MATCH);
         if (ifNoneMatchHeader != null) {

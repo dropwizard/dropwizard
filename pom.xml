@@ -283,42 +283,6 @@
             </modules>
         </profile>
         <profile>
-            <id>jakarta-apis</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-enforcer-plugin</artifactId>
-                        <version>${maven-enforcer-plugin.version}</version>
-                        <executions>
-                            <execution>
-                                <id>enforce-jakarta-apis</id>
-                                <goals>
-                                    <goal>enforce</goal>
-                                </goals>
-                                <configuration>
-                                    <rules>
-                                        <bannedDependencies>
-                                            <excludes>
-                                                <!-- Replaced with jakarta.activation:jakarta.activation-api -->
-                                                <exclude>javax.activation:javax.activation-api</exclude>
-                                                <!-- Replaced with jakarta.servlet:jakarta.servlet-api -->
-                                                <exclude>javax.servlet:javax.servlet-api</exclude>
-                                                <!-- Replaced with jakarta.validation:jakarta.validation-api -->
-                                                <exclude>javax.validation:validation-api</exclude>
-                                                <!-- Replaced with jakarta.xml.bind:jakarta.xml.bind-api -->
-                                                <exclude>javax.xml.bind:jaxb-api</exclude>
-                                            </excludes>
-                                        </bannedDependencies>
-                                    </rules>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
             <id>release</id>
             <activation>
                 <property>

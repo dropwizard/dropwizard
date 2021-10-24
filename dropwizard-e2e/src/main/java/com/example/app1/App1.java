@@ -6,8 +6,8 @@ import io.dropwizard.Configuration;
 import io.dropwizard.jersey.optional.EmptyOptionalNoContentExceptionMapper;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import io.dropwizard.util.Throwables;
 import io.dropwizard.views.ViewBundle;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.eclipse.jetty.io.EofException;
 import org.glassfish.jersey.spi.ExtendedExceptionMapper;
 
@@ -50,7 +50,7 @@ public class App1 extends Application<Configuration> {
 
             @Override
             public boolean isMappable(WebApplicationException e) {
-                return Throwables.getRootCause(e).getClass() == MustacheNotFoundException.class;
+                return ExceptionUtils.indexOfThrowable(e, MustacheNotFoundException.class) != -1;
             }
         });
 

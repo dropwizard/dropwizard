@@ -70,10 +70,10 @@ class OptionalLongMessageBodyWriterTest extends AbstractJerseyTest {
     }
 
     @Test
-    void valueEmptyReturnsDefault() {
-        assertThat(target("optional-return/default").queryParam("id", "").request().get(Long.class))
-            .isEqualTo(target("optional-return/long/default").queryParam("id", "").request().get(Long.class))
-            .isEqualTo(0L);
+    void valueEmptyReturns404() {
+        assertThat(target("optional-return/default").queryParam("id", "").request().get())
+            .extracting(Response::getStatus)
+            .isEqualTo(404);
     }
 
     @Test

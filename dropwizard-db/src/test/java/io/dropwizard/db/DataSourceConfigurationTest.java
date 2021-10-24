@@ -1,13 +1,12 @@
 package io.dropwizard.db;
 
+import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.validation.Validators;
 import io.dropwizard.util.Duration;
-import io.dropwizard.util.Resources;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -112,19 +111,17 @@ class DataSourceConfigurationTest {
 
     @Test
     void testInitialSizeZeroIsAllowed() throws Exception {
-        DataSourceFactory ds = getDataSourceFactory("yaml/empty_initial_pool.yml");
-        assertThat(ds.getInitialSize()).isZero();
+        assertThat(getDataSourceFactory("yaml/empty_initial_pool.yml").getInitialSize()).isZero();
     }
 
     @Test
     void testEmptyDriverClassIsAllowed() throws Exception {
-        DataSourceFactory ds = getDataSourceFactory("yaml/empty_driver_class_db_pool.yml");
-        assertThat(ds.getDriverClass()).isNull();
+        assertThat(getDataSourceFactory("yaml/empty_driver_class_db_pool.yml").getDriverClass()).isNull();
     }
 
     private DataSourceFactory getDataSourceFactory(String resourceName) throws Exception {
         return new YamlConfigurationFactory<>(DataSourceFactory.class,
                 Validators.newValidator(), Jackson.newObjectMapper(), "dw")
-                .build(new File(Resources.getResource(resourceName).toURI()));
+                .build(new ResourceConfigurationSourceProvider(), resourceName);
     }
 }

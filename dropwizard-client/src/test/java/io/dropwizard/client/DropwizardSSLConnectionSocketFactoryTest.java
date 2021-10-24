@@ -15,6 +15,8 @@ import org.glassfish.jersey.client.ClientResponse;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import javax.net.ssl.HostnameVerifier;
@@ -36,7 +38,7 @@ import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.assertj.core.api.Assertions.catchThrowable;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.bouncycastle.jce.provider.BouncyCastleProvider.PROVIDER_NAME;
 
 @ExtendWith(DropwizardExtensionsSupport.class)
@@ -64,7 +66,7 @@ class DropwizardSSLConnectionSocketFactoryTest {
     }
 
     static {
-        Security.addProvider(new BouncyCastleProvider());
+        Security.insertProviderAt(new BouncyCastleProvider(), 1);
     }
 
     @AfterAll
@@ -147,6 +149,7 @@ class DropwizardSSLConnectionSocketFactoryTest {
     }
 
     @Test
+    @DisabledOnOs(OS.WINDOWS) // https://github.com/dropwizard/dropwizard/issues/4330
     void shouldReturn200IfAbleToClientAuth() {
         tlsConfiguration.setKeyStorePath(new File(ResourceHelpers.resourceFilePath("stores/client/keycert.p12")));
         tlsConfiguration.setKeyStorePassword("password");
@@ -169,6 +172,7 @@ class DropwizardSSLConnectionSocketFactoryTest {
     }
 
     @Test
+    @DisabledOnOs(OS.WINDOWS) // https://github.com/dropwizard/dropwizard/issues/4330
     void shouldReturn200IfAbleToClientAuthSpecifyingCertAliasForGoodCert() {
         tlsConfiguration.setKeyStorePath(new File(ResourceHelpers.resourceFilePath("stores/client/twokeys.p12")));
         tlsConfiguration.setKeyStorePassword("password");
@@ -208,17 +212,17 @@ class DropwizardSSLConnectionSocketFactoryTest {
     @Test
     void shouldErrorIfHostnameVerificationOnAndServerHostnameDoesntMatch() {
         final Client client = new JerseyClientBuilder(TLS_APP_RULE.getEnvironment()).using(jerseyClientConfiguration).build("bad_host_broken");
-        final Throwable exn = catchThrowable(() -> client.target(String.format("https://localhost:%d", TLS_APP_RULE.getPort(3))).request().get());
-        assertThat(exn).hasCauseExactlyInstanceOf(SSLPeerUnverifiedException.class);
-        assertThat(exn.getCause()).hasMessage("Certificate for <localhost> doesn't match any of the subject alternative names: []");
+        assertThatThrownBy(() -> client.target(String.format("https://localhost:%d", TLS_APP_RULE.getPort(3))).request().get())
+            .hasCauseExactlyInstanceOf(SSLPeerUnverifiedException.class)
+            .hasRootCauseMessage("Certificate for <localhost> doesn't match any of the subject alternative names: []");
     }
 
     @Test
     void shouldErrorIfHostnameVerificationOnAndServerHostnameMatchesAndFailVerifierSpecified() {
         final Client client = new JerseyClientBuilder(TLS_APP_RULE.getEnvironment()).using(jerseyClientConfiguration).using(new FailVerifier()).build("bad_host_broken_fail_verifier");
-        final Throwable exn = catchThrowable(() -> client.target(String.format("https://localhost:%d", TLS_APP_RULE.getLocalPort())).request().get());
-        assertThat(exn).hasCauseExactlyInstanceOf(SSLPeerUnverifiedException.class);
-        assertThat(exn.getCause()).hasMessage("Certificate for <localhost> doesn't match any of the subject alternative names: []");
+        assertThatThrownBy(() -> client.target(String.format("https://localhost:%d", TLS_APP_RULE.getLocalPort())).request().get())
+            .hasCauseExactlyInstanceOf(SSLPeerUnverifiedException.class)
+            .hasRootCauseMessage("Certificate for <localhost> doesn't match any of the subject alternative names: []");
     }
 
     @Test
@@ -237,7 +241,7 @@ class DropwizardSSLConnectionSocketFactoryTest {
     }
 
     @Test
-    void shouldBeOkIfHostnameVerificationOffAndServerHostnameMatchesAndFailVerfierSpecified() {
+    void shouldBeOkIfHostnameVerificationOffAndServerHostnameMatchesAndFailVerifierSpecified() {
         tlsConfiguration.setVerifyHostname(false);
         final Client client = new JerseyClientBuilder(TLS_APP_RULE.getEnvironment()).using(jerseyClientConfiguration).using(new FailVerifier()).build("bad_host_fail_verifier_working");
         final Response response = client.target(String.format("https://localhost:%d", TLS_APP_RULE.getLocalPort())).request().get();
@@ -255,6 +259,7 @@ class DropwizardSSLConnectionSocketFactoryTest {
     }
 
     @Test
+    @DisabledOnOs(OS.WINDOWS) // https://github.com/dropwizard/dropwizard/issues/4330
     void shouldSucceedWithBcProvider() {
         // switching host verifier off for simplicity
         tlsConfiguration.setVerifyHostname(false);

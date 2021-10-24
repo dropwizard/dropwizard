@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 import java.util.Locale;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
 
 class SyslogAppenderFactoryTest {
 
@@ -83,9 +82,8 @@ class SyslogAppenderFactoryTest {
     @Test
     void syslogFacilityTest() {
         for (SyslogAppenderFactory.Facility facility : SyslogAppenderFactory.Facility.values()) {
-            assertThatCode(() ->
-                    SyslogAppender.facilityStringToint(facility.toString().toLowerCase(Locale.ENGLISH)))
-                .doesNotThrowAnyException();
+            assertThat(SyslogAppender.facilityStringToint(facility.toString().toLowerCase(Locale.ENGLISH)))
+                .isNotNegative();
         }
     }
 }

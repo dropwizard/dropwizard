@@ -2,8 +2,6 @@ package io.dropwizard.jersey.validation;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import io.dropwizard.util.Lists;
-import io.dropwizard.util.Strings;
 import io.dropwizard.validation.ValidationMethod;
 import io.dropwizard.validation.selfvalidating.SelfValidating;
 import org.apache.commons.lang3.StringUtils;
@@ -18,11 +16,12 @@ import javax.validation.Path;
 import javax.validation.metadata.ConstraintDescriptor;
 import java.lang.reflect.Field;
 import java.time.Duration;
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import static org.glassfish.jersey.model.Parameter.Source.BEAN_PARAM;
 import static org.glassfish.jersey.model.Parameter.Source.UNKNOWN;
@@ -71,8 +70,9 @@ public class ConstraintMessage {
             // A present entity means that the request body failed validation but
             // if the request entity is simple (eg. byte[], String, etc), the entity
             // string will be empty, so prepend a message about the request body
-            final String prefix = Strings.isNullOrEmpty(entity.get()) ? "The request body" : entity.get();
-            return prefix + " " ;
+            return entity.filter(e -> !e.isEmpty())
+                .orElse("The request body")
+                + " ";
         }
 
         // Check if the violation occurred on a *Param annotation and if so,
@@ -87,8 +87,7 @@ public class ConstraintMessage {
      * friendly string representation of where the error occurred (eg. "patient.name")
      */
     public static Optional<String> isRequestEntity(ConstraintViolation<?> violation, Invocable invocable) {
-        final Collection<Path.Node> propertyPath = Lists.of(violation.getPropertyPath());
-        final Path.Node parent = propertyPath.stream()
+        final Path.Node parent = StreamSupport.stream(violation.getPropertyPath().spliterator(), false)
                 .skip(1L)
                 .findFirst()
                 .orElse(null);
@@ -100,7 +99,7 @@ public class ConstraintMessage {
         if (parent.getKind() == ElementKind.PARAMETER) {
             final Parameter param = parameters.get(parent.as(Path.ParameterNode.class).getParameterIndex());
             if (param.getSource().equals(UNKNOWN)) {
-                final String path = propertyPath.stream()
+                final String path = StreamSupport.stream(violation.getPropertyPath().spliterator(), false)
                         .skip(2L)
                         .map(Path.Node::toString)
                         .collect(Collectors.joining("."));
@@ -116,7 +115,8 @@ public class ConstraintMessage {
      * Gets a method parameter (or a parameter field) name, if the violation raised in it.
      */
     private static Optional<String> getMemberName(ConstraintViolation<?> violation, Invocable invocable) {
-        final List<Path.Node> propertyPath = Lists.of(violation.getPropertyPath());
+        final List<Path.Node> propertyPath = new ArrayList<>();
+        violation.getPropertyPath().iterator().forEachRemaining(propertyPath::add);
         final int size = propertyPath.size();
         if (size < 2) {
             return Optional.empty();
@@ -194,7 +194,7 @@ public class ConstraintMessage {
             }
         }
 
-        // This shouldn't hit, but if it does, we'll return a unprocessable entity
+        // This shouldn't hit, but if it does, we'll return an unprocessable entity
         return 422;
     }
 }

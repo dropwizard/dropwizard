@@ -7,7 +7,6 @@ import com.codahale.metrics.health.HealthCheckRegistry;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import io.dropwizard.health.response.HealthResponderFactory;
 import io.dropwizard.health.response.HealthResponseProvider;
@@ -27,6 +26,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static java.util.Collections.singletonList;
 
 @JsonTypeName("default")
 public class DefaultHealthFactory implements HealthFactory {
@@ -56,7 +57,7 @@ public class DefaultHealthFactory implements HealthFactory {
     @NotNull
     @Size(min = 1)
     @JsonProperty
-    private List<String> healthCheckUrlPaths = ImmutableList.of(DEFAULT_PATH);
+    private List<String> healthCheckUrlPaths = singletonList(DEFAULT_PATH);
 
     @Valid
     @JsonProperty("responseProvider")

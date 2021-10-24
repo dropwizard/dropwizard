@@ -11,14 +11,14 @@ import java.lang.annotation.Annotation;
 
 import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.catchThrowableOfType;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 class FuzzyEnumParamConverterProviderTest {
     private final FuzzyEnumParamConverterProvider paramConverterProvider = new FuzzyEnumParamConverterProvider();
 
     private enum Fuzzy {
         A_1,
-        A_2;
+        A_2
     }
 
     private enum WithToString {
@@ -170,12 +170,12 @@ class FuzzyEnumParamConverterProviderTest {
         assertThat(converter.fromString("A_1 ")).isSameAs(Fuzzy.A_1);
         assertThat(converter.fromString("A_2")).isSameAs(Fuzzy.A_2);
 
-        final WebApplicationException throwable = catchThrowableOfType(() -> converter.fromString("B"), WebApplicationException.class);
-        assertThat(throwable.getResponse())
-            .extracting(Response::getEntity)
-            .matches(e -> ((ErrorMessage) e).getCode() == 400)
-            .matches(e -> ((ErrorMessage) e).getMessage().contains("A_1"))
-            .matches(e -> ((ErrorMessage) e).getMessage().contains("A_2"));
+        assertThatExceptionOfType(WebApplicationException.class)
+            .isThrownBy(() -> converter.fromString("B"))
+            .extracting(e -> (ErrorMessage)e.getResponse().getEntity())
+            .matches(e -> e.getCode() == 400)
+            .matches(e -> e.getMessage().contains("A_1"))
+            .matches(e -> e.getMessage().contains("A_2"));
     }
 
 
@@ -195,44 +195,44 @@ class FuzzyEnumParamConverterProviderTest {
         final ParamConverter<ExplicitFromString> converter = getConverter(ExplicitFromString.class);
         assertThat(converter.fromString("1")).isSameAs(ExplicitFromString.A);
         assertThat(converter.fromString("2")).isSameAs(ExplicitFromString.B);
-        final WebApplicationException throwable = catchThrowableOfType(() -> converter.fromString("3"), WebApplicationException.class);
-        assertThat(throwable.getResponse())
-            .extracting(Response::getEntity)
-            .matches(e -> ((ErrorMessage) e).getCode() == 400)
-            .matches(e -> ((ErrorMessage) e).getMessage().contains("is not a valid ExplicitFromString"));
+        assertThatExceptionOfType(WebApplicationException.class)
+            .isThrownBy(() -> converter.fromString("3"))
+            .extracting(e -> (ErrorMessage)e.getResponse().getEntity())
+            .matches(e -> e.getCode() == 400)
+            .matches(e -> e.getMessage().contains("is not a valid ExplicitFromString"));
     }
 
     @Test
     void testEnumViaExplicitFromStringThatThrowsWebApplicationException() {
         final ParamConverter<ExplicitFromStringThrowsWebApplicationException> converter =
             getConverter(ExplicitFromStringThrowsWebApplicationException.class);
-        final WebApplicationException throwable = catchThrowableOfType(() -> converter.fromString("3"), WebApplicationException.class);
-        assertThat(throwable.getResponse())
-            .extracting(Response::getStatusInfo)
-            .matches(e -> ((Response.StatusType) e).getStatusCode() == 418)
-            .matches(e -> ((Response.StatusType) e).getReasonPhrase().contains("I am a teapot"));
+        assertThatExceptionOfType(WebApplicationException.class)
+            .isThrownBy(() -> converter.fromString("3"))
+            .extracting(e -> e.getResponse().getStatusInfo())
+            .matches(e -> e.getStatusCode() == 418)
+            .matches(e -> e.getReasonPhrase().contains("I am a teapot"));
     }
 
     @Test
     void testEnumViaExplicitFromStringThatThrowsOtherException() {
         final ParamConverter<ExplicitFromStringThrowsOtherException> converter =
             getConverter(ExplicitFromStringThrowsOtherException.class);
-        final WebApplicationException throwable = catchThrowableOfType(() -> converter.fromString("1"), WebApplicationException.class);
-        assertThat(throwable.getResponse())
-            .extracting(Response::getEntity)
-            .matches(e -> ((ErrorMessage) e).getCode() == 400)
-            .matches(e -> ((ErrorMessage) e).getMessage().contains("Failed to convert"));
+        assertThatExceptionOfType(WebApplicationException.class)
+            .isThrownBy(() -> converter.fromString("1"))
+            .extracting(e -> (ErrorMessage)e.getResponse().getEntity())
+            .matches(e -> e.getCode() == 400)
+            .matches(e -> e.getMessage().contains("Failed to convert"));
     }
 
     @Test
     void testEnumViaExplicitFromStringNonStatic() {
         final ParamConverter<ExplicitFromStringNonStatic> converter = getConverter(ExplicitFromStringNonStatic.class);
-        final WebApplicationException throwable = catchThrowableOfType(() -> converter.fromString("1"), WebApplicationException.class);
-        assertThat(throwable.getResponse())
-            .extracting(Response::getEntity)
-            .matches(e -> ((ErrorMessage) e).getCode() == 400)
-            .matches(e -> ((ErrorMessage) e).getMessage().contains("A"))
-            .matches(e -> ((ErrorMessage) e).getMessage().contains("B"));
+        assertThatExceptionOfType(WebApplicationException.class)
+            .isThrownBy(() -> converter.fromString("1"))
+            .extracting(e -> (ErrorMessage)e.getResponse().getEntity())
+            .matches(e -> e.getCode() == 400)
+            .matches(e -> e.getMessage().contains("A"))
+            .matches(e -> e.getMessage().contains("B"));
 
         assertThat(converter.fromString("A")).isSameAs(ExplicitFromStringNonStatic.A);
     }
@@ -240,10 +240,10 @@ class FuzzyEnumParamConverterProviderTest {
     @Test
     void testEnumViaExplicitFromStringPrivate() {
         final ParamConverter<ExplicitFromStringPrivate> converter = getConverter(ExplicitFromStringPrivate.class);
-        final WebApplicationException throwable = catchThrowableOfType(() -> converter.fromString("1"), WebApplicationException.class);
-        assertThat(throwable.getResponse())
-            .extracting(Response::getEntity)
-            .matches(e -> ((ErrorMessage) e).getCode() == 400)
-            .matches(e -> ((ErrorMessage) e).getMessage().contains("Not permitted to call"));
+        assertThatExceptionOfType(WebApplicationException.class)
+            .isThrownBy(() -> converter.fromString("1"))
+            .extracting(e -> (ErrorMessage)e.getResponse().getEntity())
+            .matches(e -> e.getCode() == 400)
+            .matches(e -> e.getMessage().contains("Not permitted to call"));
     }
 }

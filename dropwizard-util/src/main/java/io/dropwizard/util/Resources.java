@@ -2,7 +2,6 @@ package io.dropwizard.util;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.URL;
 import java.nio.charset.Charset;
@@ -43,6 +42,7 @@ public final class Resources {
      * @return a byte array containing all the bytes from the URL
      * @throws IOException if an I/O error occurs
      */
+    @Deprecated
     public static byte[] toByteArray(URL url) throws IOException {
         try (InputStream inputStream = url.openStream()) {
             return ByteStreams.toByteArray(inputStream);
@@ -58,9 +58,10 @@ public final class Resources {
      * @return a string containing all the characters from the URL
      * @throws IOException if an I/O error occurs.
      */
+    @Deprecated
     public static String toString(URL url, Charset charset) throws IOException {
         try (InputStream inputStream = url.openStream()) {
-            return CharStreams.toString(new InputStreamReader(inputStream, charset));
+            return new String(ByteStreams.toByteArray(inputStream), charset);
         }
     }
 
@@ -71,9 +72,10 @@ public final class Resources {
      * @param to the output stream
      * @throws IOException if an I/O error occurs
      */
+    @Deprecated
     public static void copy(URL from, OutputStream to) throws IOException {
         try (InputStream inputStream = from.openStream()) {
-            ByteStreams.copy(inputStream, to);
+            ByteStreams.copyInternal(inputStream, to);
         }
     }
 }

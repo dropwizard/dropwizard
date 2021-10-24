@@ -2,13 +2,12 @@ package io.dropwizard.health.response;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Charsets;
 import io.dropwizard.health.HealthCheckType;
 import io.dropwizard.health.HealthStateAggregator;
 import io.dropwizard.health.HealthStateView;
 import io.dropwizard.health.HealthStatusChecker;
 import io.dropwizard.jackson.Jackson;
-import io.dropwizard.util.Resources;
+import io.dropwizard.util.ByteStreams;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,13 +16,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.ws.rs.core.MediaType;
 import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -34,9 +33,6 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class JsonHealthResponseProviderTest {
-    private static final String READY_TYPE = HealthCheckType.READY.name().toLowerCase();
-    private static final String ALIVE_TYPE = HealthCheckType.ALIVE.name().toLowerCase();
-
     private final ObjectMapper mapper = Jackson.newObjectMapper();
     @Mock
     private HealthStatusChecker healthStatusChecker;
@@ -51,7 +47,7 @@ class JsonHealthResponseProviderTest {
     }
 
     @Test
-    void shouldHandleSingleHealthStateViewCorrectly() {
+    void shouldHandleSingleHealthStateViewCorrectly() throws IOException {
         // given
         final HealthStateView view = new HealthStateView("foo", true, HealthCheckType.READY, true);
         final Map<String, Collection<String>> queryParams = Collections.singletonMap(
@@ -65,11 +61,11 @@ class JsonHealthResponseProviderTest {
         // then
         assertThat(response.isHealthy()).isTrue();
         assertThat(response.getContentType()).isEqualTo(MediaType.APPLICATION_JSON);
-        assertThat(response.getMessage()).isEqualToIgnoringWhitespace(fixture("json/single-healthy-response.json"));
+        assertThat(response.getMessage()).isEqualToIgnoringWhitespace(fixture("/json/single-healthy-response.json"));
     }
 
     @Test
-    void shouldHandleMultipleHealthStateViewsCorrectly() {
+    void shouldHandleMultipleHealthStateViewsCorrectly() throws IOException {
         // given
         final HealthStateView fooView = new HealthStateView("foo", true, HealthCheckType.READY, true);
         final HealthStateView barView = new HealthStateView("bar", true, HealthCheckType.ALIVE, true);
@@ -91,7 +87,7 @@ class JsonHealthResponseProviderTest {
         // then
         assertThat(response.isHealthy()).isTrue();
         assertThat(response.getContentType()).isEqualTo(MediaType.APPLICATION_JSON);
-        assertThat(response.getMessage()).isEqualToIgnoringWhitespace(fixture("json/multiple-healthy-responses.json"));
+        assertThat(response.getMessage()).isEqualToIgnoringWhitespace(fixture("/json/multiple-healthy-responses.json"));
     }
 
     @Test
@@ -131,13 +127,7 @@ class JsonHealthResponseProviderTest {
         verifyNoInteractions(healthStatusChecker);
     }
 
-    // Duplicated from dropwizard-testing due to circular deps
-    private String fixture(final String filename) {
-        final URL resource = Resources.getResource(filename);
-        try {
-            return Resources.toString(resource, Charsets.UTF_8).trim();
-        } catch (final IOException e) {
-            throw new IllegalArgumentException(e);
-        }
+    private String fixture(final String filename) throws IOException {
+        return new String(ByteStreams.toByteArray(getClass().getResourceAsStream(filename)), UTF_8);
     }
 }

@@ -9,7 +9,7 @@ jobs:
     env:
       JAVA_OPTS: "-XX:+TieredCompilation -XX:TieredStopAtLevel=1"
     steps:
-    - uses: actions/checkout@v2.3.4
+    - uses: actions/checkout@v2.3.5
     - name: Set up JDK
       uses: joschi/setup-jdk@v2.4.0
       with:
@@ -26,7 +26,7 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-maven-${{ secrets.CACHE_VERSION }}-
     - name: Build and Deploy
-      run: ./mvnw -B -V -ntp -Pjakarta-apis -DperformRelease=true deploy
+      run: ./mvnw -B -V -ntp -DperformRelease=true deploy
       env:
         CI_DEPLOY_USERNAME: ${{ secrets.CI_DEPLOY_USERNAME }}
         CI_DEPLOY_PASSWORD: ${{ secrets.CI_DEPLOY_PASSWORD }}

@@ -1,14 +1,13 @@
 package io.dropwizard.health;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.io.Resources;
+import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.validation.Validators;
 import org.junit.jupiter.api.Test;
 
 import javax.validation.Validator;
-import java.io.File;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -20,8 +19,7 @@ class HealthCheckConfigurationTest {
 
     @Test
     void shouldBuildHealthCheckConfigurationFromYaml() throws Exception {
-        final File yml = new File(Resources.getResource("yml/healthCheck.yml").toURI());
-        final HealthCheckConfiguration healthCheckConfig = configFactory.build(yml);
+        final HealthCheckConfiguration healthCheckConfig = configFactory.build(new ResourceConfigurationSourceProvider(), "/yml/healthCheck.yml");
 
         assertThat(healthCheckConfig.getName()).isEqualTo("cassandra");
         assertThat(healthCheckConfig.isCritical()).isTrue();

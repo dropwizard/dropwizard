@@ -52,7 +52,7 @@ class ExecutorServiceBuilderTest {
 
     @Test
     @SuppressWarnings("Slf4jFormatShouldBeConst")
-    void testGiveNoWarningAboutMaximumPoolSizeAndBoundedQueue() throws InterruptedException {
+    void testGiveNoWarningAboutMaximumPoolSizeAndBoundedQueue() {
         ExecutorService exe = executorServiceBuilder
             .minThreads(4)
             .maxThreads(8)
@@ -86,7 +86,7 @@ class ExecutorServiceBuilderTest {
      */
     @Test
     @SuppressWarnings("Slf4jFormatShouldBeConst")
-    void shouldNotWarnWhenSettingUpCachedThreadPool() throws InterruptedException {
+    void shouldNotWarnWhenSettingUpCachedThreadPool() {
         ExecutorService exe = executorServiceBuilder
             .minThreads(0)
             .maxThreads(Integer.MAX_VALUE)

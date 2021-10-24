@@ -1,7 +1,6 @@
 package io.dropwizard.client;
 
 import io.dropwizard.util.DirectExecutorService;
-import io.dropwizard.util.Strings;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.StatusLine;
@@ -87,8 +86,8 @@ public class DropwizardApacheConnector implements Connector {
             final CloseableHttpResponse apacheResponse = client.execute(apacheRequest);
 
             final StatusLine statusLine = apacheResponse.getStatusLine();
-            final String reasonPhrase = Strings.nullToEmpty(statusLine.getReasonPhrase());
-            final Response.StatusType status = Statuses.from(statusLine.getStatusCode(), reasonPhrase);
+            final String reasonPhrase = statusLine.getReasonPhrase();
+            final Response.StatusType status = Statuses.from(statusLine.getStatusCode(), reasonPhrase == null ? "" : reasonPhrase);
 
             final ClientResponse jerseyResponse = new ClientResponse(status, jerseyRequest);
             for (Header header : apacheResponse.getAllHeaders()) {

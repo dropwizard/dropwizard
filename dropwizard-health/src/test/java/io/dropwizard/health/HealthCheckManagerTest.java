@@ -3,9 +3,8 @@ package io.dropwizard.health;
 import com.codahale.metrics.Counter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheck;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import io.dropwizard.util.Duration;
+import io.dropwizard.util.Maps;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -14,6 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
@@ -21,6 +21,9 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static java.util.Collections.singletonList;
+import static java.util.Collections.singletonMap;
+import static java.util.Collections.unmodifiableList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -58,7 +61,7 @@ class HealthCheckManagerTest {
         config.setName(NAME);
         config.setCritical(true);
         config.setSchedule(new Schedule());
-        final HealthCheckManager manager = new HealthCheckManager(Collections.singletonList(config), scheduler,
+        final HealthCheckManager manager = new HealthCheckManager(singletonList(config), scheduler,
             new MetricRegistry(), SHUTDOWN_WAIT, true, Collections.emptyList());
 
         // when
@@ -74,7 +77,7 @@ class HealthCheckManagerTest {
         final ScheduledHealthCheck healthCheck = mock(ScheduledHealthCheck.class);
         final HealthCheckManager manager = new HealthCheckManager(Collections.emptyList(), scheduler,
             new MetricRegistry(), SHUTDOWN_WAIT, true, Collections.emptyList());
-        manager.setChecks(ImmutableMap.of(NAME, healthCheck));
+        manager.setChecks(singletonMap(NAME, healthCheck));
 
         // when
         manager.onHealthCheckRemoved(NAME, mock(HealthCheck.class));
@@ -104,7 +107,7 @@ class HealthCheckManagerTest {
         config.setCritical(true);
         config.setInitialState(false);
         config.setSchedule(new Schedule());
-        final HealthCheckManager manager = new HealthCheckManager(Collections.singletonList(config), scheduler,
+        final HealthCheckManager manager = new HealthCheckManager(singletonList(config), scheduler,
             new MetricRegistry(), SHUTDOWN_WAIT, false, Collections.emptyList());
         manager.initializeAppHealth();
         final HealthCheck check = mock(HealthCheck.class);
@@ -132,7 +135,7 @@ class HealthCheckManagerTest {
         config.setName(NAME);
         config.setCritical(true);
         config.setSchedule(new Schedule());
-        final HealthCheckManager manager = new HealthCheckManager(Collections.singletonList(config), scheduler,
+        final HealthCheckManager manager = new HealthCheckManager(singletonList(config), scheduler,
             new MetricRegistry(), SHUTDOWN_WAIT, true, Collections.emptyList());
         manager.initializeAppHealth();
         final HealthCheck check = mock(HealthCheck.class);
@@ -160,7 +163,7 @@ class HealthCheckManagerTest {
         config.setName(NAME);
         config.setType(HealthCheckType.ALIVE);
         config.setSchedule(new Schedule());
-        final HealthCheckManager manager = new HealthCheckManager(Collections.singletonList(config), scheduler,
+        final HealthCheckManager manager = new HealthCheckManager(singletonList(config), scheduler,
             new MetricRegistry(), SHUTDOWN_WAIT, true, Collections.emptyList());
         manager.initializeAppHealth();
         final HealthCheck check = mock(HealthCheck.class);
@@ -188,7 +191,7 @@ class HealthCheckManagerTest {
         config.setName(NAME);
         config.setCritical(true);
         config.setSchedule(new Schedule());
-        final HealthCheckManager manager = new HealthCheckManager(Collections.singletonList(config), scheduler,
+        final HealthCheckManager manager = new HealthCheckManager(singletonList(config), scheduler,
             new MetricRegistry(), SHUTDOWN_WAIT, true, Collections.emptyList());
         final HealthCheck check = mock(HealthCheck.class);
 
@@ -234,7 +237,7 @@ class HealthCheckManagerTest {
         config.setCritical(false);
         config.setSchedule(new Schedule());
         final HealthCheck check = mock(HealthCheck.class);
-        final HealthCheckManager manager = new HealthCheckManager(Collections.singletonList(config), scheduler,
+        final HealthCheckManager manager = new HealthCheckManager(singletonList(config), scheduler,
             new MetricRegistry(), SHUTDOWN_WAIT, true, Collections.emptyList());
         manager.initializeAppHealth();
 
@@ -251,16 +254,18 @@ class HealthCheckManagerTest {
     @Test
     void shouldNotChangeServerStateWhenNonCriticalHealthCheckRecovers() {
         // given
+        final List<HealthCheckConfiguration> configs = new ArrayList<>();
         final HealthCheckConfiguration nonCriticalConfig = new HealthCheckConfiguration();
         nonCriticalConfig.setName(NAME);
         nonCriticalConfig.setCritical(false);
         nonCriticalConfig.setSchedule(new Schedule());
+        configs.add(nonCriticalConfig);
         final HealthCheckConfiguration criticalConfig = new HealthCheckConfiguration();
         criticalConfig.setName(NAME_2);
         criticalConfig.setCritical(true);
         criticalConfig.setSchedule(new Schedule());
-        final List<HealthCheckConfiguration> configs = ImmutableList.of(nonCriticalConfig, criticalConfig);
-        final HealthCheckManager manager = new HealthCheckManager(configs, scheduler, new MetricRegistry(),
+        configs.add(criticalConfig);
+        final HealthCheckManager manager = new HealthCheckManager(unmodifiableList(configs), scheduler, new MetricRegistry(),
             SHUTDOWN_WAIT, true, Collections.emptyList());
         final HealthCheck check = mock(HealthCheck.class);
 
@@ -314,15 +319,17 @@ class HealthCheckManagerTest {
     void shouldRecordNumberOfHealthyAndUnhealthyHealthChecks() {
         // given
         final Schedule schedule = new Schedule();
+        final List<HealthCheckConfiguration> configs = new ArrayList<>();
         final HealthCheckConfiguration nonCriticalConfig = new HealthCheckConfiguration();
         nonCriticalConfig.setName(NAME);
         nonCriticalConfig.setCritical(false);
         nonCriticalConfig.setSchedule(schedule);
+        configs.add(nonCriticalConfig);
         final HealthCheckConfiguration criticalConfig = new HealthCheckConfiguration();
         criticalConfig.setName(NAME_2);
         criticalConfig.setCritical(true);
         criticalConfig.setSchedule(schedule);
-        final List<HealthCheckConfiguration> configs = ImmutableList.of(nonCriticalConfig, criticalConfig);
+        configs.add(criticalConfig);
         final HealthCheck check = mock(HealthCheck.class);
         final MetricRegistry metrics = new MetricRegistry();
         final AtomicInteger healthyCounter = new AtomicInteger();
@@ -343,7 +350,7 @@ class HealthCheckManagerTest {
             public void onStateChanged(String healthCheckName, boolean healthy) {
             }
         };
-        final HealthCheckManager manager = new HealthCheckManager(configs, scheduler, metrics, SHUTDOWN_WAIT, true,
+        final HealthCheckManager manager = new HealthCheckManager(unmodifiableList(configs), scheduler, metrics, SHUTDOWN_WAIT, true,
             Collections.singleton(countingListener));
 
         final ScheduledHealthCheck check1 = new ScheduledHealthCheck(NAME, READY, nonCriticalConfig.isCritical(), check,
@@ -352,7 +359,7 @@ class HealthCheckManagerTest {
         final ScheduledHealthCheck check2 = new ScheduledHealthCheck(NAME_2, READY, criticalConfig.isCritical(), check,
             schedule, new State(NAME, schedule.getFailureAttempts(), schedule.getSuccessAttempts(), true, manager),
             metrics.counter(NAME_2 + ".healthy"), metrics.counter(NAME_2 + ".unhealthy"));
-        manager.setChecks(ImmutableMap.of(NAME, check1, NAME_2, check2));
+        manager.setChecks(Maps.of(NAME, check1, NAME_2, check2));
 
         // then
         assertThat(metrics.gauge(manager.getAggregateHealthyName(), null).getValue())
@@ -390,7 +397,7 @@ class HealthCheckManagerTest {
         checkConfig.setName("check1");
         checkConfig.setCritical(true);
         checkConfig.setSchedule(schedule);
-        final List<HealthCheckConfiguration> configs = ImmutableList.of(checkConfig);
+        final List<HealthCheckConfiguration> configs = singletonList(checkConfig);
         final ScheduledExecutorService executorService = new ScheduledThreadPoolExecutor(1);
         final HealthCheckScheduler scheduler = new HealthCheckScheduler(executorService);
         final MetricRegistry metrics = new MetricRegistry();

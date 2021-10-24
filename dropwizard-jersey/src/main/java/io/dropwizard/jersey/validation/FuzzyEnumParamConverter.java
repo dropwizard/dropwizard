@@ -2,7 +2,6 @@ package io.dropwizard.jersey.validation;
 
 import io.dropwizard.jersey.errors.ErrorMessage;
 import io.dropwizard.util.Enums;
-import io.dropwizard.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,7 +48,7 @@ public class FuzzyEnumParamConverter<T> implements ParamConverter<T> {
     @Override
     @Nullable
     public T fromString(String value) {
-        if (Strings.isNullOrEmpty(value)) {
+        if (value == null || value.isEmpty()) {
             return null;
         }
 
