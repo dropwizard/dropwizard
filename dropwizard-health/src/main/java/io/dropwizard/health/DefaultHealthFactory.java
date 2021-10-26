@@ -76,10 +76,12 @@ public class DefaultHealthFactory implements HealthFactory {
         this.enabled = enabled;
     }
 
+    @JsonProperty("healthChecks")
     public List<HealthCheckConfiguration> getHealthCheckConfigurations() {
         return healthChecks;
     }
 
+    @JsonProperty("healthChecks")
     public void setHealthCheckConfigurations(final List<HealthCheckConfiguration> healthChecks) {
         this.healthChecks = healthChecks;
     }
@@ -132,10 +134,18 @@ public class DefaultHealthFactory implements HealthFactory {
         this.healthResponderFactory = healthResponderFactory;
     }
 
+    /**
+     * @deprecated use {@link #getHealthCheckConfigurations()} instead
+     */
+    @Deprecated
     public List<HealthCheckConfiguration> getHealthChecks() {
         return healthChecks;
     }
 
+    /**
+     * @deprecated use {@link #setHealthCheckConfigurations(List)} instead
+     */
+    @Deprecated
     public void setHealthChecks(List<HealthCheckConfiguration> healthChecks) {
         this.healthChecks = healthChecks;
     }

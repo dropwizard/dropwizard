@@ -241,7 +241,9 @@ public class HttpClientBuilder {
      *
      * @param httpProcessor a {@link HttpProcessor} instance
      * @return {@code} this
+     * @deprecated
      */
+    @Deprecated
     public HttpClientBuilder using(HttpProcessor httpProcessor) {
         this.httpProcessor = httpProcessor;
         return this;
@@ -252,7 +254,9 @@ public class HttpClientBuilder {
      *
      * @param serviceUnavailableRetryStrategy a {@link ServiceUnavailableRetryStrategy} instance
      * @return {@code} this
+     * @deprecated will be combined with {@link #using(HttpRequestRetryHandler)} in {@code using(HttpRequestRetryStrategy)}
      */
+    @Deprecated
     public HttpClientBuilder using(ServiceUnavailableRetryStrategy serviceUnavailableRetryStrategy) {
         this.serviceUnavailableRetryStrategy = serviceUnavailableRetryStrategy;
         return this;
