@@ -51,8 +51,11 @@ public class AccessJsonLayoutBaseFactory extends AbstractJsonLayoutBaseFactory<I
             AccessAttribute.TIMESTAMP);
 
     private Set<String> responseHeaders = Collections.emptySet();
+    private boolean flattenResponseHeaders;
     private Set<String> requestHeaders = Collections.emptySet();
+    private boolean flattenRequestHeaders;
     private Set<String> requestAttributes = Collections.emptySet();
+    private boolean flattenRequestAttributes;
 
     @JsonProperty
     public Set<String> getResponseHeaders() {
@@ -62,6 +65,22 @@ public class AccessJsonLayoutBaseFactory extends AbstractJsonLayoutBaseFactory<I
     @JsonProperty
     public void setResponseHeaders(Set<String> responseHeaders) {
         this.responseHeaders = responseHeaders;
+    }
+
+    /**
+     * @since 2.0
+     */
+    @JsonProperty
+    public boolean isFlattenResponseHeaders() {
+        return flattenResponseHeaders;
+    }
+
+    /**
+     * @since 2.0
+     */
+    @JsonProperty
+    public void setFlattenResponseHeaders(boolean flattenResponseHeaders) {
+        this.flattenResponseHeaders = flattenResponseHeaders;
     }
 
     @JsonProperty
@@ -78,6 +97,22 @@ public class AccessJsonLayoutBaseFactory extends AbstractJsonLayoutBaseFactory<I
      * @since 2.0
      */
     @JsonProperty
+    public boolean isFlattenRequestHeaders() {
+        return flattenRequestHeaders;
+    }
+
+    /**
+     * @since 2.0
+     */
+    @JsonProperty
+    public void setFlattenRequestHeaders(boolean flattenRequestHeaders) {
+        this.flattenRequestHeaders = flattenRequestHeaders;
+    }
+
+    /**
+     * @since 2.0
+     */
+    @JsonProperty
     public Set<String> getRequestAttributes() {
         return requestAttributes;
     }
@@ -88,6 +123,22 @@ public class AccessJsonLayoutBaseFactory extends AbstractJsonLayoutBaseFactory<I
     @JsonProperty
     public void setRequestAttributes(Set<String> requestAttributes) {
         this.requestAttributes = requestAttributes;
+    }
+
+    /**
+     * @since 2.0
+     */
+    @JsonProperty
+    public boolean isFlattenRequestAttributes() {
+        return flattenRequestAttributes;
+    }
+
+    /**
+     * @since 2.0
+     */
+    @JsonProperty
+    public void setFlattenRequestAttributes(boolean flattenRequestAttributes) {
+        this.flattenRequestAttributes = flattenRequestAttributes;
     }
 
     @JsonProperty
@@ -112,6 +163,9 @@ public class AccessJsonLayoutBaseFactory extends AbstractJsonLayoutBaseFactory<I
         jsonLayout.setRequestHeaders(requestHeaders);
         jsonLayout.setResponseHeaders(responseHeaders);
         jsonLayout.setRequestAttributes(requestAttributes);
+        jsonLayout.setFlattenRequestHeaders(flattenRequestHeaders);
+        jsonLayout.setFlattenResponseHeaders(flattenResponseHeaders);
+        jsonLayout.setFlattenRequestAttributes(flattenRequestAttributes);
         return jsonLayout;
     }
 }

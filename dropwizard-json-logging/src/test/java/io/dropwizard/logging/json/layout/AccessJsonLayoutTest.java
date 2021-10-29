@@ -163,6 +163,26 @@ public class AccessJsonLayoutTest {
     }
 
     @Test
+    void testFlattenRequestHeaders() {
+        final AccessJsonLayout accessJsonLayout = new AccessJsonLayout(jsonFormatter, timestampFormatter,
+            EnumSet.noneOf(AccessAttribute.class), Collections.emptyMap(), Collections.emptyMap());
+        accessJsonLayout.setRequestHeaders(Sets.of("Host", "User-Agent"));
+        accessJsonLayout.setFlattenRequestHeaders(true);
+
+        assertThat(accessJsonLayout.toJsonMap(event)).isEqualTo(requestHeaders);
+    }
+
+    @Test
+    void testFlattenResponseHeaders() {
+        final AccessJsonLayout accessJsonLayout = new AccessJsonLayout(jsonFormatter, timestampFormatter,
+            EnumSet.noneOf(AccessAttribute.class), Collections.emptyMap(), Collections.emptyMap());
+        accessJsonLayout.setResponseHeaders(Sets.of("Transfer-Encoding", "Content-Type"));
+        accessJsonLayout.setFlattenResponseHeaders(true);
+
+        assertThat(accessJsonLayout.toJsonMap(event)).isEqualTo(responseHeaders);
+    }
+
+    @Test
     void testAddAdditionalFields() {
         final Map<String, Object> additionalFields = Maps.of(
                 "serviceName", "user-service",
@@ -215,6 +235,50 @@ public class AccessJsonLayoutTest {
         assertThat(accessJsonLayout.toJsonMap(event))
             .containsEntry("requestAttributes", attributes);
     }
+
+
+    @Test
+    void testFlattenedRequestAttributes() {
+        final String attribute1 = "attribute1";
+        final String attribute2 = "attribute2";
+        final String attribute3 = "attribute3";
+
+        final Map<String, String> attributes =
+            Maps.of(
+                attribute1, "value1",
+                attribute2, "value2",
+                attribute3, "value3");
+
+        when(event.getAttribute(eq(attribute1))).thenReturn(attributes.get(attribute1));
+        when(event.getAttribute(eq(attribute2))).thenReturn(attributes.get(attribute2));
+        when(event.getAttribute(eq(attribute3))).thenReturn(attributes.get(attribute3));
+
+        final AccessJsonLayout accessJsonLayout = new AccessJsonLayout(jsonFormatter, timestampFormatter,
+            EnumSet.noneOf(AccessAttribute.class), Collections.emptyMap(), Collections.emptyMap());
+        accessJsonLayout.setRequestAttributes(attributes.keySet());
+        accessJsonLayout.setFlattenRequestAttributes(true);
+
+        assertThat(accessJsonLayout.toJsonMap(event))
+            .isEqualTo(attributes);
+    }
+
+    @Test
+    void testFlattenedRequestAttributesWithCustomizedName() {
+        final String attribute = "attribute";
+        final String attr = "attr";
+        final String val = "value";
+
+        when(event.getAttribute(eq(attribute))).thenReturn(val);
+
+        final AccessJsonLayout accessJsonLayout = new AccessJsonLayout(jsonFormatter, timestampFormatter,
+            EnumSet.noneOf(AccessAttribute.class), Collections.singletonMap(attribute,attr), Collections.emptyMap());
+        accessJsonLayout.setRequestAttributes(Collections.singleton(attribute));
+        accessJsonLayout.setFlattenRequestAttributes(true);
+
+        assertThat(accessJsonLayout.toJsonMap(event))
+            .containsExactly(entry(attr,val));
+    }
+
 
     @Test
     public void testStartAndStop() {
