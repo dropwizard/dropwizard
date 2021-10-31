@@ -1996,13 +1996,19 @@ input and output formats by creating classes which implement Jersey's ``MessageB
 instances of them (or their classes if they depend on Jersey's ``@Context`` injection) to your
 application's ``Environment`` on initialization.
 
+.. _man-core-filters:
+
+Filters
+=======
+
+There might be cases when you want to filter out requests or modify them before they reach your Resources.
+
 .. _man-core-jersey-filters:
 
 Jersey filters
 --------------
 
-There might be cases when you want to filter out requests or modify them before they reach your Resources. Jersey
-has a rich api for `filters and interceptors`_ that can be used directly in Dropwizard.
+Jersey has a rich api for `filters and interceptors`_ that can be used directly in Dropwizard.
 You can stop the request from reaching your resources by throwing a ``WebApplicationException``. Alternatively,
 you can use filters to modify inbound requests or outbound responses.
 
