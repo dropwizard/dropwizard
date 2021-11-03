@@ -28,6 +28,7 @@ class SelfValidationTest {
     public void clearAllLoggers() {
         //this must be a clear all because the validation runs in other threads
         TestLoggerFactory.clearAll();
+        TestLoggerFactory.getInstance().setPrintLevel(Level.OFF);
     }
 
     @SelfValidating
