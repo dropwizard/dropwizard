@@ -24,7 +24,15 @@ import java.util.stream.Collectors;
  * the validation methods efficiently and then calls them.
  */
 public class SelfValidatingValidator implements ConstraintValidator<SelfValidating, Object> {
-    private static final Logger log = LoggerFactory.getLogger(SelfValidatingValidator.class);
+    private final Logger log;
+
+    public SelfValidatingValidator() {
+        this(LoggerFactory.getLogger(SelfValidatingValidator.class));
+    }
+
+    SelfValidatingValidator(Logger logger) {
+        log = logger;
+    }
 
     @SuppressWarnings("rawtypes")
     private final ConcurrentMap<Class<?>, List<ValidationCaller>> methodMap = new ConcurrentHashMap<>();
