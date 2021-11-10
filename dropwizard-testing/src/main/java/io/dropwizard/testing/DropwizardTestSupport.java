@@ -10,6 +10,7 @@ import io.dropwizard.cli.ServerCommand;
 import io.dropwizard.configuration.ConfigurationSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.lifecycle.Managed;
+import io.dropwizard.logging.LoggingUtil;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.util.Sets;
@@ -17,6 +18,7 @@ import net.sourceforge.argparse4j.inf.Namespace;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
+import org.slf4j.Logger;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
@@ -238,6 +240,7 @@ public class DropwizardTestSupport<C extends Configuration> {
             stopIfRequired();
         } finally {
             resetConfigOverrides();
+            LoggingUtil.getLoggerContext().getLogger(Logger.ROOT_LOGGER_NAME).detachAndStopAllAppenders();
         }
     }
 
