@@ -11,7 +11,6 @@ import org.apache.http.client.methods.RequestBuilder;
 import org.apache.http.entity.AbstractHttpEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.VersionInfo;
-import org.glassfish.jersey.apache.connector.LocalizationMessages;
 import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.client.ClientRequest;
 import org.glassfish.jersey.client.ClientResponse;
@@ -49,6 +48,8 @@ import java.util.concurrent.Future;
  * </p>
  */
 public class DropwizardApacheConnector implements Connector {
+
+    private static final String ERROR_BUFFERING_ENTITY = "Error buffering the entity.";
 
     private static final String APACHE_HTTP_CLIENT_VERSION = VersionInfo
             .loadVersionInfo("org.apache.http.client", DropwizardApacheConnector.class.getClassLoader())
@@ -289,7 +290,7 @@ public class DropwizardApacheConnector implements Connector {
             try {
                 clientRequest.writeEntity();
             } catch (IOException e) {
-                throw new ProcessingException(LocalizationMessages.ERROR_BUFFERING_ENTITY(), e);
+                throw new ProcessingException(ERROR_BUFFERING_ENTITY, e);
             }
             buffer = stream.toByteArray();
             setChunked(false);
