@@ -240,7 +240,6 @@ public class DropwizardTestSupport<C extends Configuration> {
             stopIfRequired();
         } finally {
             resetConfigOverrides();
-            LoggingUtil.getLoggerContext().getLogger(Logger.ROOT_LOGGER_NAME).detachAndStopAllAppenders();
         }
     }
 
@@ -266,6 +265,8 @@ public class DropwizardTestSupport<C extends Configuration> {
         // Don't leak logging appenders into other test cases
         if (configuration != null) {
             configuration.getLoggingFactory().reset();
+        } else {
+            LoggingUtil.getLoggerContext().getLogger(Logger.ROOT_LOGGER_NAME).detachAndStopAllAppenders();
         }
     }
 
