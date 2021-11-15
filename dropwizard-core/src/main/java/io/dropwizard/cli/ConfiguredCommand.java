@@ -1,11 +1,13 @@
 package io.dropwizard.cli;
 
+import ch.qos.logback.classic.LoggerContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.Configuration;
 import io.dropwizard.configuration.ConfigurationException;
 import io.dropwizard.configuration.ConfigurationFactory;
 import io.dropwizard.configuration.ConfigurationFactoryFactory;
 import io.dropwizard.configuration.ConfigurationSourceProvider;
+import io.dropwizard.logging.LoggingUtil;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.util.Generics;
 import net.sourceforge.argparse4j.inf.Argument;
@@ -111,6 +113,9 @@ public abstract class ConfiguredCommand<T extends Configuration> extends Command
         if (configuration != null) {
             configuration.getLoggingFactory().stop();
         }
+        LoggerContext loggerContext = LoggingUtil.getLoggerContext();
+        loggerContext.stop();
+        loggerContext.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME).detachAndStopAllAppenders();
     }
 
     /**
