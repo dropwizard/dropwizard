@@ -26,7 +26,9 @@ class TcpServer {
                 try {
                     socket = serverSocket.accept();
                 } catch (IOException e) {
-                    fail("Error setting up logging server", e);
+                    if (!Thread.currentThread().isInterrupted()) {
+                        fail("Error setting up logging server", e);
+                    }
                     continue;
                 }
                 new Thread(() -> readAndVerifyData(socket)).start();
