@@ -8,11 +8,12 @@ import java.io.IOException;
 import java.net.ConnectException;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
+import java.net.SocketTimeoutException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class TcpHealthCheckTest {
     private ServerSocket serverSocket;
@@ -40,7 +41,7 @@ class TcpHealthCheckTest {
     @Test
     void tcpHealthCheckShouldReturnUnhealthyIfCannotConnect() throws IOException {
         serverSocket.close();
-        assertThrows(ConnectException.class, () -> tcpHealthCheck.check());
+        assertThatThrownBy(() -> tcpHealthCheck.check()).isInstanceOfAny(ConnectException.class, SocketTimeoutException.class);
     }
 
     @Test
@@ -57,6 +58,6 @@ class TcpHealthCheckTest {
             return true;
         });
 
-        assertThrows(ConnectException.class, () -> tcpHealthCheck.check());
+        assertThatThrownBy(() -> tcpHealthCheck.check()).isInstanceOfAny(ConnectException.class, SocketTimeoutException.class);
     }
 }
