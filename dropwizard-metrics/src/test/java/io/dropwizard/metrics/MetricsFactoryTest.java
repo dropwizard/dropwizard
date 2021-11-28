@@ -35,12 +35,12 @@ class MetricsFactoryTest {
     }
 
     @Test
-    void hasADefaultFrequency() throws Exception {
+    void hasADefaultFrequency() {
         assertThat(config.getFrequency()).isEqualTo(Duration.seconds(10));
     }
 
     @Test
-    void hasReporters() throws Exception {
+    void hasReporters() {
         CsvReporterFactory csvReporter = new CsvReporterFactory();
         csvReporter.setFile(new File("metrics"));
         assertThat(config.getReporters()).hasSize(3);
@@ -48,23 +48,23 @@ class MetricsFactoryTest {
 
     @Test
     void canReadExcludedAndIncludedAttributes() {
-        assertThat(config.getReporters()).hasSize(3);
-        final ReporterFactory reporterFactory = config.getReporters().get(0);
-        assertThat(reporterFactory).isInstanceOf(ConsoleReporterFactory.class);
-        final ConsoleReporterFactory consoleReporterFactory = (ConsoleReporterFactory) reporterFactory;
-        assertThat(consoleReporterFactory.getIncludesAttributes()).isEqualTo(EnumSet.of(
-            MetricAttribute.P50, MetricAttribute.P95, MetricAttribute.P98, MetricAttribute.P99));
-        assertThat(consoleReporterFactory.getExcludesAttributes()).isEqualTo(EnumSet.of(MetricAttribute.P98));
+        assertThat(config.getReporters())
+            .hasSize(3)
+            .element(0)
+            .isInstanceOfSatisfying(ConsoleReporterFactory.class, consoleReporterFactory -> assertThat(consoleReporterFactory)
+                .satisfies(factory -> assertThat(factory.getIncludesAttributes())
+                    .isEqualTo(EnumSet.of(MetricAttribute.P50, MetricAttribute.P95, MetricAttribute.P98, MetricAttribute.P99)))
+                    .satisfies(factory -> assertThat(factory.getExcludesAttributes()).isEqualTo(EnumSet.of(MetricAttribute.P98))));
     }
 
     @Test
     void canReadDefaultExcludedAndIncludedAttributes() {
-        assertThat(config.getReporters()).hasSize(3);
-        final ReporterFactory reporterFactory = config.getReporters().get(1);
-        assertThat(reporterFactory).isInstanceOf(CsvReporterFactory.class);
-        final CsvReporterFactory csvReporterFactory = (CsvReporterFactory) reporterFactory;
-        assertThat(csvReporterFactory.getIncludesAttributes()).isEqualTo(EnumSet.allOf(MetricAttribute.class));
-        assertThat(csvReporterFactory.getExcludesAttributes()).isEmpty();
+        assertThat(config.getReporters())
+            .hasSize(3)
+            .element(1)
+            .isInstanceOfSatisfying(CsvReporterFactory.class, csvReporterFactory -> assertThat(csvReporterFactory)
+                .satisfies(factory -> assertThat(factory.getIncludesAttributes()).isEqualTo(EnumSet.allOf(MetricAttribute.class)))
+                .satisfies(factory -> assertThat(factory.getExcludesAttributes()).isEmpty()));
     }
 
     @Test

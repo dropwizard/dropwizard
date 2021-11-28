@@ -38,7 +38,7 @@ class MigrationsBundleTest {
     };
 
     @Test
-    void testMigrationsBundle() throws Exception {
+    void testMigrationsBundle() {
         Bootstrap<TestMigrationConfiguration> bootstrap = new Bootstrap<>(application);
         assertThat(migrationsBundle.name()).isEqualTo("db");
         assertThat(migrationsBundle.getMigrationsFileName()).isEqualTo("migrations.xml");
@@ -47,8 +47,8 @@ class MigrationsBundleTest {
         migrationsBundle.initialize(bootstrap);
 
         assertThat(bootstrap.getCommands())
-            .hasSize(1)
-            .satisfies(list -> assertThat(list.get(0)).isInstanceOf(DbCommand.class));
+            .singleElement()
+            .isInstanceOf(DbCommand.class);
     }
 
     @Test

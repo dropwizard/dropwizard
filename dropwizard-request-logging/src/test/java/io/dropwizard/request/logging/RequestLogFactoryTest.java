@@ -31,10 +31,10 @@ class RequestLogFactoryTest {
 
     @Test
     void fileAppenderFactoryIsSet() {
-        assertThat(logbackAccessRequestLogFactory).isNotNull();
-        assertThat(logbackAccessRequestLogFactory.getAppenders()).isNotNull();
-        assertThat(logbackAccessRequestLogFactory.getAppenders().size()).isEqualTo(1);
-        assertThat(logbackAccessRequestLogFactory.getAppenders().get(0))
+        assertThat(logbackAccessRequestLogFactory)
+            .extracting(LogbackAccessRequestLogFactory::getAppenders)
+            .asList()
+            .singleElement()
             .isInstanceOf(FileAppenderFactory.class);
     }
 

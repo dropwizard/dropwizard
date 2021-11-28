@@ -7,7 +7,6 @@ import org.eclipse.jetty.util.component.ContainerLifeCycle;
 import org.eclipse.jetty.util.component.LifeCycle;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -24,7 +23,7 @@ class LifecycleEnvironmentTest {
     private final LifecycleEnvironment environment = new LifecycleEnvironment(new MetricRegistry());
 
     @Test
-    void managesLifeCycleObjects() throws Exception {
+    void managesLifeCycleObjects() {
         final LifeCycle lifeCycle = mock(LifeCycle.class);
         environment.manage(lifeCycle);
 
@@ -36,21 +35,17 @@ class LifecycleEnvironmentTest {
     }
 
     @Test
-    void managesManagedObjects() throws Exception {
+    void managesManagedObjects() {
         final Managed managed = mock(Managed.class);
         environment.manage(managed);
 
         final ContainerLifeCycle container = new ContainerLifeCycle();
         environment.attach(container);
 
-        final Object bean = new ArrayList<>(container.getBeans()).get(0);
-        assertThat(bean)
-            .isInstanceOf(JettyManaged.class);
-
-        final JettyManaged jettyManaged = (JettyManaged) bean;
-
-        assertThat(jettyManaged.getManaged())
-            .isEqualTo(managed);
+        assertThat(container.getBeans())
+            .singleElement()
+            .isInstanceOfSatisfying(JettyManaged.class, jettyManaged ->
+                assertThat(jettyManaged.getManaged()).isEqualTo(managed));
     }
 
     @Test
