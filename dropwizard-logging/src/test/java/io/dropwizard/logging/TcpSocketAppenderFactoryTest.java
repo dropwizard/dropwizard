@@ -1,6 +1,5 @@
 package io.dropwizard.logging;
 
-import ch.qos.logback.classic.spi.ILoggingEvent;
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
@@ -53,14 +52,14 @@ class TcpSocketAppenderFactoryTest {
     @Test
     void testParseConfig() throws Exception {
         DefaultLoggingFactory loggingFactory = yamlConfigurationFactory.build(new ResourceConfigurationSourceProvider(), "/yaml/logging-tcp-custom.yml");
-        assertThat(loggingFactory.getAppenders()).hasSize(1);
-        TcpSocketAppenderFactory<ILoggingEvent> tcpAppenderFactory = (TcpSocketAppenderFactory<ILoggingEvent>)
-            loggingFactory.getAppenders().get(0);
-        assertThat(tcpAppenderFactory.getHost()).isEqualTo("172.16.11.245");
-        assertThat(tcpAppenderFactory.getPort()).isEqualTo(17001);
-        assertThat(tcpAppenderFactory.getConnectionTimeout()).isEqualTo(Duration.milliseconds(100));
-        assertThat(tcpAppenderFactory.getSendBufferSize()).isEqualTo(DataSize.kibibytes(2));
-        assertThat(tcpAppenderFactory.isImmediateFlush()).isFalse();
+        assertThat(loggingFactory.getAppenders())
+            .singleElement()
+            .isInstanceOfSatisfying(TcpSocketAppenderFactory.class, tcpAppenderFactory -> assertThat(tcpAppenderFactory)
+                .satisfies(factory -> assertThat(factory.getHost()).isEqualTo( "172.16.11.245"))
+                .satisfies(factory -> assertThat(factory.getPort()).isEqualTo(17001))
+                .satisfies(factory -> assertThat(factory.getConnectionTimeout()).isEqualTo(Duration.milliseconds(100)))
+                .satisfies(factory -> assertThat(factory.getSendBufferSize()).isEqualTo(DataSize.kibibytes(2)))
+                .satisfies(factory -> assertThat(factory.isImmediateFlush()).isFalse()));
     }
 
     @Test

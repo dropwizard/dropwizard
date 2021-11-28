@@ -540,11 +540,13 @@ class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
                 .request().post(Entity.json("[ {\"examples\": [ {\"id\":1 } ] } ]"));
 
         assertThat(response.getStatus()).isEqualTo(200);
-        List<ListExample> res = response.readEntity(new GenericType<List<ListExample>>() {
-        });
-        assertThat(res).hasSize(1);
-        assertThat(res.get(0).examples).hasSize(1);
-        assertThat(res.get(0).examples.get(0).id).isEqualTo(1);
+        assertThat(response.readEntity(new GenericType<List<ListExample>>() {
+        }))
+            .singleElement()
+            .extracting("examples").asList()
+            .singleElement()
+            .extracting("id")
+            .isEqualTo(1);
     }
 
     @Test

@@ -121,12 +121,12 @@ public abstract class BaseConfigurationFactoryTest {
         CaffeineSpec cacheBuilderSpec = CaffeineSpec.parse("initialCapacity=0,maximumSize=0");
     }
 
-    static class NonInsatiableExample {
+    static class NonInstantiableExample {
 
         @JsonProperty
         String name = "Code Hale";
 
-        NonInsatiableExample(@JsonProperty("name") String name) {
+        NonInstantiableExample(@JsonProperty("name") String name) {
             this.name = name;
         }
     }
@@ -181,19 +181,19 @@ public abstract class BaseConfigurationFactoryTest {
         assertThat(example.getName())
                 .isEqualTo("Coda Hale");
 
-        assertThat(example.getType().get(0))
-                .isEqualTo("coder");
-        assertThat(example.getType().get(1))
-                .isEqualTo("wizard");
+        assertThat(example.getType())
+            .satisfies(type -> assertThat(type).element(0).isEqualTo("coder"))
+            .satisfies(type -> assertThat(type).element(1).isEqualTo("wizard"));
 
         assertThat(example.getProperties())
                 .contains(MapEntry.entry("debug", "true"),
                         MapEntry.entry("settings.enabled", "false"));
 
         assertThat(example.getServers())
-                .hasSize(3);
-        assertThat(example.getServers().get(0).getPort())
-                .isEqualTo(8080);
+            .hasSize(3)
+            .element(0)
+            .extracting(ExampleServer::getPort)
+            .isEqualTo(8080);
 
     }
 
@@ -225,51 +225,48 @@ public abstract class BaseConfigurationFactoryTest {
     void handlesArrayOverride() throws Exception {
         System.setProperty("dw.type", "coder,wizard,overridden");
         final Example example = factory.build(configurationSourceProvider, validFile);
-        assertThat(example.getType().get(2))
-                .isEqualTo("overridden");
-        assertThat(example.getType().size())
-                .isEqualTo(3);
+        assertThat(example.getType())
+            .hasSize(3)
+            .element(2)
+            .isEqualTo("overridden");
     }
 
     @Test
     void handlesArrayOverrideEscaped() throws Exception {
         System.setProperty("dw.type", "coder,wizard,overr\\,idden");
         final Example example = factory.build(configurationSourceProvider, validFile);
-        assertThat(example.getType().get(2))
-                .isEqualTo("overr,idden");
-        assertThat(example.getType().size())
-                .isEqualTo(3);
+        assertThat(example.getType())
+            .hasSize(3)
+            .element(2)
+            .isEqualTo("overr,idden");
     }
 
     @Test
     void handlesSingleElementArrayOverride() throws Exception {
         System.setProperty("dw.type", "overridden");
         final Example example = factory.build(configurationSourceProvider, validFile);
-        assertThat(example.getType().get(0))
-                .isEqualTo("overridden");
-        assertThat(example.getType().size())
-                .isEqualTo(1);
+        assertThat(example.getType())
+            .singleElement()
+            .isEqualTo("overridden");
     }
 
     @Test
     void handlesArrayOverrideIntoValidNoTypeFile() throws Exception {
         System.setProperty("dw.type", "coder,wizard,overridden");
         final Example example = factory.build(configurationSourceProvider, validNoTypeFile);
-        assertThat(example.getType().get(2))
-            .isEqualTo("overridden");
-        assertThat(example.getType().size())
-            .isEqualTo(3);
-    }
+
+        assertThat(example.getType())
+            .hasSize(3)
+            .element(2)
+            .isEqualTo("overridden");}
 
     @Test
     void overridesArrayWithIndices() throws Exception {
         System.setProperty("dw.type[1]", "overridden");
         final Example example = factory.build(configurationSourceProvider, validFile);
 
-        assertThat(example.getType().get(0))
-                .isEqualTo("coder");
-        assertThat(example.getType().get(1))
-                .isEqualTo("overridden");
+        assertThat(example.getType())
+            .containsExactly("coder", "overridden");
     }
 
     @Test
@@ -277,10 +274,8 @@ public abstract class BaseConfigurationFactoryTest {
         System.setProperty("dw.type[0]", "overridden");
         final Example example = factory.build(configurationSourceProvider, validFile);
 
-        assertThat(example.getType().get(0))
-                .isEqualTo("overridden");
-        assertThat(example.getType().get(1))
-                .isEqualTo("wizard");
+        assertThat(example.getType())
+            .containsExactly("overridden", "wizard");
     }
 
     @Test
@@ -290,11 +285,9 @@ public abstract class BaseConfigurationFactoryTest {
         final Example example = factory.build(configurationSourceProvider, validFile);
 
         assertThat(example.getServers())
-                .hasSize(3);
-        assertThat(example.getServers().get(0).getPort())
-                .isEqualTo(7000);
-        assertThat(example.getServers().get(2).getPort())
-                .isEqualTo(9000);
+            .hasSize(3)
+            .satisfies(servers -> assertThat(servers).element(0).extracting(ExampleServer::getPort).isEqualTo(7000))
+            .satisfies(servers -> assertThat(servers).element(2).extracting(ExampleServer::getPort).isEqualTo(9000));
     }
 
     @Test
@@ -318,7 +311,8 @@ public abstract class BaseConfigurationFactoryTest {
     void throwsAnExceptionOnArrayOverrideWithInvalidType() {
         System.setProperty("dw.servers", "one,two");
 
-        assertThatExceptionOfType(ConfigurationParsingException.class).isThrownBy(() -> factory.build(configurationSourceProvider, validFile));
+        assertThatExceptionOfType(ConfigurationParsingException.class)
+            .isThrownBy(() -> factory.build(configurationSourceProvider, validFile));
     }
 
     @Test
@@ -347,7 +341,7 @@ public abstract class BaseConfigurationFactoryTest {
     void throwsAnExceptionOnEmptyFiles() {
         assertThatExceptionOfType(ConfigurationParsingException.class)
             .isThrownBy(() -> factory.build(configurationSourceProvider, emptyFile))
-            .withMessageContaining(" * Configuration at " + emptyFile.toString() + " must not be empty");
+            .withMessageContaining(" * Configuration at " + emptyFile + " must not be empty");
     }
 
     @Test
@@ -374,12 +368,16 @@ public abstract class BaseConfigurationFactoryTest {
                 new YamlConfigurationFactory<>(ExampleWithDefaults.class, validator, Jackson.newObjectMapper(), "dw")
                         .build();
 
-        assertThat(example.name).isEqualTo("Coda Hale Overridden");
-        assertThat(example.type.get(2)).isEqualTo("overridden");
-        assertThat(example.type.size()).isEqualTo(3);
-        assertThat(example.properties).containsEntry("settings.enabled", "true");
-        assertThat(example.servers.get(0).getPort()).isEqualTo(8090);
-        assertThat(example.servers.get(2).getPort()).isEqualTo(8092);
+        assertThat(example)
+            .satisfies(eg -> assertThat(eg.name).isEqualTo("Coda Hale Overridden"))
+            .satisfies(eg -> assertThat(eg.type)
+                .hasSize(3)
+                .element(2)
+                .isEqualTo("overridden"))
+            .satisfies(eg -> assertThat(eg.properties).containsEntry("settings.enabled", "true"))
+            .satisfies(eg -> assertThat(eg.servers)
+                .satisfies(servers -> assertThat(servers).element(0).extracting(ExampleServer::getPort).isEqualTo(8090))
+                .satisfies(servers -> assertThat(servers).element(2).extracting(ExampleServer::getPort).isEqualTo(8092)));
     }
 
     @Test
@@ -388,23 +386,25 @@ public abstract class BaseConfigurationFactoryTest {
                 new YamlConfigurationFactory<>(ExampleWithDefaults.class, validator, Jackson.newObjectMapper(), "dw")
                         .build();
 
-        assertThat(example.name).isEqualTo("Coda Hale");
-        assertThat(example.type).isEqualTo(Arrays.asList("coder", "wizard"));
-        assertThat(example.properties).isEqualTo(Maps.of("debug", "true", "settings.enabled", "false"));
-        assertThat(example.servers.get(0).getPort()).isEqualTo(8080);
-        assertThat(example.servers.get(1).getPort()).isEqualTo(8081);
-        assertThat(example.servers.get(2).getPort()).isEqualTo(8082);
+        assertThat(example)
+            .satisfies(eg -> assertThat(eg.name).isEqualTo("Coda Hale"))
+            .satisfies(eg -> assertThat(eg.type).containsExactly("coder", "wizard"))
+            .satisfies(eg -> assertThat(eg.properties).containsOnly(MapEntry.entry("debug", "true"), MapEntry.entry("settings.enabled", "false")))
+            .satisfies(eg -> assertThat(eg.servers)
+                .satisfies(servers -> assertThat(servers).element(0).extracting(ExampleServer::getPort).isEqualTo(8080))
+                .satisfies(servers -> assertThat(servers).element(1).extracting(ExampleServer::getPort).isEqualTo(8081))
+                .satisfies(servers -> assertThat(servers).element(2).extracting(ExampleServer::getPort).isEqualTo(8082)));
     }
 
     @Test
     void throwsAnExceptionIfDefaultConfigurationCantBeInstantiated() {
         System.setProperty("dw.name", "Coda Hale Overridden");
-        final YamlConfigurationFactory<NonInsatiableExample> factory =
-            new YamlConfigurationFactory<>(NonInsatiableExample.class, validator, Jackson.newObjectMapper(), "dw");
+        final YamlConfigurationFactory<NonInstantiableExample> factory =
+            new YamlConfigurationFactory<>(NonInstantiableExample.class, validator, Jackson.newObjectMapper(), "dw");
         assertThatIllegalArgumentException()
             .isThrownBy(factory::build)
             .withMessage("Unable to create an instance of the configuration class: " +
-                "'io.dropwizard.configuration.BaseConfigurationFactoryTest.NonInsatiableExample'");
+                "'io.dropwizard.configuration.BaseConfigurationFactoryTest.NonInstantiableExample'");
     }
 
     @Test
