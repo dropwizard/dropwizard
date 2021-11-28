@@ -91,18 +91,18 @@ class DefaultLoggingFactoryTest {
         assertThat(newApp).isNotNull();
         final LoggerConfiguration newAppConfiguration = objectMapper.treeToValue(newApp, LoggerConfiguration.class);
         assertThat(newAppConfiguration.getLevel()).isEqualTo("DEBUG");
-        assertThat(newAppConfiguration.getAppenders()).hasSize(1);
-        final AppenderFactory<ILoggingEvent> appenderFactory = newAppConfiguration.getAppenders().get(0);
-        assertThat(appenderFactory).isInstanceOf(FileAppenderFactory.class);
-        final FileAppenderFactory<ILoggingEvent> fileAppenderFactory = (FileAppenderFactory<ILoggingEvent>) appenderFactory;
-        assertThat(fileAppenderFactory.getCurrentLogFilename()).isEqualTo("${new_app}.log");
-        assertThat(fileAppenderFactory.getArchivedLogFilenamePattern()).isEqualTo("${new_app}-%d.log.gz");
-        assertThat(fileAppenderFactory.getArchivedFileCount()).isEqualTo(5);
-        assertThat(fileAppenderFactory.getBufferSize().toKibibytes()).isEqualTo(256);
-        final List<FilterFactory<ILoggingEvent>> filterFactories = fileAppenderFactory.getFilterFactories();
-        assertThat(filterFactories).hasSize(2);
-        assertThat(filterFactories.get(0)).isExactlyInstanceOf(TestFilterFactory.class);
-        assertThat(filterFactories.get(1)).isExactlyInstanceOf(SecondTestFilterFactory.class);
+        assertThat(newAppConfiguration.getAppenders())
+            .singleElement()
+            .isInstanceOfSatisfying(FileAppenderFactory.class, fileAppenderFactory ->
+                assertThat(fileAppenderFactory)
+                    .satisfies(f -> assertThat(f.getCurrentLogFilename()).isEqualTo("${new_app}.log"))
+                    .satisfies(f -> assertThat(f.getArchivedLogFilenamePattern()).isEqualTo("${new_app}-%d.log.gz"))
+                    .satisfies(f -> assertThat(f.getArchivedFileCount()).isEqualTo(5))
+                    .satisfies(f -> assertThat(f.getBufferSize().toKibibytes()).isEqualTo(256))
+                    .extracting(FileAppenderFactory::getFilterFactories).asList()
+                    .hasSize(2)
+                    .satisfies(factories -> assertThat(factories).element(0).isExactlyInstanceOf(TestFilterFactory.class))
+                    .satisfies(factories -> assertThat(factories).element(1).isExactlyInstanceOf(SecondTestFilterFactory.class)));
 
         final JsonNode legacyApp = config.getLoggers().get("com.example.legacyApp");
         assertThat(legacyApp).isNotNull();

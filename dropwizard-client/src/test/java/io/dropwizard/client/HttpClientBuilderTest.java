@@ -342,7 +342,7 @@ class HttpClientBuilderTest {
         );
         when(response.headerIterator(HTTP.CONN_KEEP_ALIVE)).thenReturn(iterator);
 
-        assertThat(strategy.getKeepAliveDuration(response, context)).isEqualTo(50000);
+        assertThat(strategy.getKeepAliveDuration(response, context)).isEqualTo(50_000);
     }
 
     @Test
@@ -695,10 +695,10 @@ class HttpClientBuilderTest {
             (List<? extends Header>) getInaccessibleField(httpClientBuilderClass, "defaultHeaders")
                 .get(apacheBuilder);
 
-        assertThat(defaultHeaders).hasSize(1);
-        final Header header = defaultHeaders.get(0);
-        assertThat(header.getName()).isEqualTo(HttpHeaders.ACCEPT_LANGUAGE);
-        assertThat(header.getValue()).isEqualTo("de");
+        assertThat(defaultHeaders)
+            .singleElement()
+            .satisfies(header -> assertThat(header.getName()).isEqualTo(HttpHeaders.ACCEPT_LANGUAGE))
+            .satisfies(header -> assertThat(header.getValue()).isEqualTo("de"));
     }
 
     @Test
@@ -745,22 +745,18 @@ class HttpClientBuilderTest {
 
     @Test
     void configureCredentialReturnsNTCredentialsForNTLMConfig() {
-        AuthConfiguration ntlmConfig = new AuthConfiguration("username", "password", "NTLM", "realm", "hostname", "domain", "NT");
-
-        Credentials credentials = builder.configureCredentials(ntlmConfig);
-        assertThat(credentials).isInstanceOf(NTCredentials.class);
-        assertThat(credentials.getPassword()).isEqualTo("password");
-        assertThat(credentials.getUserPrincipal().getName()).isEqualTo("DOMAIN\\username");
+        assertThat(builder.configureCredentials(new AuthConfiguration("username", "password", "NTLM", "realm", "hostname", "domain", "NT")))
+            .isInstanceOfSatisfying(NTCredentials.class, credentials -> assertThat(credentials)
+                .satisfies(c -> assertThat(c.getPassword()).isEqualTo("password"))
+                .satisfies(c -> assertThat(c.getUserPrincipal().getName()).isEqualTo("DOMAIN\\username")));
     }
 
     @Test
-    void configureCredentialReturnsNTCredentialsForBasicConfig() {
-        AuthConfiguration ntlmConfig = new AuthConfiguration("username", "password");
-
-        Credentials credentials = builder.configureCredentials(ntlmConfig);
-        assertThat(credentials).isInstanceOf(UsernamePasswordCredentials.class);
-        assertThat(credentials.getPassword()).isEqualTo("password");
-        assertThat(credentials.getUserPrincipal().getName()).isEqualTo("username");
+    void configureCredentialReturnsUserNamePasswordCredentialsForBasicConfig() {
+        assertThat(builder.configureCredentials(new AuthConfiguration("username", "password")))
+            .isInstanceOfSatisfying(UsernamePasswordCredentials.class, upCredentials -> assertThat(upCredentials)
+                .satisfies(c -> assertThat(c.getPassword()).isEqualTo("password"))
+                .satisfies(c -> assertThat(c.getUserPrincipal().getName()).isEqualTo("username")));
     }
 
     private Object spyHttpClientBuilderField(final String fieldName, final Object obj) throws Exception {

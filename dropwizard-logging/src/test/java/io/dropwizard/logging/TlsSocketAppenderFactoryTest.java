@@ -1,6 +1,5 @@
 package io.dropwizard.logging;
 
-import ch.qos.logback.classic.spi.ILoggingEvent;
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
@@ -87,26 +86,26 @@ class TlsSocketAppenderFactoryTest {
     void testParseCustomConfiguration() throws Exception {
         DefaultLoggingFactory loggingFactory = yamlConfigurationFactory
             .build(new ResourceConfigurationSourceProvider(), "yaml/logging-tls-custom.yml");
-        assertThat(loggingFactory.getAppenders()).hasSize(1);
-        TlsSocketAppenderFactory<ILoggingEvent> appenderFactory = (TlsSocketAppenderFactory<ILoggingEvent>)
-            loggingFactory.getAppenders().get(0);
-        assertThat(appenderFactory.getHost()).isEqualTo("172.16.11.244");
-        assertThat(appenderFactory.getPort()).isEqualTo(17002);
-        assertThat(appenderFactory.getKeyStorePath()).isEqualTo("/path/to/keystore.p12");
-        assertThat(appenderFactory.getKeyStorePassword()).isEqualTo("keystore_pass");
-        assertThat(appenderFactory.getKeyStoreType()).isEqualTo("PKCS12");
-        assertThat(appenderFactory.getKeyStoreProvider()).isEqualTo("BC");
-        assertThat(appenderFactory.getTrustStorePath()).isEqualTo("/path/to/trust_store.jks");
-        assertThat(appenderFactory.getTrustStorePassword()).isEqualTo("trust_store_pass");
-        assertThat(appenderFactory.getTrustStoreType()).isEqualTo("JKS");
-        assertThat(appenderFactory.getTrustStoreProvider()).isEqualTo("SUN");
-        assertThat(appenderFactory.getJceProvider()).isEqualTo("Conscrypt");
-        assertThat(appenderFactory.isValidateCerts()).isTrue();
-        assertThat(appenderFactory.isValidatePeers()).isTrue();
-        assertThat(appenderFactory.getSupportedProtocols()).containsExactly("TLSv1.1", "TLSv1.2");
-        assertThat(appenderFactory.getExcludedProtocols()).isEmpty();
-        assertThat(appenderFactory.getSupportedCipherSuites()).containsExactly("ECDHE-RSA-AES128-GCM-SHA256",
-            "ECDHE-ECDSA-AES128-GCM-SHA256");
-        assertThat(appenderFactory.getExcludedCipherSuites()).isEmpty();
+        assertThat(loggingFactory.getAppenders())
+            .singleElement()
+            .isInstanceOfSatisfying(TlsSocketAppenderFactory.class, appenderFactory -> assertThat(appenderFactory)
+                .satisfies(factory -> assertThat(factory.getHost()).isEqualTo("172.16.11.244"))
+                .satisfies(factory -> assertThat(factory.getPort()).isEqualTo(17002))
+                .satisfies(factory -> assertThat(factory.getKeyStorePath()).isEqualTo("/path/to/keystore.p12"))
+                .satisfies(factory -> assertThat(factory.getKeyStorePassword()).isEqualTo("keystore_pass"))
+                .satisfies(factory -> assertThat(factory.getKeyStoreType()).isEqualTo("PKCS12"))
+                .satisfies(factory -> assertThat(factory.getKeyStoreProvider()).isEqualTo("BC"))
+                .satisfies(factory -> assertThat(factory.getTrustStorePath()).isEqualTo("/path/to/trust_store.jks"))
+                .satisfies(factory -> assertThat(factory.getTrustStorePassword()).isEqualTo("trust_store_pass"))
+                .satisfies(factory -> assertThat(factory.getTrustStoreType()).isEqualTo("JKS"))
+                .satisfies(factory -> assertThat(factory.getTrustStoreProvider()).isEqualTo("SUN"))
+                .satisfies(factory -> assertThat(factory.getJceProvider()).isEqualTo("Conscrypt"))
+                .satisfies(factory -> assertThat(factory.isValidateCerts()).isTrue())
+                .satisfies(factory -> assertThat(factory.isValidatePeers()).isTrue())
+                .satisfies(factory -> assertThat(factory.getSupportedProtocols()).containsExactly("TLSv1.1", "TLSv1.2"))
+                .satisfies(factory -> assertThat(factory.getExcludedProtocols()).isEmpty())
+                .satisfies(factory -> assertThat(factory.getSupportedCipherSuites())
+                    .containsExactly("ECDHE-RSA-AES128-GCM-SHA256", "ECDHE-ECDSA-AES128-GCM-SHA256"))
+                .satisfies(factory -> assertThat(factory.getExcludedCipherSuites()).isEmpty()));
     }
 }
