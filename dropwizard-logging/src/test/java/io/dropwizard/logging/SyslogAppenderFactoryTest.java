@@ -24,43 +24,47 @@ class SyslogAppenderFactoryTest {
     }
 
     @Test
-    void isDiscoverable() throws Exception {
+    void isDiscoverable() {
         assertThat(new DiscoverableSubtypeResolver().getDiscoveredSubtypes())
                 .contains(SyslogAppenderFactory.class);
     }
 
     @Test
-    void defaultIncludesAppName() throws Exception {
+    void defaultIncludesAppName() {
         assertThat(new SyslogAppenderFactory().getLogFormat())
                 .contains("%app");
     }
 
     @Test
-    void defaultIncludesPid() throws Exception {
+    void defaultIncludesPid() {
         assertThat(new SyslogAppenderFactory().getLogFormat())
                 .contains("%pid");
     }
 
     @Test
-    void patternIncludesAppNameAndPid() throws Exception {
-        final AsyncAppender wrapper = (AsyncAppender) new SyslogAppenderFactory()
-                .build(new LoggerContext(), "MyApplication", new DropwizardLayoutFactory(), new NullLevelFilterFactory<>(), new AsyncLoggingEventAppenderFactory());
-        assertThat(((SyslogAppender) wrapper.getAppender("syslog-appender")).getSuffixPattern())
-                .matches("^MyApplication\\[\\d+\\].+");
+    void patternIncludesAppNameAndPid() {
+        assertThat(new SyslogAppenderFactory()
+                .build(new LoggerContext(), "MyApplication", new DropwizardLayoutFactory(), new NullLevelFilterFactory<>(), new AsyncLoggingEventAppenderFactory()))
+            .isInstanceOfSatisfying(AsyncAppender.class, asyncAppender ->
+                assertThat(asyncAppender.getAppender("syslog-appender"))
+                    .isInstanceOfSatisfying(SyslogAppender.class, syslogAppender ->
+                        assertThat(syslogAppender.getSuffixPattern()).matches("^MyApplication\\[\\d+\\].+")));
     }
 
     @Test
-    void stackTracePatternCanBeSet() throws Exception {
+    void stackTracePatternCanBeSet() {
         final SyslogAppenderFactory syslogAppenderFactory = new SyslogAppenderFactory();
         syslogAppenderFactory.setStackTracePrefix("--->");
-        final AsyncAppender wrapper = (AsyncAppender) syslogAppenderFactory
-                .build(new LoggerContext(), "MyApplication", new DropwizardLayoutFactory(), new NullLevelFilterFactory<>(), new AsyncLoggingEventAppenderFactory());
-        assertThat(((SyslogAppender) wrapper.getAppender("syslog-appender"))
-                .getStackTracePattern()).isEqualTo("--->");
+
+        assertThat(syslogAppenderFactory
+                .build(new LoggerContext(), "MyApplication", new DropwizardLayoutFactory(), new NullLevelFilterFactory<>(), new AsyncLoggingEventAppenderFactory()))
+            .isInstanceOfSatisfying(AsyncAppender.class, asyncAppender -> assertThat(asyncAppender.getAppender("syslog-appender"))
+                .isInstanceOfSatisfying(SyslogAppender.class, syslogAppender ->
+                    assertThat(syslogAppender.getStackTracePattern()).isEqualTo("--->")));
     }
 
     @Test
-    void appenderContextIsSet() throws Exception {
+    void appenderContextIsSet() {
         final Logger root = (Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
         final SyslogAppenderFactory appenderFactory = new SyslogAppenderFactory();
         final Appender<ILoggingEvent> appender = appenderFactory.build(root.getLoggerContext(), "test", new DropwizardLayoutFactory(),
@@ -70,7 +74,7 @@ class SyslogAppenderFactoryTest {
     }
 
     @Test
-    void appenderNameIsSet() throws Exception {
+    void appenderNameIsSet() {
         final Logger root = (Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
         final SyslogAppenderFactory appenderFactory = new SyslogAppenderFactory();
         final Appender<ILoggingEvent> appender = appenderFactory.build(root.getLoggerContext(), "test", new DropwizardLayoutFactory(),

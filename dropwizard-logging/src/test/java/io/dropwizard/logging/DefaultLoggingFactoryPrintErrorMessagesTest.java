@@ -33,7 +33,7 @@ class DefaultLoggingFactoryPrintErrorMessagesTest {
     }
 
     @AfterEach
-    void tearDown() throws Exception {
+    void tearDown() {
         factory.stop();
         factory.reset();
     }
@@ -58,14 +58,14 @@ class DefaultLoggingFactoryPrintErrorMessagesTest {
     }
 
     @Test
-    void testWhenUsingDefaultConstructor_SystemErrIsSet() throws Exception {
+    void testWhenUsingDefaultConstructor_SystemErrIsSet() {
         PrintStream configurationErrorsStream = new DefaultLoggingFactory().getConfigurationErrorsStream();
 
         assertThat(configurationErrorsStream).isSameAs(System.err);
     }
 
     @Test
-    void testWhenUsingDefaultConstructor_StaticILoggerFactoryIsSet() throws Exception {
+    void testWhenUsingDefaultConstructor_StaticILoggerFactoryIsSet() {
         LoggerContext loggerContext = new DefaultLoggingFactory().getLoggerContext();
 
         assertThat(loggerContext).isSameAs(LoggerFactory.getILoggerFactory());
@@ -99,7 +99,7 @@ class DefaultLoggingFactoryPrintErrorMessagesTest {
         Field field = StatusPrinter.class.getDeclaredField("ps");
         field.setAccessible(true);
 
-        PrintStream out = (PrintStream) field.get(null);
-        assertThat(out).isSameAs(System.out);
+        assertThat(field.get(null))
+            .isInstanceOfSatisfying(PrintStream.class, printStream -> assertThat(printStream).isSameAs(System.out));
     }
 }

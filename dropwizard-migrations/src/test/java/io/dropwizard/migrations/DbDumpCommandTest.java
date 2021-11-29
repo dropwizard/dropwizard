@@ -179,23 +179,26 @@ class DbDumpCommandTest extends AbstractMigrationTest {
 
         final NodeList columns = createTable.getElementsByTagName("column");
 
-        final Element idColumn = (Element) columns.item(0);
-        assertThat(idColumn.getAttribute("autoIncrement")).isEqualTo("true");
-        assertThat(idColumn.getAttribute("name")).isEqualTo("ID");
-        assertThat(idColumn.getAttribute("type")).isEqualTo("INT");
-        final Element idColumnConstraints = getFirstElement(idColumn, "constraints");
-        assertThat(idColumnConstraints.getAttribute("primaryKey")).isEqualTo("true");
-        assertThat(idColumnConstraints.getAttribute("primaryKeyName")).isEqualTo("PK_PERSONS");
+        assertThat(columns.item(0))
+            .isInstanceOfSatisfying(Element.class, column -> assertThat(column)
+                .satisfies(idColumn -> assertThat(idColumn.getAttribute("autoIncrement")).isEqualTo("true"))
+                .satisfies(idColumn -> assertThat(idColumn.getAttribute("name")).isEqualTo("ID"))
+                .satisfies(idColumn -> assertThat(idColumn.getAttribute("type")).isEqualTo("INT"))
+                .extracting(idColumn -> getFirstElement(idColumn, "constraints"))
+                .satisfies(idColumnConstraints -> assertThat(idColumnConstraints.getAttribute("primaryKey")).isEqualTo("true"))
+                .satisfies(idColumnConstraints -> assertThat(idColumnConstraints.getAttribute("primaryKeyName")).isEqualTo("PK_PERSONS")));
 
-        final Element nameColumn = (Element) columns.item(1);
-        assertThat(nameColumn.getAttribute("name")).isEqualTo("NAME");
-        assertThat(nameColumn.getAttribute("type")).isEqualTo("VARCHAR(256)");
-        final Element nameColumnConstraints = getFirstElement(nameColumn, "constraints");
-        assertThat(nameColumnConstraints.getAttribute("nullable")).isEqualTo("false");
+        assertThat(columns.item(1))
+            .isInstanceOfSatisfying(Element.class, column -> assertThat(column)
+                .satisfies(nameColumn -> assertThat(nameColumn.getAttribute("name")).isEqualTo("NAME"))
+                .satisfies(nameColumn -> assertThat(nameColumn.getAttribute("type")).isEqualTo("VARCHAR(256)"))
+                .extracting(nameColumn -> getFirstElement(nameColumn, "constraints"))
+                .satisfies(nameColumnConstraints -> assertThat(nameColumnConstraints.getAttribute("nullable")).isEqualTo("false")));
 
-        final Element emailColumn = (Element) columns.item(2);
-        assertThat(emailColumn.getAttribute("name")).isEqualTo("EMAIL");
-        assertThat(emailColumn.getAttribute("type")).isEqualTo("VARCHAR(128)");
+        assertThat(columns.item(2))
+            .isInstanceOfSatisfying(Element.class, column -> assertThat(column)
+                .satisfies(emailColumn -> assertThat(emailColumn.getAttribute("name")).isEqualTo("EMAIL"))
+                .satisfies(emailColumn -> assertThat(emailColumn.getAttribute("type")).isEqualTo("VARCHAR(128)")));
     }
 
     /**
@@ -212,17 +215,20 @@ class DbDumpCommandTest extends AbstractMigrationTest {
 
         final NodeList columns = insert.getElementsByTagName("column");
 
-        final Element idColumn = (Element) columns.item(0);
-        assertThat(idColumn.getAttribute("name")).isEqualTo("ID");
-        assertThat(idColumn.getAttribute("valueNumeric")).isEqualTo("1");
+        assertThat(columns.item(0))
+            .isInstanceOfSatisfying(Element.class, column -> assertThat(column)
+                .satisfies(idColumn -> assertThat(idColumn.getAttribute("name")).isEqualTo("ID"))
+                .satisfies(idColumn -> assertThat(idColumn.getAttribute("valueNumeric")).isEqualTo("1")));
 
-        final Element nameColumn = (Element) columns.item(1);
-        assertThat(nameColumn.getAttribute("name")).isEqualTo("NAME");
-        assertThat(nameColumn.getAttribute("value")).isEqualTo("Bill Smith");
+        assertThat(columns.item(1))
+            .isInstanceOfSatisfying(Element.class, column -> assertThat(column)
+                .satisfies(nameColumn -> assertThat(nameColumn.getAttribute("name")).isEqualTo("NAME"))
+                .satisfies(nameColumn -> assertThat(nameColumn.getAttribute("value")).isEqualTo("Bill Smith")));
 
-        final Element emailColumn = (Element) columns.item(2);
-        assertThat(emailColumn.getAttribute("name")).isEqualTo("EMAIL");
-        assertThat(emailColumn.getAttribute("value")).isEqualTo("bill@smith.me");
+        assertThat(columns.item(2))
+            .isInstanceOfSatisfying(Element.class, column -> assertThat(column)
+                .satisfies(nameColumn -> assertThat(nameColumn.getAttribute("name")).isEqualTo("EMAIL"))
+                .satisfies(nameColumn -> assertThat(nameColumn.getAttribute("value")).isEqualTo("bill@smith.me")));
     }
 
     private static Element getFirstElement(Element root, String tagName) {

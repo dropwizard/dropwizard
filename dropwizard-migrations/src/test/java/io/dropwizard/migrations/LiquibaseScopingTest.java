@@ -30,14 +30,14 @@ public class LiquibaseScopingTest extends AbstractMigrationTest implements Custo
     static {
         scopedObjects.put("person", new Person("Bill Smith"));
     }
-    private DbCommand<TestMigrationConfiguration> dbCommand = new DbCommand<>(
+    private final DbCommand<TestMigrationConfiguration> dbCommand = new DbCommand<>(
         "db",
         TestMigrationConfiguration::getDataSource,
         TestMigrationConfiguration.class,
         "migrations-custom-change.xml",
         scopedObjects
     );
-    private DbCommand<TestMigrationConfiguration> dbCommandWithoutScopedObjects = new DbCommand<>(
+    private final DbCommand<TestMigrationConfiguration> dbCommandWithoutScopedObjects = new DbCommand<>(
         "db",
         TestMigrationConfiguration::getDataSource,
         TestMigrationConfiguration.class,
@@ -76,9 +76,10 @@ public class LiquibaseScopingTest extends AbstractMigrationTest implements Custo
             final ResultIterable<Map<String, Object>> rows = handle.select("select * from persons").mapToMap();
             assertThat(rows).hasSize(1);
             Map<String, Object> dbPerson = rows.first();
-            String name = (String) dbPerson.getOrDefault("name", null);
-            assertThat(name).isNotNull();
-            assertThat(name).isEqualTo(((Person)scopedObjects.get("person")).getName());
+            assertThat(dbPerson.getOrDefault("name", null))
+                .isInstanceOfSatisfying(String.class, name -> assertThat(name)
+                    .isNotNull()
+                    .isEqualTo(((Person)scopedObjects.get("person")).getName()));
         }
     }
 

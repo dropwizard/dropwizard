@@ -2,6 +2,7 @@ package io.dropwizard.logging;
 
 import ch.qos.logback.classic.AsyncAppender;
 import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.ConsoleAppender;
 import ch.qos.logback.core.encoder.LayoutWrappingEncoder;
 import ch.qos.logback.core.pattern.PatternLayoutBase;
@@ -14,6 +15,8 @@ import io.dropwizard.logging.filter.NullLevelFilterFactory;
 import io.dropwizard.logging.layout.DropwizardLayoutFactory;
 import io.dropwizard.validation.BaseValidator;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import java.util.TimeZone;
 
@@ -31,34 +34,17 @@ class AppenderFactoryCustomTimeZoneTest {
     private final YamlConfigurationFactory<ConsoleAppenderFactory> factory = new YamlConfigurationFactory<>(
         ConsoleAppenderFactory.class, BaseValidator.newValidator(), Jackson.newObjectMapper(), "dw");
 
-    @Test
-    void testLoadAppenderWithTimeZoneInFullFormat() throws Exception {
-        final ConsoleAppenderFactory<?> appender = factory.build(configurationSourceProvider, "yaml/appender_with_time_zone_in_full_format.yml");
-        assertThat(appender.getTimeZone().getID()).isEqualTo("America/Los_Angeles");
-    }
-
-    @Test
-    void testLoadAppenderWithTimeZoneInCustomFormat() throws Exception {
-        final ConsoleAppenderFactory<?> appender = factory.build(configurationSourceProvider, "yaml/appender_with_custom_time_zone_format.yml");
-        assertThat(appender.getTimeZone().getID()).isEqualTo("GMT-02:00");
-    }
-
-    @Test
-    void testLoadAppenderWithNoTimeZone() throws Exception {
-        final ConsoleAppenderFactory<?> appender = factory.build(configurationSourceProvider, "yaml/appender_with_no_time_zone.yml");
-        assertThat(appender.getTimeZone().getID()).isEqualTo("UTC");
-    }
-
-    @Test
-    void testLoadAppenderWithUtcTimeZone() throws Exception {
-        final ConsoleAppenderFactory<?> appender = factory.build(configurationSourceProvider, "yaml/appender_with_utc_time_zone.yml");
-        assertThat(appender.getTimeZone().getID()).isEqualTo("UTC");
-    }
-
-    @Test
-    void testLoadAppenderWithWrongTimeZone() throws Exception {
-        final ConsoleAppenderFactory<?> appender = factory.build(new ResourceConfigurationSourceProvider(), "yaml/appender_with_wrong_time_zone.yml");
-        assertThat(appender.getTimeZone().getID()).isEqualTo("GMT");
+    @ParameterizedTest
+    @CsvSource({
+        "yaml/appender_with_time_zone_in_full_format.yml, America/Los_Angeles",
+        "yaml/appender_with_custom_time_zone_format.yml, GMT-02:00",
+        "yaml/appender_with_no_time_zone.yml, UTC",
+        "yaml/appender_with_utc_time_zone.yml, UTC",
+        "yaml/appender_with_wrong_time_zone.yml, GMT"
+    })
+    void testAppenderTimeZone(String configurationFile, String timeZone) throws Exception {
+        final ConsoleAppenderFactory<?> appender = factory.build(configurationSourceProvider, configurationFile);
+        assertThat(appender.getTimeZone().getID()).isEqualTo(timeZone);
     }
 
     @Test
@@ -68,15 +54,17 @@ class AppenderFactoryCustomTimeZoneTest {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     void testBuildAppenderWithTimeZonePlaceholderInLogFormat() throws Exception {
-        AsyncAppender appender = (AsyncAppender) factory.build(configurationSourceProvider, "yaml/appender_with_time_zone_placeholder.yml")
+        Appender appender = factory.build(configurationSourceProvider, "yaml/appender_with_time_zone_placeholder.yml")
             .build(new LoggerContext(), "test-custom-time-zone", new DropwizardLayoutFactory(),
                 new NullLevelFilterFactory<>(), new AsyncLoggingEventAppenderFactory());
-        ConsoleAppender<?> consoleAppender = (ConsoleAppender<?>) appender.getAppender("console-appender");
-        LayoutWrappingEncoder<?> encoder = (LayoutWrappingEncoder<?>) consoleAppender.getEncoder();
-        PatternLayoutBase<?> layout = (PatternLayoutBase<?>) encoder.getLayout();
-        assertThat(layout.getPattern()).isEqualTo("custom format with UTC");
+
+        assertThat(appender)
+            .isInstanceOfSatisfying(AsyncAppender.class, asyncAppender -> assertThat(asyncAppender.getAppender("console-appender"))
+                .isInstanceOfSatisfying(ConsoleAppender.class, consoleAppender -> assertThat(consoleAppender.getEncoder())
+                    .isInstanceOfSatisfying(LayoutWrappingEncoder.class, encoder -> assertThat(encoder.getLayout())
+                        .isInstanceOfSatisfying(PatternLayoutBase.class, layout -> assertThat(layout.getPattern())
+                            .isEqualTo("custom format with UTC")))));
     }
 
 }
