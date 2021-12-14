@@ -4,6 +4,7 @@ import ch.qos.logback.classic.AsyncAppender;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.ConsoleAppender;
+import ch.qos.logback.core.OutputStreamAppender;
 import ch.qos.logback.core.encoder.LayoutWrappingEncoder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
@@ -41,24 +42,28 @@ class AppenderFactoryCustomLayoutTest {
     void testLoadAppenderWithCustomLayout() throws Exception {
         final ConsoleAppenderFactory<ILoggingEvent> appender = factory
             .build(new ResourceConfigurationSourceProvider(), "yaml/appender_with_custom_layout.yml");
-        assertThat(appender.getLayout()).isNotNull().isInstanceOf(TestLayoutFactory.class);
-        TestLayoutFactory layoutFactory = (TestLayoutFactory) appender.getLayout();
-        assertThat(layoutFactory).isNotNull().extracting(TestLayoutFactory::isIncludeSeparator).isEqualTo(true);
+        assertThat(appender.getLayout())
+            .isInstanceOfSatisfying(TestLayoutFactory.class, layoutFactory -> assertThat(layoutFactory)
+                .isNotNull()
+                .extracting(TestLayoutFactory::isIncludeSeparator)
+                .isEqualTo(true));
     }
 
     @Test
     void testBuildAppenderWithCustomLayout() throws Exception {
-        ConsoleAppender<?> consoleAppender = buildAppender("yaml/appender_with_custom_layout.yml");
-        LayoutWrappingEncoder<?> encoder = (LayoutWrappingEncoder<?>) consoleAppender.getEncoder();
-        assertThat(encoder.getLayout()).isInstanceOf(TestLayoutFactory.TestLayout.class);
+        assertThat(buildAppender("yaml/appender_with_custom_layout.yml"))
+            .extracting(OutputStreamAppender::getEncoder)
+            .isInstanceOfSatisfying(LayoutWrappingEncoder.class, encoder ->
+                assertThat(encoder.getLayout()).isInstanceOf(TestLayoutFactory.TestLayout.class));
     }
 
     @Test
     void testBuildAppenderWithCustomPatternLayoutAndFormat() throws Exception {
-        ConsoleAppender<?> consoleAppender = buildAppender("yaml/appender_with_custom_layout_and_format.yml");
-        LayoutWrappingEncoder<?> encoder = (LayoutWrappingEncoder<?>) consoleAppender.getEncoder();
-        TestPatternLayout layout = (TestPatternLayout) encoder.getLayout();
-        assertThat(layout.getPattern()).isEqualTo("custom pattern");
+        assertThat(buildAppender("yaml/appender_with_custom_layout_and_format.yml"))
+            .extracting(OutputStreamAppender::getEncoder)
+            .isInstanceOfSatisfying(LayoutWrappingEncoder.class, encoder -> assertThat(encoder)
+                .extracting(LayoutWrappingEncoder::getLayout)
+                .isInstanceOfSatisfying(TestPatternLayout.class, layout -> assertThat(layout.getPattern()).isEqualTo("custom pattern")));
     }
 
     private ConsoleAppender<?> buildAppender(String resourceName) throws Exception {

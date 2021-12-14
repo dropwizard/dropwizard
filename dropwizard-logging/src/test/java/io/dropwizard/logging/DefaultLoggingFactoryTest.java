@@ -3,7 +3,6 @@ package io.dropwizard.logging;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.ConsoleAppender;
 import ch.qos.logback.core.spi.LifeCycle;
@@ -16,7 +15,6 @@ import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.configuration.SubstitutingSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
-import io.dropwizard.logging.filter.FilterFactory;
 import io.dropwizard.util.Maps;
 import io.dropwizard.validation.BaseValidator;
 import org.apache.commons.text.StringSubstitutor;
@@ -29,7 +27,6 @@ import org.slf4j.LoggerFactory;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -166,13 +163,14 @@ class DefaultLoggingFactoryTest {
         config.reset();
 
         // There should be exactly one appender configured, a ConsoleAppender
-        final Logger logger = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
-        assertThat(logger.iteratorForAppenders())
-            .toIterable()
-            .hasAtLeastOneElementOfType(ConsoleAppender.class)
-            .as("context").allMatch((Appender<?> a) -> a.getContext() != null)
-            .as("started").allMatch(LifeCycle::isStarted)
-            .hasSize(1);
+        assertThat(LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME))
+            .isInstanceOfSatisfying(Logger.class, logger ->
+            assertThat(logger.iteratorForAppenders())
+                .toIterable()
+                .singleElement()
+                .isInstanceOf(ConsoleAppender.class)
+                .as("context").matches((Appender<?> a) -> a.getContext() != null)
+                .as("started").matches(LifeCycle::isStarted));
     }
 
     @Test

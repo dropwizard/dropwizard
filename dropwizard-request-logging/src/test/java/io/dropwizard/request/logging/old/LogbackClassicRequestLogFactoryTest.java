@@ -52,11 +52,12 @@ class LogbackClassicRequestLogFactoryTest {
 
     @Test
     void testDeserialized() {
-        LogbackClassicRequestLogFactory classicRequestLogFactory = (LogbackClassicRequestLogFactory) requestLog;
-        assertThat(classicRequestLogFactory.getTimeZone()).isEqualTo(TimeZone.getTimeZone("Europe/Amsterdam"));
-        assertThat(classicRequestLogFactory.getAppenders()).hasSize(3).extractingResultOf("getClass").contains(
-            ConsoleAppenderFactory.class, FileAppenderFactory.class, SyslogAppenderFactory.class
-        );
+        assertThat(requestLog)
+            .isInstanceOfSatisfying(LogbackClassicRequestLogFactory.class, logFactory -> assertThat(logFactory)
+                .satisfies(classicRequestLogFactory -> assertThat(classicRequestLogFactory.getTimeZone()).isEqualTo(TimeZone.getTimeZone("Europe/Amsterdam")))
+                .satisfies(classicRequestLogFactory -> assertThat(classicRequestLogFactory.getAppenders()).hasSize(3).extractingResultOf("getClass")
+                    .containsOnly(ConsoleAppenderFactory.class, FileAppenderFactory.class, SyslogAppenderFactory.class
+        )));
     }
 
     @Test
