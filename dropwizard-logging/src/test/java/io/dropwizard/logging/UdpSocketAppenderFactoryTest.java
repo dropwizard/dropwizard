@@ -6,75 +6,55 @@ import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.validation.BaseValidator;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.nio.charset.StandardCharsets;
-import java.util.concurrent.CountDownLatch;
+import java.util.List;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.fail;
 
 class UdpSocketAppenderFactoryTest {
 
     private static final int UDP_PORT = 32144;
 
-    private Thread thread;
-    private DatagramSocket datagramSocket;
-
-    private final int messagesCount = 100;
-    private final CountDownLatch countDownLatch = new CountDownLatch(messagesCount);
-
-    @BeforeEach
-    void setUp() throws Exception {
-        datagramSocket = new DatagramSocket(UDP_PORT);
-        thread = new Thread(() -> {
-            byte[] buffer = new byte[256];
-            for (int i = 0; i < messagesCount; i++) {
-                try {
-                    DatagramPacket datagramPacket = new DatagramPacket(buffer, buffer.length);
-                    datagramSocket.receive(datagramPacket);
-                    assertThat(new String(buffer, 0, datagramPacket.getLength(), StandardCharsets.UTF_8))
-                        .startsWith("INFO").contains("com.example.app: Application log " + i);
-                    countDownLatch.countDown();
-                } catch (IOException e) {
-                    fail("Error reading logs", e);
-                }
-            }
-        });
-        thread.start();
-    }
-
-    @AfterEach
-    void tearDown() {
-        thread.interrupt();
-        datagramSocket.close();
-    }
-
     @Test
     void testSendLogsByTcp() throws Exception {
+        final int messageCount = 100;
         ObjectMapper objectMapper = Jackson.newObjectMapper();
         objectMapper.getSubtypeResolver().registerSubtypes(UdpSocketAppenderFactory.class);
 
-        DefaultLoggingFactory loggingFactory = new YamlConfigurationFactory<>(DefaultLoggingFactory.class,
-            BaseValidator.newValidator(), objectMapper, "dw-udp")
-            .build(new ResourceConfigurationSourceProvider(), "yaml/logging-udp.yml");
-        loggingFactory.configure(new MetricRegistry(), "udp-test");
+        try (DatagramSocket datagramSocket = new DatagramSocket(UDP_PORT); UdpServer udpServer = new UdpServer(datagramSocket, messageCount)) {
+            Future<List<String>> receivedMessages = udpServer.receive();
+            DefaultLoggingFactory loggingFactory = new YamlConfigurationFactory<>(DefaultLoggingFactory.class,
+                BaseValidator.newValidator(), objectMapper, "dw-udp")
+                .build(new ResourceConfigurationSourceProvider(), "yaml/logging-udp.yml");
+            loggingFactory.configure(new MetricRegistry(), "udp-test");
 
-        Logger logger = LoggerFactory.getLogger("com.example.app");
-        for (int i = 0; i < 100; i++) {
-            logger.info("Application log {}", i);
+            Logger logger = LoggerFactory.getLogger("com.example.app");
+            List<String> loggedMessages = generateLogs(logger, messageCount)
+                .stream()
+                .map(msg -> String.format("%s%n", msg))
+                .collect(Collectors.toList());
+            loggingFactory.reset();
+
+            assertThat(receivedMessages.get(1, TimeUnit.MINUTES))
+                .allSatisfy(s -> assertThat(s).startsWith("INFO"))
+                // Strip preamble from e.g. "INFO  [2021-11-20 10:23:57,620] com.example.app: Application log 0"
+                .extracting(s -> s.substring(s.lastIndexOf("com.example.app: ") + "com.example.app: ".length()))
+                .containsExactlyElementsOf(loggedMessages);
         }
+    }
 
-        countDownLatch.await(5, TimeUnit.SECONDS);
-        assertThat(countDownLatch.getCount()).isZero();
-        loggingFactory.reset();
+    private static List<String> generateLogs(final Logger logger, final int messageCount) {
+        return IntStream.range(0, messageCount)
+            .mapToObj(i -> String.format("Application log %d", i))
+            .peek(logger::info)
+            .collect(Collectors.toList());
     }
 }

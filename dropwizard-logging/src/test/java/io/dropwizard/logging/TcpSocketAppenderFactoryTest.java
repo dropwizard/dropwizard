@@ -10,7 +10,6 @@ import io.dropwizard.util.DataSize;
 import io.dropwizard.util.Duration;
 import io.dropwizard.validation.BaseValidator;
 import org.apache.commons.text.StringSubstitutor;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -19,26 +18,23 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class TcpSocketAppenderFactoryTest {
 
-    private final TcpServer tcpServer = new TcpServer(createServerSocket());
     private final ObjectMapper objectMapper = Jackson.newObjectMapper();
     private final YamlConfigurationFactory<DefaultLoggingFactory> yamlConfigurationFactory = new YamlConfigurationFactory<>(
         DefaultLoggingFactory.class, BaseValidator.newValidator(), objectMapper, "dw-tcp");
 
     @BeforeEach
     void setUp() throws Exception {
-        tcpServer.setUp();
         objectMapper.getSubtypeResolver().registerSubtypes(TcpSocketAppenderFactory.class);
-    }
-
-    @AfterEach
-    void tearDown() throws Exception {
-        tcpServer.tearDown();
     }
 
     private ServerSocket createServerSocket() {
@@ -55,7 +51,7 @@ class TcpSocketAppenderFactoryTest {
         assertThat(loggingFactory.getAppenders())
             .singleElement()
             .isInstanceOfSatisfying(TcpSocketAppenderFactory.class, tcpAppenderFactory -> assertThat(tcpAppenderFactory)
-                .satisfies(factory -> assertThat(factory.getHost()).isEqualTo( "172.16.11.245"))
+                .satisfies(factory -> assertThat(factory.getHost()).isEqualTo("172.16.11.245"))
                 .satisfies(factory -> assertThat(factory.getPort()).isEqualTo(17001))
                 .satisfies(factory -> assertThat(factory.getConnectionTimeout()).isEqualTo(Duration.milliseconds(100)))
                 .satisfies(factory -> assertThat(factory.getSendBufferSize()).isEqualTo(DataSize.kibibytes(2)))
@@ -64,38 +60,52 @@ class TcpSocketAppenderFactoryTest {
 
     @Test
     void testTestTcpLogging() throws Exception {
-        DefaultLoggingFactory loggingFactory = yamlConfigurationFactory.build(new SubstitutingSourceProvider(
-                new ResourceConfigurationSourceProvider(),
-                new StringSubstitutor(Collections.singletonMap("tcp.server.port", tcpServer.getPort()))),
-            "yaml/logging-tcp.yml");
-        loggingFactory.configure(new MetricRegistry(), "tcp-test");
+        try (ServerSocket serverSocket = createServerSocket(); TcpServer tcpServer = new TcpServer(serverSocket)) {
+            Future<List<String>> receivedMessages = tcpServer.receive();
+            DefaultLoggingFactory loggingFactory = yamlConfigurationFactory.build(new SubstitutingSourceProvider(
+                    new ResourceConfigurationSourceProvider(),
+                    new StringSubstitutor(Collections.singletonMap("tcp.server.port", serverSocket.getLocalPort()))),
+                "yaml/logging-tcp.yml");
+            loggingFactory.configure(new MetricRegistry(), "tcp-test");
 
-        Logger logger = LoggerFactory.getLogger("com.example.app");
-        for (int i = 0; i < tcpServer.getMessageCount(); i++) {
-            logger.info("Application log {}", i);
+            List<String> loggedMessages = generateLogs(LoggerFactory.getLogger("com.example.app"));
+            loggingFactory.reset();
+
+            assertThat(receivedMessages.get(1, TimeUnit.MINUTES))
+                .hasSize(100)
+                .allSatisfy(s -> assertThat(s).startsWith("INFO"))
+                // Strip preamble from e.g. "INFO  [2021-11-20 10:23:57,620] com.example.app: Application log 0"
+                .extracting(s -> s.substring(s.lastIndexOf("com.example.app: ") + "com.example.app: ".length()))
+                .containsExactlyElementsOf(loggedMessages);
         }
-
-        tcpServer.getLatch().await(5, TimeUnit.SECONDS);
-        assertThat(tcpServer.getLatch().getCount()).isZero();
-        loggingFactory.reset();
     }
 
     @Test
     void testBufferingTcpLogging() throws Exception {
-        DefaultLoggingFactory loggingFactory = yamlConfigurationFactory.build(new SubstitutingSourceProvider(
-            new ResourceConfigurationSourceProvider(),
-                new StringSubstitutor(Collections.singletonMap("tcp.server.port", tcpServer.getPort()))),
-            "yaml/logging-tcp-buffered.yml");
-        loggingFactory.configure(new MetricRegistry(), "tcp-test");
+        try (ServerSocket serverSocket = createServerSocket(); TcpServer tcpServer = new TcpServer(serverSocket)) {
+            Future<List<String>> receivedMessages = tcpServer.receive();
+            DefaultLoggingFactory loggingFactory = yamlConfigurationFactory.build(new SubstitutingSourceProvider(
+                    new ResourceConfigurationSourceProvider(),
+                    new StringSubstitutor(Collections.singletonMap("tcp.server.port", serverSocket.getLocalPort()))),
+                "yaml/logging-tcp-buffered.yml");
+            loggingFactory.configure(new MetricRegistry(), "tcp-test");
 
-        Logger logger = LoggerFactory.getLogger("com.example.app");
-        for (int i = 0; i < tcpServer.getMessageCount(); i++) {
-            logger.info("Application log {}", i);
+            List<String> loggedMessages = generateLogs(LoggerFactory.getLogger("com.example.app"));
+            // We have to flush the buffer manually
+            loggingFactory.reset();
+
+            assertThat(receivedMessages.get(1, TimeUnit.MINUTES))
+                .allSatisfy(s -> assertThat(s).startsWith("INFO"))
+                // Strip preamble from e.g. "INFO  [2021-11-20 10:23:57,620] com.example.app: Application log 0"
+                .extracting(s -> s.substring(s.lastIndexOf("com.example.app: ") + "com.example.app: ".length()))
+                .containsExactlyElementsOf(loggedMessages);
         }
-        // We have to flush the buffer manually
-        loggingFactory.reset();
+    }
 
-        tcpServer.getLatch().await(5, TimeUnit.SECONDS);
-        assertThat(tcpServer.getLatch().getCount()).isZero();
+    private static List<String> generateLogs(final Logger logger) {
+        return IntStream.range(0, 100)
+            .mapToObj(i -> String.format("Application log %d", i))
+            .peek(logger::info)
+            .collect(Collectors.toList());
     }
 }
