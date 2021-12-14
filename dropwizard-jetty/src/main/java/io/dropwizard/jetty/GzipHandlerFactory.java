@@ -284,7 +284,7 @@ public class GzipHandlerFactory {
     }
 
     public GzipHandler build(@Nullable Handler handler) {
-        final GzipHandler gzipHandler = new GzipHandler();
+        final ZipExceptionHandlingGzipHandler gzipHandler = new ZipExceptionHandlingGzipHandler();
         gzipHandler.setHandler(handler);
         gzipHandler.setMinGzipSize((int) minimumEntitySize.toBytes());
         gzipHandler.setInflateBufferSize((int) bufferSize.toBytes());

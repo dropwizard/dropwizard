@@ -72,6 +72,17 @@ class GzipHandlerTest {
     }
 
     @Test
+    void testBadRequestStatusOnInvalidGzipBytes() throws Exception {
+        request.setMethod("POST");
+        request.setHeader(HttpHeader.CONTENT_TYPE.asString(), PLAIN_TEXT_UTF_8);
+        request.setHeader(HttpHeader.CONTENT_ENCODING.asString(), "gzip");
+        request.setContent("Invalid gzip bytes");
+
+        HttpTester.Response response = HttpTester.parseResponse(servletTester.getResponses(request.generate()));
+        assertThat(response.getStatus()).isEqualTo(400);
+    }
+
+    @Test
     void testDecompressRequest() throws Exception {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try (GZIPOutputStream gz = new GZIPOutputStream(baos)) {
