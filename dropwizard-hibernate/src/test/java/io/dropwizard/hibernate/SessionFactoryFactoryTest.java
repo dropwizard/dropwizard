@@ -93,8 +93,9 @@ class SessionFactoryFactoryTest {
 
         ArgumentCaptor<SessionFactoryManager> sessionFactoryManager = ArgumentCaptor.forClass(SessionFactoryManager.class);
         verify(lifecycleEnvironment).manage(sessionFactoryManager.capture());
-        ManagedPooledDataSource dataSource = (ManagedPooledDataSource) sessionFactoryManager.getValue().getDataSource();
-        assertThat(dataSource.getPool().getName()).isEqualTo("hibernate");
+        assertThat(sessionFactoryManager.getValue().getDataSource())
+            .isInstanceOfSatisfying(ManagedPooledDataSource.class, dataSource ->
+                assertThat(dataSource.getPool().getName()).isEqualTo("hibernate"));
     }
 
     @Test
@@ -104,8 +105,9 @@ class SessionFactoryFactoryTest {
 
         ArgumentCaptor<SessionFactoryManager> sessionFactoryManager = ArgumentCaptor.forClass(SessionFactoryManager.class);
         verify(lifecycleEnvironment).manage(sessionFactoryManager.capture());
-        ManagedPooledDataSource dataSource = (ManagedPooledDataSource) sessionFactoryManager.getValue().getDataSource();
-        assertThat(dataSource.getPool().getName()).isEqualTo("custom-hibernate-db");
+        assertThat(sessionFactoryManager.getValue().getDataSource())
+            .isInstanceOfSatisfying(ManagedPooledDataSource.class, dataSource ->
+                assertThat(dataSource.getPool().getName()).isEqualTo("custom-hibernate-db"));
     }
 
     @Test

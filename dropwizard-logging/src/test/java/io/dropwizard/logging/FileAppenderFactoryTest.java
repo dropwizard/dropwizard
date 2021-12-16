@@ -38,6 +38,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 
+import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
@@ -60,12 +61,12 @@ class FileAppenderFactoryTest {
     void includesCallerData() {
         FileAppenderFactory<ILoggingEvent> fileAppenderFactory = new FileAppenderFactory<>();
         fileAppenderFactory.setArchive(false);
-        AsyncAppender asyncAppender = (AsyncAppender) fileAppenderFactory.build(new LoggerContext(), "test", new DropwizardLayoutFactory(), new NullLevelFilterFactory<>(), new AsyncLoggingEventAppenderFactory());
-        assertThat(asyncAppender.isIncludeCallerData()).isFalse();
+        assertThat(fileAppenderFactory.build(new LoggerContext(), "test", new DropwizardLayoutFactory(), new NullLevelFilterFactory<>(), new AsyncLoggingEventAppenderFactory()))
+            .isInstanceOfSatisfying(AsyncAppender.class, asyncAppender -> assertThat(asyncAppender.isIncludeCallerData()).isFalse());
 
         fileAppenderFactory.setIncludeCallerData(true);
-        asyncAppender = (AsyncAppender) fileAppenderFactory.build(new LoggerContext(), "test", new DropwizardLayoutFactory(), new NullLevelFilterFactory<>(), new AsyncLoggingEventAppenderFactory());
-        assertThat(asyncAppender.isIncludeCallerData()).isTrue();
+        assertThat(fileAppenderFactory.build(new LoggerContext(), "test", new DropwizardLayoutFactory(), new NullLevelFilterFactory<>(), new AsyncLoggingEventAppenderFactory()))
+            .isInstanceOfSatisfying(AsyncAppender.class, asyncAppender -> assertThat(asyncAppender.isIncludeCallerData()).isTrue());
     }
 
     @Test
@@ -226,8 +227,8 @@ class FileAppenderFactoryTest {
         assertThat(appender.getTriggeringPolicy().isStarted()).isTrue();
         final Field maxFileSizeField = SizeBasedTriggeringPolicy.class.getDeclaredField("maxFileSize");
         maxFileSizeField.setAccessible(true);
-        final FileSize maxFileSize = (FileSize) maxFileSizeField.get(appender.getTriggeringPolicy());
-        assertThat(maxFileSize.getSize()).isEqualTo(1024L);
+        assertThat(maxFileSizeField.get(appender.getTriggeringPolicy()))
+            .isInstanceOfSatisfying(FileSize.class, maxFileSize -> assertThat(maxFileSize.getSize()).isEqualTo(1024L));
     }
 
     @Test
@@ -267,9 +268,9 @@ class FileAppenderFactoryTest {
         FileAppenderFactory<ILoggingEvent> fileAppenderFactory = new FileAppenderFactory<>();
         fileAppenderFactory.setArchive(false);
         fileAppenderFactory.setNeverBlock(true);
-        AsyncAppender asyncAppender = (AsyncAppender) fileAppenderFactory.build(new LoggerContext(), "test", new DropwizardLayoutFactory(), new NullLevelFilterFactory<>(), new AsyncLoggingEventAppenderFactory());
 
-        assertThat(asyncAppender.isNeverBlock()).isTrue();
+        assertThat(fileAppenderFactory.build(new LoggerContext(), "test", new DropwizardLayoutFactory(), new NullLevelFilterFactory<>(), new AsyncLoggingEventAppenderFactory()))
+            .isInstanceOfSatisfying(AsyncAppender.class, asyncAppender -> assertThat(asyncAppender.isNeverBlock()).isTrue());
     }
 
     @Test
@@ -277,9 +278,9 @@ class FileAppenderFactoryTest {
         FileAppenderFactory<ILoggingEvent> fileAppenderFactory = new FileAppenderFactory<>();
         fileAppenderFactory.setArchive(false);
         fileAppenderFactory.setNeverBlock(false);
-        AsyncAppender asyncAppender = (AsyncAppender) fileAppenderFactory.build(new LoggerContext(), "test", new DropwizardLayoutFactory(), new NullLevelFilterFactory<>(), new AsyncLoggingEventAppenderFactory());
 
-        assertThat(asyncAppender.isNeverBlock()).isFalse();
+        assertThat(fileAppenderFactory.build(new LoggerContext(), "test", new DropwizardLayoutFactory(), new NullLevelFilterFactory<>(), new AsyncLoggingEventAppenderFactory()))
+            .isInstanceOfSatisfying(AsyncAppender.class, asyncAppender -> assertThat(asyncAppender.isNeverBlock()).isFalse());
     }
 
     @Test
@@ -287,9 +288,9 @@ class FileAppenderFactoryTest {
         FileAppenderFactory<ILoggingEvent> fileAppenderFactory = new FileAppenderFactory<>();
         fileAppenderFactory.setArchive(false);
         // default neverBlock
-        AsyncAppender asyncAppender = (AsyncAppender) fileAppenderFactory.build(new LoggerContext(), "test", new DropwizardLayoutFactory(), new NullLevelFilterFactory<>(), new AsyncLoggingEventAppenderFactory());
 
-        assertThat(asyncAppender.isNeverBlock()).isFalse();
+        assertThat(fileAppenderFactory.build(new LoggerContext(), "test", new DropwizardLayoutFactory(), new NullLevelFilterFactory<>(), new AsyncLoggingEventAppenderFactory()))
+            .isInstanceOfSatisfying(AsyncAppender.class, asyncAppender -> assertThat(asyncAppender.isNeverBlock()).isFalse());
     }
 
     @Test
@@ -300,10 +301,13 @@ class FileAppenderFactoryTest {
         AsyncAppender asyncAppender = (AsyncAppender) fileAppenderFactory.build(new LoggerContext(), "test", new DropwizardLayoutFactory(), new NullLevelFilterFactory<>(), new AsyncLoggingEventAppenderFactory());
         final Appender<ILoggingEvent> fileAppender = asyncAppender.getAppender("file-appender");
         assertThat(fileAppender).isInstanceOf(FileAppender.class);
+
         final Field bufferSizeField = FileAppender.class.getDeclaredField("bufferSize");
         bufferSizeField.setAccessible(true);
-        FileSize bufferSizeFromAppender = (FileSize) bufferSizeField.get(fileAppender);
-        assertThat(bufferSizeFromAppender.getSize()).isEqualTo(fileAppenderFactory.getBufferSize().toBytes());
+
+        assertThat(bufferSizeField.get(fileAppender))
+            .isInstanceOfSatisfying(FileSize.class, bufferSize ->
+                assertThat(bufferSize.getSize()).isEqualTo(fileAppenderFactory.getBufferSize().toBytes()));
     }
 
     @Test
@@ -315,14 +319,16 @@ class FileAppenderFactoryTest {
         isImmediateFlushField.setAccessible(true);
 
         fileAppenderFactory.setImmediateFlush(false);
-        AsyncAppender asyncAppender = (AsyncAppender) fileAppenderFactory.build(new LoggerContext(), "test", new DropwizardLayoutFactory(), new NullLevelFilterFactory<>(), new AsyncLoggingEventAppenderFactory());
-        Appender<ILoggingEvent> fileAppender = asyncAppender.getAppender("file-appender");
-        assertThat((Boolean) isImmediateFlushField.get(fileAppender)).isEqualTo(fileAppenderFactory.isImmediateFlush());
+        assertThat(fileAppenderFactory.build(new LoggerContext(), "test", new DropwizardLayoutFactory(), new NullLevelFilterFactory<>(), new AsyncLoggingEventAppenderFactory()))
+            .isInstanceOfSatisfying(AsyncAppender.class, asyncAppender -> assertThat(asyncAppender)
+                .extracting(appender -> appender.getAppender("file-appender"))
+                .satisfies(fileAppender -> assertThat(isImmediateFlushField.get(fileAppender)).isEqualTo(fileAppenderFactory.isImmediateFlush())));
 
         fileAppenderFactory.setImmediateFlush(true);
-        asyncAppender = (AsyncAppender) fileAppenderFactory.build(new LoggerContext(), "test", new DropwizardLayoutFactory(), new NullLevelFilterFactory<>(), new AsyncLoggingEventAppenderFactory());
-        fileAppender = asyncAppender.getAppender("file-appender");
-        assertThat((Boolean) isImmediateFlushField.get(fileAppender)).isEqualTo(fileAppenderFactory.isImmediateFlush());
+        assertThat(fileAppenderFactory.build(new LoggerContext(), "test", new DropwizardLayoutFactory(), new NullLevelFilterFactory<>(), new AsyncLoggingEventAppenderFactory()))
+            .isInstanceOfSatisfying(AsyncAppender.class, asyncAppender -> assertThat(asyncAppender)
+                .extracting(appender -> appender.getAppender("file-appender"))
+                    .satisfies(fileAppender -> assertThat(isImmediateFlushField.get(fileAppender)).isEqualTo(fileAppenderFactory.isImmediateFlush())));
     }
 
     @Test

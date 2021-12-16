@@ -9,7 +9,6 @@ import io.dropwizard.jackson.Jackson;
 import io.dropwizard.validation.BaseValidator;
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.eclipse.jetty.server.ConnectionFactory;
-import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.SecureRequestCustomizer;
@@ -319,10 +318,8 @@ class HttpsConnectorFactoryTest {
         final Server server = new Server();
         final MetricRegistry metrics = new MetricRegistry();
         final ThreadPool threadPool = new QueuedThreadPool();
-        final Connector connector = https.build(server, metrics, "test-https-connector", threadPool);
-        assertThat(connector).isInstanceOf(ServerConnector.class);
 
-        try (final ServerConnector serverConnector = (ServerConnector) connector) {
+        try (final ServerConnector serverConnector = (ServerConnector) https.build(server, metrics, "test-https-connector", threadPool)) {
             assertThat(serverConnector.getPort()).isEqualTo(8443);
             assertThat(serverConnector.getHost()).isEqualTo("127.0.0.1");
             assertThat(serverConnector.getName()).isEqualTo("test-https-connector");
@@ -377,7 +374,6 @@ class HttpsConnectorFactoryTest {
             assertThat(httpConfiguration.getSecurePort()).isEqualTo(8443);
             assertThat(httpConfiguration.getCustomizers()).hasAtLeastOneElementOfType(SecureRequestCustomizer.class);
         } finally {
-            connector.stop();
             server.stop();
         }
     }

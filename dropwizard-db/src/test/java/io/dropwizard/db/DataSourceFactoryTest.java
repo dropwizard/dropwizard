@@ -56,14 +56,14 @@ class DataSourceFactoryTest {
     }
 
     @Test
-    void testEmptyDriverClass() throws Exception {
+    void testEmptyDriverClass() {
         factory.setDriverClass(null);
         ManagedDataSource dataSource = factory.build(metricRegistry, "test");
         assertThatNoException().isThrownBy(dataSource::start);
     }
 
     @Test
-    void testInitialSizeIsZero() throws Exception {
+    void testInitialSizeIsZero() {
         factory.setUrl("nonsense invalid url");
         factory.setInitialSize(0);
         ManagedDataSource dataSource = factory.build(metricRegistry, "test");
@@ -129,11 +129,12 @@ class DataSourceFactoryTest {
     @Test
     void testJdbcInterceptors() throws Exception {
         factory.setJdbcInterceptors(Optional.of("StatementFinalizer;ConnectionState"));
-        final ManagedPooledDataSource source = (ManagedPooledDataSource) dataSource();
 
-        assertThat(source.getPoolProperties().getJdbcInterceptorsAsArray())
-            .extracting("interceptorClass")
-            .contains(StatementFinalizer.class, ConnectionState.class);
+        assertThat(dataSource())
+            .isInstanceOfSatisfying(ManagedPooledDataSource.class, source ->
+                assertThat(source.getPoolProperties().getJdbcInterceptorsAsArray())
+                .extracting("interceptorClass")
+                .contains(StatementFinalizer.class, ConnectionState.class));
     }
 
     @Test

@@ -32,7 +32,7 @@ class ExecutorServiceBuilderTest {
     private Logger log;
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() {
         executorServiceBuilder = new ExecutorServiceBuilder(new LifecycleEnvironment(metricRegistry), "test-%d");
         log = mock(Logger.class);
         ExecutorServiceBuilder.setLog(log);
@@ -126,10 +126,9 @@ class ExecutorServiceBuilderTest {
 
     @Test
     void shouldUseInstrumentedThreadFactory() {
-        ExecutorService exe = executorServiceBuilder.build();
-        final ThreadPoolExecutor castedExec = (ThreadPoolExecutor) exe;
-
-        assertThat(castedExec.getThreadFactory()).isInstanceOf(InstrumentedThreadFactory.class);
+        assertThat(executorServiceBuilder.build())
+            .isInstanceOfSatisfying(ThreadPoolExecutor.class, castedExec ->
+                assertThat(castedExec.getThreadFactory()).isInstanceOf(InstrumentedThreadFactory.class));
     }
 
     @Test

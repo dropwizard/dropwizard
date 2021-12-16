@@ -10,7 +10,6 @@ import io.dropwizard.util.Maps;
 import io.dropwizard.validation.BaseValidator;
 import org.apache.commons.text.StringSubstitutor;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -19,13 +18,15 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.net.ServerSocket;
 import java.net.URISyntaxException;
+import java.util.List;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class TlsSocketAppenderFactoryTest {
-
-    public TcpServer tcpServer = new TcpServer(createServerSocket());
 
     private final ObjectMapper objectMapper = Jackson.newObjectMapper();
     private final YamlConfigurationFactory<DefaultLoggingFactory> yamlConfigurationFactory = new YamlConfigurationFactory<>(
@@ -33,13 +34,7 @@ class TlsSocketAppenderFactoryTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        tcpServer.setUp();
         objectMapper.getSubtypeResolver().registerSubtypes(TcpSocketAppenderFactory.class);
-    }
-
-    @AfterEach
-    void tearDown() throws Exception {
-        tcpServer.tearDown();
     }
 
     private ServerSocket createServerSocket() {
@@ -64,22 +59,28 @@ class TlsSocketAppenderFactoryTest {
 
     @Test
     void testTlsLogging() throws Exception {
-        DefaultLoggingFactory loggingFactory = yamlConfigurationFactory.build(new SubstitutingSourceProvider(
-            new ResourceConfigurationSourceProvider(), new StringSubstitutor(Maps.of(
-            "tls.trust_store.path", resourcePath("/stores/tls_client.jks"),
-            "tls.trust_store.pass", "client_pass",
-            "tls.server_port", tcpServer.getPort()
-        ))), "/yaml/logging-tls.yml");
-        loggingFactory.configure(new MetricRegistry(), "tls-appender-test");
+        try (ServerSocket serverSocket = createServerSocket(); TcpServer tcpServer = new TcpServer(serverSocket)) {
+            Future<List<String>> receivedMessages = tcpServer.receive();
+            DefaultLoggingFactory loggingFactory = yamlConfigurationFactory.build(new SubstitutingSourceProvider(
+                new ResourceConfigurationSourceProvider(), new StringSubstitutor(Maps.of(
+                "tls.trust_store.path", resourcePath("/stores/tls_client.jks"),
+                "tls.trust_store.pass", "client_pass",
+                "tls.server_port", serverSocket.getLocalPort()
+            ))), "/yaml/logging-tls.yml");
+            loggingFactory.configure(new MetricRegistry(), "tls-appender-test");
 
-        Logger logger = LoggerFactory.getLogger("com.example.app");
-        for (int i = 0; i < tcpServer.getMessageCount(); i++) {
-            logger.info("Application log {}", i);
+            Logger logger = LoggerFactory.getLogger("com.example.app");
+            List<String> loggedMessages = generateLogs(logger);
+
+            loggingFactory.reset();
+
+            assertThat(receivedMessages.get(1, TimeUnit.MINUTES))
+                .hasSize(100)
+                .allSatisfy(s -> assertThat(s).startsWith("INFO"))
+                // Strip preamble from e.g. "INFO  [2021-11-20 10:23:57,620] com.example.app: Application log 0"
+                .extracting(s -> s.substring(s.lastIndexOf("com.example.app: ") + "com.example.app: ".length()))
+                .containsExactlyElementsOf(loggedMessages);
         }
-
-        tcpServer.getLatch().await(5, TimeUnit.SECONDS);
-        assertThat(tcpServer.getLatch().getCount()).isZero();
-        loggingFactory.reset();
     }
 
     @Test
@@ -107,5 +108,12 @@ class TlsSocketAppenderFactoryTest {
                 .satisfies(factory -> assertThat(factory.getSupportedCipherSuites())
                     .containsExactly("ECDHE-RSA-AES128-GCM-SHA256", "ECDHE-ECDSA-AES128-GCM-SHA256"))
                 .satisfies(factory -> assertThat(factory.getExcludedCipherSuites()).isEmpty()));
+    }
+
+    private static List<String> generateLogs(final Logger logger) {
+        return IntStream.range(0, 100)
+            .mapToObj(i -> String.format("Application log %d", i))
+            .peek(logger::info)
+            .collect(Collectors.toList());
     }
 }

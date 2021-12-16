@@ -71,8 +71,9 @@ public class SimpleServerFactoryTest {
 
     @Test
     void testGetPort() {
-        final HttpConnectorFactory connector = (HttpConnectorFactory) http.getConnector();
-        assertThat(connector.getPort()).isZero();
+        assertThat(http.getConnector())
+            .isInstanceOfSatisfying(HttpConnectorFactory.class, httpConnectorFactory ->
+                assertThat(httpConnectorFactory.getPort()).isZero());
     }
 
     @Test

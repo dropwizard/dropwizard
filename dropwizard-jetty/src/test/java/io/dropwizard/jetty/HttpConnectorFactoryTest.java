@@ -133,32 +133,31 @@ class HttpConnectorFactoryTest {
         MetricRegistry metrics = new MetricRegistry();
         ThreadPool threadPool = new QueuedThreadPool();
         Server server = null;
-        ServerConnector connector = null;
 
         try {
             server = new Server();
-            connector = (ServerConnector) http.build(server, metrics, "test-http-connector", threadPool);
+            try (final ServerConnector connector = (ServerConnector) http.build(server, metrics, "test-http-connector", threadPool)) {
 
-            assertThat(connector.getPort()).isEqualTo(8080);
-            assertThat(connector.getHost()).isEqualTo("127.0.0.1");
-            assertThat(connector.getAcceptQueueSize()).isEqualTo(1024);
-            assertThat(connector.getReuseAddress()).isTrue();
-            assertThat(connector.getIdleTimeout()).isEqualTo(30000);
-            assertThat(connector.getName()).isEqualTo("test-http-connector");
+                assertThat(connector.getPort()).isEqualTo(8080);
+                assertThat(connector.getHost()).isEqualTo("127.0.0.1");
+                assertThat(connector.getAcceptQueueSize()).isEqualTo(1024);
+                assertThat(connector.getReuseAddress()).isTrue();
+                assertThat(connector.getIdleTimeout()).isEqualTo(30000);
+                assertThat(connector.getName()).isEqualTo("test-http-connector");
 
-            assertThat(connector.getServer()).isSameAs(server);
-            assertThat(connector.getScheduler()).isInstanceOf(ScheduledExecutorScheduler.class);
-            assertThat(connector.getExecutor()).isSameAs(threadPool);
+                assertThat(connector.getServer()).isSameAs(server);
+                assertThat(connector.getScheduler()).isInstanceOf(ScheduledExecutorScheduler.class);
+                assertThat(connector.getExecutor()).isSameAs(threadPool);
 
-            verify(http).buildBufferPool(64, 1024, 64 * 1024);
+                verify(http).buildBufferPool(64, 1024, 64 * 1024);
 
-            assertThat(connector.getAcceptors()).isEqualTo(1);
-            assertThat(connector.getSelectorManager().getSelectorCount()).isEqualTo(2);
+                assertThat(connector.getAcceptors()).isEqualTo(1);
+                assertThat(connector.getSelectorManager().getSelectorCount()).isEqualTo(2);
 
-            InstrumentedConnectionFactory connectionFactory =
+                InstrumentedConnectionFactory connectionFactory =
                     (InstrumentedConnectionFactory) connector.getConnectionFactory("http/1.1");
-            assertThat(connectionFactory).isInstanceOf(InstrumentedConnectionFactory.class);
-            assertThat(connectionFactory)
+                assertThat(connectionFactory).isInstanceOf(InstrumentedConnectionFactory.class);
+                assertThat(connectionFactory)
                     .extracting("connectionFactory")
                     .asInstanceOf(InstanceOfAssertFactories.type(HttpConnectionFactory.class))
                     .satisfies(factory -> {
@@ -179,10 +178,8 @@ class HttpConnectorFactoryTest {
                         assertThat(config.getRequestCookieCompliance()).isEqualTo(CookieCompliance.RFC6265);
                         assertThat(config.getResponseCookieCompliance()).isEqualTo(CookieCompliance.RFC6265);
                     });
-        } finally {
-            if (connector != null) {
-                connector.stop();
             }
+        } finally {
             if (server != null) {
                 server.stop();
             }
@@ -198,17 +195,13 @@ class HttpConnectorFactoryTest {
         MetricRegistry metrics = new MetricRegistry();
         ThreadPool threadPool = new QueuedThreadPool();
         Server server = null;
-        ServerConnector connector = null;
 
         try {
             server = new Server();
-            connector = (ServerConnector) http.build(server, metrics, "test-http-connector-with-proxy-protocol", threadPool);
-
-            assertThat(connector.getConnectionFactories().toArray()[0]).isInstanceOf(ProxyConnectionFactory.class);
-        } finally {
-            if (connector != null) {
-                connector.stop();
+            try (final ServerConnector connector = (ServerConnector) http.build(server, metrics, "test-http-connector-with-proxy-protocol", threadPool)) {
+                assertThat(connector.getConnectionFactories().toArray()[0]).isInstanceOf(ProxyConnectionFactory.class);
             }
+        } finally {
             if (server != null) {
                 server.stop();
             }
@@ -225,16 +218,13 @@ class HttpConnectorFactoryTest {
         MetricRegistry metrics = new MetricRegistry();
         ThreadPool threadPool = new QueuedThreadPool();
         Server server = null;
-        ServerConnector connector = null;
 
         try {
             server = new Server();
-            connector = (ServerConnector) http.build(server, metrics, "test-http-connector", threadPool);
-            assertThat(connector.getAcceptQueueSize()).isEqualTo(NetUtil.getTcpBacklog());
-        } finally {
-            if (connector != null) {
-                connector.stop();
+            try (final ServerConnector connector = (ServerConnector) http.build(server, metrics, "test-http-connector", threadPool)) {
+                assertThat(connector.getAcceptQueueSize()).isEqualTo(NetUtil.getTcpBacklog());
             }
+        } finally {
             if (server != null) {
                 server.stop();
             }
