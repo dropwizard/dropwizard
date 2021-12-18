@@ -54,14 +54,14 @@ class SessionFactoryFactoryTest {
         when(environment.metrics()).thenReturn(metricRegistry);
         when(environment.lifecycle()).thenReturn(lifecycleEnvironment);
 
-        config.setUrl("jdbc:hsqldb:mem:DbTest-" + System.currentTimeMillis());
+        config.setUrl("jdbc:h2:mem:DbTest-" + System.currentTimeMillis());
         config.setUser("sa");
-        config.setDriverClass("org.hsqldb.jdbcDriver");
-        config.setValidationQuery("SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS");
+        config.setDriverClass("org.h2.Driver");
+        config.setValidationQuery("SELECT 1");
 
         final Map<String, String> properties = Maps.of(
             "hibernate.show_sql", "true",
-            "hibernate.dialect", "org.hibernate.dialect.HSQLDialect",
+            "hibernate.dialect", "org.hibernate.dialect.H2Dialect",
             "hibernate.jdbc.time_zone", "UTC");
         config.setProperties(properties);
     }

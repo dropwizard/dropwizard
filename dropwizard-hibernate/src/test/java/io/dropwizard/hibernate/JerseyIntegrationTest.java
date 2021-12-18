@@ -116,10 +116,10 @@ class JerseyIntegrationTest extends JerseyTest {
         when(environment.lifecycle()).thenReturn(lifecycleEnvironment);
         when(environment.metrics()).thenReturn(metricRegistry);
 
-        dbConfig.setUrl("jdbc:hsqldb:mem:DbTest-" + System.nanoTime() + "?hsqldb.translate_dti_types=false");
+        dbConfig.setUrl("jdbc:h2:mem:DbTest-" + System.nanoTime());
         dbConfig.setUser("sa");
-        dbConfig.setDriverClass("org.hsqldb.jdbcDriver");
-        dbConfig.setValidationQuery("SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS");
+        dbConfig.setDriverClass("org.h2.Driver");
+        dbConfig.setValidationQuery("SELECT 1");
 
         this.sessionFactory = factory.build(bundle,
                                             environment,
