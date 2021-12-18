@@ -162,12 +162,6 @@
             <artifactId>dropwizard-testing</artifactId>
             <scope>test</scope>
         </dependency>
-        <!-- we need HSQL because it handles time zones, H2 totally doesn't -->
-        <dependency>
-            <groupId>org.hsqldb</groupId>
-            <artifactId>hsqldb</artifactId>
-            <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>

@@ -42,7 +42,7 @@ class LazyLoadingTest {
     private final DropwizardAppExtension<TestConfiguration> appExtension = new DropwizardAppExtension<>(
         TestApplication.class,
         ResourceHelpers.resourceFilePath("hibernate-integration-test.yaml"),
-        ConfigOverride.config("dataSource.url", "jdbc:hsqldb:mem:DbTest" + System.nanoTime() + "?hsqldb.translate_dti_types=false")
+        ConfigOverride.config("dataSource.url", "jdbc:h2:mem:DbTest" + System.nanoTime())
     );
 
     @Test
@@ -62,7 +62,7 @@ class LazyLoadingTest {
         final Response response = appExtension.client().target("http://localhost:" + appExtension.getLocalPort()).path("/dogs/Raf").request().put(Entity.entity(raf, MediaType.APPLICATION_JSON));
         assertThat(response.getStatusInfo()).isEqualTo(Response.Status.BAD_REQUEST);
         assertThat(response.getHeaderString(HttpHeaders.CONTENT_TYPE)).isEqualTo(MediaType.APPLICATION_JSON);
-        assertThat(response.readEntity(ErrorMessage.class).getMessage()).contains("unique constraint", "table: DOGS");
+        assertThat(response.readEntity(ErrorMessage.class).getMessage()).contains("Unique index or primary key violation", "PUBLIC.DOGS(NAME)");
     }
 
     @Nested
@@ -72,7 +72,7 @@ class LazyLoadingTest {
         private final DropwizardAppExtension<TestConfiguration> appExtension = new DropwizardAppExtension<>(
             TestApplicationWithDisabledLazyLoading.class,
             ResourceHelpers.resourceFilePath("hibernate-integration-test.yaml"),
-            ConfigOverride.config("dataSource.url", "jdbc:hsqldb:mem:DbTest" + System.nanoTime() + "?hsqldb.translate_dti_types=false")
+            ConfigOverride.config("dataSource.url", "jdbc:h2:mem:DbTest" + System.nanoTime())
         );
 
         @Test
