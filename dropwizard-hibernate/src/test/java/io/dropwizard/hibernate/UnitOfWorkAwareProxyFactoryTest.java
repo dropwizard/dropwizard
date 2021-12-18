@@ -38,11 +38,11 @@ public class UnitOfWorkAwareProxyFactoryTest {
         when(environment.metrics()).thenReturn(new MetricRegistry());
 
         final DataSourceFactory dataSourceFactory = new DataSourceFactory();
-        dataSourceFactory.setUrl("jdbc:hsqldb:mem:unit-of-work-" + UUID.randomUUID().toString());
+        dataSourceFactory.setUrl("jdbc:h2:mem:unit-of-work-" + UUID.randomUUID());
         dataSourceFactory.setUser("sa");
-        dataSourceFactory.setDriverClass("org.hsqldb.jdbcDriver");
-        dataSourceFactory.setValidationQuery("SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS");
-        dataSourceFactory.setProperties(Collections.singletonMap("hibernate.dialect", "org.hibernate.dialect.HSQLDialect"));
+        dataSourceFactory.setDriverClass("org.h2.Driver");
+        dataSourceFactory.setValidationQuery("SELECT 1");
+        dataSourceFactory.setProperties(Collections.singletonMap("hibernate.dialect", "org.hibernate.dialect.H2Dialect"));
         dataSourceFactory.setInitialSize(1);
         dataSourceFactory.setMinSize(1);
 

@@ -157,7 +157,7 @@ public class LazyLoadingTest {
 
     public void setup(Class<? extends Application<TestConfiguration>> applicationClass) throws Exception {
         dropwizardTestSupport = new DropwizardTestSupport<>(applicationClass, ResourceHelpers.resourceFilePath("hibernate-integration-test.yaml"),
-            ConfigOverride.config("dataSource.url", "jdbc:hsqldb:mem:DbTest" + System.nanoTime() + "?hsqldb.translate_dti_types=false"));
+            ConfigOverride.config("dataSource.url", "jdbc:h2:mem:DbTest" + System.nanoTime()));
         dropwizardTestSupport.before();
     }
 
@@ -211,6 +211,6 @@ public class LazyLoadingTest {
         final Response response = client.target(getUrlPrefix() + "/dogs/Raf").request().put(Entity.entity(raf, MediaType.APPLICATION_JSON));
         assertThat(response.getStatusInfo()).isEqualTo(Response.Status.BAD_REQUEST);
         assertThat(response.getHeaderString(HttpHeaders.CONTENT_TYPE)).isEqualTo(MediaType.APPLICATION_JSON);
-        assertThat(response.readEntity(ErrorMessage.class).getMessage()).contains("unique constraint", "table: DOGS");
+        assertThat(response.readEntity(ErrorMessage.class).getMessage()).contains("Unique index or primary key violation:", "PUBLIC.DOGS(NAME)");
     }
 }
