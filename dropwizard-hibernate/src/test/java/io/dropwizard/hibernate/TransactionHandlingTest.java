@@ -35,7 +35,7 @@ class TransactionHandlingTest {
     private final DropwizardAppExtension<TestConfiguration> appExtension = new DropwizardAppExtension<>(
         TestApplication.class,
         ResourceHelpers.resourceFilePath("transaction-handling-test.yaml"),
-        ConfigOverride.config("dataSource.url", "jdbc:hsqldb:mem:DbTest" + System.nanoTime() + "?hsqldb.translate_dti_types=false"),
+        ConfigOverride.config("dataSource.url", "jdbc:h2:mem:DbTest" + System.nanoTime()),
         ConfigOverride.config("server.registerDefaultExceptionMappers", "false")
     );
 
