@@ -360,8 +360,8 @@ useServerHeader          false               Whether or not to add the ``Server`
 useDateHeader            true                Whether or not to add the ``Date`` header to each response.
 useForwardedHeaders      false               Whether or not to look at ``X-Forwarded-*`` headers added by proxies. See
                                              `ForwardedRequestCustomizer`_ for details.
-useProxyProtocol         false               Whether or not to accept PROXY protocol requests from a reverse proxy like HAProxy
-                                             `org.eclipse.jetty.server.ProxyConnectionFactory` supports v1 and v2
+useProxyProtocol         false               Whether or not to accept ``PROXY`` protocol requests from a reverse proxy such as `HAProxy`_.
+                                             `ProxyConnectionFactory`_ supports version 1 and 2 of the ``PROXY`` protocol.
 httpCompliance           RFC7230             This sets the http compliance level used by Jetty when parsing http, this
                                              can be useful when using a non-RFC7230 compliant front end, such as nginx,
                                              which can produce multi-line headers when forwarding client certificates
@@ -394,7 +394,9 @@ responseCookieCompliance RFC6265             This sets the cookie compliance lev
 ======================== ==================  ======================================================================================
 
 .. _`java.net.Socket#setSoTimeout(int)`: https://docs.oracle.com/javase/8/docs/api/java/net/Socket.html#setSoTimeout-int-
-.. _`ForwardedRequestCustomizer`: https://www.eclipse.org/jetty/javadoc/9.4.12.v20180830/org/eclipse/jetty/server/ForwardedRequestCustomizer.html
+.. _`ForwardedRequestCustomizer`: https://www.eclipse.org/jetty/javadoc/jetty-9/org/eclipse/jetty/server/ForwardedRequestCustomizer.html
+.. _`ProxyConnectionFactory`: https://www.eclipse.org/jetty/javadoc/jetty-9/org/eclipse/jetty/server/ProxyConnectionFactory.html
+.. _`HAProxy`: https://www.haproxy.org/
 
 .. _`Server::Starter`:  https://github.com/kazuho/p5-Server-Starter
 
