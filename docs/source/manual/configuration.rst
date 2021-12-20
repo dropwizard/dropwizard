@@ -314,6 +314,7 @@ HTTP
           useServerHeader: false
           useDateHeader: true
           useForwardedHeaders: false
+          useProxyProtocol: false
           httpCompliance: RFC7230
 
 
@@ -359,6 +360,8 @@ useServerHeader          false               Whether or not to add the ``Server`
 useDateHeader            true                Whether or not to add the ``Date`` header to each response.
 useForwardedHeaders      false               Whether or not to look at ``X-Forwarded-*`` headers added by proxies. See
                                              `ForwardedRequestCustomizer`_ for details.
+useProxyProtocol         false               Whether or not to accept PROXY protocol requests from a reverse proxy like HAProxy
+                                             `org.eclipse.jetty.server.ProxyConnectionFactory` supports v1 and v2
 httpCompliance           RFC7230             This sets the http compliance level used by Jetty when parsing http, this
                                              can be useful when using a non-RFC7230 compliant front end, such as nginx,
                                              which can produce multi-line headers when forwarding client certificates
