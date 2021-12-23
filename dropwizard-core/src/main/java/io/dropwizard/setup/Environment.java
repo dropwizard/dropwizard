@@ -17,6 +17,7 @@ import io.dropwizard.jetty.MutableServletContextHandler;
 import io.dropwizard.jetty.setup.ServletEnvironment;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import io.dropwizard.validation.InjectValidatorFeature;
+import org.eclipse.jetty.server.session.SessionHandler;
 
 import javax.annotation.Nullable;
 import javax.servlet.Servlet;
@@ -76,6 +77,7 @@ public class Environment {
 
         this.servletContext = new MutableServletContextHandler();
         servletContext.setClassLoader(classLoader);
+        servletContext.setSessionHandler(new SessionHandler());
         this.servletEnvironment = new ServletEnvironment(servletContext);
 
         this.adminContext = new MutableServletContextHandler();
