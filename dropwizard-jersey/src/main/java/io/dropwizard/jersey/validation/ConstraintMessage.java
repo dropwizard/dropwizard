@@ -4,9 +4,6 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import io.dropwizard.validation.ValidationMethod;
 import io.dropwizard.validation.selfvalidating.SelfValidating;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.reflect.FieldUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.glassfish.jersey.server.model.Invocable;
 import org.glassfish.jersey.server.model.Parameter;
 
@@ -14,8 +11,9 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ElementKind;
 import javax.validation.Path;
 import javax.validation.metadata.ConstraintDescriptor;
-import java.lang.reflect.Field;
+import java.lang.annotation.Annotation;
 import java.time.Duration;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -28,7 +26,7 @@ import static org.glassfish.jersey.model.Parameter.Source.UNKNOWN;
 
 public class ConstraintMessage {
 
-    private static final Cache<Pair<Path, ? extends ConstraintDescriptor<?>>, String> PREFIX_CACHE =
+    private static final Cache<AbstractMap.SimpleImmutableEntry<Path, ? extends ConstraintDescriptor<?>>, String> PREFIX_CACHE =
             Caffeine.newBuilder()
             .expireAfterWrite(Duration.ofHours(1))
             .build();
@@ -40,22 +38,22 @@ public class ConstraintMessage {
      * Gets the human friendly location of where the violation was raised.
      */
     public static String getMessage(ConstraintViolation<?> v, Invocable invocable) {
-        final Pair<Path, ? extends ConstraintDescriptor<?>> of =
-                Pair.of(v.getPropertyPath(), v.getConstraintDescriptor());
-        final String cachePrefix = PREFIX_CACHE.getIfPresent(of);
-        if (cachePrefix == null) {
-            final String prefix = calculatePrefix(v, invocable);
-            PREFIX_CACHE.put(of, prefix);
-            return prefix + v.getMessage();
-        }
+        final AbstractMap.SimpleImmutableEntry<Path, ? extends ConstraintDescriptor<?>> of =
+            new AbstractMap.SimpleImmutableEntry<>(v.getPropertyPath(), v.getConstraintDescriptor());
+        final String cachePrefix = PREFIX_CACHE.get(of, k -> calculatePrefix(v, invocable));
         return cachePrefix + v.getMessage();
+    }
+
+    private static String stripLastComponent(String str) {
+        int pos = str.lastIndexOf('.');
+        return pos == -1 ? str : str.substring(0, pos);
     }
 
     private static String calculatePrefix(ConstraintViolation<?> v, Invocable invocable) {
         final Optional<String> returnValueName = getMethodReturnValueName(v);
         if (returnValueName.isPresent()) {
             final String name = isValidationMethod(v) ?
-                    StringUtils.substringBeforeLast(returnValueName.get(), ".") : returnValueName.get();
+                    stripLastComponent(returnValueName.get()) : returnValueName.get();
             return name + " ";
         }
 
@@ -132,8 +130,8 @@ public class ConstraintMessage {
 
                 // Extract the failing *Param annotation inside the Bean Param
                 if (param.getSource().equals(BEAN_PARAM)) {
-                    final Field field = FieldUtils.getField(param.getRawType(), member.getName(), true);
-                    return JerseyParameterNameProvider.getParameterNameFromAnnotations(field.getDeclaredAnnotations());
+                    return getFieldAnnotations(param.getRawType(), member.getName())
+                        .flatMap(JerseyParameterNameProvider::getParameterNameFromAnnotations);
                 }
                 break;
             case METHOD:
@@ -196,5 +194,14 @@ public class ConstraintMessage {
 
         // This shouldn't hit, but if it does, we'll return an unprocessable entity
         return 422;
+    }
+
+    private static Optional<Annotation[]> getFieldAnnotations(Class klass, String name) {
+        try {
+            return Optional.of(klass.getDeclaredField(name).getDeclaredAnnotations());
+        } catch (NoSuchFieldException e) {
+            return Optional.ofNullable(klass.getSuperclass())
+                .flatMap(superClass -> getFieldAnnotations(superClass, name));
+        }
     }
 }
