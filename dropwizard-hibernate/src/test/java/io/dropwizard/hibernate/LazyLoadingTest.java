@@ -3,6 +3,7 @@ package io.dropwizard.hibernate;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
+import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.db.PooledDataSourceFactory;
 import io.dropwizard.jersey.errors.ErrorMessage;
@@ -12,7 +13,6 @@ import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.DropwizardTestSupport;
 import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.util.Strings;
-import org.glassfish.jersey.client.JerseyClientBuilder;
 import org.hibernate.FlushMode;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -153,12 +153,13 @@ public class LazyLoadingTest {
     }
 
     private DropwizardTestSupport<?> dropwizardTestSupport = mock(DropwizardTestSupport.class);
-    private Client client = new JerseyClientBuilder().build();
+    private Client client = mock(Client.class);
 
     public void setup(Class<? extends Application<TestConfiguration>> applicationClass) throws Exception {
         dropwizardTestSupport = new DropwizardTestSupport<>(applicationClass, ResourceHelpers.resourceFilePath("hibernate-integration-test.yaml"),
             ConfigOverride.config("dataSource.url", "jdbc:h2:mem:DbTest" + System.nanoTime()));
         dropwizardTestSupport.before();
+        client = new JerseyClientBuilder(dropwizardTestSupport.getEnvironment()).build("test client");
     }
 
     @AfterEach
