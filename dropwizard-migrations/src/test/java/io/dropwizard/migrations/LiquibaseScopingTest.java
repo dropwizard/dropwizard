@@ -18,24 +18,18 @@ import org.junit.jupiter.api.Test;
 import javax.annotation.Nullable;
 import java.sql.PreparedStatement;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class LiquibaseScopingTest extends AbstractMigrationTest implements CustomTaskChange {
-
-    private static final Map<String, Object> scopedObjects = new HashMap<>();
-    static {
-        scopedObjects.put("person", new Person("Bill Smith"));
-    }
     private final DbCommand<TestMigrationConfiguration> dbCommand = new DbCommand<>(
         "db",
         TestMigrationConfiguration::getDataSource,
         TestMigrationConfiguration.class,
         "migrations-custom-change.xml",
-        scopedObjects
+        Collections.singletonMap("person", new Person("Bill Smith"))
     );
     private final DbCommand<TestMigrationConfiguration> dbCommandWithoutScopedObjects = new DbCommand<>(
         "db",
@@ -77,9 +71,7 @@ public class LiquibaseScopingTest extends AbstractMigrationTest implements Custo
             assertThat(rows).hasSize(1);
             Map<String, Object> dbPerson = rows.first();
             assertThat(dbPerson.getOrDefault("name", null))
-                .isInstanceOfSatisfying(String.class, name -> assertThat(name)
-                    .isNotNull()
-                    .isEqualTo(((Person)scopedObjects.get("person")).getName()));
+                .isInstanceOfSatisfying(String.class, name -> assertThat(name).isEqualTo("Bill Smith"));
         }
     }
 
@@ -111,12 +103,15 @@ public class LiquibaseScopingTest extends AbstractMigrationTest implements Custo
     public String getConfirmationMessage() {
         return "";
     }
+
     @Override
     public void setUp() {
     }
+
     @Override
     public void setFileOpener(ResourceAccessor resourceAccessor) {
     }
+
     @Override
     @Nullable
     public ValidationErrors validate(Database database) {
