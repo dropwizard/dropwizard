@@ -4,6 +4,7 @@ dependency-reduced-pom.xml
 pom.xml.releaseBackup
 pom.xml.versionsBackup
 release.properties
+.mvn/wrapper/maven-wrapper.jar
 
 # IntelliJ IDEA
 .idea/
