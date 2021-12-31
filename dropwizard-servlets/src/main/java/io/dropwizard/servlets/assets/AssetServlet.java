@@ -257,7 +257,10 @@ public class AssetServlet extends HttpServlet {
                 }
             }
         } catch (RuntimeException | URISyntaxException ignored) {
-            resp.sendError(HttpServletResponse.SC_NOT_FOUND);
+            if (!resp.isCommitted()) {
+                resp.reset();
+                resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            }
         }
     }
 
