@@ -21,7 +21,9 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 /**
  * The annotated element has to be in the appropriate range. Apply on
  * {@link io.dropwizard.util.Size} instances.
+ * @deprecated Use {@link DataSizeRange} for correct SI and IEC prefixes.
  */
+@Deprecated
 @Documented
 @Constraint(validatedBy = { })
 @Target({ METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE })
