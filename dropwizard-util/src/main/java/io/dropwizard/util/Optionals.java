@@ -2,6 +2,9 @@ package io.dropwizard.util;
 
 import java.util.Optional;
 
+/**
+ * @deprecated prefer using {@link java.util.Optional} directly
+ */
 @Deprecated
 public abstract class Optionals {
     /**
