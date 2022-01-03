@@ -42,41 +42,41 @@ class StateTest {
         final State state = new State(NAME, 2, 1, true, listener);
         state.failure();
 
-        assertThat(didStateChange.get()).isFalse();
-        assertThat(state.getHealthy().get()).isTrue();
+        assertThat(didStateChange).isFalse();
+        assertThat(state.getHealthy()).isTrue();
     }
 
     @Test
     void singleFailureShouldChangeStateIfThresholdExceeded() {
         final State state = new State(NAME, 1, 1, true, listener);
-        assertThat(state.getHealthy().get()).isTrue();
+        assertThat(state.getHealthy()).isTrue();
 
         state.failure();
 
-        assertThat(didStateChange.get()).isTrue();
-        assertThat(state.getHealthy().get()).isFalse();
+        assertThat(didStateChange).isTrue();
+        assertThat(state.getHealthy()).isFalse();
     }
 
     @Test
     void singleSuccessShouldNotChangeStateIfThresholdNotExceeded() {
         final State state = new State(NAME, 1, 2, false, listener);
-        assertThat(state.getHealthy().get()).isFalse();
+        assertThat(state.getHealthy()).isFalse();
 
         state.success();
 
-        assertThat(didStateChange.get()).isFalse();
-        assertThat(state.getHealthy().get()).isFalse();
+        assertThat(didStateChange).isFalse();
+        assertThat(state.getHealthy()).isFalse();
     }
 
     @Test
     void singleSuccessShouldChangeStateIfThresholdExceeded() {
         final State state = new State(NAME, 1, 1, false, listener);
-        assertThat(state.getHealthy().get()).isFalse();
+        assertThat(state.getHealthy()).isFalse();
 
         state.success();
 
-        assertThat(didStateChange.get()).isTrue();
-        assertThat(state.getHealthy().get()).isTrue();
+        assertThat(didStateChange).isTrue();
+        assertThat(state.getHealthy()).isTrue();
     }
 
     @Test
@@ -85,47 +85,47 @@ class StateTest {
 
         state.failure();
 
-        assertThat(didStateChange.get()).isTrue();
-        assertThat(state.getHealthy().get()).isFalse();
+        assertThat(didStateChange).isTrue();
+        assertThat(state.getHealthy()).isFalse();
 
         didStateChange.set(false);
 
         state.success();
 
-        assertThat(didStateChange.get()).isTrue();
-        assertThat(state.getHealthy().get()).isTrue();
+        assertThat(didStateChange).isTrue();
+        assertThat(state.getHealthy()).isTrue();
 
         didStateChange.set(false);
 
         state.failure();
 
-        assertThat(didStateChange.get()).isTrue();
-        assertThat(state.getHealthy().get()).isFalse();
+        assertThat(didStateChange).isTrue();
+        assertThat(state.getHealthy()).isFalse();
     }
 
     @Test
     void successFollowedByFailureShouldAllowAStateChangeToHealthyAfterAnotherSuccessOccurs() {
         final State state = new State(NAME, 1, 1, false, listener);
-        assertThat(state.getHealthy().get()).isFalse();
+        assertThat(state.getHealthy()).isFalse();
 
         state.success();
 
-        assertThat(didStateChange.get()).isTrue();
-        assertThat(state.getHealthy().get()).isTrue();
+        assertThat(didStateChange).isTrue();
+        assertThat(state.getHealthy()).isTrue();
 
         didStateChange.set(false);
 
         state.failure();
 
-        assertThat(didStateChange.get()).isTrue();
-        assertThat(state.getHealthy().get()).isFalse();
+        assertThat(didStateChange).isTrue();
+        assertThat(state.getHealthy()).isFalse();
 
         didStateChange.set(false);
 
         state.success();
 
-        assertThat(didStateChange.get()).isTrue();
-        assertThat(state.getHealthy().get()).isTrue();
+        assertThat(didStateChange).isTrue();
+        assertThat(state.getHealthy()).isTrue();
     }
 
     @Test
