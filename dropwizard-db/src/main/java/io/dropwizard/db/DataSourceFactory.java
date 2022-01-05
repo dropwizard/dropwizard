@@ -167,6 +167,13 @@ import java.util.concurrent.TimeUnit;
  *         </td>
  *     </tr>
  *     <tr>
+ *         <td>{@code maxIdle}</td>
+ *         <td>1</td>
+ *         <td>
+ *             The maximum size of the inactif connection pool.
+ *         </td>
+ *     </tr>
+ *     <tr>
  *         <td>{@code initializationQuery}</td>
  *         <td>none</td>
  *         <td>
@@ -379,6 +386,9 @@ public class DataSourceFactory implements PooledDataSourceFactory {
 
     @Min(1)
     private int maxSize = 100;
+    
+    @Min(1)
+    private int maxIdle = 10;
 
     @Nullable
     private String initializationQuery;
@@ -548,6 +558,16 @@ public class DataSourceFactory implements PooledDataSourceFactory {
     @JsonProperty
     public void setMaxSize(int maxSize) {
         this.maxSize = maxSize;
+    }
+    
+    @JsonProperty
+    public int getMaxIdle() {
+        return maxIdle;
+    }
+
+    @JsonProperty
+    public void setMaxIdle(int maxIdle) {
+        this.maxIdle = maxIdle;
     }
 
     @JsonProperty
@@ -894,7 +914,7 @@ public class DataSourceFactory implements PooledDataSourceFactory {
         poolConfig.setLogAbandoned(logAbandonedConnections);
         poolConfig.setLogValidationErrors(logValidationErrors);
         poolConfig.setMaxActive(maxSize);
-        poolConfig.setMaxIdle(maxSize);
+        poolConfig.setMaxIdle(maxIdle);
         poolConfig.setMinIdle(minSize);
 
         getMaxConnectionAge().map(Duration::toMilliseconds).ifPresent(poolConfig::setMaxAge);
