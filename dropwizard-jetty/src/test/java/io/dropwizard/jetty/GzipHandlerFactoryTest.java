@@ -62,8 +62,7 @@ class GzipHandlerFactoryTest {
         final GzipHandler handler = gzip.build(null);
 
         assertThat(handler.getMinGzipSize()).isEqualTo((int) gzip.getMinimumEntitySize().toBytes());
-        assertThat(handler.getExcludedAgentPatterns()).hasSize(1);
-        assertThat(handler.getExcludedAgentPatterns()[0]).isEqualTo("OLD-2.+");
+        assertThat(handler.getExcludedAgentPatterns()).singleElement().isEqualTo("OLD-2.+");
         assertThat(handler.getIncludedMimeTypes()).containsOnly("text/plain");
         assertThat(handler.getIncludedMethods()).containsOnly("GET", "POST");
         assertThat(handler.getCompressionLevel()).isEqualTo(Deflater.DEFAULT_COMPRESSION);

@@ -45,7 +45,7 @@ class HealthIntegrationTest {
     private String hostUrl;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         hostUrl = "http://" + HOST + ":" + TEST_APP_RULE.getLocalPort();
         Awaitility.waitAtMost(APP_STARTUP_MAX_TIMEOUT)
                 .pollInSameThread()
@@ -77,9 +77,9 @@ class HealthIntegrationTest {
                 .pollDelay(POLL_DELAY)
                 .until(this::isAppHealthy);
 
-        assertThat(app.getStateChangeCounter().get()).isPositive();
-        assertThat(app.getHealthyCheckCounter().get()).isPositive();
-        assertThat(app.getUnhealthyCheckCounter().get()).isPositive();
+        assertThat(app.getStateChangeCounter()).hasPositiveValue();
+        assertThat(app.getHealthyCheckCounter()).hasPositiveValue();
+        assertThat(app.getUnhealthyCheckCounter()).hasPositiveValue();
     }
 
     @Test
@@ -94,9 +94,9 @@ class HealthIntegrationTest {
                 .atMost(testTimeout)
                 .pollDelay(POLL_DELAY)
                 .until(this::isAppHealthy);
-        assertThat(app.getStateChangeCounter().get()).isPositive();
-        assertThat(app.getHealthyCheckCounter().get()).isPositive();
-        assertThat(app.getUnhealthyCheckCounter().get()).isPositive();
+        assertThat(app.getStateChangeCounter()).hasPositiveValue();
+        assertThat(app.getHealthyCheckCounter()).hasPositiveValue();
+        assertThat(app.getUnhealthyCheckCounter()).hasPositiveValue();
     }
 
     @Test
@@ -112,9 +112,9 @@ class HealthIntegrationTest {
                 .pollDelay(POLL_DELAY)
                 .until(this::isAppHealthy);
 
-        assertThat(app.getStateChangeCounter().get()).isPositive();
-        assertThat(app.getHealthyCheckCounter().get()).isPositive();
-        assertThat(app.getUnhealthyCheckCounter().get()).isPositive();
+        assertThat(app.getStateChangeCounter()).hasPositiveValue();
+        assertThat(app.getHealthyCheckCounter()).hasPositiveValue();
+        assertThat(app.getUnhealthyCheckCounter()).hasPositiveValue();
     }
 
     @Test
@@ -127,9 +127,9 @@ class HealthIntegrationTest {
                 .pollDelay(POLL_DELAY)
                 .until(() -> !isAppHealthy());
         // 2 state changes (to unhealthy) for critical checks, because of initial value of false
-        assertThat(app.getStateChangeCounter().get()).isPositive();
-        assertThat(app.getHealthyCheckCounter().get()).isZero();
-        assertThat(app.getUnhealthyCheckCounter().get()).isPositive();
+        assertThat(app.getStateChangeCounter()).hasPositiveValue();
+        assertThat(app.getHealthyCheckCounter()).hasValue(0);
+        assertThat(app.getUnhealthyCheckCounter()).hasPositiveValue();
     }
 
     @Test
@@ -150,9 +150,9 @@ class HealthIntegrationTest {
                 .pollDelay(POLL_DELAY)
                 .until(this::isAppHealthy);
 
-        assertThat(app.getStateChangeCounter().get()).isPositive();
-        assertThat(app.getHealthyCheckCounter().get()).isPositive();
-        assertThat(app.getUnhealthyCheckCounter().get()).isPositive();
+        assertThat(app.getStateChangeCounter()).hasPositiveValue();
+        assertThat(app.getHealthyCheckCounter()).hasPositiveValue();
+        assertThat(app.getUnhealthyCheckCounter()).hasPositiveValue();
     }
 
     private boolean isAppHealthy() {
