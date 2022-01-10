@@ -491,14 +491,13 @@ public class HttpClientBuilder {
     protected InstrumentedHttpClientConnectionManager createConnectionManager(Registry<ConnectionSocketFactory> registry,
                                                                               String name) {
         final Duration ttl = configuration.getTimeToLive();
-        final InstrumentedHttpClientConnectionManager manager = new InstrumentedHttpClientConnectionManager(
-                metricRegistry,
-                registry,
-                null, null,
-                resolver,
-                ttl.getQuantity(),
-                ttl.getUnit(),
-                name);
+        final InstrumentedHttpClientConnectionManager manager = InstrumentedHttpClientConnectionManager.builder(metricRegistry)
+            .socketFactoryRegistry(registry)
+            .dnsResolver(resolver)
+            .connTTL(ttl.getQuantity())
+            .connTTLTimeUnit(ttl.getUnit())
+            .name(name)
+            .build();
         return configureConnectionManager(manager);
     }
 

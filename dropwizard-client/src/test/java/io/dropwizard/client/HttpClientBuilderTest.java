@@ -143,7 +143,7 @@ class HttpClientBuilderTest {
         final MetricRegistry metricRegistry = new MetricRegistry();
         configuration = new HttpClientConfiguration();
         builder = new HttpClientBuilder(metricRegistry);
-        connectionManager = spy(new InstrumentedHttpClientConnectionManager(metricRegistry, registry));
+        connectionManager = spy(InstrumentedHttpClientConnectionManager.builder(metricRegistry).socketFactoryRegistry(registry).build());
         apacheBuilder = org.apache.http.impl.client.HttpClientBuilder.create();
         anotherApacheBuilder = spy(AnotherHttpClientBuilder.create());
     }

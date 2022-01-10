@@ -21,13 +21,13 @@ public class SslReloadTask extends Task {
     @Override
     public void execute(Map<String, List<String>> parameters, PrintWriter output) throws Exception {
         // Iterate through all the reloaders first to ensure valid configuration
-        for (SslReload reloader : getReloaders()) {
-            reloader.reload(new SslContextFactory.Server());
+        for (SslReload sslReload : getReloaders()) {
+            sslReload.reload(new SslContextFactory.Server());
         }
 
         // Now we know that configuration is valid, reload for real
-        for (SslReload reloader : getReloaders()) {
-            reloader.reload();
+        for (SslReload sslReload : getReloaders()) {
+            sslReload.reload();
         }
 
         output.write("Reloaded certificate configuration\n");
