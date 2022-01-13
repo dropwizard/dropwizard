@@ -53,7 +53,7 @@
         <jetty.version>9.4.44.v20210927</jetty.version>
         <joda-time.version>2.10.13</joda-time.version>
         <jsr305.version>3.0.2</jsr305.version>
-        <liquibase-core.version>4.6.2</liquibase-core.version>
+        <liquibase-core.version>4.7.0</liquibase-core.version>
         <liquibase-slf4j.version>4.0.0</liquibase-slf4j.version>
         <logback-throttling-appender.version>1.1.8</logback-throttling-appender.version>
         <logback.version>1.2.10</logback.version>
