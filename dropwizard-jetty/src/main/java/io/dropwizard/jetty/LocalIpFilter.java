@@ -21,7 +21,11 @@ import java.net.SocketException;
 
 /**
  * @see <a href="https://github.com/apache/curator/blob/master/curator-x-discovery/src/main/java/org/apache/curator/x/discovery/LocalIpFilter.java">LocalIpFilter</a>
+ *
+ * @deprecated This interface is intended for internal use and should be treated as
+ *             package-private.
  */
+@Deprecated
 public interface LocalIpFilter {
     boolean use(NetworkInterface networkInterface, InetAddress address) throws SocketException;
 }
