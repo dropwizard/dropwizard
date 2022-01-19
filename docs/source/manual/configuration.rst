@@ -330,10 +330,10 @@ outputBufferSize         32KiB               The size of the buffer into which r
                                              the client. A larger buffer can improve performance by allowing a content producer
                                              to run without blocking, however larger buffers consume more memory and may induce
                                              some latency before a client starts processing the content.
-maxRequestHeaderSize     8KiB                The maximum size of a request header. Larger headers will allow for more and/or
-                                             larger cookies plus larger form content encoded in a URL. However, larger headers
-                                             consume more memory and can make a server more vulnerable to denial of service
-                                             attacks.
+maxRequestHeaderSize     8KiB                The maximum allowed size in bytes for the HTTP request line and HTTP request headers.
+                                             Larger headers will allow for more and/or larger cookies plus larger form content
+                                             encoded in a URL. However, larger headers consume more memory and can make a server
+                                             more vulnerable to denial of service attacks.
 maxResponseHeaderSize    8KiB                The maximum size of a response header. Larger headers will allow for more and/or
                                              larger cookies and longer HTTP headers (eg for redirection).  However, larger headers
                                              will also consume more memory.
@@ -1317,7 +1317,7 @@ Health Checks
 Options around a particular health check which is registered in an Application
 
   .. code-block:: yaml
-     
+
       health:
         healthChecks:
           - name: file-system
