@@ -116,11 +116,23 @@ public class TaskServlet extends HttpServlet {
                     .map(Task::getName)
                     .sorted()
                     .forEach(output::println);
+            } catch (IOException ioException) {
+                LOGGER.error("Failed to write response", ioException);
+                if (!resp.isCommitted()) {
+                    resp.reset();
+                    resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                }
             }
         } else if (tasks.containsKey(req.getPathInfo())) {
-            resp.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+            if (!resp.isCommitted()) {
+                resp.reset();
+                resp.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+            }
         } else {
-            resp.sendError(HttpServletResponse.SC_NOT_FOUND);
+            if (!resp.isCommitted()) {
+                resp.reset();
+                resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            }
         }
     }
 
@@ -131,7 +143,17 @@ public class TaskServlet extends HttpServlet {
         final Task task = pathInfo != null ? tasks.get(pathInfo) : null;
         if (task != null) {
             resp.setContentType(task.getResponseContentType().orElse(DEFAULT_CONTENT_TYPE));
-            final PrintWriter output = resp.getWriter();
+            PrintWriter output;
+            try {
+                output = resp.getWriter();
+            } catch (IOException ioException) {
+                LOGGER.error("Failed to write response", ioException);
+                if (!resp.isCommitted()) {
+                    resp.reset();
+                    resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                }
+                return;
+            }
             try {
                 final TaskExecutor taskExecutor = taskExecutors.get(task);
                 requireNonNull(taskExecutor, "taskExecutor").executeTask(getParams(req), getBody(req), output);
@@ -147,7 +169,10 @@ public class TaskServlet extends HttpServlet {
                 output.close();
             }
         } else {
-            resp.sendError(HttpServletResponse.SC_NOT_FOUND);
+            if (!resp.isCommitted()) {
+                resp.reset();
+                resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            }
         }
     }
 
