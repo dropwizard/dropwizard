@@ -6,6 +6,8 @@ import com.codahale.metrics.health.HealthCheck;
 import io.dropwizard.util.Duration;
 import io.dropwizard.util.Maps;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
@@ -341,6 +343,7 @@ class HealthCheckManagerTest {
     }
 
     @Test
+    @DisabledOnOs(OS.WINDOWS)
     void shouldContinueScheduledCheckingWhileDelayingShutdown() throws Exception {
         // given
         final int checkIntervalMillis = 10;
