@@ -672,7 +672,7 @@ class DataSizeTest {
         assertThat(DataSize.parse("128", DataSizeUnit.KIBIBYTES)).isEqualTo(DataSize.kibibytes(128L));
     }
 
-    @SuppressWarnings("deprecation")
+    @Deprecated
     @Test
     void testToSize() {
         assertThat(DataSize.bytes(5L).toSize()).isEqualTo(Size.bytes(5L));
@@ -688,7 +688,7 @@ class DataSizeTest {
         assertThat(DataSize.pebibytes(5L).toSize()).isEqualTo(Size.terabytes(5L * 1024L));
     }
 
-    @SuppressWarnings("deprecation")
+    @Deprecated
     @Test
     void testFromSize() {
         assertThat(DataSize.fromSize(Size.bytes(5L))).isEqualTo(DataSize.bytes(5L));

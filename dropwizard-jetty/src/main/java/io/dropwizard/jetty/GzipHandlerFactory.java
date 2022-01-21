@@ -198,13 +198,14 @@ public class GzipHandlerFactory {
     /**
      * @deprecated  gzip handler no longer supports inflate streams
      */
+    @Deprecated
     @JsonProperty
     public boolean isGzipCompatibleInflation() {
         return gzipCompatibleInflation;
     }
 
     /**
-     * @deprecated  gzip handler no longer supports inflate streams
+     * @deprecated gzip handler no longer supports inflate streams
      */
     @Deprecated
     @JsonProperty
@@ -213,7 +214,7 @@ public class GzipHandlerFactory {
     }
 
     /**
-     * @deprecated
+     * @deprecated excluding by user agent will be removed in Jetty 10
      */
     @Deprecated
     public Set<String> getExcludedUserAgentPatterns() {
@@ -221,7 +222,7 @@ public class GzipHandlerFactory {
     }
 
     /**
-     * @deprecated
+     * @deprecated excluding by user agent will be removed in Jetty 10
      */
     @Deprecated
     public void setExcludedUserAgentPatterns(Set<String> excludedUserAgentPatterns) {

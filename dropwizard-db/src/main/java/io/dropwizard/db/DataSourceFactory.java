@@ -518,6 +518,9 @@ public class DataSourceFactory implements PooledDataSourceFactory {
         return validationQuery;
     }
 
+    /**
+     * @deprecated use {@link #getValidationQuery()} instead
+     */
     @Override
     @Deprecated
     @JsonIgnore
@@ -560,12 +563,18 @@ public class DataSourceFactory implements PooledDataSourceFactory {
         this.checkConnectionWhileIdle = checkConnectionWhileIdle;
     }
 
+    /**
+     * @deprecated use {@link #getReadOnlyByDefault()} instead
+     */
     @Deprecated
     @JsonProperty
     public boolean isDefaultReadOnly() {
         return Boolean.TRUE.equals(readOnlyByDefault);
     }
 
+    /**
+     * @deprecated use {@link #setReadOnlyByDefault(Boolean)} instead
+     */
     @Deprecated
     @JsonProperty
     public void setDefaultReadOnly(boolean defaultReadOnly) {
@@ -810,6 +819,9 @@ public class DataSourceFactory implements PooledDataSourceFactory {
         this.validatorClassName = validatorClassName;
     }
 
+    /**
+     * @deprecated use {@link #getValidationQueryTimeout()} instead
+     */
     @Override
     @Deprecated
     @JsonIgnore
