@@ -7,6 +7,7 @@ public class Saying {
 
     private String content;
 
+    @SuppressWarnings("unused")
     public Saying() {
         // Jackson deserialization
     }
