@@ -19,8 +19,8 @@ import javax.ws.rs.core.MediaType;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class DropwizardResourceConfigTest {
-    private DropwizardResourceConfig rc = DropwizardResourceConfig.forTesting();
-    private AbstractJerseyTest jerseyTest = new AbstractJerseyTest() {
+    private final DropwizardResourceConfig rc = DropwizardResourceConfig.forTesting();
+    private final AbstractJerseyTest jerseyTest = new AbstractJerseyTest() {
         @Override
         protected Application configure() {
             return rc;
@@ -437,7 +437,7 @@ class DropwizardResourceConfigTest {
     }
 
     public static class ResourceWithInjectedDependency implements ResourceInterface {
-        private Dependency dependency;
+        private final Dependency dependency;
 
         @Inject
         public ResourceWithInjectedDependency(Dependency dependency) {

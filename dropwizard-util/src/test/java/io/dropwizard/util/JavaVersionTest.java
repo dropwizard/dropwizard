@@ -4,6 +4,10 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * @deprecated {@link JavaVersion} is deprecated
+ */
+@Deprecated
 class JavaVersionTest {
     @Test
     void isJava8_returns_false_if_specVersion_cannot_be_read() {
