@@ -384,7 +384,7 @@ class HealthCheckManagerTest {
         long afterCount = check.getCount();
 
         // then
-        assertThat(shutdownFailure.get()).isFalse();
+        assertThat(shutdownFailure).isFalse();
         assertThat(afterCount - beforeCount).isGreaterThanOrEqualTo(expectedCount);
     }
 
