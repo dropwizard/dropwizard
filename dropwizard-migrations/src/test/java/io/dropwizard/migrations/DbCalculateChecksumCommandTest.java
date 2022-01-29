@@ -32,7 +32,7 @@ class DbCalculateChecksumCommandTest extends AbstractMigrationTest {
                 "id", Collections.singletonList("2"),
                 "author", Collections.singletonList("db_dev"))),
                 createConfiguration(getDatabaseUrl()));
-        assertThat(checkSumVerified.get()).isTrue();
+        assertThat(checkSumVerified).isTrue();
     }
 
     @Test

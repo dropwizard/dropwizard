@@ -8,33 +8,34 @@ import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import org.eclipse.jetty.http.HttpStatus;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledForJreRange;
 import org.junit.jupiter.api.condition.JRE;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.File;
 import java.util.Optional;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 @Testcontainers(disabledWithoutDocker = true)
 @ExtendWith(DropwizardExtensionsSupport.class)
 @DisabledForJreRange(min = JRE.JAVA_16)
 public class DockerIntegrationTest {
     @Container
-    private static final MySQLContainer<?> MY_SQL_CONTAINER = new MySQLContainer<>(DockerImageName.parse("mysql:8.0.24"));
+    private static final MySQLContainer<?> MY_SQL_CONTAINER = new MySQLContainer<>(DockerImageName.parse("mysql:8.0.28"));
 
     private static final String CONFIG_PATH = ResourceHelpers.resourceFilePath("test-docker-example.yml");
 
@@ -61,6 +62,36 @@ public class DockerIntegrationTest {
         assertThat(saying.getContent()).isEqualTo(APP.getConfiguration().buildTemplate().render(name));
     }
 
+    @Nested
+    class DateParameterTests {
+        @Test
+        void validDateParameter() {
+            final String date = APP.client().target("http://localhost:" + APP.getLocalPort() + "/hello-world/date")
+                .queryParam("date", "2022-01-20")
+                .request()
+                .get(String.class);
+            assertThat(date).isEqualTo("2022-01-20");
+        }
+
+        @ParameterizedTest
+        @ValueSource(strings = {"null", "abc", "0"})
+        void invalidDateParameter(String value) {
+            assertThatExceptionOfType(BadRequestException.class)
+                .isThrownBy(() -> APP.client().target("http://localhost:" + APP.getLocalPort() + "/hello-world/date")
+                    .queryParam("date", value)
+                    .request()
+                    .get(String.class));
+        }
+
+        @Test
+        void noDateParameter() {
+            final String date = APP.client().target("http://localhost:" + APP.getLocalPort() + "/hello-world/date")
+                .request()
+                .get(String.class);
+            assertThat(date).isEqualTo("");
+        }
+    }
+
     @Test
     void testPostPerson() {
         final Person person = new Person("Dr. IntegrationTest", "Chief Wizard", 1525);
@@ -69,17 +100,9 @@ public class DockerIntegrationTest {
         assertThat(newPerson.getJobTitle()).isEqualTo(person.getJobTitle());
     }
 
-    @Test
-    void testRenderingPersonFreemarker() {
-        testRenderingPerson("view_freemarker");
-    }
-
-    @Test
-    void testRenderingPersonMustache() {
-        testRenderingPerson("view_mustache");
-    }
-
-    private void testRenderingPerson(String viewName) {
+    @ParameterizedTest
+    @ValueSource(strings={"view_freemarker", "view_mustache"})
+    void testRenderingPerson(String viewName) {
         final Person person = new Person("Dr. IntegrationTest", "Chief Wizard", 1525);
         final Person newPerson = postPerson(person);
         final String url = "http://localhost:" + APP.getLocalPort() + "/people/" + newPerson.getId() + "/" + viewName;
@@ -95,14 +118,14 @@ public class DockerIntegrationTest {
     }
 
     @Test
-    void testLogFileWritten() throws IOException {
+    void testLogFileWritten() {
         // The log file is using a size and time based policy, which used to silently
         // fail (and not write to a log file). This test ensures not only that the
         // log file exists, but also contains the log line that jetty prints on startup
-        final Path log = Paths.get("./logs/application.log");
-        assertThat(log).exists();
-        final String actual = new String(Files.readAllBytes(log), UTF_8);
-        assertThat(actual).contains("0.0.0.0:" + APP.getLocalPort());
+        assertThat(new File("./logs/application.log"))
+            .exists()
+            .content()
+            .contains("0.0.0.0:" + APP.getLocalPort());
     }
 
     @Test

@@ -7,23 +7,25 @@ import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import org.eclipse.jetty.http.HttpStatus;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.io.IOException;
-import java.nio.file.Files;
+import java.io.File;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Optional;
 import java.util.function.Supplier;
 
 import static io.dropwizard.testing.ConfigOverride.config;
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 @ExtendWith(DropwizardExtensionsSupport.class)
 class IntegrationTest {
@@ -47,34 +49,56 @@ class IntegrationTest {
     }
 
     @Test
-    void testHelloWorld() throws Exception {
+    void testHelloWorld() {
         final Optional<String> name = Optional.of("Dr. IntegrationTest");
         final Saying saying = APP.client().target("http://localhost:" + APP.getLocalPort() + "/hello-world")
-                .queryParam("name", name.get())
-                .request()
-                .get(Saying.class);
+            .queryParam("name", name.get())
+            .request()
+            .get(Saying.class);
         assertThat(saying.getContent()).isEqualTo(APP.getConfiguration().buildTemplate().render(name));
     }
 
+    @Nested
+    class DateParameterTests {
+        @Test
+        void validDateParameter() {
+            final String date = APP.client().target("http://localhost:" + APP.getLocalPort() + "/hello-world/date")
+                .queryParam("date", "2022-01-20")
+                .request()
+                .get(String.class);
+            assertThat(date).isEqualTo("2022-01-20");
+        }
+
+        @ParameterizedTest
+        @ValueSource(strings = {"null", "abc", "0"})
+        void invalidDateParameter(String value) {
+            assertThatExceptionOfType(BadRequestException.class)
+                .isThrownBy(() -> APP.client().target("http://localhost:" + APP.getLocalPort() + "/hello-world/date")
+                    .queryParam("date", value)
+                    .request()
+                    .get(String.class));
+        }
+
+        @Test
+        void noDateParameter() {
+            final String date = APP.client().target("http://localhost:" + APP.getLocalPort() + "/hello-world/date")
+                .request()
+                .get(String.class);
+            assertThat(date).isEqualTo("");
+        }
+    }
+
     @Test
-    void testPostPerson() throws Exception {
+    void testPostPerson() {
         final Person person = new Person("Dr. IntegrationTest", "Chief Wizard", 1525);
         final Person newPerson = postPerson(person);
         assertThat(newPerson.getFullName()).isEqualTo(person.getFullName());
         assertThat(newPerson.getJobTitle()).isEqualTo(person.getJobTitle());
     }
 
-    @Test
-    void testRenderingPersonFreemarker() throws Exception {
-        testRenderingPerson("view_freemarker");
-    }
-
-    @Test
-    void testRenderingPersonMustache() throws Exception {
-        testRenderingPerson("view_mustache");
-    }
-
-    private void testRenderingPerson(String viewName) throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings={"view_freemarker", "view_mustache"})
+    void testRenderingPerson(String viewName) {
         final Person person = new Person("Dr. IntegrationTest", "Chief Wizard", 1525);
         final Person newPerson = postPerson(person);
         final String url = "http://localhost:" + APP.getLocalPort() + "/people/" + newPerson.getId() + "/" + viewName;
@@ -90,16 +114,15 @@ class IntegrationTest {
     }
 
     @Test
-    void testLogFileWritten() throws IOException {
+    void testLogFileWritten() {
         // The log file is using a size and time based policy, which used to silently
         // fail (and not write to a log file). This test ensures not only that the
         // log file exists, but also contains the log line that jetty prints on startup
-        final Path logFile = Paths.get(CURRENT_LOG.get());
-        assertThat(logFile).exists();
-        final String logFileContent = new String(Files.readAllBytes(logFile), UTF_8);
-        assertThat(logFileContent)
-                .contains("0.0.0.0:" + APP.getLocalPort(), "Starting hello-world", "Started application", "Started admin")
-                .doesNotContain("Exception", "ERROR", "FATAL");
+        assertThat(new File(CURRENT_LOG.get()))
+            .exists()
+            .content()
+            .contains("0.0.0.0:" + APP.getLocalPort(), "Starting hello-world", "Started application", "Started admin")
+            .doesNotContain("Exception", "ERROR", "FATAL");
     }
 
     @Test
