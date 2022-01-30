@@ -54,6 +54,10 @@ class HealthCheckManagerTest {
 
         // then
         verifyNoInteractions(scheduler);
+        assertThat(manager.healthStateView(NAME))
+            .isEmpty();
+        assertThat(manager.healthStateViews())
+            .isEmpty();
     }
 
     @Test
@@ -71,6 +75,10 @@ class HealthCheckManagerTest {
 
         // then
         verifyCheckWasScheduled(scheduler, true);
+        assertThat(manager.healthStateViews())
+            .singleElement()
+            .isEqualTo(manager.healthStateView(NAME).orElseThrow(IllegalStateException::new))
+            .satisfies(view -> assertThat(view.getName()).isEqualTo(NAME));
     }
 
     @Test
@@ -86,6 +94,11 @@ class HealthCheckManagerTest {
 
         // then
         verify(scheduler).unschedule(NAME);
+        assertThat(manager.healthStateView(NAME))
+            .isEmpty();
+        assertThat(manager.healthStateViews())
+            .singleElement()
+            .isNull();
     }
 
     @Test
