@@ -716,10 +716,10 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
             factory.setKeyStorePath(keyStorePath);
         }
 
-        final String keyStoreType = getKeyStoreType();
-        if (keyStoreType.startsWith("Windows-")) {
+        final String realKeyStoreType = getKeyStoreType();
+        if (realKeyStoreType.startsWith("Windows-")) {
             try {
-                final KeyStore keyStore = KeyStore.getInstance(keyStoreType);
+                final KeyStore keyStore = KeyStore.getInstance(realKeyStoreType);
 
                 keyStore.load(null, null);
                 factory.setKeyStore(keyStore);
@@ -727,7 +727,7 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
                 throw new IllegalStateException("Windows key store not supported", e);
             }
         } else {
-            factory.setKeyStoreType(keyStoreType);
+            factory.setKeyStoreType(realKeyStoreType);
             factory.setKeyStorePassword(keyStorePassword);
         }
 
@@ -735,10 +735,10 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
             factory.setKeyStoreProvider(keyStoreProvider);
         }
 
-        final String trustStoreType = getTrustStoreType();
-        if (trustStoreType.startsWith("Windows-")) {
+        final String realTrustStoreType = getTrustStoreType();
+        if (realTrustStoreType.startsWith("Windows-")) {
             try {
-                final KeyStore keyStore = KeyStore.getInstance(trustStoreType);
+                final KeyStore keyStore = KeyStore.getInstance(realTrustStoreType);
 
                 keyStore.load(null, null);
                 factory.setTrustStore(keyStore);
@@ -752,7 +752,7 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
             if (trustStorePassword != null) {
                 factory.setTrustStorePassword(trustStorePassword);
             }
-            factory.setTrustStoreType(trustStoreType);
+            factory.setTrustStoreType(realTrustStoreType);
         }
 
         if (trustStoreProvider != null) {

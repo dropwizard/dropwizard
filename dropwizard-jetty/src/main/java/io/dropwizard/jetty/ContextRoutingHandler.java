@@ -63,9 +63,9 @@ public class ContextRoutingHandler extends AbstractHandlerContainer {
     @Override
     protected void expandChildren(List<Handler> list, Class<?> byClass)
     {
-        Handler[] handlers = getHandlers();
-        if (handlers != null) {
-            for (Handler h : handlers) {
+        Handler[] handlerArray = getHandlers();
+        if (handlerArray != null) {
+            for (Handler h : handlerArray) {
                 expandHandler(h, list, byClass);
             }
         }
