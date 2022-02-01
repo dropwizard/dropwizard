@@ -160,7 +160,7 @@ public class DefaultHealthFactory implements HealthFactory {
         }
 
         final MetricRegistry metrics = lifecycle.getMetricRegistry();
-        final HealthCheckRegistry healthChecks = health.healthChecks();
+        final HealthCheckRegistry envHealthChecks = health.healthChecks();
 
         final String fullName = DEFAULT_BASE_NAME + "-" + name;
         final List<HealthCheckConfiguration> healthCheckConfigs = getHealthCheckConfigurations();
@@ -181,15 +181,15 @@ public class DefaultHealthFactory implements HealthFactory {
                 mapper);
 
         // register listener for HealthCheckRegistry and setup validator to ensure correct config
-        healthChecks.addListener(healthCheckManager);
-        lifecycle.manage(new HealthCheckConfigValidator(healthCheckConfigs, healthChecks));
+        envHealthChecks.addListener(healthCheckManager);
+        lifecycle.manage(new HealthCheckConfigValidator(healthCheckConfigs, envHealthChecks));
 
         // register shutdown handler with Jetty
-        final Duration shutdownWaitPeriod = getShutdownWaitPeriod();
-        if (isDelayedShutdownHandlerEnabled() && shutdownWaitPeriod.toMilliseconds() > 0) {
+        final Duration shutdownDelay = getShutdownWaitPeriod();
+        if (isDelayedShutdownHandlerEnabled() && shutdownDelay.toMilliseconds() > 0) {
             final DelayedShutdownHandler shutdownHandler = new DelayedShutdownHandler(healthCheckManager);
             shutdownHandler.register();
-            LOGGER.debug("Set up delayed shutdown with delay: {}", shutdownWaitPeriod);
+            LOGGER.debug("Set up delayed shutdown with delay: {}", shutdownDelay);
         }
 
         // Set the health state aggregator on the HealthEnvironment

@@ -255,9 +255,9 @@ public class ConfigurationParsingException extends ConfigurationException {
             }
 
             if (hasSuggestions()) {
-                final List<String> suggestions = getSuggestions();
+                final List<String> suggestionList = getSuggestions();
                 sb.append(NEWLINE).append("    Did you mean?:").append(NEWLINE);
-                final Iterator<String> it = suggestions.iterator();
+                final Iterator<String> it = suggestionList.iterator();
                 int i = 0;
                 while (it.hasNext() && i < MAX_SUGGESTIONS) {
                     sb.append("      - ").append(it.next());
@@ -267,7 +267,7 @@ public class ConfigurationParsingException extends ConfigurationException {
                     }
                 }
 
-                final int total = suggestions.size();
+                final int total = suggestionList.size();
                 if (i < total) {
                     sb.append("        [").append(total - i).append(" more]");
                 }

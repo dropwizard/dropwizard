@@ -29,10 +29,10 @@ public class InjectValidatorFeature implements Feature {
         ConstraintValidatorFactory constraintValidatorFactory = validatorFactory.getConstraintValidatorFactory();
         if (constraintValidatorFactory instanceof MutableValidatorFactory) {
             MutableValidatorFactory mutableValidatorFactory = (MutableValidatorFactory) constraintValidatorFactory;
-            ConstraintValidatorFactory validatorFactory =
+            ConstraintValidatorFactory resourceContextValidatorFactory =
                 resourceContext.getResource(InjectingConstraintValidatorFactory.class);
 
-            mutableValidatorFactory.setValidatorFactory(validatorFactory);
+            mutableValidatorFactory.setValidatorFactory(resourceContextValidatorFactory);
             return true;
         }
 

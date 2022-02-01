@@ -883,17 +883,15 @@ public class DataSourceFactory implements PooledDataSourceFactory {
 
     @Override
     public ManagedDataSource build(MetricRegistry metricRegistry, String name) {
-        final Properties properties = new Properties();
-        for (Map.Entry<String, String> property : this.properties.entrySet()) {
-            properties.setProperty(property.getKey(), property.getValue());
-        }
+        final Properties dbProperties = new Properties();
+        properties.forEach(dbProperties::setProperty);
 
         final PoolProperties poolConfig = new PoolProperties();
         poolConfig.setAbandonWhenPercentageFull(abandonWhenPercentageFull);
         poolConfig.setAlternateUsernameAllowed(alternateUsernamesAllowed);
         poolConfig.setCommitOnReturn(commitOnReturn);
         poolConfig.setRollbackOnReturn(rollbackOnReturn);
-        poolConfig.setDbProperties(properties);
+        poolConfig.setDbProperties(dbProperties);
         poolConfig.setDefaultAutoCommit(autoCommitByDefault);
         poolConfig.setDefaultCatalog(defaultCatalog);
         poolConfig.setDefaultReadOnly(readOnlyByDefault);
