@@ -20,7 +20,7 @@ public class ResourceHelpers {
         try {
             return new File(Resources.getResource(resourceClassPathLocation).toURI()).getAbsolutePath();
         } catch (RuntimeException e) {
-            throw (RuntimeException) e;
+            throw e;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
