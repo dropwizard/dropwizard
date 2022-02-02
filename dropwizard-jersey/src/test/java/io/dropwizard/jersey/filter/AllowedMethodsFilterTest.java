@@ -68,14 +68,10 @@ class AllowedMethodsFilterTest extends AbstractJerseyTest {
     }
 
     private int getResponseStatusForRequestMethod(String method, boolean includeEntity) {
-        final Response resourceResponse = includeEntity
-                ? target("/ping").request().method(method, Entity.entity("", MediaType.TEXT_PLAIN))
-                : target("/ping").request().method(method);
-
-        try {
+        try (Response resourceResponse = includeEntity
+            ? target("/ping").request().method(method, Entity.entity("", MediaType.TEXT_PLAIN))
+            : target("/ping").request().method(method)) {
             return resourceResponse.getStatus();
-        } finally {
-            resourceResponse.close();
         }
     }
 
