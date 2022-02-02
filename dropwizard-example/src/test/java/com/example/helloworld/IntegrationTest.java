@@ -84,7 +84,7 @@ class IntegrationTest {
             final String date = APP.client().target("http://localhost:" + APP.getLocalPort() + "/hello-world/date")
                 .request()
                 .get(String.class);
-            assertThat(date).isEqualTo("");
+            assertThat(date).isEmpty();
         }
     }
 
