@@ -3,7 +3,6 @@ package io.dropwizard.db;
 import com.codahale.metrics.health.HealthCheck;
 import io.dropwizard.util.Duration;
 
-import java.lang.InterruptedException;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 
