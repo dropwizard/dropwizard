@@ -38,10 +38,8 @@ public @interface DataSizeRange {
     @OverridesAttribute(constraint = MaxDataSize.class, name = "value")
     long max() default Long.MAX_VALUE;
 
-    @OverridesAttribute.List({
-        @OverridesAttribute(constraint = MinDataSize.class, name = "unit"),
-        @OverridesAttribute(constraint = MaxDataSize.class, name = "unit")
-    })
+    @OverridesAttribute(constraint = MinDataSize.class, name = "unit")
+    @OverridesAttribute(constraint = MaxDataSize.class, name = "unit")
     DataSizeUnit unit() default DataSizeUnit.BYTES;
 
     String message() default "must be between {min} {unit} and {max} {unit}";
