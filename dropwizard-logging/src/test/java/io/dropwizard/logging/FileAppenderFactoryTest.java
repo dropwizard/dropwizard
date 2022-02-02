@@ -343,7 +343,7 @@ class FileAppenderFactoryTest {
 
         final FileAppender appender = factory.build(new ResourceConfigurationSourceProvider(), "yaml/appender_file_cap.yaml")
             .buildAppender(new LoggerContext());
-        assertThat(appender).isInstanceOfSatisfying(RollingFileAppender.class, roller -> {
+        assertThat(appender).isInstanceOfSatisfying(RollingFileAppender.class, roller ->
             assertThat(roller.getRollingPolicy()).isInstanceOfSatisfying(SizeAndTimeBasedRollingPolicy.class, policy -> {
                 try {
                     assertThat(totalSizeCap.get(policy))
@@ -358,8 +358,8 @@ class FileAppenderFactoryTest {
                 } catch (IllegalAccessException e) {
                     throw new RuntimeException("Unexpected illegal access", e);
                 }
-            });
-        });
+            })
+        );
     }
 
     @Test
