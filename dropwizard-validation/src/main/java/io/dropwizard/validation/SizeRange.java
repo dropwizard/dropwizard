@@ -38,10 +38,8 @@ public @interface SizeRange {
     @OverridesAttribute(constraint = MaxSize.class, name = "value")
     long max() default Long.MAX_VALUE;
 
-    @OverridesAttribute.List({
-        @OverridesAttribute(constraint = MinSize.class, name = "unit"),
-        @OverridesAttribute(constraint = MaxSize.class, name = "unit")
-    })
+    @OverridesAttribute(constraint = MinSize.class, name = "unit")
+    @OverridesAttribute(constraint = MaxSize.class, name = "unit")
     SizeUnit unit() default SizeUnit.BYTES;
 
     String message() default "must be between {min} {unit} and {max} {unit}";

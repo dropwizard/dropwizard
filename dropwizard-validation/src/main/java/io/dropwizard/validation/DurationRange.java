@@ -35,10 +35,8 @@ public @interface DurationRange {
     @OverridesAttribute(constraint = MaxDuration.class, name = "value")
     long max() default Long.MAX_VALUE;
 
-    @OverridesAttribute.List({
-        @OverridesAttribute(constraint = MinDuration.class, name = "unit"),
-        @OverridesAttribute(constraint = MaxDuration.class, name = "unit")
-    })
+    @OverridesAttribute(constraint = MinDuration.class, name = "unit")
+    @OverridesAttribute(constraint = MaxDuration.class, name = "unit")
     TimeUnit unit() default TimeUnit.SECONDS;
 
     String message() default "must be between {min} {unit} and {max} {unit}";

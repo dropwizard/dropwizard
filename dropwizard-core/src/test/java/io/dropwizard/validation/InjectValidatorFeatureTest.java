@@ -15,7 +15,6 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import javax.validation.constraints.Min;
-import java.util.Optional;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -36,7 +35,7 @@ class InjectValidatorFeatureTest {
     private ValidatorFactory validatorFactory;
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() {
         Bootstrap<Configuration> bootstrap = new Bootstrap<>(application);
         application.initialize(bootstrap);
 
@@ -57,14 +56,10 @@ class InjectValidatorFeatureTest {
         // Run validation manually
         Set<ConstraintViolation<Bean>> constraintViolations = validator.validate(new Bean(1));
 
-
-        assertThat(constraintViolations.size()).isEqualTo(1);
-
-        Optional<String> message = constraintViolations.stream()
-            .findFirst()
-            .map(ConstraintViolation::getMessage);
-
-        assertThat(message).hasValue("must be greater than or equal to 10");
+        assertThat(constraintViolations)
+            .singleElement()
+            .extracting(ConstraintViolation::getMessage)
+            .isEqualTo("must be greater than or equal to 10");
     }
 
     @Test
