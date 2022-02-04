@@ -1680,6 +1680,34 @@ Adding a ``Cache-Control`` statement to your resource class is simple with Dropw
 
 The ``@CacheControl`` annotation will take all of the parameters of the ``Cache-Control`` header.
 
+Sessions
+--------
+
+Although Dropwizard's main purpose is to build stateless RESTful APIs, a stateful web service can
+be built using HTTP sessions. As most users won't profit from having session support enabled by
+default, session support is implemented as opt-in.
+
+The underlying Jetty server will handle sessions only if a ``SessionHandler`` is provided at
+application startup. Therefore the following code has to be added to the ``run`` method of the
+``Application`` class:
+
+.. code-block:: java
+
+    @Override
+    public void run(final TestConfiguration configuration, final Environment environment) {
+        environment.servlets().setSessionHandler(new org.eclipse.jetty.server.session.SessionHandler());
+    }
+
+This will provide Jetty's default ``SessionHandler`` to the servlet environment and session support is enabled.
+To get an ``HttpSession`` object injected into a Jersey resource method, Dropwizard provides a ``@Session``
+annotation:
+
+.. code-block:: java
+
+    public Response doSomethingWithSessions(@Session HttpSession httpSession) {
+        return Response.ok().build();
+    }
+
 .. _man-core-representations:
 
 Representations
