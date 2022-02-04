@@ -50,9 +50,10 @@ class GraphiteReporterFactoryTest {
         verify(builderSpy).build(argument.capture());
 
         final Graphite graphite = argument.getValue();
-        assertThat(getField(graphite, "hostname")).isEqualTo("localhost");
-        assertThat(getField(graphite, "port")).isEqualTo(2003);
-        assertThat(getField(graphite, "address")).isNull();
+        final FieldAccessor<Graphite> graphiteFieldAccessor = new FieldAccessor<>(graphite);
+        assertThat(graphiteFieldAccessor.getField("hostname")).isEqualTo("localhost");
+        assertThat(graphiteFieldAccessor.getField("port")).isEqualTo(2003);
+        assertThat(graphiteFieldAccessor.getField("address")).isNull();
     }
 
     @Test
@@ -64,30 +65,23 @@ class GraphiteReporterFactoryTest {
         verify(builderSpy).build(argument.capture());
 
         final GraphiteUDP graphite = argument.getValue();
-        assertThat(getField(graphite, "hostname")).isEqualTo("localhost");
-        assertThat(getField(graphite, "port")).isEqualTo(2003);
-        assertThat(getField(graphite, "address")).isNull();
+        final FieldAccessor<GraphiteUDP> graphiteUDPFieldAccessor = new FieldAccessor<>(graphite);
+        assertThat(graphiteUDPFieldAccessor.getField("hostname")).isEqualTo("localhost");
+        assertThat(graphiteUDPFieldAccessor.getField("port")).isEqualTo(2003);
+        assertThat(graphiteUDPFieldAccessor.getField("address")).isNull();
     }
 
-    private static Object getField(GraphiteUDP graphite, String name) throws NoSuchFieldException {
-        try {
-            return getInaccessibleField(GraphiteUDP.class, name).get(graphite);
-        } catch (IllegalAccessException e) {
-            throw new IllegalStateException(e);
+    private static class FieldAccessor<T> {
+        T obj;
+
+        FieldAccessor(T obj) {
+            this.obj = obj;
         }
-    }
 
-    private static Object getField(Graphite graphite, String name) throws NoSuchFieldException {
-        try {
-            return getInaccessibleField(Graphite.class, name).get(graphite);
-        } catch (IllegalAccessException e) {
-            throw new IllegalStateException(e);
+        Object getField(String name) throws IllegalAccessException, NoSuchFieldException {
+            Field field = obj.getClass().getDeclaredField(name);
+            field.setAccessible(true);
+            return field.get(obj);
         }
-    }
-
-    private static Field getInaccessibleField(Class klass, String name) throws NoSuchFieldException {
-        Field field = klass.getDeclaredField(name);
-        field.setAccessible(true);
-        return field;
     }
 }

@@ -65,8 +65,8 @@ class HealthCheckManager implements HealthCheckRegistryListener, HealthStatusChe
 
         this.aggregateHealthyName = MetricRegistry.name("health", "aggregate", "healthy");
         this.aggregateUnhealthyName = MetricRegistry.name("health", "aggregate", "unhealthy");
-        metrics.register(aggregateHealthyName, (Gauge) this::calculateNumberOfHealthyChecks);
-        metrics.register(aggregateUnhealthyName, (Gauge) this::calculateNumberOfUnhealthyChecks);
+        metrics.register(aggregateHealthyName, (Gauge<Long>) this::calculateNumberOfHealthyChecks);
+        metrics.register(aggregateUnhealthyName, (Gauge<Long>) this::calculateNumberOfUnhealthyChecks);
     }
 
     // visible for testing

@@ -57,10 +57,10 @@ public class CsvReporterFactory extends BaseFormattedReporterFactory {
 
     @Override
     public ScheduledReporter build(MetricRegistry registry) {
-        final File file = requireNonNull(this.file, "File is not set");
-        final boolean creation = file.mkdirs();
-        if (!creation && !file.exists()) {
-            throw new RuntimeException("Failed to create" + file.getAbsolutePath());
+        final File directory = requireNonNull(getFile(), "File is not set");
+        final boolean creation = directory.mkdirs();
+        if (!creation && !directory.exists()) {
+            throw new RuntimeException("Failed to create" + directory.getAbsolutePath());
         }
 
         return CsvReporter.forRegistry(registry)
@@ -68,6 +68,6 @@ public class CsvReporterFactory extends BaseFormattedReporterFactory {
                           .convertRatesTo(getRateUnit())
                           .filter(getFilter())
                           .formatFor(getLocale())
-                          .build(getFile());
+                          .build(directory);
     }
 }
