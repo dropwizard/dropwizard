@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledForJreRange;
 import org.junit.jupiter.api.condition.JRE;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.testcontainers.containers.MySQLContainer;
@@ -25,7 +26,9 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.File;
+import java.nio.file.Path;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -39,12 +42,19 @@ public class DockerIntegrationTest {
 
     private static final String CONFIG_PATH = ResourceHelpers.resourceFilePath("test-docker-example.yml");
 
+    @TempDir
+    static Path tempDir;
+    static Supplier<String> CURRENT_LOG = () -> tempDir.resolve("application.log").toString();
+    static Supplier<String> ARCHIVED_LOG = () -> tempDir.resolve("application-%d-%i.log.gz").toString();
+
     public static final DropwizardAppExtension<HelloWorldConfiguration> APP = new DropwizardAppExtension<>(
             HelloWorldApplication.class, CONFIG_PATH,
             ConfigOverride.config("database.url", MY_SQL_CONTAINER::getJdbcUrl),
             ConfigOverride.config("database.user", MY_SQL_CONTAINER::getUsername),
             ConfigOverride.config("database.password", MY_SQL_CONTAINER::getPassword),
-            ConfigOverride.config("database.properties.enabledTLSProtocols", "TLSv1.1,TLSv1.2,TLSv1.3")
+            ConfigOverride.config("database.properties.enabledTLSProtocols", "TLSv1.1,TLSv1.2,TLSv1.3"),
+            ConfigOverride.config("logging.appenders[1].currentLogFilename", CURRENT_LOG),
+            ConfigOverride.config("logging.appenders[1].archivedLogFilenamePattern", ARCHIVED_LOG)
     );
 
     @BeforeAll
@@ -122,10 +132,15 @@ public class DockerIntegrationTest {
         // The log file is using a size and time based policy, which used to silently
         // fail (and not write to a log file). This test ensures not only that the
         // log file exists, but also contains the log line that jetty prints on startup
-        assertThat(new File("./logs/application.log"))
+        assertThat(new File(CURRENT_LOG.get()))
             .exists()
             .content()
-            .contains("0.0.0.0:" + APP.getLocalPort());
+            .contains("Starting hello-world",
+                "Started application@",
+                "0.0.0.0:" + APP.getLocalPort(),
+                "Started admin@",
+                "0.0.0.0:" + APP.getAdminPort())
+            .doesNotContain("ERROR", "FATAL", "Exception");
     }
 
     @Test
