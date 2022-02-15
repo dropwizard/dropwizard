@@ -4,10 +4,7 @@ import javax.annotation.Nullable;
 
 /**
  * @since 2.0
- *
- * @deprecated will be removed in a future release
  */
-@Deprecated
 public final class JavaVersion {
     private JavaVersion() {
     }
