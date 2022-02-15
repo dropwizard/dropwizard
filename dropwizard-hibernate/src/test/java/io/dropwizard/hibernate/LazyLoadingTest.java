@@ -68,7 +68,7 @@ class LazyLoadingTest {
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     @ExtendWith(DropwizardExtensionsSupport.class)
-    class LazyLoadingDisabled {
+    class LazyLoadingDisabledTest {
         private final DropwizardAppExtension<TestConfiguration> appExtension = new DropwizardAppExtension<>(
             TestApplicationWithDisabledLazyLoading.class,
             ResourceHelpers.resourceFilePath("hibernate-integration-test.yaml"),
@@ -107,7 +107,7 @@ class LazyLoadingTest {
         }
 
         @Override
-        public void run(TestConfiguration configuration, Environment environment) throws Exception {
+        public void run(TestConfiguration configuration, Environment environment) {
             final SessionFactory sessionFactory = hibernate.getSessionFactory();
             initDatabase(sessionFactory);
 

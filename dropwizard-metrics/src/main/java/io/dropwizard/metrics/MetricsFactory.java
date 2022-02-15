@@ -93,12 +93,6 @@ public class MetricsFactory {
     }
 
     /**
-     * @since 2.0
-     */
-    @JsonProperty
-
-
-    /**
      * Configures the given lifecycle with the {@link com.codahale.metrics.ScheduledReporter
      * reporters} configured for the given registry.
      * <p />

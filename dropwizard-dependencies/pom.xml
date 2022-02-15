@@ -20,7 +20,7 @@
         <!-- External dependencies -->
         <activation-api.version>1.2.2</activation-api.version>
         <argparse4j.version>0.9.0</argparse4j.version>
-        <byte-buddy.version>1.12.7</byte-buddy.version>
+        <byte-buddy.version>1.12.8</byte-buddy.version>
         <caffeine.version>2.9.3</caffeine.version>
         <checker-qual.version>3.21.2</checker-qual.version>
         <classmate.version>1.5.1</classmate.version>
@@ -32,7 +32,7 @@
         <freemarker.version>2.3.31</freemarker.version>
         <guava.version>31.0.1-jre</guava.version>
         <hibernate-core.version>5.6.5.Final</hibernate-core.version>
-        <hibernate-validator.version>6.2.1.Final</hibernate-validator.version>
+        <hibernate-validator.version>6.2.2.Final</hibernate-validator.version>
         <hk2.version>2.6.1</hk2.version>
         <httpclient.version>4.5.13</httpclient.version>
         <httpcore.version>4.4.15</httpcore.version>
@@ -50,7 +50,7 @@
         <jdbi3.version>3.27.1</jdbi3.version>
         <jersey.version>2.35</jersey.version>
         <jetty-setuid-java.version>1.0.4</jetty-setuid-java.version>
-        <jetty.version>9.4.44.v20210927</jetty.version>
+        <jetty.version>9.4.45.v20220203</jetty.version>
         <joda-time.version>2.10.13</joda-time.version>
         <jsr305.version>3.0.2</jsr305.version>
         <liquibase-core.version>4.7.1</liquibase-core.version>
@@ -60,7 +60,7 @@
         <metrics4.version>4.2.8</metrics4.version>
         <mustache-compiler.version>0.9.10</mustache-compiler.version>
         <nullaway.version>0.9.5</nullaway.version>
-        <slf4j.version>1.7.35</slf4j.version>
+        <slf4j.version>1.7.36</slf4j.version>
         <tomcat-jdbc.version>9.0.58</tomcat-jdbc.version>
         <usertype.core.version>7.0.0.CR1</usertype.core.version>
 
@@ -74,7 +74,7 @@
         <mockito.version>4.3.1</mockito.version>
 
         <!-- Plugin versions -->
-        <maven-compiler-plugin.version>3.9.0</maven-compiler-plugin.version>
+        <maven-compiler-plugin.version>3.10.0</maven-compiler-plugin.version>
         <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
         <jacoco-maven-plugin.version>0.8.7</jacoco-maven-plugin.version>
         <lifecycle-mapping.version>1.0.0</lifecycle-mapping.version>
