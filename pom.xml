@@ -79,7 +79,7 @@
         <maven-resources-plugin.version>3.2.0</maven-resources-plugin.version>
         <maven-site-plugin.version>3.10.0</maven-site-plugin.version>
         <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
-        <nexus-staging-maven-plugin.version>1.6.10</nexus-staging-maven-plugin.version>
+        <nexus-staging-maven-plugin.version>1.6.11</nexus-staging-maven-plugin.version>
         <sonar-maven-plugin.version>3.9.1.2184</sonar-maven-plugin.version>
 
         <sonar.moduleKey>${project.groupId}:${project.artifactId}</sonar.moduleKey>
