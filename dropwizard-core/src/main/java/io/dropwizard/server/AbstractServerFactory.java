@@ -2,11 +2,6 @@ package io.dropwizard.server;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheckRegistry;
-import com.codahale.metrics.jetty9.InstrumentedHandler;
-import com.codahale.metrics.jetty9.InstrumentedQueuedThreadPool;
-import com.codahale.metrics.servlets.AdminServlet;
-import com.codahale.metrics.servlets.HealthCheckServlet;
-import com.codahale.metrics.servlets.MetricsServlet;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,6 +13,11 @@ import io.dropwizard.jetty.GzipHandlerFactory;
 import io.dropwizard.jetty.MutableServletContextHandler;
 import io.dropwizard.jetty.ServerPushFilterFactory;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
+import io.dropwizard.metrics.jetty11.InstrumentedHandler;
+import io.dropwizard.metrics.jetty11.InstrumentedQueuedThreadPool;
+import io.dropwizard.metrics.servlets.AdminServlet;
+import io.dropwizard.metrics.servlets.HealthCheckServlet;
+import io.dropwizard.metrics.servlets.MetricsServlet;
 import io.dropwizard.request.logging.LogbackAccessRequestLogFactory;
 import io.dropwizard.request.logging.RequestLogFactory;
 import io.dropwizard.servlets.ThreadNameFilter;
@@ -40,12 +40,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
-import javax.servlet.DispatcherType;
-import javax.servlet.Servlet;
-import javax.validation.Valid;
-import javax.validation.Validator;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
+import jakarta.servlet.DispatcherType;
+import jakarta.servlet.Servlet;
+import jakarta.validation.Valid;
+import jakarta.validation.Validator;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -620,7 +620,7 @@ public abstract class AbstractServerFactory implements ServerFactory {
     protected Server buildServer(LifecycleEnvironment lifecycle,
                                  ThreadPool threadPool) {
         final Server server = new Server(threadPool);
-        server.addLifeCycleListener(buildSetUIDListener());
+        server.addEventListener(buildSetUIDListener());
         lifecycle.attach(server);
         final ErrorHandler errorHandler = new ErrorHandler();
         errorHandler.setServer(server);

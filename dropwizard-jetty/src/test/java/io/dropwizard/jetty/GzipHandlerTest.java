@@ -10,9 +10,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -43,7 +43,6 @@ class GzipHandlerTest {
         request.setHeader("Connection", "close");
         request.setURI("/banner");
 
-        gzipHandler.setExcludedAgentPatterns();
         gzipHandler.addIncludedMethods("POST");
         servletTester.addServlet(BannerServlet.class, "/banner");
         servletTester.getContext().setGzipHandler(gzipHandler);

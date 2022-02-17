@@ -9,7 +9,7 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlets.PushCacheFilter;
 import org.junit.jupiter.api.Test;
 
-import javax.servlet.DispatcherType;
+import jakarta.servlet.DispatcherType;
 import java.util.Arrays;
 import java.util.EnumSet;
 

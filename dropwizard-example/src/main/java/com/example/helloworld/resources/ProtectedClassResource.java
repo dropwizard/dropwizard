@@ -3,12 +3,12 @@ package com.example.helloworld.resources;
 import com.example.helloworld.core.User;
 import io.dropwizard.auth.Auth;
 
-import javax.annotation.security.PermitAll;
-import javax.annotation.security.RolesAllowed;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.SecurityContext;
+import jakarta.annotation.security.PermitAll;
+import jakarta.annotation.security.RolesAllowed;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.SecurityContext;
 
 /**
  * {@link RolesAllowed}, {@link PermitAll} are supported on the class level.<p>

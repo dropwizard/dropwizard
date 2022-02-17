@@ -78,7 +78,7 @@ public class LifecycleEnvironment {
         lifecycleListeners.add(new ServerListener(listener));
     }
 
-    public void addLifeCycleListener(LifeCycle.Listener listener) {
+    public void addEventListener(LifeCycle.Listener listener) {
         lifecycleListeners.add(listener);
     }
 
@@ -86,14 +86,14 @@ public class LifecycleEnvironment {
         for (LifeCycle object : managedObjects) {
             container.addBean(object);
         }
-        container.addLifeCycleListener(new AbstractLifeCycle.AbstractLifeCycleListener() {
+        container.addEventListener(new AbstractLifeCycle.AbstractLifeCycleListener() {
             @Override
             public void lifeCycleStarting(LifeCycle event) {
                 LOGGER.debug("managed objects = {}", managedObjects);
             }
         });
         for (LifeCycle.Listener listener : lifecycleListeners) {
-            container.addLifeCycleListener(listener);
+            container.addEventListener(listener);
         }
     }
 

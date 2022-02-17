@@ -13,7 +13,7 @@ import com.google.common.annotations.VisibleForTesting;
 import io.dropwizard.util.Sets;
 
 import javax.annotation.Nullable;
-import javax.ws.rs.container.ContainerRequestContext;
+import jakarta.ws.rs.container.ContainerRequestContext;
 import java.security.Principal;
 import java.util.Set;
 import java.util.concurrent.CompletionException;

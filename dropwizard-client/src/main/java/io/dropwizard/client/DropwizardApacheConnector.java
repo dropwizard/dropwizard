@@ -19,8 +19,8 @@ import org.glassfish.jersey.client.spi.Connector;
 import org.glassfish.jersey.message.internal.Statuses;
 
 import javax.annotation.Nullable;
-import javax.ws.rs.ProcessingException;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.ProcessingException;
+import jakarta.ws.rs.core.Response;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

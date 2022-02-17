@@ -22,11 +22,11 @@ import org.glassfish.jersey.client.spi.ConnectorProvider;
 
 import javax.annotation.Nullable;
 import javax.net.ssl.HostnameVerifier;
-import javax.validation.Validator;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.RxInvokerProvider;
-import javax.ws.rs.core.Configuration;
+import jakarta.validation.Validator;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.client.RxInvokerProvider;
+import jakarta.ws.rs.core.Configuration;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;

@@ -1,10 +1,10 @@
 package io.dropwizard.client.proxy;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import javax.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotEmpty;
 
 import javax.annotation.Nullable;
-import javax.validation.constraints.Pattern;
+import jakarta.validation.constraints.Pattern;
 
 /**
  * Represents a configuration of credentials for either Username Password or NT credentials

@@ -3,8 +3,8 @@ package io.dropwizard.jersey.validation;
 import io.dropwizard.validation.BaseValidator;
 import org.hibernate.validator.HibernateValidatorConfiguration;
 
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
 
 /**
  * A utility class for Hibernate.

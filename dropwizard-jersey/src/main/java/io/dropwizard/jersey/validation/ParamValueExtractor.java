@@ -3,9 +3,9 @@ package io.dropwizard.jersey.validation;
 import io.dropwizard.jersey.params.AbstractParam;
 import org.hibernate.validator.internal.engine.valueextraction.ValueExtractorDescriptor;
 
-import javax.validation.valueextraction.ExtractedValue;
-import javax.validation.valueextraction.UnwrapByDefault;
-import javax.validation.valueextraction.ValueExtractor;
+import jakarta.validation.valueextraction.ExtractedValue;
+import jakarta.validation.valueextraction.UnwrapByDefault;
+import jakarta.validation.valueextraction.ValueExtractor;
 
 /**
  * Let's the validator know that when validating a class that is an {@link AbstractParam} to

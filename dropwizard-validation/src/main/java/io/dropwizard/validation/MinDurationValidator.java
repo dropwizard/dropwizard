@@ -2,8 +2,8 @@ package io.dropwizard.validation;
 
 import io.dropwizard.util.Duration;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 import java.util.concurrent.TimeUnit;
 
 /**

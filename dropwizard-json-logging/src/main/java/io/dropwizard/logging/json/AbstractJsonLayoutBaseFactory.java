@@ -8,7 +8,7 @@ import io.dropwizard.logging.json.layout.TimestampFormatter;
 import io.dropwizard.logging.layout.DiscoverableLayoutFactory;
 
 import javax.annotation.Nullable;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import java.util.Collections;
 import java.util.Map;
 import java.util.TimeZone;

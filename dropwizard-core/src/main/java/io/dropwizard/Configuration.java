@@ -10,8 +10,8 @@ import io.dropwizard.server.ServerFactory;
 import io.dropwizard.setup.AdminFactory;
 
 import javax.annotation.Nullable;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import java.util.Optional;
 
 /**

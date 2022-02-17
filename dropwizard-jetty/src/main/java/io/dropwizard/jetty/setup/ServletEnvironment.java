@@ -11,10 +11,10 @@ import org.eclipse.jetty.util.resource.ResourceCollection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterRegistration;
-import javax.servlet.Servlet;
-import javax.servlet.ServletRegistration;
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterRegistration;
+import jakarta.servlet.Servlet;
+import jakarta.servlet.ServletRegistration;
 import java.util.Arrays;
 import java.util.EventListener;
 import java.util.HashSet;
@@ -39,7 +39,7 @@ public class ServletEnvironment {
      *
      * @param name    the servlet's name
      * @param servlet the servlet instance
-     * @return a {@link javax.servlet.ServletRegistration.Dynamic} instance allowing for further
+     * @return a {@link jakarta.servlet.ServletRegistration.Dynamic} instance allowing for further
      *         configuration
      */
     public ServletRegistration.Dynamic addServlet(String name, Servlet servlet) {
@@ -58,7 +58,7 @@ public class ServletEnvironment {
      *
      * @param name  the servlet's name
      * @param klass the servlet class
-     * @return a {@link javax.servlet.ServletRegistration.Dynamic} instance allowing for further configuration
+     * @return a {@link jakarta.servlet.ServletRegistration.Dynamic} instance allowing for further configuration
      */
     public ServletRegistration.Dynamic addServlet(String name, Class<? extends Servlet> klass) {
         final ServletHolder holder = new ServletHolder(name, klass);
@@ -76,7 +76,7 @@ public class ServletEnvironment {
      *
      * @param name   the filter's name
      * @param filter the filter instance
-     * @return a {@link javax.servlet.FilterRegistration.Dynamic} instance allowing for further
+     * @return a {@link jakarta.servlet.FilterRegistration.Dynamic} instance allowing for further
      *         configuration
      */
     public FilterRegistration.Dynamic addFilter(String name, Filter filter) {
@@ -88,7 +88,7 @@ public class ServletEnvironment {
      *
      * @param name  the filter's name
      * @param klass the filter class
-     * @return a {@link javax.servlet.FilterRegistration.Dynamic} instance allowing for further configuration
+     * @return a {@link jakarta.servlet.FilterRegistration.Dynamic} instance allowing for further configuration
      */
     public FilterRegistration.Dynamic addFilter(String name, Class<? extends Filter> klass) {
         return addFilter(name, new FilterHolder(requireNonNull(klass)));
@@ -108,9 +108,9 @@ public class ServletEnvironment {
      * Add one or more servlet event listeners.
      *
      * @param listeners one or more listener instances that implement {@link
-     *                  javax.servlet.ServletContextListener}, {@link javax.servlet.ServletContextAttributeListener},
-     *                  {@link javax.servlet.ServletRequestListener} or {@link
-     *                  javax.servlet.ServletRequestAttributeListener}
+     *                  jakarta.servlet.ServletContextListener}, {@link jakarta.servlet.ServletContextAttributeListener},
+     *                  {@link jakarta.servlet.ServletRequestListener} or {@link
+     *                  jakarta.servlet.ServletRequestAttributeListener}
      */
     public void addServletListeners(EventListener... listeners) {
         for (EventListener listener : listeners) {

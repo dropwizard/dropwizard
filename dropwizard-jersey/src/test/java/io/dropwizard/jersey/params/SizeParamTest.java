@@ -4,7 +4,7 @@ import io.dropwizard.jersey.errors.ErrorMessage;
 import io.dropwizard.util.Size;
 import org.junit.jupiter.api.Test;
 
-import javax.ws.rs.WebApplicationException;
+import jakarta.ws.rs.WebApplicationException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;

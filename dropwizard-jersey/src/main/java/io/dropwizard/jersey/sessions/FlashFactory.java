@@ -1,9 +1,9 @@
 package io.dropwizard.jersey.sessions;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import jakarta.inject.Inject;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 public final class FlashFactory {
     private final HttpServletRequest request;

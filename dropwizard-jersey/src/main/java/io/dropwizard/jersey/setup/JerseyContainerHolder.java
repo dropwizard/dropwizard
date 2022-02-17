@@ -1,7 +1,7 @@
 package io.dropwizard.jersey.setup;
 
 import javax.annotation.Nullable;
-import javax.servlet.Servlet;
+import jakarta.servlet.Servlet;
 
 public class JerseyContainerHolder {
 

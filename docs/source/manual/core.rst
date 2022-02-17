@@ -2099,7 +2099,7 @@ this example demonstrates a servlet filter analogous to the previous example:
 
 .. code-block:: java
 
-    public class DateNotSpecifiedServletFilter implements javax.servlet.Filter {
+    public class DateNotSpecifiedServletFilter implements jakarta.servlet.Filter {
         // Other methods in interface omitted for brevity
 
         @Override

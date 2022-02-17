@@ -22,8 +22,8 @@ import org.eclipse.jetty.server.CustomRequestLog;
 import org.eclipse.jetty.server.RequestLog;
 import org.slf4j.LoggerFactory;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;

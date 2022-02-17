@@ -3,15 +3,15 @@ package io.dropwizard.jersey.errors;
 import org.glassfish.jersey.server.internal.LocalizationMessages;
 import org.slf4j.LoggerFactory;
 
-import javax.ws.rs.NotSupportedException;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.ext.Provider;
+import jakarta.ws.rs.NotSupportedException;
+import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.ext.Provider;
 
-import static javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE;
+import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON_TYPE;
 
 /**
- * {@link javax.ws.rs.ext.ExceptionMapper ExceptionMapper} for {@link IllegalStateException}.
+ * {@link jakarta.ws.rs.ext.ExceptionMapper ExceptionMapper} for {@link IllegalStateException}.
  */
 @Provider
 public class IllegalStateExceptionMapper extends LoggingExceptionMapper<IllegalStateException> {

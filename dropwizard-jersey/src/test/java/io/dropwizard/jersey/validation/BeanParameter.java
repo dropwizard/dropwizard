@@ -2,9 +2,9 @@ package io.dropwizard.jersey.validation;
 
 import io.dropwizard.validation.ValidationMethod;
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.QueryParam;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.ws.rs.QueryParam;
 
 public class BeanParameter {
     @QueryParam("name")

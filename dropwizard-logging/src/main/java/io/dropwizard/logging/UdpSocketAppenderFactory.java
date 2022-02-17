@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.dropwizard.logging.socket.DropwizardUdpSocketAppender;
 import io.dropwizard.validation.PortRange;
-import javax.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotEmpty;
 
 /**
  * An {@link AppenderFactory} implementation which provides an appender that writes events to an UDP socket.

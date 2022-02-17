@@ -7,8 +7,8 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlets.PushCacheFilter;
 
 import javax.annotation.Nullable;
-import javax.servlet.DispatcherType;
-import javax.validation.constraints.Min;
+import jakarta.servlet.DispatcherType;
+import jakarta.validation.constraints.Min;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.concurrent.TimeUnit;

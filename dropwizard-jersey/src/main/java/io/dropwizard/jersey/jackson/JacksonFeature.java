@@ -2,10 +2,10 @@ package io.dropwizard.jersey.jackson;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import javax.ws.rs.core.Feature;
-import javax.ws.rs.core.FeatureContext;
-import javax.ws.rs.ext.MessageBodyReader;
-import javax.ws.rs.ext.MessageBodyWriter;
+import jakarta.ws.rs.core.Feature;
+import jakarta.ws.rs.core.FeatureContext;
+import jakarta.ws.rs.ext.MessageBodyReader;
+import jakarta.ws.rs.ext.MessageBodyWriter;
 
 /**
  * A binder that registers the Jackson JSON provider while allowing users to override.

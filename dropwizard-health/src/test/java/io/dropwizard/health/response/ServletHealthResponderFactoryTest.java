@@ -23,9 +23,9 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import javax.servlet.ServletRegistration;
-import javax.validation.Validator;
-import javax.ws.rs.core.MediaType;
+import jakarta.servlet.ServletRegistration;
+import jakarta.validation.Validator;
+import jakarta.ws.rs.core.MediaType;
 import java.util.Collections;
 import java.util.List;
 

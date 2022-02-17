@@ -17,9 +17,9 @@ import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
-import javax.servlet.Servlet;
-import javax.servlet.ServletRegistration;
-import javax.validation.Validator;
+import jakarta.servlet.Servlet;
+import jakarta.servlet.ServletRegistration;
+import jakarta.validation.Validator;
 import java.util.stream.Collectors;
 
 import static java.util.Collections.singletonList;

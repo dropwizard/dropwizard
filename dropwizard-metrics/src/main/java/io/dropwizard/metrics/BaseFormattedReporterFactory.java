@@ -2,7 +2,7 @@ package io.dropwizard.metrics;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import java.util.Locale;
 
 /**

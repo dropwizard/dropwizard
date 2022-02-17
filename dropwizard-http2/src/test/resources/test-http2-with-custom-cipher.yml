@@ -11,3 +11,4 @@ server:
       - 'TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256'
   applicationContextPath: /api
   adminContextPath: /admin
+  shutdownGracePeriod: 0s

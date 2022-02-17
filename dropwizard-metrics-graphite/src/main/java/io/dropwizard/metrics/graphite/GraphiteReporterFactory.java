@@ -10,9 +10,9 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.dropwizard.metrics.BaseReporterFactory;
 import io.dropwizard.validation.OneOf;
 import io.dropwizard.validation.PortRange;
-import javax.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotEmpty;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 /**
  * A factory for {@link GraphiteReporter} instances.

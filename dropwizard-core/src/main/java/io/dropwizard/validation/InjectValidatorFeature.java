@@ -3,12 +3,12 @@ package io.dropwizard.validation;
 import io.dropwizard.jersey.validation.MutableValidatorFactory;
 import org.glassfish.jersey.server.validation.internal.InjectingConstraintValidatorFactory;
 
-import javax.inject.Inject;
-import javax.validation.ConstraintValidatorFactory;
-import javax.validation.ValidatorFactory;
-import javax.ws.rs.container.ResourceContext;
-import javax.ws.rs.core.Feature;
-import javax.ws.rs.core.FeatureContext;
+import jakarta.inject.Inject;
+import jakarta.validation.ConstraintValidatorFactory;
+import jakarta.validation.ValidatorFactory;
+import jakarta.ws.rs.container.ResourceContext;
+import jakarta.ws.rs.core.Feature;
+import jakarta.ws.rs.core.FeatureContext;
 
 /**
  * @since 2.0

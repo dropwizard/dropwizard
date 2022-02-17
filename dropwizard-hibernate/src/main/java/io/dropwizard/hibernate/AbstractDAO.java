@@ -12,7 +12,7 @@ import org.hibernate.query.internal.AbstractProducedQuery;
 import java.io.Serializable;
 import java.util.List;
 
-import javax.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.CriteriaQuery;
 
 import static java.util.Objects.requireNonNull;
 

@@ -9,3 +9,4 @@ server:
           port: 0
           keyStorePath: keystore.jks
           keyStorePassword: password
+          disableSniHostCheck: true

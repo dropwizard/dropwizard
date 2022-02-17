@@ -48,7 +48,7 @@ public class ServerCommand<T extends Configuration> extends EnvironmentCommand<T
     protected void run(Environment environment, Namespace namespace, T configuration) throws Exception {
         final Server server = configuration.getServerFactory().build(environment);
         try {
-            server.addLifeCycleListener(new LifeCycleListener());
+            server.addEventListener(new LifeCycleListener());
             cleanupAsynchronously();
             server.start();
         } catch (Exception e) {

@@ -8,8 +8,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.WebApplicationException;
+import jakarta.validation.constraints.NotNull;
+import jakarta.ws.rs.WebApplicationException;
 import java.io.OutputStream;
 import java.util.Collections;
 import java.util.Locale;

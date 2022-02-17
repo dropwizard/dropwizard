@@ -4,7 +4,7 @@ import io.dropwizard.jersey.validation.ConstraintMessage;
 import io.dropwizard.jersey.validation.Validators;
 import io.dropwizard.logging.BootstrapLogging;
 import org.glassfish.jersey.server.model.Invocable;
-import javax.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotEmpty;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Mode;
@@ -15,11 +15,11 @@ import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.Valid;
-import javax.validation.Validator;
-import javax.validation.executable.ExecutableValidator;
-import javax.ws.rs.HeaderParam;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Valid;
+import jakarta.validation.Validator;
+import jakarta.validation.executable.ExecutableValidator;
+import jakarta.ws.rs.HeaderParam;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 

@@ -4,7 +4,7 @@
     <parent>
         <groupId>io.dropwizard</groupId>
         <artifactId>dropwizard-dependencies</artifactId>
-        <version>2.1.0-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
         <relativePath>../dropwizard-dependencies</relativePath>
     </parent>
 
@@ -18,8 +18,8 @@
     </description>
 
     <properties>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
         <maven.compiler.showWarnings>true</maven.compiler.showWarnings>
         <maven.compiler.showDeprecation>true</maven.compiler.showDeprecation>
 
@@ -203,88 +203,6 @@
                 </plugins>
             </build>
         </profile>
-        <profile>
-            <id>compile-eclipse</id>
-            <activation>
-                <jdk>1.8</jdk>
-                <property>
-                    <name>m2e.version</name>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-compiler-plugin</artifactId>
-                        <configuration>
-                            <debug>true</debug>
-                        </configuration>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.eclipse.m2e</groupId>
-                        <artifactId>lifecycle-mapping</artifactId>
-                        <configuration>
-                            <lifecycleMappingMetadata>
-                                <pluginExecutions>
-                                    <pluginExecution>
-                                        <pluginExecutionFilter>
-                                            <groupId>org.simplify4u.plugins</groupId>
-                                            <artifactId>pgpverify-maven-plugin</artifactId>
-                                            <version>${pgpverify-maven-plugin.version}</version>
-                                            <goals>
-                                                <goal>check</goal>
-                                            </goals>
-                                        </pluginExecutionFilter>
-                                        <action>
-                                            <ignore />
-                                        </action>
-                                    </pluginExecution>
-                                </pluginExecutions>
-                            </lifecycleMappingMetadata>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>compile-not-eclipse</id>
-            <activation>
-                <jdk>1.8</jdk>
-                <property>
-                    <name>!m2e.version</name>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-compiler-plugin</artifactId>
-                        <configuration>
-                            <debug>true</debug>
-                            <fork>true</fork>
-                            <annotationProcessorPaths>
-                                <path>
-                                    <groupId>com.google.errorprone</groupId>
-                                    <artifactId>error_prone_core</artifactId>
-                                    <version>${error_prone.version}</version>
-                                </path>
-                                <!-- enable extended nullability checks -->
-                                <path>
-                                    <groupId>com.uber.nullaway</groupId>
-                                    <artifactId>nullaway</artifactId>
-                                    <version>${nullaway.version}</version>
-                                </path>
-                            </annotationProcessorPaths>
-                            <compilerArgs>
-                                <arg>-J-Xbootclasspath/p:${settings.localRepository}/com/google/errorprone/javac/${error_prone.javac.version}/javac-${error_prone.javac.version}.jar</arg>
-                                <arg>-XDcompilePolicy=simple</arg>
-                                <arg>-Xplugin:ErrorProne -XepDisableWarningsInGeneratedCode -Xep:EqualsGetClass:OFF -Xep:NullAway:ERROR -XepOpt:NullAway:AnnotatedPackages=io.dropwizard -XepOpt:NullAway:ExcludedFieldAnnotations=org.mockito.Mock -XepOpt:NullAway:UnannotatedSubPackages=io.dropwizard.benchmarks</arg>
-                            </compilerArgs>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
     </profiles>
 
     <dependencyManagement>
@@ -292,7 +210,7 @@
             <dependency>
                 <groupId>io.dropwizard</groupId>
                 <artifactId>dropwizard-dependencies</artifactId>
-                <version>2.1.0-SNAPSHOT</version>
+                <version>4.0.0-SNAPSHOT</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>

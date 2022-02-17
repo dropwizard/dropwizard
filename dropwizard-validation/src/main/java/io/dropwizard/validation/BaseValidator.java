@@ -4,8 +4,8 @@ import io.dropwizard.validation.valuehandling.GuavaOptionalValueExtractor;
 import org.hibernate.validator.HibernateValidator;
 import org.hibernate.validator.HibernateValidatorConfiguration;
 
-import javax.validation.Validation;
-import javax.validation.Validator;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
 
 public class BaseValidator {
     private BaseValidator() { /* singleton */ }

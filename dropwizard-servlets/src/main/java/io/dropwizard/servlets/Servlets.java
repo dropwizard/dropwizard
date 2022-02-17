@@ -1,6 +1,6 @@
 package io.dropwizard.servlets;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Utility functions for dealing with servlets.

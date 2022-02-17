@@ -11,9 +11,9 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.eclipse.jetty.io.EofException;
 import org.glassfish.jersey.spi.ExtendedExceptionMapper;
 
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.ext.ExceptionMapper;
+import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.ext.ExceptionMapper;
 
 public class App1 extends Application<Configuration> {
     public volatile boolean wasEofExceptionHit = false;

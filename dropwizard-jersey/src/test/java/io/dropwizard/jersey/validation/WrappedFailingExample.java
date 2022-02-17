@@ -3,7 +3,7 @@ package io.dropwizard.jersey.validation;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.annotation.Nullable;
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 public class WrappedFailingExample {
     @Valid

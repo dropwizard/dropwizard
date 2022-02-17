@@ -3,7 +3,7 @@ package io.dropwizard.jersey.params;
 import io.dropwizard.jersey.errors.ErrorMessage;
 import org.junit.jupiter.api.Test;
 
-import javax.ws.rs.WebApplicationException;
+import jakarta.ws.rs.WebApplicationException;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;

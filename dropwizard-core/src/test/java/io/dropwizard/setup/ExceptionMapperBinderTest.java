@@ -15,14 +15,14 @@ import org.eclipse.jetty.server.Server;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import javax.validation.Validator;
-import javax.validation.constraints.NotEmpty;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.ext.ExceptionMapper;
+import jakarta.validation.Validator;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.ext.ExceptionMapper;
 
 import static io.dropwizard.server.SimpleServerFactoryTest.httpRequest;
 import static org.assertj.core.api.Assertions.assertThat;

@@ -10,8 +10,8 @@ import io.dropwizard.validation.BaseValidator;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.Validator;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validator;
 import java.util.Arrays;
 import java.util.Set;
 

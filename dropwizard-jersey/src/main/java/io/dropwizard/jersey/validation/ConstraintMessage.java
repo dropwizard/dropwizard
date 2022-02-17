@@ -7,10 +7,10 @@ import io.dropwizard.validation.selfvalidating.SelfValidating;
 import org.glassfish.jersey.server.model.Invocable;
 import org.glassfish.jersey.server.model.Parameter;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.ElementKind;
-import javax.validation.Path;
-import javax.validation.metadata.ConstraintDescriptor;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ElementKind;
+import jakarta.validation.Path;
+import jakarta.validation.metadata.ConstraintDescriptor;
 import java.lang.annotation.Annotation;
 import java.time.Duration;
 import java.util.AbstractMap;

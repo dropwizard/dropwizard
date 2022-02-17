@@ -1,7 +1,7 @@
 package io.dropwizard.validation;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
 public class OneOfValidator implements ConstraintValidator<OneOf, Object> {
     private String[] values = new String[]{};

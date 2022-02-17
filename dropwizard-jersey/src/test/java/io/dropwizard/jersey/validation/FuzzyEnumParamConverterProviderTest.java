@@ -4,9 +4,9 @@ import io.dropwizard.jersey.errors.ErrorMessage;
 import org.junit.jupiter.api.Test;
 
 import javax.annotation.Nullable;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.ext.ParamConverter;
+import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.ext.ParamConverter;
 import java.lang.annotation.Annotation;
 
 import static java.util.Objects.requireNonNull;

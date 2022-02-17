@@ -3,8 +3,8 @@ package io.dropwizard.validation;
 import io.dropwizard.util.DataSize;
 import io.dropwizard.util.DataSizeUnit;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
 /**
  * Check that a {@link DataSize} being validated is less than or equal to the

@@ -4,7 +4,7 @@ import io.dropwizard.jersey.DropwizardResourceConfig;
 import org.glassfish.jersey.server.ResourceConfig;
 
 import javax.annotation.Nullable;
-import javax.servlet.Servlet;
+import jakarta.servlet.Servlet;
 import java.util.function.Function;
 
 import static java.util.Objects.requireNonNull;

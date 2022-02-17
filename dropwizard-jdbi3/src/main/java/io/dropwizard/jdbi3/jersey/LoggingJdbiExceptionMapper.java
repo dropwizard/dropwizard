@@ -5,7 +5,7 @@ import org.jdbi.v3.core.JdbiException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ws.rs.ext.Provider;
+import jakarta.ws.rs.ext.Provider;
 import java.sql.SQLException;
 
 /**

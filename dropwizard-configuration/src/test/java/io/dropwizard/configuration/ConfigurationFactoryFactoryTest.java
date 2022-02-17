@@ -8,7 +8,7 @@ import io.dropwizard.validation.BaseValidator;
 
 import org.junit.jupiter.api.Test;
 
-import javax.validation.Validator;
+import jakarta.validation.Validator;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;

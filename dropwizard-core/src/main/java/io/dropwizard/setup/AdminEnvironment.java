@@ -43,7 +43,7 @@ public class AdminEnvironment extends ServletEnvironment {
         tasks.add(new GarbageCollectionTask());
         tasks.add(new LogConfigurationTask());
         addServlet("tasks", tasks).addMapping("/tasks/*");
-        handler.addLifeCycleListener(new AbstractLifeCycle.AbstractLifeCycleListener() {
+        handler.addEventListener(new AbstractLifeCycle.AbstractLifeCycleListener() {
             @Override
             public void lifeCycleStarting(LifeCycle event) {
                 logTasks();

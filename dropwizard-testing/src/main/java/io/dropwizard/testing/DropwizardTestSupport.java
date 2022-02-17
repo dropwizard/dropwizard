@@ -21,7 +21,7 @@ import org.eclipse.jetty.server.ServerConnector;
 import org.slf4j.Logger;
 
 import javax.annotation.Nullable;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;

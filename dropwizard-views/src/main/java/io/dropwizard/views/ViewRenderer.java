@@ -1,6 +1,6 @@
 package io.dropwizard.views;
 
-import javax.ws.rs.WebApplicationException;
+import jakarta.ws.rs.WebApplicationException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Locale;
