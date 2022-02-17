@@ -2,7 +2,6 @@ package io.dropwizard.sslreload;
 
 import io.dropwizard.jetty.SslReload;
 import io.dropwizard.servlets.tasks.Task;
-import org.eclipse.jetty.util.ssl.SslContextFactory;
 
 import java.io.PrintWriter;
 import java.util.Collection;
@@ -22,7 +21,7 @@ public class SslReloadTask extends Task {
     public void execute(Map<String, List<String>> parameters, PrintWriter output) throws Exception {
         // Iterate through all the reloaders first to ensure valid configuration
         for (SslReload sslReload : getReloaders()) {
-            sslReload.reload(new SslContextFactory.Server());
+            sslReload.reloadDryRun();
         }
 
         // Now we know that configuration is valid, reload for real
