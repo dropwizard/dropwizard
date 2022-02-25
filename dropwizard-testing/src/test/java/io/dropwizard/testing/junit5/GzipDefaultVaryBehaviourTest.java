@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ExtendWith(DropwizardExtensionsSupport.class)
 class GzipDefaultVaryBehaviourTest {
 
-    private DropwizardAppExtension<TestConfiguration> extension = new DropwizardAppExtension<>(TestApplication.class,
+    private final DropwizardAppExtension<TestConfiguration> extension = new DropwizardAppExtension<>(TestApplication.class,
         resourceFilePath("gzip-vary-test-config.yaml"));
 
     @Test
@@ -25,7 +25,8 @@ class GzipDefaultVaryBehaviourTest {
         final Response clientResponse = extension.client().target(
             "http://localhost:" + extension.getLocalPort() + "/test").request().header(ACCEPT_ENCODING, "gzip").get();
 
-        assertThat(clientResponse.getHeaders().get(VARY)).isEqualTo(Collections.singletonList((Object) ACCEPT_ENCODING));
-        assertThat(clientResponse.getHeaders().get(CONTENT_ENCODING)).isEqualTo(Collections.singletonList((Object) "gzip"));
+        assertThat(clientResponse.getHeaders())
+            .containsEntry(VARY, Collections.singletonList(ACCEPT_ENCODING))
+            .containsEntry(CONTENT_ENCODING, Collections.singletonList("gzip"));
     }
 }
