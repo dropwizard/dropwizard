@@ -273,10 +273,10 @@ public class AssetServlet extends HttpServlet {
         final String requestedResourcePath = trimSlashes(key.substring(uriPath.length()));
         final String absoluteRequestedResourcePath = trimSlashes(this.resourcePath + requestedResourcePath);
 
-        URL requestedResourceURL = getResourceUrl(absoluteRequestedResourcePath);
+        URL requestedResourceURL = getResourceURL(absoluteRequestedResourcePath);
         if (ResourceURL.isDirectory(requestedResourceURL)) {
             if (indexFile != null) {
-                requestedResourceURL = getResourceUrl(absoluteRequestedResourcePath + '/' + indexFile);
+                requestedResourceURL = getResourceURL(absoluteRequestedResourcePath + '/' + indexFile);
             } else {
                 // directory requested but no index file defined
                 return null;
@@ -294,8 +294,18 @@ public class AssetServlet extends HttpServlet {
         return new CachedAsset(readResource(requestedResourceURL), lastModified);
     }
 
+    /**
+     * @deprecated use/override {@link AssetServlet#getResourceURL(String)} instead
+     */
+    @Deprecated
     protected URL getResourceUrl(String absoluteRequestedResourcePath) {
         return Resources.getResource(absoluteRequestedResourcePath);
+    }
+
+    @SuppressWarnings("deprecation")
+    protected URL getResourceURL(String absoluteRequestedResourcePath) {
+        // Delegate to the deprecated method as it may have been overridden in existing code.
+        return getResourceUrl(absoluteRequestedResourcePath);
     }
 
     protected byte[] readResource(URL requestedResourceURL) throws IOException {
