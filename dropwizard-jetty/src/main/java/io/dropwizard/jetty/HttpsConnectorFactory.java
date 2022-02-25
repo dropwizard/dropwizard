@@ -600,7 +600,7 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
         final HttpConnectionFactory httpConnectionFactory = buildHttpConnectionFactory(httpConfig);
 
         final SslContextFactory sslContextFactory = configureSslContextFactory(new SslContextFactory.Server());
-        sslContextFactory.addLifeCycleListener(logSslInfoOnStart(sslContextFactory));
+        sslContextFactory.addLifeCycleListener(logSslParameters(sslContextFactory));
 
         server.addBean(sslContextFactory);
         server.addBean(new SslReload(sslContextFactory, this::configureSslContextFactory));
@@ -628,9 +628,21 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
         return config;
     }
 
-    /** Register a listener that waits until the ssl context factory has started. Once it has
-     *  started we can grab the fully initialized context so we can log the parameters.
+    /**
+     * Register a listener that waits until the SSL context factory has started. Once it has
+     * started we can grab the fully initialized context so we can log the parameters.
+     *
+     * @since 2.1.0
      */
+    protected LifeCycle.Listener logSslParameters(final SslContextFactory sslContextFactory) {
+        // Delegate to the old method as it may have been overridden
+        return logSslInfoOnStart(sslContextFactory);
+    }
+
+    /**
+     * @deprecated Use {@link #logSslParameters(SslContextFactory) instead}
+     */
+    @Deprecated
     protected AbstractLifeCycle.AbstractLifeCycleListener logSslInfoOnStart(final SslContextFactory sslContextFactory) {
         return new AbstractLifeCycle.AbstractLifeCycleListener() {
             @Override
