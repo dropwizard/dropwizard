@@ -5,7 +5,6 @@ import io.dropwizard.lifecycle.JettyManaged;
 import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.lifecycle.ServerLifecycleListener;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.util.component.AbstractLifeCycle;
 import org.eclipse.jetty.util.component.ContainerLifeCycle;
 import org.eclipse.jetty.util.component.LifeCycle;
 import org.slf4j.Logger;
@@ -86,7 +85,7 @@ public class LifecycleEnvironment {
         for (LifeCycle object : managedObjects) {
             container.addBean(object);
         }
-        container.addLifeCycleListener(new AbstractLifeCycle.AbstractLifeCycleListener() {
+        container.addLifeCycleListener(new LifeCycle.Listener() {
             @Override
             public void lifeCycleStarting(LifeCycle event) {
                 LOGGER.debug("managed objects = {}", managedObjects);
@@ -104,7 +103,7 @@ public class LifecycleEnvironment {
         return metricRegistry;
     }
 
-    private static class ServerListener extends AbstractLifeCycle.AbstractLifeCycleListener {
+    private static class ServerListener implements LifeCycle.Listener {
         private final ServerLifecycleListener listener;
 
         private ServerListener(ServerLifecycleListener listener) {
