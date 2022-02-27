@@ -1,5 +1,6 @@
 package io.dropwizard.testing.junit5;
 
+import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.testing.app.TestApplication;
 import io.dropwizard.testing.app.TestConfiguration;
 import org.junit.jupiter.api.Test;
@@ -8,7 +9,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import javax.ws.rs.core.Response;
 import java.util.Collections;
 
-import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static javax.ws.rs.core.HttpHeaders.ACCEPT_ENCODING;
 import static javax.ws.rs.core.HttpHeaders.CONTENT_ENCODING;
 import static javax.ws.rs.core.HttpHeaders.VARY;
@@ -18,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class GzipDefaultVaryBehaviourTest {
 
     private final DropwizardAppExtension<TestConfiguration> extension = new DropwizardAppExtension<>(TestApplication.class,
-        resourceFilePath("gzip-vary-test-config.yaml"));
+        "gzip-vary-test-config.yaml", new ResourceConfigurationSourceProvider());
 
     @Test
     void testDefaultVaryHeader() {
