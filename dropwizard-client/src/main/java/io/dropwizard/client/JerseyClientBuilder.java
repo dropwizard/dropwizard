@@ -376,11 +376,7 @@ public class JerseyClientBuilder {
         if (environment != null) {
             environment.lifecycle().manage(new Managed() {
                 @Override
-                public void start() throws Exception {
-                }
-
-                @Override
-                public void stop() throws Exception {
+                public void stop() {
                     client.close();
                 }
             });

@@ -285,10 +285,6 @@ public class HttpClientBuilder {
         if (environment != null) {
             environment.lifecycle().manage(new Managed() {
                 @Override
-                public void start() throws Exception {
-                }
-
-                @Override
                 public void stop() throws Exception {
                     client.close();
                 }
