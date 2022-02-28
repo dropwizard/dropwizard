@@ -5,63 +5,55 @@ import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import org.eclipse.jetty.client.HttpClient;
+import org.eclipse.jetty.http.HttpVersion;
 import org.eclipse.jetty.http2.client.HTTP2Client;
 import org.eclipse.jetty.http2.client.HTTP2ClientConnectionFactory;
 import org.eclipse.jetty.http2.client.http.HttpClientTransportOverHTTP2;
-import org.glassfish.jersey.client.JerseyClient;
-import org.glassfish.jersey.client.JerseyClientBuilder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(DropwizardExtensionsSupport.class)
-public class Http2CIntegrationTest  extends AbstractHttp2Test {
+class Http2CIntegrationTest extends AbstractHttp2Test {
 
-    public DropwizardAppExtension<Configuration> appRule = new DropwizardAppExtension<>(
+    final DropwizardAppExtension<Configuration> appRule = new DropwizardAppExtension<>(
             FakeApplication.class, ResourceHelpers.resourceFilePath("test-http2c.yml"));
 
     @BeforeEach
     @Override
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         final HTTP2Client http2Client = new HTTP2Client();
         http2Client.setClientConnectionFactory(new HTTP2ClientConnectionFactory()); // No need for ALPN
-        client = new HttpClient(new HttpClientTransportOverHTTP2(http2Client), null);
-        client.start();
+        this.http2Client = new HttpClient(new HttpClientTransportOverHTTP2(http2Client), null);
+        this.http2Client.start();
+
+        this.http1Client = new HttpClient();
+        this.http1Client.start();
     }
 
     @AfterEach
     @Override
-    public void tearDown() throws Exception {
-        client.stop();
+    void tearDown() throws Exception {
+        http2Client.stop();
+        http1Client.stop();
     }
 
     @Test
-    public void testHttp11() {
-        final String hostname = "127.0.0.1";
-        final int port = appRule.getLocalPort();
-        final JerseyClient http11Client = new JerseyClientBuilder().build();
-        final Response response = http11Client.target("http://" + hostname + ":" + port + "/api/test")
-                .request()
-                .get();
-        assertThat(response.getHeaderString(HttpHeaders.CONTENT_TYPE)).isEqualTo(MediaType.APPLICATION_JSON);
-        assertThat(response.readEntity(String.class)).isEqualTo(FakeApplication.HELLO_WORLD);
-        http11Client.close();
+    void testHttp1() throws Exception {
+        AbstractHttp2Test.assertResponse(http1Client.GET("http://localhost:" + appRule.getLocalPort() + "/api/test"), HttpVersion.HTTP_1_1);
     }
 
     @Test
-    public void testHttp2c() throws Exception {
-        assertResponse(client.GET("http://localhost:" + appRule.getLocalPort() + "/api/test"));
+    void testHttp2c() throws Exception {
+        AbstractHttp2Test.assertResponse(http2Client.GET("http://localhost:" + appRule.getLocalPort() + "/api/test"), HttpVersion.HTTP_2);
     }
 
     @Test
-    public void testHttp2cManyRequests() throws Exception {
-        performManyAsyncRequests(client, "http://localhost:" + appRule.getLocalPort() + "/api/test");
+    void testHttp2cManyRequests() throws Exception {
+        assertThat(AbstractHttp2Test.performManyAsyncRequests(http2Client, "http://localhost:" + appRule.getLocalPort() + "/api/test"))
+            .isTrue();
     }
 }

@@ -16,12 +16,16 @@ public class TimeBoundHealthCheck {
     }
     
     public HealthCheck.Result check(Callable<HealthCheck.Result> c) {
-        HealthCheck.Result result;
         try {
-            result = executorService.submit(c).get(duration.getQuantity(), duration.getUnit());
-        } catch (Exception e) {
-            result = HealthCheck.Result.unhealthy("Unable to successfully check in %s", duration);
+            return executorService.submit(c).get(duration.getQuantity(), duration.getUnit());
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        } catch (Exception ignored) {
         }
-        return result;
+        return unhealthy();
+    }
+
+    private HealthCheck.Result unhealthy() {
+        return HealthCheck.Result.unhealthy("Unable to successfully check in %s", duration);
     }
 }

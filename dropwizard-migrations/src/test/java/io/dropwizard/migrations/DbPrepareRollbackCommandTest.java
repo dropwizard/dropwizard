@@ -11,10 +11,11 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.Collections;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @NotThreadSafe
-public class DbPrepareRollbackCommandTest extends AbstractMigrationTest {
+class DbPrepareRollbackCommandTest extends AbstractMigrationTest {
 
     private final DbPrepareRollbackCommand<TestMigrationConfiguration> prepareRollbackCommand =
         new DbPrepareRollbackCommand<>(new TestMigrationDatabaseConfiguration(), TestMigrationConfiguration.class,
@@ -22,34 +23,34 @@ public class DbPrepareRollbackCommandTest extends AbstractMigrationTest {
     private TestMigrationConfiguration conf;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() {
         final String databaseUrl = getDatabaseUrl();
         conf = createConfiguration(databaseUrl);
     }
 
     @Test
-    public void testRun() throws Exception {
+    void testRun() throws Exception {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         prepareRollbackCommand.setOutputStream(new PrintStream(baos));
         prepareRollbackCommand.run(null, new Namespace(Collections.emptyMap()), conf);
-        assertThat(baos.toString(UTF_8))
+        assertThat(baos.toString(UTF_8.name()))
             .contains("ALTER TABLE PUBLIC.persons DROP COLUMN email;")
             .contains("DROP TABLE PUBLIC.persons;");
     }
 
     @Test
-    public void testPrepareOnlyChange() throws Exception {
+    void testPrepareOnlyChange() throws Exception {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         prepareRollbackCommand.setOutputStream(new PrintStream(baos));
         prepareRollbackCommand.run(null, new Namespace(Collections.singletonMap("count", 1)), conf);
-        assertThat(baos.toString(UTF_8)).contains("DROP TABLE PUBLIC.persons;");
+        assertThat(baos.toString(UTF_8.name())).contains("DROP TABLE PUBLIC.persons;");
     }
 
     @Test
-    public void testPrintHelp() throws Exception {
+    void testPrintHelp() throws Exception {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         createSubparser(prepareRollbackCommand).printHelp(new PrintWriter(new OutputStreamWriter(out, UTF_8), true));
-        assertThat(out.toString(UTF_8)).isEqualTo(String.format(
+        assertThat(out.toString(UTF_8.name())).isEqualTo(String.format(
             "usage: db prepare-rollback [-h] [--migrations MIGRATIONS-FILE]%n" +
                 "          [--catalog CATALOG] [--schema SCHEMA] [-c COUNT] [-i CONTEXTS]%n" +
                 "          [file]%n" +

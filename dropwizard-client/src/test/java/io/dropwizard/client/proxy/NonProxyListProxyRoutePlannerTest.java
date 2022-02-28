@@ -10,7 +10,7 @@ import java.util.Arrays;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
-public class NonProxyListProxyRoutePlannerTest {
+class NonProxyListProxyRoutePlannerTest {
 
     private HttpHost proxy = new HttpHost("192.168.52.15");
     private NonProxyListProxyRoutePlanner routePlanner = new NonProxyListProxyRoutePlanner(proxy,
@@ -19,28 +19,28 @@ public class NonProxyListProxyRoutePlannerTest {
     private HttpContext httpContext = mock(HttpContext.class);
 
     @Test
-    public void testProxyListIsNotSet() {
+    void testProxyListIsNotSet() {
         assertThat(new NonProxyListProxyRoutePlanner(proxy, null).getNonProxyHostPatterns()).isEmpty();
     }
 
     @Test
-    public void testHostNotInBlackList() throws Exception {
+    void testHostNotInBlackList() throws Exception {
         assertThat(routePlanner.determineProxy(new HttpHost("dropwizard.io"), httpRequest, httpContext))
                 .isEqualTo(proxy);
     }
 
     @Test
-    public void testPlainHostIsMatched() throws Exception {
+    void testPlainHostIsMatched() throws Exception {
         assertThat(routePlanner.determineProxy(new HttpHost("localhost"), httpRequest, httpContext)).isNull();
     }
 
     @Test
-    public void testHostWithStartWildcardIsMatched() throws Exception {
+    void testHostWithStartWildcardIsMatched() throws Exception {
         assertThat(routePlanner.determineProxy(new HttpHost("test.example.com"), httpRequest, httpContext)).isNull();
     }
 
     @Test
-    public void testHostWithEndWildcardIsMatched() throws Exception {
+    void testHostWithEndWildcardIsMatched() throws Exception {
         assertThat(routePlanner.determineProxy(new HttpHost("192.168.52.94"), httpRequest, httpContext)).isNull();
     }
 }

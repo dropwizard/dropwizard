@@ -6,8 +6,7 @@ import com.codahale.metrics.Timer;
 import com.codahale.metrics.annotation.ExceptionMetered;
 import com.codahale.metrics.annotation.Metered;
 import com.codahale.metrics.annotation.Timed;
-import io.dropwizard.util.CharStreams;
-import io.dropwizard.util.Strings;
+import io.dropwizard.util.ByteStreams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,7 +15,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
@@ -26,6 +25,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -109,18 +109,30 @@ public class TaskServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req,
                          HttpServletResponse resp) throws ServletException, IOException {
-        if (Strings.isNullOrEmpty(req.getPathInfo())) {
+        if (!Optional.ofNullable(req.getPathInfo()).filter(s -> !s.isEmpty()).isPresent()) {
             try (final PrintWriter output = resp.getWriter()) {
                 resp.setContentType(DEFAULT_CONTENT_TYPE);
                 getTasks().stream()
                     .map(Task::getName)
                     .sorted()
                     .forEach(output::println);
+            } catch (IOException ioException) {
+                LOGGER.error("Failed to write response", ioException);
+                if (!resp.isCommitted()) {
+                    resp.reset();
+                    resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                }
             }
         } else if (tasks.containsKey(req.getPathInfo())) {
-            resp.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+            if (!resp.isCommitted()) {
+                resp.reset();
+                resp.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+            }
         } else {
-            resp.sendError(HttpServletResponse.SC_NOT_FOUND);
+            if (!resp.isCommitted()) {
+                resp.reset();
+                resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            }
         }
     }
 
@@ -131,7 +143,17 @@ public class TaskServlet extends HttpServlet {
         final Task task = pathInfo != null ? tasks.get(pathInfo) : null;
         if (task != null) {
             resp.setContentType(task.getResponseContentType().orElse(DEFAULT_CONTENT_TYPE));
-            final PrintWriter output = resp.getWriter();
+            PrintWriter output;
+            try {
+                output = resp.getWriter();
+            } catch (IOException ioException) {
+                LOGGER.error("Failed to write response", ioException);
+                if (!resp.isCommitted()) {
+                    resp.reset();
+                    resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                }
+                return;
+            }
             try {
                 final TaskExecutor taskExecutor = taskExecutors.get(task);
                 requireNonNull(taskExecutor, "taskExecutor").executeTask(getParams(req), getBody(req), output);
@@ -147,7 +169,10 @@ public class TaskServlet extends HttpServlet {
                 output.close();
             }
         } else {
-            resp.sendError(HttpServletResponse.SC_NOT_FOUND);
+            if (!resp.isCommitted()) {
+                resp.reset();
+                resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            }
         }
     }
 
@@ -164,7 +189,9 @@ public class TaskServlet extends HttpServlet {
     }
 
     private String getBody(HttpServletRequest req) throws IOException {
-        return CharStreams.toString(new InputStreamReader(req.getInputStream(), StandardCharsets.UTF_8));
+        try (InputStream in = req.getInputStream()) {
+            return new String(ByteStreams.toByteArray(in), StandardCharsets.UTF_8);
+        }
     }
 
     public Collection<Task> getTasks() {

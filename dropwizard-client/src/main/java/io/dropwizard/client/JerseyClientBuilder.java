@@ -310,7 +310,9 @@ public class JerseyClientBuilder {
      *
      * @param serviceUnavailableRetryStrategy a {@link ServiceUnavailableRetryStrategy} instance
      * @return {@code this}
+     * @deprecated will be combined with {@link #using(HttpRequestRetryHandler)} in {@code using(HttpRequestRetryStrategy)}
      */
+    @Deprecated
     public JerseyClientBuilder using(ServiceUnavailableRetryStrategy serviceUnavailableRetryStrategy) {
         apacheHttpClientBuilder.using(serviceUnavailableRetryStrategy);
         return this;

@@ -1,6 +1,5 @@
 package io.dropwizard.db;
 
-import com.codahale.metrics.Gauge;
 import com.codahale.metrics.MetricFilter;
 import com.codahale.metrics.MetricRegistry;
 import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
@@ -19,7 +18,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Map;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -56,14 +54,14 @@ class DataSourceFactoryTest {
     }
 
     @Test
-    void testEmptyDriverClass() throws Exception {
+    void testEmptyDriverClass() {
         factory.setDriverClass(null);
         ManagedDataSource dataSource = factory.build(metricRegistry, "test");
         assertThatNoException().isThrownBy(dataSource::start);
     }
 
     @Test
-    void testInitialSizeIsZero() throws Exception {
+    void testInitialSizeIsZero() {
         factory.setUrl("nonsense invalid url");
         factory.setInitialSize(0);
         ManagedDataSource dataSource = factory.build(metricRegistry, "test");
@@ -87,7 +85,7 @@ class DataSourceFactoryTest {
     void testNoValidationQueryTimeout() throws Exception {
         try (Connection connection = dataSource().getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement("select 1")) {
-                assertThat(statement.getQueryTimeout()).isEqualTo(0);
+                assertThat(statement.getQueryTimeout()).isZero();
             }
         }
     }
@@ -129,11 +127,12 @@ class DataSourceFactoryTest {
     @Test
     void testJdbcInterceptors() throws Exception {
         factory.setJdbcInterceptors(Optional.of("StatementFinalizer;ConnectionState"));
-        final ManagedPooledDataSource source = (ManagedPooledDataSource) dataSource();
 
-        assertThat(source.getPoolProperties().getJdbcInterceptorsAsArray())
-            .extracting("interceptorClass")
-            .contains(StatementFinalizer.class, ConnectionState.class);
+        assertThat(dataSource())
+            .isInstanceOfSatisfying(ManagedPooledDataSource.class, source ->
+                assertThat(source.getPoolProperties().getJdbcInterceptorsAsArray())
+                .extracting("interceptorClass")
+                .contains(StatementFinalizer.class, ConnectionState.class));
     }
 
     @Test
@@ -147,25 +146,25 @@ class DataSourceFactoryTest {
         assertThat(factory.getPassword()).isEqualTo("iAMs00perSecrEET");
         assertThat(factory.getUrl()).isEqualTo("jdbc:postgresql://db.example.com/db-prod");
         assertThat(factory.getValidationQuery()).isEqualTo(Optional.of("/* Health Check */ SELECT 1"));
-        assertThat(factory.getValidationQueryTimeout()).isEqualTo(Optional.empty());
+        assertThat(factory.getValidationQueryTimeout()).isNotPresent();
     }
 
     @Test
     void metricsRecorded() throws Exception {
         dataSource();
-        Map<String, Gauge> poolMetrics = metricRegistry.getGauges(MetricFilter.startsWith("io.dropwizard.db.ManagedPooledDataSource.test."));
-        assertThat(poolMetrics.keySet()).contains(
-            "io.dropwizard.db.ManagedPooledDataSource.test.active",
-            "io.dropwizard.db.ManagedPooledDataSource.test.idle",
-            "io.dropwizard.db.ManagedPooledDataSource.test.waiting",
-            "io.dropwizard.db.ManagedPooledDataSource.test.size",
-            "io.dropwizard.db.ManagedPooledDataSource.test.created",
-            "io.dropwizard.db.ManagedPooledDataSource.test.borrowed",
-            "io.dropwizard.db.ManagedPooledDataSource.test.reconnected",
-            "io.dropwizard.db.ManagedPooledDataSource.test.released",
-            "io.dropwizard.db.ManagedPooledDataSource.test.releasedIdle",
-            "io.dropwizard.db.ManagedPooledDataSource.test.returned",
-            "io.dropwizard.db.ManagedPooledDataSource.test.removeAbandoned");
+        assertThat(metricRegistry.getGauges(MetricFilter.startsWith("io.dropwizard.db.ManagedPooledDataSource.test.")))
+            .containsOnlyKeys(
+                "io.dropwizard.db.ManagedPooledDataSource.test.active",
+                "io.dropwizard.db.ManagedPooledDataSource.test.idle",
+                "io.dropwizard.db.ManagedPooledDataSource.test.waiting",
+                "io.dropwizard.db.ManagedPooledDataSource.test.size",
+                "io.dropwizard.db.ManagedPooledDataSource.test.created",
+                "io.dropwizard.db.ManagedPooledDataSource.test.borrowed",
+                "io.dropwizard.db.ManagedPooledDataSource.test.reconnected",
+                "io.dropwizard.db.ManagedPooledDataSource.test.released",
+                "io.dropwizard.db.ManagedPooledDataSource.test.releasedIdle",
+                "io.dropwizard.db.ManagedPooledDataSource.test.returned",
+                "io.dropwizard.db.ManagedPooledDataSource.test.removeAbandoned");
     }
 
 }

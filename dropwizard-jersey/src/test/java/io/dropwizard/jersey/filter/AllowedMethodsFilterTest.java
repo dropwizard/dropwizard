@@ -26,13 +26,12 @@ import java.util.Collections;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class AllowedMethodsFilterTest extends AbstractJerseyTest {
+class AllowedMethodsFilterTest extends AbstractJerseyTest {
 
     private static final int DISALLOWED_STATUS_CODE = Response.Status.METHOD_NOT_ALLOWED.getStatusCode();
     private static final int OK_STATUS_CODE = Response.Status.OK.getStatusCode();
@@ -44,7 +43,7 @@ public class AllowedMethodsFilterTest extends AbstractJerseyTest {
     private final AllowedMethodsFilter filter = new AllowedMethodsFilter();
 
     @BeforeEach
-    public void setUpFilter() {
+    void setUpFilter() {
         filter.init(config);
     }
 
@@ -69,44 +68,40 @@ public class AllowedMethodsFilterTest extends AbstractJerseyTest {
     }
 
     private int getResponseStatusForRequestMethod(String method, boolean includeEntity) {
-        final Response resourceResponse = includeEntity
-                ? target("/ping").request().method(method, Entity.entity("", MediaType.TEXT_PLAIN))
-                : target("/ping").request().method(method);
-
-        try {
+        try (Response resourceResponse = includeEntity
+            ? target("/ping").request().method(method, Entity.entity("", MediaType.TEXT_PLAIN))
+            : target("/ping").request().method(method)) {
             return resourceResponse.getStatus();
-        } finally {
-            resourceResponse.close();
         }
     }
 
     @Test
-    public void testGetRequestAllowed() {
+    void testGetRequestAllowed() {
         assertEquals(OK_STATUS_CODE, getResponseStatusForRequestMethod("GET", false));
     }
 
     @Test
-    public void testPostRequestAllowed() {
+    void testPostRequestAllowed() {
         assertEquals(OK_STATUS_CODE, getResponseStatusForRequestMethod("POST", true));
     }
 
     @Test
-    public void testPutRequestBlocked() {
+    void testPutRequestBlocked() {
         assertEquals(DISALLOWED_STATUS_CODE, getResponseStatusForRequestMethod("PUT", true));
     }
 
     @Test
-    public void testDeleteRequestBlocked() {
+    void testDeleteRequestBlocked() {
         assertEquals(DISALLOWED_STATUS_CODE, getResponseStatusForRequestMethod("DELETE", false));
     }
 
     @Test
-    public void testTraceRequestBlocked() {
+    void testTraceRequestBlocked() {
         assertEquals(DISALLOWED_STATUS_CODE, getResponseStatusForRequestMethod("TRACE", false));
     }
 
     @Test
-    public void allowsAllowedMethod() throws Exception {
+    void allowsAllowedMethod() throws Exception {
         when(request.getMethod()).thenReturn("GET");
         filter.doFilter(request, response, chain);
 
@@ -114,7 +109,7 @@ public class AllowedMethodsFilterTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void blocksDisallowedMethod() throws Exception {
+    void blocksDisallowedMethod() throws Exception {
         when(request.getMethod()).thenReturn("TRACE");
         filter.doFilter(request, response, chain);
 
@@ -122,9 +117,9 @@ public class AllowedMethodsFilterTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void disallowedMethodCausesMethodNotAllowedResponse() throws IOException, ServletException {
+    void disallowedMethodCausesMethodNotAllowedResponse() throws IOException, ServletException {
         when(request.getMethod()).thenReturn("TRACE");
         filter.doFilter(request, response, chain);
-        verify(response).sendError(eq(DISALLOWED_STATUS_CODE));
+        verify(response).sendError(DISALLOWED_STATUS_CODE);
     }
 }

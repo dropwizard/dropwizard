@@ -5,6 +5,7 @@ import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
 import io.dropwizard.util.Maps;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -13,10 +14,14 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
-public class LogConfigurationTaskTest {
+class LogConfigurationTaskTest {
 
     private final LoggerContext loggerContext = new LoggerContext();
     private final Logger logger1 = loggerContext.getLogger("logger.one");
@@ -28,7 +33,7 @@ public class LogConfigurationTaskTest {
     private final LogConfigurationTask task = new LogConfigurationTask(loggerContext);
 
     @Test
-    public void configuresSpecificLevelForALogger() throws Exception {
+    void configuresSpecificLevelForALogger() throws Exception {
 
         // given
         Level twoEffectiveBefore = logger2.getEffectiveLevel();
@@ -43,34 +48,39 @@ public class LogConfigurationTaskTest {
         assertThat(logger1.getEffectiveLevel()).isEqualTo(Level.DEBUG);
         assertThat(logger2.getEffectiveLevel()).isEqualTo(twoEffectiveBefore);
 
-        assertThat(stringWriter.toString()).isEqualTo(String.format("Configured logging level for logger.one to DEBUG%n"));
+        assertThat(stringWriter).hasToString(String.format("Configured logging level for logger.one to DEBUG%n"));
     }
 
     @Test
-    public void configuresSpecificLevelForALoggerForADuration() throws Exception {
+    void configuresSpecificLevelForALoggerForADuration() throws Exception {
 
         // given
-        long millis = 2000;
         Level oneEffectiveBefore = logger1.getEffectiveLevel();
         Map<String, List<String>> parameters = Maps.of(
             "logger", Collections.singletonList("logger.one"),
             "level", Collections.singletonList("debug"),
-            "duration", Collections.singletonList(Duration.ofMillis(millis).toString()));
+            "duration", Collections.singletonList(Duration.ofMillis(2_000).toString()));
+
+        Timer timer = mock(Timer.class);
+        ArgumentCaptor<TimerTask> timerAction = ArgumentCaptor.forClass(TimerTask.class);
+        ArgumentCaptor<Long> timerDuration = ArgumentCaptor.forClass(Long.class);
 
         // when
-        task.execute(parameters, output);
+        new LogConfigurationTask(loggerContext, () -> timer).execute(parameters, output);
 
         // then
         assertThat(logger1.getLevel()).isEqualTo(Level.DEBUG);
-        assertThat(stringWriter.toString()).isEqualTo(String.format("Configured logging level for logger.one to DEBUG for %d milliseconds%n", millis));
+        assertThat(stringWriter).hasToString(String.format("Configured logging level for logger.one to DEBUG for 2000 milliseconds%n"));
+        verify(timer).schedule(timerAction.capture(), timerDuration.capture());
+        assertThat(timerDuration.getValue()).isEqualTo(2_000);
 
         // after
-        Thread.sleep(4000);
+        timerAction.getValue().run();
         assertThat(logger1.getEffectiveLevel()).isEqualTo(oneEffectiveBefore);
     }
 
     @Test
-    public void configuresDefaultLevelForALogger() throws Exception {
+    void configuresDefaultLevelForALogger() throws Exception {
         // given
         Level oneEffectiveBefore = logger1.getEffectiveLevel();
         Level twoEffectiveBefore = logger2.getEffectiveLevel();
@@ -84,11 +94,11 @@ public class LogConfigurationTaskTest {
         assertThat(logger1.getEffectiveLevel()).isEqualTo(oneEffectiveBefore);
         assertThat(logger2.getEffectiveLevel()).isEqualTo(twoEffectiveBefore);
 
-        assertThat(stringWriter.toString()).isEqualTo(String.format("Configured logging level for logger.one to null%n"));
+        assertThat(stringWriter).hasToString(String.format("Configured logging level for logger.one to null%n"));
     }
 
     @Test
-    public void configuresLevelForMultipleLoggers() throws Exception {
+    void configuresLevelForMultipleLoggers() throws Exception {
         // given
         Map<String, List<String>> parameters = Maps.of(
                 "logger", Arrays.asList("logger.one", "logger.two"),
@@ -101,7 +111,7 @@ public class LogConfigurationTaskTest {
         assertThat(logger1.getEffectiveLevel()).isEqualTo(Level.INFO);
         assertThat(logger2.getEffectiveLevel()).isEqualTo(Level.INFO);
 
-        assertThat(stringWriter.toString())
-                .isEqualTo(String.format("Configured logging level for logger.one to INFO%nConfigured logging level for logger.two to INFO%n"));
+        assertThat(stringWriter)
+                .hasToString(String.format("Configured logging level for logger.one to INFO%nConfigured logging level for logger.two to INFO%n"));
     }
 }

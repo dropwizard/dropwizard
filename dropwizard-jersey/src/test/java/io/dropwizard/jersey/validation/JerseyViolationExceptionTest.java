@@ -12,10 +12,10 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.Mockito.mock;
 
-public class JerseyViolationExceptionTest {
+class JerseyViolationExceptionTest {
 
     @Test
-    public void testAccessors() {
+    void testAccessors() {
         final Set<? extends ConstraintViolation<?>> violations = Collections.emptySet();
 
         @SuppressWarnings("unchecked")

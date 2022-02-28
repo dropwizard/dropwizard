@@ -35,6 +35,7 @@ team to ship a *production-quality* web service in the shortest time possible.
    :caption: User Guide
 
    manual/core
+   manual/di
    manual/client
    manual/jdbi3
    manual/migrations

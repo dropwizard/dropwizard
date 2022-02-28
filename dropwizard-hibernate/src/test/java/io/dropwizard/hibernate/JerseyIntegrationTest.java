@@ -29,6 +29,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
@@ -41,7 +42,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class JerseyIntegrationTest extends JerseyTest {
+class JerseyIntegrationTest extends JerseyTest {
     static {
         BootstrapLogging.bootstrap();
     }
@@ -115,10 +116,10 @@ public class JerseyIntegrationTest extends JerseyTest {
         when(environment.lifecycle()).thenReturn(lifecycleEnvironment);
         when(environment.metrics()).thenReturn(metricRegistry);
 
-        dbConfig.setUrl("jdbc:hsqldb:mem:DbTest-" + System.nanoTime() + "?hsqldb.translate_dti_types=false");
+        dbConfig.setUrl("jdbc:h2:mem:DbTest-" + System.nanoTime());
         dbConfig.setUser("sa");
-        dbConfig.setDriverClass("org.hsqldb.jdbcDriver");
-        dbConfig.setValidationQuery("SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS");
+        dbConfig.setDriverClass("org.h2.Driver");
+        dbConfig.setValidationQuery("SELECT 1");
 
         this.sessionFactory = factory.build(bundle,
                                             environment,
@@ -154,7 +155,7 @@ public class JerseyIntegrationTest extends JerseyTest {
     }
 
     @Test
-    public void findsExistingData() {
+    void findsExistingData() {
         final Person coda = target("/people/Coda").request(MediaType.APPLICATION_JSON).get(Person.class);
 
         assertThat(coda.getName())
@@ -168,15 +169,15 @@ public class JerseyIntegrationTest extends JerseyTest {
     }
 
     @Test
-    public void doesNotFindMissingData() {
+    void doesNotFindMissingData() {
+        Invocation.Builder request = target("/people/Poof").request(MediaType.APPLICATION_JSON);
         assertThatExceptionOfType(WebApplicationException.class)
-            .isThrownBy(() -> target("/people/Poof").request(MediaType.APPLICATION_JSON)
-                    .get(Person.class))
+            .isThrownBy(() -> request.get(Person.class))
             .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(404));
     }
 
     @Test
-    public void createsNewData() {
+    void createsNewData() {
         final Person person = new Person();
         person.setName("Hank");
         person.setEmail("hank@example.com");
@@ -200,7 +201,7 @@ public class JerseyIntegrationTest extends JerseyTest {
 
 
     @Test
-    public void testSqlExceptionIsHandled() {
+    void testSqlExceptionIsHandled() {
         final Person person = new Person();
         person.setName("Jeff");
         person.setEmail("jeff.hammersmith@targetprocessinc.com");

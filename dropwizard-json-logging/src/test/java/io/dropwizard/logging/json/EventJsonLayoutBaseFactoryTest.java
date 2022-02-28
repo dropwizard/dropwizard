@@ -43,21 +43,17 @@ class EventJsonLayoutBaseFactoryTest {
         ThrowableHandlingConverter converter = factory.createThrowableProxyConverter(new LoggerContext());
         converter.start();
 
+        assertThat(converter.isStarted()).isTrue();
+
         // Verify the original stack includes the excluded packages
         assertThat(proxy.getThrowable()).hasStackTraceContaining(packageFilter);
 
-        String conversion = converter.convert(event);
-
         // Verify the conversion depth
-        // 2 messages and 8 lines of stack per throwable
-        assertThat(conversion).hasLineCount(18);
-
-        // Verify that the root is not first
-        assertThat(conversion).containsSubsequence("wrapp3d", "r00t");
-
-        // Verify the conversion does not includes the excluded packages and contains skipped lines
-        assertThat(conversion).doesNotContain(packageFilter);
-        assertThat(conversion).containsPattern("\\[\\d+ skipped\\]");
+        assertThat(converter.convert(event))
+            .hasLineCount(18) // 2 messages and 8 lines of stack per throwable
+            .containsSubsequence("wrapp3d", "r00t") // the root is not first
+            .doesNotContain(packageFilter) // does not includes the excluded packages
+            .containsPattern("\\[\\d+ skipped\\]"); // and contains no skipped lines
     }
 
     @Test
@@ -67,15 +63,13 @@ class EventJsonLayoutBaseFactoryTest {
         ThrowableHandlingConverter converter = factory.createThrowableProxyConverter(new LoggerContext());
         converter.start();
 
-        String conversion = converter.convert(event);
+        assertThat(converter.isStarted()).isTrue();
 
         int originalSize = getStackTraceAsString(proxy.getThrowable()).split(LINE_SEPARATOR).length;
 
-        // Verify that the full stack is included
-        assertThat(conversion).hasLineCount(originalSize);
-
-        // Verify that the root is first
-        assertThat(conversion).containsSubsequence("r00t", "wrapp3d");
+        assertThat(converter.convert(event))
+            .hasLineCount(originalSize) // Verify that the full stack is included
+            .containsSubsequence("r00t", "wrapp3d"); // Verify that the root is first
     }
 
     private static String getStackTraceAsString(Throwable throwable) throws IOException {

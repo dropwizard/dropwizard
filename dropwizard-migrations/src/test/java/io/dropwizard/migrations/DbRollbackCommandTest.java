@@ -3,6 +3,7 @@ package io.dropwizard.migrations;
 import io.dropwizard.util.Maps;
 import net.jcip.annotations.NotThreadSafe;
 import net.sourceforge.argparse4j.inf.Namespace;
+import org.jdbi.v3.core.Handle;
 import org.jdbi.v3.core.Jdbi;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,6 +15,7 @@ import java.io.PrintWriter;
 import java.util.Collections;
 import java.util.Date;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @NotThreadSafe
@@ -40,11 +42,18 @@ class DbRollbackCommandTest extends AbstractMigrationTest {
         // Migrate some DDL changes to the database
         migrateCommand.run(null, new Namespace(Collections.emptyMap()), conf);
 
+        try (Handle handle = dbi.open()) {
+            assertThat(columnExists(handle, "PERSONS", "EMAIL"))
+                .isTrue();
+        }
+
         // Rollback the last one (the email field)
         rollbackCommand.run(null, new Namespace(Collections.singletonMap("count", 1)), conf);
 
-        // Now we can add it
-        dbi.useHandle(h -> h.execute("alter table persons add column email varchar(128)"));
+        try (Handle handle = dbi.open()) {
+            assertThat(columnExists(handle, "PERSONS", "EMAIL"))
+                .isFalse();
+        }
     }
 
     @Test
@@ -55,7 +64,7 @@ class DbRollbackCommandTest extends AbstractMigrationTest {
         // Print out the change that rollbacks the second change
         rollbackCommand.setOutputStream(new PrintStream(baos, true));
         rollbackCommand.run(null, new Namespace(Maps.of("count", 1, "dry-run", true)), conf);
-        assertThat(baos.toString(UTF_8))
+        assertThat(baos.toString(UTF_8.name()))
             .containsIgnoringCase("ALTER TABLE PUBLIC.persons DROP COLUMN email;");
     }
 
@@ -65,12 +74,19 @@ class DbRollbackCommandTest extends AbstractMigrationTest {
         long migrationDate = System.currentTimeMillis();
         migrateCommand.run(null, new Namespace(Collections.emptyMap()), conf);
 
+        try (Handle handle = dbi.open()) {
+            assertThat(tableExists(handle, "PERSONS"))
+                .isTrue();
+        }
+
         // Rollback both changes (they're tearDown the migration date)
         rollbackCommand.run(null, new Namespace(Collections.singletonMap("date", new Date(migrationDate - 1000))),
             conf);
 
-        // Verify we can creat the table
-        dbi.useHandle(h -> h.execute("create table persons(id int, name varchar(255))"));
+        try (Handle handle = dbi.open()) {
+            assertThat(tableExists(handle, "PERSONS"))
+                .isFalse();
+        }
     }
 
     @Test
@@ -85,7 +101,7 @@ class DbRollbackCommandTest extends AbstractMigrationTest {
                 "date", new Date(migrationDate - 1000),
                 "dry-run", true)),
                 conf);
-        assertThat(baos.toString(UTF_8))
+        assertThat(baos.toString(UTF_8.name()))
             .containsIgnoringCase("ALTER TABLE PUBLIC.persons DROP COLUMN email;")
             .containsIgnoringCase("DROP TABLE PUBLIC.persons;");
     }
@@ -100,14 +116,26 @@ class DbRollbackCommandTest extends AbstractMigrationTest {
             new TestMigrationDatabaseConfiguration(), TestMigrationConfiguration.class, migrationsFileName);
         tagCommand.run(null, new Namespace(Collections.singletonMap("tag-name", Collections.singletonList("v1"))), conf);
 
+        try (Handle handle = dbi.open()) {
+            assertThat(columnExists(handle, "PERSONS", "EMAIL"))
+                .isFalse();
+        }
+
         // Migrate the second change
         migrateCommand.run(null, new Namespace(Collections.emptyMap()), conf);
+
+        try (Handle handle = dbi.open()) {
+            assertThat(columnExists(handle, "PERSONS", "EMAIL"))
+                .isTrue();
+        }
 
         // Rollback to the first change
         rollbackCommand.run(null, new Namespace(Collections.singletonMap("tag", "v1")), conf);
 
-        // Verify we can add the second change manually
-        dbi.useHandle(h -> h.execute("alter table persons add column email varchar(128)"));
+        try (Handle handle = dbi.open()) {
+            assertThat(columnExists(handle, "PERSONS", "EMAIL"))
+                .isFalse();
+        }
     }
 
     @Test
@@ -126,14 +154,14 @@ class DbRollbackCommandTest extends AbstractMigrationTest {
         // Print out the rollback script for the second change
         rollbackCommand.setOutputStream(new PrintStream(baos, true));
         rollbackCommand.run(null, new Namespace(Maps.of("tag", "v1", "dry-run", true)), conf);
-        assertThat(baos.toString(UTF_8))
+        assertThat(baos.toString(UTF_8.name()))
             .containsIgnoringCase("ALTER TABLE PUBLIC.persons DROP COLUMN email;");
     }
 
     @Test
     void testPrintHelp() throws Exception {
         createSubparser(rollbackCommand).printHelp(new PrintWriter(new OutputStreamWriter(baos, UTF_8), true));
-        assertThat(baos.toString(UTF_8)).isEqualTo(String.format(
+        assertThat(baos.toString(UTF_8.name())).isEqualTo(String.format(
             "usage: db rollback [-h] [--migrations MIGRATIONS-FILE] [--catalog CATALOG]%n" +
             "          [--schema SCHEMA] [-n] [-t TAG] [-d DATE] [-c COUNT]%n" +
             "          [-i CONTEXTS] [file]%n" +

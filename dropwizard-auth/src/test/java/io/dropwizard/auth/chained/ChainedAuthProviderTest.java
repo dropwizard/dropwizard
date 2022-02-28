@@ -22,7 +22,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ChainedAuthProviderTest extends AuthBaseTest<ChainedAuthProviderTest.ChainedAuthTestResourceConfig> {
+class ChainedAuthProviderTest extends AuthBaseTest<ChainedAuthProviderTest.ChainedAuthTestResourceConfig> {
     private static final String BEARER_USER = "A12B3C4D";
     public static class ChainedAuthTestResourceConfig extends DropwizardResourceConfig {
 
@@ -56,7 +56,7 @@ public class ChainedAuthProviderTest extends AuthBaseTest<ChainedAuthProviderTes
     }
 
     @Test
-    public void transformsBearerCredentialsToPrincipals() throws Exception {
+    void transformsBearerCredentialsToPrincipals() throws Exception {
         assertThat(target("/test/admin").request()
             .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + " " + BEARER_USER)
             .get(String.class))

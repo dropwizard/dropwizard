@@ -17,7 +17,7 @@ public abstract class CloseableLiquibase extends Liquibase implements AutoClosea
         ResourceAccessor resourceAccessor,
         Database database,
         ManagedDataSource dataSource
-    ) throws LiquibaseException, SQLException {
+    ) {
         super(changeLogFile, resourceAccessor, database);
         this.dataSource = dataSource;
     }

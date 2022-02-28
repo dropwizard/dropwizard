@@ -1,9 +1,9 @@
 package io.dropwizard.jetty;
 
 import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.jetty9.InstrumentedConnectionFactory;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import io.dropwizard.util.Strings;
 import io.dropwizard.validation.ValidationMethod;
 import org.eclipse.jetty.http.HttpVersion;
 import org.eclipse.jetty.io.ByteBufferPool;
@@ -32,6 +32,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -589,7 +590,7 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
     @ValidationMethod(message = "keyStorePassword should not be null or empty")
     public boolean isValidKeyStorePassword() {
         return keyStoreType.startsWith("Windows-") ||
-                !Strings.isNullOrEmpty(keyStorePassword);
+                Optional.ofNullable(keyStorePassword).filter(s -> !s.isEmpty()).isPresent();
     }
 
     @Override
@@ -612,7 +613,7 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
         final ByteBufferPool bufferPool = buildBufferPool();
 
         return buildConnector(server, scheduler, bufferPool, name, threadPool,
-                              new Jetty93InstrumentedConnectionFactory(
+                              new InstrumentedConnectionFactory(
                                       sslConnectionFactory,
                                       metrics.timer(httpConnections())),
                                       httpConnectionFactory);
@@ -715,10 +716,10 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
             factory.setKeyStorePath(keyStorePath);
         }
 
-        final String keyStoreType = getKeyStoreType();
-        if (keyStoreType.startsWith("Windows-")) {
+        final String realKeyStoreType = getKeyStoreType();
+        if (realKeyStoreType.startsWith("Windows-")) {
             try {
-                final KeyStore keyStore = KeyStore.getInstance(keyStoreType);
+                final KeyStore keyStore = KeyStore.getInstance(realKeyStoreType);
 
                 keyStore.load(null, null);
                 factory.setKeyStore(keyStore);
@@ -726,7 +727,7 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
                 throw new IllegalStateException("Windows key store not supported", e);
             }
         } else {
-            factory.setKeyStoreType(keyStoreType);
+            factory.setKeyStoreType(realKeyStoreType);
             factory.setKeyStorePassword(keyStorePassword);
         }
 
@@ -734,10 +735,10 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
             factory.setKeyStoreProvider(keyStoreProvider);
         }
 
-        final String trustStoreType = getTrustStoreType();
-        if (trustStoreType.startsWith("Windows-")) {
+        final String realTrustStoreType = getTrustStoreType();
+        if (realTrustStoreType.startsWith("Windows-")) {
             try {
-                final KeyStore keyStore = KeyStore.getInstance(trustStoreType);
+                final KeyStore keyStore = KeyStore.getInstance(realTrustStoreType);
 
                 keyStore.load(null, null);
                 factory.setTrustStore(keyStore);
@@ -751,7 +752,7 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
             if (trustStorePassword != null) {
                 factory.setTrustStorePassword(trustStorePassword);
             }
-            factory.setTrustStoreType(trustStoreType);
+            factory.setTrustStoreType(realTrustStoreType);
         }
 
         if (trustStoreProvider != null) {

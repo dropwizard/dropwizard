@@ -1,7 +1,6 @@
 package io.dropwizard.logging;
 
 import ch.qos.logback.classic.spi.ThrowableProxy;
-import io.dropwizard.util.Strings;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -10,16 +9,15 @@ import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
+import java.util.Objects;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tests {@link PrefixedRootCauseFirstThrowableProxyConverter}.
  */
-public class PrefixedRootCauseFirstThrowableProxyConverterTest {
+class PrefixedRootCauseFirstThrowableProxyConverterTest {
 
     private final PrefixedRootCauseFirstThrowableProxyConverter converter
             = new PrefixedRootCauseFirstThrowableProxyConverter();
@@ -58,24 +56,22 @@ public class PrefixedRootCauseFirstThrowableProxyConverterTest {
     }
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         converter.setOptionList(Collections.singletonList("full"));
         converter.start();
     }
 
     @Test
-    public void prefixesExceptionsWithExclamationMarks()  {
-        final List<String> stackTrace = Arrays.stream(converter.throwableProxyToString(proxy).split(System.lineSeparator()))
-                .filter(s -> !Strings.isNullOrEmpty(s))
-                .collect(Collectors.toList());
-
-        assertThat(stackTrace)
+    void prefixesExceptionsWithExclamationMarks()  {
+        assertThat(Arrays.stream(converter.throwableProxyToString(proxy).split(System.lineSeparator()))
+                .filter(Objects::nonNull)
+                .filter(s -> !s.isEmpty()))
                 .isNotEmpty()
                 .allSatisfy(line -> assertThat(line).startsWith("!"));
     }
 
     @Test
-    public void placesRootCauseIsFirst() {
+    void placesRootCauseIsFirst() {
         assertThat(converter.throwableProxyToString(proxy)).matches(Pattern.compile(".+" +
                 "java\\.net\\.SocketTimeoutException: Timed-out reading from socket.+" +
                 "java\\.io\\.IOException: Fairly general error doing some IO.+" +

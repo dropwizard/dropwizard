@@ -8,9 +8,9 @@ import javax.ws.rs.WebApplicationException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class LongParamTest {
+class LongParamTest {
     @Test
-    public void aLongReturnsALong() {
+    void aLongReturnsALong() {
         final LongParam param = new LongParam("200");
 
         assertThat(param.get())
@@ -18,7 +18,7 @@ public class LongParamTest {
     }
 
     @Test
-    public void nullThrowsAnException() {
+    void nullThrowsAnException() {
         assertThatExceptionOfType(WebApplicationException.class)
             .isThrownBy(() -> new LongParam(null))
             .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(400))
@@ -28,7 +28,7 @@ public class LongParamTest {
     }
 
     @Test
-    public void emptyStringThrowsAnException() {
+    void emptyStringThrowsAnException() {
         assertThatExceptionOfType(WebApplicationException.class)
             .isThrownBy(() -> new LongParam(null))
             .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(400))
@@ -38,7 +38,7 @@ public class LongParamTest {
     }
 
     @Test
-    public void aNonIntegerThrowsAnException() {
+    void aNonIntegerThrowsAnException() {
         assertThatExceptionOfType(WebApplicationException.class)
             .isThrownBy(() -> new LongParam("foo"))
             .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(400))
@@ -48,7 +48,7 @@ public class LongParamTest {
     }
 
     @Test
-    public void aNonIntegerThrowsAnExceptionWithCustomName() {
+    void aNonIntegerThrowsAnExceptionWithCustomName() {
         assertThatExceptionOfType(WebApplicationException.class)
             .isThrownBy(() -> new LongParam("foo", "customName"))
             .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(400))

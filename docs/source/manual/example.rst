@@ -6,7 +6,7 @@ Dropwizard Example, Step by Step
 
 .. highlight:: text
 
-.. rubric:: The ``dropwizard-example`` module provides you with a working Dropwizard Example Application.
+.. rubric:: The ``dropwizard-example`` module provides you with a working `Dropwizard Example Application <https://github.com/dropwizard/dropwizard/tree/master/dropwizard-example>`_.
 
 * Preconditions
 

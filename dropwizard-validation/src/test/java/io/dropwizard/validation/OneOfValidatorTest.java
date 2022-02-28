@@ -12,7 +12,7 @@ import static io.dropwizard.validation.ConstraintViolations.format;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
-public class OneOfValidatorTest {
+class OneOfValidatorTest {
     @SuppressWarnings("UnusedDeclaration")
     public static class Example {
         @OneOf({"one", "two", "three"})
@@ -31,13 +31,13 @@ public class OneOfValidatorTest {
     private final Validator validator = BaseValidator.newValidator();
 
     @Test
-    public void allowsExactElements() throws Exception {
+    void allowsExactElements() throws Exception {
         assertThat(format(validator.validate(new Example())))
                 .isEmpty();
     }
 
     @Test
-    public void doesNotAllowOtherElements() throws Exception {
+    void doesNotAllowOtherElements() throws Exception {
         assumeTrue("en".equals(Locale.getDefault().getLanguage()),
                 "This test executes when the defined language is English ('en'). If not, it is skipped.");
 
@@ -49,7 +49,7 @@ public class OneOfValidatorTest {
     }
 
     @Test
-    public void doesNotAllowBadElementsInList() {
+    void doesNotAllowBadElementsInList() {
         final Example example = new Example();
         example.basicList = Collections.singletonList("four");
 
@@ -58,7 +58,7 @@ public class OneOfValidatorTest {
     }
 
     @Test
-    public void optionallyIgnoresCase() throws Exception {
+    void optionallyIgnoresCase() throws Exception {
         final Example example = new Example();
         example.caseInsensitive = "ONE";
 
@@ -67,7 +67,7 @@ public class OneOfValidatorTest {
     }
 
     @Test
-    public void optionallyIgnoresWhitespace() throws Exception {
+    void optionallyIgnoresWhitespace() throws Exception {
         final Example example = new Example();
         example.whitespaceInsensitive = "   one  ";
 

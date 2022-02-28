@@ -8,9 +8,9 @@ import java.sql.SQLException;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-public class LoggingSQLExceptionMapperTest {
+class LoggingSQLExceptionMapperTest {
     @Test
-    public void testLogException() throws Exception {
+    void testLogException() throws Exception {
         Logger logger = mock(Logger.class);
         LoggingSQLExceptionMapper sqlExceptionMapper = new LoggingSQLExceptionMapper(logger);
 

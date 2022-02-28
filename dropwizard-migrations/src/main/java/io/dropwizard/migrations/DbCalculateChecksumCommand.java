@@ -14,7 +14,7 @@ import java.util.function.Consumer;
 public class DbCalculateChecksumCommand<T extends Configuration> extends AbstractLiquibaseCommand<T> {
     private static final Logger LOGGER = LoggerFactory.getLogger("liquibase");
 
-    private Consumer<CheckSum> checkSumConsumer = (checkSum) -> LOGGER.info("checksum = {}", checkSum);
+    private Consumer<CheckSum> checkSumConsumer = checkSum -> LOGGER.info("checksum = {}", checkSum);
 
     public DbCalculateChecksumCommand(DatabaseConfiguration<T> strategy, Class<T> configurationClass, String migrationsFileName) {
         super("calculate-checksum", "Calculates and prints a checksum for a change set", strategy,

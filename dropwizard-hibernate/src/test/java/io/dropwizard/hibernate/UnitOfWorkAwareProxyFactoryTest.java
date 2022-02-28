@@ -18,11 +18,11 @@ import java.util.Map;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class UnitOfWorkAwareProxyFactoryTest {
+class UnitOfWorkAwareProxyFactoryTest {
 
     static {
         BootstrapLogging.bootstrap();
@@ -31,18 +31,18 @@ public class UnitOfWorkAwareProxyFactoryTest {
     private SessionFactory sessionFactory;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         final HibernateBundle<?> bundle = mock(HibernateBundle.class);
         final Environment environment = mock(Environment.class);
         when(environment.lifecycle()).thenReturn(mock(LifecycleEnvironment.class));
         when(environment.metrics()).thenReturn(new MetricRegistry());
 
         final DataSourceFactory dataSourceFactory = new DataSourceFactory();
-        dataSourceFactory.setUrl("jdbc:hsqldb:mem:unit-of-work-" + UUID.randomUUID().toString());
+        dataSourceFactory.setUrl("jdbc:h2:mem:unit-of-work-" + UUID.randomUUID());
         dataSourceFactory.setUser("sa");
-        dataSourceFactory.setDriverClass("org.hsqldb.jdbcDriver");
-        dataSourceFactory.setValidationQuery("SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS");
-        dataSourceFactory.setProperties(Collections.singletonMap("hibernate.dialect", "org.hibernate.dialect.HSQLDialect"));
+        dataSourceFactory.setDriverClass("org.h2.Driver");
+        dataSourceFactory.setValidationQuery("SELECT 1");
+        dataSourceFactory.setProperties(Collections.singletonMap("hibernate.dialect", "org.hibernate.dialect.H2Dialect"));
         dataSourceFactory.setInitialSize(1);
         dataSourceFactory.setMinSize(1);
 
@@ -59,7 +59,7 @@ public class UnitOfWorkAwareProxyFactoryTest {
     }
 
     @Test
-    public void testProxyWorks() throws Exception {
+    void testProxyWorks() throws Exception {
         final SessionDao sessionDao = new SessionDao(sessionFactory);
         final UnitOfWorkAwareProxyFactory unitOfWorkAwareProxyFactory =
                 new UnitOfWorkAwareProxyFactory("default", sessionFactory);
@@ -71,7 +71,7 @@ public class UnitOfWorkAwareProxyFactoryTest {
     }
 
     @Test
-    public void testProxyWorksWithoutUnitOfWork() {
+    void testProxyWorksWithoutUnitOfWork() {
         assertThat(new UnitOfWorkAwareProxyFactory("default", sessionFactory)
                 .create(PlainAuthenticator.class)
                 .authenticate("c82d11e"))
@@ -79,8 +79,8 @@ public class UnitOfWorkAwareProxyFactoryTest {
     }
 
     @Test
-    public void testProxyHandlesErrors() {
-        assertThatExceptionOfType(IllegalStateException.class).isThrownBy(()->
+    void testProxyHandlesErrors() {
+        assertThatIllegalStateException().isThrownBy(()->
             new UnitOfWorkAwareProxyFactory("default", sessionFactory)
                 .create(BrokenAuthenticator.class)
                 .authenticate("b812ae4"))
@@ -88,7 +88,7 @@ public class UnitOfWorkAwareProxyFactoryTest {
     }
 
     @Test
-    public void testNewAspect() {
+    void testNewAspect() {
         final UnitOfWorkAwareProxyFactory unitOfWorkAwareProxyFactory =
                 new UnitOfWorkAwareProxyFactory("default", sessionFactory);
 
@@ -99,7 +99,7 @@ public class UnitOfWorkAwareProxyFactoryTest {
     }
 
     @Test
-    public void testCanBeConfiguredWithACustomAspect() {
+    void testCanBeConfiguredWithACustomAspect() {
         final SessionDao sessionDao = new SessionDao(sessionFactory);
         final UnitOfWorkAwareProxyFactory unitOfWorkAwareProxyFactory =
             new UnitOfWorkAwareProxyFactory("default", sessionFactory) {
@@ -115,7 +115,7 @@ public class UnitOfWorkAwareProxyFactoryTest {
     }
 
     @Test
-    public void testNestedCall() {
+    void testNestedCall() {
         final UnitOfWorkAwareProxyFactory unitOfWorkAwareProxyFactory =
                 new UnitOfWorkAwareProxyFactory("default", sessionFactory);
 
@@ -130,16 +130,14 @@ public class UnitOfWorkAwareProxyFactoryTest {
     }
 
     @Test
-    public void testInvalidNestedCall() {
+    void testInvalidNestedCall() {
         final UnitOfWorkAwareProxyFactory unitOfWorkAwareProxyFactory =
                 new UnitOfWorkAwareProxyFactory("default", sessionFactory);
 
         final NestedCall nestedCall = unitOfWorkAwareProxyFactory
                 .create(NestedCall.class, SessionFactory.class, sessionFactory);
 
-        assertThatExceptionOfType(IllegalStateException.class).isThrownBy(()-> {
-            nestedCall.invalidNestedCall();
-        });
+        assertThatIllegalStateException().isThrownBy(nestedCall::invalidNestedCall);
     }
 
     static class SessionDao {

@@ -1,13 +1,12 @@
 package io.dropwizard.db;
 
+import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.validation.Validators;
 import io.dropwizard.util.Duration;
-import io.dropwizard.util.Resources;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -46,12 +45,12 @@ class DataSourceConfigurationTest {
                 .isEqualTo(DataSourceFactory.TransactionIsolation.READ_COMMITTED);
         assertThat(ds.getUseFairQueue()).isFalse();
         assertThat(ds.getInitializationQuery()).isEqualTo("insert into connections_log(ts) values (now())");
-        assertThat(ds.getLogAbandonedConnections()).isEqualTo(true);
-        assertThat(ds.getLogValidationErrors()).isEqualTo(true);
+        assertThat(ds.getLogAbandonedConnections()).isTrue();
+        assertThat(ds.getLogValidationErrors()).isTrue();
         assertThat(ds.getMaxConnectionAge()).isEqualTo(Optional.of(Duration.hours(1)));
-        assertThat(ds.getCheckConnectionOnBorrow()).isEqualTo(true);
-        assertThat(ds.getCheckConnectionOnConnect()).isEqualTo(false);
-        assertThat(ds.getCheckConnectionOnReturn()).isEqualTo(true);
+        assertThat(ds.getCheckConnectionOnBorrow()).isTrue();
+        assertThat(ds.getCheckConnectionOnConnect()).isFalse();
+        assertThat(ds.getCheckConnectionOnReturn()).isTrue();
         assertThat(ds.getValidationQueryTimeout()).isEqualTo(Optional.of(Duration.seconds(3)));
         assertThat(ds.getValidatorClassName()).isEqualTo(Optional.of("io.dropwizard.db.CustomConnectionValidator"));
         assertThat(ds.getJdbcInterceptors()).isEqualTo(Optional.of("StatementFinalizer;SlowQueryReport"));
@@ -80,7 +79,7 @@ class DataSourceConfigurationTest {
         assertThat(ds.getReadOnlyByDefault()).isNull();
         assertThat(ds.isRemoveAbandoned()).isFalse();
         assertThat(ds.getRemoveAbandonedTimeout()).isEqualTo(Duration.seconds(60L));
-        assertThat(ds.getAbandonWhenPercentageFull()).isEqualTo(0);
+        assertThat(ds.getAbandonWhenPercentageFull()).isZero();
         assertThat(ds.isAlternateUsernamesAllowed()).isFalse();
         assertThat(ds.getCommitOnReturn()).isFalse();
         assertThat(ds.getRollbackOnReturn()).isFalse();
@@ -90,13 +89,13 @@ class DataSourceConfigurationTest {
                 .isEqualTo(DataSourceFactory.TransactionIsolation.DEFAULT);
         assertThat(ds.getUseFairQueue()).isTrue();
         assertThat(ds.getInitializationQuery()).isNull();
-        assertThat(ds.getLogAbandonedConnections()).isEqualTo(false);
-        assertThat(ds.getLogValidationErrors()).isEqualTo(false);
-        assertThat(ds.getMaxConnectionAge()).isEqualTo(Optional.empty());
-        assertThat(ds.getCheckConnectionOnBorrow()).isEqualTo(false);
-        assertThat(ds.getCheckConnectionOnConnect()).isEqualTo(true);
-        assertThat(ds.getCheckConnectionOnReturn()).isEqualTo(false);
-        assertThat(ds.getValidationQueryTimeout()).isEqualTo(Optional.empty());
+        assertThat(ds.getLogAbandonedConnections()).isFalse();
+        assertThat(ds.getLogValidationErrors()).isFalse();
+        assertThat(ds.getMaxConnectionAge()).isNotPresent();
+        assertThat(ds.getCheckConnectionOnBorrow()).isFalse();
+        assertThat(ds.getCheckConnectionOnConnect()).isTrue();
+        assertThat(ds.getCheckConnectionOnReturn()).isFalse();
+        assertThat(ds.getValidationQueryTimeout()).isNotPresent();
         assertThat(ds.isIgnoreExceptionOnPreLoad()).isFalse();
     }
 
@@ -112,19 +111,17 @@ class DataSourceConfigurationTest {
 
     @Test
     void testInitialSizeZeroIsAllowed() throws Exception {
-        DataSourceFactory ds = getDataSourceFactory("yaml/empty_initial_pool.yml");
-        assertThat(ds.getInitialSize()).isEqualTo(0);
+        assertThat(getDataSourceFactory("yaml/empty_initial_pool.yml").getInitialSize()).isZero();
     }
 
     @Test
     void testEmptyDriverClassIsAllowed() throws Exception {
-        DataSourceFactory ds = getDataSourceFactory("yaml/empty_driver_class_db_pool.yml");
-        assertThat(ds.getDriverClass()).isNull();
+        assertThat(getDataSourceFactory("yaml/empty_driver_class_db_pool.yml").getDriverClass()).isNull();
     }
 
     private DataSourceFactory getDataSourceFactory(String resourceName) throws Exception {
         return new YamlConfigurationFactory<>(DataSourceFactory.class,
                 Validators.newValidator(), Jackson.newObjectMapper(), "dw")
-                .build(new File(Resources.getResource(resourceName).toURI()));
+                .build(new ResourceConfigurationSourceProvider(), resourceName);
     }
 }

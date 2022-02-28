@@ -2,7 +2,10 @@ package io.dropwizard.util;
 
 /**
  * @since 2.0
+ *
+ * @deprecated consider using Apache commons-lang3 ExceptionUtils instead
  */
+@Deprecated
 public final class Throwables {
     private Throwables() {
     }

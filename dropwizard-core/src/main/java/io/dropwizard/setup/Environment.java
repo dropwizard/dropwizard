@@ -6,6 +6,7 @@ import com.codahale.metrics.health.HealthCheckRegistry;
 import com.codahale.metrics.health.SharedHealthCheckRegistries;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.Configuration;
+import io.dropwizard.health.HealthEnvironment;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.jersey.setup.JerseyContainerHolder;
@@ -50,6 +51,8 @@ public class Environment {
     private final MutableServletContextHandler adminContext;
     private final AdminEnvironment adminEnvironment;
 
+    private final HealthEnvironment healthEnvironment;
+
     private final ExecutorService healthCheckExecutorService;
 
     /**
@@ -81,6 +84,8 @@ public class Environment {
         final AdminFactory adminFactory = configuration.getAdminFactory();
         this.adminEnvironment = new AdminEnvironment(adminContext, healthCheckRegistry, metricRegistry, adminFactory);
 
+        this.healthEnvironment = new HealthEnvironment(healthCheckRegistry);
+
         this.lifecycleEnvironment = new LifecycleEnvironment(metricRegistry);
 
         final DropwizardResourceConfig jerseyConfig = new DropwizardResourceConfig(metricRegistry);
@@ -88,9 +93,9 @@ public class Environment {
 
         this.jerseyServletContainer = new JerseyContainerHolder(new JerseyServletContainer(jerseyConfig));
 
-        final JerseyEnvironment jerseyEnvironment = new JerseyEnvironment(jerseyServletContainer, jerseyConfig);
-        jerseyEnvironment.register(new InjectValidatorFeature(validatorFactory));
-        this.jerseyEnvironment = jerseyEnvironment;
+        final JerseyEnvironment jerseyEnv = new JerseyEnvironment(jerseyServletContainer, jerseyConfig);
+        jerseyEnv.register(new InjectValidatorFeature(validatorFactory));
+        this.jerseyEnvironment = jerseyEnv;
 
         final HealthCheckConfiguration healthCheckConfig = adminFactory.getHealthChecks();
         this.healthCheckExecutorService = this.lifecycle().executorService("TimeBoundHealthCheck-pool-%d")
@@ -162,6 +167,13 @@ public class Environment {
      */
     public ServletEnvironment servlets() {
         return servletEnvironment;
+    }
+
+    /**
+     * Returns the application's {@link HealthEnvironment}.
+     */
+    public HealthEnvironment health() {
+        return healthEnvironment;
     }
 
     /**

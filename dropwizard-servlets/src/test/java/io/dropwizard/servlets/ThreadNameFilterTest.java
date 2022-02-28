@@ -15,7 +15,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class ThreadNameFilterTest {
+class ThreadNameFilterTest {
 
     private HttpServletRequest request = mock(HttpServletRequest.class);
 
@@ -28,17 +28,17 @@ public class ThreadNameFilterTest {
     private ThreadNameFilter threadNameFilter = new ThreadNameFilter();
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         threadNameFilter.init(filterConfig);
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    void tearDown() throws Exception {
         threadNameFilter.destroy();
     }
 
     @Test
-    public void setsThreadNameInChain() throws Exception {
+    void setsThreadNameInChain() throws Exception {
         when(request.getMethod()).thenReturn("GET");
         when(request.getRequestURI()).thenReturn("/some/path");
 

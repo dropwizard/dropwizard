@@ -26,7 +26,8 @@ public class GzipDefaultVaryBehaviourTest {
         final Response clientResponse = RULE.client().target(
             "http://localhost:" + RULE.getLocalPort() + "/test").request().header(ACCEPT_ENCODING, "gzip").get();
 
-        assertThat(clientResponse.getHeaders().get(VARY)).isEqualTo(Collections.singletonList((Object) ACCEPT_ENCODING));
-        assertThat(clientResponse.getHeaders().get(CONTENT_ENCODING)).isEqualTo(Collections.singletonList((Object) "gzip"));
+        assertThat(clientResponse.getHeaders())
+            .containsEntry(VARY, Collections.singletonList(ACCEPT_ENCODING))
+            .containsEntry(CONTENT_ENCODING, Collections.singletonList("gzip"));
     }
 }

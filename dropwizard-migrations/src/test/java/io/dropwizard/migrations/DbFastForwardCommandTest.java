@@ -15,13 +15,14 @@ import java.io.PrintWriter;
 import java.util.Collections;
 import java.util.regex.Pattern;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @NotThreadSafe
 class DbFastForwardCommandTest extends AbstractMigrationTest {
 
     private static final Pattern NEWLINE_PATTERN = Pattern.compile(System.lineSeparator());
-    private DbFastForwardCommand<TestMigrationConfiguration> fastForwardCommand = new DbFastForwardCommand<>(
+    private final DbFastForwardCommand<TestMigrationConfiguration> fastForwardCommand = new DbFastForwardCommand<>(
         TestMigrationConfiguration::getDataSource, TestMigrationConfiguration.class, "migrations.xml");
     private TestMigrationConfiguration conf;
 
@@ -91,7 +92,7 @@ class DbFastForwardCommandTest extends AbstractMigrationTest {
         // Fast-forward one change
         fastForwardCommand.run(null, new Namespace(Maps.of("all", false, "dry-run", true)), conf);
 
-        assertThat(NEWLINE_PATTERN.splitAsStream(baos.toString(UTF_8))
+        assertThat(NEWLINE_PATTERN.splitAsStream(baos.toString(UTF_8.name()))
             .filter(s -> s.startsWith("INSERT INTO PUBLIC.DATABASECHANGELOG (")))
             .hasSize(1);
     }
@@ -104,7 +105,7 @@ class DbFastForwardCommandTest extends AbstractMigrationTest {
         // Fast-forward 3 changes
         fastForwardCommand.run(null, new Namespace(Maps.of("all", true, "dry-run", true)), conf);
 
-        assertThat(NEWLINE_PATTERN.splitAsStream(baos.toString(UTF_8))
+        assertThat(NEWLINE_PATTERN.splitAsStream(baos.toString(UTF_8.name()))
             .filter(s -> s.startsWith("INSERT INTO PUBLIC.DATABASECHANGELOG (")))
             .hasSize(3);
     }
@@ -113,7 +114,7 @@ class DbFastForwardCommandTest extends AbstractMigrationTest {
     void testPrintHelp() throws Exception {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         createSubparser(fastForwardCommand).printHelp(new PrintWriter(new OutputStreamWriter(baos, UTF_8), true));
-        assertThat(baos.toString(UTF_8)).isEqualTo(String.format(
+        assertThat(baos.toString(UTF_8.name())).isEqualTo(String.format(
             "usage: db fast-forward [-h] [--migrations MIGRATIONS-FILE]%n" +
                 "          [--catalog CATALOG] [--schema SCHEMA] [-n] [-a] [-i CONTEXTS]%n" +
                 "          [file]%n" +

@@ -13,13 +13,14 @@ import org.glassfish.jersey.test.spi.TestContainerFactory;
 import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class ErrorEntityWriterTest extends AbstractJerseyTest {
+class ErrorEntityWriterTest extends AbstractJerseyTest {
 
     public static class ErrorEntityWriterTestResourceConfig extends DropwizardResourceConfig {
         public ErrorEntityWriterTestResourceConfig() {
@@ -52,11 +53,10 @@ public class ErrorEntityWriterTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void formatsErrorsAsHtml() {
+    void formatsErrorsAsHtml() {
+        Invocation.Builder request = target("/exception/html-exception").request(MediaType.TEXT_HTML_TYPE);
         assertThatExceptionOfType(WebApplicationException.class)
-            .isThrownBy(() -> target("/exception/html-exception")
-                .request(MediaType.TEXT_HTML_TYPE)
-                .get(String.class))
+            .isThrownBy(() -> request.get(String.class))
             .satisfies(e -> {
                 final Response response = e.getResponse();
                 assertThat(response.getStatus()).isEqualTo(400);

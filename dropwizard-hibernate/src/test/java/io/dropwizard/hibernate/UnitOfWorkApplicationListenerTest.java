@@ -17,7 +17,7 @@ import org.mockito.InOrder;
 import java.lang.reflect.Method;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.hibernate.resource.transaction.spi.TransactionStatus.ACTIVE;
 import static org.hibernate.resource.transaction.spi.TransactionStatus.NOT_ACTIVE;
 import static org.mockito.Mockito.doAnswer;
@@ -29,7 +29,7 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @SuppressWarnings("HibernateResourceOpenedButNotSafelyClosed")
-public class UnitOfWorkApplicationListenerTest {
+class UnitOfWorkApplicationListenerTest {
     private final SessionFactory sessionFactory = mock(SessionFactory.class);
     private final SessionFactory analyticsSessionFactory = mock(SessionFactory.class);
     private final UnitOfWorkApplicationListener listener = new UnitOfWorkApplicationListener();
@@ -46,7 +46,7 @@ public class UnitOfWorkApplicationListenerTest {
     private final Transaction analyticsTransaction = mock(Transaction.class);
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         listener.registerSessionFactory(HibernateBundle.DEFAULT_NAME, sessionFactory);
         listener.registerSessionFactory("analytics", analyticsSessionFactory);
 
@@ -74,7 +74,7 @@ public class UnitOfWorkApplicationListenerTest {
     }
 
     @Test
-    public void opensAndClosesASession() throws Exception {
+    void opensAndClosesASession() throws Exception {
         execute();
 
         final InOrder inOrder = inOrder(sessionFactory, session);
@@ -83,7 +83,7 @@ public class UnitOfWorkApplicationListenerTest {
     }
 
     @Test
-    public void bindsAndUnbindsTheSessionToTheManagedContext() throws Exception {
+    void bindsAndUnbindsTheSessionToTheManagedContext() throws Exception {
         doAnswer(invocation -> {
             assertThat(ManagedSessionContext.hasBind(sessionFactory))
                 .isTrue();
@@ -96,7 +96,7 @@ public class UnitOfWorkApplicationListenerTest {
     }
 
     @Test
-    public void configuresTheSessionsReadOnlyDefault() throws Exception {
+    void configuresTheSessionsReadOnlyDefault() throws Exception {
         prepareResourceMethod("methodWithReadOnlyAnnotation");
 
         execute();
@@ -105,7 +105,7 @@ public class UnitOfWorkApplicationListenerTest {
     }
 
     @Test
-    public void configuresTheSessionsCacheMode() throws Exception {
+    void configuresTheSessionsCacheMode() throws Exception {
         prepareResourceMethod("methodWithCacheModeIgnoreAnnotation");
 
         execute();
@@ -114,7 +114,7 @@ public class UnitOfWorkApplicationListenerTest {
     }
 
     @Test
-    public void configuresTheSessionsFlushMode() throws Exception {
+    void configuresTheSessionsFlushMode() throws Exception {
         prepareResourceMethod("methodWithFlushModeAlwaysAnnotation");
 
         execute();
@@ -123,7 +123,7 @@ public class UnitOfWorkApplicationListenerTest {
     }
 
     @Test
-    public void doesNotBeginATransactionIfNotTransactional() throws Exception {
+    void doesNotBeginATransactionIfNotTransactional() throws Exception {
         final String resourceMethodName = "methodWithTransactionalFalseAnnotation";
         prepareResourceMethod(resourceMethodName);
 
@@ -136,7 +136,7 @@ public class UnitOfWorkApplicationListenerTest {
     }
 
     @Test
-    public void detectsAnnotationOnHandlingMethod() throws NoSuchMethodException {
+    void detectsAnnotationOnHandlingMethod() throws NoSuchMethodException {
         final String resourceMethodName = "handlingMethodAnnotated";
         prepareResourceMethod(resourceMethodName);
 
@@ -146,7 +146,7 @@ public class UnitOfWorkApplicationListenerTest {
     }
 
     @Test
-    public void detectsAnnotationOnDefinitionMethod() throws NoSuchMethodException {
+    void detectsAnnotationOnDefinitionMethod() throws NoSuchMethodException {
         final String resourceMethodName = "definitionMethodAnnotated";
         prepareResourceMethod(resourceMethodName);
 
@@ -156,7 +156,7 @@ public class UnitOfWorkApplicationListenerTest {
     }
 
     @Test
-    public void annotationOnDefinitionMethodOverridesHandlingMethod() throws NoSuchMethodException {
+    void annotationOnDefinitionMethodOverridesHandlingMethod() throws NoSuchMethodException {
         final String resourceMethodName = "bothMethodsAnnotated";
         prepareResourceMethod(resourceMethodName);
 
@@ -166,7 +166,7 @@ public class UnitOfWorkApplicationListenerTest {
     }
 
     @Test
-    public void beginsAndCommitsATransactionIfTransactional() throws Exception {
+    void beginsAndCommitsATransactionIfTransactional() throws Exception {
         execute();
 
         final InOrder inOrder = inOrder(session, transaction);
@@ -176,7 +176,7 @@ public class UnitOfWorkApplicationListenerTest {
     }
 
     @Test
-    public void rollsBackTheTransactionOnException() throws Exception {
+    void rollsBackTheTransactionOnException() throws Exception {
         executeWithException();
 
         final InOrder inOrder = inOrder(session, transaction);
@@ -186,7 +186,7 @@ public class UnitOfWorkApplicationListenerTest {
     }
 
     @Test
-    public void doesNotCommitAnInactiveTransaction() throws Exception {
+    void doesNotCommitAnInactiveTransaction() throws Exception {
         when(transaction.getStatus()).thenReturn(NOT_ACTIVE);
 
         execute();
@@ -195,7 +195,7 @@ public class UnitOfWorkApplicationListenerTest {
     }
 
     @Test
-    public void doesNotCommitANullTransaction() throws Exception {
+    void doesNotCommitANullTransaction() throws Exception {
         when(session.getTransaction()).thenReturn(null);
 
         execute();
@@ -204,7 +204,7 @@ public class UnitOfWorkApplicationListenerTest {
     }
 
     @Test
-    public void doesNotRollbackAnInactiveTransaction() throws Exception {
+    void doesNotRollbackAnInactiveTransaction() throws Exception {
         when(transaction.getStatus()).thenReturn(NOT_ACTIVE);
 
         executeWithException();
@@ -213,7 +213,7 @@ public class UnitOfWorkApplicationListenerTest {
     }
 
     @Test
-    public void doesNotRollbackANullTransaction() throws Exception {
+    void doesNotRollbackANullTransaction() throws Exception {
         when(session.getTransaction()).thenReturn(null);
 
         executeWithException();
@@ -222,7 +222,7 @@ public class UnitOfWorkApplicationListenerTest {
     }
 
     @Test
-    public void beginsAndCommitsATransactionForAnalytics() throws Exception {
+    void beginsAndCommitsATransactionForAnalytics() throws Exception {
         prepareResourceMethod("methodWithUnitOfWorkOnAnalyticsDatabase");
         execute();
 
@@ -233,9 +233,9 @@ public class UnitOfWorkApplicationListenerTest {
     }
 
     @Test
-    public void throwsExceptionOnNotRegisteredDatabase() throws Exception {
+    void throwsExceptionOnNotRegisteredDatabase() throws Exception {
         prepareResourceMethod("methodWithUnitOfWorkOnNotRegisteredDatabase");
-        assertThatExceptionOfType(IllegalArgumentException.class)
+        assertThatIllegalArgumentException()
             .isThrownBy(this::execute)
             .withMessage("Unregistered Hibernate bundle: 'warehouse'");
     }

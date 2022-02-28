@@ -14,11 +14,11 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.assertThatIOException;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class ServerCommandTest {
+class ServerCommandTest {
     private static class MyApplication extends Application<Configuration> {
         @Override
         public void run(Configuration configuration, Environment environment) throws Exception {
@@ -45,36 +45,36 @@ public class ServerCommandTest {
     private boolean throwException = false;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         when(serverFactory.build(environment)).thenReturn(server);
         when(configuration.getServerFactory()).thenReturn(serverFactory);
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    void tearDown() throws Exception {
         server.stop();
     }
 
     @Test
-    public void hasAName() {
+    void hasAName() {
         assertThat(command.getName())
                 .isEqualTo("server");
     }
 
     @Test
-    public void hasADescription() {
+    void hasADescription() {
         assertThat(command.getDescription())
                 .isEqualTo("Runs the Dropwizard application as an HTTP server");
     }
 
     @Test
-    public void hasTheApplicationsConfigurationClass() {
+    void hasTheApplicationsConfigurationClass() {
         assertThat(command.getConfigurationClass())
                 .isEqualTo(application.getConfigurationClass());
     }
 
     @Test
-    public void buildsAndRunsAConfiguredServer() throws Exception {
+    void buildsAndRunsAConfiguredServer() throws Exception {
         command.run(environment, namespace, configuration);
 
         assertThat(server.isStarted())
@@ -82,7 +82,7 @@ public class ServerCommandTest {
     }
 
     @Test
-    public void stopsAServerIfThereIsAnErrorStartingIt() {
+    void stopsAServerIfThereIsAnErrorStartingIt() {
         this.throwException = true;
         server.addBean(new AbstractLifeCycle() {
             @Override
@@ -91,7 +91,7 @@ public class ServerCommandTest {
             }
         });
 
-        assertThatExceptionOfType(IOException.class)
+        assertThatIOException()
             .isThrownBy(() -> command.run(environment, namespace, configuration))
             .withMessage("oh crap");
 

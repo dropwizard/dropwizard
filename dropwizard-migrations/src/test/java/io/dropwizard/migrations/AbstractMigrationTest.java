@@ -5,16 +5,16 @@ import liquibase.sqlgenerator.SqlGeneratorFactory;
 import liquibase.sqlgenerator.core.AddColumnGeneratorSQLite;
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.inf.Subparser;
+import org.jdbi.v3.core.Handle;
 
+import java.sql.SQLException;
 import java.util.UUID;
 
-public class AbstractMigrationTest {
+class AbstractMigrationTest {
 
     static {
         SqlGeneratorFactory.getInstance().unregister(AddColumnGeneratorSQLite.class);
     }
-
-    protected static final String UTF_8 = "UTF-8";
 
     protected static Subparser createSubparser(AbstractLiquibaseCommand<?> command) {
         final Subparser subparser = ArgumentParsers.newFor("db")
@@ -37,5 +37,13 @@ public class AbstractMigrationTest {
 
     protected static String getDatabaseUrl() {
         return "jdbc:h2:mem:" + UUID.randomUUID() + ";db_close_delay=-1";
+    }
+
+    protected boolean tableExists(final Handle handle, final String tableName) throws SQLException {
+        return handle.getConnection().getMetaData().getTables(null, null, tableName, null).next();
+    }
+
+    protected boolean columnExists(final Handle handle, final String tableName, final String columnName) throws SQLException {
+        return handle.getConnection().getMetaData().getColumns(null, null, tableName, columnName).next();
     }
 }

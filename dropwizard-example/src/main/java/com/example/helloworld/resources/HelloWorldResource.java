@@ -5,7 +5,7 @@ import com.codahale.metrics.annotation.Timed;
 import com.example.helloworld.api.Saying;
 import com.example.helloworld.core.Template;
 import io.dropwizard.jersey.caching.CacheControl;
-import io.dropwizard.jersey.params.DateTimeParam;
+import io.dropwizard.jersey.jsr310.LocalDateParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,14 +48,13 @@ public class HelloWorldResource {
     @GET
     @Path("/date")
     @Produces(MediaType.TEXT_PLAIN)
-    public String receiveDate(@QueryParam("date") Optional<DateTimeParam> dateTimeParam) {
-        if (dateTimeParam.isPresent()) {
-            final DateTimeParam actualDateTimeParam = dateTimeParam.get();
-            LOGGER.info("Received a date: {}", actualDateTimeParam);
-            return actualDateTimeParam.get().toString();
-        } else {
+    public String receiveDate(@QueryParam("date") LocalDateParam date) {
+        if (date == null) {
             LOGGER.warn("No received date");
             return null;
         }
+
+        LOGGER.info("Received a date: {}", date);
+        return date.get().toString();
     }
 }

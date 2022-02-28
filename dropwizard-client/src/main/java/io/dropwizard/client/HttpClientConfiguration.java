@@ -134,7 +134,9 @@ public class HttpClientConfiguration {
 
     /**
      * @since 2.0
+     * @deprecated
      */
+    @Deprecated
     @JsonProperty
     public boolean isNormalizeUriEnabled() {
         return normalizeUriEnabled;
@@ -142,7 +144,9 @@ public class HttpClientConfiguration {
 
     /**
      * @since 2.0
+     * @deprecated
      */
+    @Deprecated
     @JsonProperty
     public void setNormalizeUriEnabled(final boolean normalizeUriEnabled) {
         this.normalizeUriEnabled = normalizeUriEnabled;

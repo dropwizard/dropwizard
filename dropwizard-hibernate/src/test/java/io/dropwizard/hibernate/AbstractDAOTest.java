@@ -27,7 +27,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @SuppressWarnings("deprecation")
-public class AbstractDAOTest {
+class AbstractDAOTest {
     private static class MockDAO extends AbstractDAO<String> {
         MockDAO(SessionFactory factory) {
             super(factory);
@@ -46,6 +46,11 @@ public class AbstractDAOTest {
         @Override
         public Query<?> namedQuery(String queryName) throws HibernateException {
             return super.namedQuery(queryName);
+        }
+
+        @Override
+        protected Query<String> namedTypedQuery(String queryName) throws HibernateException {
+            return super.namedTypedQuery(queryName);
         }
 
         @Override
@@ -100,29 +105,30 @@ public class AbstractDAOTest {
     private final MockDAO dao = new MockDAO(factory);
 
     @BeforeEach
-    public void setup() throws Exception {
+    void setup() throws Exception {
         when(criteriaBuilder.createQuery(same(String.class))).thenReturn(criteriaQuery);
         when(factory.getCurrentSession()).thenReturn(session);
         when(session.createCriteria(String.class)).thenReturn(criteria);
         when(session.getCriteriaBuilder()).thenReturn(criteriaBuilder);
         when(session.getNamedQuery(anyString())).thenReturn(query);
         when(session.createQuery(anyString(), same(String.class))).thenReturn(query);
+        when(session.createNamedQuery(anyString(), same(String.class))).thenReturn(query);
     }
 
     @Test
-    public void getsASessionFromTheSessionFactory() throws Exception {
+    void getsASessionFromTheSessionFactory() throws Exception {
         assertThat(dao.currentSession())
                 .isSameAs(session);
     }
 
     @Test
-    public void hasAnEntityClass() throws Exception {
+    void hasAnEntityClass() throws Exception {
         assertThat(dao.getEntityClass())
                 .isEqualTo(String.class);
     }
 
     @Test
-    public void getsNamedQueries() throws Exception {
+    void getsNamedQueries() throws Exception {
         assertThat(dao.namedQuery("query-name"))
                 .isEqualTo(query);
 
@@ -130,7 +136,15 @@ public class AbstractDAOTest {
     }
 
     @Test
-    public void getsTypedQueries() throws Exception {
+    void getsNamedTypedQueries() throws Exception {
+        assertThat(dao.namedTypedQuery("query-name"))
+            .isEqualTo(query);
+
+        verify(session).createNamedQuery("query-name", String.class);
+    }
+
+    @Test
+    void getsTypedQueries() throws Exception {
         assertThat(dao.query("HQL"))
             .isEqualTo(query);
 
@@ -138,7 +152,7 @@ public class AbstractDAOTest {
     }
 
     @Test
-    public void createsNewCriteria() throws Exception {
+    void createsNewCriteria() throws Exception {
         assertThat(dao.criteria())
                 .isEqualTo(criteria);
 
@@ -146,7 +160,7 @@ public class AbstractDAOTest {
     }
 
     @Test
-    public void createsNewCriteriaQueries() throws Exception {
+    void createsNewCriteriaQueries() throws Exception {
         assertThat(dao.criteriaQuery())
                 .isEqualTo(criteriaQuery);
 
@@ -155,7 +169,7 @@ public class AbstractDAOTest {
     }
 
     @Test
-    public void returnsUniqueResultsFromCriteriaQueries() throws Exception {
+    void returnsUniqueResultsFromCriteriaQueries() throws Exception {
         when(criteria.uniqueResult()).thenReturn("woo");
 
         assertThat(dao.uniqueResult(criteria))
@@ -163,7 +177,7 @@ public class AbstractDAOTest {
     }
 
     @Test
-    public void returnsUniqueResultsFromJpaCriteriaQueries() throws Exception {
+    void returnsUniqueResultsFromJpaCriteriaQueries() throws Exception {
         when(session.createQuery(criteriaQuery)).thenReturn(query);
         when(query.getResultList()).thenReturn(Collections.singletonList("woo"));
 
@@ -172,7 +186,7 @@ public class AbstractDAOTest {
     }
 
     @Test
-    public void throwsOnNonUniqueResultsFromJpaCriteriaQueries() throws Exception {
+    void throwsOnNonUniqueResultsFromJpaCriteriaQueries() throws Exception {
         when(session.createQuery(criteriaQuery)).thenReturn(query);
         when(query.getResultList()).thenReturn(Arrays.asList("woo", "boo"));
 
@@ -181,7 +195,7 @@ public class AbstractDAOTest {
     }
 
     @Test
-    public void returnsUniqueResultsFromQueries() throws Exception {
+    void returnsUniqueResultsFromQueries() throws Exception {
         when(query.uniqueResult()).thenReturn("woo");
 
         assertThat(dao.uniqueResult(query))
@@ -189,7 +203,7 @@ public class AbstractDAOTest {
     }
 
     @Test
-    public void returnsUniqueListsFromCriteriaQueries() throws Exception {
+    void returnsUniqueListsFromCriteriaQueries() throws Exception {
         when(criteria.list()).thenReturn(Collections.singletonList("woo"));
 
         assertThat(dao.list(criteria))
@@ -197,7 +211,7 @@ public class AbstractDAOTest {
     }
 
     @Test
-    public void returnsUniqueListsFromJpaCriteriaQueries() throws Exception {
+    void returnsUniqueListsFromJpaCriteriaQueries() throws Exception {
         when(session.createQuery(criteriaQuery)).thenReturn(query);
         when(query.getResultList()).thenReturn(Collections.singletonList("woo"));
 
@@ -206,7 +220,7 @@ public class AbstractDAOTest {
     }
 
     @Test
-    public void returnsUniqueListsFromQueries() throws Exception {
+    void returnsUniqueListsFromQueries() throws Exception {
         when(query.list()).thenReturn(Collections.singletonList("woo"));
 
         assertThat(dao.list(query))
@@ -214,7 +228,7 @@ public class AbstractDAOTest {
     }
 
     @Test
-    public void getsEntitiesById() throws Exception {
+    void getsEntitiesById() throws Exception {
         when(session.get(String.class, 200)).thenReturn("woo!");
 
         assertThat(dao.get(200))
@@ -224,7 +238,7 @@ public class AbstractDAOTest {
     }
 
     @Test
-    public void persistsEntities() throws Exception {
+    void persistsEntities() throws Exception {
         assertThat(dao.persist("woo"))
                 .isEqualTo("woo");
 
@@ -232,7 +246,7 @@ public class AbstractDAOTest {
     }
 
     @Test
-    public void initializesProxies() throws Exception {
+    void initializesProxies() throws Exception {
         final LazyInitializer initializer = mock(LazyInitializer.class);
         when(initializer.isUninitialized()).thenReturn(true);
         final HibernateProxy proxy = mock(HibernateProxy.class);

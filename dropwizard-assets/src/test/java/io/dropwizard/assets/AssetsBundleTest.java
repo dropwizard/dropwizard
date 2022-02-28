@@ -5,7 +5,6 @@ import io.dropwizard.jetty.setup.ServletEnvironment;
 import io.dropwizard.servlets.assets.AssetServlet;
 import io.dropwizard.servlets.assets.ResourceURL;
 import io.dropwizard.setup.Environment;
-import io.dropwizard.util.Resources;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -44,7 +43,7 @@ class AssetsBundleTest {
                 .isEqualTo("index.htm");
 
         assertThat(servlet.getResourceURL())
-                .isEqualTo(normalize("assets"));
+                .isEqualTo(normalize("/assets"));
 
         assertThat(servlet.getUriPath())
                 .isEqualTo("/assets");
@@ -61,7 +60,7 @@ class AssetsBundleTest {
                 .isEqualTo("index.htm");
 
         assertThat(servlet.getResourceURL())
-                .isEqualTo(normalize("json"));
+                .isEqualTo(normalize("/json"));
 
         assertThat(servlet.getUriPath())
                 .isEqualTo("/json");
@@ -78,7 +77,7 @@ class AssetsBundleTest {
                 .isEqualTo("index.htm");
 
         assertThat(servlet.getResourceURL())
-                .isEqualTo(normalize("json"));
+                .isEqualTo(normalize("/json"));
 
         assertThat(servlet.getUriPath())
                 .isEqualTo("/what");
@@ -95,7 +94,7 @@ class AssetsBundleTest {
                 .isEqualTo("index.txt");
 
         assertThat(servlet.getResourceURL())
-                .isEqualTo(normalize("json"));
+                .isEqualTo(normalize("/json"));
 
         assertThat(servlet.getUriPath())
                 .isEqualTo("/what/new");
@@ -108,7 +107,7 @@ class AssetsBundleTest {
                 .isEqualTo("index.txt");
 
         assertThat(servlet.getResourceURL())
-                .isEqualTo(normalize("json"));
+                .isEqualTo(normalize("/json"));
 
         assertThat(servlet.getUriPath())
                 .isEqualTo("/what/old");
@@ -125,7 +124,7 @@ class AssetsBundleTest {
                 .isEqualTo("index.txt");
 
         assertThat(servlet.getResourceURL())
-                .isEqualTo(normalize("json"));
+                .isEqualTo(normalize("/json"));
 
         assertThat(servlet.getUriPath())
                 .isEqualTo("/what");
@@ -137,13 +136,13 @@ class AssetsBundleTest {
 
         assertThat(servletPath).isEqualTo("/assets/*");
         assertThat(servlet.getIndexFile()).isEqualTo("index.html");
-        assertThat(servlet.getResourceURL()).isEqualTo(normalize("assets"));
+        assertThat(servlet.getResourceURL()).isEqualTo(normalize("/assets"));
         assertThat(servlet.getUriPath()).isEqualTo("/assets");
         assertThat(servlet.getDefaultMediaType()).isEqualTo("text/plain");
     }
 
     private URL normalize(String path) {
-        return ResourceURL.appendTrailingSlash(Resources.getResource(path));
+        return ResourceURL.appendTrailingSlash(getClass().getResource(path));
     }
 
     private void runBundle(AssetsBundle bundle) {

@@ -12,7 +12,7 @@ import javax.ws.rs.core.Application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class NonEmptyStringParamProviderTest extends AbstractJerseyTest {
+class NonEmptyStringParamProviderTest extends AbstractJerseyTest {
 
     @Override
     protected Application configure() {
@@ -21,25 +21,25 @@ public class NonEmptyStringParamProviderTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void shouldReturnDefaultMessageWhenNonExistent() {
+    void shouldReturnDefaultMessageWhenNonExistent() {
         String response = target("/non-empty/string").request().get(String.class);
         assertThat(response).isEqualTo("Hello");
     }
 
     @Test
-    public void shouldReturnDefaultMessageWhenEmptyString() {
+    void shouldReturnDefaultMessageWhenEmptyString() {
         String response = target("/non-empty/string").queryParam("message", "").request().get(String.class);
         assertThat(response).isEqualTo("Hello");
     }
 
     @Test
-    public void shouldReturnDefaultMessageWhenNull() {
+    void shouldReturnDefaultMessageWhenNull() {
         String response = target("/non-empty/string").queryParam("message").request().get(String.class);
         assertThat(response).isEqualTo("Hello");
     }
 
     @Test
-    public void shouldReturnMessageWhenSpecified() {
+    void shouldReturnMessageWhenSpecified() {
         String response = target("/non-empty/string").queryParam("message", "Goodbye").request().get(String.class);
         assertThat(response).isEqualTo("Goodbye");
     }

@@ -4,23 +4,23 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MutableServletContextHandlerTest {
+class MutableServletContextHandlerTest {
     private final MutableServletContextHandler handler = new MutableServletContextHandler();
 
     @Test
-    public void defaultsToSessionsBeingDisabled() throws Exception {
+    void defaultsToSessionsBeingDisabled() throws Exception {
         assertThat(handler.isSessionsEnabled())
                 .isFalse();
     }
 
     @Test
-    public void defaultsToSecurityBeingDisabled() throws Exception {
+    void defaultsToSecurityBeingDisabled() throws Exception {
         assertThat(handler.isSecurityEnabled())
                 .isFalse();
     }
 
     @Test
-    public void canEnableSessionManagement() throws Exception {
+    void canEnableSessionManagement() throws Exception {
         handler.setSessionsEnabled(true);
 
         assertThat(handler.isSessionsEnabled())
@@ -31,7 +31,7 @@ public class MutableServletContextHandlerTest {
     }
 
     @Test
-    public void canDisableSessionManagement() throws Exception {
+    void canDisableSessionManagement() throws Exception {
         handler.setSessionsEnabled(true);
         handler.setSessionsEnabled(false);
 
@@ -43,7 +43,7 @@ public class MutableServletContextHandlerTest {
     }
 
     @Test
-    public void canEnableSecurity() throws Exception {
+    void canEnableSecurity() throws Exception {
         handler.setSecurityEnabled(true);
 
         assertThat(handler.isSessionsEnabled())
@@ -54,7 +54,7 @@ public class MutableServletContextHandlerTest {
     }
 
     @Test
-    public void canDisableSecurity() throws Exception {
+    void canDisableSecurity() throws Exception {
         handler.setSecurityEnabled(true);
         handler.setSecurityEnabled(false);
 

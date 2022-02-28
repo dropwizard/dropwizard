@@ -16,6 +16,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
 import java.util.Collections;
@@ -29,7 +30,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
  *
  * @since 1.1.0
  */
-public class MustacheViewRendererFileSystemTest extends JerseyTest {
+class MustacheViewRendererFileSystemTest extends JerseyTest {
     static {
         BootstrapLogging.bootstrap();
     }
@@ -86,30 +87,32 @@ public class MustacheViewRendererFileSystemTest extends JerseyTest {
     }
 
     @Test
-    public void rendersViewsWithAbsoluteTemplatePaths() {
+    void rendersViewsWithAbsoluteTemplatePaths() {
         final String response = target("/test/absolute").request().get(String.class);
         assertThat(response).isEqualTo("Woop woop. yay\n");
     }
 
     @Test
-    public void rendersViewsWithRelativeTemplatePaths() {
+    void rendersViewsWithRelativeTemplatePaths() {
         final String response = target("/test/relative").request().get(String.class);
         assertThat(response).isEqualTo("Ok.\n");
     }
 
     @Test
-    public void returnsA500ForViewsWithBadTemplatePaths() {
+    void returnsA500ForViewsWithBadTemplatePaths() {
+        Invocation.Builder request = target("/test/bad").request();
         assertThatExceptionOfType(WebApplicationException.class)
-            .isThrownBy(() -> target("/test/bad").request().get(String.class))
+            .isThrownBy(() -> request.get(String.class))
             .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(500))
             .satisfies(e -> assertThat(e.getResponse().readEntity(String.class))
                 .isEqualTo(ViewRenderExceptionMapper.TEMPLATE_ERROR_MSG));
     }
 
     @Test
-    public void returnsA500ForViewsThatCantCompile() {
+    void returnsA500ForViewsThatCantCompile() {
+        Invocation.Builder request = target("/test/error").request();
         assertThatExceptionOfType(WebApplicationException.class)
-            .isThrownBy(() -> target("/test/error").request().get(String.class))
+            .isThrownBy(() -> request.get(String.class))
             .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(500))
             .satisfies(e -> assertThat(e.getResponse().readEntity(String.class))
                 .isEqualTo(ViewRenderExceptionMapper.TEMPLATE_ERROR_MSG));

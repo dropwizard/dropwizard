@@ -7,12 +7,12 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MapsTest {
+class MapsTest {
 
     @Test
-    public void of2KeyValuePairs() {
-        final Map map = Maps.of(1, 60, 2, 61);
-        final HashMap hashMap = new HashMap();
+    void of2KeyValuePairs() {
+        final Map<Integer,Integer> map = Maps.of(1, 60, 2, 61);
+        final HashMap<Integer,Integer> hashMap = new HashMap<>();
         hashMap.put(1, 60);
         hashMap.put(2, 61);
 
@@ -20,9 +20,9 @@ public class MapsTest {
     }
 
     @Test
-    public void of3KeyValuePairs() {
-        final Map map = Maps.of(1, 60, 2, 61, 3, 62);
-        final HashMap hashMap = new HashMap();
+    void of3KeyValuePairs() {
+        final Map<Integer,Integer> map = Maps.of(1, 60, 2, 61, 3, 62);
+        final HashMap<Integer,Integer> hashMap = new HashMap<>();
         hashMap.put(1, 60);
         hashMap.put(2, 61);
         hashMap.put(3, 62);
@@ -31,9 +31,9 @@ public class MapsTest {
     }
 
     @Test
-    public void of4KeyValuePairs() {
-        final Map map = Maps.of(1, 60, 2, 61, 3, 62, 4, 63);
-        final HashMap hashMap = new HashMap();
+    void of4KeyValuePairs() {
+        final Map<Integer,Integer> map = Maps.of(1, 60, 2, 61, 3, 62, 4, 63);
+        final HashMap<Integer,Integer> hashMap = new HashMap<>();
         hashMap.put(1, 60);
         hashMap.put(2, 61);
         hashMap.put(3, 62);
@@ -43,9 +43,9 @@ public class MapsTest {
     }
 
     @Test
-    public void of5KeyValuePairs() {
-        final Map map = Maps.of(1, 60, 2, 61, 3, 62, 4, 63, 5, 64);
-        final HashMap hashMap = new HashMap();
+    void of5KeyValuePairs() {
+        final Map<Integer,Integer> map = Maps.of(1, 60, 2, 61, 3, 62, 4, 63, 5, 64);
+        final HashMap<Integer,Integer> hashMap = new HashMap<>();
         hashMap.put(1, 60);
         hashMap.put(2, 61);
         hashMap.put(3, 62);
@@ -54,5 +54,4 @@ public class MapsTest {
 
         assertThat(map).isEqualTo(hashMap);
     }
-
 }

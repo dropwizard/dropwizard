@@ -9,7 +9,7 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class UUIDParamTest {
+class UUIDParamTest {
     private void UuidParamNegativeTest(String input) {
         assertThatExceptionOfType(WebApplicationException.class)
             .isThrownBy(() -> new UUIDParam(input))
@@ -20,7 +20,7 @@ public class UUIDParamTest {
     }
 
     @Test
-    public void aUUIDStringReturnsAUUIDObject() {
+    void aUUIDStringReturnsAUUIDObject() {
         final String uuidString = "067e6162-3b6f-4ae2-a171-2470b63dff00";
         final UUID uuid = UUID.fromString(uuidString);
 
@@ -28,17 +28,17 @@ public class UUIDParamTest {
     }
 
     @Test
-    public void noSpaceUUID() {
+    void noSpaceUUID() {
         UuidParamNegativeTest("067e61623b6f4ae2a1712470b63dff00");
     }
 
     @Test
-    public void tooLongUUID() {
+    void tooLongUUID() {
         UuidParamNegativeTest("067e6162-3b6f-4ae2-a171-2470b63dff000");
     }
 
     @Test
-    public void aNonUUIDThrowsAnException() {
+    void aNonUUIDThrowsAnException() {
         UuidParamNegativeTest("foo");
     }
 }

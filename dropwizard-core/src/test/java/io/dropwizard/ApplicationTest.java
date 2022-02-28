@@ -8,7 +8,7 @@ import java.io.File;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ApplicationTest {
+class ApplicationTest {
     private static class FakeConfiguration extends Configuration {
     }
 
@@ -46,26 +46,26 @@ public class ApplicationTest {
     }
 
     @Test
-    public void hasAReferenceToItsTypeParameter() throws Exception {
+    void hasAReferenceToItsTypeParameter() throws Exception {
         assertThat(new FakeApplication().getConfigurationClass())
                 .isSameAs(FakeConfiguration.class);
     }
 
     @Test
-    public void canDetermineConfiguration() throws Exception {
+    void canDetermineConfiguration() throws Exception {
         assertThat(new PoserApplication().getConfigurationClass())
                 .isSameAs(FakeConfiguration.class);
     }
 
     @Test
-    public void canDetermineWrappedConfiguration() throws Exception {
+    void canDetermineWrappedConfiguration() throws Exception {
         final PoserApplication application = new PoserApplication();
         assertThat(new WrapperApplication<>(application).getConfigurationClass())
                 .isSameAs(FakeConfiguration.class);
     }
 
     @Test
-    public void exitWithFatalErrorWhenCommandFails() throws Exception {
+    void exitWithFatalErrorWhenCommandFails() throws Exception {
         final File configFile = File.createTempFile("dropwizard-invalid-config", ".yml");
         try {
             final FakeApplication application = new FakeApplication();

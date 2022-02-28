@@ -14,7 +14,7 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class GuavaOptionalValueExtractorTest {
+class GuavaOptionalValueExtractorTest {
 
     public static class Example {
 
@@ -33,14 +33,14 @@ public class GuavaOptionalValueExtractorTest {
             .getValidator();
 
     @Test
-    public void succeedsWhenAbsent() {
+    void succeedsWhenAbsent() {
         Example example = new Example();
         Set<ConstraintViolation<Example>> violations = validator.validate(example);
         assertThat(violations).isEmpty();
     }
 
     @Test
-    public void failsWhenFailingConstraint() {
+    void failsWhenFailingConstraint() {
         Example example = new Example();
         example.three = Optional.of(2);
         Set<ConstraintViolation<Example>> violations = validator.validate(example);
@@ -48,7 +48,7 @@ public class GuavaOptionalValueExtractorTest {
     }
 
     @Test
-    public void succeedsWhenConstraintsMet() {
+    void succeedsWhenConstraintsMet() {
         Example example = new Example();
         example.three = Optional.of(10);
         Set<ConstraintViolation<Example>> violations = validator.validate(example);
@@ -56,7 +56,7 @@ public class GuavaOptionalValueExtractorTest {
     }
 
     @Test
-    public void notNullFailsWhenAbsent() {
+    void notNullFailsWhenAbsent() {
         Example example = new Example();
         example.notNull = Optional.absent();
         Set<ConstraintViolation<Example>> violations = validator.validate(example);

@@ -9,6 +9,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -56,6 +57,17 @@ public class ContextRoutingHandler extends AbstractHandlerContainer {
 
     @Override
     public Handler[] getHandlers() {
-        return handlers.entrySet().stream().map(e -> e.getValue()).toArray(Handler[]::new);
+        return handlers.entrySet().stream().map(Map.Entry::getValue).toArray(Handler[]::new);
+    }
+
+    @Override
+    protected void expandChildren(List<Handler> list, Class<?> byClass)
+    {
+        Handler[] handlerArray = getHandlers();
+        if (handlerArray != null) {
+            for (Handler h : handlerArray) {
+                expandHandler(h, list, byClass);
+            }
+        }
     }
 }

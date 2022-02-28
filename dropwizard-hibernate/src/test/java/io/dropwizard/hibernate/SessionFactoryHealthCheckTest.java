@@ -23,23 +23,23 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @SuppressWarnings("HibernateResourceOpenedButNotSafelyClosed")
-public class SessionFactoryHealthCheckTest {
+class SessionFactoryHealthCheckTest {
     private final SessionFactory factory = mock(SessionFactory.class);
 
     @Test
-    public void hasASessionFactory() throws Exception {
+    void hasASessionFactory() throws Exception {
         assertThat(healthCheck().getSessionFactory())
                 .isEqualTo(factory);
     }
 
     @Test
-    public void hasAValidationQuery() throws Exception {
+    void hasAValidationQuery() throws Exception {
         assertThat(healthCheck("SELECT 1").getValidationQuery())
                 .isEqualTo(Optional.of("SELECT 1"));
     }
 
     @Test
-    public void isHealthyIfNoExceptionIsThrown() throws Exception {
+    void isHealthyIfNoExceptionIsThrown() throws Exception {
         final Session session = mock(Session.class);
         when(factory.openSession()).thenReturn(session);
 
@@ -61,7 +61,7 @@ public class SessionFactoryHealthCheckTest {
     }
 
     @Test
-    public void isHealthyIfIsValid() {
+    void isHealthyIfIsValid() {
         final Session session = mock(Session.class);
         when(factory.openSession()).thenReturn(session);
 
@@ -81,7 +81,7 @@ public class SessionFactoryHealthCheckTest {
     }
 
     @Test
-    public void isUnhealthyIfAnExceptionIsThrown() throws Exception {
+    void isUnhealthyIfAnExceptionIsThrown() throws Exception {
         final Session session = mock(Session.class);
         when(factory.openSession()).thenReturn(session);
 
@@ -108,7 +108,7 @@ public class SessionFactoryHealthCheckTest {
     }
 
     @Test
-    public void isUnhealthyIfIsNotValid() {
+    void isUnhealthyIfIsNotValid() {
         final Session session = mock(Session.class);
         when(factory.openSession()).thenReturn(session);
 

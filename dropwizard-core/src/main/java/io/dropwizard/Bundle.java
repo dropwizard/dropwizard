@@ -18,7 +18,7 @@ public interface Bundle extends ConfiguredBundle<Configuration> {
      * Initializes the application environment.
      *
      * @param environment the application environment
-     * @deprecated Use {@link ConfiguredBundle#run(Configuration, Environment)}
+     * @deprecated Use {@link ConfiguredBundle<Configuration>#run(Configuration, Environment)}
      */
     @Deprecated
     default void run(Environment environment) {

@@ -21,9 +21,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class ConfiguredGZipEncoderTest {
+class ConfiguredGZipEncoderTest {
     @Test
-    public void gzipParametersSpec() throws IOException {
+    void gzipParametersSpec() throws IOException {
         ClientRequestContext context = mock(ClientRequestContext.class);
         MultivaluedMap<String, Object> headers = new MultivaluedHashMap<>();
         when(context.getHeaders()).thenReturn(headers);
@@ -32,11 +32,11 @@ public class ConfiguredGZipEncoderTest {
 
         new ConfiguredGZipEncoder(true).filter(context);
 
-        assertThat(headers.getFirst(HttpHeaders.CONTENT_ENCODING).toString()).isEqualTo("gzip");
+        assertThat(headers.getFirst(HttpHeaders.CONTENT_ENCODING)).hasToString("gzip");
     }
 
     @Test
-    public void aroundWriteToSpec() throws IOException, WebApplicationException {
+    void aroundWriteToSpec() throws IOException, WebApplicationException {
         MultivaluedMap<String, Object> headers = new MultivaluedHashMap<>();
         headers.add(HttpHeaders.CONTENT_ENCODING, "gzip");
         WriterInterceptorContextMock context = new WriterInterceptorContextMock(headers);
@@ -45,7 +45,7 @@ public class ConfiguredGZipEncoderTest {
         assertThat(context.isProceedCalled()).isTrue();
     }
     @Test
-    public void aroundWriteToSpecX_GZip() throws IOException, WebApplicationException {
+    void aroundWriteToSpecX_GZip() throws IOException, WebApplicationException {
         MultivaluedMap<String, Object> headers = new MultivaluedHashMap<>();
         headers.add(HttpHeaders.CONTENT_ENCODING, "x-gzip");
         WriterInterceptorContextMock context = new WriterInterceptorContextMock(headers);
@@ -54,7 +54,7 @@ public class ConfiguredGZipEncoderTest {
         assertThat(context.isProceedCalled()).isTrue();
     }
     @Test
-    public void otherEncodingWillNotAroundWrite() throws IOException, WebApplicationException {
+    void otherEncodingWillNotAroundWrite() throws IOException, WebApplicationException {
         MultivaluedMap<String, Object> headers = new MultivaluedHashMap<>();
         headers.add(HttpHeaders.CONTENT_ENCODING, "someOtherEnc");
         WriterInterceptorContextMock context = new WriterInterceptorContextMock(headers);
@@ -63,7 +63,7 @@ public class ConfiguredGZipEncoderTest {
         assertThat(context.isProceedCalled()).isTrue();
     }
     @Test
-    public void noEncodingwillNotAroundWrite() throws IOException, WebApplicationException {
+    void noEncodingwillNotAroundWrite() throws IOException, WebApplicationException {
         MultivaluedMap<String, Object> headers = new MultivaluedHashMap<>();
         headers.add(HttpHeaders.CONTENT_ENCODING, null);
         WriterInterceptorContextMock context = new WriterInterceptorContextMock(headers);
@@ -76,7 +76,7 @@ public class ConfiguredGZipEncoderTest {
         private final MultivaluedMap<String, Object> headers;
         private OutputStream os = new OutputStream() {
             @Override
-            public void write(int i) throws IOException {
+            public void write(int i) {
                 //void
             }
         };
@@ -87,7 +87,7 @@ public class ConfiguredGZipEncoderTest {
         }
 
         @Override
-        public void proceed() throws IOException, WebApplicationException {
+        public void proceed() throws WebApplicationException {
             proceedCalled = true;
         }
 

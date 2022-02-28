@@ -13,7 +13,7 @@ import java.util.Locale;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
-public class SizeValidatorTest {
+class SizeValidatorTest {
     @SuppressWarnings("unused")
     public static class Example {
         @MaxSize(value = 30, unit = SizeUnit.KILOBYTES)
@@ -60,7 +60,7 @@ public class SizeValidatorTest {
     private final Validator validator = BaseValidator.newValidator();
 
     @Test
-    public void returnsASetOfErrorsForAnObject() throws Exception {
+    void returnsASetOfErrorsForAnObject() throws Exception {
         assumeTrue("en".equals(Locale.getDefault().getLanguage()),
                 "This test executes when the defined language is English ('en'). If not, it is skipped.");
 
@@ -75,7 +75,7 @@ public class SizeValidatorTest {
     }
 
     @Test
-    public void returnsAnEmptySetForAValidObject() throws Exception {
+    void returnsAnEmptySetForAValidObject() throws Exception {
         final Example example = new Example();
         example.setTooBig(Size.bytes(10));
         example.setTooSmall(Size.megabytes(10));

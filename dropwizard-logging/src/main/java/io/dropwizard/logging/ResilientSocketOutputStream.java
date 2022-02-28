@@ -1,5 +1,6 @@
 package io.dropwizard.logging;
 
+import javax.annotation.Nullable;
 import javax.net.SocketFactory;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
@@ -20,6 +21,8 @@ public class ResilientSocketOutputStream extends ResilientOutputStreamBase {
     private final int connectionTimeoutMs;
     private final int sendBufferSize;
     private final SocketFactory socketFactory;
+    @Nullable
+    private Socket socket;
 
     /**
      * Creates a new stream based on the socket configuration.
@@ -51,8 +54,21 @@ public class ResilientSocketOutputStream extends ResilientOutputStreamBase {
     }
 
     @Override
+    public void close() throws IOException {
+        super.close();
+        closeSocket();
+    }
+
+    private void closeSocket() throws IOException {
+        if (socket != null && !socket.isClosed()) {
+            socket.close();
+        }
+    }
+
+    @Override
     OutputStream openNewOutputStream() throws IOException {
-        final Socket socket = socketFactory.createSocket();
+        closeSocket();
+        socket = socketFactory.createSocket();
         // Prevent automatic closing of the connection during periods of inactivity.
         socket.setKeepAlive(true);
         // Important not to cache `InetAddress` in case the host moved to a new IP address.

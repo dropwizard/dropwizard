@@ -12,7 +12,7 @@ import java.util.Locale;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assumptions.assumeThat;
 
-public class PortRangeValidatorTest {
+class PortRangeValidatorTest {
     @SuppressWarnings("PublicField")
     public static class Example {
         @PortRange
@@ -30,12 +30,12 @@ public class PortRangeValidatorTest {
     private final Example example = new Example();
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         assumeThat(Locale.getDefault().getLanguage()).isEqualTo("en");
     }
 
     @Test
-    public void acceptsNonPrivilegedPorts() throws Exception {
+    void acceptsNonPrivilegedPorts() throws Exception {
         example.port = 2048;
 
         assertThat(validator.validate(example))
@@ -43,7 +43,7 @@ public class PortRangeValidatorTest {
     }
 
     @Test
-    public void acceptsDynamicPorts() throws Exception {
+    void acceptsDynamicPorts() throws Exception {
         example.port = 0;
 
         assertThat(validator.validate(example))
@@ -51,7 +51,7 @@ public class PortRangeValidatorTest {
     }
 
     @Test
-    public void rejectsNegativePorts() throws Exception {
+    void rejectsNegativePorts() throws Exception {
         example.port = -1;
 
         assertThat(ConstraintViolations.format(validator.validate(example)))
@@ -59,7 +59,7 @@ public class PortRangeValidatorTest {
     }
 
     @Test
-    public void allowsForCustomMinimumPorts() throws Exception {
+    void allowsForCustomMinimumPorts() throws Exception {
         example.otherPort = 8080;
 
         assertThat(ConstraintViolations.format(validator.validate(example)))
@@ -67,7 +67,7 @@ public class PortRangeValidatorTest {
     }
 
     @Test
-    public void allowsForCustomMaximumPorts() throws Exception {
+    void allowsForCustomMaximumPorts() throws Exception {
         example.otherPort = 16000;
 
         assertThat(ConstraintViolations.format(validator.validate(example)))
@@ -75,7 +75,7 @@ public class PortRangeValidatorTest {
     }
 
     @Test
-    public void rejectsInvalidPortsInList() {
+    void rejectsInvalidPortsInList() {
         example.ports = Collections.singletonList(-1);
         assertThat(ConstraintViolations.format(validator.validate(example)))
             .containsOnly("ports[0].<list element> must be between 1 and 65535");

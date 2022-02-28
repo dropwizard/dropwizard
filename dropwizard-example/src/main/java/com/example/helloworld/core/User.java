@@ -1,9 +1,12 @@
 package com.example.helloworld.core;
 
 import java.security.Principal;
+import java.util.Random;
 import java.util.Set;
 
 public class User implements Principal {
+    private static final Random rng = new Random();
+
     private final String name;
 
     private final Set<String> roles;
@@ -23,7 +26,7 @@ public class User implements Principal {
     }
 
     public int getId() {
-        return (int) (Math.random() * 100);
+        return rng.nextInt(100);
     }
 
     public Set<String> getRoles() {

@@ -6,17 +6,17 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class DiscoverableSubtypeResolverTest {
+class DiscoverableSubtypeResolverTest {
     private final ObjectMapper mapper = new ObjectMapper();
     private final DiscoverableSubtypeResolver resolver = new DiscoverableSubtypeResolver(ExampleTag.class);
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         mapper.setSubtypeResolver(resolver);
     }
 
     @Test
-    public void discoversSubtypes() throws Exception {
+    void discoversSubtypes() throws Exception {
         assertThat(mapper.readValue("{\"type\":\"a\"}", ExampleSPI.class))
                 .isInstanceOf(ImplA.class);
 

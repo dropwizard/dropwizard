@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
-public class DurationValidatorTest {
+class DurationValidatorTest {
     @SuppressWarnings("unused")
     public static class Example {
         @MaxDuration(value = 30, unit = TimeUnit.SECONDS)
@@ -73,7 +73,7 @@ public class DurationValidatorTest {
     private final Validator validator = BaseValidator.newValidator();
 
     @Test
-    public void returnsASetOfErrorsForAnObject() throws Exception {
+    void returnsASetOfErrorsForAnObject() throws Exception {
         assumeTrue("en".equals(Locale.getDefault().getLanguage()),
                 "This test executes when the defined language is English ('en'). If not, it is skipped.");
 
@@ -94,7 +94,7 @@ public class DurationValidatorTest {
     }
 
     @Test
-    public void returnsAnEmptySetForAValidObject() throws Exception {
+    void returnsAnEmptySetForAValidObject() throws Exception {
         final Example example = new Example();
         example.setTooBig(Duration.seconds(10));
         example.setTooBigExclusive(Duration.seconds(29));

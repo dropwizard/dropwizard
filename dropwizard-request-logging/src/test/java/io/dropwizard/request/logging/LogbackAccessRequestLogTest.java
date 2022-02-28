@@ -18,7 +18,7 @@ import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class LogbackAccessRequestLogTest {
+class LogbackAccessRequestLogTest {
 
     @SuppressWarnings("unchecked")
     private final Appender<IAccessEvent> appender = mock(Appender.class);
@@ -29,7 +29,7 @@ public class LogbackAccessRequestLogTest {
     private final HttpChannelState channelState = mock(HttpChannelState.class);
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         when(channelState.isInitial()).thenReturn(true);
 
         when(request.getRemoteAddr()).thenReturn("10.0.0.1");
@@ -48,12 +48,12 @@ public class LogbackAccessRequestLogTest {
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    void tearDown() throws Exception {
         requestLog.stop();
     }
 
     @Test
-    public void logsRequestsToTheAppender() {
+    void logsRequestsToTheAppender() {
         final IAccessEvent event = logAndCapture();
 
         assertThat(event.getRemoteAddr()).isEqualTo("10.0.0.1");

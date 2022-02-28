@@ -15,7 +15,7 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ParamValidatorUnwrapperTest {
+class ParamValidatorUnwrapperTest {
     private static class Example {
         @NotNull(payload = Unwrapping.Skip.class)
         @Min(3)
@@ -30,14 +30,14 @@ public class ParamValidatorUnwrapperTest {
     private final Validator validator = Validators.newValidator();
 
     @Test
-    public void succeedsWithAllGoodData() {
+    void succeedsWithAllGoodData() {
         final Example example = new Example();
         final Set<ConstraintViolation<Example>> validate = validator.validate(example);
         assertThat(validate).isEmpty();
     }
 
     @Test
-    public void failsWithInvalidIntParam() {
+    void failsWithInvalidIntParam() {
         final Example example = new Example();
         example.inter = new IntParam("2");
         final Set<ConstraintViolation<Example>> validate = validator.validate(example);
@@ -46,7 +46,7 @@ public class ParamValidatorUnwrapperTest {
 
     @SuppressWarnings("NullAway")
     @Test
-    public void failsWithNullIntParam() {
+    void failsWithNullIntParam() {
         final Example example = new Example();
         example.inter = null;
         final Set<ConstraintViolation<Example>> validate = validator.validate(example);
@@ -55,7 +55,7 @@ public class ParamValidatorUnwrapperTest {
 
     @SuppressWarnings("NullAway")
     @Test
-    public void failsWithNullNonEmptyStringParam() {
+    void failsWithNullNonEmptyStringParam() {
         final Example example = new Example();
         example.name = null;
         final Set<ConstraintViolation<Example>> validate = validator.validate(example);
@@ -63,7 +63,7 @@ public class ParamValidatorUnwrapperTest {
     }
 
     @Test
-    public void failsWithInvalidNonEmptyStringParam() {
+    void failsWithInvalidNonEmptyStringParam() {
         final Example example = new Example();
         example.name = new NonEmptyStringParam("hello");
         final Set<ConstraintViolation<Example>> validate = validator.validate(example);
@@ -71,7 +71,7 @@ public class ParamValidatorUnwrapperTest {
     }
 
     @Test
-    public void failsWithEmptyNonEmptyStringParam() {
+    void failsWithEmptyNonEmptyStringParam() {
         final Example example = new Example();
         example.name = new NonEmptyStringParam("");
         final Set<ConstraintViolation<Example>> validate = validator.validate(example);

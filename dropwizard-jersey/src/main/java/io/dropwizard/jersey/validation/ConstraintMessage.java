@@ -2,13 +2,8 @@ package io.dropwizard.jersey.validation;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import io.dropwizard.util.Lists;
-import io.dropwizard.util.Strings;
 import io.dropwizard.validation.ValidationMethod;
 import io.dropwizard.validation.selfvalidating.SelfValidating;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.reflect.FieldUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.glassfish.jersey.server.model.Invocable;
 import org.glassfish.jersey.server.model.Parameter;
 
@@ -16,17 +11,22 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ElementKind;
 import javax.validation.Path;
 import javax.validation.metadata.ConstraintDescriptor;
-import java.lang.reflect.Field;
+import java.lang.annotation.Annotation;
 import java.time.Duration;
-import java.util.Collection;
+import java.util.AbstractMap;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
+import static org.glassfish.jersey.model.Parameter.Source.BEAN_PARAM;
+import static org.glassfish.jersey.model.Parameter.Source.UNKNOWN;
 
 public class ConstraintMessage {
 
-    private static final Cache<Pair<Path, ? extends ConstraintDescriptor<?>>, String> PREFIX_CACHE =
+    private static final Cache<AbstractMap.SimpleImmutableEntry<Path, ? extends ConstraintDescriptor<?>>, String> PREFIX_CACHE =
             Caffeine.newBuilder()
             .expireAfterWrite(Duration.ofHours(1))
             .build();
@@ -38,22 +38,22 @@ public class ConstraintMessage {
      * Gets the human friendly location of where the violation was raised.
      */
     public static String getMessage(ConstraintViolation<?> v, Invocable invocable) {
-        final Pair<Path, ? extends ConstraintDescriptor<?>> of =
-                Pair.of(v.getPropertyPath(), v.getConstraintDescriptor());
-        final String cachePrefix = PREFIX_CACHE.getIfPresent(of);
-        if (cachePrefix == null) {
-            final String prefix = calculatePrefix(v, invocable);
-            PREFIX_CACHE.put(of, prefix);
-            return prefix + v.getMessage();
-        }
+        final AbstractMap.SimpleImmutableEntry<Path, ? extends ConstraintDescriptor<?>> of =
+            new AbstractMap.SimpleImmutableEntry<>(v.getPropertyPath(), v.getConstraintDescriptor());
+        final String cachePrefix = PREFIX_CACHE.get(of, k -> calculatePrefix(v, invocable));
         return cachePrefix + v.getMessage();
+    }
+
+    private static String stripLastComponent(String str) {
+        int pos = str.lastIndexOf('.');
+        return pos == -1 ? str : str.substring(0, pos);
     }
 
     private static String calculatePrefix(ConstraintViolation<?> v, Invocable invocable) {
         final Optional<String> returnValueName = getMethodReturnValueName(v);
         if (returnValueName.isPresent()) {
             final String name = isValidationMethod(v) ?
-                    StringUtils.substringBeforeLast(returnValueName.get(), ".") : returnValueName.get();
+                    stripLastComponent(returnValueName.get()) : returnValueName.get();
             return name + " ";
         }
 
@@ -68,8 +68,9 @@ public class ConstraintMessage {
             // A present entity means that the request body failed validation but
             // if the request entity is simple (eg. byte[], String, etc), the entity
             // string will be empty, so prepend a message about the request body
-            final String prefix = Strings.isNullOrEmpty(entity.get()) ? "The request body" : entity.get();
-            return prefix + " " ;
+            return entity.filter(e -> !e.isEmpty())
+                .orElse("The request body")
+                + " ";
         }
 
         // Check if the violation occurred on a *Param annotation and if so,
@@ -84,8 +85,7 @@ public class ConstraintMessage {
      * friendly string representation of where the error occurred (eg. "patient.name")
      */
     public static Optional<String> isRequestEntity(ConstraintViolation<?> violation, Invocable invocable) {
-        final Collection<Path.Node> propertyPath = Lists.of(violation.getPropertyPath());
-        final Path.Node parent = propertyPath.stream()
+        final Path.Node parent = StreamSupport.stream(violation.getPropertyPath().spliterator(), false)
                 .skip(1L)
                 .findFirst()
                 .orElse(null);
@@ -96,8 +96,8 @@ public class ConstraintMessage {
 
         if (parent.getKind() == ElementKind.PARAMETER) {
             final Parameter param = parameters.get(parent.as(Path.ParameterNode.class).getParameterIndex());
-            if (param.getSource().equals(Parameter.Source.UNKNOWN)) {
-                final String path = propertyPath.stream()
+            if (param.getSource().equals(UNKNOWN)) {
+                final String path = StreamSupport.stream(violation.getPropertyPath().spliterator(), false)
                         .skip(2L)
                         .map(Path.Node::toString)
                         .collect(Collectors.joining("."));
@@ -113,7 +113,8 @@ public class ConstraintMessage {
      * Gets a method parameter (or a parameter field) name, if the violation raised in it.
      */
     private static Optional<String> getMemberName(ConstraintViolation<?> violation, Invocable invocable) {
-        final List<Path.Node> propertyPath = Lists.of(violation.getPropertyPath());
+        final List<Path.Node> propertyPath = new ArrayList<>();
+        violation.getPropertyPath().iterator().forEachRemaining(propertyPath::add);
         final int size = propertyPath.size();
         if (size < 2) {
             return Optional.empty();
@@ -128,9 +129,9 @@ public class ConstraintMessage {
                 final Parameter param = parameters.get(parent.as(Path.ParameterNode.class).getParameterIndex());
 
                 // Extract the failing *Param annotation inside the Bean Param
-                if (param.getSource().equals(Parameter.Source.BEAN_PARAM)) {
-                    final Field field = FieldUtils.getField(param.getRawType(), member.getName(), true);
-                    return JerseyParameterNameProvider.getParameterNameFromAnnotations(field.getDeclaredAnnotations());
+                if (param.getSource().equals(BEAN_PARAM)) {
+                    return getFieldAnnotations(param.getRawType(), member.getName())
+                        .flatMap(JerseyParameterNameProvider::getParameterNameFromAnnotations);
                 }
                 break;
             case METHOD:
@@ -174,7 +175,7 @@ public class ConstraintMessage {
      * are invalid means a bad request
      */
     public static <T extends ConstraintViolation<?>> int determineStatus(Set<T> violations, Invocable invocable) {
-        if (violations.size() > 0) {
+        if (!violations.isEmpty()) {
             final ConstraintViolation<?> violation = violations.iterator().next();
             for (Path.Node node : violation.getPropertyPath()) {
                 switch (node.getKind()) {
@@ -184,14 +185,23 @@ public class ConstraintMessage {
                         // Now determine if the parameter is the request entity
                         final int index = node.as(Path.ParameterNode.class).getParameterIndex();
                         final Parameter parameter = invocable.getParameters().get(index);
-                        return parameter.getSource().equals(Parameter.Source.UNKNOWN) ? 422 : 400;
+                        return parameter.getSource().equals(UNKNOWN) ? 422 : 400;
                     default:
                         continue;
                 }
             }
         }
 
-        // This shouldn't hit, but if it does, we'll return a unprocessable entity
+        // This shouldn't hit, but if it does, we'll return an unprocessable entity
         return 422;
+    }
+
+    private static Optional<Annotation[]> getFieldAnnotations(Class klass, String name) {
+        try {
+            return Optional.of(klass.getDeclaredField(name).getDeclaredAnnotations());
+        } catch (NoSuchFieldException e) {
+            return Optional.ofNullable(klass.getSuperclass())
+                .flatMap(superClass -> getFieldAnnotations(superClass, name));
+        }
     }
 }

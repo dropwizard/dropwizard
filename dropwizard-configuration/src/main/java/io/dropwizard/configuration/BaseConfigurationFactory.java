@@ -125,7 +125,7 @@ public abstract class BaseConfigurationFactory<T> implements ConfigurationFactor
         }
 
         try {
-            final T config = mapper.readValue(new TreeTraversingParser(node), klass);
+            final T config = mapper.readValue(new TreeTraversingParser(node, mapper), klass);
             validate(path, config);
             return config;
         } catch (UnrecognizedPropertyException e) {
@@ -173,11 +173,10 @@ public abstract class BaseConfigurationFactory<T> implements ConfigurationFactor
             final ObjectNode obj = (ObjectNode) node;
 
             final String remainingPath = String.join(".", parts.subList(i, parts.size()));
-            if (obj.has(remainingPath) && !remainingPath.equals(key)) {
-                if (obj.get(remainingPath).isValueNode()) {
-                    obj.put(remainingPath, value);
-                    return;
-                }
+            if (obj.has(remainingPath) && !remainingPath.equals(key)
+                    && obj.get(remainingPath).isValueNode()) {
+                obj.put(remainingPath, value);
+                return;
             }
 
             JsonNode child;

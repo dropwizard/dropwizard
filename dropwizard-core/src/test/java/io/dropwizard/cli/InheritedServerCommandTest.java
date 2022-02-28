@@ -2,7 +2,6 @@ package io.dropwizard.cli;
 
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
-import io.dropwizard.configuration.ConfigurationException;
 import io.dropwizard.configuration.ConfigurationFactory;
 import io.dropwizard.configuration.ConfigurationSourceProvider;
 import io.dropwizard.logging.LoggingFactory;
@@ -18,14 +17,13 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class InheritedServerCommandTest {
+class InheritedServerCommandTest {
     private static class ApiCommand extends ServerCommand<Configuration> {
 
         protected ApiCommand(final Application<Configuration> application) {
@@ -55,30 +53,30 @@ public class InheritedServerCommandTest {
     private final Configuration configuration = mock(Configuration.class);
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         when(serverFactory.build(environment)).thenReturn(server);
         when(configuration.getServerFactory()).thenReturn(serverFactory);
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    void tearDown() throws Exception {
         server.stop();
     }
 
     @Test
-    public void hasAName() throws Exception {
+    void hasAName() throws Exception {
         assertThat(command.getName())
                 .isEqualTo("api");
     }
 
     @Test
-    public void hasADescription() throws Exception {
+    void hasADescription() throws Exception {
         assertThat(command.getDescription())
                 .isEqualTo("Runs the Dropwizard application as an API HTTP server");
     }
 
     @Test
-    public void buildsAndRunsAConfiguredServer() throws Exception {
+    void buildsAndRunsAConfiguredServer() throws Exception {
         command.run(environment, namespace, configuration);
 
         assertThat(server.isStarted())
@@ -86,16 +84,16 @@ public class InheritedServerCommandTest {
     }
 
     @Test
-    public void usesDefaultConfigPath() throws Exception {
+    void usesDefaultConfigPath() throws Exception {
 
         class SingletonConfigurationFactory implements ConfigurationFactory<Configuration> {
             @Override
-            public Configuration build(final ConfigurationSourceProvider provider, final String path) throws IOException, ConfigurationException {
+            public Configuration build(final ConfigurationSourceProvider provider, final String path) {
                 return configuration;
             }
 
             @Override
-            public Configuration build() throws IOException, ConfigurationException {
+            public Configuration build() {
                 throw new AssertionError("Didn't use the default config path variable");
             }
         }
@@ -109,7 +107,7 @@ public class InheritedServerCommandTest {
         bootstrap.addCommand(new ConfiguredCommand<Configuration>("test", "a test command") {
 
             @Override
-            protected void run(final Bootstrap<Configuration> bootstrap, final Namespace namespace, final Configuration configuration) throws Exception {
+            protected void run(final Bootstrap<Configuration> bootstrap, final Namespace namespace, final Configuration configuration) {
                 assertThat(namespace.getString("file"))
                         .isNotEmpty()
                         .isEqualTo("yaml/server.yml");

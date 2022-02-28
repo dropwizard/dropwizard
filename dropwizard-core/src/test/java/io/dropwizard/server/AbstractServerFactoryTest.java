@@ -24,7 +24,7 @@ import static org.mockito.Mockito.when;
  *     <li>Default value defined by {@link DropwizardResourceConfig#urlPattern}</li>
  * </ol>
  */
-public class AbstractServerFactoryTest {
+class AbstractServerFactoryTest {
 
     private final JerseyContainerHolder holder = mock(JerseyContainerHolder.class);
     private final DropwizardResourceConfig config = new DropwizardResourceConfig();
@@ -37,13 +37,13 @@ public class AbstractServerFactoryTest {
     private static final String YAML_SET_PATTERN = "/set/from/yaml/*";
 
     @BeforeEach
-    public void before() {
+    void before() {
         when(environment.jersey()).thenReturn(jerseyEnvironment);
         when(environment.getApplicationContext()).thenReturn(new MutableServletContextHandler());
     }
 
     @Test
-    public void usesYamlDefinedPattern() {
+    void usesYamlDefinedPattern() {
         serverFactory.setJerseyRootPath(YAML_SET_PATTERN);
         jerseyEnvironment.setUrlPattern(RUN_SET_PATTERN);
 
@@ -53,7 +53,7 @@ public class AbstractServerFactoryTest {
     }
 
     @Test
-    public void usesRunDefinedPatternWhenNoYaml() {
+    void usesRunDefinedPatternWhenNoYaml() {
         jerseyEnvironment.setUrlPattern(RUN_SET_PATTERN);
 
         serverFactory.build(environment);
@@ -62,7 +62,7 @@ public class AbstractServerFactoryTest {
     }
 
     @Test
-    public void usesDefaultPatternWhenNoneSet() {
+    void usesDefaultPatternWhenNoneSet() {
         serverFactory.build(environment);
 
         assertThat(jerseyEnvironment.getUrlPattern()).isEqualTo(DEFAULT_PATTERN);

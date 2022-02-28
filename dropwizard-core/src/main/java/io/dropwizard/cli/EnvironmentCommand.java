@@ -42,6 +42,7 @@ public abstract class EnvironmentCommand<T extends Configuration> extends Config
         return environment;
     }
 
+    @SuppressWarnings("NullAway")
     @Override
     protected void run(Bootstrap<T> bootstrap, Namespace namespace, T configuration) throws Exception {
         this.environment = new Environment(bootstrap.getApplication().getName(),
@@ -54,6 +55,13 @@ public abstract class EnvironmentCommand<T extends Configuration> extends Config
         configuration.getMetricsFactory().configure(environment.lifecycle(),
                                                     bootstrap.getMetricRegistry());
         configuration.getServerFactory().configure(environment);
+        configuration.getHealthFactory().ifPresent(health -> health.configure(
+                environment.lifecycle(),
+                environment.servlets(),
+                environment.jersey(),
+                environment.health(),
+                environment.getObjectMapper(),
+                application.getName()));
 
         bootstrap.run(configuration, environment);
         application.run(configuration, environment);

@@ -20,6 +20,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.client.Invocation;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.DynamicFeature;
 import javax.ws.rs.core.HttpHeaders;
@@ -32,7 +33,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 /**
  * Testing that polymorphic principal entity injection works.
  */
-public class PolymorphicPrincipalEntityTest extends JerseyTest {
+class PolymorphicPrincipalEntityTest extends JerseyTest {
     private static final String JSON_USERNAME = "good-guy";
     private static final String NULL_USERNAME = "bad-guy";
     private static final String JSON_USERNAME_ENCODED_TOKEN = "Z29vZC1ndXk6c2VjcmV0";
@@ -120,7 +121,7 @@ public class PolymorphicPrincipalEntityTest extends JerseyTest {
     }
 
     @Test
-    public void jsonPrincipalEntityResourceAuth200() {
+    void jsonPrincipalEntityResourceAuth200() {
         assertThat(target("/auth-test/json-principal-entity").request()
                    .header(HttpHeaders.AUTHORIZATION, "Basic " + JSON_USERNAME_ENCODED_TOKEN)
                    .get(String.class))
@@ -128,14 +129,15 @@ public class PolymorphicPrincipalEntityTest extends JerseyTest {
     }
 
     @Test
-    public void jsonPrincipalEntityResourceNoAuth401() {
+    void jsonPrincipalEntityResourceNoAuth401() {
+        Invocation.Builder request = target("/auth-test/json-principal-entity").request();
         assertThatExceptionOfType(WebApplicationException.class)
-            .isThrownBy(() -> target("/auth-test/json-principal-entity").request().get(String.class))
+            .isThrownBy(() -> request.get(String.class))
             .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(401));
     }
 
     @Test
-    public void nullPrincipalEntityResourceAuth200() {
+    void nullPrincipalEntityResourceAuth200() {
         assertThat(target("/auth-test/null-principal-entity").request()
                 .header(HttpHeaders.AUTHORIZATION, "Basic " + NULL_USERNAME_ENCODED_TOKEN)
                 .get(String.class))
@@ -143,14 +145,15 @@ public class PolymorphicPrincipalEntityTest extends JerseyTest {
     }
 
     @Test
-    public void nullPrincipalEntityResourceNoAuth401() {
+    void nullPrincipalEntityResourceNoAuth401() {
+        Invocation.Builder request = target("/auth-test/null-principal-entity").request();
         assertThatExceptionOfType(WebApplicationException.class)
-            .isThrownBy(() -> target("/auth-test/null-principal-entity").request().get(String.class))
+            .isThrownBy(() -> request.get(String.class))
             .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(401));
     }
 
     @Test
-    public void resourceWithValidOptionalAuthentication200() {
+    void resourceWithValidOptionalAuthentication200() {
         assertThat(target("/auth-test/optional").request()
             .header(HttpHeaders.AUTHORIZATION, "Basic " + NULL_USERNAME_ENCODED_TOKEN)
             .get(String.class))
@@ -158,7 +161,7 @@ public class PolymorphicPrincipalEntityTest extends JerseyTest {
     }
 
     @Test
-    public void resourceWithInvalidOptionalAuthentication200() {
+    void resourceWithInvalidOptionalAuthentication200() {
         assertThat(target("/auth-test/optional").request()
             .header(HttpHeaders.AUTHORIZATION, "Basic cats")
             .get(String.class))
@@ -166,14 +169,14 @@ public class PolymorphicPrincipalEntityTest extends JerseyTest {
     }
 
     @Test
-    public void resourceWithoutOptionalAuthentication200() {
+    void resourceWithoutOptionalAuthentication200() {
         assertThat(target("/auth-test/optional").request()
             .get(String.class))
             .isEqualTo("principal was not present");
     }
 
     @Test
-    public void resourceWithDifferentOptionalAuthentication200() {
+    void resourceWithDifferentOptionalAuthentication200() {
         assertThat(target("/auth-test/optional").request()
             .header(HttpHeaders.AUTHORIZATION, "Basic " + JSON_USERNAME_ENCODED_TOKEN)
             .get(String.class))

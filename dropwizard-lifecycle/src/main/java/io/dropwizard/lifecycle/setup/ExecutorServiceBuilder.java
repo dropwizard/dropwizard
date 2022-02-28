@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import java.util.Formatter;
 import java.util.Locale;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
@@ -50,10 +51,14 @@ public class ExecutorServiceBuilder {
         this(environment, nameFormat, buildThreadFactory(nameFormat));
     }
 
-    @SuppressWarnings("ResultOfMethodCallIgnored")
     private static ThreadFactory buildThreadFactory(String nameFormat) {
         ThreadFactory defaultThreadFactory = Executors.defaultThreadFactory();
-        String.format(Locale.ROOT, nameFormat, 0); // Fail fast on invalid name format
+
+        // Validate the format string
+        try (Formatter fmt = new Formatter()) {
+            fmt.format(Locale.ROOT, nameFormat, 0);
+        }
+
         return r -> {
             final Thread thread = defaultThreadFactory.newThread(r);
             thread.setName(String.format(Locale.ROOT, nameFormat, COUNT.incrementAndGet()));

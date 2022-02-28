@@ -25,7 +25,7 @@ import com.codahale.metrics.health.HealthCheck;
 
 import io.dropwizard.util.Duration;
 
-public class JdbiHealthCheckTest {
+class JdbiHealthCheckTest {
     private static final String VALIDATION_QUERY = "select 1";
 
     private Jdbi jdbi;
@@ -34,7 +34,7 @@ public class JdbiHealthCheckTest {
     private ExecutorService executorService;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         jdbi = mock(Jdbi.class);
         handle = mock(Handle.class);
         connection = mock(Connection.class);
@@ -46,12 +46,12 @@ public class JdbiHealthCheckTest {
     }
 
     @AfterEach
-    public void teardown() {
+    void teardown() {
         executorService.shutdown();
     }
 
     @Test
-    public void testNoTimeoutReturnsHealthy() throws Exception {
+    void testNoTimeoutReturnsHealthy() throws Exception {
         when(handle.execute(VALIDATION_QUERY)).thenReturn(0);
 
         HealthCheck.Result result = healthCheck(VALIDATION_QUERY).check();
@@ -60,7 +60,7 @@ public class JdbiHealthCheckTest {
     }
 
     @Test
-    public void tesHealthyAfterWhenMissingValidationQuery() throws Exception {
+    void tesHealthyAfterWhenMissingValidationQuery() throws Exception {
         when(connection.isValid(anyInt())).thenReturn(true);
 
         HealthCheck.Result result = healthCheck().check();
@@ -70,7 +70,7 @@ public class JdbiHealthCheckTest {
     }
 
     @Test
-    public void testItTimesOutProperly() throws Exception {
+    void testItTimesOutProperly() throws Exception {
         when(handle.execute(VALIDATION_QUERY)).thenAnswer((Answer<Integer>) invocation -> {
             TimeUnit.SECONDS.sleep(10);
             return null;
@@ -82,7 +82,7 @@ public class JdbiHealthCheckTest {
     }
 
     @Test
-    public void testUnhealthyWhenMissingValidationQuery() throws Exception {
+    void testUnhealthyWhenMissingValidationQuery() throws Exception {
         HealthCheck.Result result = healthCheck().check();
 
         assertThat(result.isHealthy()).isFalse();

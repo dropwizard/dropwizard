@@ -39,7 +39,7 @@ public class CustomDeserialization extends StdDeserializer<CustomRepresentation>
      */
     public static class MyNastyException extends JsonMappingException {
         public MyNastyException(JsonParser jp) {
-            super(jp::close, null);
+            super(jp, null);
         }
 
         @Override

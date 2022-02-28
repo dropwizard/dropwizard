@@ -14,12 +14,12 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.component.ContainerLifeCycle;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.util.thread.ThreadPool;
-import javax.validation.constraints.NotEmpty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -167,7 +167,8 @@ public class DefaultServerFactory extends AbstractServerFactory {
         final Handler adminHandler = createAdminServlet(server,
                                                         environment.getAdminContext(),
                                                         environment.metrics(),
-                                                        environment.healthChecks());
+                                                        environment.healthChecks(),
+                                                        environment.admin());
         final RoutingHandler routingHandler = buildRoutingHandler(environment.metrics(),
                                                                   server,
                                                                   applicationHandler,
@@ -220,7 +221,7 @@ public class DefaultServerFactory extends AbstractServerFactory {
         for (ConnectorFactory factory : adminConnectors) {
             final Connector connector = factory.build(server, metricRegistry, "admin", threadPool);
             if (connector instanceof ContainerLifeCycle) {
-                ((ContainerLifeCycle) connector).unmanage(threadPool);
+                connector.unmanage(threadPool);
             }
             connectors.add(connector);
         }

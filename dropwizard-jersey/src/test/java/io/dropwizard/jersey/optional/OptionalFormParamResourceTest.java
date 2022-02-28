@@ -15,12 +15,11 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Form;
 import javax.ws.rs.core.Response;
-import java.io.IOException;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class OptionalFormParamResourceTest extends AbstractJerseyTest {
+class OptionalFormParamResourceTest extends AbstractJerseyTest {
 
     @Override
     protected Application configure() {
@@ -30,7 +29,7 @@ public class OptionalFormParamResourceTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void shouldReturnDefaultMessageWhenMessageIsNotPresent() throws IOException {
+    void shouldReturnDefaultMessageWhenMessageIsNotPresent() {
         final String defaultMessage = "Default Message";
         final Response response = target("/optional/message").request().post(Entity.form(new MultivaluedStringMap()));
 
@@ -38,15 +37,15 @@ public class OptionalFormParamResourceTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void shouldReturnMessageWhenMessageBlank() throws IOException {
+    void shouldReturnMessageWhenMessageBlank() {
         final Form form = new Form("message", "");
         final Response response = target("/optional/message").request().post(Entity.form(form));
 
-        assertThat(response.readEntity(String.class)).isEqualTo("");
+        assertThat(response.readEntity(String.class)).isEmpty();
     }
 
     @Test
-    public void shouldReturnMessageWhenMessageIsPresent() throws IOException {
+    void shouldReturnMessageWhenMessageIsPresent() {
         final String customMessage = "Custom Message";
         final Form form = new Form("message", customMessage);
         final Response response = target("/optional/message").request().post(Entity.form(form));
@@ -55,7 +54,7 @@ public class OptionalFormParamResourceTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void shouldReturnDefaultMessageWhenMyMessageIsNotPresent() throws IOException {
+    void shouldReturnDefaultMessageWhenMyMessageIsNotPresent() {
         final String defaultMessage = "My Default Message";
         final Response response = target("/optional/my-message").request().post(Entity.form(new MultivaluedStringMap()));
 
@@ -63,7 +62,7 @@ public class OptionalFormParamResourceTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void shouldReturnMyMessageWhenMyMessageIsPresent() throws IOException {
+    void shouldReturnMyMessageWhenMyMessageIsPresent() {
         final String myMessage = "My Message";
         final Form form = new Form("mymessage", myMessage);
         final Response response = target("/optional/my-message").request().post(Entity.form(form));
@@ -72,7 +71,7 @@ public class OptionalFormParamResourceTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void shouldThrowBadRequestExceptionWhenInvalidUUIDIsPresent() throws IOException {
+    void shouldThrowBadRequestExceptionWhenInvalidUUIDIsPresent() {
         final String invalidUUID = "invalid-uuid";
         final Form form = new Form("uuid", invalidUUID);
         final Response response = target("/optional/uuid").request().post(Entity.form(form));
@@ -81,7 +80,7 @@ public class OptionalFormParamResourceTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void shouldReturnDefaultUUIDWhenUUIDIsNotPresent() throws IOException {
+    void shouldReturnDefaultUUIDWhenUUIDIsNotPresent() {
         final String defaultUUID = "d5672fa8-326b-40f6-bf71-d9dacf44bcdc";
         final Response response = target("/optional/uuid").request().post(Entity.form(new MultivaluedStringMap()));
 
@@ -89,7 +88,7 @@ public class OptionalFormParamResourceTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void shouldReturnUUIDWhenValidUUIDIsPresent() throws IOException {
+    void shouldReturnUUIDWhenValidUUIDIsPresent() {
         final String uuid = "fd94b00d-bd50-46b3-b42f-905a9c9e7d78";
         final Form form = new Form("uuid", uuid);
         final Response response = target("/optional/uuid").request().post(Entity.form(form));

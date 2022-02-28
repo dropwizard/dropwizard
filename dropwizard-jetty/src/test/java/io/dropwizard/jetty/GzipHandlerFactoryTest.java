@@ -1,9 +1,9 @@
 package io.dropwizard.jetty;
 
+import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.util.DataSize;
-import io.dropwizard.util.Resources;
 import io.dropwizard.util.Sets;
 import io.dropwizard.validation.BaseValidator;
 import org.eclipse.jetty.server.Handler;
@@ -11,7 +11,6 @@ import org.eclipse.jetty.server.handler.gzip.GzipHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.util.Collections;
 import java.util.zip.Deflater;
 
@@ -25,7 +24,7 @@ class GzipHandlerFactoryTest {
     void setUp() throws Exception {
         this.gzip = new YamlConfigurationFactory<>(GzipHandlerFactory.class,
                 BaseValidator.newValidator(), Jackson.newObjectMapper(), "dw")
-                .build(new File(Resources.getResource("yaml/gzip.yml").toURI()));
+                .build(new ResourceConfigurationSourceProvider(),"yaml/gzip.yml");
     }
 
     @Test
@@ -63,8 +62,7 @@ class GzipHandlerFactoryTest {
         final GzipHandler handler = gzip.build(null);
 
         assertThat(handler.getMinGzipSize()).isEqualTo((int) gzip.getMinimumEntitySize().toBytes());
-        assertThat(handler.getExcludedAgentPatterns()).hasSize(1);
-        assertThat(handler.getExcludedAgentPatterns()[0]).isEqualTo("OLD-2.+");
+        assertThat(handler.getExcludedAgentPatterns()).singleElement().isEqualTo("OLD-2.+");
         assertThat(handler.getIncludedMimeTypes()).containsOnly("text/plain");
         assertThat(handler.getIncludedMethods()).containsOnly("GET", "POST");
         assertThat(handler.getCompressionLevel()).isEqualTo(Deflater.DEFAULT_COMPRESSION);
@@ -74,7 +72,7 @@ class GzipHandlerFactoryTest {
     void testBuildDefault() throws Exception {
         final GzipHandler handler = new YamlConfigurationFactory<>(GzipHandlerFactory.class,
                 BaseValidator.newValidator(), Jackson.newObjectMapper(), "dw")
-                .build(new File(Resources.getResource("yaml/default_gzip.yml").toURI()))
+                .build(new ResourceConfigurationSourceProvider(), "yaml/default_gzip.yml")
                 .build(null);
 
         assertThat(handler.getMinGzipSize()).isEqualTo(256);

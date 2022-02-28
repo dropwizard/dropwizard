@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @NotThreadSafe
 class DbMigrateCustomSchemaTest extends AbstractMigrationTest {
 
-    private DbMigrateCommand<TestMigrationConfiguration> migrateCommand = new DbMigrateCommand<>(
+    private final DbMigrateCommand<TestMigrationConfiguration> migrateCommand = new DbMigrateCommand<>(
         TestMigrationConfiguration::getDataSource, TestMigrationConfiguration.class, "migrations-custom-schema.xml");
     private TestMigrationConfiguration conf;
     private String databaseUrl;
@@ -35,7 +35,7 @@ class DbMigrateCustomSchemaTest extends AbstractMigrationTest {
                 .select("select * from " + schemaName + ".persons")
                 .mapToMap())
                 .hasSize(1)
-                .containsExactly(Maps.<String, Object>of("id", 1, "name", "Bill Smith", "email", "bill@smith.me"))
+                .containsExactly(Maps.of("id", 1, "name", "Bill Smith", "email", "bill@smith.me"))
         );
     }
 

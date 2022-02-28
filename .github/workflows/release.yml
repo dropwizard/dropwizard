@@ -9,24 +9,20 @@ jobs:
     env:
       JAVA_OPTS: "-XX:+TieredCompilation -XX:TieredStopAtLevel=1"
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v2.4.0
     - name: Set up JDK
-      uses: joschi/setup-jdk@v2.3.0
+      uses: actions/setup-java@v3
       with:
-        java-version: '8'
+        distribution: 'temurin'
+        java-version: '11'
+        cache: 'maven'
         server-id: ossrh
         server-username: CI_DEPLOY_USERNAME
         server-password: CI_DEPLOY_PASSWORD
         gpg-passphrase: GPG_PASSPHRASE
         gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
-    - uses: actions/cache@v2.1.4
-      with:
-        path: ~/.m2/repository
-        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-        restore-keys: |
-          ${{ runner.os }}-maven-
     - name: Build and Deploy
-      run: ./mvnw -B -V -ntp -Pjakarta-apis -DperformRelease=true deploy
+      run: ./mvnw -B -V -ntp -DperformRelease=true deploy
       env:
         CI_DEPLOY_USERNAME: ${{ secrets.CI_DEPLOY_USERNAME }}
         CI_DEPLOY_PASSWORD: ${{ secrets.CI_DEPLOY_PASSWORD }}

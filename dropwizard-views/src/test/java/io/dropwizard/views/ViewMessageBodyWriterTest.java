@@ -29,7 +29,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-public class ViewMessageBodyWriterTest {
+class ViewMessageBodyWriterTest {
 
     public ContainerRequest headers = mock(ContainerRequest.class);
     public MetricRegistry metricRegistry = mock(MetricRegistry.class);
@@ -39,7 +39,7 @@ public class ViewMessageBodyWriterTest {
     public Timer.Context timerContext = mock(Timer.Context.class);
 
     @Test
-    public void writeToShouldUseValidRenderer() throws IOException {
+    void writeToShouldUseValidRenderer() throws IOException {
         final ViewRenderer renderable = mock(ViewRenderer.class);
         final ViewRenderer nonRenderable = mock(ViewRenderer.class);
         final Locale locale = new Locale("en-US");
@@ -65,22 +65,20 @@ public class ViewMessageBodyWriterTest {
     }
 
     @Test
-    public void writeToShouldThrowWhenNoValidRendererFound() {
+    void writeToShouldThrowWhenNoValidRendererFound() {
         final ViewMessageBodyWriter writer = new ViewMessageBodyWriter(metricRegistry, Collections.emptyList());
 
         when(metricRegistry.timer(anyString())).thenReturn(timer);
         when(timer.time()).thenReturn(timerContext);
 
-        assertThatExceptionOfType(WebApplicationException.class).isThrownBy(() -> {
-            writer.writeTo(view, Class.class, Class.class, new Annotation[]{}, new MediaType(),
-                new MultivaluedHashMap<>(), stream);
-        }).withCauseExactlyInstanceOf(ViewRenderException.class);
+        assertThatExceptionOfType(WebApplicationException.class)
+            .isThrownBy(() -> writer.writeTo(view, Class.class, Class.class, new Annotation[]{}, new MediaType(), new MultivaluedHashMap<>(), stream)).withCauseExactlyInstanceOf(ViewRenderException.class);
 
         verify(timerContext).stop();
     }
 
     @Test
-    public void writeToShouldHandleViewRenderingExceptions() throws IOException {
+    void writeToShouldHandleViewRenderingExceptions() throws IOException {
         final ViewRenderer renderer = mock(ViewRenderer.class);
         final Locale locale = new Locale("en-US");
         final ViewRenderException exception = new ViewRenderException("oops");
@@ -95,27 +93,25 @@ public class ViewMessageBodyWriterTest {
         doReturn(locale).when(writer).detectLocale(any());
         writer.setHeaders(mock(HttpHeaders.class));
 
-        assertThatExceptionOfType(WebApplicationException.class).isThrownBy(() -> {
-            writer.writeTo(view, Class.class, Class.class, new Annotation[]{}, new MediaType(),
-                new MultivaluedHashMap<>(), stream);
-        }).withCause(exception);
+        assertThatExceptionOfType(WebApplicationException.class)
+            .isThrownBy(() -> writer.writeTo(view, Class.class, Class.class, new Annotation[]{}, new MediaType(), new MultivaluedHashMap<>(), stream))
+            .withCause(exception);
 
         verify(timerContext).stop();
     }
 
     @Test
-    public void detectLocaleShouldHandleBadlyFormedHeader() {
+    void detectLocaleShouldHandleBadlyFormedHeader() {
         when(headers.getAcceptableLanguages()).thenThrow(HeaderValueException.class);
 
         final ViewMessageBodyWriter writer = new ViewMessageBodyWriter(metricRegistry, Collections.emptyList());
 
-        assertThatExceptionOfType(WebApplicationException.class).isThrownBy(() -> {
-            writer.detectLocale(headers);
-        });
+        assertThatExceptionOfType(WebApplicationException.class)
+            .isThrownBy(() -> writer.detectLocale(headers));
     }
 
     @Test
-    public void detectLocaleShouldReturnDefaultLocaleWhenHeaderNotSpecified() {
+    void detectLocaleShouldReturnDefaultLocaleWhenHeaderNotSpecified() {
         // We call the real methods to make sure that 'getAcceptableLanguages' returns a locale with a wildcard
         // (which is their default value). This also validates that 'detectLocale' skips wildcard languages.
         when(headers.getAcceptableLanguages()).thenCallRealMethod();
@@ -129,7 +125,7 @@ public class ViewMessageBodyWriterTest {
     }
 
     @Test
-    public void detectLocaleShouldReturnCorrectLocale() {
+    void detectLocaleShouldReturnCorrectLocale() {
         final Locale fakeLocale = new Locale("en-US");
         when(headers.getAcceptableLanguages()).thenReturn(Collections.singletonList(fakeLocale));
 

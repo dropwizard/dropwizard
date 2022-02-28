@@ -1,6 +1,7 @@
 package io.dropwizard.setup;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jersey.validation.JerseyViolationException;
 import io.dropwizard.jetty.HttpConnectorFactory;
@@ -9,7 +10,6 @@ import io.dropwizard.logging.FileAppenderFactory;
 import io.dropwizard.logging.SyslogAppenderFactory;
 import io.dropwizard.server.ServerFactory;
 import io.dropwizard.server.SimpleServerFactory;
-import io.dropwizard.util.Resources;
 import org.eclipse.jetty.server.AbstractNetworkConnector;
 import org.eclipse.jetty.server.Server;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,27 +23,26 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
-import java.io.File;
 
 import static io.dropwizard.server.SimpleServerFactoryTest.httpRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ExceptionMapperBinderTest {
     private SimpleServerFactory http;
-    private Environment environment = new Environment("testEnvironment");
+    private final Environment environment = new Environment("testEnvironment");
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         final ObjectMapper objectMapper = environment.getObjectMapper();
         final Validator validator = environment.getValidator();
         objectMapper.getSubtypeResolver().registerSubtypes(ConsoleAppenderFactory.class,
             FileAppenderFactory.class, SyslogAppenderFactory.class, HttpConnectorFactory.class);
         http = (SimpleServerFactory) new YamlConfigurationFactory<>(ServerFactory.class, validator, objectMapper, "dw")
-            .build(new File(Resources.getResource("yaml/simple_server.yml").toURI()));
+            .build(new ResourceConfigurationSourceProvider(), "yaml/simple_server.yml");
     }
 
     @Test
-    public void testOverrideDefaultExceptionMapper() throws Exception {
+    void testOverrideDefaultExceptionMapper() throws Exception {
         environment.jersey().register(new TestValidationResource());
         environment.jersey().register(new MyJerseyExceptionMapper());
         final Server server = http.build(environment);

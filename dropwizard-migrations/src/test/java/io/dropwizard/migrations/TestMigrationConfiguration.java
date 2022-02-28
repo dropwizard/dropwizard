@@ -5,7 +5,7 @@ import io.dropwizard.db.DataSourceFactory;
 
 public class TestMigrationConfiguration extends Configuration {
 
-    private DataSourceFactory dataSource;
+    private final DataSourceFactory dataSource;
 
     public TestMigrationConfiguration(DataSourceFactory dataSource) {
         this.dataSource = dataSource;

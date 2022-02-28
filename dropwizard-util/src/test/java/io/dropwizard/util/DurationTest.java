@@ -13,9 +13,9 @@ import java.util.concurrent.TimeUnit;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
-public class DurationTest {
+class DurationTest {
     @Test
-    public void convertsDays() throws Exception {
+    void convertsDays() throws Exception {
         assertThat(Duration.days(2).toDays())
             .isEqualTo(2);
         assertThat(Duration.days(2).toHours())
@@ -23,43 +23,43 @@ public class DurationTest {
     }
 
     @Test
-    public void convertsHours() throws Exception {
+    void convertsHours() throws Exception {
         assertThat(Duration.hours(2).toMinutes())
             .isEqualTo(120);
     }
 
     @Test
-    public void convertsMinutes() throws Exception {
+    void convertsMinutes() throws Exception {
         assertThat(Duration.minutes(3).toSeconds())
             .isEqualTo(180);
     }
 
     @Test
-    public void convertsSeconds() throws Exception {
+    void convertsSeconds() throws Exception {
         assertThat(Duration.seconds(2).toMilliseconds())
             .isEqualTo(2000);
     }
 
     @Test
-    public void convertsMilliseconds() throws Exception {
+    void convertsMilliseconds() throws Exception {
         assertThat(Duration.milliseconds(2).toMicroseconds())
             .isEqualTo(2000);
     }
 
     @Test
-    public void convertsMicroseconds() throws Exception {
+    void convertsMicroseconds() throws Exception {
         assertThat(Duration.microseconds(2).toNanoseconds())
             .isEqualTo(2000);
     }
 
     @Test
-    public void convertsNanoseconds() throws Exception {
+    void convertsNanoseconds() throws Exception {
         assertThat(Duration.nanoseconds(2).toNanoseconds())
             .isEqualTo(2);
     }
 
     @Test
-    public void parsesDays() throws Exception {
+    void parsesDays() throws Exception {
         assertThat(Duration.parse("1d"))
             .isEqualTo(Duration.days(1));
 
@@ -71,7 +71,7 @@ public class DurationTest {
     }
 
     @Test
-    public void parsesHours() throws Exception {
+    void parsesHours() throws Exception {
         assertThat(Duration.parse("1h"))
             .isEqualTo(Duration.hours(1));
 
@@ -83,7 +83,7 @@ public class DurationTest {
     }
 
     @Test
-    public void parsesMinutes() throws Exception {
+    void parsesMinutes() throws Exception {
         assertThat(Duration.parse("1m"))
             .isEqualTo(Duration.minutes(1));
 
@@ -101,7 +101,7 @@ public class DurationTest {
     }
 
     @Test
-    public void parsesSeconds() throws Exception {
+    void parsesSeconds() throws Exception {
         assertThat(Duration.parse("1s"))
             .isEqualTo(Duration.seconds(1));
 
@@ -113,7 +113,7 @@ public class DurationTest {
     }
 
     @Test
-    public void parsesMilliseconds() throws Exception {
+    void parsesMilliseconds() throws Exception {
         assertThat(Duration.parse("1ms"))
             .isEqualTo(Duration.milliseconds(1));
 
@@ -125,7 +125,7 @@ public class DurationTest {
     }
 
     @Test
-    public void parsesMicroseconds() throws Exception {
+    void parsesMicroseconds() throws Exception {
         assertThat(Duration.parse("1us"))
             .isEqualTo(Duration.microseconds(1));
 
@@ -137,7 +137,7 @@ public class DurationTest {
     }
 
     @Test
-    public void parsesNanoseconds() throws Exception {
+    void parsesNanoseconds() throws Exception {
         assertThat(Duration.parse("1ns"))
             .isEqualTo(Duration.nanoseconds(1));
 
@@ -149,105 +149,105 @@ public class DurationTest {
     }
 
     @Test
-    public void parseDurationWithWhiteSpaces() {
+    void parseDurationWithWhiteSpaces() {
         assertThat(Duration.parse("5   seconds"))
             .isEqualTo(Duration.seconds(5));
     }
 
     @Test
-    public void unableParseWrongDurationCount() {
+    void unableParseWrongDurationCount() {
         assertThatIllegalArgumentException().isThrownBy(() -> Duration.parse("five seconds"));
     }
 
     @Test
-    public void unableParseWrongDurationTimeUnit() {
+    void unableParseWrongDurationTimeUnit() {
         assertThatIllegalArgumentException().isThrownBy(() -> Duration.parse("1gs"));
     }
 
     @Test
-    public void unableParseWrongDurationFormat() {
+    void unableParseWrongDurationFormat() {
         assertThatIllegalArgumentException().isThrownBy(() -> Duration.parse("1 milli second"));
     }
 
     @Test
-    public void isHumanReadable() throws Exception {
-        assertThat(Duration.microseconds(1).toString())
-            .isEqualTo("1 microsecond");
+    void isHumanReadable() throws Exception {
+        assertThat(Duration.microseconds(1))
+            .hasToString("1 microsecond");
 
-        assertThat(Duration.microseconds(3).toString())
-            .isEqualTo("3 microseconds");
+        assertThat(Duration.microseconds(3))
+            .hasToString("3 microseconds");
     }
 
     @Test
-    public void hasAQuantity() throws Exception {
+    void hasAQuantity() throws Exception {
         assertThat(Duration.microseconds(12).getQuantity())
             .isEqualTo(12);
     }
 
     @Test
-    public void hasAUnit() throws Exception {
+    void hasAUnit() throws Exception {
         assertThat(Duration.microseconds(1).getUnit())
             .isEqualTo(TimeUnit.MICROSECONDS);
     }
 
     @Test
-    public void isComparable() throws Exception {
+    void isComparable() throws Exception {
         // both zero
-        assertThat(Duration.nanoseconds(0).compareTo(Duration.nanoseconds(0))).isEqualTo(0);
-        assertThat(Duration.nanoseconds(0).compareTo(Duration.microseconds(0))).isEqualTo(0);
-        assertThat(Duration.nanoseconds(0).compareTo(Duration.milliseconds(0))).isEqualTo(0);
-        assertThat(Duration.nanoseconds(0).compareTo(Duration.seconds(0))).isEqualTo(0);
-        assertThat(Duration.nanoseconds(0).compareTo(Duration.minutes(0))).isEqualTo(0);
-        assertThat(Duration.nanoseconds(0).compareTo(Duration.hours(0))).isEqualTo(0);
-        assertThat(Duration.nanoseconds(0).compareTo(Duration.days(0))).isEqualTo(0);
+        assertThat(Duration.nanoseconds(0)).isEqualByComparingTo(Duration.nanoseconds(0));
+        assertThat(Duration.nanoseconds(0)).isEqualByComparingTo(Duration.microseconds(0));
+        assertThat(Duration.nanoseconds(0)).isEqualByComparingTo(Duration.milliseconds(0));
+        assertThat(Duration.nanoseconds(0)).isEqualByComparingTo(Duration.seconds(0));
+        assertThat(Duration.nanoseconds(0)).isEqualByComparingTo(Duration.minutes(0));
+        assertThat(Duration.nanoseconds(0)).isEqualByComparingTo(Duration.hours(0));
+        assertThat(Duration.nanoseconds(0)).isEqualByComparingTo(Duration.days(0));
 
-        assertThat(Duration.microseconds(0).compareTo(Duration.nanoseconds(0))).isEqualTo(0);
-        assertThat(Duration.microseconds(0).compareTo(Duration.microseconds(0))).isEqualTo(0);
-        assertThat(Duration.microseconds(0).compareTo(Duration.milliseconds(0))).isEqualTo(0);
-        assertThat(Duration.microseconds(0).compareTo(Duration.seconds(0))).isEqualTo(0);
-        assertThat(Duration.microseconds(0).compareTo(Duration.minutes(0))).isEqualTo(0);
-        assertThat(Duration.microseconds(0).compareTo(Duration.hours(0))).isEqualTo(0);
-        assertThat(Duration.microseconds(0).compareTo(Duration.days(0))).isEqualTo(0);
+        assertThat(Duration.microseconds(0)).isEqualByComparingTo(Duration.nanoseconds(0));
+        assertThat(Duration.microseconds(0)).isEqualByComparingTo(Duration.microseconds(0));
+        assertThat(Duration.microseconds(0)).isEqualByComparingTo(Duration.milliseconds(0));
+        assertThat(Duration.microseconds(0)).isEqualByComparingTo(Duration.seconds(0));
+        assertThat(Duration.microseconds(0)).isEqualByComparingTo(Duration.minutes(0));
+        assertThat(Duration.microseconds(0)).isEqualByComparingTo(Duration.hours(0));
+        assertThat(Duration.microseconds(0)).isEqualByComparingTo(Duration.days(0));
 
-        assertThat(Duration.milliseconds(0).compareTo(Duration.nanoseconds(0))).isEqualTo(0);
-        assertThat(Duration.milliseconds(0).compareTo(Duration.microseconds(0))).isEqualTo(0);
-        assertThat(Duration.milliseconds(0).compareTo(Duration.milliseconds(0))).isEqualTo(0);
-        assertThat(Duration.milliseconds(0).compareTo(Duration.seconds(0))).isEqualTo(0);
-        assertThat(Duration.milliseconds(0).compareTo(Duration.minutes(0))).isEqualTo(0);
-        assertThat(Duration.milliseconds(0).compareTo(Duration.hours(0))).isEqualTo(0);
-        assertThat(Duration.milliseconds(0).compareTo(Duration.days(0))).isEqualTo(0);
+        assertThat(Duration.milliseconds(0)).isEqualByComparingTo(Duration.nanoseconds(0));
+        assertThat(Duration.milliseconds(0)).isEqualByComparingTo(Duration.microseconds(0));
+        assertThat(Duration.milliseconds(0)).isEqualByComparingTo(Duration.milliseconds(0));
+        assertThat(Duration.milliseconds(0)).isEqualByComparingTo(Duration.seconds(0));
+        assertThat(Duration.milliseconds(0)).isEqualByComparingTo(Duration.minutes(0));
+        assertThat(Duration.milliseconds(0)).isEqualByComparingTo(Duration.hours(0));
+        assertThat(Duration.milliseconds(0)).isEqualByComparingTo(Duration.days(0));
 
-        assertThat(Duration.seconds(0).compareTo(Duration.nanoseconds(0))).isEqualTo(0);
-        assertThat(Duration.seconds(0).compareTo(Duration.microseconds(0))).isEqualTo(0);
-        assertThat(Duration.seconds(0).compareTo(Duration.milliseconds(0))).isEqualTo(0);
-        assertThat(Duration.seconds(0).compareTo(Duration.seconds(0))).isEqualTo(0);
-        assertThat(Duration.seconds(0).compareTo(Duration.minutes(0))).isEqualTo(0);
-        assertThat(Duration.seconds(0).compareTo(Duration.hours(0))).isEqualTo(0);
-        assertThat(Duration.seconds(0).compareTo(Duration.days(0))).isEqualTo(0);
+        assertThat(Duration.seconds(0)).isEqualByComparingTo(Duration.nanoseconds(0));
+        assertThat(Duration.seconds(0)).isEqualByComparingTo(Duration.microseconds(0));
+        assertThat(Duration.seconds(0)).isEqualByComparingTo(Duration.milliseconds(0));
+        assertThat(Duration.seconds(0)).isEqualByComparingTo(Duration.seconds(0));
+        assertThat(Duration.seconds(0)).isEqualByComparingTo(Duration.minutes(0));
+        assertThat(Duration.seconds(0)).isEqualByComparingTo(Duration.hours(0));
+        assertThat(Duration.seconds(0)).isEqualByComparingTo(Duration.days(0));
 
-        assertThat(Duration.minutes(0).compareTo(Duration.nanoseconds(0))).isEqualTo(0);
-        assertThat(Duration.minutes(0).compareTo(Duration.microseconds(0))).isEqualTo(0);
-        assertThat(Duration.minutes(0).compareTo(Duration.milliseconds(0))).isEqualTo(0);
-        assertThat(Duration.minutes(0).compareTo(Duration.seconds(0))).isEqualTo(0);
-        assertThat(Duration.minutes(0).compareTo(Duration.minutes(0))).isEqualTo(0);
-        assertThat(Duration.minutes(0).compareTo(Duration.hours(0))).isEqualTo(0);
-        assertThat(Duration.minutes(0).compareTo(Duration.days(0))).isEqualTo(0);
+        assertThat(Duration.minutes(0)).isEqualByComparingTo(Duration.nanoseconds(0));
+        assertThat(Duration.minutes(0)).isEqualByComparingTo(Duration.microseconds(0));
+        assertThat(Duration.minutes(0)).isEqualByComparingTo(Duration.milliseconds(0));
+        assertThat(Duration.minutes(0)).isEqualByComparingTo(Duration.seconds(0));
+        assertThat(Duration.minutes(0)).isEqualByComparingTo(Duration.minutes(0));
+        assertThat(Duration.minutes(0)).isEqualByComparingTo(Duration.hours(0));
+        assertThat(Duration.minutes(0)).isEqualByComparingTo(Duration.days(0));
 
-        assertThat(Duration.hours(0).compareTo(Duration.nanoseconds(0))).isEqualTo(0);
-        assertThat(Duration.hours(0).compareTo(Duration.microseconds(0))).isEqualTo(0);
-        assertThat(Duration.hours(0).compareTo(Duration.milliseconds(0))).isEqualTo(0);
-        assertThat(Duration.hours(0).compareTo(Duration.seconds(0))).isEqualTo(0);
-        assertThat(Duration.hours(0).compareTo(Duration.minutes(0))).isEqualTo(0);
-        assertThat(Duration.hours(0).compareTo(Duration.hours(0))).isEqualTo(0);
-        assertThat(Duration.hours(0).compareTo(Duration.days(0))).isEqualTo(0);
+        assertThat(Duration.hours(0)).isEqualByComparingTo(Duration.nanoseconds(0));
+        assertThat(Duration.hours(0)).isEqualByComparingTo(Duration.microseconds(0));
+        assertThat(Duration.hours(0)).isEqualByComparingTo(Duration.milliseconds(0));
+        assertThat(Duration.hours(0)).isEqualByComparingTo(Duration.seconds(0));
+        assertThat(Duration.hours(0)).isEqualByComparingTo(Duration.minutes(0));
+        assertThat(Duration.hours(0)).isEqualByComparingTo(Duration.hours(0));
+        assertThat(Duration.hours(0)).isEqualByComparingTo(Duration.days(0));
 
-        assertThat(Duration.days(0).compareTo(Duration.nanoseconds(0))).isEqualTo(0);
-        assertThat(Duration.days(0).compareTo(Duration.microseconds(0))).isEqualTo(0);
-        assertThat(Duration.days(0).compareTo(Duration.milliseconds(0))).isEqualTo(0);
-        assertThat(Duration.days(0).compareTo(Duration.seconds(0))).isEqualTo(0);
-        assertThat(Duration.days(0).compareTo(Duration.minutes(0))).isEqualTo(0);
-        assertThat(Duration.days(0).compareTo(Duration.hours(0))).isEqualTo(0);
-        assertThat(Duration.days(0).compareTo(Duration.days(0))).isEqualTo(0);
+        assertThat(Duration.days(0)).isEqualByComparingTo(Duration.nanoseconds(0));
+        assertThat(Duration.days(0)).isEqualByComparingTo(Duration.microseconds(0));
+        assertThat(Duration.days(0)).isEqualByComparingTo(Duration.milliseconds(0));
+        assertThat(Duration.days(0)).isEqualByComparingTo(Duration.seconds(0));
+        assertThat(Duration.days(0)).isEqualByComparingTo(Duration.minutes(0));
+        assertThat(Duration.days(0)).isEqualByComparingTo(Duration.hours(0));
+        assertThat(Duration.days(0)).isEqualByComparingTo(Duration.days(0));
 
         // one zero, one negative
         assertThat(Duration.nanoseconds(0)).isGreaterThan(Duration.nanoseconds(-1));
@@ -816,7 +816,7 @@ public class DurationTest {
     }
 
     @Test
-    public void serializesCorrectlyWithJackson() throws IOException {
+    void serializesCorrectlyWithJackson() throws IOException {
         final ObjectMapper mapper = new ObjectMapper();
 
         assertThat(mapper.writeValueAsString(Duration.nanoseconds(0L))).isEqualTo("\"0 nanoseconds\"");
@@ -843,7 +843,7 @@ public class DurationTest {
     }
 
     @Test
-    public void deserializesCorrectlyWithJackson() throws IOException {
+    void deserializesCorrectlyWithJackson() throws IOException {
         final ObjectMapper mapper = new ObjectMapper();
 
         assertThat(mapper.readValue("\"0 nanoseconds\"", Duration.class)).isEqualTo(Duration.nanoseconds(0L));

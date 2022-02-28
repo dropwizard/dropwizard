@@ -14,10 +14,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 
-public class EofExceptionWriterInterceptorTest {
+class EofExceptionWriterInterceptorTest {
     @SuppressWarnings("NullAway")
     @Test
-    public void shouldSwallowEofException() throws IOException {
+    void shouldSwallowEofException() throws IOException {
         MetricRegistry metricRegistry = new MetricRegistry();
         EofExceptionWriterInterceptor interceptor = new EofExceptionWriterInterceptor(metricRegistry);
         WriterInterceptorContext context = mock(WriterInterceptorContext.class);

@@ -33,7 +33,7 @@ import java.util.StringJoiner;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MultipleContentTypeTest extends JerseyTest {
+class MultipleContentTypeTest extends JerseyTest {
     static {
         BootstrapLogging.bootstrap();
     }
@@ -60,7 +60,7 @@ public class MultipleContentTypeTest extends JerseyTest {
     }
 
     @Test
-    public void testJsonContentType() {
+    void testJsonContentType() {
         final Response response = target("/").request().accept(MediaType.APPLICATION_JSON_TYPE).get();
 
         assertThat(response.getStatus()).isEqualTo(200);
@@ -68,7 +68,7 @@ public class MultipleContentTypeTest extends JerseyTest {
     }
 
     @Test
-    public void testHtmlContentType() {
+    void testHtmlContentType() {
         final Response response = target("/").request().accept(MediaType.TEXT_HTML_TYPE).get();
 
         assertThat(response.getStatus()).isEqualTo(200);
@@ -79,7 +79,7 @@ public class MultipleContentTypeTest extends JerseyTest {
     }
 
     @Test
-    public void testOnlyJsonContentType() {
+    void testOnlyJsonContentType() {
         final Response response = target("/json").request().accept(MediaType.APPLICATION_JSON_TYPE).get();
 
         assertThat(response.getStatus()).isEqualTo(200);
@@ -87,7 +87,7 @@ public class MultipleContentTypeTest extends JerseyTest {
     }
 
     @Test
-    public void testOnlyHtmlContentType() {
+    void testOnlyHtmlContentType() {
         final Response response = target("/html").request().accept(MediaType.TEXT_HTML_TYPE).get();
 
         assertThat(response.getStatus()).isEqualTo(200);

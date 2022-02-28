@@ -11,9 +11,9 @@ import javax.ws.rs.WebApplicationException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class InstantParamTest {
+class InstantParamTest {
     @Test
-    public void parsesDateTimes() {
+    void parsesDateTimes() {
         final InstantParam param = new InstantParam("2012-11-19T00:00:00Z");
         Instant instant = LocalDateTime.of(2012, 11, 19, 0, 0)
             .toInstant(ZoneOffset.UTC);
@@ -23,7 +23,7 @@ public class InstantParamTest {
     }
 
     @Test
-    public void nullThrowsAnException() {
+    void nullThrowsAnException() {
         assertThatExceptionOfType(WebApplicationException.class)
             .isThrownBy(() -> new InstantParam(null, "myDate"))
             .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(400))

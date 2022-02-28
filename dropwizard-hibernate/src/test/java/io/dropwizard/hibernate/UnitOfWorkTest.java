@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class UnitOfWorkTest {
+class UnitOfWorkTest {
     private static class Example {
         @UnitOfWork
         public void example() {
@@ -18,31 +18,31 @@ public class UnitOfWorkTest {
     private UnitOfWork unitOfWork;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         this.unitOfWork = Example.class.getDeclaredMethod("example")
                                        .getAnnotation(UnitOfWork.class);
     }
 
     @Test
-    public void defaultsToReadWrite() throws Exception {
+    void defaultsToReadWrite() throws Exception {
         assertThat(unitOfWork.readOnly())
                 .isFalse();
     }
 
     @Test
-    public void defaultsToTransactional() throws Exception {
+    void defaultsToTransactional() throws Exception {
         assertThat(unitOfWork.transactional())
                 .isTrue();
     }
 
     @Test
-    public void defaultsToNormalCaching() throws Exception {
+    void defaultsToNormalCaching() throws Exception {
         assertThat(unitOfWork.cacheMode())
                 .isEqualTo(CacheMode.NORMAL);
     }
 
     @Test
-    public void defaultsToAutomaticFlushing() throws Exception {
+    void defaultsToAutomaticFlushing() throws Exception {
         assertThat(unitOfWork.flushMode())
                 .isEqualTo(FlushMode.AUTO);
     }

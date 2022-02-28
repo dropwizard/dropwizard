@@ -8,14 +8,14 @@ import javax.ws.rs.WebApplicationException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class IntParamTest {
+class IntParamTest {
     @Test
-    public void anIntegerReturnsAnInteger() {
+    void anIntegerReturnsAnInteger() {
         assertThat(new IntParam("200").get()).isEqualTo(200);
     }
 
     @Test
-    public void nullThrowsAnException() {
+    void nullThrowsAnException() {
         assertThatExceptionOfType(WebApplicationException.class)
             .isThrownBy(() -> new IntParam(null))
             .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(400))
@@ -25,7 +25,7 @@ public class IntParamTest {
     }
 
     @Test
-    public void emptyStringThrowsAnException() {
+    void emptyStringThrowsAnException() {
         assertThatExceptionOfType(WebApplicationException.class)
             .isThrownBy(() -> new IntParam(""))
             .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(400))
@@ -35,7 +35,7 @@ public class IntParamTest {
     }
 
     @Test
-    public void aNonIntegerThrowsAnException() {
+    void aNonIntegerThrowsAnException() {
         assertThatExceptionOfType(WebApplicationException.class)
             .isThrownBy(() -> new IntParam("foo"))
             .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(400))
@@ -45,7 +45,7 @@ public class IntParamTest {
     }
 
     @Test
-    public void aNonIntegerThrowsAnExceptionWithCustomName() {
+    void aNonIntegerThrowsAnExceptionWithCustomName() {
         assertThatExceptionOfType(WebApplicationException.class)
             .isThrownBy(() -> new IntParam("foo", "customName"))
             .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(400))

@@ -11,7 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verifyNoInteractions;
 
-public class CheckCommandTest {
+class CheckCommandTest {
     private static class MyApplication extends Application<Configuration> {
         @Override
         public void run(Configuration configuration, Environment environment) throws Exception {
@@ -27,19 +27,19 @@ public class CheckCommandTest {
     private final Configuration configuration = mock(Configuration.class);
 
     @Test
-    public void hasAName() {
+    void hasAName() {
         assertThat(command.getName())
                 .isEqualTo("check");
     }
 
     @Test
-    public void hasADescription() {
+    void hasADescription() {
         assertThat(command.getDescription())
                 .isEqualTo("Parses and validates the configuration file");
     }
 
     @Test
-    public void doesNotInteractWithAnything() throws Exception {
+    void doesNotInteractWithAnything() throws Exception {
         command.run(bootstrap, namespace, configuration);
 
         verifyNoInteractions(bootstrap, namespace, configuration);

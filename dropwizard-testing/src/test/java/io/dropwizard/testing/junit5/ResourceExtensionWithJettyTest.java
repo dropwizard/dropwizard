@@ -22,7 +22,7 @@ class ResourceExtensionWithJettyTest {
             .build();
 
     @Test
-    public void testClientSupportsPatchMethod() {
+    void testClientSupportsPatchMethod() {
         final String resp = resources.target("test")
                 .request()
                 .method("PATCH", Entity.text("Patch is working"), String.class);

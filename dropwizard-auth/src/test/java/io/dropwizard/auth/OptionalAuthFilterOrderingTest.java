@@ -13,7 +13,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.security.Principal;
 
 import javax.annotation.Priority;
@@ -24,7 +23,7 @@ import javax.ws.rs.container.DynamicFeature;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
-public class OptionalAuthFilterOrderingTest extends JerseyTest {
+class OptionalAuthFilterOrderingTest extends JerseyTest {
 
     @Override
     @BeforeEach
@@ -79,13 +78,13 @@ public class OptionalAuthFilterOrderingTest extends JerseyTest {
     }
 
     @Test
-    public void authenticationFilterShouldExecuteInAuthenticationPhaseForImplicitPermitall() {
+    void authenticationFilterShouldExecuteInAuthenticationPhaseForImplicitPermitall() {
         assertThat(target("/test/implicit-permitall").request().get(String.class))
             .isEqualTo("authorization ok");
     }
 
     @Test
-    public void authenticationFilterShouldExecuteInAuthenticationPhaseForOptionalPrincipal() {
+    void authenticationFilterShouldExecuteInAuthenticationPhaseForOptionalPrincipal() {
         assertThat(target("/test/optional").request().get(String.class))
             .isEqualTo("authorization ok");
     }
@@ -94,7 +93,7 @@ public class OptionalAuthFilterOrderingTest extends JerseyTest {
     private static class DummyAuthenticationFilter extends AuthFilter<Object, Principal> {
 
         @Override
-        public void filter(ContainerRequestContext requestContext) throws IOException {
+        public void filter(ContainerRequestContext requestContext) {
             requestContext.setSecurityContext(new SecurityContext() {
                 @Override
                 public Principal getUserPrincipal() {
@@ -123,7 +122,7 @@ public class OptionalAuthFilterOrderingTest extends JerseyTest {
     private static class DummyAuthorizationFilter implements ContainerRequestFilter {
 
         @Override
-        public void filter(ContainerRequestContext request) throws IOException {
+        public void filter(ContainerRequestContext request) {
             if (request.getSecurityContext().getUserPrincipal() != null) {
                 request.abortWith(Response.ok("authorization ok").build());
             } else {

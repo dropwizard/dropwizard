@@ -22,37 +22,44 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * Common code for HTTP/2 connector tests
  */
-public class AbstractHttp2Test {
+class AbstractHttp2Test {
 
     static {
         BootstrapLogging.bootstrap();
     }
 
-    final SslContextFactory.Server sslContextFactory = new SslContextFactory.Server();
-    HttpClient client;
+    final SslContextFactory.Client sslContextFactory = new SslContextFactory.Client();
+    HttpClient http2Client;
+    HttpClient http1Client;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         sslContextFactory.setTrustStorePath(ResourceHelpers.resourceFilePath("stores/http2_client.jts"));
         sslContextFactory.setTrustStorePassword("http2_client");
         sslContextFactory.start();
 
-        client = new HttpClient(new HttpClientTransportOverHTTP2(new HTTP2Client()), sslContextFactory);
-        client.start();
+        http1Client = new HttpClient(sslContextFactory);
+        http1Client.start();
+
+        http2Client = new HttpClient(new HttpClientTransportOverHTTP2(new HTTP2Client()), sslContextFactory);
+        http2Client.start();
+
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
-        client.stop();
+    void tearDown() throws Exception {
+        http2Client.stop();
+        http1Client.stop();
+        sslContextFactory.stop();
     }
 
-    protected static void assertResponse(ContentResponse response) {
-        assertThat(response.getVersion()).isEqualTo(HttpVersion.HTTP_2);
+    static void assertResponse(ContentResponse response, HttpVersion httpVersion) {
+        assertThat(response.getVersion()).isEqualTo(httpVersion);
         assertThat(response.getStatus()).isEqualTo(200);
         assertThat(response.getContentAsString()).isEqualTo(FakeApplication.HELLO_WORLD);
     }
 
-    protected void performManyAsyncRequests(HttpClient client, String url) throws InterruptedException {
+    static boolean performManyAsyncRequests(HttpClient client, String url) throws InterruptedException {
         final int amount = 100;
         final CountDownLatch latch = new CountDownLatch(amount);
         for (int i = 0; i < amount; i++) {
@@ -68,6 +75,6 @@ public class AbstractHttp2Test {
                     });
         }
 
-        assertThat(latch.await(30, TimeUnit.SECONDS)).isTrue();
+        return latch.await(30, TimeUnit.SECONDS);
     }
 }

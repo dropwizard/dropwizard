@@ -1,0 +1,20 @@
+[
+    {
+        "name": "foo",
+        "healthy": true,
+        "type": "READY",
+        "critical": true
+    },
+    {
+        "name": "bar",
+        "healthy": true,
+        "type": "ALIVE",
+        "critical": true
+    },
+    {
+        "name": "baz",
+        "healthy": false,
+        "type": "READY",
+        "critical": false
+    }
+]

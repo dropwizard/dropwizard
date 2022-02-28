@@ -10,14 +10,13 @@ import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import io.dropwizard.util.Duration;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
-import org.apache.http.conn.ssl.SSLInitializationException;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.glassfish.jersey.client.ClientResponse;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledOnJre;
-import org.junit.jupiter.api.condition.JRE;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import javax.net.ssl.HostnameVerifier;
@@ -29,6 +28,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.Client;
+import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.Response;
 import java.io.File;
 import java.io.IOException;
@@ -38,11 +38,11 @@ import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.assertj.core.api.Assertions.catchThrowable;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.bouncycastle.jce.provider.BouncyCastleProvider.PROVIDER_NAME;
 
 @ExtendWith(DropwizardExtensionsSupport.class)
-public class DropwizardSSLConnectionSocketFactoryTest {
+class DropwizardSSLConnectionSocketFactoryTest {
     private TlsConfiguration tlsConfiguration;
     private JerseyClientConfiguration jerseyClientConfiguration;
 
@@ -66,7 +66,7 @@ public class DropwizardSSLConnectionSocketFactoryTest {
     }
 
     static {
-        Security.addProvider(new BouncyCastleProvider());
+        Security.insertProviderAt(new BouncyCastleProvider(), 1);
     }
 
     @AfterAll
@@ -125,8 +125,9 @@ public class DropwizardSSLConnectionSocketFactoryTest {
     void shouldErrorIfServerCertNotFoundInTruststore() {
         tlsConfiguration.setTrustStorePath(new File(ResourceHelpers.resourceFilePath("stores/server/other_cert_truststore.ts")));
         final Client client = new JerseyClientBuilder(TLS_APP_RULE.getEnvironment()).using(jerseyClientConfiguration).build("tls_broken_client");
+        Invocation.Builder request = client.target(String.format("https://localhost:%d", TLS_APP_RULE.getLocalPort())).request();
         assertThatExceptionOfType(ProcessingException.class)
-            .isThrownBy(() -> client.target(String.format("https://localhost:%d", TLS_APP_RULE.getLocalPort())).request().get())
+            .isThrownBy(request::get)
             .withCauseInstanceOf(SSLHandshakeException.class);
     }
 
@@ -141,12 +142,14 @@ public class DropwizardSSLConnectionSocketFactoryTest {
     @Test
     void shouldErrorIfServerCertSelfSignedAndSelfSignedCertsNotAllowed() {
         final Client client = new JerseyClientBuilder(TLS_APP_RULE.getEnvironment()).using(jerseyClientConfiguration).build("self_sign_failure");
+        Invocation.Builder request = client.target(String.format("https://localhost:%d", TLS_APP_RULE.getPort(1))).request();
         assertThatExceptionOfType(ProcessingException.class)
-            .isThrownBy(() -> client.target(String.format("https://localhost:%d", TLS_APP_RULE.getPort(1))).request().get(ClientResponse.class))
+            .isThrownBy(() -> request.get(ClientResponse.class))
             .withCauseInstanceOf(SSLHandshakeException.class);
     }
 
     @Test
+    @DisabledOnOs(OS.WINDOWS) // https://github.com/dropwizard/dropwizard/issues/4330
     void shouldReturn200IfAbleToClientAuth() {
         tlsConfiguration.setKeyStorePath(new File(ResourceHelpers.resourceFilePath("stores/client/keycert.p12")));
         tlsConfiguration.setKeyStorePassword("password");
@@ -162,12 +165,14 @@ public class DropwizardSSLConnectionSocketFactoryTest {
         tlsConfiguration.setKeyStorePassword("password");
         tlsConfiguration.setKeyStoreType("PKCS12");
         final Client client = new JerseyClientBuilder(TLS_APP_RULE.getEnvironment()).using(jerseyClientConfiguration).build("client_auth_broken");
+        Invocation.Builder request = client.target(String.format("https://localhost:%d", TLS_APP_RULE.getPort(2))).request();
         assertThatExceptionOfType(ProcessingException.class)
-            .isThrownBy(() -> client.target(String.format("https://localhost:%d", TLS_APP_RULE.getPort(2))).request().get())
+            .isThrownBy(request::get)
             .satisfies(e -> assertThat(e.getCause()).isInstanceOfAny(SocketException.class, SSLHandshakeException.class, SSLException.class));
     }
 
     @Test
+    @DisabledOnOs(OS.WINDOWS) // https://github.com/dropwizard/dropwizard/issues/4330
     void shouldReturn200IfAbleToClientAuthSpecifyingCertAliasForGoodCert() {
         tlsConfiguration.setKeyStorePath(new File(ResourceHelpers.resourceFilePath("stores/client/twokeys.p12")));
         tlsConfiguration.setKeyStorePassword("password");
@@ -185,8 +190,9 @@ public class DropwizardSSLConnectionSocketFactoryTest {
         tlsConfiguration.setKeyStoreType("PKCS12");
         tlsConfiguration.setCertAlias("2");
         final Client client = new JerseyClientBuilder(TLS_APP_RULE.getEnvironment()).using(jerseyClientConfiguration).build("client_auth_using_cert_alias_broken");
+        Invocation.Builder request = client.target(String.format("https://localhost:%d", TLS_APP_RULE.getPort(2))).request();
         assertThatExceptionOfType(ProcessingException.class)
-            .isThrownBy(() -> client.target(String.format("https://localhost:%d", TLS_APP_RULE.getPort(2))).request().get())
+            .isThrownBy(request::get)
             .satisfies(e -> assertThat(e.getCause()).isInstanceOfAny(SocketException.class, SSLHandshakeException.class, SSLException.class));
     }
 
@@ -197,25 +203,26 @@ public class DropwizardSSLConnectionSocketFactoryTest {
         tlsConfiguration.setKeyStoreType("PKCS12");
         tlsConfiguration.setCertAlias("unknown");
         final Client client = new JerseyClientBuilder(TLS_APP_RULE.getEnvironment()).using(jerseyClientConfiguration).build("client_auth_using_unknown_cert_alias_broken");
+        Invocation.Builder request = client.target(String.format("https://localhost:%d", TLS_APP_RULE.getPort(2))).request();
         assertThatExceptionOfType(ProcessingException.class)
-            .isThrownBy(() -> client.target(String.format("https://localhost:%d", TLS_APP_RULE.getPort(2))).request().get())
+            .isThrownBy(request::get)
             .satisfies(e -> assertThat(e.getCause()).isInstanceOfAny(SocketException.class, SSLHandshakeException.class, SSLException.class));
     }
 
     @Test
     void shouldErrorIfHostnameVerificationOnAndServerHostnameDoesntMatch() {
         final Client client = new JerseyClientBuilder(TLS_APP_RULE.getEnvironment()).using(jerseyClientConfiguration).build("bad_host_broken");
-        final Throwable exn = catchThrowable(() -> client.target(String.format("https://localhost:%d", TLS_APP_RULE.getPort(3))).request().get());
-        assertThat(exn).hasCauseExactlyInstanceOf(SSLPeerUnverifiedException.class);
-        assertThat(exn.getCause()).hasMessage("Certificate for <localhost> doesn't match any of the subject alternative names: []");
+        assertThatThrownBy(() -> client.target(String.format("https://localhost:%d", TLS_APP_RULE.getPort(3))).request().get())
+            .hasCauseExactlyInstanceOf(SSLPeerUnverifiedException.class)
+            .hasRootCauseMessage("Certificate for <localhost> doesn't match any of the subject alternative names: []");
     }
 
     @Test
     void shouldErrorIfHostnameVerificationOnAndServerHostnameMatchesAndFailVerifierSpecified() {
         final Client client = new JerseyClientBuilder(TLS_APP_RULE.getEnvironment()).using(jerseyClientConfiguration).using(new FailVerifier()).build("bad_host_broken_fail_verifier");
-        final Throwable exn = catchThrowable(() -> client.target(String.format("https://localhost:%d", TLS_APP_RULE.getLocalPort())).request().get());
-        assertThat(exn).hasCauseExactlyInstanceOf(SSLPeerUnverifiedException.class);
-        assertThat(exn.getCause()).hasMessage("Certificate for <localhost> doesn't match any of the subject alternative names: []");
+        assertThatThrownBy(() -> client.target(String.format("https://localhost:%d", TLS_APP_RULE.getLocalPort())).request().get())
+            .hasCauseExactlyInstanceOf(SSLPeerUnverifiedException.class)
+            .hasRootCauseMessage("Certificate for <localhost> doesn't match any of the subject alternative names: []");
     }
 
     @Test
@@ -234,7 +241,7 @@ public class DropwizardSSLConnectionSocketFactoryTest {
     }
 
     @Test
-    void shouldBeOkIfHostnameVerificationOffAndServerHostnameMatchesAndFailVerfierSpecified() {
+    void shouldBeOkIfHostnameVerificationOffAndServerHostnameMatchesAndFailVerifierSpecified() {
         tlsConfiguration.setVerifyHostname(false);
         final Client client = new JerseyClientBuilder(TLS_APP_RULE.getEnvironment()).using(jerseyClientConfiguration).using(new FailVerifier()).build("bad_host_fail_verifier_working");
         final Response response = client.target(String.format("https://localhost:%d", TLS_APP_RULE.getLocalPort())).request().get();
@@ -245,27 +252,14 @@ public class DropwizardSSLConnectionSocketFactoryTest {
     void shouldRejectNonSupportedProtocols() {
         tlsConfiguration.setSupportedProtocols(Collections.singletonList("TLSv1.2"));
         final Client client = new JerseyClientBuilder(TLS_APP_RULE.getEnvironment()).using(jerseyClientConfiguration).build("reject_non_supported");
+        Invocation.Builder request = client.target(String.format("https://localhost:%d", TLS_APP_RULE.getPort(4))).request();
         assertThatExceptionOfType(ProcessingException.class)
-            .isThrownBy(() -> client.target(String.format("https://localhost:%d", TLS_APP_RULE.getPort(4))).request().get())
+            .isThrownBy(request::get)
             .withRootCauseInstanceOf(IOException.class);
     }
 
     @Test
-    @EnabledOnJre({JRE.JAVA_8, JRE.JAVA_11})
-    void shouldFailDueDefaultProviderInsufficiency() {
-        tlsConfiguration.setKeyStorePath(new File(ResourceHelpers.resourceFilePath("stores/client/acme-weak.keystore.p12")));
-        tlsConfiguration.setKeyStorePassword("acme2");
-        tlsConfiguration.setKeyStoreType("PKCS12");
-        tlsConfiguration.setCertAlias("acme-weak");
-        tlsConfiguration.setTrustStorePath(new File(ResourceHelpers.resourceFilePath("stores/server/acme-weak.truststore.p12")));
-        tlsConfiguration.setTrustStorePassword("acme2");
-        tlsConfiguration.setTrustStoreType("PKCS12");
-
-        assertThatExceptionOfType(SSLInitializationException.class).isThrownBy(() -> new JerseyClientBuilder(TLS_APP_RULE.getEnvironment()).using(
-                jerseyClientConfiguration).build("reject_provider_non_supported"));
-    }
-
-    @Test
+    @DisabledOnOs(OS.WINDOWS) // https://github.com/dropwizard/dropwizard/issues/4330
     void shouldSucceedWithBcProvider() {
         // switching host verifier off for simplicity
         tlsConfiguration.setVerifyHostname(false);

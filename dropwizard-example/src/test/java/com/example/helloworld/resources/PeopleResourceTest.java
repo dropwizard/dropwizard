@@ -28,7 +28,7 @@ import static org.mockito.Mockito.when;
  * Unit tests for {@link PeopleResource}.
  */
 @ExtendWith(DropwizardExtensionsSupport.class)
-public class PeopleResourceTest {
+class PeopleResourceTest {
     private static final PersonDAO PERSON_DAO = mock(PersonDAO.class);
     public static final ResourceExtension RESOURCES = ResourceExtension.builder()
             .addResource(new PeopleResource(PERSON_DAO))
@@ -37,7 +37,7 @@ public class PeopleResourceTest {
     private Person person;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         person = new Person();
         person.setFullName("Full Name");
         person.setJobTitle("Job Title");
@@ -45,12 +45,12 @@ public class PeopleResourceTest {
     }
 
     @AfterEach
-    public void tearDown() {
+    void tearDown() {
         reset(PERSON_DAO);
     }
 
     @Test
-    public void createPerson() {
+    void createPerson() {
         when(PERSON_DAO.create(any(Person.class))).thenReturn(person);
         final Response response = RESOURCES.target("/people")
                 .request(MediaType.APPLICATION_JSON_TYPE)
@@ -62,7 +62,7 @@ public class PeopleResourceTest {
     }
 
     @Test
-    public void createPersonFailureMinYearBorn() {
+    void createPersonFailureMinYearBorn() {
         person.setYearBorn(-1);
 
         final Response response = RESOURCES.target("/people")
@@ -74,7 +74,7 @@ public class PeopleResourceTest {
     }
 
     @Test
-    public void createPersonFailureMaxYearBorn() {
+    void createPersonFailureMaxYearBorn() {
         person.setYearBorn(10000);
 
         final Response response = RESOURCES.target("/people")
@@ -86,7 +86,7 @@ public class PeopleResourceTest {
     }
 
     @Test
-    public void listPeople() throws Exception {
+    void listPeople() throws Exception {
         final List<Person> people = Collections.singletonList(person);
         when(PERSON_DAO.findAll()).thenReturn(people);
 
