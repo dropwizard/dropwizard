@@ -5,13 +5,13 @@ import static org.mockito.Mockito.verify;
 
 import org.junit.jupiter.api.Test;
 
-public class AutoCloseableManagerTest {
+class AutoCloseableManagerTest {
 
     private final AutoCloseable managed = mock(AutoCloseable.class);
     private final AutoCloseableManager closeableManager = new AutoCloseableManager(this.managed);
 
     @Test
-    public void startsAndStops() throws Exception {
+    void startsAndStops() throws Exception {
         this.closeableManager.start();
         this.closeableManager.stop();
 

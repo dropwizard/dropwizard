@@ -143,9 +143,7 @@ public class ServerPushFilterFactory {
         handler.setInitParameter("associatePeriod", String.valueOf(associatePeriod.toMilliseconds()));
         handler.setInitParameter("maxAssociations", String.valueOf(maxAssociations));
         if (refererHosts != null) {
-            final String hosts = refererHosts.stream()
-                    .collect(Collectors.joining(","));
-            handler.setInitParameter("hosts", hosts);
+            handler.setInitParameter("hosts", String.join(",", refererHosts));
         }
         if (refererPorts != null) {
             final String ports = refererPorts.stream()

@@ -18,7 +18,7 @@ import javax.ws.rs.core.MediaType;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class DropwizardResourceConfigTest {
+class DropwizardResourceConfigTest {
     private DropwizardResourceConfig rc = DropwizardResourceConfig.forTesting();
     private AbstractJerseyTest jerseyTest = new AbstractJerseyTest() {
         @Override

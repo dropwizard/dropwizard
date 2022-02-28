@@ -1,7 +1,11 @@
 package io.dropwizard.testing.junit5;
 
 import io.dropwizard.testing.common.DAOTest;
+import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
+import org.junit.jupiter.api.extension.AfterAllCallback;
+import org.junit.jupiter.api.extension.BeforeAllCallback;
+import org.junit.jupiter.api.extension.ExtensionContext;
 
 import java.util.concurrent.Callable;
 
@@ -34,7 +38,7 @@ import java.util.concurrent.Callable;
  * </p>
  */
 //@formatter:on
-public class DAOTestExtension implements DropwizardExtension {
+public class DAOTestExtension implements DropwizardExtension, BeforeAllCallback, AfterAllCallback {
     private final DAOTest daoTest;
 
     public static class Builder extends DAOTest.Builder<Builder> {
@@ -68,6 +72,20 @@ public class DAOTestExtension implements DropwizardExtension {
     @Override
     public void after() {
         daoTest.after();
+    }
+
+    @Override
+    public void beforeAll(ExtensionContext extensionContext) throws Exception {
+        try {
+            before();
+        } catch (Throwable e) {
+            throw new HibernateException(e);
+        }
+    }
+
+    @Override
+    public void afterAll(ExtensionContext extensionContext) {
+        after();
     }
 
     /**

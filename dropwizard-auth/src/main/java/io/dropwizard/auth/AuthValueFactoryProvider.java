@@ -38,7 +38,7 @@ public class AuthValueFactoryProvider<T extends Principal> extends AbstractValue
     @Inject
     public AuthValueFactoryProvider(MultivaluedParameterExtractorProvider mpep,
                                     PrincipalClassProvider<T> principalClassProvider) {
-        super(() -> mpep, Parameter.Source.UNKNOWN);
+        super(() -> mpep, org.glassfish.jersey.model.Parameter.Source.UNKNOWN);
         this.principalClass = principalClassProvider.clazz;
     }
 

@@ -6,10 +6,12 @@ jobs:
   stale:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/stale@v3.0.14
+    - uses: actions/stale@v4
       with:
         repo-token: ${{ secrets.GITHUB_TOKEN }}
         stale-issue-message: 'This issue is stale because it has been open 90 days with no activity. Remove the "stale" label or comment or this will be closed in 14 days.'
         stale-pr-message: 'This pull request is stale because it has been open 90 days with no activity. Remove the "stale" label or comment or this will be closed in 14 days.'
-        days-before-stale: 90
-        days-before-close: 14
+        days-before-stale: 180
+        days-before-close: 28
+        exempt-issue-labels: 'blocked'
+        exempt-pr-labels: 'blocked'

@@ -6,6 +6,8 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import net.sourceforge.argparse4j.inf.Namespace;
 
+import javax.annotation.Nullable;
+
 /**
  * A command which executes with a configured {@link Environment}.
  *
@@ -14,6 +16,8 @@ import net.sourceforge.argparse4j.inf.Namespace;
  */
 public abstract class EnvironmentCommand<T extends Configuration> extends ConfiguredCommand<T> {
     private final Application<T> application;
+    @Nullable
+    private Environment environment;
 
     /**
      * Creates a new environment command.
@@ -27,18 +31,37 @@ public abstract class EnvironmentCommand<T extends Configuration> extends Config
         this.application = application;
     }
 
+    /**
+     * Returns the constructed environment or {@code null} if it hasn't been constructed yet.
+     *
+     * @return Returns the constructed environment or {@code null} if it hasn't been constructed yet
+     * @since 2.0.19
+     */
+    @Nullable
+    public Environment getEnvironment() {
+        return environment;
+    }
+
+    @SuppressWarnings("NullAway")
     @Override
     protected void run(Bootstrap<T> bootstrap, Namespace namespace, T configuration) throws Exception {
-        final Environment environment = new Environment(bootstrap.getApplication().getName(),
-                                                        bootstrap.getObjectMapper(),
-                                                        bootstrap.getValidatorFactory(),
-                                                        bootstrap.getMetricRegistry(),
-                                                        bootstrap.getClassLoader(),
-                                                        bootstrap.getHealthCheckRegistry(),
-                                                        configuration);
+        this.environment = new Environment(bootstrap.getApplication().getName(),
+                                           bootstrap.getObjectMapper(),
+                                           bootstrap.getValidatorFactory(),
+                                           bootstrap.getMetricRegistry(),
+                                           bootstrap.getClassLoader(),
+                                           bootstrap.getHealthCheckRegistry(),
+                                           configuration);
         configuration.getMetricsFactory().configure(environment.lifecycle(),
                                                     bootstrap.getMetricRegistry());
         configuration.getServerFactory().configure(environment);
+        configuration.getHealthFactory().ifPresent(health -> health.configure(
+                environment.lifecycle(),
+                environment.servlets(),
+                environment.jersey(),
+                environment.health(),
+                environment.getObjectMapper(),
+                application.getName()));
 
         bootstrap.run(configuration, environment);
         application.run(configuration, environment);

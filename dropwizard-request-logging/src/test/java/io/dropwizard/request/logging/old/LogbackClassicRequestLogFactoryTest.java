@@ -3,6 +3,7 @@ package io.dropwizard.request.logging.old;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.DiscoverableSubtypeResolver;
 import io.dropwizard.jackson.Jackson;
@@ -11,7 +12,6 @@ import io.dropwizard.logging.ConsoleAppenderFactory;
 import io.dropwizard.logging.FileAppenderFactory;
 import io.dropwizard.logging.SyslogAppenderFactory;
 import io.dropwizard.request.logging.RequestLogFactory;
-import io.dropwizard.util.Resources;
 import io.dropwizard.validation.BaseValidator;
 import org.eclipse.jetty.server.CustomRequestLog;
 import org.eclipse.jetty.server.HttpChannelState;
@@ -21,7 +21,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
-import java.io.File;
 import java.util.Collections;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
@@ -33,7 +32,7 @@ import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class LogbackClassicRequestLogFactoryTest {
+class LogbackClassicRequestLogFactoryTest {
 
     static {
         BootstrapLogging.bootstrap();
@@ -42,26 +41,27 @@ public class LogbackClassicRequestLogFactoryTest {
     private RequestLogFactory<?> requestLog;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         final ObjectMapper objectMapper = Jackson.newObjectMapper();
         objectMapper.getSubtypeResolver().registerSubtypes(ConsoleAppenderFactory.class, FileAppenderFactory.class,
             SyslogAppenderFactory.class);
         this.requestLog = new YamlConfigurationFactory<>(RequestLogFactory.class,
             BaseValidator.newValidator(), objectMapper, "dw")
-            .build(new File(Resources.getResource("yaml/logbackClassicRequestLog.yml").toURI()));
+            .build(new ResourceConfigurationSourceProvider(), "yaml/logbackClassicRequestLog.yml");
     }
 
     @Test
-    public void testDeserialized() {
-        LogbackClassicRequestLogFactory classicRequestLogFactory = (LogbackClassicRequestLogFactory) requestLog;
-        assertThat(classicRequestLogFactory.getTimeZone()).isEqualTo(TimeZone.getTimeZone("Europe/Amsterdam"));
-        assertThat(classicRequestLogFactory.getAppenders()).hasSize(3).extractingResultOf("getClass").contains(
-            ConsoleAppenderFactory.class, FileAppenderFactory.class, SyslogAppenderFactory.class
-        );
+    void testDeserialized() {
+        assertThat(requestLog)
+            .isInstanceOfSatisfying(LogbackClassicRequestLogFactory.class, logFactory -> assertThat(logFactory)
+                .satisfies(classicRequestLogFactory -> assertThat(classicRequestLogFactory.getTimeZone()).isEqualTo(TimeZone.getTimeZone("Europe/Amsterdam")))
+                .satisfies(classicRequestLogFactory -> assertThat(classicRequestLogFactory.getAppenders()).hasSize(3).extractingResultOf("getClass")
+                    .containsOnly(ConsoleAppenderFactory.class, FileAppenderFactory.class, SyslogAppenderFactory.class
+        )));
     }
 
     @Test
-    public void testLogFormat() throws Exception {
+    void testLogFormat() throws Exception {
         final LogbackClassicRequestLogFactory factory = new LogbackClassicRequestLogFactory();
 
         @SuppressWarnings("unchecked")
@@ -112,7 +112,7 @@ public class LogbackClassicRequestLogFactoryTest {
     }
 
     @Test
-    public void isDiscoverable() throws Exception {
+    void isDiscoverable() {
         assertThat(new DiscoverableSubtypeResolver().getDiscoveredSubtypes())
             .contains(LogbackClassicRequestLogFactory.class);
     }

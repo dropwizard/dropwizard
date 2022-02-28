@@ -19,7 +19,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class ScheduledExecutorServiceBuilderTest {
+class ScheduledExecutorServiceBuilderTest {
 
     private static final Duration DEFAULT_SHUTDOWN_PERIOD = Duration.seconds(5L);
 
@@ -35,7 +35,7 @@ public class ScheduledExecutorServiceBuilderTest {
     }
 
     @AfterEach
-    public void tearDown() {
+    void tearDown() {
         if (this.execTracker != null) {
             this.execTracker.shutdownNow();
 
@@ -53,7 +53,7 @@ public class ScheduledExecutorServiceBuilderTest {
     }
 
     @Test
-    public void testBasicInvocation() {
+    void testBasicInvocation() {
         final String poolName = this.getClass().getSimpleName();
 
         final ScheduledExecutorServiceBuilder test = new ScheduledExecutorServiceBuilder(this.le,
@@ -61,11 +61,11 @@ public class ScheduledExecutorServiceBuilderTest {
             false);
 
         this.execTracker = test.build();
-        assertThat(this.execTracker).isInstanceOf(ScheduledThreadPoolExecutor.class);
 
-        final ScheduledThreadPoolExecutor castedExec = (ScheduledThreadPoolExecutor) this.execTracker;
-        assertThat(castedExec.getRemoveOnCancelPolicy()).isFalse();
-        assertThat(castedExec.getThreadFactory()).isInstanceOf(InstrumentedThreadFactory.class);
+        assertThat(this.execTracker)
+            .isInstanceOfSatisfying(ScheduledThreadPoolExecutor.class, exe -> assertThat(exe)
+                .satisfies(castedExec -> assertThat(castedExec.getRemoveOnCancelPolicy()).isFalse())
+                .satisfies(castedExec -> assertThat(castedExec.getThreadFactory()).isInstanceOf(InstrumentedThreadFactory.class)));
 
         final ArgumentCaptor<ExecutorServiceManager> esmCaptor = ArgumentCaptor.forClass(ExecutorServiceManager.class);
         verify(this.le).manage(esmCaptor.capture());
@@ -77,7 +77,7 @@ public class ScheduledExecutorServiceBuilderTest {
     }
 
     @Test
-    public void testRemoveOnCancelTrue() {
+    void testRemoveOnCancelTrue() {
         final String poolName = this.getClass().getSimpleName();
 
         final ScheduledExecutorServiceBuilder test = new ScheduledExecutorServiceBuilder(this.le,
@@ -85,10 +85,9 @@ public class ScheduledExecutorServiceBuilderTest {
             false);
 
         this.execTracker = test.removeOnCancelPolicy(true).build();
-        assertThat(this.execTracker).isInstanceOf(ScheduledThreadPoolExecutor.class);
-
-        final ScheduledThreadPoolExecutor castedExec = (ScheduledThreadPoolExecutor) this.execTracker;
-        assertThat(castedExec.getRemoveOnCancelPolicy()).isTrue();
+        assertThat(this.execTracker)
+            .isInstanceOfSatisfying(ScheduledThreadPoolExecutor.class, executor ->
+                assertThat(executor.getRemoveOnCancelPolicy()).isTrue());
 
         final ArgumentCaptor<ExecutorServiceManager> esmCaptor = ArgumentCaptor.forClass(ExecutorServiceManager.class);
         verify(this.le).manage(esmCaptor.capture());
@@ -100,7 +99,7 @@ public class ScheduledExecutorServiceBuilderTest {
     }
 
     @Test
-    public void testRemoveOnCancelFalse() {
+    void testRemoveOnCancelFalse() {
         final String poolName = this.getClass().getSimpleName();
 
         final ScheduledExecutorServiceBuilder test = new ScheduledExecutorServiceBuilder(this.le,
@@ -108,10 +107,9 @@ public class ScheduledExecutorServiceBuilderTest {
             false);
 
         this.execTracker = test.removeOnCancelPolicy(false).build();
-        assertThat(this.execTracker).isInstanceOf(ScheduledThreadPoolExecutor.class);
-
-        final ScheduledThreadPoolExecutor castedExec = (ScheduledThreadPoolExecutor) this.execTracker;
-        assertThat(castedExec.getRemoveOnCancelPolicy()).isFalse();
+        assertThat(this.execTracker)
+            .isInstanceOfSatisfying(ScheduledThreadPoolExecutor.class, executor ->
+                assertThat(executor.getRemoveOnCancelPolicy()).isFalse());
 
         final ArgumentCaptor<ExecutorServiceManager> esmCaptor = ArgumentCaptor.forClass(ExecutorServiceManager.class);
         verify(this.le).manage(esmCaptor.capture());
@@ -123,7 +121,7 @@ public class ScheduledExecutorServiceBuilderTest {
     }
 
     @Test
-    public void testPredefinedThreadFactory() {
+    void testPredefinedThreadFactory() {
         final ThreadFactory tfactory = mock(ThreadFactory.class);
         final String poolName = this.getClass().getSimpleName();
 
@@ -132,11 +130,10 @@ public class ScheduledExecutorServiceBuilderTest {
             tfactory);
 
         this.execTracker = test.removeOnCancelPolicy(false).build();
-        assertThat(this.execTracker).isInstanceOf(ScheduledThreadPoolExecutor.class);
-
-        final ScheduledThreadPoolExecutor castedExec = (ScheduledThreadPoolExecutor) this.execTracker;
-        assertThat(castedExec.getRemoveOnCancelPolicy()).isFalse();
-        assertThat(castedExec.getThreadFactory()).isInstanceOf(InstrumentedThreadFactory.class);
+        assertThat(this.execTracker)
+            .isInstanceOfSatisfying(ScheduledThreadPoolExecutor.class, exe -> assertThat(exe)
+                .satisfies(castedExec -> assertThat(castedExec.getRemoveOnCancelPolicy()).isFalse())
+                .satisfies(castedExec -> assertThat(castedExec.getThreadFactory()).isInstanceOf(InstrumentedThreadFactory.class)));
 
         final ArgumentCaptor<ExecutorServiceManager> esmCaptor = ArgumentCaptor.forClass(ExecutorServiceManager.class);
         verify(this.le).manage(esmCaptor.capture());

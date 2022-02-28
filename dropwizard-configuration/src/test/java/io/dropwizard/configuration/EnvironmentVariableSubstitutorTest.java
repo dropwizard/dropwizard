@@ -6,16 +6,16 @@ import static org.assertj.core.api.Assumptions.assumeThat;
 
 import org.junit.jupiter.api.Test;
 
-public class EnvironmentVariableSubstitutorTest {
+class EnvironmentVariableSubstitutorTest {
 
     @Test
-    public void defaultConstructorDisablesSubstitutionInVariables() {
+    void defaultConstructorDisablesSubstitutionInVariables() {
         EnvironmentVariableSubstitutor substitutor = new EnvironmentVariableSubstitutor();
         assertThat(substitutor.isEnableSubstitutionInVariables()).isFalse();
     }
 
     @Test
-    public void defaultConstructorEnablesStrict() {
+    void defaultConstructorEnablesStrict() {
         assumeThat(System.getenv("DOES_NOT_EXIST")).isNull();
 
         assertThatExceptionOfType(UndefinedEnvironmentVariableException.class).isThrownBy(() ->
@@ -23,19 +23,19 @@ public class EnvironmentVariableSubstitutorTest {
     }
 
     @Test
-    public void constructorEnablesSubstitutionInVariables() {
+    void constructorEnablesSubstitutionInVariables() {
         EnvironmentVariableSubstitutor substitutor = new EnvironmentVariableSubstitutor(true, true);
         assertThat(substitutor.isEnableSubstitutionInVariables()).isTrue();
     }
 
     @Test
-    public void substitutorUsesEnvironmentVariableLookup() {
+    void substitutorUsesEnvironmentVariableLookup() {
         EnvironmentVariableSubstitutor substitutor = new EnvironmentVariableSubstitutor();
         assertThat(substitutor.getStringLookup()).isInstanceOf(EnvironmentVariableLookup.class);
     }
 
     @Test
-    public void substitutorReplacesWithEnvironmentVariables() {
+    void substitutorReplacesWithEnvironmentVariables() {
         EnvironmentVariableSubstitutor substitutor = new EnvironmentVariableSubstitutor(false);
 
         assertThat(substitutor.replace("${TEST}")).isEqualTo(System.getenv("TEST"));
@@ -46,7 +46,7 @@ public class EnvironmentVariableSubstitutorTest {
     }
 
     @Test
-    public void substitutorStrictWithDefaults() {
+    void substitutorStrictWithDefaults() {
         EnvironmentVariableSubstitutor substitutor = new EnvironmentVariableSubstitutor(true);
         assertThat(substitutor.replace("${TEST} ${DOES_NOT_EXIST:-default}")).isEqualTo("test_value default");
 
@@ -55,14 +55,14 @@ public class EnvironmentVariableSubstitutorTest {
     }
 
     @Test
-    public void substitutorStrictRecurse() {
+    void substitutorStrictRecurse() {
         assumeThat(System.getenv("DOES_NOT_EXIST")).isNull();
         EnvironmentVariableSubstitutor substitutor = new EnvironmentVariableSubstitutor(true, true);
         assertThat(substitutor.replace("${DOES_NOT_EXIST:-${TEST}}")).isEqualTo(System.getenv("TEST"));
     }
 
     @Test
-    public void substitutorThrowsExceptionInStrictMode() {
+    void substitutorThrowsExceptionInStrictMode() {
         assumeThat(System.getenv("DOES_NOT_EXIST")).isNull();
 
         assertThatExceptionOfType(UndefinedEnvironmentVariableException.class).isThrownBy(() ->
@@ -70,7 +70,7 @@ public class EnvironmentVariableSubstitutorTest {
     }
 
     @Test
-    public void substitutorReplacesRecursively() {
+    void substitutorReplacesRecursively() {
         EnvironmentVariableSubstitutor substitutor = new EnvironmentVariableSubstitutor(false, true);
 
         assertThat(substitutor.replace("$${${TEST}}")).isEqualTo("${test_value}");

@@ -8,34 +8,34 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class SetsTest {
+class SetsTest {
 
     @Test
-    public void of2Elements() {
-        final Set set = Sets.of(1, 2);
+    void of2Elements() {
+        final Set<Integer> set = Sets.of(1, 2);
 
-        assertThat(set).isEqualTo(new HashSet(Arrays.asList(1, 2)));
+        assertThat(set).isEqualTo(new HashSet<>(Arrays.asList(1, 2)));
     }
 
     @Test
-    public void of3Elements() {
-        final Set set = Sets.of(1, 2, 1);
+    void of3Elements() {
+        final Set<Integer> set = Sets.of(1, 2, 1);
 
-        assertThat(set).isEqualTo(new HashSet(Arrays.asList(1, 2)));
+        assertThat(set).isEqualTo(new HashSet<>(Arrays.asList(1, 2)));
     }
 
     @Test
-    public void of4Elements() {
-        final Set set = Sets.of(1, 2, 1, 1);
+    void of4Elements() {
+        final Set<Integer> set = Sets.of(1, 2, 1, 1);
 
-        assertThat(set).isEqualTo(new HashSet(Arrays.asList(1, 2)));
+        assertThat(set).isEqualTo(new HashSet<>(Arrays.asList(1, 2)));
     }
 
     @Test
-    public void of5Elements() {
-        final Set set = Sets.of(1, 1, 2, 3, 3);
+    void of5Elements() {
+        final Set<Integer> set = Sets.of(1, 1, 2, 3, 3);
 
-        assertThat(set).isEqualTo(new HashSet(Arrays.asList(1, 2, 3)));
+        assertThat(set).isEqualTo(new HashSet<>(Arrays.asList(1, 2, 3)));
     }
 
 }

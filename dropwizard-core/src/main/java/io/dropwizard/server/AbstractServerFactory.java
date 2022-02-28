@@ -21,6 +21,7 @@ import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import io.dropwizard.request.logging.LogbackAccessRequestLogFactory;
 import io.dropwizard.request.logging.RequestLogFactory;
 import io.dropwizard.servlets.ThreadNameFilter;
+import io.dropwizard.setup.AdminEnvironment;
 import io.dropwizard.setup.ExceptionMapperBinder;
 import io.dropwizard.util.Duration;
 import io.dropwizard.validation.MinDuration;
@@ -553,11 +554,13 @@ public abstract class AbstractServerFactory implements ServerFactory {
     protected Handler createAdminServlet(Server server,
                                          MutableServletContextHandler handler,
                                          MetricRegistry metrics,
-                                         HealthCheckRegistry healthChecks) {
+                                         HealthCheckRegistry healthChecks,
+                                         AdminEnvironment admin) {
         configureSessionsAndSecurity(handler, server);
         handler.setServer(server);
         handler.getServletContext().setAttribute(MetricsServlet.METRICS_REGISTRY, metrics);
         handler.getServletContext().setAttribute(HealthCheckServlet.HEALTH_CHECK_REGISTRY, healthChecks);
+        handler.getServletContext().setAttribute(AdminServlet.HEALTHCHECK_ENABLED_PARAM_KEY, admin.isHealthCheckServletEnabled());
         handler.addServlet(AdminServlet.class, "/*");
         final String allowedMethodsParam = String.join(",", allowedMethods);
         handler.addFilter(AllowedMethodsFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST))
@@ -699,6 +702,7 @@ public abstract class AbstractServerFactory implements ServerFactory {
         return gzip.isEnabled() ? gzip.build(handler) : handler;
     }
 
+    @SuppressWarnings("Slf4jFormatShouldBeConst")
     protected void printBanner(String name) {
         String msg = "Starting " + name;
         final URL resource = Thread.currentThread().getContextClassLoader().getResource("banner.txt");
@@ -708,7 +712,7 @@ public abstract class AbstractServerFactory implements ServerFactory {
                  final BufferedReader bufferedReader = new BufferedReader(inputStreamReader)) {
                 final String banner = bufferedReader
                         .lines()
-                        .collect(Collectors.joining(String.format("%n")));
+                        .collect(Collectors.joining(System.lineSeparator()));
                 msg = String.format("Starting %s%n%s", name, banner);
             } catch (IllegalArgumentException | IOException ignored) {
             }

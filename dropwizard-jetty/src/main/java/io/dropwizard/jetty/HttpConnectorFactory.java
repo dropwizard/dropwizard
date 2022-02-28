@@ -1,6 +1,7 @@
 package io.dropwizard.jetty;
 
 import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.jetty9.InstrumentedConnectionFactory;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.dropwizard.util.DataSize;
@@ -84,10 +85,10 @@ import static com.codahale.metrics.MetricRegistry.name;
  *         <td>{@code maxRequestHeaderSize}</td>
  *         <td>8KiB</td>
  *         <td>
- *             The maximum size of a request header. Larger headers will allow for more and/or
- *             larger cookies plus larger form content encoded  in a URL. However, larger headers
- *             consume more memory and can make a server more vulnerable to denial of service
- *             attacks.
+ *             The maximum allowed size in bytes for the HTTP request line and HTTP request headers.
+ *             Larger headers will allow for more and/or larger cookies plus larger form content
+ *             encoded in a URL. However, larger headers consume more memory and can make a server
+ *             more vulnerable to denial of service attacks.
  *         </td>
  *     </tr>
  *     <tr>
@@ -618,7 +619,7 @@ public class HttpConnectorFactory implements ConnectorFactory {
         final ByteBufferPool bufferPool = buildBufferPool();
 
         return buildConnector(server, scheduler, bufferPool, name, threadPool,
-                              new Jetty93InstrumentedConnectionFactory(httpConnectionFactory,
+                              new InstrumentedConnectionFactory(httpConnectionFactory,
                                                                 metrics.timer(httpConnections())));
     }
 
@@ -694,8 +695,13 @@ public class HttpConnectorFactory implements ConnectorFactory {
     }
 
     protected ByteBufferPool buildBufferPool() {
-        return new ArrayByteBufferPool((int) minBufferPoolSize.toBytes(),
-                                       (int) bufferPoolIncrement.toBytes(),
-                                       (int) maxBufferPoolSize.toBytes());
+        return buildBufferPool((int) minBufferPoolSize.toBytes(),
+                               (int) bufferPoolIncrement.toBytes(),
+                               (int) maxBufferPoolSize.toBytes());
+    }
+
+    // This method only exists so that mockito can spy on the constructor parameters.
+    ByteBufferPool buildBufferPool(int minCapacity, int factor, int maxCapacity) {
+        return new ArrayByteBufferPool(minCapacity, factor, maxCapacity);
     }
 }

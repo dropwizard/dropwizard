@@ -3,31 +3,29 @@ package io.dropwizard.hibernate;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
+import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.db.PooledDataSourceFactory;
 import io.dropwizard.jersey.errors.ErrorMessage;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import io.dropwizard.testing.ConfigOverride;
-import io.dropwizard.testing.DropwizardTestSupport;
-import io.dropwizard.testing.ResourceHelpers;
-import io.dropwizard.util.Strings;
-import org.glassfish.jersey.client.JerseyClientBuilder;
+import io.dropwizard.testing.junit5.DropwizardAppExtension;
+import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import org.hibernate.FlushMode;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.exception.ConstraintViolationException;
-import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
@@ -36,24 +34,66 @@ import javax.ws.rs.ext.ExceptionMapper;
 import java.util.Arrays;
 import java.util.Optional;
 
-import static java.util.Objects.requireNonNull;
+import static io.dropwizard.testing.ConfigOverride.config;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
 
-public class LazyLoadingTest {
+@ExtendWith(DropwizardExtensionsSupport.class)
+class LazyLoadingTest {
+    private final DropwizardAppExtension<TestConfiguration> appExtension = new DropwizardAppExtension<>(
+        TestApplication.class, "hibernate-integration-test.yaml", new ResourceConfigurationSourceProvider(),
+        config("dataSource.url", "jdbc:h2:mem:DbTest" + System.nanoTime())
+    );
+
+    @Test
+    void serialisesLazyObjectWhenEnabled() {
+        final Dog raf = appExtension.client().target("http://localhost:" + appExtension.getLocalPort()).path("/dogs/Raf").request(MediaType.APPLICATION_JSON).get(Dog.class);
+
+        assertThat(raf.getName()).isEqualTo("Raf");
+        assertThat(raf.getOwner()).satisfies(person -> assertThat(person.getName()).isEqualTo("Coda"));
+    }
+
+    @Test
+    void returnsErrorsWhenEnabled() {
+        final Dog raf = new Dog();
+        raf.setName("Raf");
+
+        // Raf already exists so this should cause a primary key constraint violation
+        final Response response = appExtension.client().target("http://localhost:" + appExtension.getLocalPort()).path("/dogs/Raf").request().put(Entity.entity(raf, MediaType.APPLICATION_JSON));
+        assertThat(response.getStatusInfo()).isEqualTo(Response.Status.BAD_REQUEST);
+        assertThat(response.getHeaderString(HttpHeaders.CONTENT_TYPE)).isEqualTo(MediaType.APPLICATION_JSON);
+        assertThat(response.readEntity(ErrorMessage.class).getMessage()).contains("Unique index or primary key violation", "PUBLIC.DOGS(NAME)");
+    }
+
+    @Nested
+    @SuppressWarnings("ClassCanBeStatic")
+    @ExtendWith(DropwizardExtensionsSupport.class)
+    class LazyLoadingDisabledTest {
+        private final DropwizardAppExtension<TestConfiguration> appExtension = new DropwizardAppExtension<>(
+            TestApplicationWithDisabledLazyLoading.class, "hibernate-integration-test.yaml",
+            new ResourceConfigurationSourceProvider(),
+            config("dataSource.url", "jdbc:h2:mem:DbTest" + System.nanoTime())
+        );
+
+        @Test
+        void sendsNullWhenDisabled() {
+            final Dog raf = appExtension.client().target("http://localhost:" + appExtension.getLocalPort()).path("/dogs/Raf").request(MediaType.APPLICATION_JSON).get(Dog.class);
+
+            assertThat(raf.getName()).isEqualTo("Raf");
+            assertThat(raf.getOwner()).isNull();
+        }
+    }
 
     public static class TestConfiguration extends Configuration {
-
-        DataSourceFactory dataSource = new DataSourceFactory();
+        DataSourceFactory dataSource;
 
         TestConfiguration(@JsonProperty("dataSource") DataSourceFactory dataSource) {
             this.dataSource = dataSource;
         }
     }
 
-    public static class TestApplication extends io.dropwizard.Application<TestConfiguration> {
+    public static class TestApplication extends Application<TestConfiguration> {
         final HibernateBundle<TestConfiguration> hibernate = new HibernateBundle<TestConfiguration>(
-                Arrays.asList(Person.class, Dog.class), new SessionFactoryFactory()) {
+            Arrays.asList(Person.class, Dog.class), new SessionFactoryFactory()) {
             @Override
             public PooledDataSourceFactory getDataSourceFactory(TestConfiguration configuration) {
                 return configuration.dataSource;
@@ -66,8 +106,7 @@ public class LazyLoadingTest {
         }
 
         @Override
-        public void run(TestConfiguration configuration, Environment environment) throws Exception {
-
+        public void run(TestConfiguration configuration, Environment environment) {
             final SessionFactory sessionFactory = hibernate.getSessionFactory();
             initDatabase(sessionFactory);
 
@@ -114,10 +153,9 @@ public class LazyLoadingTest {
             return Optional.ofNullable(get(name));
         }
 
-        Dog create(Dog dog) throws HibernateException {
+        void create(Dog dog) throws HibernateException {
             currentSession().setHibernateFlushMode(FlushMode.COMMIT);
-            currentSession().save(requireNonNull(dog));
-            return dog;
+            currentSession().save(dog);
         }
     }
 
@@ -147,70 +185,8 @@ public class LazyLoadingTest {
         @Override
         public Response toResponse(ConstraintViolationException e) {
             return Response.status(Response.Status.BAD_REQUEST)
-                .entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(), Strings.nullToEmpty(e.getCause().getMessage())))
+                .entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(), Optional.ofNullable(e.getCause().getMessage()).orElse("")))
                 .build();
         }
-    }
-
-    private DropwizardTestSupport<?> dropwizardTestSupport = mock(DropwizardTestSupport.class);
-    private Client client = new JerseyClientBuilder().build();
-
-    public void setup(Class<? extends Application<TestConfiguration>> applicationClass) throws Exception {
-        dropwizardTestSupport = new DropwizardTestSupport<>(applicationClass, ResourceHelpers.resourceFilePath("hibernate-integration-test.yaml"),
-            ConfigOverride.config("dataSource.url", "jdbc:hsqldb:mem:DbTest" + System.nanoTime() + "?hsqldb.translate_dti_types=false"));
-        dropwizardTestSupport.before();
-    }
-
-    @AfterEach
-    public void tearDown() {
-        dropwizardTestSupport.after();
-        client.close();
-    }
-
-    private String getUrlPrefix() {
-        return "http://localhost:" + dropwizardTestSupport.getLocalPort();
-    }
-
-    @Test
-    public void serialisesLazyObjectWhenEnabled() throws Exception {
-        setup(TestApplication.class);
-
-        final Dog raf = client.target(getUrlPrefix() + "/dogs/Raf").request(MediaType.APPLICATION_JSON).get(Dog.class);
-
-        assertThat(raf.getName())
-            .isEqualTo("Raf");
-
-        assertThat(raf.getOwner())
-            .isNotNull();
-
-        assertThat(requireNonNull(raf.getOwner()).getName())
-            .isEqualTo("Coda");
-    }
-
-    @Test
-    public void sendsNullWhenDisabled() throws Exception {
-        setup(TestApplicationWithDisabledLazyLoading.class);
-
-        final Dog raf = client.target(getUrlPrefix() + "/dogs/Raf").request(MediaType.APPLICATION_JSON).get(Dog.class);
-
-        assertThat(raf.getName())
-            .isEqualTo("Raf");
-
-        assertThat(raf.getOwner())
-            .isNull();
-    }
-
-    @Test
-    public void returnsErrorsWhenEnabled() throws Exception {
-        setup(TestApplication.class);
-
-        final Dog raf = new Dog();
-        raf.setName("Raf");
-
-        // Raf already exists so this should cause a primary key constraint violation
-        final Response response = client.target(getUrlPrefix() + "/dogs/Raf").request().put(Entity.entity(raf, MediaType.APPLICATION_JSON));
-        assertThat(response.getStatusInfo()).isEqualTo(Response.Status.BAD_REQUEST);
-        assertThat(response.getHeaderString(HttpHeaders.CONTENT_TYPE)).isEqualTo(MediaType.APPLICATION_JSON);
-        assertThat(response.readEntity(ErrorMessage.class).getMessage()).contains("unique constraint", "table: DOGS");
     }
 }

@@ -55,10 +55,12 @@ public class SelfValidatingBenchmark {
     public static class SelfValidatingMethodUser {
         @SelfValidation
         public void validateValid1(ViolationCollector collector) {
+            // stub implementation
         }
 
         @SelfValidation
         public void validateValid2(ViolationCollector collector) {
+            // stub implementation
         }
 
         @SelfValidation

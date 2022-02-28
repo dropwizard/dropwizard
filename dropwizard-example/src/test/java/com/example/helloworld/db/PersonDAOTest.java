@@ -15,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 @ExtendWith(DropwizardExtensionsSupport.class)
-public class PersonDAOTest {
+class PersonDAOTest {
 
     public DAOTestExtension daoTestRule = DAOTestExtension.newBuilder()
         .addEntityClass(Person.class)
@@ -24,14 +24,14 @@ public class PersonDAOTest {
     private PersonDAO personDAO;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         personDAO = new PersonDAO(daoTestRule.getSessionFactory());
     }
 
     @Test
-    public void createPerson() {
+    void createPerson() {
         final Person jeff = daoTestRule.inTransaction(() -> personDAO.create(new Person("Jeff", "The plumber", 1995)));
-        assertThat(jeff.getId()).isGreaterThan(0);
+        assertThat(jeff.getId()).isPositive();
         assertThat(jeff.getFullName()).isEqualTo("Jeff");
         assertThat(jeff.getJobTitle()).isEqualTo("The plumber");
         assertThat(jeff.getYearBorn()).isEqualTo(1995);
@@ -39,7 +39,7 @@ public class PersonDAOTest {
     }
 
     @Test
-    public void findAll() {
+    void findAll() {
         daoTestRule.inTransaction(() -> {
             personDAO.create(new Person("Jeff", "The plumber", 1975));
             personDAO.create(new Person("Jim", "The cook", 1985));
@@ -53,7 +53,7 @@ public class PersonDAOTest {
     }
 
     @Test
-    public void handlesNullFullName() {
+    void handlesNullFullName() {
         assertThatExceptionOfType(ConstraintViolationException.class).isThrownBy(()->
             daoTestRule.inTransaction(() -> personDAO.create(new Person(null, "The null", 0))));
     }

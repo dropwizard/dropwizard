@@ -1,9 +1,7 @@
 package io.dropwizard.migrations;
 
-import io.dropwizard.util.Resources;
 import net.jcip.annotations.NotThreadSafe;
 import net.sourceforge.argparse4j.inf.Namespace;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -29,10 +27,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @NotThreadSafe
-public class DbDumpCommandTest extends AbstractMigrationTest {
+class DbDumpCommandTest extends AbstractMigrationTest {
 
     private static final List<String> ATTRIBUTE_NAMES = Arrays.asList("columns", "foreign-keys", "indexes",
             "primary-keys", "sequences", "tables", "unique-constraints", "views");
@@ -49,15 +48,15 @@ public class DbDumpCommandTest extends AbstractMigrationTest {
     }
 
     @BeforeEach
-    public void setUp() throws Exception {
-        final String existedDbPath = new File(Resources.getResource("test-db.mv.db").toURI()).getAbsolutePath();
-        final String existedDbUrl = "jdbc:h2:" + StringUtils.removeEnd(existedDbPath, ".mv.db");
+    void setUp() throws Exception {
+        final String existedDbPath = getClass().getResource("/test-db.mv.db").getPath();
+        final String existedDbUrl = "jdbc:h2:" + existedDbPath.substring(0, existedDbPath.length() - ".mv.db".length());
         existedDbConf = createConfiguration(existedDbUrl);
         dumpCommand.setOutputStream(new PrintStream(baos));
     }
 
     @Test
-    public void testDumpSchema() throws Exception {
+    void testDumpSchema() throws Exception {
         dumpCommand.run(null, new Namespace(ATTRIBUTE_NAMES.stream()
             .collect(Collectors.toMap(a -> a, b -> true))), existedDbConf);
 
@@ -66,7 +65,7 @@ public class DbDumpCommandTest extends AbstractMigrationTest {
     }
 
     @Test
-    public void testDumpSchemaAndData() throws Exception {
+    void testDumpSchemaAndData() throws Exception {
         dumpCommand.run(null, new Namespace(Stream.concat(ATTRIBUTE_NAMES.stream(), Stream.of("data"))
             .collect(Collectors.toMap(a -> a, b -> true))), existedDbConf);
 
@@ -76,7 +75,7 @@ public class DbDumpCommandTest extends AbstractMigrationTest {
     }
 
     @Test
-    public void testDumpOnlyData() throws Exception {
+    void testDumpOnlyData() throws Exception {
         dumpCommand.run(null, new Namespace(Collections.singletonMap("data", true)), existedDbConf);
 
         final Element changeSet = getFirstElement(toXmlDocument(baos).getDocumentElement(), "changeSet");
@@ -84,7 +83,7 @@ public class DbDumpCommandTest extends AbstractMigrationTest {
     }
 
     @Test
-    public void testWriteToFile() throws Exception {
+    void testWriteToFile() throws Exception {
         final File file = File.createTempFile("migration", ".xml");
         dumpCommand.run(null, new Namespace(Collections.singletonMap("output", file.getAbsolutePath())), existedDbConf);
         // Check that file is exist, and has some XML content (no reason to make a full-blown XML assertion)
@@ -93,9 +92,9 @@ public class DbDumpCommandTest extends AbstractMigrationTest {
     }
 
     @Test
-    public void testHelpPage() throws Exception {
+    void testHelpPage() throws Exception {
         createSubparser(dumpCommand).printHelp(new PrintWriter(new OutputStreamWriter(baos, UTF_8), true));
-        assertThat(baos.toString(UTF_8)).isEqualTo(String.format(
+        assertThat(baos.toString(UTF_8.name())).isEqualTo(String.format(
                 "usage: db dump [-h] [--migrations MIGRATIONS-FILE] [--catalog CATALOG]%n" +
                         "          [--schema SCHEMA] [-o OUTPUT] [--tables] [--ignore-tables]%n" +
                         "          [--columns] [--ignore-columns] [--views] [--ignore-views]%n" +
@@ -180,23 +179,26 @@ public class DbDumpCommandTest extends AbstractMigrationTest {
 
         final NodeList columns = createTable.getElementsByTagName("column");
 
-        final Element idColumn = (Element) columns.item(0);
-        assertThat(idColumn.getAttribute("autoIncrement")).isEqualTo("true");
-        assertThat(idColumn.getAttribute("name")).isEqualTo("ID");
-        assertThat(idColumn.getAttribute("type")).isEqualTo("INT");
-        final Element idColumnConstraints = getFirstElement(idColumn, "constraints");
-        assertThat(idColumnConstraints.getAttribute("primaryKey")).isEqualTo("true");
-        assertThat(idColumnConstraints.getAttribute("primaryKeyName")).isEqualTo("PK_PERSONS");
+        assertThat(columns.item(0))
+            .isInstanceOfSatisfying(Element.class, column -> assertThat(column)
+                .satisfies(idColumn -> assertThat(idColumn.getAttribute("autoIncrement")).isEqualTo("true"))
+                .satisfies(idColumn -> assertThat(idColumn.getAttribute("name")).isEqualTo("ID"))
+                .satisfies(idColumn -> assertThat(idColumn.getAttribute("type")).isEqualTo("INT"))
+                .extracting(idColumn -> getFirstElement(idColumn, "constraints"))
+                .satisfies(idColumnConstraints -> assertThat(idColumnConstraints.getAttribute("primaryKey")).isEqualTo("true"))
+                .satisfies(idColumnConstraints -> assertThat(idColumnConstraints.getAttribute("primaryKeyName")).isEqualTo("PK_PERSONS")));
 
-        final Element nameColumn = (Element) columns.item(1);
-        assertThat(nameColumn.getAttribute("name")).isEqualTo("NAME");
-        assertThat(nameColumn.getAttribute("type")).isEqualTo("VARCHAR(256)");
-        final Element nameColumnConstraints = getFirstElement(nameColumn, "constraints");
-        assertThat(nameColumnConstraints.getAttribute("nullable")).isEqualTo("false");
+        assertThat(columns.item(1))
+            .isInstanceOfSatisfying(Element.class, column -> assertThat(column)
+                .satisfies(nameColumn -> assertThat(nameColumn.getAttribute("name")).isEqualTo("NAME"))
+                .satisfies(nameColumn -> assertThat(nameColumn.getAttribute("type")).isEqualTo("VARCHAR(256)"))
+                .extracting(nameColumn -> getFirstElement(nameColumn, "constraints"))
+                .satisfies(nameColumnConstraints -> assertThat(nameColumnConstraints.getAttribute("nullable")).isEqualTo("false")));
 
-        final Element emailColumn = (Element) columns.item(2);
-        assertThat(emailColumn.getAttribute("name")).isEqualTo("EMAIL");
-        assertThat(emailColumn.getAttribute("type")).isEqualTo("VARCHAR(128)");
+        assertThat(columns.item(2))
+            .isInstanceOfSatisfying(Element.class, column -> assertThat(column)
+                .satisfies(emailColumn -> assertThat(emailColumn.getAttribute("name")).isEqualTo("EMAIL"))
+                .satisfies(emailColumn -> assertThat(emailColumn.getAttribute("type")).isEqualTo("VARCHAR(128)")));
     }
 
     /**
@@ -213,17 +215,20 @@ public class DbDumpCommandTest extends AbstractMigrationTest {
 
         final NodeList columns = insert.getElementsByTagName("column");
 
-        final Element idColumn = (Element) columns.item(0);
-        assertThat(idColumn.getAttribute("name")).isEqualTo("ID");
-        assertThat(idColumn.getAttribute("valueNumeric")).isEqualTo("1");
+        assertThat(columns.item(0))
+            .isInstanceOfSatisfying(Element.class, column -> assertThat(column)
+                .satisfies(idColumn -> assertThat(idColumn.getAttribute("name")).isEqualTo("ID"))
+                .satisfies(idColumn -> assertThat(idColumn.getAttribute("valueNumeric")).isEqualTo("1")));
 
-        final Element nameColumn = (Element) columns.item(1);
-        assertThat(nameColumn.getAttribute("name")).isEqualTo("NAME");
-        assertThat(nameColumn.getAttribute("value")).isEqualTo("Bill Smith");
+        assertThat(columns.item(1))
+            .isInstanceOfSatisfying(Element.class, column -> assertThat(column)
+                .satisfies(nameColumn -> assertThat(nameColumn.getAttribute("name")).isEqualTo("NAME"))
+                .satisfies(nameColumn -> assertThat(nameColumn.getAttribute("value")).isEqualTo("Bill Smith")));
 
-        final Element emailColumn = (Element) columns.item(2);
-        assertThat(emailColumn.getAttribute("name")).isEqualTo("EMAIL");
-        assertThat(emailColumn.getAttribute("value")).isEqualTo("bill@smith.me");
+        assertThat(columns.item(2))
+            .isInstanceOfSatisfying(Element.class, column -> assertThat(column)
+                .satisfies(nameColumn -> assertThat(nameColumn.getAttribute("name")).isEqualTo("EMAIL"))
+                .satisfies(nameColumn -> assertThat(nameColumn.getAttribute("value")).isEqualTo("bill@smith.me")));
     }
 
     private static Element getFirstElement(Element root, String tagName) {

@@ -1,0 +1,17 @@
+{
+  "extends": [
+    "config:base"
+  ],
+  "baseBranches": ["master", "release/2.0.x", "release/2.1.x", "release/3.0.x", "release/4.0.x"],
+  "dependencyDashboard": true,
+  "labels": ["dependencies"],
+  "reviewers": ["team:committers"],
+  "separateMinorPatch": true,
+  "schedule": [
+    "before 2am"
+  ],
+  "vulnerabilityAlerts": {
+    "labels": ["security"],
+    "assignees": ["team:committers"]
+  }
+}

@@ -17,7 +17,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class OptionalQueryParamResourceTest extends AbstractJerseyTest {
+class OptionalQueryParamResourceTest extends AbstractJerseyTest {
 
     @Override
     protected Application configure() {
@@ -27,27 +27,27 @@ public class OptionalQueryParamResourceTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void shouldReturnDefaultMessageWhenMessageIsNotPresent() {
+    void shouldReturnDefaultMessageWhenMessageIsNotPresent() {
         String defaultMessage = "Default Message";
         String response = target("/optional/message").request().get(String.class);
         assertThat(response).isEqualTo(defaultMessage);
     }
 
     @Test
-    public void shouldReturnMessageWhenMessageIsPresent() {
+    void shouldReturnMessageWhenMessageIsPresent() {
         String customMessage = "Custom Message";
         String response = target("/optional/message").queryParam("message", customMessage).request().get(String.class);
         assertThat(response).isEqualTo(customMessage);
     }
 
     @Test
-    public void shouldReturnMessageWhenMessageIsBlank() {
+    void shouldReturnMessageWhenMessageIsBlank() {
         String response = target("/optional/message").queryParam("message", "").request().get(String.class);
-        assertThat(response).isEqualTo("");
+        assertThat(response).isEmpty();
     }
 
     @Test
-    public void shouldReturnDecodedMessageWhenEncodedMessageIsPresent() {
+    void shouldReturnDecodedMessageWhenEncodedMessageIsPresent() {
         String encodedMessage = "Custom%20Message";
         String decodedMessage = "Custom Message";
         String response = target("/optional/message").queryParam("message", encodedMessage).request().get(String.class);
@@ -55,35 +55,35 @@ public class OptionalQueryParamResourceTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void shouldReturnDefaultMessageWhenMyMessageIsNotPresent() {
+    void shouldReturnDefaultMessageWhenMyMessageIsNotPresent() {
         String defaultMessage = "My Default Message";
         String response = target("/optional/my-message").request().get(String.class);
         assertThat(response).isEqualTo(defaultMessage);
     }
 
     @Test
-    public void shouldReturnMyMessageWhenMyMessageIsPresent() {
+    void shouldReturnMyMessageWhenMyMessageIsPresent() {
         String myMessage = "My Message";
         String response = target("/optional/my-message").queryParam("mymessage", myMessage).request().get(String.class);
         assertThat(response).isEqualTo(myMessage);
     }
 
     @Test
-    public void shouldThrowBadRequestExceptionWhenInvalidUUIDIsPresent() {
+    void shouldThrowBadRequestExceptionWhenInvalidUUIDIsPresent() {
         String invalidUUID = "invalid-uuid";
         assertThatExceptionOfType(BadRequestException.class).isThrownBy(() ->
             target("/optional/uuid").queryParam("uuid", invalidUUID).request().get(String.class));
     }
 
     @Test
-    public void shouldReturnDefaultUUIDWhenUUIDIsNotPresent() {
+    void shouldReturnDefaultUUIDWhenUUIDIsNotPresent() {
         String defaultUUID = "d5672fa8-326b-40f6-bf71-d9dacf44bcdc";
         String response = target("/optional/uuid").request().get(String.class);
         assertThat(response).isEqualTo(defaultUUID);
     }
 
     @Test
-    public void shouldReturnUUIDWhenValidUUIDIsPresent() {
+    void shouldReturnUUIDWhenValidUUIDIsPresent() {
         String uuid = "fd94b00d-bd50-46b3-b42f-905a9c9e7d78";
         String response = target("/optional/uuid").queryParam("uuid", uuid).request().get(String.class);
         assertThat(response).isEqualTo(uuid);

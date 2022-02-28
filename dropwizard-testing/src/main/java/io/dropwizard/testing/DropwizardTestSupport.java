@@ -4,18 +4,21 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.cli.Command;
+import io.dropwizard.cli.ConfiguredCommand;
+import io.dropwizard.cli.EnvironmentCommand;
 import io.dropwizard.cli.ServerCommand;
 import io.dropwizard.configuration.ConfigurationSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.lifecycle.Managed;
+import io.dropwizard.logging.LoggingUtil;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.util.Sets;
-import io.dropwizard.util.Strings;
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
+import org.slf4j.Logger;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
@@ -250,10 +253,9 @@ public class DropwizardTestSupport<C extends Configuration> {
             }
             try {
                 jettyServer.stop();
+            } catch (RuntimeException e) {
+                throw e;
             } catch (Exception e) {
-                if (e instanceof RuntimeException) {
-                  throw (RuntimeException) e;
-                }
                 throw new RuntimeException(e);
             } finally {
                 jettyServer = null;
@@ -263,19 +265,17 @@ public class DropwizardTestSupport<C extends Configuration> {
         // Don't leak logging appenders into other test cases
         if (configuration != null) {
             configuration.getLoggingFactory().reset();
+        } else {
+            LoggingUtil.getLoggerContext().getLogger(Logger.ROOT_LOGGER_NAME).detachAndStopAllAppenders();
         }
     }
 
     private void applyConfigOverrides() {
-        for (ConfigOverride configOverride : configOverrides) {
-            configOverride.addToSystemProperties();
-        }
+        configOverrides.forEach(ConfigOverride::addToSystemProperties);
     }
 
     private void resetConfigOverrides() {
-        for (ConfigOverride configOverride : configOverrides) {
-            configOverride.removeFromSystemProperties();
-        }
+        configOverrides.forEach(ConfigOverride::removeFromSystemProperties);
     }
 
     private void startIfRequired() throws Exception {
@@ -289,8 +289,6 @@ public class DropwizardTestSupport<C extends Configuration> {
             @Override
             public void run(C configuration, Environment environment) throws Exception {
                 environment.lifecycle().addServerLifecycleListener(server -> jettyServer = server);
-                DropwizardTestSupport.this.configuration = configuration;
-                DropwizardTestSupport.this.environment = environment;
                 super.run(configuration, environment);
                 for (ServiceListener<C> listener : listeners) {
                     try {
@@ -318,33 +316,42 @@ public class DropwizardTestSupport<C extends Configuration> {
         }
 
 
-        final Map<String, Object> namespaceAttributes;
-        if (!Strings.isNullOrEmpty(configPath)) {
-            namespaceAttributes = Collections.singletonMap("file", configPath);
-        } else {
-            namespaceAttributes = Collections.emptyMap();
-        }
+        final Map<String, Object> namespaceAttributes = Optional.ofNullable(configPath)
+            .filter(path -> !path.isEmpty())
+            .map(path -> Collections.singletonMap("file", (Object)path))
+            .orElse(Collections.emptyMap());
 
         final Namespace namespace = new Namespace(namespaceAttributes);
         final Command command = commandInstantiator.apply(application);
         command.run(bootstrap, namespace);
+
+        if (command instanceof EnvironmentCommand) {
+            @SuppressWarnings("unchecked")
+            EnvironmentCommand<C> environmentCommand = (EnvironmentCommand<C>) command;
+            this.configuration = environmentCommand.getConfiguration();
+            this.environment = environmentCommand.getEnvironment();
+        } else if (command instanceof ConfiguredCommand) {
+            @SuppressWarnings("unchecked")
+            ConfiguredCommand<C> configuredCommand = (ConfiguredCommand<C>) command;
+            this.configuration = configuredCommand.getConfiguration();
+        }
     }
 
     public C getConfiguration() {
-        return requireNonNull(configuration);
+        return requireNonNull(configuration, "configuration");
     }
 
     public int getLocalPort() {
-        return ((ServerConnector) requireNonNull(jettyServer).getConnectors()[0]).getLocalPort();
+        return getPort(0);
     }
 
     public int getAdminPort() {
-        final Connector[] connectors = requireNonNull(jettyServer).getConnectors();
+        final Connector[] connectors = requireNonNull(jettyServer, "jettyServer").getConnectors();
         return ((ServerConnector) connectors[connectors.length - 1]).getLocalPort();
     }
 
     public int getPort(int connectorIndex) {
-        return ((ServerConnector) requireNonNull(jettyServer).getConnectors()[connectorIndex]).getLocalPort();
+        return ((ServerConnector) requireNonNull(jettyServer, "jettyServer").getConnectors()[connectorIndex]).getLocalPort();
     }
 
     public Application<C> newApplication() {
@@ -357,11 +364,11 @@ public class DropwizardTestSupport<C extends Configuration> {
 
     @SuppressWarnings({"unchecked", "TypeParameterUnusedInFormals"})
     public <A extends Application<C>> A getApplication() {
-        return (A) requireNonNull(application);
+        return (A) requireNonNull(application, "application");
     }
 
     public Environment getEnvironment() {
-        return requireNonNull(environment);
+        return requireNonNull(environment, "environment");
     }
 
     public ObjectMapper getObjectMapper() {

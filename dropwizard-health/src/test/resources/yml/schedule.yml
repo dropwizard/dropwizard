@@ -1,0 +1,4 @@
+checkInterval: 2500ms
+downtimeInterval: 25s
+failureAttempts: 2
+successAttempts: 1

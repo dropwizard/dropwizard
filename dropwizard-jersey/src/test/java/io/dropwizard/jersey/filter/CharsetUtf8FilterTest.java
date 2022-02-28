@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class CharsetUtf8FilterTest {
+class CharsetUtf8FilterTest {
 
     private ContainerRequestContext request = mock(ContainerRequestContext.class);
     private ContainerResponseContext response = mock(ContainerResponseContext.class);
@@ -21,7 +21,7 @@ public class CharsetUtf8FilterTest {
     private CharsetUtf8Filter charsetUtf8Filter = new CharsetUtf8Filter();
 
     @Test
-    public void testSetsCharsetEncoding() throws Exception {
+    void testSetsCharsetEncoding() throws Exception {
         when(response.getMediaType()).thenReturn(MediaType.APPLICATION_JSON_TYPE);
         MultivaluedMap<String, Object> headers = new MultivaluedHashMap<>();
         headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_TYPE);

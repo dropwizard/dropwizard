@@ -16,12 +16,11 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-public class JdbiFactoryTest {
+class JdbiFactoryTest {
     @Test
-    public void testBuild() {
+    void testBuild() {
         final Environment environment = mock(Environment.class);
         final MetricRegistry metrics = mock(MetricRegistry.class);
         final LifecycleEnvironment lifecycle = mock(LifecycleEnvironment.class);

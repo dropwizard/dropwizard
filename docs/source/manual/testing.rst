@@ -114,7 +114,7 @@ This test uses `AssertJ assertions`_ and JUnit_ to test that when a ``Person`` i
 via Jackson it matches the JSON in the fixture file. (The comparison is done on a normalized JSON
 string representation, so formatting doesn't affect the results.)
 
-.. _AssertJ assertions: http://assertj.org/assertj-core-conditions.html
+.. _AssertJ assertions: https://assertj.github.io/doc/#assertj-core-assertions-guide
 .. _JUnit: http://www.junit.org/
 
 .. _man-testing-representations-deserialization:
@@ -334,7 +334,7 @@ The optional ``dropwizard-client`` module offers more helpers, e.g. a custom Jer
 which is aware of your application's environment.
 
 JUnit 5
------
+-------
 Adding ``DropwizardExtensionsSupport`` annotation and ``DropwizardAppExtension`` extension to your JUnit5 test class will start the app prior to any tests
 running and stop it again when they've completed (roughly equivalent to having used ``@BeforeAll`` and ``@AfterAll``).
 ``DropwizardAppExtension`` also exposes the app's ``Configuration``,
@@ -368,7 +368,7 @@ and can be reused across tests.
     }
 
 JUnit 4
------
+-------
 Adding ``DropwizardAppRule`` to your JUnit4 test class will start the app prior to any tests
 running and stop it again when they've completed (roughly equivalent to having used ``@BeforeClass`` and ``@AfterClass``).
 ``DropwizardAppRule`` also exposes the app's ``Configuration``,
@@ -528,7 +528,7 @@ which setups a Hibernate ``SessionFactory``.
         }
 
         @Test
-        public createsFoo() {
+        public void createsFoo() {
             FooEntity fooEntity = new FooEntity("bar");
             long id = database.inTransaction(() -> {
                 return fooDAO.save(fooEntity);
@@ -538,7 +538,7 @@ which setups a Hibernate ``SessionFactory``.
         }
 
         @Test
-        public roundtripsFoo() {
+        public void roundtripsFoo() {
             long id = database.inTransaction(() -> {
                 return fooDAO.save(new FooEntity("baz"));
             });
@@ -583,8 +583,7 @@ assert the expected widget is deserialized based on the ``type`` field.
 
         @Test
         public void testBuildAHammer() throws Exception {
-            final File yml = new File(Resources.getResource("yaml/hammer.yml").toURI());
-            final WidgetFactory wid = factory.build(yml);
+            final WidgetFactory wid = factory.build(new ResourceConfigurationSourceProvider(), "yaml/hammer.yml");
             assertThat(wid).isInstanceOf(HammerFactory.class);
             assertThat(((HammerFactory) wid).createWidget().getWeight()).isEqualTo(10);
         }

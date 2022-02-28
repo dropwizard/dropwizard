@@ -7,9 +7,9 @@ import java.time.ZonedDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ZonedDateTimeParamTest {
+class ZonedDateTimeParamTest {
     @Test
-    public void parsesDateTimes() throws Exception {
+    void parsesDateTimes() throws Exception {
         final ZonedDateTimeParam param = new ZonedDateTimeParam("2012-11-19T13:37+01:00[Europe/Berlin]");
 
         assertThat(param.get())

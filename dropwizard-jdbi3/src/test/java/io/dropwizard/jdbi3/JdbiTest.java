@@ -5,7 +5,7 @@ import com.codahale.metrics.jdbi3.strategies.TimedAnnotationNameStrategy;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.logging.BootstrapLogging;
 import io.dropwizard.setup.Environment;
-import io.dropwizard.util.Resources;
+import io.dropwizard.util.ByteStreams;
 import org.eclipse.jetty.util.component.LifeCycle;
 import org.jdbi.v3.core.Jdbi;
 import org.joda.time.DateTime;
@@ -44,8 +44,8 @@ class JdbiTest {
 
         dbi = new JdbiFactory(new TimedAnnotationNameStrategy()).build(environment, dataSourceFactory, "h2");
         dbi.useTransaction(h -> {
-            h.createScript(Resources.toString(Resources.getResource("schema.sql"), StandardCharsets.UTF_8)).execute();
-            h.createScript(Resources.toString(Resources.getResource("data.sql"), StandardCharsets.UTF_8)).execute();
+            h.createScript(new String(ByteStreams.toByteArray(getClass().getResourceAsStream("/schema.sql")), StandardCharsets.UTF_8)).execute();
+            h.createScript(new String(ByteStreams.toByteArray(getClass().getResourceAsStream("/data.sql")), StandardCharsets.UTF_8)).execute();
         });
         dao = dbi.onDemand(GameDao.class);
         for (LifeCycle lc : environment.lifecycle().getManagedObjects()) {

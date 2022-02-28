@@ -8,6 +8,7 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.CaffeineSpec;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.github.benmanes.caffeine.cache.stats.CacheStats;
+import com.github.benmanes.caffeine.cache.stats.StatsCounter;
 import com.google.common.annotations.VisibleForTesting;
 import io.dropwizard.util.Sets;
 
@@ -17,6 +18,7 @@ import java.security.Principal;
 import java.util.Set;
 import java.util.concurrent.CompletionException;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static com.codahale.metrics.MetricRegistry.name;
@@ -74,11 +76,28 @@ public class CachingAuthorizer<P extends Principal> implements Authorizer<P> {
         final MetricRegistry metricRegistry,
         final Authorizer<P> authorizer,
         final Caffeine<Object, Object> builder) {
+        this(metricRegistry, authorizer, builder, () -> new MetricsStatsCounter(metricRegistry, name(CachingAuthorizer.class)));
+    }
+
+    /**
+     * Creates a new cached authorizer.
+     *
+     * @param metricRegistry the application's registry of metrics
+     * @param authorizer     the underlying authorizer
+     * @param builder        a {@link Caffeine} spec
+     * @param supplier       a {@link Supplier<StatsCounter>}
+     */
+    public CachingAuthorizer(
+        final MetricRegistry metricRegistry,
+        final Authorizer<P> authorizer,
+        final Caffeine<Object, Object> builder,
+        final Supplier<StatsCounter> supplier
+        ) {
         this.underlying = authorizer;
         this.cacheMisses = metricRegistry.meter(name(authorizer.getClass(), "cache-misses"));
         this.getsTimer = metricRegistry.timer(name(authorizer.getClass(), "gets"));
         this.cache = builder
-                .recordStats(() -> new MetricsStatsCounter(metricRegistry, name(CachingAuthorizer.class)))
+                .recordStats(supplier)
                 .build(key -> {
                     cacheMisses.mark();
                     return underlying.authorize(key.getPrincipal(), key.getRole(), key.getRequestContext());
@@ -93,9 +112,8 @@ public class CachingAuthorizer<P extends Principal> implements Authorizer<P> {
     @Override
     public boolean authorize(P principal, String role, @Nullable ContainerRequestContext requestContext) {
         try (Timer.Context context = getsTimer.time()) {
-            final AuthorizationContext<P> cacheKey = new AuthorizationContext<>(principal, role, requestContext);
-            final Boolean result = cache.get(cacheKey);
-            return result == null ? false : result;
+            final AuthorizationContext<P> cacheKey = getAuthorizationContext(principal, role, requestContext);
+            return Boolean.TRUE.equals(cache.get(cacheKey));
         } catch (CompletionException e) {
             Throwable cause = e.getCause();
             if (cause instanceof RuntimeException) {
@@ -108,6 +126,11 @@ public class CachingAuthorizer<P extends Principal> implements Authorizer<P> {
         }
     }
 
+    @Override
+    public AuthorizationContext<P> getAuthorizationContext(P principal, String role, @Nullable ContainerRequestContext requestContext) {
+        return underlying.getAuthorizationContext(principal, role, requestContext);
+    }
+
     /**
      * Discards any cached role associations for the given principal and role.
      *
@@ -116,7 +139,7 @@ public class CachingAuthorizer<P extends Principal> implements Authorizer<P> {
      * @param requestContext
      */
     public void invalidate(P principal, String role, ContainerRequestContext requestContext) {
-        cache.invalidate(new AuthorizationContext<>(principal, role, requestContext));
+        cache.invalidate(getAuthorizationContext(principal, role, requestContext));
     }
 
     /**

@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class NamePrependingTemplateEngineTest {
+class NamePrependingTemplateEngineTest {
     private static final String TEMPLATE = UUID.randomUUID().toString();
     private static final String ORIGINAL_RENDERED = UUID.randomUUID().toString();
 
@@ -25,7 +25,7 @@ public class NamePrependingTemplateEngineTest {
     private NamePrependingTemplateEngine sut;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         original = mock(TemplateEngine.class);
         ctx = mock(StatementContext.class);
         when(original.render(TEMPLATE, ctx)).thenReturn(ORIGINAL_RENDERED);
@@ -34,7 +34,7 @@ public class NamePrependingTemplateEngineTest {
     }
 
     @Test
-    public void testNoExtensionMethodShouldReturnOriginal() {
+    void testNoExtensionMethodShouldReturnOriginal() {
         when(ctx.getExtensionMethod()).thenReturn(null);
 
         final String result = sut.render(TEMPLATE, ctx);
@@ -43,7 +43,7 @@ public class NamePrependingTemplateEngineTest {
     }
 
     @Test
-    public void testPrependsCorrectName() throws NoSuchMethodException {
+    void testPrependsCorrectName() throws NoSuchMethodException {
         final ExtensionMethod extensionMethod = new ExtensionMethod(MyDao.class, MyDao.class.getMethod("myDbCall"));
 
         when(ctx.getExtensionMethod()).thenReturn(extensionMethod);

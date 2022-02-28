@@ -7,25 +7,23 @@ import org.junit.jupiter.api.Test;
 import javax.ws.rs.WebApplicationException;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class DurationParamTest {
+class DurationParamTest {
 
     @Test
-    public void parseDurationSeconds() {
-        final DurationParam param = new DurationParam("10 seconds");
-        assertThat(param.get())
+    void parseDurationSeconds() {
+        assertThat(new DurationParam("10 seconds").get())
             .isEqualTo(Duration.seconds(10));
     }
 
     @Test
-    public void badValueThrowsException() {
-        assertThatThrownBy(() -> new DurationParam("invalid", "param_name"))
-            .isInstanceOfSatisfying(WebApplicationException.class, e -> {
-                assertThat(e.getResponse().getStatus()).isEqualTo(400);
-                assertThat(e.getResponse().getEntity()).isEqualTo(
+    void badValueThrowsException() {
+        assertThatExceptionOfType(WebApplicationException.class)
+            .isThrownBy(() -> new DurationParam("invalid", "param_name"))
+            .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(400))
+            .satisfies(e -> assertThat(e.getResponse().getEntity()).isEqualTo(
                     new ErrorMessage(400, "param_name is not a valid duration.")
-                );
-            });
+                ));
     }
 }

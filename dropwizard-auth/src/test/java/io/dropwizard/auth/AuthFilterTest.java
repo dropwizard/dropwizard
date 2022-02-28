@@ -26,10 +26,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class AuthFilterTest {
+class AuthFilterTest {
 
     @Test
-    public void isSecureShouldStayTheSame() throws Exception {
+    void isSecureShouldStayTheSame() throws Exception {
         ContainerRequestContext requestContext = new FakeSecureRequestContext();
 
         new SimpleAuthFilter().filter(requestContext);

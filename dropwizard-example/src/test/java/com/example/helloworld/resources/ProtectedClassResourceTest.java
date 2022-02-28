@@ -14,13 +14,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import javax.ws.rs.ForbiddenException;
+import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.HttpHeaders;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 @ExtendWith(DropwizardExtensionsSupport.class)
-public final class ProtectedClassResourceTest {
+final class ProtectedClassResourceTest {
 
     private static final BasicCredentialAuthFilter<User> BASIC_AUTH_HANDLER =
         new BasicCredentialAuthFilter.Builder<User>()
@@ -39,7 +40,7 @@ public final class ProtectedClassResourceTest {
         .build();
 
     @Test
-    public void testProtectedAdminEndpoint() {
+    void testProtectedAdminEndpoint() {
         String secret = RULE.target("/protected/admin").request()
             .header(HttpHeaders.AUTHORIZATION, "Basic Y2hpZWYtd2l6YXJkOnNlY3JldA==")
             .get(String.class);
@@ -47,7 +48,7 @@ public final class ProtectedClassResourceTest {
     }
 
     @Test
-    public void testProtectedBasicUserEndpoint() {
+    void testProtectedBasicUserEndpoint() {
         String secret = RULE.target("/protected").request()
             .header(HttpHeaders.AUTHORIZATION, "Basic Z29vZC1ndXk6c2VjcmV0")
             .get(String.class);
@@ -55,7 +56,7 @@ public final class ProtectedClassResourceTest {
     }
 
     @Test
-    public void testProtectedBasicUserEndpointAsAdmin() {
+    void testProtectedBasicUserEndpointAsAdmin() {
         String secret = RULE.target("/protected").request()
             .header(HttpHeaders.AUTHORIZATION, "Basic Y2hpZWYtd2l6YXJkOnNlY3JldA==")
             .get(String.class);
@@ -63,7 +64,7 @@ public final class ProtectedClassResourceTest {
     }
 
     @Test
-    public void testProtectedGuestEndpoint() {
+    void testProtectedGuestEndpoint() {
         String secret = RULE.target("/protected/guest").request()
             .header(HttpHeaders.AUTHORIZATION, "Basic Z3Vlc3Q6c2VjcmV0")
             .get(String.class);
@@ -71,15 +72,12 @@ public final class ProtectedClassResourceTest {
     }
 
     @Test
-    public void testProtectedBasicUserEndpointPrincipalIsNotAuthorized403() {
-        try {
-            RULE.target("/protected").request()
-            .header(HttpHeaders.AUTHORIZATION, "Basic Z3Vlc3Q6c2VjcmV0")
-            .get(String.class);
-            failBecauseExceptionWasNotThrown(ForbiddenException.class);
-        } catch (ForbiddenException e) {
-            assertThat(e.getResponse().getStatus()).isEqualTo(403);
-        }
+    void testProtectedBasicUserEndpointPrincipalIsNotAuthorized403() {
+        Invocation.Builder request = RULE.target("/protected").request()
+            .header(HttpHeaders.AUTHORIZATION, "Basic Z3Vlc3Q6c2VjcmV0");
+        assertThatExceptionOfType(ForbiddenException.class)
+            .isThrownBy(() -> request.get(String.class))
+            .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(403));
     }
 
 }

@@ -518,6 +518,9 @@ public class DataSourceFactory implements PooledDataSourceFactory {
         return validationQuery;
     }
 
+    /**
+     * @deprecated use {@link #getValidationQuery()} instead
+     */
     @Override
     @Deprecated
     @JsonIgnore
@@ -560,12 +563,18 @@ public class DataSourceFactory implements PooledDataSourceFactory {
         this.checkConnectionWhileIdle = checkConnectionWhileIdle;
     }
 
+    /**
+     * @deprecated use {@link #getReadOnlyByDefault()} instead
+     */
     @Deprecated
     @JsonProperty
     public boolean isDefaultReadOnly() {
         return Boolean.TRUE.equals(readOnlyByDefault);
     }
 
+    /**
+     * @deprecated use {@link #setReadOnlyByDefault(Boolean)} instead
+     */
     @Deprecated
     @JsonProperty
     public void setDefaultReadOnly(boolean defaultReadOnly) {
@@ -810,6 +819,9 @@ public class DataSourceFactory implements PooledDataSourceFactory {
         this.validatorClassName = validatorClassName;
     }
 
+    /**
+     * @deprecated use {@link #getValidationQueryTimeout()} instead
+     */
     @Override
     @Deprecated
     @JsonIgnore
@@ -871,17 +883,15 @@ public class DataSourceFactory implements PooledDataSourceFactory {
 
     @Override
     public ManagedDataSource build(MetricRegistry metricRegistry, String name) {
-        final Properties properties = new Properties();
-        for (Map.Entry<String, String> property : this.properties.entrySet()) {
-            properties.setProperty(property.getKey(), property.getValue());
-        }
+        final Properties dbProperties = new Properties();
+        properties.forEach(dbProperties::setProperty);
 
         final PoolProperties poolConfig = new PoolProperties();
         poolConfig.setAbandonWhenPercentageFull(abandonWhenPercentageFull);
         poolConfig.setAlternateUsernameAllowed(alternateUsernamesAllowed);
         poolConfig.setCommitOnReturn(commitOnReturn);
         poolConfig.setRollbackOnReturn(rollbackOnReturn);
-        poolConfig.setDbProperties(properties);
+        poolConfig.setDbProperties(dbProperties);
         poolConfig.setDefaultAutoCommit(autoCommitByDefault);
         poolConfig.setDefaultCatalog(defaultCatalog);
         poolConfig.setDefaultReadOnly(readOnlyByDefault);

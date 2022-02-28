@@ -23,7 +23,7 @@ import java.util.Collections;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
 
-public class MustacheViewRendererTest extends JerseyTest {
+class MustacheViewRendererTest extends JerseyTest {
     static {
         BootstrapLogging.bootstrap();
     }
@@ -79,19 +79,19 @@ public class MustacheViewRendererTest extends JerseyTest {
     }
 
     @Test
-    public void rendersViewsWithAbsoluteTemplatePaths() throws Exception {
+    void rendersViewsWithAbsoluteTemplatePaths() throws Exception {
         final String response = target("/test/absolute").request().get(String.class);
         assertThat(response).isEqualTo("Woop woop. yay\n");
     }
 
     @Test
-    public void rendersViewsWithRelativeTemplatePaths() throws Exception {
+    void rendersViewsWithRelativeTemplatePaths() throws Exception {
         final String response = target("/test/relative").request().get(String.class);
         assertThat(response).isEqualTo("Ok.\n");
     }
 
     @Test
-    public void returnsA500ForViewsWithBadTemplatePaths() throws Exception {
+    void returnsA500ForViewsWithBadTemplatePaths() throws Exception {
         try {
             target("/test/bad").request().get(String.class);
             failBecauseExceptionWasNotThrown(WebApplicationException.class);
@@ -105,7 +105,7 @@ public class MustacheViewRendererTest extends JerseyTest {
     }
 
     @Test
-    public void returnsA500ForViewsThatCantCompile() throws Exception {
+    void returnsA500ForViewsThatCantCompile() throws Exception {
         try {
             target("/test/error").request().get(String.class);
             failBecauseExceptionWasNotThrown(WebApplicationException.class);
@@ -119,14 +119,14 @@ public class MustacheViewRendererTest extends JerseyTest {
     }
 
     @Test
-    public void cacheByDefault() {
+    void cacheByDefault() {
         MustacheViewRenderer mustacheViewRenderer = new MustacheViewRenderer();
         mustacheViewRenderer.configure(Collections.emptyMap());
         assertThat(mustacheViewRenderer.isUseCache()).isTrue();
     }
 
     @Test
-    public void canDisableCache() {
+    void canDisableCache() {
         MustacheViewRenderer mustacheViewRenderer = new MustacheViewRenderer();
         mustacheViewRenderer.configure(Collections.singletonMap("cache", "false"));
         assertThat(mustacheViewRenderer.isUseCache()).isFalse();

@@ -7,41 +7,38 @@ import javax.ws.rs.WebApplicationException;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class UUIDParamTest {
+class UUIDParamTest {
     private void UuidParamNegativeTest(String input) {
-        assertThatThrownBy(() -> new UUIDParam(input))
-            .isInstanceOfSatisfying(WebApplicationException.class, e -> {
-                assertThat(e.getResponse().getStatus()).isEqualTo(400);
-                assertThat(e.getResponse().getEntity()).isEqualTo(
-                    new ErrorMessage(400, "Parameter is not a UUID.")
-                );
-            });
+        assertThatExceptionOfType(WebApplicationException.class)
+            .isThrownBy(() -> new UUIDParam(input))
+            .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(400))
+            .satisfies(e -> assertThat(e.getResponse().getEntity()).isEqualTo(
+                new ErrorMessage(400, "Parameter is not a UUID.")
+            ));
     }
 
     @Test
-    public void aUUIDStringReturnsAUUIDObject() {
+    void aUUIDStringReturnsAUUIDObject() {
         final String uuidString = "067e6162-3b6f-4ae2-a171-2470b63dff00";
         final UUID uuid = UUID.fromString(uuidString);
 
-        final UUIDParam param = new UUIDParam(uuidString);
-        assertThat(param.get())
-                .isEqualTo(uuid);
+        assertThat(new UUIDParam(uuidString).get()).isEqualTo(uuid);
     }
 
     @Test
-    public void noSpaceUUID() {
+    void noSpaceUUID() {
         UuidParamNegativeTest("067e61623b6f4ae2a1712470b63dff00");
     }
 
     @Test
-    public void tooLongUUID() {
+    void tooLongUUID() {
         UuidParamNegativeTest("067e6162-3b6f-4ae2-a171-2470b63dff000");
     }
 
     @Test
-    public void aNonUUIDThrowsAnException() {
+    void aNonUUIDThrowsAnException() {
         UuidParamNegativeTest("foo");
     }
 }

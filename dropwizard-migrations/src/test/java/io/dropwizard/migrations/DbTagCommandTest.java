@@ -9,17 +9,18 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.Collections;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @NotThreadSafe
-public class DbTagCommandTest extends AbstractMigrationTest {
+class DbTagCommandTest extends AbstractMigrationTest {
 
     private final String migrationsFileName = "migrations-ddl.xml";
     private final DbTagCommand<TestMigrationConfiguration> dbTagCommand = new DbTagCommand<>(
         new TestMigrationDatabaseConfiguration(), TestMigrationConfiguration.class, migrationsFileName);
 
     @Test
-    public void testRun() throws Exception {
+    void testRun() throws Exception {
         // Migrate some DDL changes
         final TestMigrationConfiguration conf = createConfiguration(getDatabaseUrl());
         final DbMigrateCommand<TestMigrationConfiguration> dbMigrateCommand = new DbMigrateCommand<>(
@@ -37,10 +38,10 @@ public class DbTagCommandTest extends AbstractMigrationTest {
     }
 
     @Test
-    public void testPrintHelp() throws Exception {
+    void testPrintHelp() throws Exception {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         createSubparser(dbTagCommand).printHelp(new PrintWriter(new OutputStreamWriter(baos, UTF_8), true));
-        assertThat(baos.toString(UTF_8)).isEqualTo(String.format(
+        assertThat(baos.toString(UTF_8.name())).isEqualTo(String.format(
             "usage: db tag [-h] [--migrations MIGRATIONS-FILE] [--catalog CATALOG]%n" +
             "          [--schema SCHEMA] [file] tag-name%n" +
             "%n" +

@@ -45,6 +45,17 @@ public abstract class ConfiguredCommand<T extends Configuration> extends Command
     }
 
     /**
+     * Returns the parsed configuration or {@code null} if it hasn't been parsed yet.
+     *
+     * @return Returns the parsed configuration or {@code null} if it hasn't been parsed yet
+     * @since 2.0.19
+     */
+    @Nullable
+    public T getConfiguration() {
+        return configuration;
+    }
+
+    /**
      * Configure the command's {@link Subparser}. <p><strong> N.B.: if you override this method, you
      * <em>must</em> call {@code super.override(subparser)} in order to preserve the configuration
      * file parameter in the subparser. </strong></p>

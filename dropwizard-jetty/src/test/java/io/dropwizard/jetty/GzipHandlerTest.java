@@ -1,8 +1,7 @@
 package io.dropwizard.jetty;
 
-import io.dropwizard.util.CharStreams;
+import io.dropwizard.util.ByteStreams;
 import io.dropwizard.util.DataSize;
-import io.dropwizard.util.Resources;
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpTester;
 import org.eclipse.jetty.server.handler.gzip.GzipHandler;
@@ -67,18 +66,27 @@ class GzipHandlerTest {
         assertThat(response.get(HttpHeader.VARY)).isEqualTo(HttpHeader.ACCEPT_ENCODING.asString());
         assertThat(response.get(HttpHeader.CONTENT_TYPE)).isEqualToIgnoringCase(PLAIN_TEXT_UTF_8);
 
-        final byte[] expectedBytes = Resources.toByteArray(Resources.getResource("assets/banner.txt"));
-        try (GZIPInputStream is = new GZIPInputStream(new ByteArrayInputStream(response.getContentBytes()));
-             ByteArrayInputStream expected = new ByteArrayInputStream(expectedBytes)) {
-            assertThat(is).hasSameContentAs(expected);
+        try (GZIPInputStream is = new GZIPInputStream(new ByteArrayInputStream(response.getContentBytes()))) {
+            assertThat(is).hasSameContentAs(getClass().getResourceAsStream("/assets/banner.txt"));
         }
+    }
+
+    @Test
+    void testBadRequestStatusOnInvalidGzipBytes() throws Exception {
+        request.setMethod("POST");
+        request.setHeader(HttpHeader.CONTENT_TYPE.asString(), PLAIN_TEXT_UTF_8);
+        request.setHeader(HttpHeader.CONTENT_ENCODING.asString(), "gzip");
+        request.setContent("Invalid gzip bytes");
+
+        HttpTester.Response response = HttpTester.parseResponse(servletTester.getResponses(request.generate()));
+        assertThat(response.getStatus()).isEqualTo(400);
     }
 
     @Test
     void testDecompressRequest() throws Exception {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try (GZIPOutputStream gz = new GZIPOutputStream(baos)) {
-            Resources.copy(Resources.getResource("assets/new-banner.txt"), gz);
+            gz.write(ByteStreams.toByteArray(getClass().getResourceAsStream("/assets/new-banner.txt")));
         }
 
         setRequestPostGzipPlainText(baos.toByteArray());
@@ -100,14 +108,13 @@ class GzipHandlerTest {
         request.setHeader(HttpHeader.CONTENT_ENCODING.asString(), "gzip");
     }
 
-    @SuppressWarnings("serial")
     public static class BannerServlet extends HttpServlet {
 
         @Override
         protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
             resp.setCharacterEncoding(StandardCharsets.UTF_8.toString());
             resp.setContentType(PLAIN_TEXT_UTF_8);
-            resp.getWriter().write(Resources.toString(Resources.getResource("assets/banner.txt"), StandardCharsets.UTF_8));
+            resp.getWriter().write(new String(ByteStreams.toByteArray(getClass().getResourceAsStream("/assets/banner.txt")), StandardCharsets.UTF_8));
         }
 
         @Override
@@ -118,8 +125,8 @@ class GzipHandlerTest {
             assertThat(req.getContentLength()).isEqualTo(-1);
             assertThat(req.getContentLengthLong()).isEqualTo(-1L);
 
-            assertThat(CharStreams.toString(req.getReader())).isEqualTo(Resources.toString(
-                Resources.getResource("assets/new-banner.txt"), StandardCharsets.UTF_8));
+            assertThat(req.getInputStream())
+                .hasSameContentAs(getClass().getResourceAsStream("/assets/new-banner.txt"));
 
             resp.setContentType(PLAIN_TEXT_UTF_8);
             resp.getWriter().write("Banner has been updated");

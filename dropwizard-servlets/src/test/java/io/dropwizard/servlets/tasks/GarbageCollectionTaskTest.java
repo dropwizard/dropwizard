@@ -13,20 +13,20 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @SuppressWarnings("CallToSystemGC")
-public class GarbageCollectionTaskTest {
+class GarbageCollectionTaskTest {
     private final Runtime runtime = mock(Runtime.class);
     private final PrintWriter output = mock(PrintWriter.class);
     private final GarbageCollectionTask task = new GarbageCollectionTask(runtime);
 
     @Test
-    public void runsOnceWithNoParameters() throws Exception {
+    void runsOnceWithNoParameters() throws Exception {
         task.execute(Collections.emptyMap(), output);
 
         verify(runtime, times(1)).gc();
     }
 
     @Test
-    public void usesTheFirstRunsParameter() throws Exception {
+    void usesTheFirstRunsParameter() throws Exception {
         final Map<String, List<String>> parameters = Collections.singletonMap("runs", Arrays.asList("3", "2"));
         task.execute(parameters, output);
 
@@ -34,7 +34,7 @@ public class GarbageCollectionTaskTest {
     }
 
     @Test
-    public void defaultsToOneRunIfTheQueryParamDoesNotParse() throws Exception {
+    void defaultsToOneRunIfTheQueryParamDoesNotParse() throws Exception {
         task.execute(Collections.singletonMap("runs", Collections.singletonList("$")), output);
 
         verify(runtime, times(1)).gc();

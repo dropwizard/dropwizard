@@ -7,10 +7,10 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-public class ScanningHibernateBundleTest {
+class ScanningHibernateBundleTest {
 
     @Test
-    public void testFindEntityClassesFromDirectory() {
+    void testFindEntityClassesFromDirectory() {
         //given
         String packageWithEntities = "io.dropwizard.hibernate.fake.entities.pckg";
         //when
@@ -23,7 +23,7 @@ public class ScanningHibernateBundleTest {
     }
 
     @Test
-    public void testFindEntityClassesFromMultipleDirectories() {
+    void testFindEntityClassesFromMultipleDirectories() {
         //given
         String packageWithEntities = "io.dropwizard.hibernate.fake.entities.pckg";
         String packageWithEntities2 = "io.dropwizard.hibernate.fake2.entities.pckg";

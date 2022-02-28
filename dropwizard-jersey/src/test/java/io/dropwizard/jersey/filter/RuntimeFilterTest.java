@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class RuntimeFilterTest {
+class RuntimeFilterTest {
 
     private ContainerRequestContext request = mock(ContainerRequestContext.class);
     private ContainerResponseContext response = mock(ContainerResponseContext.class);
@@ -20,14 +20,14 @@ public class RuntimeFilterTest {
     private RuntimeFilter runtimeFilter = new RuntimeFilter();
 
     @Test
-    public void testSetsCurrentTimeProperty() throws Exception {
+    void testSetsCurrentTimeProperty() throws Exception {
         runtimeFilter.setCurrentTimeProvider(() -> 1510330745000000L);
         runtimeFilter.filter(request);
         Mockito.verify(request).setProperty("io.dropwizard.jersey.filter.runtime", 1510330745000000L);
     }
 
     @Test
-    public void testAddsXRuntimeHeader() throws Exception {
+    void testAddsXRuntimeHeader() throws Exception {
         MultivaluedMap<String, Object> headers = new MultivaluedHashMap<>();
         when(response.getHeaders()).thenReturn(headers);
         when(request.getProperty("io.dropwizard.jersey.filter.runtime")).thenReturn(1510330745000000L);

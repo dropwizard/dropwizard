@@ -5,7 +5,6 @@ import ch.qos.logback.classic.pattern.ThrowableProxyConverter;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.LoggerContextVO;
 import ch.qos.logback.classic.spi.ThrowableProxyVO;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.logging.json.EventAttribute;
 import io.dropwizard.util.Maps;
@@ -26,7 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class EventJsonLayoutTest {
+class EventJsonLayoutTest {
     private static final String timestamp = "2018-01-02T15:19:21.000+0000";
     private static final String logger = "com.example.user.service";
     private static final String message = "User[18] has been registered";
@@ -56,7 +55,7 @@ public class EventJsonLayoutTest {
     private EventJsonLayout eventJsonLayout;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         when(event.getTimeStamp()).thenReturn(1514906361000L);
         when(event.getLevel()).thenReturn(Level.INFO);
         when(event.getThreadName()).thenReturn("main");
@@ -89,14 +88,14 @@ public class EventJsonLayoutTest {
     }
 
     @Test
-    public void testProducesDefaultMap() {
+    void testProducesDefaultMap() {
         Map<String, Object> map = eventJsonLayout.toJsonMap(event);
         final HashMap<String, Object> expectedFields = new HashMap<>(defaultExpectedFields);
         assertThat(map).isEqualTo(expectedFields);
     }
 
     @Test
-    public void testLogsAnException() {
+    void testLogsAnException() {
         when(event.getThrowableProxy()).thenReturn(new ThrowableProxyVO());
         when(throwableProxyConverter.convert(event)).thenReturn("Boom!");
 
@@ -106,7 +105,7 @@ public class EventJsonLayoutTest {
     }
 
     @Test
-    public void testDisableTimestamp() {
+    void testDisableTimestamp() {
         EnumSet<EventAttribute> eventAttributes = EnumSet.copyOf(DEFAULT_EVENT_ATTRIBUTES);
         eventAttributes.remove(EventAttribute.TIMESTAMP);
         eventJsonLayout.setIncludes(eventAttributes);
@@ -117,7 +116,7 @@ public class EventJsonLayoutTest {
     }
 
     @Test
-    public void testLogVersion() {
+    void testLogVersion() {
         eventJsonLayout.setJsonProtocolVersion("1.2");
 
         final HashMap<String, Object> expectedFields = new HashMap<>(defaultExpectedFields);
@@ -126,7 +125,7 @@ public class EventJsonLayoutTest {
     }
 
     @Test
-    public void testReplaceFieldName() {
+    void testReplaceFieldName() {
         final Map<String, String> customFieldNames = Maps.of(
                 "timestamp", "@timestamp",
                 "message", "@message");
@@ -143,7 +142,7 @@ public class EventJsonLayoutTest {
     }
 
     @Test
-    public void testAddNewField() {
+    void testAddNewField() {
         final Map<String, Object> additionalFields = Maps.of(
                 "serviceName", "userService",
                 "serviceBuild", 207);
@@ -159,7 +158,7 @@ public class EventJsonLayoutTest {
     }
 
     @Test
-    public void testFilterMdc() {
+    void testFilterMdc() {
         final Set<String> includesMdcKeys = Sets.of("userId", "orderId");
         Map<String, Object> map = new EventJsonLayout(jsonFormatter, timestampFormatter, throwableProxyConverter, DEFAULT_EVENT_ATTRIBUTES,
             Collections.emptyMap(), Collections.emptyMap(), includesMdcKeys, false)
@@ -174,7 +173,7 @@ public class EventJsonLayoutTest {
     }
 
     @Test
-    public void testFlattensMdcMap() {
+    void testFlattensMdcMap() {
         Map<String, Object> map = new EventJsonLayout(jsonFormatter, timestampFormatter, throwableProxyConverter,
                 DEFAULT_EVENT_ATTRIBUTES, Collections.emptyMap(), Collections.emptyMap(), Collections.emptySet(), true)
                 .toJsonMap(event);
@@ -186,15 +185,19 @@ public class EventJsonLayoutTest {
     }
 
     @Test
-    public void testStartThrowableConverter() {
+    void testStartThrowableConverter() {
         eventJsonLayout.start();
+
+        assertThat(eventJsonLayout.isStarted()).isTrue();
 
         verify(throwableProxyConverter).start();
     }
 
     @Test
-    public void testStopThrowableConverter() {
+    void testStopThrowableConverter() {
         eventJsonLayout.stop();
+
+        assertThat(eventJsonLayout.isStarted()).isFalse();
 
         verify(throwableProxyConverter).stop();
     }

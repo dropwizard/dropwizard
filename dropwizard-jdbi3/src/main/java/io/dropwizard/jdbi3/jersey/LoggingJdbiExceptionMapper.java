@@ -28,6 +28,7 @@ public class LoggingJdbiExceptionMapper extends LoggingExceptionMapper<JdbiExcep
     }
 
     @Override
+    @SuppressWarnings("Slf4jFormatShouldBeConst")
     protected void logException(long id, JdbiException exception) {
         final Throwable cause = exception.getCause();
         if (cause instanceof SQLException) {

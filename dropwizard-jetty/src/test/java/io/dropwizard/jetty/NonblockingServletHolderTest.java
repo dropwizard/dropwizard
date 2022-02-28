@@ -11,15 +11,13 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.assertj.core.api.Assertions.assertThatIOException;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-public class NonblockingServletHolderTest {
+class NonblockingServletHolderTest {
     private final Servlet servlet = mock(Servlet.class);
     @SuppressWarnings("deprecation")
     private final NonblockingServletHolder holder = new NonblockingServletHolder(servlet);
@@ -28,37 +26,34 @@ public class NonblockingServletHolderTest {
     private final ServletResponse response = mock(ServletResponse.class);
 
     @Test
-    public void hasAServlet() throws Exception {
+    void hasAServlet() throws Exception {
         assertThat(holder.getServlet())
                 .isEqualTo(servlet);
     }
 
     @Test
-    public void servicesRequests() throws Exception {
+    void servicesRequests() throws Exception {
         holder.handle(baseRequest, request, response);
 
         verify(servlet).service(request, response);
     }
 
     @Test
-    public void servicesRequestHandleEofException() throws Exception {
-        doThrow(new EofException()).when(servlet).service(eq(request), eq(response));
-        assertThatCode(() -> {
-            holder.handle(baseRequest, request, response);
-        }).doesNotThrowAnyException();
+    void servicesRequestHandleEofException() throws Exception {
+        doThrow(new EofException()).when(servlet).service(request, response);
+        holder.handle(baseRequest, request, response);
         verify(servlet).service(request, response);
     }
 
     @Test
-    public void servicesRequestException() throws Exception {
-        doThrow(new IOException()).when(servlet).service(eq(request), eq(response));
-        assertThatExceptionOfType(IOException.class).isThrownBy(() -> {
-            holder.handle(baseRequest, request, response);
-        });
+    void servicesRequestException() throws Exception {
+        doThrow(new IOException()).when(servlet).service(request, response);
+        assertThatIOException()
+            .isThrownBy(() -> holder.handle(baseRequest, request, response));
     }
 
     @Test
-    public void temporarilyDisablesAsyncRequestsIfDisabled() throws Exception {
+    void temporarilyDisablesAsyncRequestsIfDisabled() throws Exception {
         holder.setAsyncSupported(false);
 
         holder.handle(baseRequest, request, response);
@@ -70,7 +65,7 @@ public class NonblockingServletHolderTest {
     }
 
     @Test
-    public void isEagerlyInitialized() throws Exception {
+    void isEagerlyInitialized() throws Exception {
         assertThat(holder.getInitOrder())
                 .isEqualTo(1);
     }

@@ -1,7 +1,7 @@
 Dropwizard
 ==========
-[![Build Status](https://travis-ci.org/dropwizard/dropwizard.svg?branch=master)](https://travis-ci.org/dropwizard/dropwizard)
-[![Coverage Status](https://coveralls.io/repos/github/dropwizard/dropwizard/badge.svg?branch=master)](https://coveralls.io/github/dropwizard/dropwizard?branch=master)
+[![Build](https://github.com/dropwizard/dropwizard/workflows/Java%20CI/badge.svg)](https://github.com/dropwizard/dropwizard/actions?query=workflow%3A%22Java+CI%22)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=dropwizard_dropwizard&metric=alert_status)](https://sonarcloud.io/dashboard?id=dropwizard_dropwizard)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.dropwizard/dropwizard-core/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.dropwizard/dropwizard-core/)
 [![Javadocs](https://javadoc.io/badge/io.dropwizard/dropwizard-project.svg?color=brightgreen)](https://javadoc.io/doc/io.dropwizard/dropwizard-project)
 [![Documentation Status](https://readthedocs.org/projects/dropwizard/badge/?version=stable)](https://www.dropwizard.io/en/stable/?badge=stable)

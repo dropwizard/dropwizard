@@ -16,7 +16,6 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.groups.Default;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedHashMap;
 import java.io.ByteArrayInputStream;
@@ -27,14 +26,13 @@ import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assumptions.assumeThat;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -93,12 +91,12 @@ public class JacksonMessageBodyProviderTest {
     }
 
     @JsonIgnoreType
-    public static interface Ignorable {
+    public interface Ignorable {
 
     }
 
     @JsonIgnoreType(false)
-    public static interface NonIgnorable extends Ignorable {
+    public interface NonIgnorable extends Ignorable {
 
     }
 
@@ -107,54 +105,54 @@ public class JacksonMessageBodyProviderTest {
             new JacksonMessageBodyProvider(mapper);
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         assumeThat(Locale.getDefault().getLanguage()).isEqualTo("en");
     }
 
     @Test
-    public void readsDeserializableTypes() throws Exception {
+    void readsDeserializableTypes() {
         assertThat(provider.isReadable(Example.class, null, null, null))
                 .isTrue();
     }
 
     @Test
-    public void writesSerializableTypes() throws Exception {
+    void writesSerializableTypes() {
         assertThat(provider.isWriteable(Example.class, null, null, null))
                 .isTrue();
     }
 
     @Test
-    public void doesNotWriteIgnoredTypes() throws Exception {
+    void doesNotWriteIgnoredTypes() {
         assertThat(provider.isWriteable(Ignorable.class, null, null, null))
                 .isFalse();
     }
 
     @Test
-    public void writesUnIgnoredTypes() throws Exception {
+    void writesUnIgnoredTypes() {
         assertThat(provider.isWriteable(NonIgnorable.class, null, null, null))
                 .isTrue();
     }
 
     @Test
-    public void doesNotReadIgnoredTypes() throws Exception {
+    void doesNotReadIgnoredTypes() {
         assertThat(provider.isReadable(Ignorable.class, null, null, null))
                 .isFalse();
     }
 
     @Test
-    public void readsUnIgnoredTypes() throws Exception {
+    void readsUnIgnoredTypes() {
         assertThat(provider.isReadable(NonIgnorable.class, null, null, null))
                 .isTrue();
     }
 
     @Test
-    public void isChunked() throws Exception {
+    void isChunked() {
         assertThat(provider.getSize(null, null, null, null, null))
                 .isEqualTo(-1);
     }
 
     @Test
-    public void deserializesRequestEntities() throws Exception {
+    void deserializesRequestEntities() throws Exception {
         final ByteArrayInputStream entity = new ByteArrayInputStream("{\"id\":1}".getBytes(StandardCharsets.UTF_8));
         final Class<?> klass = Example.class;
 
@@ -173,7 +171,7 @@ public class JacksonMessageBodyProviderTest {
     }
 
     @Test
-    public void returnsPartialValidatedRequestEntities() throws Exception {
+    void returnsPartialValidatedRequestEntities() throws Exception {
         final Validated valid = mock(Validated.class);
         doReturn(Validated.class).when(valid).annotationType();
         when(valid.value()).thenReturn(new Class<?>[]{Partial1.class, Partial2.class});
@@ -196,7 +194,7 @@ public class JacksonMessageBodyProviderTest {
     }
 
     @Test
-    public void returnsPartialValidatedByGroupRequestEntities() throws Exception {
+    void returnsPartialValidatedByGroupRequestEntities() throws Exception {
         final Validated valid = mock(Validated.class);
         doReturn(Validated.class).when(valid).annotationType();
         when(valid.value()).thenReturn(new Class<?>[]{Partial1.class});
@@ -219,27 +217,23 @@ public class JacksonMessageBodyProviderTest {
     }
 
     @Test
-    public void throwsAJsonProcessingExceptionForMalformedRequestEntities() throws Exception {
+    void throwsAJsonProcessingExceptionForMalformedRequestEntities() {
         final ByteArrayInputStream entity = new ByteArrayInputStream("{\"id\":-1d".getBytes(StandardCharsets.UTF_8));
+        final Class<?> klass = Example.class;
 
-        try {
-            final Class<?> klass = Example.class;
-            provider.readFrom((Class<Object>) klass,
+        assertThatExceptionOfType(JsonProcessingException.class)
+            .isThrownBy(() -> provider.readFrom((Class<Object>) klass,
                               Example.class,
                               NONE,
                               MediaType.APPLICATION_JSON_TYPE,
                               new MultivaluedHashMap<>(),
-                              entity);
-            failBecauseExceptionWasNotThrown(WebApplicationException.class);
-        } catch (JsonProcessingException e) {
-            assertThat(e.getMessage())
-                    .startsWith("Unexpected character ('d' (code 100)): " +
+                              entity))
+            .withMessageStartingWith("Unexpected character ('d' (code 100)): " +
                                         "was expecting comma to separate Object entries\n");
-        }
     }
 
     @Test
-    public void serializesResponseEntities() throws Exception {
+    void serializesResponseEntities() throws Exception {
         final ByteArrayOutputStream output = new ByteArrayOutputStream();
 
         final Example example = new Example();
@@ -253,26 +247,26 @@ public class JacksonMessageBodyProviderTest {
                          new MultivaluedHashMap<>(),
                          output);
 
-        assertThat(output.toString())
-                .isEqualTo("{\"id\":500}");
+        assertThat(output)
+                .hasToString("{\"id\":500}");
     }
 
     @Test
-    public void returnsValidatedCollectionRequestEntities() throws Exception {
+    void returnsValidatedCollectionRequestEntities() throws Exception {
         testValidatedCollectionType(Collection.class,
             new TypeReference<Collection<Example>>() {
             }.getType());
     }
 
     @Test
-    public void returnsValidatedSetRequestEntities() throws Exception {
+    void returnsValidatedSetRequestEntities() throws Exception {
         testValidatedCollectionType(Set.class,
             new TypeReference<Set<Example>>() {
             }.getType());
     }
 
     @Test
-    public void returnsValidatedListRequestEntities() throws Exception {
+    void returnsValidatedListRequestEntities() throws Exception {
         testValidatedCollectionType(List.class,
             new TypeReference<List<Example>>() {
             }.getType());

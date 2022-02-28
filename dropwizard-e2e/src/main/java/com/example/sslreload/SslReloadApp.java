@@ -14,5 +14,6 @@ public class SslReloadApp extends Application<Configuration> {
 
     @Override
     public void run(Configuration configuration, Environment environment) throws Exception {
+        // Nothing to do
     }
 }

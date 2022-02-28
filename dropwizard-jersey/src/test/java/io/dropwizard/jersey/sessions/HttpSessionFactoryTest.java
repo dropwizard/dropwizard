@@ -21,7 +21,7 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class HttpSessionFactoryTest extends AbstractJerseyTest {
+class HttpSessionFactoryTest extends AbstractJerseyTest {
 
     @Override
     protected TestContainerFactory getTestContainerFactory()
@@ -40,7 +40,7 @@ public class HttpSessionFactoryTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void passesInHttpSessions() throws Exception {
+    void passesInHttpSessions() throws Exception {
         Response firstResponse = target("/session/").request(MediaType.TEXT_PLAIN)
                 .post(Entity.entity("Mr. Peeps", MediaType.TEXT_PLAIN));
 

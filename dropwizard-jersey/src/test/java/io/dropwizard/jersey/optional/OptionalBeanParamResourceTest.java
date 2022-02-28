@@ -29,7 +29,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class OptionalBeanParamResourceTest extends AbstractJerseyTest {
+class OptionalBeanParamResourceTest extends AbstractJerseyTest {
     @Override
     protected Application configure() {
         return DropwizardResourceConfig.forTesting()
@@ -38,7 +38,7 @@ public class OptionalBeanParamResourceTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void shouldReturnValuesIfProvidedAndValid() {
+    void shouldReturnValuesIfProvidedAndValid() {
         Map<String, Object> response = target("/optional")
                 .path("param")
                 .queryParam("double", 1234567890D)
@@ -60,7 +60,7 @@ public class OptionalBeanParamResourceTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void shouldReturnBadRequestIfValuesInvalid() {
+    void shouldReturnNotFoundIfValuesInvalid() {
         Response response = target("/optional")
                 .path("param")
                 .queryParam("double", "invalid-double")
@@ -70,11 +70,11 @@ public class OptionalBeanParamResourceTest extends AbstractJerseyTest {
                 .header("X-String", null)
                 .cookie("uuid", "invalid-uuid")
                 .get();
-        assertThat(response.getStatus()).isEqualTo(400);
+        assertThat(response.getStatus()).isEqualTo(404);
     }
 
     @Test
-    public void shouldReturnaDefaultsIfValuesMissing() {
+    void shouldReturnDefaultsIfValuesMissing() {
         Map<String, Object> response = target("/optional")
                 .path("param")
                 .request(MediaType.APPLICATION_JSON_TYPE)

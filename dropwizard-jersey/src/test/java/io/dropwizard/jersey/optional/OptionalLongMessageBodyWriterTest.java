@@ -13,16 +13,16 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.OptionalLong;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class OptionalLongMessageBodyWriterTest extends AbstractJerseyTest {
+class OptionalLongMessageBodyWriterTest extends AbstractJerseyTest {
 
     @Override
     protected Application configure() {
@@ -32,7 +32,7 @@ public class OptionalLongMessageBodyWriterTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void presentOptionalsReturnTheirValue() throws Exception {
+    void presentOptionalsReturnTheirValue() {
         assertThat(target("optional-return")
                 .queryParam("id", "1").request()
                 .get(Long.class))
@@ -40,7 +40,7 @@ public class OptionalLongMessageBodyWriterTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void presentOptionalsReturnTheirValueWithResponse() throws Exception {
+    void presentOptionalsReturnTheirValueWithResponse() {
         assertThat(target("optional-return/response-wrapped")
                 .queryParam("id", "1").request()
                 .get(Long.class))
@@ -48,42 +48,44 @@ public class OptionalLongMessageBodyWriterTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void absentOptionalsThrowANotFound() throws Exception {
-        try {
-            target("optional-return").request().get(Long.class);
-            failBecauseExceptionWasNotThrown(WebApplicationException.class);
-        } catch (WebApplicationException e) {
-            assertThat(e.getResponse().getStatus()).isEqualTo(404);
-        }
+    void absentOptionalsThrowANotFound() {
+        Invocation.Builder request = target("optional-return").request();
+        assertThatExceptionOfType(WebApplicationException.class)
+            .isThrownBy(() -> request.get(Long.class))
+            .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(404));
     }
 
     @Test
-    public void valueSetIgnoresDefault() {
+    void valueSetIgnoresDefault() {
         assertThat(target("optional-return/default").queryParam("id", "1").request().get(Long.class))
             .isEqualTo(target("optional-return/long/default").queryParam("id", "1").request().get(Long.class))
             .isEqualTo(1L);
     }
 
     @Test
-    public void valueNotSetReturnsDefault() {
+    void valueNotSetReturnsDefault() {
         assertThat(target("optional-return/default").request().get(Long.class))
             .isEqualTo(target("optional-return/long/default").request().get(Long.class))
             .isEqualTo(0L);
     }
 
     @Test
-    public void valueEmptyReturnsDefault() {
-        assertThat(target("optional-return/default").queryParam("id", "").request().get(Long.class))
-            .isEqualTo(target("optional-return/long/default").queryParam("id", "").request().get(Long.class))
-            .isEqualTo(0L);
+    void valueEmptyReturns404() {
+        assertThat(target("optional-return/default").queryParam("id", "").request().get())
+            .extracting(Response::getStatus)
+            .isEqualTo(404);
     }
 
     @Test
-    public void valueInvalidReturns404() {
-        assertThatThrownBy(() -> target("optional-return/default").queryParam("id", "invalid").request().get(Long.class))
-            .isInstanceOf(NotFoundException.class);
-        assertThatThrownBy(() -> target("optional-return/long/default").queryParam("id", "invalid").request().get(Long.class))
-            .isInstanceOf(NotFoundException.class);
+    void valueInvalidReturns404() {
+        Invocation.Builder request = target("optional-return/default").queryParam("id", "invalid")
+            .request();
+        assertThatExceptionOfType(NotFoundException.class)
+            .isThrownBy(() -> request.get(Long.class));
+        Invocation.Builder longRequest = target("optional-return/long/default").queryParam("id", "invalid")
+            .request();
+        assertThatExceptionOfType(NotFoundException.class)
+            .isThrownBy(() -> longRequest.get(Long.class));
     }
 
     @Path("optional-return")

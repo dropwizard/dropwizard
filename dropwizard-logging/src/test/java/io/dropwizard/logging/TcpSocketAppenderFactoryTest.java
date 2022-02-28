@@ -1,6 +1,5 @@
 package io.dropwizard.logging;
 
-import ch.qos.logback.classic.spi.ILoggingEvent;
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
@@ -9,40 +8,33 @@ import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.util.DataSize;
 import io.dropwizard.util.Duration;
-import io.dropwizard.util.Resources;
 import io.dropwizard.validation.BaseValidator;
 import org.apache.commons.text.StringSubstitutor;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.net.URISyntaxException;
 import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class TcpSocketAppenderFactoryTest {
 
-    private TcpServer tcpServer = new TcpServer(createServerSocket());
-    private ObjectMapper objectMapper = Jackson.newObjectMapper();
-    private YamlConfigurationFactory<DefaultLoggingFactory> yamlConfigurationFactory = new YamlConfigurationFactory<>(
+    private final ObjectMapper objectMapper = Jackson.newObjectMapper();
+    private final YamlConfigurationFactory<DefaultLoggingFactory> yamlConfigurationFactory = new YamlConfigurationFactory<>(
         DefaultLoggingFactory.class, BaseValidator.newValidator(), objectMapper, "dw-tcp");
 
     @BeforeEach
     void setUp() throws Exception {
-        tcpServer.setUp();
         objectMapper.getSubtypeResolver().registerSubtypes(TcpSocketAppenderFactory.class);
-    }
-
-    @AfterEach
-    void tearDown() throws Exception {
-        tcpServer.tearDown();
     }
 
     private ServerSocket createServerSocket() {
@@ -53,57 +45,67 @@ class TcpSocketAppenderFactoryTest {
         }
     }
 
-    private static File resourcePath(String path) throws URISyntaxException {
-        return new File(Resources.getResource(path).toURI());
-    }
-
     @Test
     void testParseConfig() throws Exception {
-        DefaultLoggingFactory loggingFactory = yamlConfigurationFactory.build(resourcePath("yaml/logging-tcp-custom.yml"));
-        assertThat(loggingFactory.getAppenders()).hasSize(1);
-        TcpSocketAppenderFactory<ILoggingEvent> tcpAppenderFactory = (TcpSocketAppenderFactory<ILoggingEvent>)
-            loggingFactory.getAppenders().get(0);
-        assertThat(tcpAppenderFactory.getHost()).isEqualTo("172.16.11.245");
-        assertThat(tcpAppenderFactory.getPort()).isEqualTo(17001);
-        assertThat(tcpAppenderFactory.getConnectionTimeout()).isEqualTo(Duration.milliseconds(100));
-        assertThat(tcpAppenderFactory.getSendBufferSize()).isEqualTo(DataSize.kibibytes(2));
-        assertThat(tcpAppenderFactory.isImmediateFlush()).isFalse();
+        DefaultLoggingFactory loggingFactory = yamlConfigurationFactory.build(new ResourceConfigurationSourceProvider(), "/yaml/logging-tcp-custom.yml");
+        assertThat(loggingFactory.getAppenders())
+            .singleElement()
+            .isInstanceOfSatisfying(TcpSocketAppenderFactory.class, tcpAppenderFactory -> assertThat(tcpAppenderFactory)
+                .satisfies(factory -> assertThat(factory.getHost()).isEqualTo("172.16.11.245"))
+                .satisfies(factory -> assertThat(factory.getPort()).isEqualTo(17001))
+                .satisfies(factory -> assertThat(factory.getConnectionTimeout()).isEqualTo(Duration.milliseconds(100)))
+                .satisfies(factory -> assertThat(factory.getSendBufferSize()).isEqualTo(DataSize.kibibytes(2)))
+                .satisfies(factory -> assertThat(factory.isImmediateFlush()).isFalse()));
     }
 
     @Test
     void testTestTcpLogging() throws Exception {
-        DefaultLoggingFactory loggingFactory = yamlConfigurationFactory.build(new SubstitutingSourceProvider(
-                new ResourceConfigurationSourceProvider(),
-                new StringSubstitutor(Collections.singletonMap("tcp.server.port", tcpServer.getPort()))),
-            "yaml/logging-tcp.yml");
-        loggingFactory.configure(new MetricRegistry(), "tcp-test");
+        try (ServerSocket serverSocket = createServerSocket(); TcpServer tcpServer = new TcpServer(serverSocket)) {
+            Future<List<String>> receivedMessages = tcpServer.receive();
+            DefaultLoggingFactory loggingFactory = yamlConfigurationFactory.build(new SubstitutingSourceProvider(
+                    new ResourceConfigurationSourceProvider(),
+                    new StringSubstitutor(Collections.singletonMap("tcp.server.port", serverSocket.getLocalPort()))),
+                "yaml/logging-tcp.yml");
+            loggingFactory.configure(new MetricRegistry(), "tcp-test");
 
-        Logger logger = LoggerFactory.getLogger("com.example.app");
-        for (int i = 0; i < tcpServer.getMessageCount(); i++) {
-            logger.info("Application log {}", i);
+            List<String> loggedMessages = generateLogs(LoggerFactory.getLogger("com.example.app"));
+            loggingFactory.reset();
+
+            assertThat(receivedMessages.get(1, TimeUnit.MINUTES))
+                .hasSize(100)
+                .allSatisfy(s -> assertThat(s).startsWith("INFO"))
+                // Strip preamble from e.g. "INFO  [2021-11-20 10:23:57,620] com.example.app: Application log 0"
+                .extracting(s -> s.substring(s.lastIndexOf("com.example.app: ") + "com.example.app: ".length()))
+                .containsExactlyElementsOf(loggedMessages);
         }
-
-        tcpServer.getLatch().await(5, TimeUnit.SECONDS);
-        assertThat(tcpServer.getLatch().getCount()).isEqualTo(0);
-        loggingFactory.reset();
     }
 
     @Test
     void testBufferingTcpLogging() throws Exception {
-        DefaultLoggingFactory loggingFactory = yamlConfigurationFactory.build(new SubstitutingSourceProvider(
-            new ResourceConfigurationSourceProvider(),
-                new StringSubstitutor(Collections.singletonMap("tcp.server.port", tcpServer.getPort()))),
-            "yaml/logging-tcp-buffered.yml");
-        loggingFactory.configure(new MetricRegistry(), "tcp-test");
+        try (ServerSocket serverSocket = createServerSocket(); TcpServer tcpServer = new TcpServer(serverSocket)) {
+            Future<List<String>> receivedMessages = tcpServer.receive();
+            DefaultLoggingFactory loggingFactory = yamlConfigurationFactory.build(new SubstitutingSourceProvider(
+                    new ResourceConfigurationSourceProvider(),
+                    new StringSubstitutor(Collections.singletonMap("tcp.server.port", serverSocket.getLocalPort()))),
+                "yaml/logging-tcp-buffered.yml");
+            loggingFactory.configure(new MetricRegistry(), "tcp-test");
 
-        Logger logger = LoggerFactory.getLogger("com.example.app");
-        for (int i = 0; i < tcpServer.getMessageCount(); i++) {
-            logger.info("Application log {}", i);
+            List<String> loggedMessages = generateLogs(LoggerFactory.getLogger("com.example.app"));
+            // We have to flush the buffer manually
+            loggingFactory.reset();
+
+            assertThat(receivedMessages.get(1, TimeUnit.MINUTES))
+                .allSatisfy(s -> assertThat(s).startsWith("INFO"))
+                // Strip preamble from e.g. "INFO  [2021-11-20 10:23:57,620] com.example.app: Application log 0"
+                .extracting(s -> s.substring(s.lastIndexOf("com.example.app: ") + "com.example.app: ".length()))
+                .containsExactlyElementsOf(loggedMessages);
         }
-        // We have to flush the buffer manually
-        loggingFactory.reset();
+    }
 
-        tcpServer.getLatch().await(5, TimeUnit.SECONDS);
-        assertThat(tcpServer.getLatch().getCount()).isEqualTo(0);
+    private static List<String> generateLogs(final Logger logger) {
+        return IntStream.range(0, 100)
+            .mapToObj(i -> String.format("Application log %d", i))
+            .peek(logger::info)
+            .collect(Collectors.toList());
     }
 }

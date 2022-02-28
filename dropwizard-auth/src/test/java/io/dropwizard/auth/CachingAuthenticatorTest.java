@@ -95,9 +95,9 @@ class CachingAuthenticatorTest {
     @Test
     void shouldNotCacheAbsentPrincipals() throws Exception {
         when(underlying.authenticate(anyString())).thenReturn(Optional.empty());
-        assertThat(cached.authenticate("credentials")).isEqualTo(Optional.empty());
+        assertThat(cached.authenticate("credentials")).isEmpty();
         verify(underlying).authenticate("credentials");
-        assertThat(cached.size()).isEqualTo(0);
+        assertThat(cached.size()).isZero();
     }
 
     @Test
@@ -125,7 +125,7 @@ class CachingAuthenticatorTest {
         when(underlying.authenticate(anyString())).thenReturn(Optional.empty());
         Caffeine<Object, Object> caffeine = Caffeine.newBuilder().maximumSize(1L).executor(Runnable::run);
         cached = new CachingAuthenticator<>(new MetricRegistry(), underlying, caffeine, true);
-        assertThat(cached.authenticate("credentials")).isEqualTo(Optional.empty());
+        assertThat(cached.authenticate("credentials")).isEmpty();
         verify(underlying).authenticate("credentials");
         assertThat(cached.size()).isEqualTo(1);
     }

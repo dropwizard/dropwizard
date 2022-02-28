@@ -7,10 +7,10 @@ import java.io.StringReader;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class CharStreamsTest {
+class CharStreamsTest {
 
     @Test
-    public void testToString() throws IOException {
+    void testToString() throws IOException {
         StringBuilder builder = new StringBuilder(4100);
         for (int i = 0; i < 4100; i++) {
              builder.append("a");

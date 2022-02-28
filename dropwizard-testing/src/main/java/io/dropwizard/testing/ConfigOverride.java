@@ -30,42 +30,40 @@ import java.util.function.Supplier;
  * <li><code>ConfigOverride.config("logging.loggers.com\\.example\\.bar",
  * "DEBUG")</code> will add a logger with the name "com.example.bar" configured
  * for debug logging.</li>
+ * <li><code>ConfigOverride.randomPorts()</code> will change the ports of the
+ * default applicationConnectors and adminConnectors to 0 so the tests start
+ * with random ports.</li>
  * </ul>
  */
-public class ConfigOverride {
+public abstract class ConfigOverride {
 
-    public static final String DEFAULT_PREFIX = "dw.";
-    private final String key;
-    private final Supplier<String> value;
-    private final String propertyPrefix;
-
-    private ConfigOverride(String propertyPrefix, String key, Supplier<String> value) {
-        this.key = key;
-        this.value = value;
-        this.propertyPrefix = propertyPrefix.endsWith(".") ? propertyPrefix : propertyPrefix + ".";
-    }
+    static final String DEFAULT_PREFIX = "dw.";
 
     public static ConfigOverride config(String key, String value) {
-        return new ConfigOverride(DEFAULT_PREFIX, key, () -> value);
+        return new ConfigOverrideValue(DEFAULT_PREFIX, key, () -> value);
     }
 
     public static ConfigOverride config(String propertyPrefix, String key, String value) {
-        return new ConfigOverride(propertyPrefix, key, () -> value);
+        return new ConfigOverrideValue(propertyPrefix, key, () -> value);
     }
 
     public static ConfigOverride config(String key, Supplier<String> value) {
-        return new ConfigOverride(DEFAULT_PREFIX, key, value);
+        return new ConfigOverrideValue(DEFAULT_PREFIX, key, value);
     }
 
     public static ConfigOverride config(String propertyPrefix, String key, Supplier<String> value) {
-        return new ConfigOverride(propertyPrefix, key, value);
+        return new ConfigOverrideValue(propertyPrefix, key, value);
     }
 
-    public void addToSystemProperties() {
-        System.setProperty(propertyPrefix + key, value.get());
+    public static ConfigOverride randomPorts() {
+        return new ConfigOverrideRandomPorts(DEFAULT_PREFIX);
     }
 
-    public void removeFromSystemProperties() {
-        System.clearProperty(propertyPrefix + key);
+    public static ConfigOverride randomPorts(String propertyPrefix) {
+        return new ConfigOverrideRandomPorts(propertyPrefix);
     }
+
+    public abstract void addToSystemProperties();
+
+    public abstract void removeFromSystemProperties();
 }

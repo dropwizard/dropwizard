@@ -21,7 +21,7 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class FlashFactoryTest extends AbstractJerseyTest {
+class FlashFactoryTest extends AbstractJerseyTest {
 
     @Override
     protected TestContainerFactory getTestContainerFactory()
@@ -40,7 +40,7 @@ public class FlashFactoryTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void passesInHttpSessions() throws Exception {
+    void passesInHttpSessions() throws Exception {
         Response firstResponse = target("/flash").request(MediaType.TEXT_PLAIN)
                 .post(Entity.entity("Mr. Peeps", MediaType.TEXT_PLAIN));
 

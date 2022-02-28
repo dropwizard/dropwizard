@@ -3,8 +3,8 @@ package com.example.app1;
 import io.dropwizard.Configuration;
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.client.JerseyClientConfiguration;
+import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.jackson.Jackson;
-import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import io.dropwizard.util.Duration;
@@ -31,7 +31,7 @@ import static org.awaitility.Awaitility.await;
 @ExtendWith(DropwizardExtensionsSupport.class)
 public class App1Test {
     public static final DropwizardAppExtension<Configuration> RULE =
-        new DropwizardAppExtension<>(App1.class, ResourceHelpers.resourceFilePath("app1/config.yml"));
+        new DropwizardAppExtension<>(App1.class, "app1/config.yml", new ResourceConfigurationSourceProvider());
 
     private static Client client;
 
@@ -47,7 +47,7 @@ public class App1Test {
     }
 
     @Test
-    public void custom204OnEmptyOptional() {
+    void custom204OnEmptyOptional() {
         final Client client = new JerseyClientBuilder(RULE.getEnvironment()).build("test client 1");
         final String url = String.format("http://localhost:%d/empty-optional", RULE.getLocalPort());
         final Response response = client.target(url).request().get();
@@ -55,7 +55,7 @@ public class App1Test {
     }
 
     @Test
-    public void custom404OnViewRenderMissingMustacheTemplate() {
+    void custom404OnViewRenderMissingMustacheTemplate() {
         final Client client = new JerseyClientBuilder(RULE.getEnvironment()).build("test client 2");
         final String url = String.format("http://localhost:%d/view-with-missing-tpl", RULE.getLocalPort());
 
@@ -64,7 +64,7 @@ public class App1Test {
     }
 
     @Test
-    public void earlyEofTest() throws IOException, InterruptedException {
+    void earlyEofTest() throws IOException {
         // Only eof test so we ensure it's false before test
         ((App1)RULE.getApplication()).wasEofExceptionHit = false;
 
@@ -84,7 +84,7 @@ public class App1Test {
     }
 
     @Test
-    public void customJsonProvider() {
+    void customJsonProvider() {
         final String url = String.format("http://localhost:%d/mapper", RULE.getLocalPort());
         final String response = client.target(url)
             .request()
@@ -94,7 +94,7 @@ public class App1Test {
     }
 
     @Test
-    public void customJsonProviderMissingHeader() {
+    void customJsonProviderMissingHeader() {
         final String url = String.format("http://localhost:%d/mapper", RULE.getLocalPort());
         final Response response = client.target(url)
             .request()
@@ -103,7 +103,7 @@ public class App1Test {
     }
 
     @Test
-    public void customJsonProviderClient() {
+    void customJsonProviderClient() {
         final String url = String.format("http://localhost:%d/mapper", RULE.getLocalPort());
         final String response = client.target(url)
             .request()
@@ -113,7 +113,7 @@ public class App1Test {
     }
 
     @Test
-    public void customJsonProviderRoundtrip() {
+    void customJsonProviderRoundtrip() {
         final String url = String.format("http://localhost:%d/mapper", RULE.getLocalPort());
         final GenericType<Map<String, String>> typ = new GenericType<Map<String, String>>() {
         };
@@ -125,7 +125,7 @@ public class App1Test {
     }
 
     @Test
-    public void customBodyWriterTest() {
+    void customBodyWriterTest() {
         final String url = String.format("http://localhost:%d/custom-class", RULE.getLocalPort());
         final String response = client.target(url)
             .request()

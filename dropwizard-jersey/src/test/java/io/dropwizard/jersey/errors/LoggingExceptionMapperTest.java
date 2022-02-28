@@ -6,15 +6,14 @@ import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.catchThrowable;
-import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class LoggingExceptionMapperTest extends AbstractJerseyTest {
+class LoggingExceptionMapperTest extends AbstractJerseyTest {
 
     @Override
     protected Application configure() {
@@ -25,60 +24,49 @@ public class LoggingExceptionMapperTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void returnsAnErrorMessage() throws Exception {
-        try {
-            target("/exception/").request(MediaType.APPLICATION_JSON).get(String.class);
-            failBecauseExceptionWasNotThrown(WebApplicationException.class);
-        } catch (WebApplicationException e) {
-            final Response response = e.getResponse();
-
-            assertThat(response.getStatus()).isEqualTo(500);
-            assertThat(response.readEntity(String.class)).startsWith("{\"code\":500,\"message\":"
-                    + "\"There was an error processing your request. It has been logged (ID ");
-        }
+    void returnsAnErrorMessage() {
+        Invocation.Builder request = target("/exception/").request(MediaType.APPLICATION_JSON);
+        assertThatExceptionOfType(WebApplicationException.class)
+            .isThrownBy(() -> request.get(String.class))
+            .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(500))
+            .satisfies(e -> assertThat(e.getResponse().readEntity(String.class)).startsWith("{\"code\":500,\"message\":"
+                + "\"There was an error processing your request. It has been logged (ID "));
     }
 
     @Test
-    public void handlesJsonMappingException() throws Exception {
-        try {
-            target("/exception/json-mapping-exception").request(MediaType.APPLICATION_JSON).get(String.class);
-            failBecauseExceptionWasNotThrown(WebApplicationException.class);
-        } catch (WebApplicationException e) {
-            final Response response = e.getResponse();
-
-            assertThat(response.getStatus()).isEqualTo(500);
-            assertThat(response.readEntity(String.class)).startsWith("{\"code\":500,\"message\":"
-                    + "\"There was an error processing your request. It has been logged (ID ");
-        }
+    void handlesJsonMappingException() {
+        Invocation.Builder request = target("/exception/json-mapping-exception").request(MediaType.APPLICATION_JSON);
+        assertThatExceptionOfType(WebApplicationException.class)
+            .isThrownBy(() -> request.get(String.class))
+            .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(500))
+            .satisfies(e -> assertThat(e.getResponse().readEntity(String.class)).startsWith("{\"code\":500,\"message\":"
+                + "\"There was an error processing your request. It has been logged (ID "));
     }
 
     @Test
-    public void handlesMethodNotAllowedWithHeaders() {
-        final Throwable thrown = catchThrowable(() -> target("/exception/json-mapping-exception")
-            .request(MediaType.APPLICATION_JSON)
-            .post(Entity.json("A"), String.class));
-        assertThat(thrown).isInstanceOf(WebApplicationException.class);
-        final Response resp = ((WebApplicationException) thrown).getResponse();
-        assertThat(resp.getStatus()).isEqualTo(405);
-        assertThat(resp.getAllowedMethods()).containsOnly("GET", "OPTIONS");
-        assertThat(resp.readEntity(String.class)).isEqualTo("{\"code\":405,\"message\":\"HTTP 405 Method Not Allowed\"}");
+    void handlesMethodNotAllowedWithHeaders() {
+        Invocation.Builder request = target("/exception/json-mapping-exception").request(MediaType.APPLICATION_JSON);
+        Entity<String> jsonEntity = Entity.json("A");
+        assertThatExceptionOfType(WebApplicationException.class)
+            .isThrownBy(() -> request.post(jsonEntity, String.class))
+            .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(405))
+            .satisfies(e -> assertThat(e.getResponse().getAllowedMethods()).containsOnly("GET", "OPTIONS"))
+            .satisfies(e -> assertThat(e.getResponse().readEntity(String.class))
+                .isEqualTo("{\"code\":405,\"message\":\"HTTP 405 Method Not Allowed\"}"));
     }
 
     @Test
-    public void formatsWebApplicationException() throws Exception {
-        try {
-            target("/exception/web-application-exception").request(MediaType.APPLICATION_JSON).get(String.class);
-            failBecauseExceptionWasNotThrown(WebApplicationException.class);
-        } catch (WebApplicationException e) {
-            final Response response = e.getResponse();
-
-            assertThat(response.getStatus()).isEqualTo(400);
-            assertThat(response.readEntity(String.class)).isEqualTo("{\"code\":400,\"message\":\"KAPOW\"}");
-        }
+    void formatsWebApplicationException() {
+        Invocation.Builder request = target("/exception/web-application-exception").request(MediaType.APPLICATION_JSON);
+        assertThatExceptionOfType(WebApplicationException.class)
+            .isThrownBy(() -> request.get(String.class))
+            .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(400))
+            .satisfies(e -> assertThat(e.getResponse().readEntity(String.class))
+                .isEqualTo("{\"code\":400,\"message\":\"KAPOW\"}"));
     }
 
     @Test
-    public void handlesRedirectInWebApplicationException() {
+    void handlesRedirectInWebApplicationException() {
         String responseText = target("/exception/web-application-exception-with-redirect")
             .request(MediaType.APPLICATION_JSON)
             .get(String.class);

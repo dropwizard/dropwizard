@@ -8,6 +8,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
+import java.util.Locale;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static java.util.Objects.requireNonNull;
@@ -62,7 +63,7 @@ public abstract class LoggingExceptionMapper<E extends Throwable> implements Exc
 
     @SuppressWarnings("UnusedParameters")
     protected String formatErrorMessage(long id, E exception) {
-        return String.format("There was an error processing your request. It has been logged (ID %016x).", id);
+        return String.format(Locale.ROOT, "There was an error processing your request. It has been logged (ID %016x).", id);
     }
 
     protected long logException(E exception) {
@@ -71,12 +72,13 @@ public abstract class LoggingExceptionMapper<E extends Throwable> implements Exc
         return id;
     }
 
+    @SuppressWarnings("Slf4jFormatShouldBeConst")
     protected void logException(long id, E exception) {
         logger.error(formatLogMessage(id, exception), exception);
     }
 
     @SuppressWarnings("UnusedParameters")
     protected String formatLogMessage(long id, Throwable exception) {
-        return String.format("Error handling a request: %016x", id);
+        return String.format(Locale.ROOT, "Error handling a request: %016x", id);
     }
 }

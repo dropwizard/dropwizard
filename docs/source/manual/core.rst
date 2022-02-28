@@ -55,7 +55,7 @@ which tends to look like this:
   * ``cli``: :ref:`man-core-commands`
   * ``client``: :ref:`Client <man-client>` code that accesses external HTTP services.
   * ``core``: Domain implementation; where objects not used in the API such as POJOs, validations, crypto, etc, reside.
-  * ``jdbi3``: :ref:`Database <man-jdbi3>` access classes
+  * ``db``: :ref:`Database <man-jdbi3>` access classes
   * ``health``: :ref:`man-core-healthchecks`
   * ``resources``: :ref:`man-core-resources`
   * ``MyApplication``: The :ref:`application <man-core-application>` class
@@ -197,7 +197,7 @@ and would output an error message describing the issues.
 Once your application has parsed the YAML file and constructed its ``Configuration`` instance,
 Dropwizard then calls your ``Application`` subclass to initialize your application's ``Environment``.
 
-.. note::
+.. note:: :name: config-override
 
     You can override configuration settings by passing special Java system properties when starting
     your application. Overrides must start with prefix ``dw.``, followed by the path to the
@@ -385,7 +385,7 @@ Environments
 ============
 
 A Dropwizard ``Environment`` consists of all the :ref:`man-core-resources`, servlets, filters,
-:ref:`man-core-healthchecks`, Jersey providers, :ref:`man-core-managed`, :ref:`man-core-tasks`, and
+:ref:`man-core-healthchecks`, :ref:`man-core-health`, Jersey providers, :ref:`man-core-managed`, :ref:`man-core-tasks`, and
 Jersey properties which your application provides.
 
 Each ``Application`` subclass implements a ``run`` method. This is where you should be creating new
@@ -450,8 +450,154 @@ If all health checks report success, a ``200 OK`` is returned. If any fail, a
 ``500 Internal Server Error`` is returned with the error messages and exception stack traces (if an
 exception was thrown).
 
+.. note::
+
+    This behavior overlaps in many ways with the new :ref:`man-core-health` functionality. If you wish to disable
+    the admin health servlet, a new flag was introduced into the health check configuration
+    :ref:`man-configuration-healthchecks` to allow disabling it.
+
+
 All Dropwizard applications ship with the ``deadlocks`` health check installed by default, which uses
 Java 1.6's built-in thread deadlock detection to determine if any threads are deadlocked.
+
+.. _man-core-health:
+
+Health
+======
+
+The health checks described in :ref:`man-core-healthchecks` can be configured to create a holistic view of your
+service health, which can then be used to drive decision making by things like `Kubernetes readiness & liveness checks`_,
+or to dictate whether or not a load balancer should forward traffic to your service.
+
+This can be done by running these dependency health checks periodically in the background on some schedule,
+and then aggregating the results of all of those checks into a single indicator of overall health. Certain
+dependencies may be critical to your application functioning, like a database that your service can't function without,
+but other dependencies may be more non-critical to your service being able to function (let's say a cache, that
+could be considered more of a nice to have than a necessity).
+
+Define the following health check configurations in your `config.yml` file:
+
+.. code-block:: yaml
+
+    health:
+      delayedShutdownHandlerEnabled: true
+      shutdownWaitPeriod: 10s
+      healthChecks:
+        - name: user-database
+          critical: true
+        - name: user-notifications-queue
+          critical: false
+          schedule:
+            checkInterval: 2500ms
+            downtimeInterval: 10s
+            failureAttempts: 2
+            successAttempts: 1
+        - name: user-cache
+          critical: false
+
+.. note::
+
+    This behavior was integrated from the `Dropwizard Health module`_. If you are migrating from that module
+    to the new Dropwizard core framework health code, you will want to refer to :ref:`upgrade-notes-dropwizard-2_1_x-health` the migration guide.
+
+
+.. _`Kubernetes readiness & liveness checks`: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
+.. _`Dropwizard Health module`: https://github.com/dropwizard/dropwizard-health
+
+.. _man-core-health-status:
+
+Application Status
+------------------
+
+There are two types of status that are supported currently: Alive and Ready.
+
+* An ``alive`` status indicates the application is operating normally and does not need to be restarted to recover from
+  a stuck state. Long-running applications can eventually reach a broken state and cannot recover except by being
+  restarted (e.g. deadlocked threads).
+* A ``ready`` status indicates the application is ready to serve traffic. Applications can temporarily be unable to
+  serve traffic due to a variety of reasons, for example, an application might need to build/compute large caches
+  during startup or can critically depend on an external service.
+
+An example of how you might query the health check, assuming you're using the default responder/responseProvider
+settings in configuration:
+
+``https://<hostname>:<port>/health-check?type=<type>&name=<name>``
+
+* replace ``<type>`` with ``ready`` or ``alive``; defaults to ``ready`` if the ``type`` parameter is not provided
+* replace ``<name>`` with the name of the health check to query. Multiple names can be provided, or no no names. If all checks are desired,
+  ``name=all`` can be specified to retrieve all checks
+
+.. _man-core-health-providedchecks:
+
+HTTP & TCP Checks
+-----------------
+
+Should your service have any dependencies that it needs to perform health checks against that expose either an HTTP or TCP health check interface,
+you can use the ``HttpHealthCheck`` or ``TcpHealthCheck`` classes to do so easily.
+
+You will need to register your health check(s) in your ``Application`` class ``run()`` method.
+
+**HTTP**
+
+.. code-block:: java
+
+    @Override
+    public void run(final AppConfiguration configuration, final Environment environment) {
+        ...
+        environment.healthChecks().register("some-http-dependency", new HttpHealthCheck("http://some-http-dependency.com:8080/health-check"));
+    }
+
+**TCP**
+
+.. code-block:: java
+
+    @Override
+    public void run(final AppConfiguration configuration, final Environment environment) {
+        ...
+        environment.healthChecks().register("some-tcp-dependency", new TcpHealthCheck("some-tcp-dependency.com", 443));
+    }
+
+.. _man-core-health-data:
+
+Health Data Access
+------------------
+In the `Application.run()` method, you can access views of the health state data in two different ways:
+
+**Accessing data directly**
+
+.. code-block:: java
+
+    @Override
+    public void run(final AppConfiguration configuration, final Environment environment) {
+        ...
+        Collection<HealthStateView> views = environment.health().healthStateAggregator().healthStateViews();
+    }
+
+**Listening to data changes**
+
+.. code-block:: java
+
+    @Override
+    public void run(final AppConfiguration configuration, final Environment environment) {
+        ...
+        HealthStateListener myListener = new HealthStateListener() {
+            @Override
+            public void onStateChanged(String healthCheckName, boolean healthy) {
+                System.out.println(healthCheckName + "changed state to " + healthy);
+            }
+
+            @Override
+            public void onHealthyCheck(String healthCheckName) {
+                System.out.println(healthCheckName + "is healthy! :)");
+            }
+
+            @Override
+            public void onUnhealthyCheck(String healthCheckName) {
+                System.out.println(healthCheckName + "is unhealthy! :(");
+            }
+        };
+        environment.health().addHealthStateListener(myListener);
+    }
 
 .. _man-core-managed:
 
@@ -722,6 +868,11 @@ location specified by ``-c``), adapt the ConfiguredCommand_ class as needed.
 
 .. _ConfiguredCommand: https://github.com/dropwizard/dropwizard/blob/master/dropwizard-core/src/main/java/io/dropwizard/cli/ConfiguredCommand.java
 
+.. note::
+
+     If you override the ``configure`` method, you **must** call ``super.override(subparser)`` (or call ``addFileArgument``)
+     in order to preserve the configuration file parameter in the subparser.
+
 .. _man-core-tasks:
 
 Tasks
@@ -940,7 +1091,7 @@ By default, all logging in Dropwizard is asynchronous, even to typically
 synchronous sinks such as files and the console. When a slow logger (like file
 logger on an overloaded disk) is coupled with a high load, Dropwizard will
 seamlessly drop events of lower importance (``TRACE``, ``DEBUG``, ``INFO``) in
-an attempt to maintain reasonable latency. 
+an attempt to maintain reasonable latency.
 
 .. TIP::
    Instead of logging business critical statements under ``INFO``, insert them
@@ -1472,7 +1623,7 @@ this:
                         @NotNull @Valid Notification notification) {
         final long id = store.add(userId.get(), notification);
         return Response.created(UriBuilder.fromResource(NotificationResource.class)
-                                          .build(userId.get(), id)
+                                          .build(userId.get(), id))
                        .build();
     }
 
@@ -1675,6 +1826,34 @@ Adding a ``Cache-Control`` statement to your resource class is simple with Dropw
 
 The ``@CacheControl`` annotation will take all of the parameters of the ``Cache-Control`` header.
 
+Sessions
+--------
+
+Although Dropwizard's main purpose is to build stateless RESTful APIs, a stateful web service can
+be built using HTTP sessions. As most users won't profit from having session support enabled by
+default, session support is implemented as opt-in.
+
+The underlying Jetty server will handle sessions only if a ``SessionHandler`` is provided at
+application startup. Therefore the following code has to be added to the ``run`` method of the
+``Application`` class:
+
+.. code-block:: java
+
+    @Override
+    public void run(final TestConfiguration configuration, final Environment environment) {
+        environment.servlets().setSessionHandler(new org.eclipse.jetty.server.session.SessionHandler());
+    }
+
+This will provide Jetty's default ``SessionHandler`` to the servlet environment and session support is enabled.
+To get an ``HttpSession`` object injected into a Jersey resource method, Dropwizard provides a ``@Session``
+annotation:
+
+.. code-block:: java
+
+    public Response doSomethingWithSessions(@Session HttpSession httpSession) {
+        return Response.ok().build();
+    }
+
 .. _man-core-representations:
 
 Representations
@@ -1845,13 +2024,19 @@ input and output formats by creating classes which implement Jersey's ``MessageB
 instances of them (or their classes if they depend on Jersey's ``@Context`` injection) to your
 application's ``Environment`` on initialization.
 
+.. _man-core-filters:
+
+Filters
+=======
+
+There might be cases when you want to filter out requests or modify them before they reach your Resources.
+
 .. _man-core-jersey-filters:
 
 Jersey filters
 --------------
 
-There might be cases when you want to filter out requests or modify them before they reach your Resources. Jersey
-has a rich api for `filters and interceptors`_ that can be used directly in Dropwizard.
+Jersey has a rich api for `filters and interceptors`_ that can be used directly in Dropwizard.
 You can stop the request from reaching your resources by throwing a ``WebApplicationException``. Alternatively,
 you can use filters to modify inbound requests or outbound responses.
 

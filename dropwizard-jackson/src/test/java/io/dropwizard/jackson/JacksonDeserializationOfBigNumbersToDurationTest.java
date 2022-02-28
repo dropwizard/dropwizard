@@ -13,60 +13,60 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.jupiter.api.Assertions.assertTimeout;
 
 
-public class JacksonDeserializationOfBigNumbersToDurationTest {
+class JacksonDeserializationOfBigNumbersToDurationTest {
 
     private final ObjectMapper objectMapper = Jackson.newObjectMapper();
 
     @Test
-    public void testDoesNotAttemptToDeserializeExtremelyBigNumbers() throws Exception {
+    void testDoesNotAttemptToDeserializeExtremelyBigNumbers() throws Exception {
         Task task = objectMapper.readValue("{\"id\": 42, \"duration\": 1e1000000000}", Task.class);
         assertTimeout(Duration.ofSeconds(5L), () -> assertThat(task.getDuration()).isEqualTo(Duration.ofSeconds(0)));
     }
 
     @Test
-    public void testCanDeserializeZero() throws Exception {
+    void testCanDeserializeZero() throws Exception {
         Task task = objectMapper.readValue("{\"id\": 42, \"duration\": 0}", Task.class);
         assertThat(task.getDuration()).isEqualTo(Duration.ofSeconds(0));
     }
 
     @Test
-    public void testCanDeserializeNormalTimestamp() throws Exception {
+    void testCanDeserializeNormalTimestamp() throws Exception {
         Task task = objectMapper.readValue("{\"id\": 42, \"duration\": 30}", Task.class);
         assertThat(task.getDuration()).isEqualTo(Duration.ofSeconds(30));
     }
 
     @Test
-    public void testCanDeserializeNormalTimestampWithNanoseconds() throws Exception {
+    void testCanDeserializeNormalTimestampWithNanoseconds() throws Exception {
         Task task = objectMapper.readValue("{\"id\": 42, \"duration\": 30.314400507}", Task.class);
         assertThat(task.getDuration()).isEqualTo(Duration.ofSeconds(30, 314400507L));
     }
 
     @Test
-    public void testCanDeserializeFromString() throws Exception {
+    void testCanDeserializeFromString() throws Exception {
         Task task = objectMapper.readValue("{\"id\": 42, \"duration\": \"PT30S\"}", Task.class);
         assertThat(task.getDuration()).isEqualTo(Duration.ofSeconds(30));
     }
 
     @Test
-    public void testCanDeserializeMinDuration() throws Exception {
+    void testCanDeserializeMinDuration() throws Exception {
         Task task = objectMapper.readValue("{\"id\": 42, \"duration\": -9223372036854775808}", Task.class);
         assertThat(task.getDuration()).isEqualTo(Duration.ofSeconds(Long.MIN_VALUE));
     }
 
     @Test
-    public void testCanDeserializeMaxDuration() throws Exception {
+    void testCanDeserializeMaxDuration() throws Exception {
         Task task = objectMapper.readValue("{\"id\": 42, \"duration\": 9223372036854775807}", Task.class);
         assertThat(task.getDuration()).isEqualTo(Duration.ofSeconds(Long.MAX_VALUE));
     }
 
     @Test
-    public void testCanNotDeserializeValueMoreThanMaxDuration() {
+    void testCanNotDeserializeValueMoreThanMaxDuration() {
         assertThatExceptionOfType(JsonMappingException.class).isThrownBy(
             () -> objectMapper.readValue("{\"id\": 42, \"duration\": 9223372036854775808}", Task.class));
     }
 
     @Test
-    public void testCanNotDeserializeValueLessThanMinDuration() {
+    void testCanNotDeserializeValueLessThanMinDuration() {
         assertThatExceptionOfType(JsonMappingException.class).isThrownBy(
             () -> objectMapper.readValue("{\"id\": 42, \"duration\": -9223372036854775809}", Task.class));
     }

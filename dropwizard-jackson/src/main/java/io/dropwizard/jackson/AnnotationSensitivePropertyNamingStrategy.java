@@ -1,5 +1,6 @@
 package io.dropwizard.jackson;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.cfg.MapperConfig;
 import com.fasterxml.jackson.databind.introspect.AnnotatedField;
@@ -9,18 +10,13 @@ import com.fasterxml.jackson.databind.introspect.AnnotatedParameter;
 /**
  * A {@link PropertyNamingStrategy} implementation which, if the declaring class of a property is
  * annotated with {@link JsonSnakeCase}, uses a
- * {@link com.fasterxml.jackson.databind.PropertyNamingStrategy.SnakeCaseStrategy}, and uses
+ * {@link com.fasterxml.jackson.databind.PropertyNamingStrategies.SnakeCaseStrategy}, and uses
  * the default {@link PropertyNamingStrategy} otherwise.
  */
 public class AnnotationSensitivePropertyNamingStrategy extends PropertyNamingStrategy {
     private static final long serialVersionUID = -1372862028366311230L;
 
-    private final SnakeCaseStrategy snakeCase;
-
-    public AnnotationSensitivePropertyNamingStrategy() {
-        super();
-        this.snakeCase = new SnakeCaseStrategy();
-    }
+    private final PropertyNamingStrategy snakeCase = new PropertyNamingStrategies.SnakeCaseStrategy();
 
     @Override
     public String nameForConstructorParameter(MapperConfig<?> config,

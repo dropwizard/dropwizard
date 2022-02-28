@@ -44,14 +44,9 @@ public class PolymorphicAuthDynamicFeature<T extends Principal> implements Dynam
 
             for (final Annotation annotation : parameterAnnotations[i]) {
                 if (annotation instanceof Auth && authFilterMap.containsKey(paramType)) {
-                    if (type == Optional.class) {
-                        final ContainerRequestFilter filter = authFilterMap.get(paramType);
-                        context.register(new WebApplicationExceptionCatchingFilter(filter));
-                        return;
-                    } else {
-                        context.register(authFilterMap.get(type));
-                        return;
-                    }
+                    final ContainerRequestFilter filter = authFilterMap.get(paramType);
+                    context.register(type == Optional.class ? new WebApplicationExceptionCatchingFilter(filter) : filter);
+                    return;
                 }
             }
         }

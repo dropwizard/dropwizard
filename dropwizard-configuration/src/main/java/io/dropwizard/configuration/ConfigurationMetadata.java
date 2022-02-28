@@ -159,13 +159,25 @@ public class ConfigurationMetadata extends JsonFormatVisitorWrapper.Base {
                 parentProps.add(prop);
 
                 // visit the type of the property (or its defaultImpl).
-                mapper.acceptJsonFormatVisitor(
-                        defaultImpl == null ? fieldType.getRawClass() : defaultImpl, thiss);
-
-                // reset state after the recursive traversal
-                parentProps.remove(prop);
-                currentDepth--;
-                currentPrefix = oldPrefix;
+                try {
+                    mapper.acceptJsonFormatVisitor(defaultImpl == null ? fieldType.getRawClass() : defaultImpl, thiss);
+                } catch (NoClassDefFoundError | TypeNotPresentException e) {
+                    // this can happen if the default implementation contains
+                    // references to classes that are not in the classpath; in
+                    // that case, just ignore the default implementation
+                    if (defaultImpl != null) {
+                        return;
+                    } else {
+                        // exception has nothing to do with default
+                        // implementation, so re-throw it
+                        throw e;
+                    }
+                } finally {
+                    // reset state after the recursive traversal
+                    parentProps.remove(prop);
+                    currentDepth--;
+                    currentPrefix = oldPrefix;
+                }
 
                 // if no new fields are discovered, we assume that we are at an primitive field
                 if (oldFieldSize == fields.size()) {

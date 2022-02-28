@@ -6,7 +6,6 @@ import io.dropwizard.jersey.validation.MutableValidatorFactory;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import org.hibernate.validator.internal.constraintvalidators.bv.number.bound.MinValidatorForInteger;
-import org.hibernate.validator.internal.constraintvalidators.bv.number.bound.MinValidatorForNumber;
 import org.hibernate.validator.internal.engine.constraintvalidation.ConstraintValidatorFactoryImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,16 +15,14 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import javax.validation.constraints.Min;
-import java.util.Optional;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.AdditionalAnswers.delegatesTo;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-public class InjectValidatorFeatureTest {
+class InjectValidatorFeatureTest {
 
     private final Application<Configuration> application = new Application<Configuration>() {
         @Override
@@ -38,7 +35,7 @@ public class InjectValidatorFeatureTest {
     private ValidatorFactory validatorFactory;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() {
         Bootstrap<Configuration> bootstrap = new Bootstrap<>(application);
         application.initialize(bootstrap);
 
@@ -46,31 +43,27 @@ public class InjectValidatorFeatureTest {
     }
 
     @Test
-    public void shouldReplaceValidatorFactory() {
+    void shouldReplaceValidatorFactory() {
         ConstraintValidatorFactory factory = validatorFactory.getConstraintValidatorFactory();
 
         assertThat(factory).isInstanceOf(MutableValidatorFactory.class);
     }
 
     @Test
-    public void shouldValidateNormally() {
+    void shouldValidateNormally() {
         Validator validator = validatorFactory.getValidator();
 
         // Run validation manually
         Set<ConstraintViolation<Bean>> constraintViolations = validator.validate(new Bean(1));
 
-
-        assertThat(constraintViolations.size()).isEqualTo(1);
-
-        Optional<String> message = constraintViolations.stream()
-            .findFirst()
-            .map(ConstraintViolation::getMessage);
-
-        assertThat(message).hasValue("must be greater than or equal to 10");
+        assertThat(constraintViolations)
+            .singleElement()
+            .extracting(ConstraintViolation::getMessage)
+            .isEqualTo("must be greater than or equal to 10");
     }
 
     @Test
-    public void shouldInvokeUpdatedFactory() {
+    void shouldInvokeUpdatedFactory() {
         MutableValidatorFactory mutableFactory = (MutableValidatorFactory) validatorFactory
             .getConstraintValidatorFactory();
 
@@ -86,7 +79,7 @@ public class InjectValidatorFeatureTest {
         Validator validator = validatorFactory.getValidator();
         validator.validate(new Bean(1));
 
-        verify(mockedFactory).getInstance(eq(MinValidatorForInteger.class));
+        verify(mockedFactory).getInstance(MinValidatorForInteger.class);
     }
 
     static class Bean {

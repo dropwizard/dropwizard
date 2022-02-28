@@ -6,6 +6,7 @@ import java.io.Reader;
 /**
  * @since 2.0
  */
+@Deprecated
 public final class CharStreams {
 
     private CharStreams() {

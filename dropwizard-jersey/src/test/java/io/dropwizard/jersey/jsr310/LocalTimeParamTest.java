@@ -6,9 +6,9 @@ import java.time.LocalTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class LocalTimeParamTest {
+class LocalTimeParamTest {
     @Test
-    public void parsesDateTimes() throws Exception {
+    void parsesDateTimes() throws Exception {
         final LocalTimeParam param = new LocalTimeParam("12:34:56");
 
         assertThat(param.get())

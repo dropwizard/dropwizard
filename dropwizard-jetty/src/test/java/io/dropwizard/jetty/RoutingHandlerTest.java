@@ -24,7 +24,7 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class RoutingHandlerTest {
+class RoutingHandlerTest {
     private final Connector connector1 = mock(Connector.class);
     private final Connector connector2 = mock(Connector.class);
     private final Handler handler1 = spy(new ContextHandler());
@@ -36,7 +36,7 @@ public class RoutingHandlerTest {
                                                                       handler2));
 
     @Test
-    public void startsAndStopsAllHandlers() throws Exception {
+    void startsAndStopsAllHandlers() throws Exception {
         handler1.setServer(mock(Server.class));
         handler2.setServer(mock(Server.class));
         handler.start();
@@ -56,7 +56,7 @@ public class RoutingHandlerTest {
     }
 
     @Test
-    public void routesRequestsToTheConnectorSpecificHandler() throws Exception {
+    void routesRequestsToTheConnectorSpecificHandler() throws Exception {
         final HttpChannel channel = mock(HttpChannel.class);
         when(channel.getConnector()).thenReturn(connector1);
 
@@ -72,7 +72,7 @@ public class RoutingHandlerTest {
     }
 
     @Test
-    public void withSessionHandler() throws Exception {
+    void withSessionHandler() throws Exception {
         final ContextHandler handler1 = new ContextHandler();
         final ServletContextHandler handler2 = new ServletContextHandler();
         final SessionHandler childHandler1 = new SessionHandler();
@@ -89,7 +89,7 @@ public class RoutingHandlerTest {
     }
 
     @Test
-    public void withoutSessionHandler() throws Exception {
+    void withoutSessionHandler() throws Exception {
         new Server().setHandler(handler);
 
         handler.start();

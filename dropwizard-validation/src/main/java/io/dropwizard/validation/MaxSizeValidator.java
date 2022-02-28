@@ -9,7 +9,10 @@ import javax.validation.ConstraintValidatorContext;
 /**
  * Check that a {@link Size} being validated is less than or equal to the
  * minimum value specified.
+ *
+ * @deprecated Use {@link MaxDataSizeValidator} for correct SI and IEC prefixes.
  */
+@Deprecated
 public class MaxSizeValidator implements ConstraintValidator<MaxSize, Size> {
 
     private long maxQty = 0;

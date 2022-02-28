@@ -1,6 +1,5 @@
 package io.dropwizard.servlets.assets;
 
-import io.dropwizard.util.Resources;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -11,11 +10,11 @@ import java.nio.file.Path;
 import java.util.jar.JarEntry;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 class ResourceURLTest {
-    private final URL resourceJar = Resources.getResource("resources.jar");
+    private final URL resourceJar = getClass().getResource("/resources.jar");
 
     @Test
     void isDirectoryReturnsTrueForPlainDirectories(@TempDir Path tempDir) throws Exception {
@@ -110,15 +109,15 @@ class ResourceURLTest {
 
     @Test
     void isDirectoryThrowsResourceNotFoundExceptionForMissingDirectories() throws Exception {
-        final URL url = Resources.getResource("META-INF/");
+        final URL url = getClass().getResource("/META-INF/");
         final URL nurl = new URL(url.toExternalForm() + "missing");
-        assertThatThrownBy(() -> ResourceURL.isDirectory(nurl))
-            .isInstanceOf(ResourceNotFoundException.class);
+        assertThatExceptionOfType(ResourceNotFoundException.class)
+            .isThrownBy(() -> ResourceURL.isDirectory(nurl));
     }
 
     @Test
-    void appendTrailingSlashAddsASlash() throws Exception {
-        final URL url = Resources.getResource("META-INF");
+    void appendTrailingSlashAddsASlash() {
+        final URL url = getClass().getResource("/META-INF");
 
         assertThat(url.toExternalForm())
                 .doesNotMatch(".*/$");
@@ -127,8 +126,8 @@ class ResourceURLTest {
     }
 
     @Test
-    void appendTrailingSlashDoesntASlashWhenOneIsAlreadyPresent() throws Exception {
-        final URL url = Resources.getResource("META-INF/");
+    void appendTrailingSlashDoesntASlashWhenOneIsAlreadyPresent() {
+        final URL url = getClass().getResource("/META-INF/");
 
         assertThat(url.toExternalForm())
                 .endsWith("/");
@@ -144,22 +143,20 @@ class ResourceURLTest {
         final long lastModified = ResourceURL.getLastModified(url);
 
         assertThat(lastModified)
-                .isGreaterThan(0);
-        assertThat(lastModified)
+                .isPositive()
                 .isEqualTo(tempDir.toFile().lastModified());
     }
 
     @Test
     void getLastModifiedReturnsTheLastModifiedTimeOfAJarEntry() throws Exception {
-        final URL url = Resources.getResource("META-INF/MANIFEST.MF");
+        final URL url = getClass().getResource("/META-INF/MANIFEST.MF");
         final long lastModified = ResourceURL.getLastModified(url);
 
         final JarURLConnection jarConnection = (JarURLConnection) url.openConnection();
         final JarEntry entry = jarConnection.getJarEntry();
 
         assertThat(lastModified)
-                .isGreaterThan(0);
-        assertThat(lastModified)
+                .isPositive()
                 .isEqualTo(entry.getTime());
     }
 

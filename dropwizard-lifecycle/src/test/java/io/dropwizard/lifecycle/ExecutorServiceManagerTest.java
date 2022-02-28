@@ -5,7 +5,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.concurrent.ExecutorService;
@@ -14,18 +14,13 @@ import org.junit.jupiter.api.Test;
 
 import io.dropwizard.util.Duration;
 
-public class ExecutorServiceManagerTest {
+class ExecutorServiceManagerTest {
 
     private static final Duration TEST_DURATION = Duration.seconds(1L);
-    private final ExecutorService exec;
-
-    public ExecutorServiceManagerTest() {
-        // This is called setUp every test
-        this.exec = mock(ExecutorService.class);
-    }
+    private final ExecutorService exec = mock(ExecutorService.class);
 
     @Test
-    public void testAccessors() {
+    void testAccessors() {
         // This test verifies the accessors behave as advertised for other unit
         // tests.
         final String poolName = this.getClass().getSimpleName();
@@ -35,10 +30,11 @@ public class ExecutorServiceManagerTest {
         assertThat(test.getShutdownPeriod()).isSameAs(TEST_DURATION);
         assertThat(test.getPoolName()).isSameAs(poolName);
         assertThat(test.getExecutor()).isSameAs(this.exec);
+        assertThat(test.toString()).contains(String.format("(%s)", poolName));
     }
 
     @Test
-    public void testManaged() throws Exception {
+    void testManaged() throws Exception {
         final String poolName = this.getClass().getSimpleName();
         when(this.exec.awaitTermination(anyLong(), any())).thenReturn(true);
 
@@ -46,7 +42,7 @@ public class ExecutorServiceManagerTest {
 
         test.start();
 
-        verifyZeroInteractions(this.exec);
+        verifyNoInteractions(this.exec);
 
         test.stop();
 
@@ -55,7 +51,7 @@ public class ExecutorServiceManagerTest {
     }
 
     @Test
-    public void testManagedTimeout() throws Exception {
+    void testManagedTimeout() throws Exception {
         final String poolName = this.getClass().getSimpleName();
         when(this.exec.awaitTermination(anyLong(), any())).thenReturn(false);
 
@@ -63,7 +59,7 @@ public class ExecutorServiceManagerTest {
 
         test.start();
 
-        verifyZeroInteractions(this.exec);
+        verifyNoInteractions(this.exec);
 
         test.stop();
 

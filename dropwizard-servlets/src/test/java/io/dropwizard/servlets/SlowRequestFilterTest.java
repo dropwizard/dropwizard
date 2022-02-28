@@ -17,7 +17,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class SlowRequestFilterTest {
+class SlowRequestFilterTest {
 
     private HttpServletRequest request = mock(HttpServletRequest.class);
     private HttpServletResponse response = mock(HttpServletResponse.class);
@@ -28,7 +28,7 @@ public class SlowRequestFilterTest {
     private SlowRequestFilter slowRequestFilter = new SlowRequestFilter(Duration.milliseconds(500));
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         slowRequestFilter.init(filterConfig);
         slowRequestFilter.setLogger(logger);
         slowRequestFilter.setCurrentTimeProvider(() -> 1510330244000000L);
@@ -38,12 +38,12 @@ public class SlowRequestFilterTest {
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    void tearDown() throws Exception {
         slowRequestFilter.destroy();
     }
 
     @Test
-    public void logsSlowRequests() throws Exception {
+    void logsSlowRequests() throws Exception {
         doAnswer(invocationOnMock -> {
             slowRequestFilter.setCurrentTimeProvider(() -> 1510330745000000L);
             return null;
@@ -55,7 +55,7 @@ public class SlowRequestFilterTest {
     }
 
     @Test
-    public void doesNotLogFastRequests() throws Exception {
+    void doesNotLogFastRequests() throws Exception {
         doAnswer(invocationOnMock -> {
             slowRequestFilter.setCurrentTimeProvider(() -> 1510330743000000L);
             return null;

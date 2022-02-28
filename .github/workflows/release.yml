@@ -1,0 +1,33 @@
+name: Release
+on:
+  push:
+    tags:
+    - 'v*'
+jobs:
+  release:
+    runs-on: 'ubuntu-latest'
+    env:
+      JAVA_OPTS: "-XX:+TieredCompilation -XX:TieredStopAtLevel=1"
+    steps:
+    - uses: actions/checkout@v2.4.0
+    - name: Set up JDK
+      uses: joschi/setup-jdk@v2.4.0
+      with:
+        java-version: '8'
+        server-id: ossrh
+        server-username: CI_DEPLOY_USERNAME
+        server-password: CI_DEPLOY_PASSWORD
+        gpg-passphrase: GPG_PASSPHRASE
+        gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+    - uses: actions/cache@v2.1.7
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ secrets.CACHE_VERSION }}-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-${{ secrets.CACHE_VERSION }}-
+    - name: Build and Deploy
+      run: ./mvnw -B -V -ntp -DperformRelease=true deploy
+      env:
+        CI_DEPLOY_USERNAME: ${{ secrets.CI_DEPLOY_USERNAME }}
+        CI_DEPLOY_PASSWORD: ${{ secrets.CI_DEPLOY_PASSWORD }}
+        GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}

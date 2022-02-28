@@ -344,7 +344,6 @@ To model this representation, we'll create a representation class:
     package com.example.helloworld.api;
 
     import com.fasterxml.jackson.annotation.JsonProperty;
-    import org.hibernate.validator.constraints.Length;
 
     public class Saying {
         private long id;
@@ -815,4 +814,4 @@ provide a phenomenal platform for developing RESTful web applications.
 
 There's a lot more to Dropwizard than is covered here (commands, bundles, servlets, advanced
 configuration, validation, HTTP clients, database clients, views, etc.), all of which is covered by
-the :ref:`User Manual <manual-index>`.
+the User Manual.

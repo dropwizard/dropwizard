@@ -14,18 +14,18 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
-public class LoggingJdbiExceptionMapperTest {
+class LoggingJdbiExceptionMapperTest {
     private LoggingJdbiExceptionMapper jdbiExceptionMapper;
     private Logger logger;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         logger = mock(Logger.class);
         jdbiExceptionMapper = new LoggingJdbiExceptionMapper(logger);
     }
 
     @Test
-    public void testSqlExceptionIsCause() throws Exception {
+    void testSqlExceptionIsCause() throws Exception {
         StatementContext statementContext = mock(StatementContext.class);
         RuntimeException runtimeException = new RuntimeException("DB is down");
         SQLException sqlException = new SQLException("DB error", runtimeException);
@@ -39,7 +39,7 @@ public class LoggingJdbiExceptionMapperTest {
     }
 
     @Test
-    public void testPlainJdbiException() throws Exception {
+    void testPlainJdbiException() throws Exception {
         JdbiException jdbiException = new TransactionException("Transaction failed for unknown reason");
 
         jdbiExceptionMapper.logException(9812, jdbiException);

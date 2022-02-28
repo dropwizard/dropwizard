@@ -1,6 +1,7 @@
 package com.example.validation;
 
 import io.dropwizard.Configuration;
+import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import org.junit.jupiter.api.Test;
@@ -10,7 +11,6 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 
-import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(DropwizardExtensionsSupport.class)
@@ -18,11 +18,11 @@ public class InjectValidatorTest {
 
     public static final DropwizardAppExtension<Configuration> RULE = new DropwizardAppExtension<>(
             DefaultValidatorApp.class,
-        resourceFilePath("app1/config.yml")
+        "app1/config.yml", new ResourceConfigurationSourceProvider()
     );
 
     @Test
-    public void shouldValidateNormally() {
+    void shouldValidateNormally() {
         final Client client = RULE.client();
         final String url = String.format("http://localhost:%d/default", RULE.getLocalPort());
         final WebTarget target = client.target(url);
@@ -43,7 +43,7 @@ public class InjectValidatorTest {
     }
 
     @Test
-    public void shouldInjectValidator() {
+    void shouldInjectValidator() {
         final Client client = RULE.client();
         final String url = String.format("http://localhost:%d/injectable", RULE.getLocalPort());
 

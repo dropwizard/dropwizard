@@ -21,9 +21,12 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * whose value must be less than or equal to the specified maximum.
  * <p/>
  * <code>null</code> elements are considered valid
+ *
+ * @deprecated Use {@link MaxDataSize} for correct SI and IEC prefixes.
  */
 @Target({ METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE })
 @Retention(RUNTIME)
+@Deprecated
 @Documented
 @Constraint(validatedBy = MaxSizeValidator.class)
 public @interface MaxSize {

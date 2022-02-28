@@ -19,7 +19,7 @@ import javax.validation.ValidatorFactory;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class BootstrapTest {
+class BootstrapTest {
     private final Application<Configuration> application = new Application<Configuration>() {
         @Override
         public void run(Configuration configuration, Environment environment) throws Exception {
@@ -28,42 +28,42 @@ public class BootstrapTest {
     private Bootstrap<Configuration> bootstrap;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         bootstrap = new Bootstrap<>(application);
     }
 
     @Test
-    public void hasAnApplication() throws Exception {
+    void hasAnApplication() throws Exception {
         assertThat(bootstrap.getApplication())
                 .isEqualTo(application);
     }
 
     @Test
-    public void hasAnObjectMapper() throws Exception {
+    void hasAnObjectMapper() throws Exception {
         assertThat(bootstrap.getObjectMapper())
                 .isNotNull();
     }
 
     @Test
-    public void hasHealthCheckRegistry() {
+    void hasHealthCheckRegistry() {
         assertThat(bootstrap.getHealthCheckRegistry())
             .isNotNull();
     }
 
     @Test
-    public void defaultsToUsingFilesForConfiguration() throws Exception {
+    void defaultsToUsingFilesForConfiguration() throws Exception {
         assertThat(bootstrap.getConfigurationSourceProvider())
                 .isInstanceOfAny(FileConfigurationSourceProvider.class);
     }
 
     @Test
-    public void defaultsToUsingTheDefaultClassLoader() throws Exception {
+    void defaultsToUsingTheDefaultClassLoader() throws Exception {
         assertThat(bootstrap.getClassLoader())
                 .isEqualTo(Thread.currentThread().getContextClassLoader());
     }
 
     @Test
-    public void comesWithJvmInstrumentation() throws Exception {
+    void comesWithJvmInstrumentation() throws Exception {
         bootstrap.registerMetrics();
         assertThat(bootstrap.getMetricRegistry().getNames())
                 .contains("jvm.buffers.mapped.capacity", "jvm.threads.count", "jvm.memory.heap.usage",
@@ -71,13 +71,13 @@ public class BootstrapTest {
     }
 
     @Test
-    public void defaultsToDefaultConfigurationFactoryFactory() throws Exception {
+    void defaultsToDefaultConfigurationFactoryFactory() throws Exception {
         assertThat(bootstrap.getConfigurationFactoryFactory())
                 .isInstanceOf(DefaultConfigurationFactoryFactory.class);
     }
 
     @Test
-    public void bringsYourOwnMetricRegistry() {
+    void bringsYourOwnMetricRegistry() {
         final MetricRegistry newRegistry = new MetricRegistry() {
             @Override
             public Histogram histogram(String name) {
@@ -94,7 +94,7 @@ public class BootstrapTest {
     }
 
     @Test
-    public void allowsAccessToJmxReporter() {
+    void allowsAccessToJmxReporter() {
         final MetricRegistry newRegistry = new MetricRegistry();
         bootstrap.setMetricRegistry(newRegistry);
         assertThat(bootstrap.getJmxReporter()).isNull();
@@ -103,7 +103,7 @@ public class BootstrapTest {
     }
 
     @Test
-    public void canUseCustomValidatorFactory() throws Exception {
+    void canUseCustomValidatorFactory() throws Exception {
         ValidatorFactory factory = Validation
                 .byProvider(HibernateValidator.class)
                 .configure()
@@ -114,14 +114,14 @@ public class BootstrapTest {
     }
 
     @Test
-    public void canUseCustomObjectMapper() {
+    void canUseCustomObjectMapper() {
         final ObjectMapper minimalObjectMapper = Jackson.newMinimalObjectMapper();
         bootstrap.setObjectMapper(minimalObjectMapper);
         assertThat(bootstrap.getObjectMapper()).isSameAs(minimalObjectMapper);
     }
 
     @Test
-    public void canUseCustomHealthCheckRegistry() {
+    void canUseCustomHealthCheckRegistry() {
         final HealthCheckRegistry healthCheckRegistry = new HealthCheckRegistry();
         bootstrap.setHealthCheckRegistry(healthCheckRegistry);
         assertThat(bootstrap.getHealthCheckRegistry()).isSameAs(healthCheckRegistry);

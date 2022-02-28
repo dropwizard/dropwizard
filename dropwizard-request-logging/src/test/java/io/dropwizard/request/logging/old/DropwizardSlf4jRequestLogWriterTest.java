@@ -23,7 +23,7 @@ import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class DropwizardSlf4jRequestLogWriterTest {
+class DropwizardSlf4jRequestLogWriterTest {
     static {
         BootstrapLogging.bootstrap();
     }
@@ -38,7 +38,7 @@ public class DropwizardSlf4jRequestLogWriterTest {
     private final HttpChannelState channelState = mock(HttpChannelState.class);
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         when(channelState.isInitial()).thenReturn(true);
 
         when(request.getRemoteHost()).thenReturn("10.0.0.1");
@@ -58,12 +58,12 @@ public class DropwizardSlf4jRequestLogWriterTest {
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    void tearDown() throws Exception {
         slf4jRequestLog.stop();
     }
 
     @Test
-    public void logsRequestsToTheAppenders() throws Exception {
+    void logsRequestsToTheAppenders() throws Exception {
         final String requestLine = "1, 2 buckle my shoe";
         slf4jRequestLog.write(requestLine);
         final ArgumentCaptor<ILoggingEvent> captor = ArgumentCaptor.forClass(ILoggingEvent.class);

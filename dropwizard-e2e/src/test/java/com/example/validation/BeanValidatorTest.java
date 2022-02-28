@@ -3,6 +3,7 @@ package com.example.validation;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.Configuration;
+import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
@@ -26,13 +27,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(DropwizardExtensionsSupport.class)
 public class BeanValidatorTest {
     public static final DropwizardAppExtension<Configuration> APP = new DropwizardAppExtension<>(
-        DefaultValidatorApp.class, resourceFilePath("app1/config.yml"));
+        DefaultValidatorApp.class, "app1/config.yml", new ResourceConfigurationSourceProvider());
 
     private final ObjectMapper mapper = Jackson.newMinimalObjectMapper();
     private WebTarget target;
@@ -47,7 +47,7 @@ public class BeanValidatorTest {
     }
 
     @Test
-    public void shouldValidateNormally() {
+    void shouldValidateNormally() {
         Entity<Map<String, Object>> entity = requestBody("My string", 5, Arrays.asList("one", "two", "three"));
         Response response = target.request(MediaType.APPLICATION_JSON_TYPE).post(entity);
 
@@ -55,7 +55,7 @@ public class BeanValidatorTest {
     }
 
     @Test
-    public void shouldFailWithNullRequestBody() throws IOException {
+    void shouldFailWithNullRequestBody() throws IOException {
         Response response = target.request(MediaType.APPLICATION_JSON_TYPE).post(null);
 
         assertThat(response.getStatus()).isEqualTo(422);
@@ -65,7 +65,7 @@ public class BeanValidatorTest {
     }
 
     @Test
-    public void shouldFailWithNullString() throws IOException {
+    void shouldFailWithNullString() throws IOException {
         Entity<Map<String, Object>> entity = requestBody(null, 5, Arrays.asList("one", "two", "three"));
         Response response = target.request(MediaType.APPLICATION_JSON_TYPE).post(entity);
 
@@ -76,7 +76,7 @@ public class BeanValidatorTest {
     }
 
     @Test
-    public void shouldFailWithNegativeNumber() throws IOException {
+    void shouldFailWithNegativeNumber() throws IOException {
         Entity<Map<String, Object>> entity = requestBody("My string", -23, Arrays.asList("one", "two", "three"));
         Response response = target.request(MediaType.APPLICATION_JSON_TYPE).post(entity);
 
@@ -86,7 +86,7 @@ public class BeanValidatorTest {
     }
 
     @Test
-    public void shouldFailWithEmptyList() throws IOException {
+    void shouldFailWithEmptyList() throws IOException {
         Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("string", "My string");
         requestBody.put("number", 5);
@@ -101,7 +101,7 @@ public class BeanValidatorTest {
     }
 
     @Test
-    public void shouldFailWithTooLongList() throws IOException {
+    void shouldFailWithTooLongList() throws IOException {
         Entity<Map<String, Object>> entity = requestBody("My string", 5, Arrays.asList("one", "two", "three", "four"));
         Response response = target.request(MediaType.APPLICATION_JSON_TYPE).post(entity);
 
@@ -111,7 +111,7 @@ public class BeanValidatorTest {
     }
 
     @Test
-    public void shouldFailWithBlankStringInList() throws IOException {
+    void shouldFailWithBlankStringInList() throws IOException {
         Entity<Map<String, Object>> entity = requestBody("My string", 5, Arrays.asList("one", " "));
         Response response = target.request(MediaType.APPLICATION_JSON_TYPE).post(entity);
 
@@ -121,7 +121,7 @@ public class BeanValidatorTest {
     }
 
     @Test
-    public void shouldFailWithAllInvalid() throws IOException {
+    void shouldFailWithAllInvalid() throws IOException {
         Entity<Map<String, Object>> entity = requestBody(null, -23, Arrays.asList("one", " ", "three", "four"));
         Response response = target.request(MediaType.APPLICATION_JSON_TYPE).post(entity);
 

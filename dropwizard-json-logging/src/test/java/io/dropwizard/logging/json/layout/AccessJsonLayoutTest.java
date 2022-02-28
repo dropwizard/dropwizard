@@ -19,10 +19,9 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
-public class AccessJsonLayoutTest {
+class AccessJsonLayoutTest {
 
     private String remoteHost = "nw-4.us.crawl.io";
     private String serverName = "sw-2.us.api.example.io";
@@ -49,7 +48,7 @@ public class AccessJsonLayoutTest {
         includes, Collections.emptyMap(), Collections.emptyMap());
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         requestHeaders = Maps.of(
                 "Host", "api.example.io",
                 "User-Agent", userAgent);
@@ -80,7 +79,7 @@ public class AccessJsonLayoutTest {
     }
 
     @Test
-    public void testProducesDefaultJsonMap() {
+    void testProducesDefaultJsonMap() {
         assertThat(accessJsonLayout.toJsonMap(event)).containsOnly(
             entry("timestamp", timestamp), entry("remoteUser", "john"),
             entry("method", "GET"), entry("uri", uri),
@@ -90,7 +89,7 @@ public class AccessJsonLayoutTest {
     }
 
     @Test
-    public void testDisableRemoteAddress() {
+    void testDisableRemoteAddress() {
         includes.remove(AccessAttribute.REMOTE_ADDRESS);
         accessJsonLayout.setIncludes(includes);
 
@@ -103,7 +102,7 @@ public class AccessJsonLayoutTest {
     }
 
     @Test
-    public void testDisableTimestamp() {
+    void testDisableTimestamp() {
         includes.remove(AccessAttribute.TIMESTAMP);
         accessJsonLayout.setIncludes(includes);
 
@@ -116,7 +115,7 @@ public class AccessJsonLayoutTest {
     }
 
     @Test
-    public void testEnableSpecificResponseHeader() {
+    void testEnableSpecificResponseHeader() {
         accessJsonLayout.setResponseHeaders(Collections.singleton("transfer-encoding"));
 
         assertThat(accessJsonLayout.toJsonMap(event)).containsOnly(
@@ -129,7 +128,7 @@ public class AccessJsonLayoutTest {
     }
 
     @Test
-    public void testEnableSpecificRequestHeader() {
+    void testEnableSpecificRequestHeader() {
         accessJsonLayout.setRequestHeaders(Collections.singleton("user-agent"));
 
         assertThat(accessJsonLayout.toJsonMap(event)).containsOnly(
@@ -142,7 +141,7 @@ public class AccessJsonLayoutTest {
     }
 
     @Test
-    public void testEnableEverything() {
+    void testEnableEverything() {
         accessJsonLayout.setIncludes(EnumSet.allOf(AccessAttribute.class));
         accessJsonLayout.setRequestHeaders(Sets.of("Host", "User-Agent"));
         accessJsonLayout.setResponseHeaders(Sets.of("Transfer-Encoding", "Content-Type"));
@@ -163,7 +162,7 @@ public class AccessJsonLayoutTest {
     }
 
     @Test
-    public void testAddAdditionalFields() {
+    void testAddAdditionalFields() {
         final Map<String, Object> additionalFields = Maps.of(
                 "serviceName", "user-service",
                 "serviceVersion", "1.2.3");
@@ -179,7 +178,7 @@ public class AccessJsonLayoutTest {
     }
 
     @Test
-    public void testCustomFieldNames() {
+    void testCustomFieldNames() {
         final Map<String, String> customFieldNames = Maps.of(
                 "remoteUser", "remote_user",
                 "userAgent", "user_agent",
@@ -196,7 +195,7 @@ public class AccessJsonLayoutTest {
     }
 
     @Test
-    public void testRequestAttributes() {
+    void testRequestAttributes() {
         final String attribute1 = "attribute1";
         final String attribute2 = "attribute2";
         final String attribute3 = "attribute3";
@@ -207,18 +206,25 @@ public class AccessJsonLayoutTest {
                 attribute2, "value2",
                 attribute3, "value3");
 
-        when(event.getAttribute(eq(attribute1))).thenReturn(attributes.get(attribute1));
-        when(event.getAttribute(eq(attribute2))).thenReturn(attributes.get(attribute2));
-        when(event.getAttribute(eq(attribute3))).thenReturn(attributes.get(attribute3));
+        when(event.getAttribute(attribute1)).thenReturn(attributes.get(attribute1));
+        when(event.getAttribute(attribute2)).thenReturn(attributes.get(attribute2));
+        when(event.getAttribute(attribute3)).thenReturn(attributes.get(attribute3));
 
         accessJsonLayout.setRequestAttributes(attributes.keySet());
         assertThat(accessJsonLayout.toJsonMap(event))
             .containsEntry("requestAttributes", attributes);
-
     }
 
     @Test
-    public void testRequestAttributesWithNull() {
+    void testStartAndStop() {
+        accessJsonLayout.start();
+        assertThat(accessJsonLayout.isStarted()).isTrue();
+        accessJsonLayout.stop();
+        assertThat(accessJsonLayout.isStarted()).isFalse();
+    }
+
+    @Test
+    void testRequestAttributesWithNull() {
         final String attribute1 = "attribute1";
         final String attribute2 = "attribute2";
         final String attribute3 = "attribute3";
@@ -228,9 +234,9 @@ public class AccessJsonLayoutTest {
                 attribute1, "value1",
                 attribute2, "value2");
 
-        when(event.getAttribute(eq(attribute1))).thenReturn(attributes.get(attribute1));
-        when(event.getAttribute(eq(attribute2))).thenReturn(attributes.get(attribute2));
-        when(event.getAttribute(eq(attribute3))).thenReturn(null);
+        when(event.getAttribute(attribute1)).thenReturn(attributes.get(attribute1));
+        when(event.getAttribute(attribute2)).thenReturn(attributes.get(attribute2));
+        when(event.getAttribute(attribute3)).thenReturn(null);
 
         accessJsonLayout.setRequestAttributes(Sets.of(attribute1, attribute2, attribute3));
         assertThat(accessJsonLayout.toJsonMap(event))
@@ -239,7 +245,7 @@ public class AccessJsonLayoutTest {
     }
 
     @Test
-    public void testProducesCorrectJson() throws Exception {
+    void testProducesCorrectJson() throws Exception {
         JsonNode json = objectMapper.readTree(accessJsonLayout.doLayout(event));
         assertThat(json).isNotNull();
         assertThat(json.get("timestamp").asText()).isEqualTo(timestamp);

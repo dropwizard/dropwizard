@@ -1,0 +1,18 @@
+name: "Pull Request Docs Check"
+on:
+  push:
+    branches:
+    - master
+    - release/*
+  pull_request:
+    branches:
+    - master
+    - release/*
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: ammaraskar/sphinx-action@0.4
+      with:
+        docs-folder: "docs/"

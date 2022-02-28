@@ -8,7 +8,7 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class EnumsTest {
+class EnumsTest {
 
     enum VideoFormat {
         OGG,
@@ -45,7 +45,7 @@ public class EnumsTest {
 
     @ParameterizedTest
     @MethodSource("data")
-    public void canGuess(String text, VideoFormat result) {
+    void canGuess(String text, VideoFormat result) {
         assertThat(Enums.fromStringFuzzy(text, VideoFormat.values())).isEqualTo(result);
     }
 }

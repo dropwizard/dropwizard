@@ -24,24 +24,26 @@ import java.util.stream.Collectors;
  * the validation methods efficiently and then calls them.
  */
 public class SelfValidatingValidator implements ConstraintValidator<SelfValidating, Object> {
-    private static final Logger log = LoggerFactory.getLogger(SelfValidatingValidator.class);
+    private final Logger log;
+
+    public SelfValidatingValidator() {
+        this(LoggerFactory.getLogger(SelfValidatingValidator.class));
+    }
+
+    SelfValidatingValidator(Logger logger) {
+        log = logger;
+    }
 
     @SuppressWarnings("rawtypes")
     private final ConcurrentMap<Class<?>, List<ValidationCaller>> methodMap = new ConcurrentHashMap<>();
     private final AnnotationConfiguration annotationConfiguration = new AnnotationConfiguration.StdConfiguration(AnnotationInclusion.INCLUDE_AND_INHERIT_IF_INHERITED);
     private final TypeResolver typeResolver = new TypeResolver();
     private final MemberResolver memberResolver = new MemberResolver(typeResolver);
-    private boolean escapeExpressions = true;
-
-    @Override
-    public void initialize(SelfValidating constraintAnnotation) {
-        escapeExpressions = constraintAnnotation.escapeExpressions();
-    }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
     public boolean isValid(Object value, ConstraintValidatorContext context) {
-        final ViolationCollector collector = new ViolationCollector(context, escapeExpressions);
+        final ViolationCollector collector = new ViolationCollector(context);
         context.disableDefaultConstraintViolation();
         for (ValidationCaller caller : methodMap.computeIfAbsent(value.getClass(), this::findMethods)) {
             caller.setValidationObject(value);
@@ -88,7 +90,7 @@ public class SelfValidatingValidator implements ConstraintValidator<SelfValidati
         return true;
     }
 
-    final static class ProxyValidationCaller<T> extends ValidationCaller<T> {
+    static final class ProxyValidationCaller<T> extends ValidationCaller<T> {
         private final Class<T> cls;
         private final ResolvedMethod resolvedMethod;
 

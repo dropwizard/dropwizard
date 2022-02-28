@@ -1,6 +1,7 @@
 package io.dropwizard.jackson;
 
 import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -11,11 +12,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatCode;
 
-public class JacksonTest {
+class JacksonTest {
     @Test
-    public void objectMapperUsesGivenCustomJsonFactory() {
+    void objectMapperUsesGivenCustomJsonFactory() {
         JsonFactory factory = Mockito.mock(JsonFactory.class);
 
         ObjectMapper mapper = Jackson.newObjectMapper(factory);
@@ -24,14 +24,14 @@ public class JacksonTest {
     }
 
     @Test
-    public void objectMapperCanHandleNullInsteadOfCustomJsonFactory() {
+    void objectMapperCanHandleNullInsteadOfCustomJsonFactory() {
         ObjectMapper mapper = Jackson.newObjectMapper(null);
 
         assertThat(mapper.getFactory()).isNotNull();
     }
 
     @Test
-    public void objectMapperCanDeserializeJdk7Types() throws IOException {
+    void objectMapperCanDeserializeJdk7Types() throws IOException {
         final LogMetadata metadata = Jackson.newObjectMapper()
             .readValue("{\"path\": \"/var/log/app/server.log\"}", LogMetadata.class);
         assertThat(metadata).isNotNull();
@@ -39,7 +39,7 @@ public class JacksonTest {
     }
 
     @Test
-    public void objectMapperSerializesNullValues() throws IOException {
+    void objectMapperSerializesNullValues() throws IOException {
         final ObjectMapper mapper = Jackson.newObjectMapper();
         final Issue1627 pojo = new Issue1627(null, null);
         final String json = "{\"string\":null,\"uuid\":null}";
@@ -48,11 +48,11 @@ public class JacksonTest {
     }
 
     @Test
-    public void objectMapperIgnoresUnknownProperties() {
-        assertThatCode(() ->
-            Jackson.newObjectMapper()
-                .readValue("{\"unknown\": 4711, \"path\": \"/var/log/app/server.log\"}", LogMetadata.class)
-        ).doesNotThrowAnyException();
+    void objectMapperIgnoresUnknownProperties() throws JsonProcessingException {
+        assertThat(Jackson.newObjectMapper()
+                .readValue("{\"unknown\": 4711, \"path\": \"/var/log/app/objectMapperIgnoresUnknownProperties.log\"}", LogMetadata.class)
+                .path)
+            .hasFileName("objectMapperIgnoresUnknownProperties.log");
     }
 
     static class LogMetadata {

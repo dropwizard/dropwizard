@@ -23,7 +23,7 @@ import java.util.concurrent.atomic.LongAdder;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class EofExceptionWriterInterceptorJerseyTest extends AbstractJerseyTest {
+class EofExceptionWriterInterceptorJerseyTest extends AbstractJerseyTest {
     @Override
     protected TestContainerFactory getTestContainerFactory() throws TestContainerException {
         return new JettyTestContainerFactory();
@@ -38,7 +38,7 @@ public class EofExceptionWriterInterceptorJerseyTest extends AbstractJerseyTest 
     }
 
     @Test
-    public void shouldCountZeroEofExceptions() throws IOException {
+    void shouldCountZeroEofExceptions() throws IOException {
         target("/").request().get(InputStream.class).close();
         assertThat(EofExceptionCountingInterceptor.exceptionCount).isEqualByComparingTo(0L);
     }

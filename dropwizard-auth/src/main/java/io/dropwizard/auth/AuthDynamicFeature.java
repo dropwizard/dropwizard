@@ -57,17 +57,14 @@ public class AuthDynamicFeature implements DynamicFeature {
 
         // First, check for any @Auth annotations on the method.
         for (int i = 0; i < parameterAnnotations.length; i++) {
-            for (final Annotation annotation : parameterAnnotations[i]) {
-                if (annotation instanceof Auth) {
-                    // Optional auth requires that a concrete AuthFilter be provided.
-                    if (parameterTypes[i].equals(Optional.class) && authFilter != null) {
-                        context.register(new WebApplicationExceptionCatchingFilter(authFilter));
-                        return;
-                    } else {
-                        registerAuthFilter(context);
-                        return;
-                    }
+            if (containsAuthAnnotation(parameterAnnotations[i])) {
+                // Optional auth requires that a concrete AuthFilter be provided.
+                if (parameterTypes[i].equals(Optional.class) && authFilter != null) {
+                    context.register(new WebApplicationExceptionCatchingFilter(authFilter));
+                } else {
+                    registerAuthFilter(context);
                 }
+                return;
             }
         }
 
@@ -81,6 +78,15 @@ public class AuthDynamicFeature implements DynamicFeature {
         if (annotationOnClass || annotationOnMethod) {
             registerAuthFilter(context);
         }
+    }
+
+    private boolean containsAuthAnnotation(final Annotation[] annotations) {
+        for (final Annotation annotation : annotations) {
+            if (annotation instanceof Auth) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void registerAuthFilter(FeatureContext context) {

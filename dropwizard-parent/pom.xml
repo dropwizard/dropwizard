@@ -23,7 +23,7 @@
         <maven.compiler.showWarnings>true</maven.compiler.showWarnings>
         <maven.compiler.showDeprecation>true</maven.compiler.showDeprecation>
 
-        <pgpverify.keyserver>hkps://hkps.pool.sks-keyservers.net;hkps://keyserver.ubuntu.com</pgpverify.keyserver>
+        <pgpverify.verifyPomFiles>false</pgpverify.verifyPomFiles>
 
         <surefire.argLine>-Duser.language=en -Duser.region=US -Duser.timezone=UTC</surefire.argLine>
         <argLine>${surefire.argLine}</argLine>
@@ -33,7 +33,7 @@
         <profile>
             <id>jdk9</id>
             <activation>
-                <jdk>[9,)</jdk>
+                <jdk>[9,16)</jdk>
             </activation>
             <properties>
                 <argLine>${surefire.argLine} --illegal-access=deny --add-opens java.base/java.net=ALL-UNNAMED</argLine>
@@ -56,19 +56,83 @@
                                     <artifactId>nullaway</artifactId>
                                     <version>${nullaway.version}</version>
                                 </path>
+                                <path>
+                                    <groupId>jp.skypencil.errorprone.slf4j</groupId>
+                                    <artifactId>errorprone-slf4j</artifactId>
+                                    <version>0.1.4</version>
+                                </path>
                             </annotationProcessorPaths>
                             <compilerArgs>
                                 <arg>-XDcompilePolicy=simple</arg>
                                 <!-- When run as plugin all args must be passed together -->
-                                <arg>-Xplugin:ErrorProne
-                                    -XepDisableWarningsInGeneratedCode
-                                    -Xep:EqualsGetClass:OFF
-                                    -Xep:NullAway:ERROR
-                                    -XepOpt:NullAway:AnnotatedPackages=io.dropwizard
-                                    -XepOpt:NullAway:ExcludedFieldAnnotations=org.mockito.Mock
-                                    -XepOpt:NullAway:UnannotatedSubPackages=io.dropwizard.benchmarks</arg>
+                                <arg>-Xplugin:ErrorProne -XepDisableWarningsInGeneratedCode -Xep:EqualsGetClass:OFF -Xep:NullAway:ERROR -XepOpt:NullAway:AnnotatedPackages=io.dropwizard -XepOpt:NullAway:ExcludedFieldAnnotations=org.mockito.Mock -XepOpt:NullAway:UnannotatedSubPackages=io.dropwizard.benchmarks</arg>
+                                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED</arg>
+                                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED</arg>
+                                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED</arg>
+                                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.model=ALL-UNNAMED</arg>
+                                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED</arg>
+                                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED</arg>
+                                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED</arg>
+                                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED</arg>
+                                <arg>-J--add-opens=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED</arg>
+                                <arg>-J--add-opens=jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED</arg>
                             </compilerArgs>
+                            <fork>true</fork>
                             <release>8</release>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>jdk16</id>
+            <activation>
+                <jdk>[16,)</jdk>
+            </activation>
+            <properties>
+                <argLine>${surefire.argLine} --illegal-access=deny --add-opens java.base/java.net=ALL-UNNAMED</argLine>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <configuration>
+                            <fork>true</fork>
+                            <release>8</release>
+                            <annotationProcessorPaths>
+                                <path>
+                                    <groupId>com.google.errorprone</groupId>
+                                    <artifactId>error_prone_core</artifactId>
+                                    <version>${error_prone.version}</version>
+                                </path>
+                                <!-- enable extended nullability checks -->
+                                <path>
+                                    <groupId>com.uber.nullaway</groupId>
+                                    <artifactId>nullaway</artifactId>
+                                    <version>${nullaway.version}</version>
+                                </path>
+                                <path>
+                                    <groupId>jp.skypencil.errorprone.slf4j</groupId>
+                                    <artifactId>errorprone-slf4j</artifactId>
+                                    <version>0.1.4</version>
+                                </path>
+                            </annotationProcessorPaths>
+                            <compilerArgs>
+                                <arg>-XDcompilePolicy=simple</arg>
+                                <!-- When run as plugin all args must be passed together -->
+                                <arg>-Xplugin:ErrorProne -XepDisableWarningsInGeneratedCode -Xep:EqualsGetClass:OFF -Xep:NullAway:ERROR -XepOpt:NullAway:AnnotatedPackages=io.dropwizard -XepOpt:NullAway:ExcludedFieldAnnotations=org.mockito.Mock -XepOpt:NullAway:UnannotatedSubPackages=io.dropwizard.benchmarks</arg>
+                                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED</arg>
+                                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED</arg>
+                                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED</arg>
+                                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED</arg>
+                                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED</arg>
+                                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED</arg>
+                                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED</arg>
+                                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED</arg>
+                                <arg>-J--add-opens=jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED</arg>
+                                <arg>-J--add-opens=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED</arg>
+                            </compilerArgs>
                         </configuration>
                     </plugin>
                 </plugins>
@@ -248,6 +312,14 @@
                                 <DependencyConvergence />
                                 <bannedDependencies>
                                     <excludes>
+                                        <!-- Replaced with jakarta.activation:jakarta.activation-api -->
+                                        <exclude>javax.activation:javax.activation-api</exclude>
+                                        <!-- Replaced with jakarta.servlet:jakarta.servlet-api -->
+                                        <exclude>javax.servlet:javax.servlet-api</exclude>
+                                        <!-- Replaced with jakarta.validation:jakarta.validation-api -->
+                                        <exclude>javax.validation:validation-api</exclude>
+                                        <!-- Replaced with jakarta.xml.bind:jakarta.xml.bind-api -->
+                                        <exclude>javax.xml.bind:jaxb-api</exclude>
                                         <!-- This should not exist as it will force SLF4J calls to be delegated to log4j -->
                                         <exclude>org.slf4j:slf4j-log4j12</exclude>
                                         <!-- This should not exist as it will force SLF4J calls to be delegated to jul -->

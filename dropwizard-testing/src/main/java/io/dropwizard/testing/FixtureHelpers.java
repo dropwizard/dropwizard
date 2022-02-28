@@ -1,8 +1,10 @@
 package io.dropwizard.testing;
 
+import io.dropwizard.util.ByteStreams;
 import io.dropwizard.util.Resources;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -36,8 +38,8 @@ public class FixtureHelpers {
      */
     private static String fixture(String filename, Charset charset) {
         final URL resource = Resources.getResource(filename);
-        try {
-            return Resources.toString(resource, charset).trim();
+        try (InputStream inputStream = resource.openStream()) {
+            return new String(ByteStreams.toByteArray(inputStream), charset).trim();
         } catch (IOException e) {
             throw new IllegalArgumentException(e);
         }

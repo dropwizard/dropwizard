@@ -10,7 +10,6 @@ import org.mockito.ArgumentCaptor;
 
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.WebApplicationException;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Collections;
 import java.util.Locale;
@@ -22,7 +21,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class ViewBundleTest {
+class ViewBundleTest {
     private JerseyEnvironment jerseyEnvironment = mock(JerseyEnvironment.class);
     private Environment environment = mock(Environment.class);
 
@@ -42,19 +41,19 @@ public class ViewBundleTest {
     }
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         when(environment.jersey()).thenReturn(jerseyEnvironment);
     }
 
     @Test
-    public void addsTheViewMessageBodyWriterToTheEnvironment() throws Exception {
+    void addsTheViewMessageBodyWriterToTheEnvironment() throws Exception {
         new ViewBundle<>().run(new MyConfiguration(), environment);
 
         verify(jerseyEnvironment).register(any(ViewMessageBodyWriter.class));
     }
 
     @Test
-    public void addsTheViewMessageBodyWriterWithSingleViewRendererToTheEnvironment() throws Exception {
+    void addsTheViewMessageBodyWriterWithSingleViewRendererToTheEnvironment() throws Exception {
         final String configurationKey = "freemarker";
         final String testKey = "testKey";
         final Map<String, String> freeMarkerConfig = Collections.singletonMap(testKey, "yes");
@@ -70,7 +69,7 @@ public class ViewBundleTest {
             }
 
             @Override
-            public void render(View view, Locale locale, OutputStream output) throws IOException, WebApplicationException {
+            public void render(View view, Locale locale, OutputStream output) throws WebApplicationException {
                 //nothing to do
             }
 
@@ -96,8 +95,8 @@ public class ViewBundleTest {
         verify(jerseyEnvironment).register(captor.capture());
 
         final ViewMessageBodyWriter capturedRenderer = captor.getValue();
-        final Iterable<ViewRenderer> configuredRenderers = capturedRenderer.getRenderers();
-        assertThat(configuredRenderers).hasSize(1);
-        assertThat(configuredRenderers).contains(renderer);
+        assertThat(capturedRenderer.getRenderers())
+            .hasSize(1)
+            .contains(renderer);
     }
 }

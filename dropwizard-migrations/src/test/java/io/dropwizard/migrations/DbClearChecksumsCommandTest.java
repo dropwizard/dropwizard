@@ -11,26 +11,27 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.Collections;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @NotThreadSafe
-public class DbClearChecksumsCommandTest extends AbstractMigrationTest {
+class DbClearChecksumsCommandTest extends AbstractMigrationTest {
 
-    private DbClearChecksumsCommand<TestMigrationConfiguration> clearChecksums = new DbClearChecksumsCommand<>(
+    private final DbClearChecksumsCommand<TestMigrationConfiguration> clearChecksums = new DbClearChecksumsCommand<>(
         TestMigrationConfiguration::getDataSource, TestMigrationConfiguration.class, "migrations.xml");
 
     @Test
-    public void testRun() throws Exception {
+    void testRun() throws Exception {
         final Liquibase liquibase = Mockito.mock(Liquibase.class);
         clearChecksums.run(new Namespace(Collections.emptyMap()), liquibase);
         Mockito.verify(liquibase).clearCheckSums();
     }
 
     @Test
-    public void testHelpPage() throws Exception {
+    void testHelpPage() throws Exception {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         createSubparser(clearChecksums).printHelp(new PrintWriter(new OutputStreamWriter(out, UTF_8), true));
-        assertThat(out.toString(UTF_8)).isEqualTo(String.format(
+        assertThat(out.toString(UTF_8.name())).isEqualTo(String.format(
             "usage: db clear-checksums [-h] [--migrations MIGRATIONS-FILE]%n" +
                 "          [--catalog CATALOG] [--schema SCHEMA] [file]%n" +
                 "%n" +

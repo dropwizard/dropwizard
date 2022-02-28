@@ -12,10 +12,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class JdbiExceptionsBundleTest {
+class JdbiExceptionsBundleTest {
 
     @Test
-    public void test() {
+    void test() {
         Environment environment = mock(Environment.class);
         JerseyEnvironment jerseyEnvironment = mock(JerseyEnvironment.class);
         when(environment.jersey()).thenReturn(jerseyEnvironment);

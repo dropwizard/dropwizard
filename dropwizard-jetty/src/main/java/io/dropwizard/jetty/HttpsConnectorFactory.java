@@ -1,9 +1,9 @@
 package io.dropwizard.jetty;
 
 import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.jetty9.InstrumentedConnectionFactory;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import io.dropwizard.util.Strings;
 import io.dropwizard.validation.ValidationMethod;
 import org.eclipse.jetty.http.HttpVersion;
 import org.eclipse.jetty.io.ByteBufferPool;
@@ -32,6 +32,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -182,7 +183,7 @@ import java.util.stream.Collectors;
  *     </tr>
  *     <tr>
  *         <td>{@code excludedProtocols}</td>
- *         <td>["SSLv3", "TLSv1", "TLSv1.1"]</td>
+ *         <td>["SSL.*", "TLSv1", "TLSv1\.1"]</td>
  *         <td>
  *             A list of protocols (e.g., {@code SSLv3}, {@code TLSv1}) which are excluded. These
  *             protocols will be refused.
@@ -287,7 +288,7 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
     private List<String> supportedProtocols;
 
     @Nullable
-    private List<String> excludedProtocols = Arrays.asList("SSLv2Hello", "SSLv3", "TLSv1", "TLSv1.1");
+    private List<String> excludedProtocols = Arrays.asList("SSL.*", "TLSv1", "TLSv1\\.1");
 
     @Nullable
     private List<String> supportedCipherSuites;
@@ -589,7 +590,7 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
     @ValidationMethod(message = "keyStorePassword should not be null or empty")
     public boolean isValidKeyStorePassword() {
         return keyStoreType.startsWith("Windows-") ||
-                !Strings.isNullOrEmpty(keyStorePassword);
+                Optional.ofNullable(keyStorePassword).filter(s -> !s.isEmpty()).isPresent();
     }
 
     @Override
@@ -599,7 +600,7 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
         final HttpConnectionFactory httpConnectionFactory = buildHttpConnectionFactory(httpConfig);
 
         final SslContextFactory sslContextFactory = configureSslContextFactory(new SslContextFactory.Server());
-        sslContextFactory.addLifeCycleListener(logSslInfoOnStart(sslContextFactory));
+        sslContextFactory.addLifeCycleListener(logSslParameters(sslContextFactory));
 
         server.addBean(sslContextFactory);
         server.addBean(new SslReload(sslContextFactory, this::configureSslContextFactory));
@@ -612,7 +613,7 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
         final ByteBufferPool bufferPool = buildBufferPool();
 
         return buildConnector(server, scheduler, bufferPool, name, threadPool,
-                              new Jetty93InstrumentedConnectionFactory(
+                              new InstrumentedConnectionFactory(
                                       sslConnectionFactory,
                                       metrics.timer(httpConnections())),
                                       httpConnectionFactory);
@@ -627,9 +628,21 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
         return config;
     }
 
-    /** Register a listener that waits until the ssl context factory has started. Once it has
-     *  started we can grab the fully initialized context so we can log the parameters.
+    /**
+     * Register a listener that waits until the SSL context factory has started. Once it has
+     * started we can grab the fully initialized context so we can log the parameters.
+     *
+     * @since 2.1.0
      */
+    protected LifeCycle.Listener logSslParameters(final SslContextFactory sslContextFactory) {
+        // Delegate to the old method as it may have been overridden
+        return logSslInfoOnStart(sslContextFactory);
+    }
+
+    /**
+     * @deprecated Use {@link #logSslParameters(SslContextFactory) instead}
+     */
+    @Deprecated
     protected AbstractLifeCycle.AbstractLifeCycleListener logSslInfoOnStart(final SslContextFactory sslContextFactory) {
         return new AbstractLifeCycle.AbstractLifeCycleListener() {
             @Override
@@ -715,10 +728,10 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
             factory.setKeyStorePath(keyStorePath);
         }
 
-        final String keyStoreType = getKeyStoreType();
-        if (keyStoreType.startsWith("Windows-")) {
+        final String realKeyStoreType = getKeyStoreType();
+        if (realKeyStoreType.startsWith("Windows-")) {
             try {
-                final KeyStore keyStore = KeyStore.getInstance(keyStoreType);
+                final KeyStore keyStore = KeyStore.getInstance(realKeyStoreType);
 
                 keyStore.load(null, null);
                 factory.setKeyStore(keyStore);
@@ -726,7 +739,7 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
                 throw new IllegalStateException("Windows key store not supported", e);
             }
         } else {
-            factory.setKeyStoreType(keyStoreType);
+            factory.setKeyStoreType(realKeyStoreType);
             factory.setKeyStorePassword(keyStorePassword);
         }
 
@@ -734,10 +747,10 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
             factory.setKeyStoreProvider(keyStoreProvider);
         }
 
-        final String trustStoreType = getTrustStoreType();
-        if (trustStoreType.startsWith("Windows-")) {
+        final String realTrustStoreType = getTrustStoreType();
+        if (realTrustStoreType.startsWith("Windows-")) {
             try {
-                final KeyStore keyStore = KeyStore.getInstance(trustStoreType);
+                final KeyStore keyStore = KeyStore.getInstance(realTrustStoreType);
 
                 keyStore.load(null, null);
                 factory.setTrustStore(keyStore);
@@ -751,7 +764,7 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
             if (trustStorePassword != null) {
                 factory.setTrustStorePassword(trustStorePassword);
             }
-            factory.setTrustStoreType(trustStoreType);
+            factory.setTrustStoreType(realTrustStoreType);
         }
 
         if (trustStoreProvider != null) {

@@ -13,7 +13,7 @@ import javax.ws.rs.container.ContainerRequestFilter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class OAuthProviderTest extends AuthBaseTest<OAuthProviderTest.OAuthTestResourceConfig> {
+class OAuthProviderTest extends AuthBaseTest<OAuthProviderTest.OAuthTestResourceConfig> {
     public static class OAuthTestResourceConfig extends AbstractAuthResourceConfig {
         public OAuthTestResourceConfig() {
             register(AuthResource.class);
@@ -29,7 +29,7 @@ public class OAuthProviderTest extends AuthBaseTest<OAuthProviderTest.OAuthTestR
     }
 
     @Test
-    public void checksQueryStringAccessTokenIfAuthorizationHeaderMissing() {
+    void checksQueryStringAccessTokenIfAuthorizationHeaderMissing() {
         assertThat(target("/test/profile")
             .queryParam(OAuthCredentialAuthFilter.OAUTH_ACCESS_TOKEN_PARAM, getOrdinaryGuyValidToken())
             .request()

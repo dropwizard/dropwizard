@@ -12,27 +12,27 @@ import javax.servlet.http.HttpServletResponse;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 
-public class CacheBustingFilterTest {
+class CacheBustingFilterTest {
     private final HttpServletRequest request = mock(HttpServletRequest.class);
     private final HttpServletResponse response = mock(HttpServletResponse.class);
     private final FilterChain chain = mock(FilterChain.class);
     private final CacheBustingFilter filter = new CacheBustingFilter();
 
     @Test
-    public void passesThroughNonHttpRequests() throws Exception {
+    void passesThroughNonHttpRequests() throws Exception {
         final ServletRequest req = mock(ServletRequest.class);
         final ServletResponse res = mock(ServletResponse.class);
 
         filter.doFilter(req, res, chain);
 
         verify(chain).doFilter(req, res);
-        verifyZeroInteractions(res);
+        verifyNoInteractions(res);
     }
 
     @Test
-    public void setsACacheHeaderOnTheResponse() throws Exception {
+    void setsACacheHeaderOnTheResponse() throws Exception {
         filter.doFilter(request, response, chain);
 
         final InOrder inOrder = inOrder(response, chain);

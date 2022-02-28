@@ -7,7 +7,6 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.util.Map;
 
 /**
  * The annotated element has methods annotated by
@@ -25,16 +24,4 @@ public @interface SelfValidating {
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};
-
-    /**
-     * Escape EL expressions to avoid template injection attacks.
-     * <p>
-     * This has serious security implications and you will
-     * have to escape the violation messages added to {@link ViolationCollector} appropriately.
-     *
-     * @see ViolationCollector#addViolation(String, Map)
-     * @see ViolationCollector#addViolation(String, String, Map)
-     * @see ViolationCollector#addViolation(String, Integer, String, Map)
-     */
-    boolean escapeExpressions() default true;
 }

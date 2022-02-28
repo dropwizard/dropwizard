@@ -17,7 +17,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class RequestIdFilterTest {
+class RequestIdFilterTest {
 
     private ContainerRequestContext request = mock(ContainerRequestContext.class);
     private ContainerResponseContext response = mock(ContainerResponseContext.class);
@@ -27,7 +27,7 @@ public class RequestIdFilterTest {
     private MultivaluedMap<String, Object> headers = new MultivaluedHashMap<>();
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         requestIdFilter.setLogger(logger);
 
         when(request.getMethod()).thenReturn("GET");
@@ -41,7 +41,7 @@ public class RequestIdFilterTest {
     }
 
     @Test
-    public void addsRandomRequestIdHeader() throws Exception {
+    void addsRandomRequestIdHeader() throws Exception {
 
         requestIdFilter.filter(request, response);
 
@@ -53,7 +53,7 @@ public class RequestIdFilterTest {
     }
 
     @Test
-    public void doesNotAddRandomRequestIdHeaderIfItExists() throws Exception {
+    void doesNotAddRandomRequestIdHeaderIfItExists() throws Exception {
         String existedRequestId = "e286b503-aa36-43fe-8312-95ee8773e348";
         headers.add("X-Request-Id", existedRequestId);
         when(request.getHeaderString("X-Request-Id")).thenReturn(existedRequestId);

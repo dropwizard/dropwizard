@@ -1,5 +1,6 @@
 package io.dropwizard.servlets.assets;
 
+import io.dropwizard.util.ByteStreams;
 import io.dropwizard.util.Resources;
 
 import javax.annotation.Nullable;
@@ -9,6 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
@@ -211,13 +213,7 @@ public class AssetServlet extends HttpServlet {
                 final String ifRange = req.getHeader(IF_RANGE);
 
                 if (ifRange == null || cachedAsset.getETag().equals(ifRange)) {
-
-                    try {
-                        ranges = parseRangeHeader(rangeHeader, resourceLength);
-                    } catch (NumberFormatException e) {
-                        resp.sendError(HttpServletResponse.SC_REQUESTED_RANGE_NOT_SATISFIABLE);
-                        return;
-                    }
+                    ranges = parseRangeHeader(rangeHeader, resourceLength);
 
                     if (ranges.isEmpty()) {
                         resp.sendError(HttpServletResponse.SC_REQUESTED_RANGE_NOT_SATISFIABLE);
@@ -237,7 +233,9 @@ public class AssetServlet extends HttpServlet {
             resp.setDateHeader(LAST_MODIFIED, cachedAsset.getLastModifiedTime());
             resp.setHeader(ETAG, cachedAsset.getETag());
 
-            final String mediaType = Optional.ofNullable(req.getServletContext().getMimeType(req.getRequestURI()))
+            final String requestUri = req.getRequestURI();
+            final String mediaType = Optional.ofNullable(req.getServletContext().getMimeType(
+                    indexFile != null && requestUri.endsWith("/") ? requestUri + indexFile : requestUri))
                     .orElse(defaultMediaType);
             if (mediaType.startsWith("video") || mediaType.startsWith("audio") || usingRanges) {
                 resp.addHeader(ACCEPT_RANGES, "bytes");
@@ -259,7 +257,10 @@ public class AssetServlet extends HttpServlet {
                 }
             }
         } catch (RuntimeException | URISyntaxException ignored) {
-            resp.sendError(HttpServletResponse.SC_NOT_FOUND);
+            if (!resp.isCommitted()) {
+                resp.reset();
+                resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            }
         }
     }
 
@@ -272,10 +273,10 @@ public class AssetServlet extends HttpServlet {
         final String requestedResourcePath = trimSlashes(key.substring(uriPath.length()));
         final String absoluteRequestedResourcePath = trimSlashes(this.resourcePath + requestedResourcePath);
 
-        URL requestedResourceURL = getResourceUrl(absoluteRequestedResourcePath);
+        URL requestedResourceURL = getResourceURL(absoluteRequestedResourcePath);
         if (ResourceURL.isDirectory(requestedResourceURL)) {
             if (indexFile != null) {
-                requestedResourceURL = getResourceUrl(absoluteRequestedResourcePath + '/' + indexFile);
+                requestedResourceURL = getResourceURL(absoluteRequestedResourcePath + '/' + indexFile);
             } else {
                 // directory requested but no index file defined
                 return null;
@@ -293,17 +294,35 @@ public class AssetServlet extends HttpServlet {
         return new CachedAsset(readResource(requestedResourceURL), lastModified);
     }
 
+    /**
+     * @deprecated use/override {@link AssetServlet#getResourceURL(String)} instead
+     */
+    @Deprecated
     protected URL getResourceUrl(String absoluteRequestedResourcePath) {
         return Resources.getResource(absoluteRequestedResourcePath);
     }
 
+    @SuppressWarnings("deprecation")
+    protected URL getResourceURL(String absoluteRequestedResourcePath) {
+        // Delegate to the deprecated method as it may have been overridden in existing code.
+        return getResourceUrl(absoluteRequestedResourcePath);
+    }
+
     protected byte[] readResource(URL requestedResourceURL) throws IOException {
-        return Resources.toByteArray(requestedResourceURL);
+        try (InputStream inputStream = requestedResourceURL.openStream()) {
+            return ByteStreams.toByteArray(inputStream);
+        }
     }
 
     private boolean isCachedClientSide(HttpServletRequest req, CachedAsset cachedAsset) {
-        return cachedAsset.getETag().equals(req.getHeader(IF_NONE_MATCH)) ||
-                (req.getDateHeader(IF_MODIFIED_SINCE) >= cachedAsset.getLastModifiedTime());
+        // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/If-Modified-Since
+        // Indicates that with the presense of If-None-Match If-Modified-Since should be ignored.
+        String ifNoneMatchHeader = req.getHeader(IF_NONE_MATCH);
+        if (ifNoneMatchHeader != null) {
+            return cachedAsset.getETag().equals(ifNoneMatchHeader);
+        } else {
+            return req.getDateHeader(IF_MODIFIED_SINCE) >= cachedAsset.getLastModifiedTime();
+        }
     }
 
     /**
@@ -314,20 +333,24 @@ public class AssetServlet extends HttpServlet {
      * @return List of parsed ranges
      */
     private List<ByteRange> parseRangeHeader(final String rangeHeader, final int resourceLength) {
-        final List<ByteRange> byteRanges;
-        if (rangeHeader.contains("=")) {
-            final String[] parts = rangeHeader.split("=", -1);
-            if (parts.length > 1) {
-                byteRanges = Arrays.stream(parts[1].split(",", -1))
-                        .map(String::trim)
-                        .map(s -> ByteRange.parse(s, resourceLength))
-                        .collect(Collectors.toList());
-            } else {
-                byteRanges = Collections.emptyList();
-            }
-        } else {
-            byteRanges = Collections.emptyList();
+        try {
+			final List<ByteRange> byteRanges;
+			if (rangeHeader.contains("=")) {
+				final String[] parts = rangeHeader.split("=", -1);
+				if (parts.length > 1) {
+					byteRanges = Arrays.stream(parts[1].split(",", -1))
+							.map(String::trim)
+							.map(s -> ByteRange.parse(s, resourceLength))
+							.collect(Collectors.toList());
+				} else {
+					byteRanges = Collections.emptyList();
+				}
+			} else {
+				byteRanges = Collections.emptyList();
+			}
+			return byteRanges;
+        } catch (NumberFormatException e) {
+            return Collections.emptyList();
         }
-        return byteRanges;
     }
 }

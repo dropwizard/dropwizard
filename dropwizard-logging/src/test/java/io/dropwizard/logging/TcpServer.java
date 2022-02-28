@@ -1,83 +1,47 @@
 package io.dropwizard.logging;
 
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
-import java.util.concurrent.CountDownLatch;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
-import static org.assertj.core.api.Assertions.assertThat;
+class TcpServer implements AutoCloseable {
 
-class TcpServer {
-
-    private final Thread thread;
     private final ServerSocket serverSocket;
-    private final int messageCount = 100;
-    private final CountDownLatch latch = new CountDownLatch(messageCount);
+    private final ExecutorService es;
 
     TcpServer(ServerSocket serverSocket) {
         this.serverSocket = serverSocket;
-        thread = new Thread(() -> {
-            while (!Thread.currentThread().isInterrupted()) {
-                Socket socket;
-                try {
-                    socket = serverSocket.accept();
-                } catch (SocketException e) {
-                    break;
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    continue;
-                }
-                new Thread(() -> readAndVerifyData(socket)).start();
+        es = Executors.newFixedThreadPool(1);
+    }
+
+    Future<List<String>> receive() {
+        return es.submit(() -> {
+            try (Socket s = serverSocket.accept(); BufferedReader reader = new BufferedReader(new InputStreamReader(s.getInputStream(), StandardCharsets.UTF_8))) {
+                return reader.lines().collect(Collectors.toList());
+            } catch (IOException e) {
+                throw new IllegalStateException("Error reading logs", e);
             }
         });
     }
 
-    ServerSocket getServerSocket() {
-        return serverSocket;
-    }
-
-    int getMessageCount() {
-        return messageCount;
-    }
-
-    CountDownLatch getLatch() {
-        return latch;
-    }
-
-    int getPort() {
-        return serverSocket.getLocalPort();
-    }
-
-    public void setUp() throws Exception {
-        thread.start();
-    }
-
-    public void tearDown() throws Exception {
-        thread.interrupt();
+    public void close() {
+        es.shutdownNow();
         try {
-            serverSocket.close();
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
-        }
-    }
-
-    private void readAndVerifyData(Socket socket) {
-        try (Socket s = socket; BufferedReader reader = new BufferedReader(new InputStreamReader(s.getInputStream(), StandardCharsets.UTF_8))) {
-            for (int i = 0; i < messageCount; i++) {
-                String line = reader.readLine();
-                if (line == null) {
-                    break;
-                }
-                assertThat(line).startsWith("INFO").contains("com.example.app: Application log " + i);
-                latch.countDown();
+            if (!es.awaitTermination(1, TimeUnit.MINUTES)) {
+                throw new IllegalStateException("server did not terminate");
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (InterruptedException ie) {
+            es.shutdownNow();
+            Thread.currentThread().interrupt();
         }
     }
 }

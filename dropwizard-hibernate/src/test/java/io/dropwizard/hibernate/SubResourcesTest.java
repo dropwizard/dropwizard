@@ -3,11 +3,12 @@ package io.dropwizard.hibernate;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
+import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.db.PooledDataSourceFactory;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import io.dropwizard.testing.ResourceHelpers;
+import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import org.hibernate.Session;
@@ -32,11 +33,88 @@ import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(DropwizardExtensionsSupport.class)
-public class SubResourcesTest {
+class SubResourcesTest {
+    private static final DropwizardAppExtension<TestConfiguration> appExtension = new DropwizardAppExtension<>(
+        TestApplication.class,
+        "hibernate-sub-resource-test.yaml",
+        new ResourceConfigurationSourceProvider(),
+        ConfigOverride.config("dataSource.url", "jdbc:h2:mem:sub-resources-" + System.nanoTime()));
+
+    private String baseUri() {
+        return "http://localhost:" + appExtension.getLocalPort();
+    }
+
+    @Test
+    void canReadFromTopResource() {
+        final Person person = appExtension.client()
+            .target(baseUri())
+            .path("/people/Greg")
+            .request()
+            .get(Person.class);
+
+        assertThat(person.getName()).isEqualTo("Greg");
+    }
+
+    @Test
+    void canWriteTopResource() {
+        final Person person = appExtension.client()
+            .target(baseUri())
+            .path("/people")
+            .request()
+            .post(Entity.entity("{\"name\": \"Jason\", \"email\": \"jason@gmail.com\", \"birthday\":637317407000}",
+                MediaType.APPLICATION_JSON_TYPE), Person.class);
+
+        assertThat(person.getName()).isEqualTo("Jason");
+    }
+
+    @Test
+    void canReadFromSubResources() {
+        final Dog dog = appExtension.client()
+            .target(baseUri())
+            .path("/people/Greg/dogs/Bello")
+            .request()
+            .get(Dog.class);
+
+        assertThat(dog.getName()).isEqualTo("Bello");
+        assertThat(dog.getOwner()).isNotNull();
+        assertThat(requireNonNull(dog.getOwner()).getName()).isEqualTo("Greg");
+    }
+
+    @Test
+    void canWriteSubResource() {
+        final Dog dog = appExtension.client()
+            .target(baseUri())
+            .path("/people/Greg/dogs")
+            .request()
+            .post(Entity.entity("{\"name\": \"Bandit\"}", MediaType.APPLICATION_JSON_TYPE), Dog.class);
+
+        assertThat(dog.getName()).isEqualTo("Bandit");
+        assertThat(dog.getOwner()).isNotNull();
+        assertThat(requireNonNull(dog.getOwner()).getName()).isEqualTo("Greg");
+    }
+
+    @Test
+    void errorsAreHandled() {
+        Response response = appExtension.client()
+            .target(baseUri())
+            .path("/people/Jim/dogs")
+            .request()
+            .post(Entity.entity("{\"name\": \"Bullet\"}", MediaType.APPLICATION_JSON_TYPE));
+        assertThat(response.getStatus()).isEqualTo(404);
+    }
+
+    @Test
+    void noSessionErrorIsRaised() {
+        Response response = appExtension.client()
+            .target(baseUri())
+            .path("/people/Greg/dogs")
+            .request()
+            .get();
+        assertThat(response.getStatus()).isEqualTo(500);
+    }
 
     public static class TestConfiguration extends Configuration {
-
-        DataSourceFactory dataSource = new DataSourceFactory();
+        final DataSourceFactory dataSource;
 
         TestConfiguration(@JsonProperty("dataSource") DataSourceFactory dataSource) {
             this.dataSource = dataSource;
@@ -57,7 +135,7 @@ public class SubResourcesTest {
         }
 
         @Override
-        public void run(TestConfiguration configuration, Environment environment) throws Exception {
+        public void run(TestConfiguration configuration, Environment environment) {
             final SessionFactory sessionFactory = hibernate.getSessionFactory();
             initDatabase(sessionFactory);
 
@@ -176,75 +254,4 @@ public class SubResourcesTest {
                 .list();
         }
     }
-
-    public static DropwizardAppExtension<TestConfiguration> appRule = new DropwizardAppExtension<>(TestApplication.class,
-        ResourceHelpers.resourceFilePath("hibernate-sub-resource-test.yaml"));
-
-    private static String baseUri() {
-        return "http://localhost:" + appRule.getLocalPort();
-    }
-
-    @Test
-    public void canReadFromTopResource() throws Exception {
-        final Person person = appRule.client()
-            .target(baseUri() + "/people/Greg")
-            .request()
-            .get(Person.class);
-
-        assertThat(person.getName()).isEqualTo("Greg");
-    }
-
-    @Test
-    public void canWriteTopResource() throws Exception {
-        final Person person = appRule.client()
-            .target(baseUri() + "/people")
-            .request()
-            .post(Entity.entity("{\"name\": \"Jason\", \"email\": \"jason@gmail.com\", \"birthday\":637317407000}",
-                MediaType.APPLICATION_JSON_TYPE), Person.class);
-
-        assertThat(person.getName()).isEqualTo("Jason");
-    }
-
-    @Test
-    public void canReadFromSubResources() throws Exception {
-        final Dog dog = appRule.client()
-            .target(baseUri() + "/people/Greg/dogs/Bello")
-            .request()
-            .get(Dog.class);
-
-        assertThat(dog.getName()).isEqualTo("Bello");
-        assertThat(dog.getOwner()).isNotNull();
-        assertThat(requireNonNull(dog.getOwner()).getName()).isEqualTo("Greg");
-    }
-
-    @Test
-    public void canWriteSubResource() throws Exception {
-        final Dog dog = appRule.client()
-            .target(baseUri() + "/people/Greg/dogs")
-            .request()
-            .post(Entity.entity("{\"name\": \"Bandit\"}", MediaType.APPLICATION_JSON_TYPE), Dog.class);
-
-        assertThat(dog.getName()).isEqualTo("Bandit");
-        assertThat(dog.getOwner()).isNotNull();
-        assertThat(requireNonNull(dog.getOwner()).getName()).isEqualTo("Greg");
-    }
-
-    @Test
-    public void errorsAreHandled() throws Exception {
-        Response response = appRule.client()
-            .target(baseUri() + "/people/Jim/dogs")
-            .request()
-            .post(Entity.entity("{\"name\": \"Bullet\"}", MediaType.APPLICATION_JSON_TYPE));
-        assertThat(response.getStatus()).isEqualTo(404);
-    }
-
-    @Test
-    public void noSessionErrorIsRaised() throws Exception {
-        Response response = appRule.client()
-            .target(baseUri() + "/people/Greg/dogs")
-            .request()
-            .get();
-        assertThat(response.getStatus()).isEqualTo(500);
-    }
-
 }

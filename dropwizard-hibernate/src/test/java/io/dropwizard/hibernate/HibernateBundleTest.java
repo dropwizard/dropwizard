@@ -27,7 +27,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class HibernateBundleTest {
+class HibernateBundleTest {
     private final DataSourceFactory dbConfig = new DataSourceFactory();
     private final List<Class<?>> entities = Collections.singletonList(Person.class);
     private final SessionFactoryFactory factory = mock(SessionFactoryFactory.class);
@@ -44,7 +44,7 @@ public class HibernateBundleTest {
     };
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         when(environment.healthChecks()).thenReturn(healthChecks);
         when(environment.jersey()).thenReturn(jerseyEnvironment);
         when(jerseyEnvironment.getResourceConfig()).thenReturn(new DropwizardResourceConfig());
@@ -58,7 +58,7 @@ public class HibernateBundleTest {
     }
 
     @Test
-    public void addsHibernateSupportToJackson() throws Exception {
+    void addsHibernateSupportToJackson() throws Exception {
         final ObjectMapper objectMapperFactory = mock(ObjectMapper.class);
 
         final Bootstrap<?> bootstrap = mock(Bootstrap.class);
@@ -73,14 +73,14 @@ public class HibernateBundleTest {
     }
 
     @Test
-    public void buildsASessionFactory() throws Exception {
+    void buildsASessionFactory() throws Exception {
         bundle.run(configuration, environment);
 
         verify(factory).build(bundle, environment, dbConfig, entities, "hibernate");
     }
 
     @Test
-    public void registersATransactionalListener() throws Exception {
+    void registersATransactionalListener() throws Exception {
         bundle.run(configuration, environment);
 
         final ArgumentCaptor<UnitOfWorkApplicationListener> captor =
@@ -89,7 +89,7 @@ public class HibernateBundleTest {
     }
 
     @Test
-    public void registersASessionFactoryHealthCheck() throws Exception {
+    void registersASessionFactoryHealthCheck() throws Exception {
         dbConfig.setValidationQuery("SELECT something");
 
         bundle.run(configuration, environment);
@@ -104,7 +104,7 @@ public class HibernateBundleTest {
     }
 
     @Test
-    public void registersACustomNameOfHealthCheckAndDBPoolMetrics() throws Exception {
+    void registersACustomNameOfHealthCheckAndDBPoolMetrics() throws Exception {
         final HibernateBundle<Configuration> customBundle = new HibernateBundle<Configuration>(entities, factory) {
             @Override
             public DataSourceFactory getDataSourceFactory(Configuration configuration) {
@@ -130,7 +130,7 @@ public class HibernateBundleTest {
     }
 
     @Test
-    public void hasASessionFactory() throws Exception {
+    void hasASessionFactory() throws Exception {
         bundle.run(configuration, environment);
 
         assertThat(bundle.getSessionFactory()).isEqualTo(sessionFactory);
