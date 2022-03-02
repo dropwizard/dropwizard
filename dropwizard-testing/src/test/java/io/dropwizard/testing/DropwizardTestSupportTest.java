@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.configuration.JsonConfigurationFactory;
+import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
-import io.dropwizard.jackson.Jackson;
 import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.servlets.tasks.PostBodyTask;
 import io.dropwizard.servlets.tasks.Task;
@@ -21,20 +21,19 @@ import javax.validation.Validator;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
-import java.io.File;
 import java.io.PrintWriter;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
+import static io.dropwizard.jackson.Jackson.newObjectMapper;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class DropwizardTestSupportTest {
     private static final TestServiceListener<TestConfiguration> TEST_SERVICE_LISTENER = new TestServiceListener<>();
     private static final TestManaged TEST_MANAGED = new TestManaged();
     private static final DropwizardTestSupport<TestConfiguration> TEST_SUPPORT =
-            new DropwizardTestSupport<>(TestApplication.class, resourceFilePath("test-config.yaml"))
+            new DropwizardTestSupport<>(TestApplication.class, "test-config.yaml", new ResourceConfigurationSourceProvider())
                     .addListener(TEST_SERVICE_LISTENER)
                     .manage(TEST_MANAGED);
 
@@ -110,9 +109,9 @@ class DropwizardTestSupportTest {
         TestConfiguration config = new YamlConfigurationFactory<>(
                 TestConfiguration.class,
                 BaseValidator.newValidator(),
-                Jackson.newObjectMapper(),
+                newObjectMapper(),
                 "dw"
-        ).build(new File(resourceFilePath("test-config.yaml")));
+        ).build(new ResourceConfigurationSourceProvider(), "test-config.yaml");
 
         DropwizardTestSupport<TestConfiguration> support = new DropwizardTestSupport<>(
                 FailingApplication.class,

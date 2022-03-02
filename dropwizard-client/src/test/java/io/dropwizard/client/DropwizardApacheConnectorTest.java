@@ -3,8 +3,8 @@ package io.dropwizard.client;
 import com.codahale.metrics.health.HealthCheck;
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
+import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.setup.Environment;
-import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import io.dropwizard.util.Duration;
@@ -58,7 +58,8 @@ class DropwizardApacheConnectorTest {
 
     private static final DropwizardAppExtension<Configuration> APP_RULE = new DropwizardAppExtension<>(
             TestApplication.class,
-            ResourceHelpers.resourceFilePath("yaml/dropwizardApacheConnectorTest.yml"));
+            "yaml/dropwizardApacheConnectorTest.yml",
+            new ResourceConfigurationSourceProvider());
 
 
     private final URI testUri = URI.create("http://localhost:" + APP_RULE.getLocalPort());

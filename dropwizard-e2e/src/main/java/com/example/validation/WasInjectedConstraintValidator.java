@@ -11,11 +11,6 @@ public class WasInjectedConstraintValidator implements ConstraintValidator<WasIn
     private UriInfo uriInfo;
 
     @Override
-    public void initialize(WasInjected constraintAnnotation) {
-
-    }
-
-    @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
         return uriInfo != null;
     }

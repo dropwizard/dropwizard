@@ -98,26 +98,25 @@ public class ResourceURL {
                     final JarEntry entry = jarConnection.getJarEntry();
                     return entry.getTime();
                 } catch (IOException ignored) {
-                    return 0;
                 }
+                return 0;
             case "file":
                 URLConnection connection = null;
                 try {
                     connection = resourceURL.openConnection();
                     return connection.getLastModified();
                 } catch (IOException ignored) {
-                    return 0;
                 } finally {
                     if (connection != null) {
                         try {
                             connection.getInputStream().close();
                         } catch (IOException ignored) {
-                            // do nothing.
                         }
                     }
                 }
+                return 0;
             default:
-                throw new IllegalArgumentException("Unsupported protocol " + resourceURL.getProtocol() + " for resource " + resourceURL);
+                throw new IllegalArgumentException("Unsupported protocol " + protocol + " for resource " + resourceURL);
         }
     }
 }
