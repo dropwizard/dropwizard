@@ -1,16 +1,15 @@
 package io.dropwizard.client;
 
 import io.dropwizard.util.DirectExecutorService;
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.StatusLine;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.client.methods.RequestBuilder;
-import org.apache.http.entity.AbstractHttpEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.util.VersionInfo;
+import org.apache.hc.client5.http.classic.methods.HttpUriRequest;
+import org.apache.hc.client5.http.classic.methods.HttpUriRequestBase;
+import org.apache.hc.client5.http.config.RequestConfig;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.io.entity.AbstractHttpEntity;
+import org.apache.hc.core5.util.VersionInfo;
 import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.client.ClientRequest;
 import org.glassfish.jersey.client.ClientResponse;
@@ -20,6 +19,7 @@ import org.glassfish.jersey.message.internal.Statuses;
 
 import javax.annotation.Nullable;
 import javax.ws.rs.ProcessingException;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -29,12 +29,13 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Dropwizard Apache Connector.
  * <p>
  * It's a custom version of Jersey's {@link org.glassfish.jersey.client.spi.Connector}
- * that uses Apache's {@link org.apache.http.client.HttpClient}
+ * that uses Apache's {@link org.apache.hc.client5.http.classic.HttpClient}
  * as an HTTP transport implementation.
  * </p>
  * <p>
@@ -52,7 +53,7 @@ public class DropwizardApacheConnector implements Connector {
     private static final String ERROR_BUFFERING_ENTITY = "Error buffering the entity.";
 
     private static final String APACHE_HTTP_CLIENT_VERSION = VersionInfo
-            .loadVersionInfo("org.apache.http.client", DropwizardApacheConnector.class.getClassLoader())
+            .loadVersionInfo("org.apache.hc.client5", DropwizardApacheConnector.class.getClassLoader())
             .getRelease();
 
     /**
@@ -86,12 +87,11 @@ public class DropwizardApacheConnector implements Connector {
             final HttpUriRequest apacheRequest = buildApacheRequest(jerseyRequest);
             final CloseableHttpResponse apacheResponse = client.execute(apacheRequest);
 
-            final StatusLine statusLine = apacheResponse.getStatusLine();
-            final String reasonPhrase = statusLine.getReasonPhrase();
-            final Response.StatusType status = Statuses.from(statusLine.getStatusCode(), reasonPhrase == null ? "" : reasonPhrase);
+            final String reasonPhrase = apacheResponse.getReasonPhrase();
+            final Response.StatusType status = Statuses.from(apacheResponse.getCode(), reasonPhrase == null ? "" : reasonPhrase);
 
             final ClientResponse jerseyResponse = new ClientResponse(status, jerseyRequest);
-            for (Header header : apacheResponse.getAllHeaders()) {
+            for (Header header : apacheResponse.getHeaders()) {
                 jerseyResponse.getHeaders().computeIfAbsent(header.getName(), k -> new ArrayList<>())
                     .add(header.getValue());
             }
@@ -107,28 +107,26 @@ public class DropwizardApacheConnector implements Connector {
     }
 
     /**
-     * Build a new Apache's {@link org.apache.http.client.methods.HttpUriRequest}
+     * Build a new Apache's {@link HttpUriRequest}
      * from Jersey's {@link org.glassfish.jersey.client.ClientRequest}
      * <p>
      * Convert a method, URI, body, headers and override a user-agent if necessary
      * </p>
      *
      * @param jerseyRequest representation of an HTTP request in Jersey
-     * @return a new {@link org.apache.http.client.methods.HttpUriRequest}
+     * @return a new {@link HttpUriRequest}
      */
     private HttpUriRequest buildApacheRequest(ClientRequest jerseyRequest) {
-        final RequestBuilder builder = RequestBuilder
-                .create(jerseyRequest.getMethod())
-                .setUri(jerseyRequest.getUri())
-                .setEntity(getHttpEntity(jerseyRequest));
+        HttpUriRequestBase base = new HttpUriRequestBase(jerseyRequest.getMethod(), jerseyRequest.getUri());
+        base.setEntity(getHttpEntity(jerseyRequest));
         for (String headerName : jerseyRequest.getHeaders().keySet()) {
-            builder.addHeader(headerName, jerseyRequest.getHeaderString(headerName));
+            base.addHeader(headerName, jerseyRequest.getHeaderString(headerName));
         }
 
         final Optional<RequestConfig> requestConfig = addJerseyRequestConfig(jerseyRequest);
-        requestConfig.ifPresent(builder::setConfig);
+        requestConfig.ifPresent(base::setConfig);
 
-        return builder.build();
+        return base;
     }
 
     private Optional<RequestConfig> addJerseyRequestConfig(ClientRequest clientRequest) {
@@ -140,11 +138,11 @@ public class DropwizardApacheConnector implements Connector {
             final RequestConfig.Builder requestConfig = RequestConfig.copy(defaultRequestConfig);
 
             if (timeout != null) {
-                requestConfig.setSocketTimeout(timeout);
+                requestConfig.setResponseTimeout(timeout, TimeUnit.MILLISECONDS);
             }
 
             if (connectTimeout != null) {
-                requestConfig.setConnectTimeout(connectTimeout);
+                requestConfig.setConnectTimeout(connectTimeout, TimeUnit.MILLISECONDS);
             }
 
             if (followRedirects != null) {
@@ -158,7 +156,7 @@ public class DropwizardApacheConnector implements Connector {
     }
 
     /**
-     * Get an Apache's {@link org.apache.http.HttpEntity}
+     * Get an Apache's {@link HttpEntity}
      * from Jersey's {@link org.glassfish.jersey.client.ClientRequest}
      * <p>
      * Create a custom HTTP entity, because Jersey doesn't provide
@@ -166,7 +164,7 @@ public class DropwizardApacheConnector implements Connector {
      * </p>
      *
      * @param jerseyRequest representation of an HTTP request in Jersey
-     * @return a correct {@link org.apache.http.HttpEntity} implementation
+     * @return a correct {@link HttpEntity} implementation
      */
     @Nullable
     protected HttpEntity getHttpEntity(ClientRequest jerseyRequest) {
@@ -210,17 +208,21 @@ public class DropwizardApacheConnector implements Connector {
     }
 
     /**
-     * A custom {@link org.apache.http.entity.AbstractHttpEntity} that uses
+     * A custom {@link org.apache.hc.core5.http.io.entity.AbstractHttpEntity} that uses
      * a Jersey request as a content source. It's chunked because we don't
      * know the content length beforehand.
      */
     private static class JerseyRequestHttpEntity extends AbstractHttpEntity {
 
-        private ClientRequest clientRequest;
+        private final ClientRequest clientRequest;
 
         private JerseyRequestHttpEntity(ClientRequest clientRequest) {
+            super(
+                clientRequest.getMediaType().toString(),
+                clientRequest.getRequestHeader(HttpHeaders.CONTENT_ENCODING).stream().findFirst().orElse(null),
+                true
+            );
             this.clientRequest = clientRequest;
-            setChunked(true);
         }
 
         /**
@@ -269,10 +271,16 @@ public class DropwizardApacheConnector implements Connector {
             return false;
         }
 
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void close() throws IOException {
+        }
     }
 
     /**
-     * A custom {@link org.apache.http.entity.AbstractHttpEntity} that uses
+     * A custom {@link AbstractHttpEntity} that uses
      * a Jersey request as a content source.
      * <p>
      * In contrast to {@link io.dropwizard.client.DropwizardApacheConnector.JerseyRequestHttpEntity}
@@ -285,6 +293,11 @@ public class DropwizardApacheConnector implements Connector {
         private byte[] buffer;
 
         private BufferedJerseyRequestHttpEntity(ClientRequest clientRequest) {
+            super(
+                clientRequest.getMediaType().toString(),
+                clientRequest.getRequestHeader(HttpHeaders.CONTENT_ENCODING).stream().findFirst().orElse(null),
+                false
+            );
             final ByteArrayOutputStream stream = new ByteArrayOutputStream(BUFFER_INITIAL_SIZE);
             clientRequest.setStreamProvider(contentLength -> stream);
             try {
@@ -293,7 +306,6 @@ public class DropwizardApacheConnector implements Connector {
                 throw new ProcessingException(ERROR_BUFFERING_ENTITY, e);
             }
             buffer = stream.toByteArray();
-            setChunked(false);
         }
 
         /**
@@ -340,6 +352,13 @@ public class DropwizardApacheConnector implements Connector {
         @Override
         public boolean isStreaming() {
             return false;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void close() throws IOException {
         }
     }
 }

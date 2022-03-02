@@ -1,7 +1,7 @@
 package io.dropwizard.client;
 
 import com.codahale.metrics.MetricRegistry;
-import com.codahale.metrics.httpclient.HttpClientMetricNameStrategy;
+import com.codahale.metrics.httpclient5.HttpClientMetricNameStrategy;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.jersey.gzip.ConfiguredGZipEncoder;
 import io.dropwizard.jersey.gzip.GZipDecoder;
@@ -10,13 +10,12 @@ import io.dropwizard.jersey.validation.HibernateValidationBinder;
 import io.dropwizard.jersey.validation.Validators;
 import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.setup.Environment;
-import org.apache.http.client.CredentialsProvider;
-import org.apache.http.client.HttpRequestRetryHandler;
-import org.apache.http.client.ServiceUnavailableRetryStrategy;
-import org.apache.http.config.Registry;
-import org.apache.http.conn.DnsResolver;
-import org.apache.http.conn.routing.HttpRoutePlanner;
-import org.apache.http.conn.socket.ConnectionSocketFactory;
+import org.apache.hc.client5.http.DnsResolver;
+import org.apache.hc.client5.http.HttpRequestRetryStrategy;
+import org.apache.hc.client5.http.auth.CredentialsStore;
+import org.apache.hc.client5.http.routing.HttpRoutePlanner;
+import org.apache.hc.client5.http.socket.ConnectionSocketFactory;
+import org.apache.hc.core5.http.config.Registry;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.spi.ConnectorProvider;
 
@@ -213,13 +212,13 @@ public class JerseyClientBuilder {
     }
 
     /**
-     * Uses the {@link org.apache.http.client.HttpRequestRetryHandler} for handling request retries.
+     * Uses the {@link org.apache.hc.client5.http.HttpRequestRetryStrategy} for handling request retries.
      *
-     * @param httpRequestRetryHandler a HttpRequestRetryHandler
+     * @param httpRequestRetryStrategy a {@link HttpRequestRetryStrategy}
      * @return {@code this}
      */
-    public JerseyClientBuilder using(HttpRequestRetryHandler httpRequestRetryHandler) {
-        apacheHttpClientBuilder.using(httpRequestRetryHandler);
+    public JerseyClientBuilder using(HttpRequestRetryStrategy httpRequestRetryStrategy) {
+        apacheHttpClientBuilder.using(httpRequestRetryStrategy);
         return this;
     }
 
@@ -295,26 +294,13 @@ public class JerseyClientBuilder {
     }
 
     /**
-     * Use the given {@link CredentialsProvider} instance.
+     * Use the given {@link org.apache.hc.client5.http.auth.CredentialsStore} instance.
      *
-     * @param credentialsProvider a {@link CredentialsProvider} instance
+     * @param credentialsStore a {@link org.apache.hc.client5.http.auth.CredentialsStore} instance
      * @return {@code this}
      */
-    public JerseyClientBuilder using(CredentialsProvider credentialsProvider) {
-        apacheHttpClientBuilder.using(credentialsProvider);
-        return this;
-    }
-
-    /**
-     * Use the given {@link ServiceUnavailableRetryStrategy} instance.
-     *
-     * @param serviceUnavailableRetryStrategy a {@link ServiceUnavailableRetryStrategy} instance
-     * @return {@code this}
-     * @deprecated will be combined with {@link #using(HttpRequestRetryHandler)} in {@code using(HttpRequestRetryStrategy)}
-     */
-    @Deprecated
-    public JerseyClientBuilder using(ServiceUnavailableRetryStrategy serviceUnavailableRetryStrategy) {
-        apacheHttpClientBuilder.using(serviceUnavailableRetryStrategy);
+    public JerseyClientBuilder using(CredentialsStore credentialsStore) {
+        apacheHttpClientBuilder.using(credentialsStore);
         return this;
     }
 

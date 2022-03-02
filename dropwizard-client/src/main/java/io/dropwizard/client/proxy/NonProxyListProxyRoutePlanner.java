@@ -1,11 +1,10 @@
 package io.dropwizard.client.proxy;
 
-import org.apache.http.HttpException;
-import org.apache.http.HttpHost;
-import org.apache.http.HttpRequest;
-import org.apache.http.conn.SchemePortResolver;
-import org.apache.http.impl.conn.DefaultProxyRoutePlanner;
-import org.apache.http.protocol.HttpContext;
+import org.apache.hc.client5.http.SchemePortResolver;
+import org.apache.hc.client5.http.impl.routing.DefaultProxyRoutePlanner;
+import org.apache.hc.core5.http.HttpException;
+import org.apache.hc.core5.http.HttpHost;
+import org.apache.hc.core5.http.protocol.HttpContext;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -14,7 +13,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 /**
- * Implementation of {@link org.apache.http.conn.routing.HttpRoutePlanner}
+ * Implementation of {@link org.apache.hc.client5.http.routing.HttpRoutePlanner}
  * that routes requests through proxy and takes into account list of hosts that should not be proxied
  */
 public class NonProxyListProxyRoutePlanner extends DefaultProxyRoutePlanner {
@@ -54,12 +53,12 @@ public class NonProxyListProxyRoutePlanner extends DefaultProxyRoutePlanner {
 
     @Override
     @Nullable
-    protected HttpHost determineProxy(HttpHost target, HttpRequest request, HttpContext context) throws HttpException {
+    protected HttpHost determineProxy(HttpHost target, HttpContext context) throws HttpException {
         for (Pattern nonProxyHostPattern : nonProxyHostPatterns) {
             if (nonProxyHostPattern.matcher(target.getHostName()).matches()) {
                 return null;
             }
         }
-        return super.determineProxy(target, request, context);
+        return super.determineProxy(target, context);
     }
 }
