@@ -103,6 +103,7 @@ public class SessionFactoryFactory {
     }
 
     protected void configure(Configuration configuration, ServiceRegistry registry) {
+        // Default implementation is a no-op
     }
 
     protected BootstrapServiceRegistryBuilder configureBootstrapServiceRegistryBuilder(BootstrapServiceRegistryBuilder builder) {

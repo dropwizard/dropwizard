@@ -4,7 +4,6 @@ import com.codahale.metrics.health.HealthCheck;
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.health.HealthStateListener;
-import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -22,10 +21,6 @@ public class HealthApp extends Application<Configuration> {
     private final AtomicInteger healthyCheckCounter = new AtomicInteger();
     private final AtomicInteger unhealthyCheckCounter = new AtomicInteger();
     private final AtomicInteger stateChangeCounter = new AtomicInteger();
-
-    @Override
-    public void initialize(Bootstrap<Configuration> bootstrap) {
-    }
 
     @Override
     public void run(final Configuration configuration, final Environment environment) throws Exception {

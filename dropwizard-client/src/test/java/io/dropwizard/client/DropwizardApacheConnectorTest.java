@@ -3,20 +3,18 @@ package io.dropwizard.client;
 import com.codahale.metrics.health.HealthCheck;
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
+import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.setup.Environment;
-import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import io.dropwizard.util.Duration;
-import org.apache.http.Header;
-import org.apache.http.HttpStatus;
-import org.apache.http.ProtocolVersion;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.conn.ConnectTimeoutException;
-import org.apache.http.conn.HttpHostConnectException;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.message.BasicHeader;
-import org.apache.http.message.BasicStatusLine;
+import org.apache.hc.client5.http.ConnectTimeoutException;
+import org.apache.hc.client5.http.HttpHostConnectException;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.message.BasicHeader;
 import org.assertj.core.api.AbstractLongAssert;
 import org.eclipse.jetty.util.component.LifeCycle;
 import org.glassfish.jersey.client.ClientProperties;
@@ -58,7 +56,8 @@ class DropwizardApacheConnectorTest {
 
     private static final DropwizardAppExtension<Configuration> APP_RULE = new DropwizardAppExtension<>(
             TestApplication.class,
-            ResourceHelpers.resourceFilePath("yaml/dropwizardApacheConnectorTest.yml"));
+            "yaml/dropwizardApacheConnectorTest.yml",
+            new ResourceConfigurationSourceProvider());
 
 
     private final URI testUri = URI.create("http://localhost:" + APP_RULE.getLocalPort());
@@ -181,8 +180,9 @@ class DropwizardApacheConnectorTest {
         };
 
         final CloseableHttpResponse apacheResponse = mock(CloseableHttpResponse.class);
-        when(apacheResponse.getStatusLine()).thenReturn(new BasicStatusLine(new ProtocolVersion("HTTP", 1, 1), 200, "OK"));
-        when(apacheResponse.getAllHeaders()).thenReturn(apacheHeaders);
+        when(apacheResponse.getCode()).thenReturn(200);
+        when(apacheResponse.getReasonPhrase()).thenReturn("OK");
+        when(apacheResponse.getHeaders()).thenReturn(apacheHeaders);
         when(client.execute(Mockito.any())).thenReturn(apacheResponse);
 
         final ClientRequest jerseyRequest = mock(ClientRequest.class);
@@ -192,7 +192,7 @@ class DropwizardApacheConnectorTest {
 
         final ClientResponse jerseyResponse = dropwizardApacheConnector.apply(jerseyRequest);
 
-        assertThat(jerseyResponse.getStatus()).isEqualTo(apacheResponse.getStatusLine().getStatusCode());
+        assertThat(jerseyResponse.getStatus()).isEqualTo(apacheResponse.getCode());
 
     }
 

@@ -27,7 +27,7 @@ public abstract class LoggingExceptionMapper<E extends Throwable> implements Exc
     /**
      * @since 2.0
      */
-    public LoggingExceptionMapper() {
+    protected LoggingExceptionMapper() {
         this(LoggerFactory.getLogger(LoggingExceptionMapper.class));
     }
 

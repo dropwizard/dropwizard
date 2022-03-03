@@ -1,7 +1,7 @@
 package com.example.httpsessions;
 
 import io.dropwizard.Configuration;
-import io.dropwizard.testing.ResourceHelpers;
+import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import org.junit.jupiter.api.Test;
@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ExtendWith(DropwizardExtensionsSupport.class)
 class HttpSessionsTest {
     public static final DropwizardAppExtension<Configuration> RULE =
-        new DropwizardAppExtension<>(HttpSessionsApp.class, ResourceHelpers.resourceFilePath("httpsessions/config.yml"));
+        new DropwizardAppExtension<>(HttpSessionsApp.class, "httpsessions/config.yml", new ResourceConfigurationSourceProvider());
 
     @Test
     void testInjectedSessionsIsNotNull() {

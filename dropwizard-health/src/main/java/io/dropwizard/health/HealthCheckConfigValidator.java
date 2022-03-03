@@ -25,11 +25,6 @@ class HealthCheckConfigValidator implements Managed {
         validateConfiguration(configs, registry.getNames());
     }
 
-    @Override
-    public void stop() throws Exception {
-        // do nothing
-    }
-
     private void validateConfiguration(final List<HealthCheckConfiguration> healthCheckConfigs,
                                        final Set<String> registeredHealthCheckNames) {
         final Set<String> configuredHealthCheckNames = healthCheckConfigs.stream()

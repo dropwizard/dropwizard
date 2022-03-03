@@ -1,8 +1,8 @@
 package io.dropwizard.client;
 
 import com.codahale.metrics.MetricRegistry;
-import com.codahale.metrics.httpclient.HttpClientMetricNameStrategies;
-import com.codahale.metrics.httpclient.HttpClientMetricNameStrategy;
+import com.codahale.metrics.httpclient5.HttpClientMetricNameStrategies;
+import com.codahale.metrics.httpclient5.HttpClientMetricNameStrategy;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.jersey.gzip.ConfiguredGZipEncoder;
 import io.dropwizard.jersey.gzip.GZipDecoder;
@@ -10,23 +10,25 @@ import io.dropwizard.jersey.validation.Validators;
 import io.dropwizard.lifecycle.setup.ExecutorServiceBuilder;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import io.dropwizard.setup.Environment;
-import org.apache.http.HttpEntity;
-import org.apache.http.client.CredentialsProvider;
-import org.apache.http.client.ServiceUnavailableRetryStrategy;
-import org.apache.http.client.entity.GzipCompressingEntity;
-import org.apache.http.config.Registry;
-import org.apache.http.config.RegistryBuilder;
-import org.apache.http.conn.DnsResolver;
-import org.apache.http.conn.routing.HttpRoutePlanner;
-import org.apache.http.conn.socket.ConnectionSocketFactory;
-import org.apache.http.conn.socket.PlainConnectionSocketFactory;
-import org.apache.http.conn.ssl.NoopHostnameVerifier;
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.entity.ByteArrayEntity;
-import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
-import org.apache.http.impl.client.SystemDefaultCredentialsProvider;
-import org.apache.http.impl.conn.SystemDefaultDnsResolver;
-import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
+import org.apache.hc.client5.http.DnsResolver;
+import org.apache.hc.client5.http.HttpRequestRetryStrategy;
+import org.apache.hc.client5.http.SystemDefaultDnsResolver;
+import org.apache.hc.client5.http.auth.CredentialsStore;
+import org.apache.hc.client5.http.entity.GzipCompressingEntity;
+import org.apache.hc.client5.http.impl.DefaultHttpRequestRetryStrategy;
+import org.apache.hc.client5.http.impl.auth.SystemDefaultCredentialsProvider;
+import org.apache.hc.client5.http.impl.routing.SystemDefaultRoutePlanner;
+import org.apache.hc.client5.http.routing.HttpRoutePlanner;
+import org.apache.hc.client5.http.socket.ConnectionSocketFactory;
+import org.apache.hc.client5.http.socket.PlainConnectionSocketFactory;
+import org.apache.hc.client5.http.ssl.NoopHostnameVerifier;
+import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactory;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.config.Registry;
+import org.apache.hc.core5.http.config.RegistryBuilder;
+import org.apache.hc.core5.http.io.entity.ByteArrayEntity;
+import org.apache.hc.core5.util.TimeValue;
 import org.glassfish.jersey.client.ClientRequest;
 import org.glassfish.jersey.client.JerseyClient;
 import org.glassfish.jersey.client.rx.rxjava2.RxFlowableInvokerProvider;
@@ -268,7 +270,7 @@ class JerseyClientBuilderTest {
 
     @Test
     void usesACustomHttpRequestRetryHandler() {
-        final DefaultHttpRequestRetryHandler customRetryHandler = new DefaultHttpRequestRetryHandler(2, true);
+        final HttpRequestRetryStrategy customRetryHandler = new DefaultHttpRequestRetryStrategy(2, TimeValue.ofSeconds(1));
         builder.using(customRetryHandler);
         verify(apacheHttpClientBuilder).using(customRetryHandler);
     }
@@ -288,15 +290,8 @@ class JerseyClientBuilderTest {
     }
 
     @Test
-    void usesACustomServiceUnavailableRetryStrategy() {
-        final ServiceUnavailableRetryStrategy customServiceUnavailableRetryStrategy = mock(ServiceUnavailableRetryStrategy.class);
-        builder.using(customServiceUnavailableRetryStrategy);
-        verify(apacheHttpClientBuilder).using(customServiceUnavailableRetryStrategy);
-    }
-
-    @Test
     void usesACustomConnectionFactoryRegistry() throws Exception {
-        final SSLContext ctx = SSLContext.getInstance(SSLConnectionSocketFactory.TLS);
+        final SSLContext ctx = SSLContext.getInstance("TLSv1.2");
         ctx.init(null, new TrustManager[]{
             new X509TrustManager() {
 
@@ -349,7 +344,7 @@ class JerseyClientBuilderTest {
 
     @Test
     void usesACustomCredentialsProvider() {
-        CredentialsProvider customCredentialsProvider = new SystemDefaultCredentialsProvider();
+        CredentialsStore customCredentialsProvider = new SystemDefaultCredentialsProvider();
         builder.using(customCredentialsProvider);
         verify(apacheHttpClientBuilder).using(customCredentialsProvider);
     }
@@ -363,7 +358,7 @@ class JerseyClientBuilderTest {
                     true) {
                     @Override
                     protected HttpEntity getHttpEntity(ClientRequest jerseyRequest) {
-                        return new GzipCompressingEntity(new ByteArrayEntity((byte[]) jerseyRequest.getEntity()));
+                        return new GzipCompressingEntity(new ByteArrayEntity((byte[]) jerseyRequest.getEntity(), ContentType.DEFAULT_BINARY));
                     }
                 };
             }

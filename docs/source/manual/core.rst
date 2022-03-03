@@ -136,10 +136,6 @@ create a new ``MessageQueueFactory`` class:
             MessageQueueClient client = new MessageQueueClient(getHost(), getPort());
             environment.lifecycle().manage(new Managed() {
                 @Override
-                public void start() {
-                }
-
-                @Override
                 public void stop() {
                     client.close();
                 }
@@ -605,12 +601,11 @@ Managed Objects
 ===============
 
 Most applications involve objects which need to be started and stopped: thread pools, database
-connections, etc. Dropwizard provides the ``Managed`` interface for this. You can either have the
-class in question implement the ``#start()`` and ``#stop()`` methods, or write a wrapper class which
-does so. Adding a ``Managed`` instance to your application's ``Environment`` ties that object's
-lifecycle to that of the application's HTTP server. Before the server starts, the ``#start()`` method is
-called. After the server has stopped (and after its graceful shutdown period) the ``#stop()`` method
-is called.
+connections, etc. Dropwizard provides the ``Managed`` interface for this. You can either have the class
+in question implement the ``#start()`` and/or ``#stop()`` methods, or write a wrapper class which does
+so. Adding a ``Managed`` instance to your application's ``Environment`` ties that object's lifecycle to
+that of the application's HTTP server. Before the server starts, the ``#start()`` method is called.
+After the server has stopped (and after its graceful shutdown period) the ``#stop()`` method is called.
 
 For example, given a theoretical Riak__ client which needs to be started and stopped:
 

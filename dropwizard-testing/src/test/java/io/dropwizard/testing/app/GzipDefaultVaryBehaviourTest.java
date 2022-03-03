@@ -1,5 +1,6 @@
 package io.dropwizard.testing.app;
 
+import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -8,7 +9,6 @@ import javax.ws.rs.core.Response;
 
 import java.util.Collections;
 
-import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static javax.ws.rs.core.HttpHeaders.ACCEPT_ENCODING;
 import static javax.ws.rs.core.HttpHeaders.CONTENT_ENCODING;
 import static javax.ws.rs.core.HttpHeaders.VARY;
@@ -19,7 +19,7 @@ public class GzipDefaultVaryBehaviourTest {
     @SuppressWarnings("deprecation")
     @ClassRule
     public static final DropwizardAppRule<TestConfiguration> RULE =
-            new DropwizardAppRule<>(TestApplication.class, resourceFilePath("gzip-vary-test-config.yaml"));
+            new DropwizardAppRule<>(TestApplication.class, "gzip-vary-test-config.yaml", new ResourceConfigurationSourceProvider());
 
     @Test
     public void testDefaultVaryHeader() {
