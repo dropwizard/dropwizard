@@ -1,21 +1,21 @@
 package io.dropwizard.lifecycle;
 
 /**
- * An interface for objects which need to be started and stopped as the application is started or
- * stopped.
+ * An interface for objects which need to take some action as the application is started or stopped.
  */
 public interface Managed {
     /**
-     * Starts the object. Called <i>before</i> the application becomes available.
+     * Starts the object. Called <i>before</i> the application becomes available. The default implementation is a no-op.
      *
      * @throws Exception if something goes wrong; this will halt the application startup.
      */
-    void start() throws Exception;
+    default void start() throws Exception {}
 
     /**
-     * Stops the object. Called <i>after</i> the application is no longer accepting requests.
+     * Stops the object. Called <i>after</i> the application is no longer accepting requests. The default implementation
+     * is a no-op
      *
      * @throws Exception if something goes wrong.
      */
-    void stop() throws Exception;
+    default void stop() throws Exception {}
 }
