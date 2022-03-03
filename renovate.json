@@ -5,6 +5,12 @@
   "baseBranches": ["master", "release/2.0.x", "release/2.1.x", "release/3.0.x", "release/4.0.x"],
   "dependencyDashboard": true,
   "labels": ["dependencies"],
+  "packageRules": [
+    {
+      "matchPackagePrefixes": ["io.dropwizard.metrics"],
+      "allowedVersions": "<4.3.0"
+    }
+  ],
   "reviewers": ["team:committers"],
   "separateMinorPatch": true,
   "schedule": [

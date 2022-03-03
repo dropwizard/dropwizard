@@ -2,8 +2,8 @@ package com.example.helloworld;
 
 import com.example.helloworld.api.Saying;
 import com.example.helloworld.core.Person;
+import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.testing.ConfigOverride;
-import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import org.eclipse.jetty.http.HttpStatus;
@@ -30,6 +30,7 @@ import java.nio.file.Path;
 import java.util.Optional;
 import java.util.function.Supplier;
 
+import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
@@ -40,7 +41,7 @@ public class DockerIntegrationTest {
     @Container
     private static final MySQLContainer<?> MY_SQL_CONTAINER = new MySQLContainer<>(DockerImageName.parse("mysql:8.0.28"));
 
-    private static final String CONFIG_PATH = ResourceHelpers.resourceFilePath("test-docker-example.yml");
+    private static final String CONFIG = "test-docker-example.yml";
 
     @TempDir
     static Path tempDir;
@@ -48,7 +49,7 @@ public class DockerIntegrationTest {
     static Supplier<String> ARCHIVED_LOG = () -> tempDir.resolve("application-%d-%i.log.gz").toString();
 
     public static final DropwizardAppExtension<HelloWorldConfiguration> APP = new DropwizardAppExtension<>(
-            HelloWorldApplication.class, CONFIG_PATH,
+            HelloWorldApplication.class, CONFIG, new ResourceConfigurationSourceProvider(),
             ConfigOverride.config("database.url", MY_SQL_CONTAINER::getJdbcUrl),
             ConfigOverride.config("database.user", MY_SQL_CONTAINER::getUsername),
             ConfigOverride.config("database.password", MY_SQL_CONTAINER::getPassword),
@@ -59,7 +60,7 @@ public class DockerIntegrationTest {
 
     @BeforeAll
     public static void migrateDb() throws Exception {
-        APP.getApplication().run("db", "migrate", CONFIG_PATH);
+        APP.getApplication().run("db", "migrate", resourceFilePath(CONFIG));
     }
 
     @Test

@@ -3,12 +3,12 @@ package io.dropwizard.hibernate;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
+import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.db.PooledDataSourceFactory;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.testing.ConfigOverride;
-import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import org.hibernate.Session;
@@ -36,7 +36,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 class SubResourcesTest {
     private static final DropwizardAppExtension<TestConfiguration> appExtension = new DropwizardAppExtension<>(
         TestApplication.class,
-        ResourceHelpers.resourceFilePath("hibernate-sub-resource-test.yaml"),
+        "hibernate-sub-resource-test.yaml",
+        new ResourceConfigurationSourceProvider(),
         ConfigOverride.config("dataSource.url", "jdbc:h2:mem:sub-resources-" + System.nanoTime()));
 
     private String baseUri() {
@@ -134,7 +135,7 @@ class SubResourcesTest {
         }
 
         @Override
-        public void run(TestConfiguration configuration, Environment environment) throws Exception {
+        public void run(TestConfiguration configuration, Environment environment) {
             final SessionFactory sessionFactory = hibernate.getSessionFactory();
             initDatabase(sessionFactory);
 

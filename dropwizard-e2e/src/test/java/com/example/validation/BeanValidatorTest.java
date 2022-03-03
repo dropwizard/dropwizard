@@ -3,6 +3,7 @@ package com.example.validation;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.Configuration;
+import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
@@ -26,13 +27,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(DropwizardExtensionsSupport.class)
 public class BeanValidatorTest {
     public static final DropwizardAppExtension<Configuration> APP = new DropwizardAppExtension<>(
-        DefaultValidatorApp.class, resourceFilePath("app1/config.yml"));
+        DefaultValidatorApp.class, "app1/config.yml", new ResourceConfigurationSourceProvider());
 
     private final ObjectMapper mapper = Jackson.newMinimalObjectMapper();
     private WebTarget target;

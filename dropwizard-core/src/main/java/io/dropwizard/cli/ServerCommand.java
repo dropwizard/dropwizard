@@ -5,7 +5,6 @@ import io.dropwizard.Configuration;
 import io.dropwizard.setup.Environment;
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.util.component.AbstractLifeCycle;
 import org.eclipse.jetty.util.component.LifeCycle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,7 +66,7 @@ public class ServerCommand<T extends Configuration> extends EnvironmentCommand<T
         }
     }
 
-    private class LifeCycleListener extends AbstractLifeCycle.AbstractLifeCycleListener {
+    private class LifeCycleListener implements LifeCycle.Listener {
         @Override
         public void lifeCycleStopped(LifeCycle event) {
             cleanup();
