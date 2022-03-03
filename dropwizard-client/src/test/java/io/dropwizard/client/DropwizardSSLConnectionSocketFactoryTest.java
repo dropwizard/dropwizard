@@ -8,7 +8,7 @@ import io.dropwizard.setup.Environment;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import io.dropwizard.util.Duration;
-import org.apache.http.conn.ssl.NoopHostnameVerifier;
+import org.apache.hc.client5.http.ssl.NoopHostnameVerifier;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.glassfish.jersey.client.ClientResponse;
 import org.junit.jupiter.api.AfterAll;
@@ -218,7 +218,7 @@ class DropwizardSSLConnectionSocketFactoryTest {
         final Client client = new JerseyClientBuilder(TLS_APP_RULE.getEnvironment()).using(jerseyClientConfiguration).build("bad_host_broken");
         assertThatThrownBy(() -> client.target(String.format("https://localhost:%d", TLS_APP_RULE.getPort(3))).request().get())
             .hasCauseExactlyInstanceOf(SSLPeerUnverifiedException.class)
-            .hasRootCauseMessage("Certificate for <localhost> doesn't match any of the subject alternative names: []");
+            .hasRootCauseMessage("Certificate for <localhost> doesn't match common name of the certificate subject: badhost");
     }
 
     @Test

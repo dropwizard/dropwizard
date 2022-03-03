@@ -32,8 +32,6 @@ public class HttpClientConfiguration {
 
     private boolean cookiesEnabled = false;
 
-    private boolean normalizeUriEnabled = true;
-
     @Min(1)
     @Max(Integer.MAX_VALUE)
     private int maxConnections = 1024;
@@ -130,26 +128,6 @@ public class HttpClientConfiguration {
     @JsonProperty
     public void setCookiesEnabled(boolean enabled) {
         this.cookiesEnabled = enabled;
-    }
-
-    /**
-     * @since 2.0
-     * @deprecated
-     */
-    @Deprecated
-    @JsonProperty
-    public boolean isNormalizeUriEnabled() {
-        return normalizeUriEnabled;
-    }
-
-    /**
-     * @since 2.0
-     * @deprecated
-     */
-    @Deprecated
-    @JsonProperty
-    public void setNormalizeUriEnabled(final boolean normalizeUriEnabled) {
-        this.normalizeUriEnabled = normalizeUriEnabled;
     }
 
     @JsonProperty

@@ -1,13 +1,14 @@
 package io.dropwizard.client;
 
 import io.dropwizard.client.ssl.TlsConfiguration;
-import org.apache.http.conn.ssl.NoopHostnameVerifier;
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.conn.ssl.SSLInitializationException;
-import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
-import org.apache.http.ssl.PrivateKeyStrategy;
-import org.apache.http.ssl.SSLContextBuilder;
-import org.apache.http.ssl.TrustStrategy;
+import org.apache.hc.client5.http.ssl.DefaultHostnameVerifier;
+import org.apache.hc.client5.http.ssl.NoopHostnameVerifier;
+import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactory;
+import org.apache.hc.client5.http.ssl.TrustSelfSignedStrategy;
+import org.apache.hc.core5.ssl.PrivateKeyStrategy;
+import org.apache.hc.core5.ssl.SSLContextBuilder;
+import org.apache.hc.core5.ssl.SSLInitializationException;
+import org.apache.hc.core5.ssl.TrustStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,7 +66,7 @@ public class DropwizardSSLConnectionSocketFactory {
 
     private HostnameVerifier chooseHostnameVerifier() {
         if (configuration.isVerifyHostname()) {
-            return verifier != null ? verifier : SSLConnectionSocketFactory.getDefaultHostnameVerifier();
+            return verifier != null ? verifier : new DefaultHostnameVerifier();
         } else {
             return new NoopHostnameVerifier();
         }

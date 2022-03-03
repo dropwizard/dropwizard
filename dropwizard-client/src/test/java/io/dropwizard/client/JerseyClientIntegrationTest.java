@@ -8,14 +8,18 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.util.Duration;
-import org.apache.http.client.HttpRequestRetryHandler;
-import org.apache.http.protocol.HttpContext;
+import org.apache.hc.client5.http.HttpRequestRetryStrategy;
+import org.apache.hc.core5.http.HttpRequest;
+import org.apache.hc.core5.http.HttpResponse;
+import org.apache.hc.core5.http.protocol.HttpContext;
+import org.apache.hc.core5.util.TimeValue;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.glassfish.jersey.logging.LoggingFeature;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import javax.annotation.Nullable;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
@@ -50,7 +54,7 @@ class JerseyClientIntegrationTest {
     private static final String CHUNKED = "chunked";
     private static final String GZIP = "gzip";
     private static final ObjectMapper JSON_MAPPER = Jackson.newObjectMapper();
-    private static final String GZIP_DEFLATE = "gzip,deflate";
+    private static final String GZIP_DEFLATE = "gzip, x-gzip, deflate";
     private static final String JSON_TOKEN = JSON_MAPPER.createObjectNode()
             .put("id", 214)
             .put("token", "a23f78bc31cc5de821ad9412e")
@@ -201,10 +205,19 @@ class JerseyClientIntegrationTest {
         Client jersey = new JerseyClientBuilder(new MetricRegistry())
                 .using(executor, JSON_MAPPER)
                 .using(configuration)
-                .using(new HttpRequestRetryHandler() {
+                .using(new HttpRequestRetryStrategy() {
                     @Override
-                    public boolean retryRequest(IOException e, int i, HttpContext httpContext) {
+                    public boolean retryRequest(HttpRequest request, IOException exception, int execCount, HttpContext context) {
                         return false;
+                    }
+                    @Override
+                    public boolean retryRequest(HttpResponse response, int execCount, HttpContext context) {
+                        return false;
+                    }
+                    @Override
+                    @Nullable
+                    public TimeValue getRetryInterval(HttpResponse response, int execCount, HttpContext context) {
+                        return null;
                     }
                 })
                 .build("jersey-test");
