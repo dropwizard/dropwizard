@@ -9,7 +9,6 @@ import io.dropwizard.servlets.tasks.GarbageCollectionTask;
 import io.dropwizard.servlets.tasks.LogConfigurationTask;
 import io.dropwizard.servlets.tasks.Task;
 import io.dropwizard.servlets.tasks.TaskServlet;
-import org.eclipse.jetty.util.component.AbstractLifeCycle;
 import org.eclipse.jetty.util.component.LifeCycle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +42,7 @@ public class AdminEnvironment extends ServletEnvironment {
         tasks.add(new GarbageCollectionTask());
         tasks.add(new LogConfigurationTask());
         addServlet("tasks", tasks).addMapping("/tasks/*");
-        handler.addLifeCycleListener(new AbstractLifeCycle.AbstractLifeCycleListener() {
+        handler.addLifeCycleListener(new LifeCycle.Listener() {
             @Override
             public void lifeCycleStarting(LifeCycle event) {
                 logTasks();

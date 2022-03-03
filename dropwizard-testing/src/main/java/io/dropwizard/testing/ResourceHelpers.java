@@ -1,8 +1,8 @@
 package io.dropwizard.testing;
 
-import io.dropwizard.util.Resources;
-
 import java.io.File;
+
+import static io.dropwizard.util.Resources.getResource;
 
 /**
  * A set of helper methods for working with classpath resources.
@@ -18,7 +18,7 @@ public class ResourceHelpers {
      */
     public static String resourceFilePath(final String resourceClassPathLocation) {
         try {
-            return new File(Resources.getResource(resourceClassPathLocation).toURI()).getAbsolutePath();
+            return new File(getResource(resourceClassPathLocation).toURI()).getAbsolutePath();
         } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {

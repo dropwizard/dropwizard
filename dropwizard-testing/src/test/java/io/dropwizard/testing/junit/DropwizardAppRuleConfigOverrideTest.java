@@ -1,19 +1,20 @@
 package io.dropwizard.testing.junit;
 
+import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.testing.app.TestApplication;
 import io.dropwizard.testing.app.TestConfiguration;
 import org.junit.ClassRule;
 import org.junit.Test;
 
 import static io.dropwizard.testing.ConfigOverride.config;
-import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class DropwizardAppRuleConfigOverrideTest {
     @SuppressWarnings("deprecation")
     @ClassRule
     public static final DropwizardAppRule<TestConfiguration> RULE =
-        new DropwizardAppRule<>(TestApplication.class, resourceFilePath("test-config.yaml"),
+        new DropwizardAppRule<>(TestApplication.class, "test-config.yaml",
+            new ResourceConfigurationSourceProvider(),
             "app-rule",
             config("app-rule", "message", "A new way to say Hooray!"),
             config("app-rule", "extra", () -> "supplied"),
@@ -28,8 +29,9 @@ public class DropwizardAppRuleConfigOverrideTest {
     }
 
     @Test
-    public void supportsSuppliedConfigAttributeOverrides() throws Exception {
-        assertThat(System.getProperty("app-rule.extra")).isEqualTo("supplied");
-        assertThat(System.getProperty("dw.extra")).isEqualTo("supplied again");
+    public void supportsSuppliedConfigAttributeOverrides() {
+        assertThat(System.getProperties())
+            .containsEntry("app-rule.extra", "supplied")
+            .containsEntry("dw.extra", "supplied again");
     }
 }

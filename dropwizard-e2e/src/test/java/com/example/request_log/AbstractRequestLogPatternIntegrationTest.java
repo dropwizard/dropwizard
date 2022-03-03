@@ -5,9 +5,9 @@ import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.client.JerseyClientConfiguration;
+import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.testing.ConfigOverride;
-import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import io.dropwizard.util.Duration;
@@ -34,11 +34,11 @@ public abstract class AbstractRequestLogPatternIntegrationTest {
         }
 
         @Override
-        public void run(Configuration configuration, Environment environment) throws Exception {
+        public void run(Configuration configuration, Environment environment) {
             environment.jersey().register(TestResource.class);
             environment.healthChecks().register("dummy", new HealthCheck() {
                 @Override
-                protected Result check() throws Exception {
+                protected Result check() {
                     return Result.healthy();
                 }
             });
@@ -60,7 +60,8 @@ public abstract class AbstractRequestLogPatternIntegrationTest {
     protected Client client;
 
     DropwizardAppExtension<Configuration> dropwizardAppRule = new DropwizardAppExtension<>(TestApplication.class,
-        ResourceHelpers.resourceFilePath("request_log/test-custom-request-log.yml"),
+        "request_log/test-custom-request-log.yml",
+        new ResourceConfigurationSourceProvider(),
         configOverrides().toArray(new ConfigOverride[0]));
 
     protected List<ConfigOverride> configOverrides() {

@@ -1,8 +1,8 @@
 package com.example.sslreload;
 
 import io.dropwizard.Configuration;
+import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.testing.ConfigOverride;
-import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import io.dropwizard.util.ByteStreams;
@@ -50,7 +50,8 @@ public class SslReloadAppTest {
     private static Path keystore;
 
     public final DropwizardAppExtension<Configuration> rule =
-        new DropwizardAppExtension<>(SslReloadApp.class, ResourceHelpers.resourceFilePath("sslreload/config.yml"),
+        new DropwizardAppExtension<>(SslReloadApp.class, "sslreload/config.yml",
+            new ResourceConfigurationSourceProvider(),
             ConfigOverride.config("server.applicationConnectors[0].keyStorePath", keystore.toString()),
             ConfigOverride.config("server.adminConnectors[0].keyStorePath", keystore.toString()));
 
