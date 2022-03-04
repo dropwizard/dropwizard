@@ -3,7 +3,7 @@ package io.dropwizard.testing.common;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.jersey.jackson.JacksonFeature;
 import io.dropwizard.jersey.validation.HibernateValidationBinder;
-import io.dropwizard.setup.ExceptionMapperBinder;
+import io.dropwizard.core.setup.ExceptionMapperBinder;
 import org.glassfish.jersey.server.ServerProperties;
 
 import javax.servlet.ServletConfig;

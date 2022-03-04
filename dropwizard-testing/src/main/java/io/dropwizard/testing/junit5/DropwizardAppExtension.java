@@ -1,14 +1,14 @@
 package io.dropwizard.testing.junit5;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.dropwizard.Application;
-import io.dropwizard.Configuration;
-import io.dropwizard.cli.Command;
-import io.dropwizard.cli.ServerCommand;
+import io.dropwizard.core.Application;
+import io.dropwizard.core.Configuration;
+import io.dropwizard.core.cli.Command;
+import io.dropwizard.core.cli.ServerCommand;
 import io.dropwizard.configuration.ConfigurationSourceProvider;
 import io.dropwizard.jersey.jackson.JacksonFeature;
 import io.dropwizard.lifecycle.Managed;
-import io.dropwizard.setup.Environment;
+import io.dropwizard.core.setup.Environment;
 import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.DropwizardTestSupport;
 import org.glassfish.jersey.client.ClientProperties;

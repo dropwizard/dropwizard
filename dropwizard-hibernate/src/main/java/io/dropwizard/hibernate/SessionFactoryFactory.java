@@ -2,7 +2,7 @@ package io.dropwizard.hibernate;
 
 import io.dropwizard.db.ManagedDataSource;
 import io.dropwizard.db.PooledDataSourceFactory;
-import io.dropwizard.setup.Environment;
+import io.dropwizard.core.setup.Environment;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.BootstrapServiceRegistry;
 import org.hibernate.boot.registry.BootstrapServiceRegistryBuilder;

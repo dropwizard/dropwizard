@@ -4,7 +4,7 @@ import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.jdbi3.strategies.TimedAnnotationNameStrategy;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.logging.BootstrapLogging;
-import io.dropwizard.setup.Environment;
+import io.dropwizard.core.setup.Environment;
 import org.eclipse.jetty.util.component.LifeCycle;
 import org.jdbi.v3.core.Jdbi;
 import org.joda.time.DateTime;

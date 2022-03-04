@@ -2,11 +2,11 @@ package io.dropwizard.testing.common;
 
 import com.codahale.metrics.health.HealthCheck;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.dropwizard.Application;
-import io.dropwizard.Configuration;
+import io.dropwizard.core.Application;
+import io.dropwizard.core.Configuration;
 import io.dropwizard.jetty.HttpConnectorFactory;
-import io.dropwizard.server.SimpleServerFactory;
-import io.dropwizard.setup.Environment;
+import io.dropwizard.core.server.SimpleServerFactory;
+import io.dropwizard.core.setup.Environment;
 import io.dropwizard.testing.DropwizardTestSupport;
 
 import java.net.URI;

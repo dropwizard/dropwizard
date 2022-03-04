@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import org.junit.jupiter.api.Test;
 
-import io.dropwizard.Configuration;
+import io.dropwizard.core.Configuration;
 import io.dropwizard.configuration.ConfigurationMetadata;
 
 import com.fasterxml.jackson.databind.ObjectMapper;

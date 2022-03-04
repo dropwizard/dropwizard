@@ -1,9 +1,9 @@
 package io.dropwizard.migrations;
 
-import io.dropwizard.Application;
+import io.dropwizard.core.Application;
 import io.dropwizard.db.PooledDataSourceFactory;
-import io.dropwizard.setup.Bootstrap;
-import io.dropwizard.setup.Environment;
+import io.dropwizard.core.setup.Bootstrap;
+import io.dropwizard.core.setup.Environment;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;

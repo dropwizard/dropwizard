@@ -1,8 +1,8 @@
 package com.example.httpsessions;
 
-import io.dropwizard.Application;
-import io.dropwizard.Configuration;
-import io.dropwizard.setup.Environment;
+import io.dropwizard.core.Application;
+import io.dropwizard.core.Configuration;
+import io.dropwizard.core.setup.Environment;
 import org.eclipse.jetty.server.session.SessionHandler;
 
 public class HttpSessionsApp extends Application<Configuration> {

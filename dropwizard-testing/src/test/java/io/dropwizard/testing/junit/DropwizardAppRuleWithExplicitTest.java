@@ -1,9 +1,9 @@
 package io.dropwizard.testing.junit;
 
-import io.dropwizard.Application;
+import io.dropwizard.core.Application;
 import io.dropwizard.jetty.HttpConnectorFactory;
-import io.dropwizard.server.DefaultServerFactory;
-import io.dropwizard.setup.Environment;
+import io.dropwizard.core.server.DefaultServerFactory;
+import io.dropwizard.core.setup.Environment;
 import io.dropwizard.testing.app.TestConfiguration;
 import org.junit.ClassRule;
 import org.junit.Test;

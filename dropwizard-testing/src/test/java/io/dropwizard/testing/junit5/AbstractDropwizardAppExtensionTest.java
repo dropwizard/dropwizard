@@ -2,7 +2,7 @@ package io.dropwizard.testing.junit5;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import io.dropwizard.setup.Environment;
+import io.dropwizard.core.setup.Environment;
 import io.dropwizard.testing.app.DropwizardTestApplication;
 import io.dropwizard.testing.app.TestConfiguration;
 import java.util.Optional;

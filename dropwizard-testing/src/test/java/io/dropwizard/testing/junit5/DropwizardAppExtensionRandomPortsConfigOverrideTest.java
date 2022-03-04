@@ -5,7 +5,7 @@ import static io.dropwizard.testing.ConfigOverride.randomPorts;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.dropwizard.jetty.HttpConnectorFactory;
-import io.dropwizard.server.DefaultServerFactory;
+import io.dropwizard.core.server.DefaultServerFactory;
 import io.dropwizard.testing.app.TestApplication;
 import io.dropwizard.testing.app.TestConfiguration;
 import org.junit.jupiter.api.Test;

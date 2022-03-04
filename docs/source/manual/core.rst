@@ -861,7 +861,7 @@ argument the path to the YAML configuration.
 For more advanced customization of the command line (for example, having the configuration file
 location specified by ``-c``), adapt the ConfiguredCommand_ class as needed.
 
-.. _ConfiguredCommand: https://github.com/dropwizard/dropwizard/blob/master/dropwizard-core/src/main/java/io/dropwizard/cli/ConfiguredCommand.java
+.. _ConfiguredCommand: https://github.com/dropwizard/dropwizard/blob/release/3.0.x/dropwizard-core/src/main/java/io/dropwizard/core/cli/ConfiguredCommand.java
 
 .. note::
 
@@ -1391,7 +1391,7 @@ We think applications should print out a big ASCII art banner on startup. Yours 
 Just add a ``banner.txt`` class to ``src/main/resources`` and it'll print it out when your application
 starts::
 
-    INFO  [2011-12-09 21:56:37,209] io.dropwizard.cli.ServerCommand: Starting hello-world
+    INFO  [2011-12-09 21:56:37,209] io.dropwizard.core.cli.ServerCommand: Starting hello-world
                                                      dP
                                                      88
       .d8888b. dP.  .dP .d8888b. 88d8b.d8b. 88d888b. 88 .d8888b.
