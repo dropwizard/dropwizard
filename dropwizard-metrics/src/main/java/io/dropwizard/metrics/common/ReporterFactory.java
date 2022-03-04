@@ -1,4 +1,4 @@
-package io.dropwizard.metrics;
+package io.dropwizard.metrics.common;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.ScheduledReporter;
@@ -15,7 +15,7 @@ import java.util.Optional;
  * <ol>
  *     <li>Create a class which implements {@link ReporterFactory}.</li>
  *     <li>Annotate it with {@code @JsonTypeName} and give it a unique type name.</li>
- *     <li>Add a {@code META-INF/services/io.dropwizard.metrics.ReporterFactory}
+ *     <li>Add a {@code META-INF/services/io.dropwizard.metrics.common.ReporterFactory}
  *     file with your implementation's full class name to the class path.</li>
  * </ol>
  *

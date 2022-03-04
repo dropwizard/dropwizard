@@ -1,6 +1,7 @@
-package io.dropwizard.metrics;
+package io.dropwizard.metrics.common;
 
 import io.dropwizard.jackson.DiscoverableSubtypeResolver;
+import io.dropwizard.metrics.common.Slf4jReporterFactory;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

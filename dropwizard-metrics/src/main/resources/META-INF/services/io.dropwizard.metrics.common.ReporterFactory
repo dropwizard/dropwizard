@@ -1,0 +1,3 @@
+io.dropwizard.metrics.common.ConsoleReporterFactory
+io.dropwizard.metrics.common.CsvReporterFactory
+io.dropwizard.metrics.common.Slf4jReporterFactory

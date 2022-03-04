@@ -1,4 +1,4 @@
-package io.dropwizard.metrics;
+package io.dropwizard.metrics.common;
 
 import com.codahale.metrics.ScheduledReporter;
 import io.dropwizard.lifecycle.Managed;

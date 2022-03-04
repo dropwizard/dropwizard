@@ -1,4 +1,4 @@
-package io.dropwizard.metrics;
+package io.dropwizard.metrics.common;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

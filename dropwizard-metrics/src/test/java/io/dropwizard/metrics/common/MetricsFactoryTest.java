@@ -1,4 +1,4 @@
-package io.dropwizard.metrics;
+package io.dropwizard.metrics.common;
 
 import com.codahale.metrics.MetricAttribute;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -6,6 +6,10 @@ import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.logging.common.BootstrapLogging;
+import io.dropwizard.metrics.common.ConsoleReporterFactory;
+import io.dropwizard.metrics.common.CsvReporterFactory;
+import io.dropwizard.metrics.common.MetricsFactory;
+import io.dropwizard.metrics.common.Slf4jReporterFactory;
 import io.dropwizard.util.Duration;
 import io.dropwizard.validation.BaseValidator;
 import org.junit.jupiter.api.BeforeEach;

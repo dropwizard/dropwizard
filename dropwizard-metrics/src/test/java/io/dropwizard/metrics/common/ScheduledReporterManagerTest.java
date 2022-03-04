@@ -1,6 +1,7 @@
-package io.dropwizard.metrics;
+package io.dropwizard.metrics.common;
 
 import com.codahale.metrics.ScheduledReporter;
+import io.dropwizard.metrics.common.ScheduledReporterManager;
 import io.dropwizard.util.Duration;
 import org.junit.jupiter.api.Test;
 
