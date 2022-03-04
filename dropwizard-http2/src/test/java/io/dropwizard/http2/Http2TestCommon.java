@@ -22,7 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * Common code for HTTP/2 connector tests
  */
-class AbstractHttp2Test {
+class Http2TestCommon {
 
     static {
         BootstrapLogging.bootstrap();
