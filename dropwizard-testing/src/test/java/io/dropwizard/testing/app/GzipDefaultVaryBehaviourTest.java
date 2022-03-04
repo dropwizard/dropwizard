@@ -6,7 +6,6 @@ import org.junit.ClassRule;
 import org.junit.Test;
 
 import javax.ws.rs.core.Response;
-
 import java.util.Collections;
 
 import static javax.ws.rs.core.HttpHeaders.ACCEPT_ENCODING;

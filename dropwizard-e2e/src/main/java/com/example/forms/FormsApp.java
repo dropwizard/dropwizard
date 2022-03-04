@@ -2,9 +2,9 @@ package com.example.forms;
 
 import io.dropwizard.core.Application;
 import io.dropwizard.core.Configuration;
-import io.dropwizard.forms.MultiPartBundle;
 import io.dropwizard.core.setup.Bootstrap;
 import io.dropwizard.core.setup.Environment;
+import io.dropwizard.forms.MultiPartBundle;
 
 public class FormsApp extends Application<Configuration> {
     @Override

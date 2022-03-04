@@ -1,7 +1,6 @@
 package io.dropwizard.logging.common;
 
 import ch.qos.logback.classic.spi.ThrowableProxy;
-import io.dropwizard.logging.common.PrefixedExtendedThrowableProxyConverter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

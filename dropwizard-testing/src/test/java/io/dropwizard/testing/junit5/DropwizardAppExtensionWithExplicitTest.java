@@ -1,9 +1,9 @@
 package io.dropwizard.testing.junit5;
 
 import io.dropwizard.core.Application;
-import io.dropwizard.jetty.HttpConnectorFactory;
 import io.dropwizard.core.server.DefaultServerFactory;
 import io.dropwizard.core.setup.Environment;
+import io.dropwizard.jetty.HttpConnectorFactory;
 import io.dropwizard.testing.app.TestConfiguration;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

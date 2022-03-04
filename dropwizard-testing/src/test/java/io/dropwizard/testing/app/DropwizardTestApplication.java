@@ -3,10 +3,10 @@ package io.dropwizard.testing.app;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.core.Application;
+import io.dropwizard.core.setup.Environment;
 import io.dropwizard.jersey.PATCH;
 import io.dropwizard.servlets.tasks.PostBodyTask;
 import io.dropwizard.servlets.tasks.Task;
-import io.dropwizard.core.setup.Environment;
 
 import javax.annotation.Nullable;
 import javax.ws.rs.GET;

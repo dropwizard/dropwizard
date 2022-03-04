@@ -1,7 +1,7 @@
 package com.example.badlog;
 
-import io.dropwizard.core.Configuration;
 import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
+import io.dropwizard.core.Configuration;
 import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.DropwizardTestSupport;
 import org.junit.jupiter.api.AfterAll;

@@ -1,13 +1,13 @@
 package io.dropwizard.hibernate;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.core.Application;
 import io.dropwizard.core.Configuration;
-import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
-import io.dropwizard.db.DataSourceFactory;
-import io.dropwizard.db.PooledDataSourceFactory;
 import io.dropwizard.core.setup.Bootstrap;
 import io.dropwizard.core.setup.Environment;
+import io.dropwizard.db.DataSourceFactory;
+import io.dropwizard.db.PooledDataSourceFactory;
 import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;

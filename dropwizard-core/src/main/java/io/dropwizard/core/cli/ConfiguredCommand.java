@@ -1,11 +1,11 @@
 package io.dropwizard.core.cli;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.dropwizard.core.Configuration;
 import io.dropwizard.configuration.ConfigurationException;
 import io.dropwizard.configuration.ConfigurationFactory;
 import io.dropwizard.configuration.ConfigurationFactoryFactory;
 import io.dropwizard.configuration.ConfigurationSourceProvider;
+import io.dropwizard.core.Configuration;
 import io.dropwizard.core.setup.Bootstrap;
 import io.dropwizard.util.Generics;
 import net.sourceforge.argparse4j.inf.Argument;

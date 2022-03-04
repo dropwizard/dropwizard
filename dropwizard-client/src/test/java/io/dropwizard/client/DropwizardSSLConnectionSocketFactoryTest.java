@@ -1,9 +1,9 @@
 package io.dropwizard.client;
 
-import io.dropwizard.core.Application;
-import io.dropwizard.core.Configuration;
 import io.dropwizard.client.ssl.TlsConfiguration;
 import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
+import io.dropwizard.core.Application;
+import io.dropwizard.core.Configuration;
 import io.dropwizard.core.setup.Environment;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;

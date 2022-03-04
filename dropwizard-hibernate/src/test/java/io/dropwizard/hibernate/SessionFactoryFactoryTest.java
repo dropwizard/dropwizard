@@ -1,6 +1,7 @@
 package io.dropwizard.hibernate;
 
 import com.codahale.metrics.MetricRegistry;
+import io.dropwizard.core.setup.Environment;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.db.ManagedPooledDataSource;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;

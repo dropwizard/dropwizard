@@ -6,13 +6,13 @@ import ch.qos.logback.core.spi.DeferredProcessingAware;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.dropwizard.logging.common.socket.DropwizardSocketAppender;
-import io.dropwizard.util.Duration;
 import io.dropwizard.util.DataSize;
+import io.dropwizard.util.Duration;
 import io.dropwizard.validation.MinDataSize;
 import io.dropwizard.validation.PortRange;
-import javax.validation.constraints.NotEmpty;
 
 import javax.net.SocketFactory;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 /**

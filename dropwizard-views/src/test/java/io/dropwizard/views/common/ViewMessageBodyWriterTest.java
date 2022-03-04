@@ -2,10 +2,6 @@ package io.dropwizard.views.common;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
-import io.dropwizard.views.common.View;
-import io.dropwizard.views.common.ViewMessageBodyWriter;
-import io.dropwizard.views.common.ViewRenderException;
-import io.dropwizard.views.common.ViewRenderer;
 import org.glassfish.jersey.message.internal.HeaderValueException;
 import org.glassfish.jersey.server.ContainerRequest;
 import org.junit.jupiter.api.Test;

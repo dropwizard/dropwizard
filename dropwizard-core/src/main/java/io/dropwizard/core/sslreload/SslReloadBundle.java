@@ -2,9 +2,9 @@ package io.dropwizard.core.sslreload;
 
 import io.dropwizard.core.Configuration;
 import io.dropwizard.core.ConfiguredBundle;
+import io.dropwizard.core.setup.Environment;
 import io.dropwizard.jetty.MutableServletContextHandler;
 import io.dropwizard.jetty.SslReload;
-import io.dropwizard.core.setup.Environment;
 import org.eclipse.jetty.util.component.LifeCycle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

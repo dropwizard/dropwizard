@@ -1,9 +1,6 @@
 package io.dropwizard.logging.common;
 
 import ch.qos.logback.classic.LoggerContext;
-import io.dropwizard.logging.common.DropwizardLayout;
-import io.dropwizard.logging.common.PrefixedExtendedThrowableProxyConverter;
-import io.dropwizard.logging.common.PrefixedThrowableProxyConverter;
 import org.junit.jupiter.api.Test;
 
 import java.util.TimeZone;

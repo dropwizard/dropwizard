@@ -10,8 +10,8 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.dropwizard.metrics.common.BaseReporterFactory;
 import io.dropwizard.validation.OneOf;
 import io.dropwizard.validation.PortRange;
-import javax.validation.constraints.NotEmpty;
 
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 /**

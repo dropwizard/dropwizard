@@ -2,6 +2,7 @@ package io.dropwizard.core.server;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import io.dropwizard.core.setup.Environment;
 import io.dropwizard.jetty.ConnectorFactory;
 import io.dropwizard.jetty.ContextRoutingHandler;
 import io.dropwizard.jetty.HttpConnectorFactory;

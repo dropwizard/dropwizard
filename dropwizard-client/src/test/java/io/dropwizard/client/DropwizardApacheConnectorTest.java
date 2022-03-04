@@ -1,9 +1,9 @@
 package io.dropwizard.client;
 
 import com.codahale.metrics.health.HealthCheck;
+import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.core.Application;
 import io.dropwizard.core.Configuration;
-import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.core.setup.Environment;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;

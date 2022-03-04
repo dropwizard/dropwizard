@@ -2,9 +2,9 @@ package io.dropwizard.core.validation;
 
 import io.dropwizard.core.Application;
 import io.dropwizard.core.Configuration;
-import io.dropwizard.jersey.validation.MutableValidatorFactory;
 import io.dropwizard.core.setup.Bootstrap;
 import io.dropwizard.core.setup.Environment;
+import io.dropwizard.jersey.validation.MutableValidatorFactory;
 import org.hibernate.validator.internal.constraintvalidators.bv.number.bound.MinValidatorForInteger;
 import org.hibernate.validator.internal.engine.constraintvalidation.ConstraintValidatorFactoryImpl;
 import org.junit.jupiter.api.BeforeEach;

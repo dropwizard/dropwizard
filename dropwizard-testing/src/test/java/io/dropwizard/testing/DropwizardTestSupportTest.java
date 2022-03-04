@@ -1,16 +1,16 @@
 package io.dropwizard.testing;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.dropwizard.core.Application;
-import io.dropwizard.core.Configuration;
 import io.dropwizard.configuration.JsonConfigurationFactory;
 import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
+import io.dropwizard.core.Application;
+import io.dropwizard.core.Configuration;
+import io.dropwizard.core.setup.Bootstrap;
+import io.dropwizard.core.setup.Environment;
 import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.servlets.tasks.PostBodyTask;
 import io.dropwizard.servlets.tasks.Task;
-import io.dropwizard.core.setup.Bootstrap;
-import io.dropwizard.core.setup.Environment;
 import io.dropwizard.testing.app.TestConfiguration;
 import io.dropwizard.validation.BaseValidator;
 import org.junit.jupiter.api.AfterAll;

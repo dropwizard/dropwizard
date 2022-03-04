@@ -1,9 +1,9 @@
 package io.dropwizard.testing;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import io.dropwizard.core.Configuration;
 import io.dropwizard.configuration.ConfigurationSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
+import io.dropwizard.core.Configuration;
 import io.dropwizard.jackson.Jackson;
 
 import java.io.File;

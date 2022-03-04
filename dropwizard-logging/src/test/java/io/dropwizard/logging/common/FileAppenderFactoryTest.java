@@ -20,8 +20,6 @@ import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.DiscoverableSubtypeResolver;
 import io.dropwizard.jackson.Jackson;
-import io.dropwizard.logging.common.BootstrapLogging;
-import io.dropwizard.logging.common.FileAppenderFactory;
 import io.dropwizard.logging.common.async.AsyncLoggingEventAppenderFactory;
 import io.dropwizard.logging.common.filter.NullLevelFilterFactory;
 import io.dropwizard.logging.common.layout.DropwizardLayoutFactory;

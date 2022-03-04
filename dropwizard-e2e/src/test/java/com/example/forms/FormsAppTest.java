@@ -1,9 +1,9 @@
 package com.example.forms;
 
-import io.dropwizard.core.Configuration;
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.client.JerseyClientConfiguration;
 import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
+import io.dropwizard.core.Configuration;
 import io.dropwizard.jersey.errors.ErrorMessage;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;

@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.dropwizard.logging.common.socket.DropwizardUdpSocketAppender;
 import io.dropwizard.validation.PortRange;
+
 import javax.validation.constraints.NotEmpty;
 
 /**

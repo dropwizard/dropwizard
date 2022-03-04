@@ -1,16 +1,17 @@
 package io.dropwizard.testing.junit5;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import io.dropwizard.core.setup.Environment;
 import io.dropwizard.testing.app.DropwizardTestApplication;
 import io.dropwizard.testing.app.TestConfiguration;
-import java.util.Optional;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 abstract class AbstractDropwizardAppExtensionTest {
 

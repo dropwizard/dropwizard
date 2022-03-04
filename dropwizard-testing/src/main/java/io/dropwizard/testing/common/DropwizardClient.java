@@ -4,9 +4,9 @@ import com.codahale.metrics.health.HealthCheck;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.core.Application;
 import io.dropwizard.core.Configuration;
-import io.dropwizard.jetty.HttpConnectorFactory;
 import io.dropwizard.core.server.SimpleServerFactory;
 import io.dropwizard.core.setup.Environment;
+import io.dropwizard.jetty.HttpConnectorFactory;
 import io.dropwizard.testing.DropwizardTestSupport;
 
 import java.net.URI;

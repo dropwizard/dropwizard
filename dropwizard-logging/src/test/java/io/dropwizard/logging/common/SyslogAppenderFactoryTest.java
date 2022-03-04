@@ -7,8 +7,6 @@ import ch.qos.logback.classic.net.SyslogAppender;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
 import io.dropwizard.jackson.DiscoverableSubtypeResolver;
-import io.dropwizard.logging.common.BootstrapLogging;
-import io.dropwizard.logging.common.SyslogAppenderFactory;
 import io.dropwizard.logging.common.async.AsyncLoggingEventAppenderFactory;
 import io.dropwizard.logging.common.filter.NullLevelFilterFactory;
 import io.dropwizard.logging.common.layout.DropwizardLayoutFactory;

@@ -7,9 +7,8 @@ import io.dropwizard.auth.util.AuthUtil;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
-
 import javax.ws.rs.container.ContainerRequestFilter;
+import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

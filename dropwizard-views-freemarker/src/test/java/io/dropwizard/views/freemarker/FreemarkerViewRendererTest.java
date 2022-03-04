@@ -1,7 +1,6 @@
 package io.dropwizard.views.freemarker;
 
 import com.codahale.metrics.MetricRegistry;
-
 import freemarker.template.Configuration;
 import io.dropwizard.logging.common.BootstrapLogging;
 import io.dropwizard.views.common.ViewMessageBodyWriter;

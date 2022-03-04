@@ -1,7 +1,5 @@
 package io.dropwizard.jackson;
 
-import static com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES;
-
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.guava.GuavaModule;
@@ -12,6 +10,8 @@ import com.fasterxml.jackson.module.blackbird.BlackbirdModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 
 import javax.annotation.Nullable;
+
+import static com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES;
 
 /**
  * A utility class for Jackson.

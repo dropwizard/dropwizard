@@ -1,7 +1,7 @@
 package io.dropwizard.testing.junit5;
 
-import io.dropwizard.core.cli.ConfiguredCommand;
 import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
+import io.dropwizard.core.cli.ConfiguredCommand;
 import io.dropwizard.core.setup.Bootstrap;
 import io.dropwizard.testing.app.DropwizardTestApplication;
 import io.dropwizard.testing.app.TestConfiguration;

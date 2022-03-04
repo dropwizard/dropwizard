@@ -6,6 +6,7 @@ import com.codahale.metrics.health.HealthCheckRegistry;
 import com.codahale.metrics.health.SharedHealthCheckRegistries;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.core.Configuration;
+import io.dropwizard.core.validation.InjectValidatorFeature;
 import io.dropwizard.health.HealthEnvironment;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.DropwizardResourceConfig;
@@ -16,7 +17,6 @@ import io.dropwizard.jersey.validation.Validators;
 import io.dropwizard.jetty.MutableServletContextHandler;
 import io.dropwizard.jetty.setup.ServletEnvironment;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
-import io.dropwizard.core.validation.InjectValidatorFeature;
 
 import javax.annotation.Nullable;
 import javax.servlet.Servlet;

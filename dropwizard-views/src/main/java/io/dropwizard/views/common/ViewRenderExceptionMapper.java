@@ -1,14 +1,14 @@
 package io.dropwizard.views.common;
 
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.ext.Provider;
-
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.glassfish.jersey.spi.ExtendedExceptionMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.ext.Provider;
 
 /**
  * An {@link ExtendedExceptionMapper} that returns a 500 error response with a generic

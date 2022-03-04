@@ -1,8 +1,8 @@
 package io.dropwizard.core.server;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import io.dropwizard.jackson.Discoverable;
 import io.dropwizard.core.setup.Environment;
+import io.dropwizard.jackson.Discoverable;
 import org.eclipse.jetty.server.Server;
 
 /**
