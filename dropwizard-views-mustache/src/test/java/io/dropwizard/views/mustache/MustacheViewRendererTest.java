@@ -2,7 +2,7 @@ package io.dropwizard.views.mustache;
 
 import com.codahale.metrics.MetricRegistry;
 import io.dropwizard.jersey.DropwizardResourceConfig;
-import io.dropwizard.logging.BootstrapLogging;
+import io.dropwizard.logging.common.BootstrapLogging;
 import io.dropwizard.views.ViewMessageBodyWriter;
 import io.dropwizard.views.ViewRenderExceptionMapper;
 import io.dropwizard.views.ViewRenderer;

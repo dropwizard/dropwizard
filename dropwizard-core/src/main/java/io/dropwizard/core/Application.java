@@ -4,7 +4,7 @@ import ch.qos.logback.classic.Level;
 import io.dropwizard.core.cli.CheckCommand;
 import io.dropwizard.core.cli.Cli;
 import io.dropwizard.core.cli.ServerCommand;
-import io.dropwizard.logging.BootstrapLogging;
+import io.dropwizard.logging.common.BootstrapLogging;
 import io.dropwizard.core.setup.Bootstrap;
 import io.dropwizard.core.setup.Environment;
 import io.dropwizard.util.Generics;

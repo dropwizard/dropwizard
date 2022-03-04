@@ -10,7 +10,7 @@ import io.dropwizard.core.cli.ServerCommand;
 import io.dropwizard.configuration.ConfigurationSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.lifecycle.Managed;
-import io.dropwizard.logging.LoggingUtil;
+import io.dropwizard.logging.common.LoggingUtil;
 import io.dropwizard.core.setup.Bootstrap;
 import io.dropwizard.core.setup.Environment;
 import net.sourceforge.argparse4j.inf.Namespace;

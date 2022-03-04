@@ -2,7 +2,7 @@ package io.dropwizard.benchmarks.jersey;
 
 import io.dropwizard.jersey.validation.ConstraintMessage;
 import io.dropwizard.jersey.validation.Validators;
-import io.dropwizard.logging.BootstrapLogging;
+import io.dropwizard.logging.common.BootstrapLogging;
 import org.glassfish.jersey.server.model.Invocable;
 import javax.validation.constraints.NotEmpty;
 import org.openjdk.jmh.annotations.Benchmark;

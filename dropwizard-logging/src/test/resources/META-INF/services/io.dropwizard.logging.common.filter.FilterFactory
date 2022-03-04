@@ -1,0 +1,2 @@
+io.dropwizard.logging.common.TestFilterFactory
+io.dropwizard.logging.common.SecondTestFilterFactory

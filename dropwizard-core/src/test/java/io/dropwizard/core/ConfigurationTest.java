@@ -1,10 +1,9 @@
 package io.dropwizard.core;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.dropwizard.core.Configuration;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jetty.ConnectorFactory;
-import io.dropwizard.logging.AppenderFactory;
+import io.dropwizard.logging.common.AppenderFactory;
 import org.junit.jupiter.api.Test;
 
 import java.util.ServiceLoader;

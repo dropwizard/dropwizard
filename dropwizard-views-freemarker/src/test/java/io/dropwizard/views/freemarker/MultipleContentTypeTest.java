@@ -4,7 +4,7 @@ import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.DropwizardResourceConfig;
-import io.dropwizard.logging.BootstrapLogging;
+import io.dropwizard.logging.common.BootstrapLogging;
 import io.dropwizard.views.View;
 import io.dropwizard.views.ViewMessageBodyWriter;
 import io.dropwizard.views.ViewRenderer;

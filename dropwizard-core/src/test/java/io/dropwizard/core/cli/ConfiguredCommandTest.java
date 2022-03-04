@@ -3,7 +3,7 @@ package io.dropwizard.core.cli;
 import io.dropwizard.core.Application;
 import io.dropwizard.core.Configuration;
 import io.dropwizard.configuration.ConfigurationFactory;
-import io.dropwizard.logging.LoggingFactory;
+import io.dropwizard.logging.common.LoggingFactory;
 import io.dropwizard.core.setup.Bootstrap;
 import io.dropwizard.core.setup.Environment;
 import net.sourceforge.argparse4j.inf.Namespace;

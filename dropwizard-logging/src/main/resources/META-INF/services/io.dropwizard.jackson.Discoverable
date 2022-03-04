@@ -1,4 +1,4 @@
-io.dropwizard.logging.AppenderFactory
-io.dropwizard.logging.LoggingFactory
-io.dropwizard.logging.filter.FilterFactory
-io.dropwizard.logging.layout.DiscoverableLayoutFactory
+io.dropwizard.logging.common.AppenderFactory
+io.dropwizard.logging.common.LoggingFactory
+io.dropwizard.logging.common.filter.FilterFactory
+io.dropwizard.logging.common.layout.DiscoverableLayoutFactory

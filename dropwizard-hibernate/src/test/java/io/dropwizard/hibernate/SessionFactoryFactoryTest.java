@@ -4,7 +4,7 @@ import com.codahale.metrics.MetricRegistry;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.db.ManagedPooledDataSource;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
-import io.dropwizard.logging.BootstrapLogging;
+import io.dropwizard.logging.common.BootstrapLogging;
 import io.dropwizard.core.setup.Environment;
 import org.hibernate.EmptyInterceptor;
 import org.hibernate.Session;

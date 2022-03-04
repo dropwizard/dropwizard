@@ -1327,7 +1327,7 @@ Reference ``SecretFilterFactory`` type in our configuration.
             filterFactories:
               - type: secret-filter-factory
 
-The last step is to add our class (in this case ``com.example.SecretFilterFactory``) to ``META-INF/services/io.dropwizard.logging.filter.FilterFactory`` in our resources folder.
+The last step is to add our class (in this case ``com.example.SecretFilterFactory``) to ``META-INF/services/FilterFactory`` in our resources folder.
 
 .. _man-core-request-log-url-filtering:
 

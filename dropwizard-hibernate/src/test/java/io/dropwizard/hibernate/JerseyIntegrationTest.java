@@ -8,7 +8,7 @@ import io.dropwizard.jersey.errors.ErrorMessage;
 import io.dropwizard.jersey.jackson.JacksonFeature;
 import io.dropwizard.jersey.optional.EmptyOptionalExceptionMapper;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
-import io.dropwizard.logging.BootstrapLogging;
+import io.dropwizard.logging.common.BootstrapLogging;
 import io.dropwizard.core.setup.Environment;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.test.JerseyTest;

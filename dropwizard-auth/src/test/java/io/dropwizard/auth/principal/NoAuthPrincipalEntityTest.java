@@ -3,7 +3,7 @@ package io.dropwizard.auth.principal;
 import io.dropwizard.auth.AbstractAuthResourceConfig;
 import io.dropwizard.auth.AuthDynamicFeature;
 import io.dropwizard.auth.AuthValueFactoryProvider;
-import io.dropwizard.logging.BootstrapLogging;
+import io.dropwizard.logging.common.BootstrapLogging;
 import org.glassfish.jersey.internal.inject.AbstractBinder;
 import org.glassfish.jersey.servlet.ServletProperties;
 import org.glassfish.jersey.test.DeploymentContext;

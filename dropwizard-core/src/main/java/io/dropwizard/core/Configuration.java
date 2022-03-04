@@ -2,8 +2,8 @@ package io.dropwizard.core;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.health.HealthFactory;
-import io.dropwizard.logging.DefaultLoggingFactory;
-import io.dropwizard.logging.LoggingFactory;
+import io.dropwizard.logging.common.DefaultLoggingFactory;
+import io.dropwizard.logging.common.LoggingFactory;
 import io.dropwizard.metrics.MetricsFactory;
 import io.dropwizard.core.server.DefaultServerFactory;
 import io.dropwizard.core.server.ServerFactory;

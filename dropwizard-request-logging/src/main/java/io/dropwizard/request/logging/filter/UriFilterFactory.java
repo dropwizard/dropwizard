@@ -5,7 +5,7 @@ import ch.qos.logback.core.filter.Filter;
 import ch.qos.logback.core.spi.FilterReply;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import io.dropwizard.logging.filter.FilterFactory;
+import io.dropwizard.logging.common.filter.FilterFactory;
 
 import java.util.Collections;
 import java.util.Set;

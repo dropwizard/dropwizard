@@ -1,7 +1,7 @@
 package io.dropwizard.forms;
 
 import io.dropwizard.core.Configuration;
-import io.dropwizard.logging.BootstrapLogging;
+import io.dropwizard.logging.common.BootstrapLogging;
 import io.dropwizard.core.setup.Environment;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.junit.jupiter.api.Test;

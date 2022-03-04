@@ -3,7 +3,7 @@ package io.dropwizard.core.setup;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheckRegistry;
 import io.dropwizard.jetty.MutableServletContextHandler;
-import io.dropwizard.logging.BootstrapLogging;
+import io.dropwizard.logging.common.BootstrapLogging;
 import io.dropwizard.servlets.tasks.Task;
 import org.eclipse.jetty.server.Server;
 import org.junit.jupiter.api.Test;

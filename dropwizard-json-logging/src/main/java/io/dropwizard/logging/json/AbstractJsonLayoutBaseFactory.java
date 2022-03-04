@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.logging.json.layout.JsonFormatter;
 import io.dropwizard.logging.json.layout.TimestampFormatter;
-import io.dropwizard.logging.layout.DiscoverableLayoutFactory;
+import io.dropwizard.logging.common.layout.DiscoverableLayoutFactory;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
