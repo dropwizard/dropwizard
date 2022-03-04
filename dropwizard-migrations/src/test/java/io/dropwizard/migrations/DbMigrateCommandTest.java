@@ -22,7 +22,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @NotThreadSafe
-class DbMigrateCommandTest extends AbstractMigrationTest {
+class DbMigrateCommandTest {
 
     private final DbMigrateCommand<TestMigrationConfiguration> migrateCommand = new DbMigrateCommand<>(
         TestMigrationConfiguration::getDataSource, TestMigrationConfiguration.class, "migrations.xml");
@@ -31,8 +31,8 @@ class DbMigrateCommandTest extends AbstractMigrationTest {
 
     @BeforeEach
     void setUp() {
-        databaseUrl = getDatabaseUrl();
-        conf = createConfiguration(databaseUrl);
+        databaseUrl = MigrationTestSupport.getDatabaseUrl();
+        conf = MigrationTestSupport.createConfiguration(databaseUrl);
     }
 
     @Test
