@@ -6,7 +6,7 @@ import io.dropwizard.core.Configuration;
 import io.dropwizard.jersey.optional.EmptyOptionalNoContentExceptionMapper;
 import io.dropwizard.core.setup.Bootstrap;
 import io.dropwizard.core.setup.Environment;
-import io.dropwizard.views.ViewBundle;
+import io.dropwizard.views.common.ViewBundle;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.eclipse.jetty.io.EofException;
 import org.glassfish.jersey.spi.ExtendedExceptionMapper;

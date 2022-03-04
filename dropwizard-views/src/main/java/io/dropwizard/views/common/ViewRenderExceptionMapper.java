@@ -1,4 +1,4 @@
-package io.dropwizard.views;
+package io.dropwizard.views.common;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;

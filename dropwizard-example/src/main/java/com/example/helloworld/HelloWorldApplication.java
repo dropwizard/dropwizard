@@ -28,7 +28,7 @@ import io.dropwizard.hibernate.HibernateBundle;
 import io.dropwizard.migrations.MigrationsBundle;
 import io.dropwizard.core.setup.Bootstrap;
 import io.dropwizard.core.setup.Environment;
-import io.dropwizard.views.ViewBundle;
+import io.dropwizard.views.common.ViewBundle;
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 
 import java.util.Map;

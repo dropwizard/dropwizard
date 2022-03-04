@@ -1,4 +1,4 @@
-package io.dropwizard.views;
+package io.dropwizard.views.common;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;

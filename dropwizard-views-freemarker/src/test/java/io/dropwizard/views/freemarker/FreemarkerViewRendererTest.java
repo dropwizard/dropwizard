@@ -4,9 +4,9 @@ import com.codahale.metrics.MetricRegistry;
 
 import freemarker.template.Configuration;
 import io.dropwizard.logging.common.BootstrapLogging;
-import io.dropwizard.views.ViewMessageBodyWriter;
-import io.dropwizard.views.ViewRenderExceptionMapper;
-import io.dropwizard.views.ViewRenderer;
+import io.dropwizard.views.common.ViewMessageBodyWriter;
+import io.dropwizard.views.common.ViewRenderExceptionMapper;
+import io.dropwizard.views.common.ViewRenderer;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.junit.jupiter.api.AfterEach;

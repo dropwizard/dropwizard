@@ -1,9 +1,13 @@
-package io.dropwizard.views;
+package io.dropwizard.views.common;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.core.Configuration;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
 import io.dropwizard.core.setup.Environment;
+import io.dropwizard.views.common.View;
+import io.dropwizard.views.common.ViewBundle;
+import io.dropwizard.views.common.ViewMessageBodyWriter;
+import io.dropwizard.views.common.ViewRenderer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;

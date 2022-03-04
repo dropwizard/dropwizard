@@ -1,4 +1,4 @@
-package io.dropwizard.views;
+package io.dropwizard.views.common;
 
 import io.dropwizard.core.ConfiguredBundle;
 import io.dropwizard.core.setup.Environment;

@@ -1,4 +1,4 @@
-package io.dropwizard.views;
+package io.dropwizard.views.common;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
