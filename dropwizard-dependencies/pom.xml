@@ -65,7 +65,7 @@
 
         <!-- Test dependencies -->
         <assertj.version>3.22.0</assertj.version>
-        <awaitility.version>4.1.1</awaitility.version>
+        <awaitility.version>4.2.0</awaitility.version>
         <bcprov-jdk15on.version>1.70</bcprov-jdk15on.version>
         <h2.version>1.4.200</h2.version>
         <junit.version>4.13.2</junit.version>
