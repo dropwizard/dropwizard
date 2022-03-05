@@ -13,7 +13,7 @@ import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(DropwizardExtensionsSupport.class)
-class Http2IntegrationTest extends AbstractHttp2Test {
+class Http2IntegrationTest extends Http2TestCommon {
 
     final DropwizardAppExtension<Configuration> appRule = new DropwizardAppExtension<>(
         FakeApplication.class, "test-http2.yml",
@@ -27,17 +27,17 @@ class Http2IntegrationTest extends AbstractHttp2Test {
 
     @Test
     void testHttp1() throws Exception {
-        AbstractHttp2Test.assertResponse(http1Client.GET("https://localhost:" + appRule.getLocalPort() + "/api/test"), HttpVersion.HTTP_1_1);
+        assertResponse(http1Client.GET("https://localhost:" + appRule.getLocalPort() + "/api/test"), HttpVersion.HTTP_1_1);
     }
 
     @Test
     void testHttp2() throws Exception {
-        AbstractHttp2Test.assertResponse(http2Client.GET("https://localhost:" + appRule.getLocalPort() + "/api/test"), HttpVersion.HTTP_2);
+        assertResponse(http2Client.GET("https://localhost:" + appRule.getLocalPort() + "/api/test"), HttpVersion.HTTP_2);
     }
 
     @Test
     void testHttp2ManyRequests() throws Exception {
-        assertThat(AbstractHttp2Test.performManyAsyncRequests(http2Client, "https://localhost:" + appRule.getLocalPort() + "/api/test"))
+        assertThat(performManyAsyncRequests(http2Client, "https://localhost:" + appRule.getLocalPort() + "/api/test"))
             .isTrue();
     }
 }

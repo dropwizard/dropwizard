@@ -28,6 +28,7 @@ import java.util.Map;
 
 import static io.dropwizard.jackson.Jackson.newObjectMapper;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatNoException;
 
 class DropwizardTestSupportTest {
     private static final TestServiceListener<TestConfiguration> TEST_SERVICE_LISTENER = new TestServiceListener<>();
@@ -117,11 +118,14 @@ class DropwizardTestSupportTest {
                 FailingApplication.class,
                 config
         );
-        try {
-            support.before();
-        } finally {
-            support.after();
-        }
+
+        assertThatNoException().isThrownBy(() -> {
+            try {
+                support.before();
+            } finally {
+                support.after();
+            }
+        });
     }
 
     public static class FailingApplication extends Application<TestConfiguration> {
