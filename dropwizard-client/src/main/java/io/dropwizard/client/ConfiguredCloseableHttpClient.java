@@ -1,7 +1,7 @@
 package io.dropwizard.client;
 
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.hc.client5.http.config.RequestConfig;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 
 public class ConfiguredCloseableHttpClient {
     private final CloseableHttpClient closeableHttpClient;

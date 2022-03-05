@@ -15,7 +15,6 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-
 /**
  * An application event listener that listens for Jersey application initialization to
  * be finished, then creates a map of resource method that have metrics annotations.
@@ -28,8 +27,8 @@ import java.util.concurrent.ConcurrentMap;
 @Provider
 public class UnitOfWorkApplicationListener implements ApplicationEventListener {
 
-    private ConcurrentMap<ResourceMethod, Optional<UnitOfWork>> methodMap = new ConcurrentHashMap<>();
-    private Map<String, SessionFactory> sessionFactories = new HashMap<>();
+    private final ConcurrentMap<ResourceMethod, Optional<UnitOfWork>> methodMap = new ConcurrentHashMap<>();
+    private final Map<String, SessionFactory> sessionFactories = new HashMap<>();
 
     public UnitOfWorkApplicationListener() {
     }
@@ -59,7 +58,7 @@ public class UnitOfWorkApplicationListener implements ApplicationEventListener {
     }
 
     private static class UnitOfWorkEventListener implements RequestEventListener {
-        private ConcurrentMap<ResourceMethod, Optional<UnitOfWork>> methodMap;
+        private final ConcurrentMap<ResourceMethod, Optional<UnitOfWork>> methodMap;
         private final UnitOfWorkAspect unitOfWorkAspect;
 
         UnitOfWorkEventListener(ConcurrentMap<ResourceMethod, Optional<UnitOfWork>> methodMap,
@@ -99,12 +98,12 @@ public class UnitOfWorkApplicationListener implements ApplicationEventListener {
 
     @Override
     public void onEvent(ApplicationEvent event) {
+        // Nothing to do
     }
 
     @Override
     public RequestEventListener onRequest(RequestEvent event) {
         return new UnitOfWorkEventListener(methodMap, sessionFactories);
     }
-
 
 }

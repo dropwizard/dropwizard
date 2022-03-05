@@ -88,7 +88,7 @@ abstract class ParentClass_ChildHasExtension implements DelayedAssertionsTest {
     }
 
     @Nested
-    public class NestedClass_OnlyInParent implements DelayedAssertionsTest {
+    class NestedClass_OnlyInParent implements DelayedAssertionsTest {
         @Override
         public List<Invokable> getDelayedAssertions() {
             return ParentClass_ChildHasExtension.this.getDelayedAssertions();
@@ -96,7 +96,7 @@ abstract class ParentClass_ChildHasExtension implements DelayedAssertionsTest {
 
         // This specific test failed due to issue: #4205
         @Test
-        public void onlyInParent() {
+        void onlyInParent() {
             // when, then
             getDelayedAssertions().add(() -> {
                 assertThat(getExtension().getBeforeInvocations()).isEqualTo(1);
@@ -136,14 +136,14 @@ abstract class ParentClass_ParentHasExtension implements DelayedAssertionsTest {
     }
 
     @Nested
-    public class NestedClass_OnlyInParent implements DelayedAssertionsTest {
+    class NestedClass_OnlyInParent implements DelayedAssertionsTest {
         @Override
         public List<Invokable> getDelayedAssertions() {
             return delayedAssertions;
         }
 
         @Test
-        public void onlyInParent() {
+        void onlyInParent() {
             // when, then
             getDelayedAssertions().add(() -> {
                 assertThat(extension.getBeforeInvocations()).isEqualTo(1);
@@ -165,7 +165,7 @@ class DropwizardExtensionsSupport_ChildHasExtension_NestedUseTest implements Del
     }
 
     @Test
-    public void regularTestMethod() {
+    void regularTestMethod() {
         // when, then
         delayedAssertions.add(() -> {
             assertThat(extension.getBeforeInvocations()).isEqualTo(1);
@@ -174,14 +174,14 @@ class DropwizardExtensionsSupport_ChildHasExtension_NestedUseTest implements Del
     }
 
     @Nested
-    public class NestedClass_Standalone implements DelayedAssertionsTest {
+    class NestedClass_Standalone implements DelayedAssertionsTest {
         @Override
         public List<Invokable> getDelayedAssertions() {
             return delayedAssertions;
         }
 
         @Test
-        public void nestedClassMethod() {
+        void nestedClassMethod() {
             // when, then
             delayedAssertions.add(() -> {
                 assertThat(extension.getBeforeInvocations()).isEqualTo(1);
@@ -191,7 +191,7 @@ class DropwizardExtensionsSupport_ChildHasExtension_NestedUseTest implements Del
     }
 
     @Nested
-    public class NestedClass_Inheriting extends ParentClass_ChildHasExtension {
+    class NestedClass_Inheriting extends ParentClass_ChildHasExtension {
         @Override
         public List<Invokable> getDelayedAssertions() {
             return delayedAssertions;
@@ -203,7 +203,7 @@ class DropwizardExtensionsSupport_ChildHasExtension_NestedUseTest implements Del
         }
 
         @Test
-        public void childClassTestMethod() {
+        void childClassTestMethod() {
             // when, then
             delayedAssertions.add(() -> {
                 assertThat(extension.getBeforeInvocations()).isEqualTo(1);
@@ -240,7 +240,7 @@ class DropwizardExtensionsSupport_ChildHasExtension_OuterUseTest extends ParentC
     }
 
     @Test
-    public void regularTestMethod() {
+    void regularTestMethod() {
         // when, then
         delayedAssertions.add(() -> {
             assertThat(extension.getBeforeInvocations()).isEqualTo(1);
@@ -249,14 +249,14 @@ class DropwizardExtensionsSupport_ChildHasExtension_OuterUseTest extends ParentC
     }
 
     @Nested
-    public class NestedClass_Standalone implements DelayedAssertionsTest {
+    class NestedClass_Standalone implements DelayedAssertionsTest {
         @Override
         public List<Invokable> getDelayedAssertions() {
             return delayedAssertions;
         }
 
         @Test
-        public void nestedClassMethod() {
+        void nestedClassMethod() {
             // when, then
             delayedAssertions.add(() -> {
                 assertThat(extension.getBeforeInvocations()).isEqualTo(1);
@@ -268,9 +268,9 @@ class DropwizardExtensionsSupport_ChildHasExtension_OuterUseTest extends ParentC
 
 class DropwizardExtensionsSupport_ParentHasExtensionTest {
     @Nested
-    public class NestedClass_Inheriting extends ParentClass_ParentHasExtension {
+    class NestedClass_Inheriting extends ParentClass_ParentHasExtension {
         @Test
-        public void childClassTestMethod() {
+        void childClassTestMethod() {
             // when, then
             delayedAssertions.add(() -> {
                 assertThat(extension.getBeforeInvocations()).isEqualTo(1);

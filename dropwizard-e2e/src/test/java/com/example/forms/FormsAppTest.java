@@ -3,8 +3,8 @@ package com.example.forms;
 import io.dropwizard.Configuration;
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.client.JerseyClientConfiguration;
+import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.jersey.errors.ErrorMessage;
-import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import io.dropwizard.util.Duration;
@@ -27,12 +27,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ExtendWith(DropwizardExtensionsSupport.class)
 public class FormsAppTest {
     public static final DropwizardAppExtension<Configuration> RULE =
-        new DropwizardAppExtension<>(FormsApp.class, ResourceHelpers.resourceFilePath("app1/config.yml"));
+        new DropwizardAppExtension<>(FormsApp.class, "app1/config.yml", new ResourceConfigurationSourceProvider());
 
     private final JerseyClientConfiguration config = new JerseyClientConfiguration();
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() {
         config.setTimeout(Duration.seconds(2));
     }
 
@@ -60,8 +60,6 @@ public class FormsAppTest {
      * sending forms to work. Maybe someday this requirement will be relaxed and
      * this test can be updated for the new behavior. For more info, see issues
      * #1013 and #1094
-     *
-     * @throws IOException
      */
     @Test
     void failOnNoChunkedEncoding() throws IOException {

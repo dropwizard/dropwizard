@@ -1,5 +1,6 @@
 package io.dropwizard.testing.junit;
 
+import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.testing.app.DropwizardTestApplication;
 import io.dropwizard.testing.app.TestConfiguration;
@@ -10,14 +11,13 @@ import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.MediaType;
 
-import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class DropwizardAppRuleTest {
     @SuppressWarnings("deprecation")
     @ClassRule
     public static final DropwizardAppRule<TestConfiguration> RULE =
-        new DropwizardAppRule<>(DropwizardTestApplication.class, resourceFilePath("test-config.yaml"));
+        new DropwizardAppRule<>(DropwizardTestApplication.class, "test-config.yaml", new ResourceConfigurationSourceProvider());
 
     @Test
     public void canGetExpectedResourceOverHttp() {

@@ -1,9 +1,9 @@
 package io.dropwizard.client;
 
 import com.codahale.metrics.MetricRegistry;
-import com.codahale.metrics.httpclient.HttpClientMetricNameStrategies;
-import com.codahale.metrics.httpclient.InstrumentedHttpClientConnectionManager;
-import com.codahale.metrics.httpclient.InstrumentedHttpRequestExecutor;
+import com.codahale.metrics.httpclient5.HttpClientMetricNameStrategies;
+import com.codahale.metrics.httpclient5.InstrumentedHttpClientConnectionManager;
+import com.codahale.metrics.httpclient5.InstrumentedHttpRequestExecutor;
 import io.dropwizard.client.proxy.AuthConfiguration;
 import io.dropwizard.client.proxy.ProxyConfiguration;
 import io.dropwizard.client.ssl.TlsConfiguration;
@@ -11,48 +11,39 @@ import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.util.Duration;
-import org.apache.http.Header;
-import org.apache.http.HeaderIterator;
-import org.apache.http.HttpHeaders;
-import org.apache.http.HttpHost;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpResponse;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.Credentials;
-import org.apache.http.auth.NTCredentials;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.CredentialsProvider;
-import org.apache.http.client.HttpRequestRetryHandler;
-import org.apache.http.client.RedirectStrategy;
-import org.apache.http.client.ServiceUnavailableRetryStrategy;
-import org.apache.http.client.config.CookieSpecs;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.config.Registry;
-import org.apache.http.config.RegistryBuilder;
-import org.apache.http.config.SocketConfig;
-import org.apache.http.conn.DnsResolver;
-import org.apache.http.conn.routing.HttpRoute;
-import org.apache.http.conn.routing.HttpRoutePlanner;
-import org.apache.http.conn.socket.ConnectionSocketFactory;
-import org.apache.http.conn.socket.PlainConnectionSocketFactory;
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.impl.DefaultConnectionReuseStrategy;
-import org.apache.http.impl.NoConnectionReuseStrategy;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.DefaultConnectionKeepAliveStrategy;
-import org.apache.http.impl.conn.DefaultRoutePlanner;
-import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-import org.apache.http.impl.conn.SystemDefaultDnsResolver;
-import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
-import org.apache.http.message.BasicHeader;
-import org.apache.http.message.BasicListHeaderIterator;
-import org.apache.http.protocol.BasicHttpContext;
-import org.apache.http.protocol.HTTP;
-import org.apache.http.protocol.HttpContext;
-import org.apache.http.protocol.HttpProcessor;
-import org.apache.http.protocol.HttpRequestExecutor;
+import org.apache.hc.client5.http.DnsResolver;
+import org.apache.hc.client5.http.HttpRequestRetryStrategy;
+import org.apache.hc.client5.http.HttpRoute;
+import org.apache.hc.client5.http.SystemDefaultDnsResolver;
+import org.apache.hc.client5.http.auth.AuthScope;
+import org.apache.hc.client5.http.auth.Credentials;
+import org.apache.hc.client5.http.auth.CredentialsProvider;
+import org.apache.hc.client5.http.auth.CredentialsStore;
+import org.apache.hc.client5.http.auth.NTCredentials;
+import org.apache.hc.client5.http.auth.UsernamePasswordCredentials;
+import org.apache.hc.client5.http.config.RequestConfig;
+import org.apache.hc.client5.http.cookie.StandardCookieSpec;
+import org.apache.hc.client5.http.impl.DefaultConnectionKeepAliveStrategy;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
+import org.apache.hc.client5.http.impl.routing.DefaultRoutePlanner;
+import org.apache.hc.client5.http.impl.routing.SystemDefaultRoutePlanner;
+import org.apache.hc.client5.http.protocol.RedirectStrategy;
+import org.apache.hc.client5.http.routing.HttpRoutePlanner;
+import org.apache.hc.client5.http.socket.ConnectionSocketFactory;
+import org.apache.hc.client5.http.socket.PlainConnectionSocketFactory;
+import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactory;
+import org.apache.hc.core5.http.*;
+import org.apache.hc.core5.http.config.Registry;
+import org.apache.hc.core5.http.config.RegistryBuilder;
+import org.apache.hc.core5.http.impl.DefaultConnectionReuseStrategy;
+import org.apache.hc.core5.http.impl.io.HttpRequestExecutor;
+import org.apache.hc.core5.http.message.BasicHeader;
+import org.apache.hc.core5.http.message.BasicHeaderIterator;
+import org.apache.hc.core5.http.protocol.BasicHttpContext;
+import org.apache.hc.core5.http.protocol.HttpContext;
+import org.apache.hc.core5.http.protocol.HttpProcessor;
+import org.apache.hc.core5.util.TimeValue;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -68,17 +59,20 @@ import java.net.ProxySelector;
 import java.net.SocketAddress;
 import java.net.URI;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.validateMockitoUsage;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-class AnotherHttpClientBuilder extends org.apache.http.impl.client.HttpClientBuilder {
+class AnotherHttpClientBuilder extends org.apache.hc.client5.http.impl.classic.HttpClientBuilder {
     public static AnotherHttpClientBuilder create() {
         return new AnotherHttpClientBuilder();
     }
@@ -90,20 +84,20 @@ class HttpClientBuilderTest {
 
     static class CustomBuilder extends HttpClientBuilder {
         public boolean customized;
-        public org.apache.http.impl.client.HttpClientBuilder builder;
+        public org.apache.hc.client5.http.impl.classic.HttpClientBuilder builder;
 
         public CustomBuilder(MetricRegistry metricRegistry) {
-            this(metricRegistry, org.apache.http.impl.client.HttpClientBuilder.create());
+            this(metricRegistry, org.apache.hc.client5.http.impl.classic.HttpClientBuilder.create());
         }
 
-        public CustomBuilder(MetricRegistry metricRegistry, org.apache.http.impl.client.HttpClientBuilder builder) {
+        public CustomBuilder(MetricRegistry metricRegistry, org.apache.hc.client5.http.impl.classic.HttpClientBuilder builder) {
             super(metricRegistry);
             customized = false;
             this.builder = builder;
         }
 
         @Override
-        protected org.apache.http.impl.client.HttpClientBuilder createBuilder() {
+        protected org.apache.hc.client5.http.impl.classic.HttpClientBuilder createBuilder() {
             return builder;
         }
 
@@ -113,8 +107,8 @@ class HttpClientBuilderTest {
         }
 
         @Override
-        protected org.apache.http.impl.client.HttpClientBuilder customizeBuilder(
-            org.apache.http.impl.client.HttpClientBuilder builder
+        protected org.apache.hc.client5.http.impl.classic.HttpClientBuilder customizeBuilder(
+            org.apache.hc.client5.http.impl.classic.HttpClientBuilder builder
         ) {
             customized = true;
             return builder;
@@ -130,12 +124,12 @@ class HttpClientBuilderTest {
     private HttpClientConfiguration configuration;
     private HttpClientBuilder builder;
     private InstrumentedHttpClientConnectionManager connectionManager;
-    private org.apache.http.impl.client.HttpClientBuilder apacheBuilder;
+    private org.apache.hc.client5.http.impl.classic.HttpClientBuilder apacheBuilder;
     private AnotherHttpClientBuilder anotherApacheBuilder;
 
     public HttpClientBuilderTest() throws ClassNotFoundException {
-        this.httpClientBuilderClass = Class.forName("org.apache.http.impl.client.HttpClientBuilder");
-        this.httpClientClass = Class.forName("org.apache.http.impl.client.InternalHttpClient");
+        this.httpClientBuilderClass = Class.forName("org.apache.hc.client5.http.impl.classic.HttpClientBuilder");
+        this.httpClientClass = Class.forName("org.apache.hc.client5.http.impl.classic.InternalHttpClient");
     }
 
     @BeforeEach
@@ -144,7 +138,7 @@ class HttpClientBuilderTest {
         configuration = new HttpClientConfiguration();
         builder = new HttpClientBuilder(metricRegistry);
         connectionManager = spy(InstrumentedHttpClientConnectionManager.builder(metricRegistry).socketFactoryRegistry(registry).build());
-        apacheBuilder = org.apache.http.impl.client.HttpClientBuilder.create();
+        apacheBuilder = org.apache.hc.client5.http.impl.classic.HttpClientBuilder.create();
         anotherApacheBuilder = spy(AnotherHttpClientBuilder.create());
     }
 
@@ -284,23 +278,12 @@ class HttpClientBuilderTest {
     }
 
     @Test
-    void createClientCanPassCustomVerifierToApacheBuilder() throws Exception {
-        final HostnameVerifier customVerifier = (s, sslSession) -> false;
-
-        assertThat(builder.using(customVerifier).createClient(apacheBuilder, connectionManager, "test")).isNotNull();
-
-        final Field hostnameVerifierField =
-                getInaccessibleField(org.apache.http.impl.client.HttpClientBuilder.class, "hostnameVerifier");
-        assertThat(hostnameVerifierField.get(apacheBuilder)).isSameAs(customVerifier);
-    }
-
-    @Test
     void doesNotReuseConnectionsIfKeepAliveIsZero() throws Exception {
         configuration.setKeepAlive(Duration.seconds(0));
         assertThat(builder.using(configuration).createClient(apacheBuilder, connectionManager, "test")).isNotNull();
 
         assertThat(spyHttpClientBuilderField("reuseStrategy", apacheBuilder))
-                .isInstanceOf(NoConnectionReuseStrategy.class);
+                .isInstanceOf(ConnectionReuseStrategy.class);
     }
 
 
@@ -322,9 +305,10 @@ class HttpClientBuilderTest {
                 (DefaultConnectionKeepAliveStrategy) spyHttpClientBuilderField("keepAliveStrategy", apacheBuilder);
         final HttpContext context = mock(HttpContext.class);
         final HttpResponse response = mock(HttpResponse.class);
-        when(response.headerIterator(HTTP.CONN_KEEP_ALIVE)).thenReturn(mock(HeaderIterator.class));
+        when(response.headerIterator()).thenReturn(Collections.emptyIterator());
+        when(response.headerIterator(any())).thenReturn(Collections.emptyIterator());
 
-        assertThat(strategy.getKeepAliveDuration(response, context)).isEqualTo(1000);
+        assertThat(strategy.getKeepAliveDuration(response, context).convert(TimeUnit.MILLISECONDS)).isEqualTo(TimeValue.ofMinutes(3).toMilliseconds());
     }
 
     @Test
@@ -336,13 +320,14 @@ class HttpClientBuilderTest {
         final DefaultConnectionKeepAliveStrategy strategy = (DefaultConnectionKeepAliveStrategy) field.get(apacheBuilder);
         final HttpContext context = mock(HttpContext.class);
         final HttpResponse response = mock(HttpResponse.class);
-        final HeaderIterator iterator = new BasicListHeaderIterator(
-                Collections.singletonList(new BasicHeader(HttpHeaders.CONNECTION, "timeout=50")),
-                HttpHeaders.CONNECTION
+        BasicHeaderIterator basicHeaderIterator = new BasicHeaderIterator(
+            new Header[]{new BasicHeader(HttpHeaders.CONNECTION, "timeout=50")},
+            HttpHeaders.CONNECTION
         );
-        when(response.headerIterator(HTTP.CONN_KEEP_ALIVE)).thenReturn(iterator);
+        when(response.headerIterator()).thenReturn(basicHeaderIterator);
+        when(response.headerIterator(any())).thenReturn(basicHeaderIterator);
 
-        assertThat(strategy.getKeepAliveDuration(response, context)).isEqualTo(50_000);
+        assertThat(strategy.getKeepAliveDuration(response, context).convert(TimeUnit.MILLISECONDS)).isEqualTo(50_000);
     }
 
     @Test
@@ -350,7 +335,7 @@ class HttpClientBuilderTest {
         assertThat(builder.using(configuration).createClient(apacheBuilder, connectionManager, "test")).isNotNull();
 
         assertThat(((RequestConfig) spyHttpClientBuilderField("defaultRequestConfig", apacheBuilder)).getCookieSpec())
-                .isEqualTo(CookieSpecs.IGNORE_COOKIES);
+                .isEqualTo(StandardCookieSpec.IGNORE);
     }
 
     @Test
@@ -359,24 +344,7 @@ class HttpClientBuilderTest {
         assertThat(builder.using(configuration).createClient(apacheBuilder, connectionManager, "test")).isNotNull();
 
         assertThat(((RequestConfig) spyHttpClientBuilderField("defaultRequestConfig", apacheBuilder)).getCookieSpec())
-                .isEqualTo(CookieSpecs.DEFAULT);
-    }
-
-    @Test
-    void normalizeUriByDefault() throws Exception {
-        assertThat(builder.using(configuration).createClient(apacheBuilder, connectionManager, "test")).isNotNull();
-
-        assertThat(((RequestConfig) spyHttpClientBuilderField("defaultRequestConfig", apacheBuilder)).isNormalizeUri())
-            .isTrue();
-    }
-
-    @Test
-    void disableNormalizeUriWhenDisabled() throws Exception {
-        configuration.setNormalizeUriEnabled(false);
-        assertThat(builder.using(configuration).createClient(apacheBuilder, connectionManager, "test")).isNotNull();
-
-        assertThat(((RequestConfig) spyHttpClientBuilderField("defaultRequestConfig", apacheBuilder)).isNormalizeUri())
-            .isFalse();
+                .isEqualTo(StandardCookieSpec.RELAXED);
     }
 
     @Test
@@ -384,7 +352,7 @@ class HttpClientBuilderTest {
         configuration.setTimeout(Duration.milliseconds(500));
         assertThat(builder.using(configuration).createClient(apacheBuilder, connectionManager, "test")).isNotNull();
 
-        assertThat(((RequestConfig) spyHttpClientBuilderField("defaultRequestConfig", apacheBuilder)).getSocketTimeout())
+        assertThat(((RequestConfig) spyHttpClientBuilderField("defaultRequestConfig", apacheBuilder)).getResponseTimeout().getDuration())
                 .isEqualTo(500);
     }
 
@@ -393,7 +361,7 @@ class HttpClientBuilderTest {
         configuration.setConnectionTimeout(Duration.milliseconds(500));
         assertThat(builder.using(configuration).createClient(apacheBuilder, connectionManager, "test")).isNotNull();
 
-        assertThat(((RequestConfig) spyHttpClientBuilderField("defaultRequestConfig", apacheBuilder)).getConnectTimeout())
+        assertThat(((RequestConfig) spyHttpClientBuilderField("defaultRequestConfig", apacheBuilder)).getConnectTimeout().getDuration())
                 .isEqualTo(500);
     }
 
@@ -402,26 +370,8 @@ class HttpClientBuilderTest {
         configuration.setConnectionRequestTimeout(Duration.milliseconds(123));
 
         assertThat(builder.using(configuration).createClient(apacheBuilder, connectionManager, "test")).isNotNull();
-        assertThat(((RequestConfig) spyHttpClientBuilderField("defaultRequestConfig", apacheBuilder)).getConnectionRequestTimeout())
+        assertThat(((RequestConfig) spyHttpClientBuilderField("defaultRequestConfig", apacheBuilder)).getConnectionRequestTimeout().getDuration())
                 .isEqualTo(123);
-    }
-
-    @Test
-    void disablesNaglesAlgorithm() throws Exception {
-        assertThat(builder.using(configuration).createClient(apacheBuilder, connectionManager, "test")).isNotNull();
-
-        assertThat(((SocketConfig) spyHttpClientBuilderField("defaultSocketConfig", apacheBuilder)).isTcpNoDelay()).isTrue();
-    }
-
-    @Test
-    void disablesStaleConnectionCheck() throws Exception {
-        assertThat(builder.using(configuration).createClient(apacheBuilder, connectionManager, "test")).isNotNull();
-
-        // It is fine to use the isStaleConnectionCheckEnabled deprecated API, as we are ensuring
-        // that the builder creates a client that does not check for stale connections on each
-        // request, which adds significant overhead.
-        assertThat(((RequestConfig) spyHttpClientBuilderField("defaultRequestConfig", apacheBuilder))
-                .isStaleConnectionCheckEnabled()).isFalse();
     }
 
     @Test
@@ -457,25 +407,39 @@ class HttpClientBuilderTest {
 
     @Test
     void usesACustomHttpRequestRetryHandler() throws Exception {
-        final HttpRequestRetryHandler customHandler = (exception, executionCount, context) -> false;
+        final HttpRequestRetryStrategy customHandler = new HttpRequestRetryStrategy() {
+            @Override
+            public boolean retryRequest(HttpRequest request, IOException exception, int execCount, HttpContext context) {
+                return false;
+            }
+            @Override
+            public boolean retryRequest(HttpResponse response, int execCount, HttpContext context) {
+                return false;
+            }
+            @Override
+            @Nullable
+            public TimeValue getRetryInterval(HttpResponse response, int execCount, HttpContext context) {
+                return null;
+            }
+        };
 
         configuration.setRetries(1);
         assertThat(builder.using(configuration).using(customHandler)
                 .createClient(apacheBuilder, connectionManager, "test")).isNotNull();
 
-        assertThat(spyHttpClientBuilderField("retryHandler", apacheBuilder)).isSameAs(customHandler);
+        assertThat(spyHttpClientBuilderField("retryStrategy", apacheBuilder)).isSameAs(customHandler);
     }
 
     @Test
     void usesCredentialsProvider() throws Exception {
-        final CredentialsProvider credentialsProvider = new CredentialsProvider() {
+        final CredentialsStore credentialsProvider = new CredentialsStore() {
             @Override
             public void setCredentials(AuthScope authscope, Credentials credentials) {
             }
 
             @Override
             @Nullable
-            public Credentials getCredentials(AuthScope authscope) {
+            public Credentials getCredentials(AuthScope authScope, HttpContext context) {
                 return null;
             }
 
@@ -516,12 +480,12 @@ class HttpClientBuilderTest {
         config.setProxyConfiguration(proxy);
 
         CloseableHttpClient httpClient = checkProxy(config, new HttpHost("dropwizard.io", 80),
-                new HttpHost("192.168.52.11", 8080, "http"));
+                new HttpHost("http", "192.168.52.11", 8080));
         CredentialsProvider credentialsProvider = (CredentialsProvider)
                 getInaccessibleField(httpClient.getClass(), "credentialsProvider").get(httpClient);
 
-        assertThat(credentialsProvider.getCredentials(new AuthScope("192.168.52.11", 8080)))
-                .isEqualTo(new UsernamePasswordCredentials("secret", "stuff"));
+        assertThat(credentialsProvider.getCredentials(new AuthScope("192.168.52.11", 8080), mock(HttpContext.class)))
+                .isEqualTo(new UsernamePasswordCredentials("secret", "stuff".toCharArray()));
     }
 
     @Test
@@ -532,14 +496,14 @@ class HttpClientBuilderTest {
         config.setProxyConfiguration(proxy);
 
         CloseableHttpClient httpClient = checkProxy(config, new HttpHost("dropwizard.io", 80),
-                new HttpHost("192.168.52.11", 8080, "http"));
+                new HttpHost("http", "192.168.52.11", 8080));
         CredentialsProvider credentialsProvider = (CredentialsProvider)
                 getInaccessibleField(httpClient.getClass(), "credentialsProvider").get(httpClient);
 
-        AuthScope authScope = new AuthScope("192.168.52.11", 8080, "realm", "NTLM");
-        Credentials credentials = new NTCredentials("secret", "stuff", "host", "domain");
+        AuthScope authScope = new AuthScope(null, "192.168.52.11", 8080, "realm", "NTLM");
+        Credentials credentials = new NTCredentials("secret", "stuff".toCharArray(), "host", "domain");
 
-        assertThat(credentialsProvider.getCredentials(authScope))
+        assertThat(credentialsProvider.getCredentials(authScope, mock(HttpContext.class)))
                 .isEqualTo(credentials);
     }
 
@@ -574,8 +538,7 @@ class HttpClientBuilderTest {
         HttpRoutePlanner routePlanner = (HttpRoutePlanner)
                 getInaccessibleField(httpClient.getClass(), "routePlanner").get(httpClient);
 
-        HttpRoute route = routePlanner.determineRoute(target, new HttpGet(target.toURI()),
-                new BasicHttpContext());
+        HttpRoute route = routePlanner.determineRoute(target, new BasicHttpContext());
         assertThat(route.getProxyHost()).isEqualTo(expectedProxy);
         assertThat(route.getTargetHost()).isEqualTo(target);
         assertThat(route.getHopCount()).isEqualTo(expectedProxy != null ? 2 : 1);
@@ -592,7 +555,7 @@ class HttpClientBuilderTest {
 
         assertThat(client).isNotNull();
         assertThat(spyHttpClientBuilderField("connManager", apacheBuilder)).isSameAs(connectionManager);
-        verify(connectionManager).setValidateAfterInactivity(validateAfterInactivityPeriod);
+        verify(connectionManager).setValidateAfterInactivity(TimeValue.ofMilliseconds(validateAfterInactivityPeriod));
     }
 
     @Test
@@ -671,9 +634,7 @@ class HttpClientBuilderTest {
 
             @Override
             @Nullable
-            public HttpUriRequest getRedirect(HttpRequest httpRequest,
-                                              HttpResponse httpResponse,
-                                              HttpContext httpContext) {
+            public URI getLocationURI(HttpRequest request, HttpResponse response, HttpContext context) throws HttpException {
                 return null;
             }
         };
@@ -708,21 +669,18 @@ class HttpClientBuilderTest {
             builder.using(httpProcessor)
                 .createClient(apacheBuilder, connectionManager, "test");
         assertThat(client).isNotNull();
-        assertThat(getInaccessibleField(httpClientBuilderClass, "httpprocessor")
+        assertThat(getInaccessibleField(httpClientBuilderClass, "requestInterceptors")
             .get(apacheBuilder))
-            .isSameAs(httpProcessor);
-    }
-
-    @Test
-    void usesServiceUnavailableRetryStrategy() throws Exception {
-        ServiceUnavailableRetryStrategy serviceUnavailableRetryStrategy = mock(ServiceUnavailableRetryStrategy.class);
-        final ConfiguredCloseableHttpClient client =
-            builder.using(serviceUnavailableRetryStrategy)
-                .createClient(apacheBuilder, connectionManager, "test");
-        assertThat(client).isNotNull();
-        assertThat(getInaccessibleField(httpClientBuilderClass, "serviceUnavailStrategy")
+            .asList()
+            .satisfies(requestInterceptors -> {
+                assertThat(requestInterceptors).hasSize(1);
+            });
+        assertThat(getInaccessibleField(httpClientBuilderClass, "responseInterceptors")
             .get(apacheBuilder))
-            .isSameAs(serviceUnavailableRetryStrategy);
+            .asList()
+            .satisfies(responseInterceptors -> {
+                assertThat(responseInterceptors).hasSize(1);
+            });
     }
 
     @Test
@@ -747,7 +705,7 @@ class HttpClientBuilderTest {
     void configureCredentialReturnsNTCredentialsForNTLMConfig() {
         assertThat(builder.configureCredentials(new AuthConfiguration("username", "password", "NTLM", "realm", "hostname", "domain", "NT")))
             .isInstanceOfSatisfying(NTCredentials.class, credentials -> assertThat(credentials)
-                .satisfies(c -> assertThat(c.getPassword()).isEqualTo("password"))
+                .satisfies(c -> assertThat(c.getPassword()).isEqualTo("password".toCharArray()))
                 .satisfies(c -> assertThat(c.getUserPrincipal().getName()).isEqualTo("DOMAIN\\username")));
     }
 
@@ -755,7 +713,7 @@ class HttpClientBuilderTest {
     void configureCredentialReturnsUserNamePasswordCredentialsForBasicConfig() {
         assertThat(builder.configureCredentials(new AuthConfiguration("username", "password")))
             .isInstanceOfSatisfying(UsernamePasswordCredentials.class, upCredentials -> assertThat(upCredentials)
-                .satisfies(c -> assertThat(c.getPassword()).isEqualTo("password"))
+                .satisfies(c -> assertThat(c.getPassword()).isEqualTo("password".toCharArray()))
                 .satisfies(c -> assertThat(c.getUserPrincipal().getName()).isEqualTo("username")));
     }
 

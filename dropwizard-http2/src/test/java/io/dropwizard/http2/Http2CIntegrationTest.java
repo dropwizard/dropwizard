@@ -1,7 +1,7 @@
 package io.dropwizard.http2;
 
 import io.dropwizard.Configuration;
-import io.dropwizard.testing.ResourceHelpers;
+import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import org.eclipse.jetty.client.HttpClient;
@@ -20,7 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class Http2CIntegrationTest extends AbstractHttp2Test {
 
     final DropwizardAppExtension<Configuration> appRule = new DropwizardAppExtension<>(
-            FakeApplication.class, ResourceHelpers.resourceFilePath("test-http2c.yml"));
+            FakeApplication.class, "test-http2c.yml", new ResourceConfigurationSourceProvider());
 
     @BeforeEach
     @Override

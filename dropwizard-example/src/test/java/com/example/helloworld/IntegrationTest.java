@@ -2,7 +2,7 @@ package com.example.helloworld;
 
 import com.example.helloworld.api.Saying;
 import com.example.helloworld.core.Person;
-import io.dropwizard.testing.ResourceHelpers;
+import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import org.eclipse.jetty.http.HttpStatus;
@@ -24,12 +24,13 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 import static io.dropwizard.testing.ConfigOverride.config;
+import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 @ExtendWith(DropwizardExtensionsSupport.class)
 class IntegrationTest {
-    private static final String CONFIG_PATH = ResourceHelpers.resourceFilePath("test-example.yml");
+    private static final String CONFIG = "test-example.yml";
 
     @TempDir
     static Path tempDir;
@@ -37,7 +38,8 @@ class IntegrationTest {
     static Supplier<String> ARCHIVED_LOG = () -> tempDir.resolve("application-%d-%i.log.gz").toString();
 
     static final DropwizardAppExtension<HelloWorldConfiguration> APP = new DropwizardAppExtension<>(
-            HelloWorldApplication.class, CONFIG_PATH,
+            HelloWorldApplication.class, CONFIG,
+            new ResourceConfigurationSourceProvider(),
             config("database.url", () -> "jdbc:h2:" + tempDir.resolve("database.h2")),
             config("logging.appenders[1].currentLogFilename", CURRENT_LOG),
             config("logging.appenders[1].archivedLogFilenamePattern", ARCHIVED_LOG)
@@ -45,7 +47,7 @@ class IntegrationTest {
 
     @BeforeAll
     public static void migrateDb() throws Exception {
-        APP.getApplication().run("db", "migrate", CONFIG_PATH);
+        APP.getApplication().run("db", "migrate", resourceFilePath(CONFIG));
     }
 
     @Test

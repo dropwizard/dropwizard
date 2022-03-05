@@ -27,7 +27,7 @@ public abstract class ConfigurationException extends Exception {
      * @param path      the bad configuration path
      * @param errors    the errors in the path
      */
-    public ConfigurationException(String path, Collection<String> errors) {
+    protected ConfigurationException(String path, Collection<String> errors) {
         super(formatMessage(path, errors));
         this.errors = errors;
     }
@@ -39,7 +39,7 @@ public abstract class ConfigurationException extends Exception {
      * @param errors    the errors in the path
      * @param cause     the cause of the error(s)
      */
-    public ConfigurationException(String path, Collection<String> errors, Throwable cause) {
+    protected ConfigurationException(String path, Collection<String> errors, Throwable cause) {
         super(formatMessage(path, errors), cause);
         this.errors = errors;
     }

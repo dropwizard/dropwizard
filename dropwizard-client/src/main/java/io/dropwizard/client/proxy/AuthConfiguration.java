@@ -30,7 +30,7 @@ import jakarta.validation.constraints.Pattern;
  *         <td>{@code authScheme}</td>
  *         <td>null</td>
  *         <td>Optional, The authentication scheme used by the underlying
- *         {@link org.apache.http.auth.AuthScope} class. Can be one of:<ul>
+ *         {@link org.apache.hc.client5.http.auth.AuthScope} class. Can be one of:<ul>
  *         <li>Basic</li><li>NTLM</li></ul></td>
  *     </tr>
  *     <tr>
@@ -51,10 +51,10 @@ import jakarta.validation.constraints.Pattern;
  *     <tr>
  *         <td>{@code credentialType}</td>
  *         <td>null</td>
- *         <td>The {@link org.apache.http.auth.Credentials} implementation
+ *         <td>The {@link org.apache.hc.client5.http.auth.Credentials} implementation
  *         to use for proxy authentication. Currently supports
- *         UsernamePassword ({@link org.apache.http.auth.UsernamePasswordCredentials}) and
- *         NT ({@link org.apache.http.auth.NTCredentials})</td>
+ *         UsernamePassword ({@link org.apache.hc.client5.http.auth.UsernamePasswordCredentials}) and
+ *         NT ({@link org.apache.hc.client5.http.auth.NTCredentials})</td>
  *     </tr>
  * </table>
  */

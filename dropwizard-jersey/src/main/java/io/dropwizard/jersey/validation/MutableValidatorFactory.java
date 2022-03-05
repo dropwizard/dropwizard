@@ -18,7 +18,9 @@ public class MutableValidatorFactory implements ConstraintValidatorFactory {
     }
 
     @Override
-    public void releaseInstance(ConstraintValidator<?, ?> instance) { }
+    public void releaseInstance(ConstraintValidator<?, ?> instance) {
+        // Nothing to do
+    }
 
     public void setValidatorFactory(ConstraintValidatorFactory validatorFactory) {
         this.validatorFactory = validatorFactory;

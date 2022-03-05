@@ -28,13 +28,6 @@ public class AutoCloseableManager implements Managed {
     }
 
     /**
-     * The start operation does nothing (i.e. it's a no-op).
-     */
-    @Override
-    public void start() throws Exception {
-    }
-
-    /**
      * Calls {@link AutoCloseable#close()} on the closable provided in
      * {@link AutoCloseableManager#AutoCloseableManager(AutoCloseable)}.
      *

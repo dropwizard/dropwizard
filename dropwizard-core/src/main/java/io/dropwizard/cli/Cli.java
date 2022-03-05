@@ -165,6 +165,7 @@ public class Cli {
 
         @Override
         public void onAttach(Argument arg) {
+            // Nothing to do
         }
     }
 }

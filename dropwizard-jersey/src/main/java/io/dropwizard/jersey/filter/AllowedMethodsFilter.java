@@ -50,8 +50,4 @@ public class AllowedMethodsFilter implements Filter {
             response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
         }
     }
-
-    @Override
-    public void destroy() {
-    }
 }

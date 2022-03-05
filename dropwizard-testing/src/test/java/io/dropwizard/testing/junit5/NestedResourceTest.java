@@ -1,27 +1,29 @@
 package io.dropwizard.testing.junit5;
 
+import io.dropwizard.configuration.ConfigurationSourceProvider;
+import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.testing.app.TestApplication;
 import io.dropwizard.testing.app.TestConfiguration;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(DropwizardExtensionsSupport.class)
 class NestedResourceTest {
-    private static DropwizardAppExtension<TestConfiguration> staticApp = new DropwizardAppExtension<>(
-            TestApplication.class, resourceFilePath("test-config.yaml"));
-    private static DropwizardClientExtension staticClient = new DropwizardClientExtension();
-    private static DAOTestExtension staticDao = DAOTestExtension.newBuilder().build();
-    private static ResourceExtension staticResources = ResourceExtension.builder().build();
+    private static final ConfigurationSourceProvider resourceConfigurationSourceProvider = new ResourceConfigurationSourceProvider();
+    private static final DropwizardAppExtension<TestConfiguration> staticApp = new DropwizardAppExtension<>(
+            TestApplication.class, "test-config.yaml", resourceConfigurationSourceProvider);
+    private static final DropwizardClientExtension staticClient = new DropwizardClientExtension();
+    private static final DAOTestExtension staticDao = DAOTestExtension.newBuilder().build();
+    private static final ResourceExtension staticResources = ResourceExtension.builder().build();
 
-    private DropwizardAppExtension<TestConfiguration> app = new DropwizardAppExtension<>(
-            TestApplication.class, resourceFilePath("test-config.yaml"));
-    private DropwizardClientExtension client = new DropwizardClientExtension();
-    private DAOTestExtension dao = DAOTestExtension.newBuilder().build();
-    private ResourceExtension resources = ResourceExtension.builder().build();
+    private final DropwizardAppExtension<TestConfiguration> app = new DropwizardAppExtension<>(
+            TestApplication.class, "test-config.yaml", resourceConfigurationSourceProvider);
+    private final DropwizardClientExtension client = new DropwizardClientExtension();
+    private final DAOTestExtension dao = DAOTestExtension.newBuilder().build();
+    private final ResourceExtension resources = ResourceExtension.builder().build();
 
     @Test
     void staticApp() {
