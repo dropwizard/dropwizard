@@ -4,12 +4,12 @@ import com.google.common.base.Optional;
 import org.hibernate.validator.HibernateValidator;
 import org.junit.jupiter.api.Test;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-import javax.validation.valueextraction.Unwrapping;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.valueextraction.Unwrapping;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;

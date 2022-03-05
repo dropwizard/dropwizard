@@ -7,7 +7,7 @@ import org.eclipse.jetty.util.ssl.SslContextFactory;
 
 import javax.annotation.Nullable;
 import javax.net.SocketFactory;
-import javax.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotEmpty;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;

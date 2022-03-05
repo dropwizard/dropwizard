@@ -1,7 +1,7 @@
 package io.dropwizard.jersey;
 
 import javax.annotation.Nullable;
-import javax.ws.rs.DefaultValue;
+import jakarta.ws.rs.DefaultValue;
 import java.lang.annotation.Annotation;
 
 public final class DefaultValueUtils {

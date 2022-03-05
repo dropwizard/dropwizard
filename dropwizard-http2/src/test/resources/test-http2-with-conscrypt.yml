@@ -9,3 +9,4 @@ server:
     jceProvider: Conscrypt
   applicationContextPath: /api
   adminContextPath: /admin
+  shutdownGracePeriod: 0s

@@ -2,7 +2,7 @@ package io.dropwizard.configuration;
 
 import io.dropwizard.validation.ConstraintViolations;
 
-import javax.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolation;
 import java.util.Set;
 
 /**

@@ -6,7 +6,7 @@ import io.dropwizard.testing.junit5.ResourceExtension;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.test.spi.TestContainerFactory;
 
-import javax.validation.Validator;
+import jakarta.validation.Validator;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;

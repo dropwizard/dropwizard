@@ -1,7 +1,7 @@
 package io.dropwizard.validation;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
 /**
  * A validator for {@link ValidationMethod}-annotated methods.

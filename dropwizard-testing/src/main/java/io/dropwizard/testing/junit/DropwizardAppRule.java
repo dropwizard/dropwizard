@@ -17,7 +17,7 @@ import org.glassfish.jersey.client.JerseyClientBuilder;
 import org.junit.rules.ExternalResource;
 
 import javax.annotation.Nullable;
-import javax.ws.rs.client.Client;
+import jakarta.ws.rs.client.Client;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;

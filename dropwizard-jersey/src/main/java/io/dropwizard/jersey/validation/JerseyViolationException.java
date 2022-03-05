@@ -2,8 +2,8 @@ package io.dropwizard.jersey.validation;
 
 import org.glassfish.jersey.server.model.Invocable;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import java.util.Set;
 
 /**

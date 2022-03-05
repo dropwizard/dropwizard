@@ -4,7 +4,7 @@ import java.security.Principal;
 import java.util.Objects;
 
 import javax.annotation.Nullable;
-import javax.ws.rs.container.ContainerRequestContext;
+import jakarta.ws.rs.container.ContainerRequestContext;
 
 public abstract class AuthorizationContext<P extends Principal> {
     private final P principal;

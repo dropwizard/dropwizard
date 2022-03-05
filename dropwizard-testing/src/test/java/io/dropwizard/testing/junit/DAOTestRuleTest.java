@@ -6,7 +6,7 @@ import org.hibernate.SessionFactory;
 import org.junit.Rule;
 import org.junit.Test;
 
-import javax.validation.ConstraintViolationException;
+import jakarta.validation.ConstraintViolationException;
 import java.io.Serializable;
 
 import static org.assertj.core.api.Assertions.assertThat;

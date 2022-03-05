@@ -1,6 +1,6 @@
 package io.dropwizard.validation;
 
-import javax.validation.groups.Default;
+import jakarta.validation.groups.Default;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 

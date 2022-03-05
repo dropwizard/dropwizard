@@ -9,7 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
-import javax.servlet.ServletRegistration;
+import jakarta.servlet.ServletRegistration;
 import java.net.URL;
 
 import static org.assertj.core.api.Assertions.assertThat;

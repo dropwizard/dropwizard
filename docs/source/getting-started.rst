@@ -195,7 +195,7 @@ Here's what our configuration class will look like, full `example conf here`_:
 
     import io.dropwizard.Configuration;
     import com.fasterxml.jackson.annotation.JsonProperty;
-    import javax.validation.constraints.NotEmpty;
+    import jakarta.validation.constraints.NotEmpty;
 
     public class HelloWorldConfiguration extends Configuration {
         @NotEmpty
@@ -405,11 +405,11 @@ instances from the URI ``/hello-world``, so our resource class looks like this:
     import com.example.helloworld.api.Saying;
     import com.codahale.metrics.annotation.Timed;
 
-    import javax.ws.rs.GET;
-    import javax.ws.rs.Path;
-    import javax.ws.rs.Produces;
-    import javax.ws.rs.QueryParam;
-    import javax.ws.rs.core.MediaType;
+    import jakarta.ws.rs.GET;
+    import jakarta.ws.rs.Path;
+    import jakarta.ws.rs.Produces;
+    import jakarta.ws.rs.QueryParam;
+    import jakarta.ws.rs.core.MediaType;
     import java.util.concurrent.atomic.AtomicLong;
     import java.util.Optional;
 

@@ -3,11 +3,11 @@ package io.dropwizard.jetty;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandlerContainer;
-import org.eclipse.jetty.util.ArrayTernaryTrie;
+import org.eclipse.jetty.util.Index;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -16,16 +16,15 @@ import java.util.Map;
  * A Jetty router which routes requests based on context path.
  */
 public class ContextRoutingHandler extends AbstractHandlerContainer {
-    private final ArrayTernaryTrie<Handler> handlers;
+    private final Index<Handler> handlers;
 
     public ContextRoutingHandler(Map<String, ? extends Handler> handlers) {
-        this.handlers = new ArrayTernaryTrie<>(false);
+        Index.Builder<Handler> builder = new Index.Builder<Handler>().caseSensitive(false);
         for (Map.Entry<String, ? extends Handler> entry : handlers.entrySet()) {
-            if (!this.handlers.put(entry.getKey(), entry.getValue())) {
-                throw new IllegalStateException("Too many handlers");
-            }
+            builder.with(entry.getKey(), entry.getValue());
             addBean(entry.getValue());
         }
+        this.handlers = builder.build();
     }
 
     @Override
@@ -57,7 +56,7 @@ public class ContextRoutingHandler extends AbstractHandlerContainer {
 
     @Override
     public Handler[] getHandlers() {
-        return handlers.entrySet().stream().map(Map.Entry::getValue).toArray(Handler[]::new);
+        return handlers.keySet().stream().map(handlers::get).toArray(Handler[]::new);
     }
 
     @Override

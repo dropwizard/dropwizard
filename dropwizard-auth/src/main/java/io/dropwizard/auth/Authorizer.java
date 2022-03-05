@@ -1,7 +1,7 @@
 package io.dropwizard.auth;
 
 import javax.annotation.Nullable;
-import javax.ws.rs.container.ContainerRequestContext;
+import jakarta.ws.rs.container.ContainerRequestContext;
 import java.security.Principal;
 
 /**

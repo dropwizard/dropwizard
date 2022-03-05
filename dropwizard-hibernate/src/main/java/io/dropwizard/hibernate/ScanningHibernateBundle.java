@@ -3,7 +3,7 @@ package io.dropwizard.hibernate;
 import org.glassfish.jersey.server.internal.scanning.AnnotationAcceptingListener;
 import org.glassfish.jersey.server.internal.scanning.PackageNamesScanner;
 
-import javax.persistence.Entity;
+import jakarta.persistence.Entity;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;

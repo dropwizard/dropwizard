@@ -2,7 +2,7 @@ package io.dropwizard.validation.selfvalidating;
 
 import org.hibernate.validator.constraintvalidation.HibernateConstraintValidatorContext;
 
-import javax.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintValidatorContext;
 import java.util.Collections;
 import java.util.Map;
 

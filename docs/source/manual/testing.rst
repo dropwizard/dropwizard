@@ -164,7 +164,7 @@ loads a given resource instance in an in-memory Jersey server:
     import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
     import io.dropwizard.testing.junit5.ResourceExtension;
     import org.junit.jupiter.api.*;
-    import javax.ws.rs.core.Response;
+    import jakarta.ws.rs.core.Response;
     import java.util.Optional;
     import static org.assertj.core.api.Assertions.assertThat;
     import static org.mockito.Mockito.*;

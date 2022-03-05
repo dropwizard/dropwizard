@@ -20,7 +20,7 @@ import io.dropwizard.validation.MinDataSize;
 import io.dropwizard.validation.ValidationMethod;
 
 import javax.annotation.Nullable;
-import javax.validation.constraints.Min;
+import jakarta.validation.constraints.Min;
 
 import static java.util.Objects.requireNonNull;
 

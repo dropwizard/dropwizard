@@ -6,8 +6,8 @@ import io.dropwizard.jersey.validation.HibernateValidationBinder;
 import io.dropwizard.setup.ExceptionMapperBinder;
 import org.glassfish.jersey.server.ServerProperties;
 
-import javax.servlet.ServletConfig;
-import javax.ws.rs.core.Context;
+import jakarta.servlet.ServletConfig;
+import jakarta.ws.rs.core.Context;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;

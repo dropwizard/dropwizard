@@ -3,7 +3,7 @@ package io.dropwizard.configuration;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import javax.validation.Validator;
+import jakarta.validation.Validator;
 
 /**
  * A factory class for loading JSON configuration files, binding them to configuration objects, and

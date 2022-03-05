@@ -2,8 +2,8 @@ package io.dropwizard.jersey.guava;
 
 import org.glassfish.jersey.internal.inject.AbstractBinder;
 
-import javax.inject.Singleton;
-import javax.ws.rs.ext.ParamConverterProvider;
+import jakarta.inject.Singleton;
+import jakarta.ws.rs.ext.ParamConverterProvider;
 
 public class OptionalParamBinder extends AbstractBinder {
     @Override

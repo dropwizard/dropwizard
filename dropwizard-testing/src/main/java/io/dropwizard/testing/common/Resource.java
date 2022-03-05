@@ -2,7 +2,7 @@ package io.dropwizard.testing.common;
 
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
+import com.fasterxml.jackson.jakarta.rs.json.JacksonXmlBindJsonProvider;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.validation.Validators;
 import io.dropwizard.logging.BootstrapLogging;
@@ -18,9 +18,9 @@ import org.glassfish.jersey.test.inmemory.InMemoryTestContainerFactory;
 import org.glassfish.jersey.test.spi.TestContainerFactory;
 
 import javax.annotation.Nullable;
-import javax.validation.Validator;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.WebTarget;
+import jakarta.validation.Validator;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.WebTarget;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -215,7 +215,7 @@ public class Resource {
 
             @Override
             protected void configureClient(ClientConfig clientConfig) {
-                final JacksonJsonProvider jsonProvider = new JacksonJsonProvider();
+                final JacksonXmlBindJsonProvider jsonProvider = new JacksonXmlBindJsonProvider();
                 jsonProvider.setMapper(configuration.mapper);
                 configuration.clientConfigurator.accept(clientConfig);
                 clientConfig.register(jsonProvider);

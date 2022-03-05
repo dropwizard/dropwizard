@@ -2,14 +2,14 @@ package io.dropwizard.jersey.caching;
 
 import org.glassfish.jersey.server.model.AnnotatedMethod;
 
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.container.ContainerResponseContext;
-import javax.ws.rs.container.ContainerResponseFilter;
-import javax.ws.rs.container.DynamicFeature;
-import javax.ws.rs.container.ResourceInfo;
-import javax.ws.rs.core.FeatureContext;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.ext.Provider;
+import jakarta.ws.rs.container.ContainerRequestContext;
+import jakarta.ws.rs.container.ContainerResponseContext;
+import jakarta.ws.rs.container.ContainerResponseFilter;
+import jakarta.ws.rs.container.DynamicFeature;
+import jakarta.ws.rs.container.ResourceInfo;
+import jakarta.ws.rs.core.FeatureContext;
+import jakarta.ws.rs.core.HttpHeaders;
+import jakarta.ws.rs.ext.Provider;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
@@ -32,7 +32,7 @@ public class CacheControlledResponseFeature implements DynamicFeature {
         private String cacheResponseHeader;
 
         CacheControlledResponseFilter(CacheControl control) {
-            final javax.ws.rs.core.CacheControl cacheControl = new javax.ws.rs.core.CacheControl();
+            final jakarta.ws.rs.core.CacheControl cacheControl = new jakarta.ws.rs.core.CacheControl();
             cacheControl.setPrivate(control.isPrivate());
             cacheControl.setNoCache(control.noCache());
             cacheControl.setNoStore(control.noStore());

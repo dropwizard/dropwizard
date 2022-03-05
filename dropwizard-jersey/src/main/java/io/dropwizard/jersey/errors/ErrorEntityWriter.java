@@ -3,12 +3,12 @@ package io.dropwizard.jersey.errors;
 import org.glassfish.jersey.message.MessageBodyWorkers;
 
 import javax.annotation.Nullable;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.ext.MessageBodyWriter;
+import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.HttpHeaders;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.MultivaluedMap;
+import jakarta.ws.rs.ext.MessageBodyWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.annotation.Annotation;
@@ -75,5 +75,5 @@ public abstract class ErrorEntityWriter<T, U> implements MessageBodyWriter<T> {
 
     @Context
     @Nullable
-    private javax.inject.Provider<MessageBodyWorkers> mbw;
+    private jakarta.inject.Provider<MessageBodyWorkers> mbw;
 }

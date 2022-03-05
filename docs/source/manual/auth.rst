@@ -266,8 +266,8 @@ Add this dependency into your ``pom.xml`` file:
         <version>${jersey.version}</version>
         <exclusions>
           <exclusion>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
           </exclusion>
           <exclusion>
             <groupId>junit</groupId>

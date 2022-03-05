@@ -19,9 +19,9 @@ import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import io.dropwizard.validation.InjectValidatorFeature;
 
 import javax.annotation.Nullable;
-import javax.servlet.Servlet;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
+import jakarta.servlet.Servlet;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;

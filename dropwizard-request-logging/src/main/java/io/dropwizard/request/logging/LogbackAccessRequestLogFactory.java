@@ -17,8 +17,8 @@ import io.dropwizard.request.logging.layout.LogbackAccessRequestLayoutFactory;
 import org.eclipse.jetty.server.RequestLog;
 import org.slf4j.LoggerFactory;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import java.util.Collections;
 import java.util.List;
 

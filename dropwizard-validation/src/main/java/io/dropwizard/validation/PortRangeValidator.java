@@ -1,7 +1,7 @@
 package io.dropwizard.validation;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
 /**
  * Allow 0 to indicate dynamic port range allocation. If not zero, it must be within the {min,max}

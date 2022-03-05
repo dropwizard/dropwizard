@@ -3,7 +3,7 @@ package io.dropwizard.jersey.validation;
 import org.glassfish.jersey.internal.inject.AbstractBinder;
 import org.glassfish.jersey.server.internal.inject.ConfiguredValidator;
 
-import javax.validation.Validator;
+import jakarta.validation.Validator;
 
 /**
  * @since 2.0

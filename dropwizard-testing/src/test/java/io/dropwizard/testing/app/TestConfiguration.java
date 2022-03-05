@@ -2,7 +2,7 @@ package io.dropwizard.testing.app;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.Configuration;
-import javax.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotEmpty;
 
 public class TestConfiguration extends Configuration {
 

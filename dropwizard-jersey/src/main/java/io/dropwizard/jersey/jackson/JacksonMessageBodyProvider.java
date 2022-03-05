@@ -2,10 +2,10 @@ package io.dropwizard.jersey.jackson;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreType;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
+import com.fasterxml.jackson.jakarta.rs.json.JacksonXmlBindJsonProvider;
 
 import javax.annotation.Nullable;
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.MediaType;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 
@@ -13,9 +13,9 @@ import java.lang.reflect.Type;
  * A Jersey provider which enables using Jackson to parse request entities into objects and generate
  * response entities from objects.
  * <p/>
- * (Essentially, extends {@link JacksonJaxbJsonProvider} with support for {@link JsonIgnoreType}.)
+ * (Essentially, extends {@link JacksonXmlBindJsonProvider} with support for {@link JsonIgnoreType}.)
  */
-public class JacksonMessageBodyProvider extends JacksonJaxbJsonProvider {
+public class JacksonMessageBodyProvider extends JacksonXmlBindJsonProvider {
     private final ObjectMapper mapper;
 
     public JacksonMessageBodyProvider(ObjectMapper mapper) {

@@ -5,12 +5,12 @@ import io.dropwizard.jersey.params.NonEmptyStringParam;
 import org.hibernate.validator.constraints.Length;
 import org.junit.jupiter.api.Test;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.Validator;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-import javax.validation.valueextraction.Unwrapping;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validator;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.valueextraction.Unwrapping;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;

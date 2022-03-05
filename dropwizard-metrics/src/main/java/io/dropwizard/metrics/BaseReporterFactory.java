@@ -8,9 +8,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.util.Duration;
 import io.dropwizard.validation.MinDuration;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.valueextraction.Unwrapping;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.valueextraction.Unwrapping;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashSet;

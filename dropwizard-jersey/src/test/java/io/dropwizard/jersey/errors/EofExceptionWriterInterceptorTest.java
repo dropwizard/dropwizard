@@ -5,7 +5,7 @@ import com.codahale.metrics.MetricRegistry;
 import org.eclipse.jetty.io.EofException;
 import org.junit.jupiter.api.Test;
 
-import javax.ws.rs.ext.WriterInterceptorContext;
+import jakarta.ws.rs.ext.WriterInterceptorContext;
 import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;

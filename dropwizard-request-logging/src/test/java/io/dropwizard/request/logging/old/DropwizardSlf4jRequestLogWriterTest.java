@@ -44,7 +44,7 @@ class DropwizardSlf4jRequestLogWriterTest {
         when(request.getRemoteHost()).thenReturn("10.0.0.1");
         when(request.getTimeStamp()).thenReturn(TimeUnit.SECONDS.toMillis(1353042047));
         when(request.getMethod()).thenReturn("GET");
-        when(request.getHttpURI()).thenReturn(new HttpURI("/test/things?yay"));
+        when(request.getHttpURI()).thenReturn(HttpURI.from("/test/things?yay"));
         when(request.getProtocol()).thenReturn("HTTP/1.1");
         when(request.getHttpChannelState()).thenReturn(channelState);
         when(request.getTimeStamp()).thenReturn(TimeUnit.SECONDS.toMillis(1353042048));

@@ -10,7 +10,7 @@ import io.dropwizard.logging.filter.FilterFactory;
 import java.util.Collections;
 import java.util.Set;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 /**
  * @since 2.0

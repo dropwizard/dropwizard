@@ -8,7 +8,7 @@ import io.dropwizard.servlets.tasks.Task;
 import org.eclipse.jetty.server.Server;
 import org.junit.jupiter.api.Test;
 
-import javax.servlet.ServletRegistration;
+import jakarta.servlet.ServletRegistration;
 import java.io.PrintWriter;
 import java.util.List;
 import java.util.Map;

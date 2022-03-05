@@ -45,6 +45,7 @@ class LifecycleEnvironmentTest {
         environment.attach(container);
 
         assertThat(container.getBeans())
+            .filteredOn(bean -> bean instanceof JettyManaged)
             .singleElement()
             .isInstanceOfSatisfying(JettyManaged.class, jettyManaged ->
                 assertThat(jettyManaged.getManaged()).isSameAs(managed));

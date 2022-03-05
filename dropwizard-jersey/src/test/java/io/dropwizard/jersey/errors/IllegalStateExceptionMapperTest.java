@@ -3,11 +3,11 @@ package io.dropwizard.jersey.errors;
 import org.glassfish.jersey.server.internal.LocalizationMessages;
 import org.junit.jupiter.api.Test;
 
-import javax.ws.rs.NotSupportedException;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.NotSupportedException;
+import jakarta.ws.rs.core.Response;
 
-import static javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR;
-import static javax.ws.rs.core.Response.Status.UNSUPPORTED_MEDIA_TYPE;
+import static jakarta.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR;
+import static jakarta.ws.rs.core.Response.Status.UNSUPPORTED_MEDIA_TYPE;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class IllegalStateExceptionMapperTest {

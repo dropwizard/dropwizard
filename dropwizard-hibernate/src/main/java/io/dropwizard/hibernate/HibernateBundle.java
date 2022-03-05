@@ -1,7 +1,7 @@
 package io.dropwizard.hibernate;
 
-import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
-import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module.Feature;
+import com.fasterxml.jackson.datatype.hibernate5.jakarta.Hibernate5JakartaModule;
+import com.fasterxml.jackson.datatype.hibernate5.jakarta.Hibernate5JakartaModule.Feature;
 import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.db.DatabaseConfiguration;
 import io.dropwizard.db.PooledDataSourceFactory;
@@ -49,10 +49,10 @@ public abstract class HibernateBundle<T> implements ConfiguredBundle<T>, Databas
     }
 
     /**
-     * Override to configure the {@link Hibernate5Module}.
+     * Override to configure the {@link Hibernate5JakartaModule}.
      */
-    protected Hibernate5Module createHibernate5Module() {
-        Hibernate5Module module = new Hibernate5Module();
+    protected Hibernate5JakartaModule createHibernate5Module() {
+        Hibernate5JakartaModule module = new Hibernate5JakartaModule();
         if (lazyLoadingEnabled) {
             module.enable(Feature.FORCE_LAZY_LOADING);
         }

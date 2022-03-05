@@ -2,8 +2,8 @@ package io.dropwizard.validation;
 
 import org.junit.jupiter.api.Test;
 
-import javax.validation.Valid;
-import javax.validation.Validator;
+import jakarta.validation.Valid;
+import jakarta.validation.Validator;
 import java.util.Collection;
 
 import static org.assertj.core.api.Assertions.assertThat;
