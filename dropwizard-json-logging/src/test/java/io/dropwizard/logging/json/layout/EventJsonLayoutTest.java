@@ -7,8 +7,6 @@ import ch.qos.logback.classic.spi.LoggerContextVO;
 import ch.qos.logback.classic.spi.ThrowableProxyVO;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.logging.json.EventAttribute;
-import io.dropwizard.util.Maps;
-import io.dropwizard.util.Sets;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -29,7 +27,7 @@ class EventJsonLayoutTest {
     private static final String timestamp = "2018-01-02T15:19:21.000+0000";
     private static final String logger = "com.example.user.service";
     private static final String message = "User[18] has been registered";
-    private static final Map<String, String> mdc = Maps.of(
+    private static final Map<String, String> mdc = Map.of(
             "userId", "18",
             "serviceId", "19",
             "orderId", "24");
@@ -126,7 +124,7 @@ class EventJsonLayoutTest {
 
     @Test
     void testReplaceFieldName() {
-        final Map<String, String> customFieldNames = Maps.of(
+        final Map<String, String> customFieldNames = Map.of(
                 "timestamp", "@timestamp",
                 "message", "@message");
         Map<String, Object> map = new EventJsonLayout(jsonFormatter, timestampFormatter, throwableProxyConverter, DEFAULT_EVENT_ATTRIBUTES,
@@ -143,7 +141,7 @@ class EventJsonLayoutTest {
 
     @Test
     void testAddNewField() {
-        final Map<String, Object> additionalFields = Maps.of(
+        final Map<String, Object> additionalFields = Map.of(
                 "serviceName", "userService",
                 "serviceBuild", 207);
         Map<String, Object> map = new EventJsonLayout(jsonFormatter, timestampFormatter, throwableProxyConverter, DEFAULT_EVENT_ATTRIBUTES,
@@ -159,12 +157,12 @@ class EventJsonLayoutTest {
 
     @Test
     void testFilterMdc() {
-        final Set<String> includesMdcKeys = Sets.of("userId", "orderId");
+        final Set<String> includesMdcKeys = Set.of("userId", "orderId");
         Map<String, Object> map = new EventJsonLayout(jsonFormatter, timestampFormatter, throwableProxyConverter, DEFAULT_EVENT_ATTRIBUTES,
             Collections.emptyMap(), Collections.emptyMap(), includesMdcKeys, false)
                 .toJsonMap(event);
 
-        final Map<String, String> expectedMdc = Maps.of(
+        final Map<String, String> expectedMdc = Map.of(
                 "userId", "18",
                 "orderId", "24");
         final HashMap<String, Object> expectedFields = new HashMap<>(defaultExpectedFields);

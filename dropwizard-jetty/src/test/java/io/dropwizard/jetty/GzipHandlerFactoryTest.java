@@ -4,7 +4,6 @@ import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.util.DataSize;
-import io.dropwizard.util.Sets;
 import io.dropwizard.validation.BaseValidator;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.handler.gzip.GzipHandler;
@@ -12,6 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
+import java.util.Set;
 import java.util.zip.Deflater;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -86,9 +86,9 @@ class GzipHandlerFactoryTest {
     void testBuilderProperties() {
         GzipHandlerFactory gzip = new GzipHandlerFactory();
         gzip.setMinimumEntitySize(DataSize.bytes(4096));
-        gzip.setIncludedMethods(Sets.of("GET", "POST"));
+        gzip.setIncludedMethods(Set.of("GET", "POST"));
         gzip.setExcludedUserAgentPatterns(Collections.singleton("MSIE 6.0"));
-        gzip.setCompressedMimeTypes(Sets.of("text/html", "application/json"));
+        gzip.setCompressedMimeTypes(Set.of("text/html", "application/json"));
         gzip.setExcludedMimeTypes(Collections.singleton("application/thrift"));
         gzip.setIncludedPaths(Collections.singleton("/include/me"));
         gzip.setExcludedPaths(Collections.singleton("/exclude/me"));

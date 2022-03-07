@@ -6,7 +6,6 @@ import io.dropwizard.db.ManagedPooledDataSource;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import io.dropwizard.logging.BootstrapLogging;
 import io.dropwizard.setup.Environment;
-import io.dropwizard.util.Maps;
 import org.hibernate.EmptyInterceptor;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -59,7 +58,7 @@ class SessionFactoryFactoryTest {
         config.setDriverClass("org.h2.Driver");
         config.setValidationQuery("SELECT 1");
 
-        final Map<String, String> properties = Maps.of(
+        final Map<String, String> properties = Map.of(
             "hibernate.show_sql", "true",
             "hibernate.dialect", "org.hibernate.dialect.H2Dialect",
             "hibernate.jdbc.time_zone", "UTC");

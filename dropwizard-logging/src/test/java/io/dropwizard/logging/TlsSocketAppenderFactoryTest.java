@@ -6,7 +6,6 @@ import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.configuration.SubstitutingSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
-import io.dropwizard.util.Maps;
 import io.dropwizard.validation.BaseValidator;
 import org.apache.commons.text.StringSubstitutor;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
@@ -19,6 +18,7 @@ import java.io.File;
 import java.net.ServerSocket;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -62,7 +62,7 @@ class TlsSocketAppenderFactoryTest {
         try (ServerSocket serverSocket = createServerSocket(); TcpServer tcpServer = new TcpServer(serverSocket)) {
             Future<List<String>> receivedMessages = tcpServer.receive();
             DefaultLoggingFactory loggingFactory = yamlConfigurationFactory.build(new SubstitutingSourceProvider(
-                new ResourceConfigurationSourceProvider(), new StringSubstitutor(Maps.of(
+                new ResourceConfigurationSourceProvider(), new StringSubstitutor(Map.of(
                 "tls.trust_store.path", resourcePath("/stores/tls_client.jks"),
                 "tls.trust_store.pass", "client_pass",
                 "tls.server_port", serverSocket.getLocalPort()

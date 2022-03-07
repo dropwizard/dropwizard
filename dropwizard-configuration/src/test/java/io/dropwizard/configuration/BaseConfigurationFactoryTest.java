@@ -3,7 +3,6 @@ package io.dropwizard.configuration;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.benmanes.caffeine.cache.CaffeineSpec;
 import io.dropwizard.jackson.Jackson;
-import io.dropwizard.util.Maps;
 import io.dropwizard.validation.BaseValidator;
 import org.assertj.core.api.ThrowableAssertAlternative;
 import org.assertj.core.data.MapEntry;
@@ -15,7 +14,6 @@ import javax.validation.Validator;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
@@ -57,18 +55,18 @@ public abstract class BaseConfigurationFactoryTest {
         @JsonProperty
         private int age = 1;
 
-        List<String> type = Collections.emptyList();
+        List<String> type = List.of();
 
         @JsonProperty
-        private Map<String, String> properties = Collections.emptyMap();
+        private Map<String, String> properties = Map.of();
 
         @JsonProperty
-        private List<ExampleServer> servers = Collections.emptyList();
+        private List<ExampleServer> servers = List.of();
 
         private boolean admin;
 
         @JsonProperty("my.logger")
-        private Map<String, String> logger = Collections.emptyMap();
+        private Map<String, String> logger = Map.of();
 
         public String getName() {
             return name;
@@ -110,7 +108,7 @@ public abstract class BaseConfigurationFactoryTest {
         List<String> type = Arrays.asList("coder", "wizard");
 
         @JsonProperty
-        Map<String, String> properties = Maps.of("debug", "true", "settings.enabled", "false");
+        Map<String, String> properties = Map.of("debug", "true", "settings.enabled", "false");
 
         @JsonProperty
         List<ExampleServer> servers = Arrays.asList(
