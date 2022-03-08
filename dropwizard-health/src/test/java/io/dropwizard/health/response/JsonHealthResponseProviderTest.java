@@ -7,7 +7,6 @@ import io.dropwizard.health.HealthStateAggregator;
 import io.dropwizard.health.HealthStateView;
 import io.dropwizard.health.HealthStatusChecker;
 import io.dropwizard.jackson.Jackson;
-import io.dropwizard.util.ByteStreams;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -128,6 +127,6 @@ class JsonHealthResponseProviderTest {
     }
 
     private String fixture(final String filename) throws IOException {
-        return new String(ByteStreams.toByteArray(getClass().getResourceAsStream(filename)), UTF_8);
+        return new String(getClass().getResourceAsStream(filename).readAllBytes(), UTF_8);
     }
 }

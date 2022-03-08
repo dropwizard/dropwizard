@@ -5,7 +5,6 @@ import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
-import io.dropwizard.util.ByteStreams;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -59,7 +58,7 @@ public class SslReloadAppTest {
     public static void setupClass(@TempDir Path tempDir) throws IOException {
         keystore = tempDir.resolve("keystore.jks");
         try (InputStream inputStream = SslReloadAppTest.class.getResourceAsStream("/sslreload/keystore.jks")) {
-            Files.write(keystore, ByteStreams.toByteArray(inputStream));
+            Files.write(keystore, inputStream.readAllBytes());
         }
     }
 
@@ -148,7 +147,7 @@ public class SslReloadAppTest {
 
     private void writeKeystore(String source) throws IOException {
         try (final InputStream inputStream = getClass().getResourceAsStream(source)) {
-            Files.write(keystore, ByteStreams.toByteArray(inputStream));
+            Files.write(keystore, inputStream.readAllBytes());
         }
     }
 }
