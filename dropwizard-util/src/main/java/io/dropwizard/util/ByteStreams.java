@@ -19,14 +19,6 @@ public final class ByteStreams {
         return to.toByteArray();
     }
 
-    /**
-     * @deprecated this is an internal method to dropwizard-util. Consider apache-commons instead.
-     */
-    @Deprecated
-    public static void copy(InputStream in, OutputStream to) throws IOException {
-        copyInternal(in, to);
-    }
-
     static void copyInternal(InputStream in, OutputStream to) throws IOException {
         byte[] buffer = new byte[4096];
         int length;

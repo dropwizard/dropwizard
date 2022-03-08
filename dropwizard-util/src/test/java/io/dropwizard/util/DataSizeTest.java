@@ -688,16 +688,6 @@ class DataSizeTest {
         assertThat(DataSize.pebibytes(5L).toSize()).isEqualTo(Size.terabytes(5L * 1024L));
     }
 
-    @Deprecated
-    @Test
-    void testFromSize() {
-        assertThat(DataSize.fromSize(Size.bytes(5L))).isEqualTo(DataSize.bytes(5L));
-        assertThat(DataSize.fromSize(Size.kilobytes(5L))).isEqualTo(DataSize.kibibytes(5L));
-        assertThat(DataSize.fromSize(Size.megabytes(5L))).isEqualTo(DataSize.mebibytes(5L));
-        assertThat(DataSize.fromSize(Size.gigabytes(5L))).isEqualTo(DataSize.gibibytes(5L));
-        assertThat(DataSize.fromSize(Size.terabytes(5L))).isEqualTo(DataSize.tebibytes(5L));
-    }
-
     @Test
     void testSerialization() throws IOException, ClassNotFoundException {
         final DataSize size = DataSize.kibibytes(42L);

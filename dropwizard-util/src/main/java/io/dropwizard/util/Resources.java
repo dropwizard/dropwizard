@@ -1,10 +1,6 @@
 package io.dropwizard.util;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.URL;
-import java.nio.charset.Charset;
 
 /**
  * @since 2.0
@@ -33,49 +29,5 @@ public final class Resources {
             throw new IllegalArgumentException("resource " + resourceName + " not found.");
         }
         return url;
-    }
-
-    /**
-     * Reads all bytes from a URL into a byte array.
-     *
-     * @param url the URL to read from
-     * @return a byte array containing all the bytes from the URL
-     * @throws IOException if an I/O error occurs
-     */
-    @Deprecated
-    public static byte[] toByteArray(URL url) throws IOException {
-        try (InputStream inputStream = url.openStream()) {
-            return ByteStreams.toByteArray(inputStream);
-        }
-    }
-
-    /**
-     * Reads all characters from a URL into a {@link String}, using the given character set.
-     *
-     * @param url     the URL to read from
-     * @param charset the charset used to decode the input stream; see {@link java.nio.charset.StandardCharsets} for helpful
-     *                predefined constants
-     * @return a string containing all the characters from the URL
-     * @throws IOException if an I/O error occurs.
-     */
-    @Deprecated
-    public static String toString(URL url, Charset charset) throws IOException {
-        try (InputStream inputStream = url.openStream()) {
-            return new String(ByteStreams.toByteArray(inputStream), charset);
-        }
-    }
-
-    /**
-     * Copies all bytes from a URL to an output stream.
-     *
-     * @param from the URL to read from
-     * @param to the output stream
-     * @throws IOException if an I/O error occurs
-     */
-    @Deprecated
-    public static void copy(URL from, OutputStream to) throws IOException {
-        try (InputStream inputStream = from.openStream()) {
-            ByteStreams.copyInternal(inputStream, to);
-        }
     }
 }

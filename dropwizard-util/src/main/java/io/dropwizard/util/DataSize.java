@@ -261,27 +261,4 @@ public class DataSize implements Comparable<DataSize>, Serializable {
                 throw new IllegalArgumentException("Unknown unit: " + getUnit());
         }
     }
-
-    /**
-     * Construct an equivalent {@link DataSize} object from a {@link Size} object
-     *
-     * @deprecated {@link Size} is deprecated in favour of {@link DataSize}
-     */
-    @Deprecated
-    public static DataSize fromSize(Size size) {
-        switch (size.getUnit()) {
-            case BYTES:
-                return DataSize.bytes(size.toBytes());
-            case KILOBYTES:
-                return DataSize.kibibytes(size.toKilobytes());
-            case MEGABYTES:
-                return DataSize.mebibytes(size.toMegabytes());
-            case GIGABYTES:
-                return DataSize.gibibytes(size.toGigabytes());
-            case TERABYTES:
-                return DataSize.tebibytes(size.toTerabytes());
-            default:
-                throw new IllegalArgumentException("Unknown unit: " + size.getUnit());
-        }
-    }
 }
