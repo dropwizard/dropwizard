@@ -13,6 +13,10 @@ public final class ByteStreams {
     private ByteStreams() {
     }
 
+    /**
+     * @deprecated use {@link InputStream#readAllBytes()} instead
+     */
+    @Deprecated
     public static byte[] toByteArray(InputStream in) throws IOException {
         ByteArrayOutputStream to = new ByteArrayOutputStream();
         copyInternal(in, to);
