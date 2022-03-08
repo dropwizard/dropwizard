@@ -1,7 +1,5 @@
 package io.dropwizard.configuration;
 
-import io.dropwizard.util.ByteStreams;
-
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -37,7 +35,7 @@ public class SubstitutingSourceProvider implements ConfigurationSourceProvider {
     @Override
     public InputStream open(String path) throws IOException {
         try (InputStream in = delegate.open(path)) {
-            final String config = new String(ByteStreams.toByteArray(in), StandardCharsets.UTF_8);
+            final String config = new String(in.readAllBytes(), StandardCharsets.UTF_8);
             final String substituted = substitutor.replace(config);
 
             return new ByteArrayInputStream(substituted.getBytes(StandardCharsets.UTF_8));

@@ -1,6 +1,5 @@
 package io.dropwizard.testing;
 
-import io.dropwizard.util.ByteStreams;
 import io.dropwizard.util.Resources;
 
 import java.io.IOException;
@@ -39,7 +38,7 @@ public class FixtureHelpers {
     private static String fixture(String filename, Charset charset) {
         final URL resource = Resources.getResource(filename);
         try (InputStream inputStream = resource.openStream()) {
-            return new String(ByteStreams.toByteArray(inputStream), charset).trim();
+            return new String(inputStream.readAllBytes(), charset).trim();
         } catch (IOException e) {
             throw new IllegalArgumentException(e);
         }

@@ -1,6 +1,5 @@
 package io.dropwizard.jetty;
 
-import io.dropwizard.util.ByteStreams;
 import io.dropwizard.util.DataSize;
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpTester;
@@ -86,7 +85,7 @@ class GzipHandlerTest {
     void testDecompressRequest() throws Exception {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try (GZIPOutputStream gz = new GZIPOutputStream(baos)) {
-            gz.write(ByteStreams.toByteArray(getClass().getResourceAsStream("/assets/new-banner.txt")));
+            gz.write(getClass().getResourceAsStream("/assets/new-banner.txt").readAllBytes());
         }
 
         setRequestPostGzipPlainText(baos.toByteArray());
@@ -114,7 +113,7 @@ class GzipHandlerTest {
         protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
             resp.setCharacterEncoding(StandardCharsets.UTF_8.toString());
             resp.setContentType(PLAIN_TEXT_UTF_8);
-            resp.getWriter().write(new String(ByteStreams.toByteArray(getClass().getResourceAsStream("/assets/banner.txt")), StandardCharsets.UTF_8));
+            resp.getWriter().write(new String(getClass().getResourceAsStream("/assets/banner.txt").readAllBytes(), StandardCharsets.UTF_8));
         }
 
         @Override

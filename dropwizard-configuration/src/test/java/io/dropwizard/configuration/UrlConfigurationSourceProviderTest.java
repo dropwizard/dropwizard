@@ -1,6 +1,5 @@
 package io.dropwizard.configuration;
 
-import io.dropwizard.util.ByteStreams;
 import org.junit.jupiter.api.Test;
 
 import java.io.InputStream;
@@ -14,7 +13,7 @@ class UrlConfigurationSourceProviderTest {
     @Test
     void readsFileContents() throws Exception {
         try (InputStream input = provider.open(getClass().getResource("/example.txt").toString())) {
-            assertThat(new String(ByteStreams.toByteArray(input), StandardCharsets.UTF_8).trim())
+            assertThat(new String(input.readAllBytes(), StandardCharsets.UTF_8).trim())
                 .isEqualTo("whee");
         }
     }

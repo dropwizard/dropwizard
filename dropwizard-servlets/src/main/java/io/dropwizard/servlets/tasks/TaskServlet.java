@@ -6,7 +6,6 @@ import com.codahale.metrics.Timer;
 import com.codahale.metrics.annotation.ExceptionMetered;
 import com.codahale.metrics.annotation.Metered;
 import com.codahale.metrics.annotation.Timed;
-import io.dropwizard.util.ByteStreams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -190,7 +189,7 @@ public class TaskServlet extends HttpServlet {
 
     private String getBody(HttpServletRequest req) throws IOException {
         try (InputStream in = req.getInputStream()) {
-            return new String(ByteStreams.toByteArray(in), StandardCharsets.UTF_8);
+            return new String(in.readAllBytes(), StandardCharsets.UTF_8);
         }
     }
 
