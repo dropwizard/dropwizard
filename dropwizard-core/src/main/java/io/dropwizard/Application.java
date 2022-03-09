@@ -114,19 +114,6 @@ public abstract class Application<T extends Configuration> {
      * @since 2.0
      */
     protected void onFatalError(Throwable t) {
-        onFatalError();
-    }
-
-    /**
-     * Called by {@link #run(String...)} to indicate there was a fatal error running the requested command.
-     *
-     * The default implementation calls {@link System#exit(int)} with a non-zero status code to terminate the
-     * application.
-     *
-     * @deprecated Use #onFatalError(Throwable) instead.
-     */
-    @Deprecated
-    protected void onFatalError() {
         System.exit(1);
     }
 }

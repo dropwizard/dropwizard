@@ -19,7 +19,7 @@ class ApplicationTest {
         public void run(FakeConfiguration configuration, Environment environment) {}
 
         @Override
-        protected void onFatalError() {
+        protected void onFatalError(Throwable throwable) {
             fatalError = true;
         }
     }
