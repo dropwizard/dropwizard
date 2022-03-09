@@ -13,7 +13,6 @@ import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.SecureRequestCustomizer;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.SslConnectionFactory;
-import org.eclipse.jetty.util.component.AbstractLifeCycle;
 import org.eclipse.jetty.util.component.LifeCycle;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.util.thread.ScheduledExecutorScheduler;
@@ -635,16 +634,7 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
      * @since 2.1.0
      */
     protected LifeCycle.Listener logSslParameters(final SslContextFactory sslContextFactory) {
-        // Delegate to the old method as it may have been overridden
-        return logSslInfoOnStart(sslContextFactory);
-    }
-
-    /**
-     * @deprecated Use {@link #logSslParameters(SslContextFactory) instead}
-     */
-    @Deprecated
-    protected AbstractLifeCycle.AbstractLifeCycleListener logSslInfoOnStart(final SslContextFactory sslContextFactory) {
-        return new AbstractLifeCycle.AbstractLifeCycleListener() {
+        return new LifeCycle.Listener() {
             @Override
             public void lifeCycleStarted(LifeCycle event) {
                 logSupportedParameters(sslContextFactory);
