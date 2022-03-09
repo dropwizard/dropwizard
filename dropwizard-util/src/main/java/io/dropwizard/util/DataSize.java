@@ -229,36 +229,4 @@ public class DataSize implements Comparable<DataSize>, Serializable {
 
         return Long.compare(toBytes(), other.toBytes());
     }
-
-    /**
-     * Construct an equivalent {@link Size} object from this {@link DataSize}
-     *
-     * @deprecated {@link Size} is deprecated in favour of {@link DataSize}
-     */
-    @Deprecated
-    public Size toSize() {
-        switch (unit) {
-            case BYTES:
-                return Size.bytes(count);
-            case KIBIBYTES:
-                return Size.kilobytes(count);
-            case MEBIBYTES:
-                return Size.megabytes(count);
-            case GIBIBYTES:
-                return Size.gigabytes(count);
-            case TEBIBYTES:
-                return Size.terabytes(count);
-            case PEBIBYTES:
-                return Size.terabytes(count * 1024L);
-            case KILOBYTES:
-            case MEGABYTES:
-            case GIGABYTES:
-            case TERABYTES:
-            case PETABYTES:
-                return Size.bytes(toBytes());
-
-            default:
-                throw new IllegalArgumentException("Unknown unit: " + getUnit());
-        }
-    }
 }
