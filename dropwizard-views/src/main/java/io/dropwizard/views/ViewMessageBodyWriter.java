@@ -20,7 +20,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Locale;
-import java.util.ServiceLoader;
 
 import static com.codahale.metrics.MetricRegistry.name;
 import static java.util.Objects.requireNonNull;
@@ -39,15 +38,6 @@ public class ViewMessageBodyWriter implements MessageBodyWriter<View> {
 
     private final Iterable<ViewRenderer> renderers;
     private final MetricRegistry metricRegistry;
-
-    /**
-     * @deprecated use {@link #ViewMessageBodyWriter(MetricRegistry, Iterable)} instead
-     * @param metricRegistry
-     */
-    @Deprecated
-    public ViewMessageBodyWriter(MetricRegistry metricRegistry) {
-        this(metricRegistry, ServiceLoader.load(ViewRenderer.class));
-    }
 
     public ViewMessageBodyWriter(MetricRegistry metricRegistry, Iterable<ViewRenderer> viewRenderers) {
         this.metricRegistry = metricRegistry;
