@@ -1,5 +1,7 @@
 package io.dropwizard.auth;
 
+import javax.annotation.Nullable;
+import javax.ws.rs.container.ContainerRequestContext;
 import java.security.Principal;
 
 /**
@@ -10,7 +12,7 @@ import java.security.Principal;
 public class PermitAllAuthorizer<P extends Principal> implements Authorizer<P> {
 
     @Override
-    public boolean authorize(P principal, String role) {
+    public boolean authorize(P principal, String role, @Nullable ContainerRequestContext ctx) {
         return true;
     }
 }
