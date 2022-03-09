@@ -40,13 +40,9 @@ import static java.util.Objects.requireNonNull;
  *
  * The {@link #getAllLocalIPs()} method was taken from the Apache Curator project
  * which is also under the Apache 2.0 license.
- *
- * @deprecated This class is intended for internal use and should be treated as
- *             package-private.
  */
 
-@Deprecated
-public class NetUtil {
+class NetUtil {
     public static final int DEFAULT_TCP_BACKLOG_WINDOWS = 200;
     public static final int DEFAULT_TCP_BACKLOG_LINUX = 128;
     public static final String TCP_BACKLOG_SETTING_LOCATION = "/proc/sys/net/core/somaxconn";
