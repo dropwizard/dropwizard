@@ -1,6 +1,5 @@
 package io.dropwizard.migrations;
 
-import io.dropwizard.util.Maps;
 import net.jcip.annotations.NotThreadSafe;
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.jdbi.v3.core.Handle;
@@ -12,8 +11,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.io.PrintWriter;
-import java.util.Collections;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -40,7 +40,7 @@ class DbRollbackCommandTest extends AbstractMigrationTest {
     @Test
     void testRollbackNChanges() throws Exception {
         // Migrate some DDL changes to the database
-        migrateCommand.run(null, new Namespace(Collections.emptyMap()), conf);
+        migrateCommand.run(null, new Namespace(Map.of()), conf);
 
         try (Handle handle = dbi.open()) {
             assertThat(columnExists(handle, "PERSONS", "EMAIL"))
@@ -48,7 +48,7 @@ class DbRollbackCommandTest extends AbstractMigrationTest {
         }
 
         // Rollback the last one (the email field)
-        rollbackCommand.run(null, new Namespace(Collections.singletonMap("count", 1)), conf);
+        rollbackCommand.run(null, new Namespace(Map.of("count", 1)), conf);
 
         try (Handle handle = dbi.open()) {
             assertThat(columnExists(handle, "PERSONS", "EMAIL"))
@@ -59,11 +59,11 @@ class DbRollbackCommandTest extends AbstractMigrationTest {
     @Test
     void testRollbackNChangesAsDryRun() throws Exception {
         // Migrate some DDL changes to the database
-        migrateCommand.run(null, new Namespace(Collections.emptyMap()), conf);
+        migrateCommand.run(null, new Namespace(Map.of()), conf);
 
         // Print out the change that rollbacks the second change
         rollbackCommand.setOutputStream(new PrintStream(baos, true));
-        rollbackCommand.run(null, new Namespace(Maps.of("count", 1, "dry-run", true)), conf);
+        rollbackCommand.run(null, new Namespace(Map.of("count", 1, "dry-run", true)), conf);
         assertThat(baos.toString(UTF_8.name()))
             .containsIgnoringCase("ALTER TABLE PUBLIC.persons DROP COLUMN email;");
     }
@@ -72,7 +72,7 @@ class DbRollbackCommandTest extends AbstractMigrationTest {
     void testRollbackToDate() throws Exception {
         // Migrate some DDL changes to the database
         long migrationDate = System.currentTimeMillis();
-        migrateCommand.run(null, new Namespace(Collections.emptyMap()), conf);
+        migrateCommand.run(null, new Namespace(Map.of()), conf);
 
         try (Handle handle = dbi.open()) {
             assertThat(tableExists(handle, "PERSONS"))
@@ -80,7 +80,7 @@ class DbRollbackCommandTest extends AbstractMigrationTest {
         }
 
         // Rollback both changes (they're tearDown the migration date)
-        rollbackCommand.run(null, new Namespace(Collections.singletonMap("date", new Date(migrationDate - 1000))),
+        rollbackCommand.run(null, new Namespace(Map.of("date", new Date(migrationDate - 1000))),
             conf);
 
         try (Handle handle = dbi.open()) {
@@ -93,11 +93,11 @@ class DbRollbackCommandTest extends AbstractMigrationTest {
     void testRollbackToDateAsDryRun() throws Exception {
         // Migrate some DDL changes to the database
         long migrationDate = System.currentTimeMillis();
-        migrateCommand.run(null, new Namespace(Collections.emptyMap()), conf);
+        migrateCommand.run(null, new Namespace(Map.of()), conf);
 
         // Print out a rollback script for both changes tearDown the migration date
         rollbackCommand.setOutputStream(new PrintStream(baos, true));
-        rollbackCommand.run(null, new Namespace(Maps.of(
+        rollbackCommand.run(null, new Namespace(Map.of(
                 "date", new Date(migrationDate - 1000),
                 "dry-run", true)),
                 conf);
@@ -109,12 +109,12 @@ class DbRollbackCommandTest extends AbstractMigrationTest {
     @Test
     void testRollbackToTag() throws Exception {
         // Migrate the first DDL change to the database
-        migrateCommand.run(null, new Namespace(Collections.singletonMap("count", 1)), conf);
+        migrateCommand.run(null, new Namespace(Map.of("count", 1)), conf);
 
         // Tag it
         final DbTagCommand<TestMigrationConfiguration> tagCommand = new DbTagCommand<>(
             new TestMigrationDatabaseConfiguration(), TestMigrationConfiguration.class, migrationsFileName);
-        tagCommand.run(null, new Namespace(Collections.singletonMap("tag-name", Collections.singletonList("v1"))), conf);
+        tagCommand.run(null, new Namespace(Map.of("tag-name", List.of("v1"))), conf);
 
         try (Handle handle = dbi.open()) {
             assertThat(columnExists(handle, "PERSONS", "EMAIL"))
@@ -122,7 +122,7 @@ class DbRollbackCommandTest extends AbstractMigrationTest {
         }
 
         // Migrate the second change
-        migrateCommand.run(null, new Namespace(Collections.emptyMap()), conf);
+        migrateCommand.run(null, new Namespace(Map.of()), conf);
 
         try (Handle handle = dbi.open()) {
             assertThat(columnExists(handle, "PERSONS", "EMAIL"))
@@ -130,7 +130,7 @@ class DbRollbackCommandTest extends AbstractMigrationTest {
         }
 
         // Rollback to the first change
-        rollbackCommand.run(null, new Namespace(Collections.singletonMap("tag", "v1")), conf);
+        rollbackCommand.run(null, new Namespace(Map.of("tag", "v1")), conf);
 
         try (Handle handle = dbi.open()) {
             assertThat(columnExists(handle, "PERSONS", "EMAIL"))
@@ -141,19 +141,19 @@ class DbRollbackCommandTest extends AbstractMigrationTest {
     @Test
     void testRollbackToTagAsDryRun() throws Exception {
         // Migrate the first DDL change to the database
-        migrateCommand.run(null, new Namespace(Collections.singletonMap("count", 1)), conf);
+        migrateCommand.run(null, new Namespace(Map.of("count", 1)), conf);
 
         // Tag it
         final DbTagCommand<TestMigrationConfiguration> tagCommand = new DbTagCommand<>(
             new TestMigrationDatabaseConfiguration(), TestMigrationConfiguration.class, migrationsFileName);
-        tagCommand.run(null, new Namespace(Collections.singletonMap("tag-name", Collections.singletonList("v1"))), conf);
+        tagCommand.run(null, new Namespace(Map.of("tag-name", List.of("v1"))), conf);
 
         // Migrate the second change
-        migrateCommand.run(null, new Namespace(Collections.emptyMap()), conf);
+        migrateCommand.run(null, new Namespace(Map.of()), conf);
 
         // Print out the rollback script for the second change
         rollbackCommand.setOutputStream(new PrintStream(baos, true));
-        rollbackCommand.run(null, new Namespace(Maps.of("tag", "v1", "dry-run", true)), conf);
+        rollbackCommand.run(null, new Namespace(Map.of("tag", "v1", "dry-run", true)), conf);
         assertThat(baos.toString(UTF_8.name()))
             .containsIgnoringCase("ALTER TABLE PUBLIC.persons DROP COLUMN email;");
     }

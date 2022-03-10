@@ -2,13 +2,13 @@ package io.dropwizard.auth;
 
 import com.codahale.metrics.MetricRegistry;
 import com.github.benmanes.caffeine.cache.CaffeineSpec;
-import io.dropwizard.util.Sets;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 
 import javax.ws.rs.container.ContainerRequestContext;
 import java.security.Principal;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
@@ -89,7 +89,7 @@ class CachingAuthorizerTest {
     void invalidatesSetsofPrincipals() throws Exception {
         cached.authorize(principal, role, requestContext);
         cached.authorize(principal2, role, requestContext);
-        cached.invalidateAll(Sets.of(principal, principal2));
+        cached.invalidateAll(Set.of(principal, principal2));
         cached.authorize(principal, role, requestContext);
         cached.authorize(principal2, role, requestContext);
 

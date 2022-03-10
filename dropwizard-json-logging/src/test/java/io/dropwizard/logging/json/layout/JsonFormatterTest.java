@@ -3,11 +3,11 @@ package io.dropwizard.logging.json.layout;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.jackson.Jackson;
-import io.dropwizard.util.Maps;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -15,9 +15,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class JsonFormatterTest {
 
-    private final SortedMap<String, Object> map = new TreeMap<>(Maps.of(
+    private final SortedMap<String, Object> map = new TreeMap<>(Map.of(
             "name", "Jim",
-            "hobbies", Arrays.asList("Reading", "Biking", "Snorkeling")));
+            "hobbies", List.of("Reading", "Biking", "Snorkeling")));
     private final ObjectMapper objectMapper = Jackson.newObjectMapper();
 
     @Test

@@ -15,7 +15,6 @@ import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.configuration.SubstitutingSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
-import io.dropwizard.util.Maps;
 import io.dropwizard.validation.BaseValidator;
 import org.apache.commons.text.StringSubstitutor;
 import org.assertj.core.data.MapEntry;
@@ -27,6 +26,7 @@ import org.slf4j.LoggerFactory;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -111,7 +111,7 @@ class DefaultLoggingFactoryTest {
 
     @Test
     void testConfigure(@TempDir Path tempDir) throws Exception {
-        final StringSubstitutor substitutor = new StringSubstitutor(Maps.of(
+        final StringSubstitutor substitutor = new StringSubstitutor(Map.of(
                 "new_app", tempDir.resolve("example-new-app").toFile().getAbsolutePath(),
                 "new_app_not_additive", tempDir.resolve("example-new-app-not-additive").toFile().getAbsolutePath(),
                 "default", tempDir.resolve("example").toFile().getAbsolutePath()

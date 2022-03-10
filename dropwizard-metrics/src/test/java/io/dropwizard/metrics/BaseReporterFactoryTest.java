@@ -3,7 +3,6 @@ package io.dropwizard.metrics;
 import com.codahale.metrics.Metric;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.ScheduledReporter;
-import io.dropwizard.util.Sets;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -16,8 +15,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
 class BaseReporterFactoryTest {
-    private static final Set<String> INCLUDES = Sets.of("inc", "both", "inc.+");
-    private static final Set<String> EXCLUDES = Sets.of("exc", "both", "exc.+");
+    private static final Set<String> INCLUDES = Set.of("inc", "both", "inc.+");
+    private static final Set<String> EXCLUDES = Set.of("exc", "both", "exc.+");
     private static final Set<String> EMPTY = Collections.emptySet();
 
     static Stream<Arguments> data() {

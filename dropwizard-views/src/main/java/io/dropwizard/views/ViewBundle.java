@@ -2,11 +2,12 @@ package io.dropwizard.views;
 
 import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.setup.Environment;
-import io.dropwizard.util.Sets;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.ServiceLoader;
+import java.util.Set;
 
 
 /**
@@ -92,12 +93,16 @@ public class ViewBundle<T> implements ConfiguredBundle<T>, ViewConfigurable<T> {
     }
 
     public ViewBundle(Iterable<ViewRenderer> viewRenderers) {
-        this.viewRenderers = Sets.of(viewRenderers);
+        final Set<ViewRenderer> viewRendererSet = new HashSet<>();
+
+        viewRenderers.forEach(viewRendererSet::add);
+
+        this.viewRenderers = Collections.unmodifiableSet(viewRendererSet);
     }
 
     @Override
     public Map<String, Map<String, String>> getViewConfiguration(T configuration) {
-        return Collections.emptyMap();
+        return Map.of();
     }
 
     @Override
@@ -105,7 +110,7 @@ public class ViewBundle<T> implements ConfiguredBundle<T>, ViewConfigurable<T> {
         final Map<String, Map<String, String>> options = getViewConfiguration(configuration);
         for (ViewRenderer viewRenderer : viewRenderers) {
             final Map<String, String> viewOptions = options.get(viewRenderer.getConfigurationKey());
-            viewRenderer.configure(viewOptions == null ? Collections.emptyMap() : viewOptions);
+            viewRenderer.configure(viewOptions == null ? Map.of() : viewOptions);
         }
         environment.jersey().register(new ViewMessageBodyWriter(environment.metrics(), viewRenderers));
     }
