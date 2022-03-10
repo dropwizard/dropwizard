@@ -12,6 +12,10 @@
     <artifactId>dropwizard-json-logging</artifactId>
     <name>Dropwizard JSON logging</name>
 
+    <properties>
+        <module.name>io.dropwizard.logging.json</module.name>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>io.dropwizard</groupId>
@@ -110,11 +114,6 @@
         <dependency>
             <groupId>io.dropwizard</groupId>
             <artifactId>dropwizard-configuration</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.dropwizard</groupId>
-            <artifactId>dropwizard-util</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

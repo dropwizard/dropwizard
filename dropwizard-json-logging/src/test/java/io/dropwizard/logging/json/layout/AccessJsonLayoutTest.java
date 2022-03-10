@@ -5,8 +5,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.logging.json.AccessAttribute;
-import io.dropwizard.util.Maps;
-import io.dropwizard.util.Sets;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -49,10 +47,10 @@ class AccessJsonLayoutTest {
 
     @BeforeEach
     void setUp() {
-        requestHeaders = Maps.of(
+        requestHeaders = Map.of(
                 "Host", "api.example.io",
                 "User-Agent", userAgent);
-        responseHeaders = Maps.of(
+        responseHeaders = Map.of(
                 "Content-Type", "application/json",
                 "Transfer-Encoding", "chunked");
         when(event.getTimeStamp()).thenReturn(1514817321000L);
@@ -143,8 +141,8 @@ class AccessJsonLayoutTest {
     @Test
     void testEnableEverything() {
         accessJsonLayout.setIncludes(EnumSet.allOf(AccessAttribute.class));
-        accessJsonLayout.setRequestHeaders(Sets.of("Host", "User-Agent"));
-        accessJsonLayout.setResponseHeaders(Sets.of("Transfer-Encoding", "Content-Type"));
+        accessJsonLayout.setRequestHeaders(Set.of("Host", "User-Agent"));
+        accessJsonLayout.setResponseHeaders(Set.of("Transfer-Encoding", "Content-Type"));
 
         assertThat(accessJsonLayout.toJsonMap(event)).containsOnly(
             entry("timestamp", timestamp), entry("remoteUser", "john"),
@@ -163,7 +161,7 @@ class AccessJsonLayoutTest {
 
     @Test
     void testAddAdditionalFields() {
-        final Map<String, Object> additionalFields = Maps.of(
+        final Map<String, Object> additionalFields = Map.of(
                 "serviceName", "user-service",
                 "serviceVersion", "1.2.3");
         accessJsonLayout = new AccessJsonLayout(jsonFormatter, timestampFormatter, includes, Collections.emptyMap(),
@@ -179,7 +177,7 @@ class AccessJsonLayoutTest {
 
     @Test
     void testCustomFieldNames() {
-        final Map<String, String> customFieldNames = Maps.of(
+        final Map<String, String> customFieldNames = Map.of(
                 "remoteUser", "remote_user",
                 "userAgent", "user_agent",
                 "remoteAddress", "remote_address",
@@ -201,7 +199,7 @@ class AccessJsonLayoutTest {
         final String attribute3 = "attribute3";
 
         final Map<String, String> attributes =
-            Maps.of(
+            Map.of(
                 attribute1, "value1",
                 attribute2, "value2",
                 attribute3, "value3");
@@ -229,8 +227,7 @@ class AccessJsonLayoutTest {
         final String attribute2 = "attribute2";
         final String attribute3 = "attribute3";
 
-        final Map<String, String> attributes =
-            Maps.of(
+        final Map<String, String> attributes = Map.of(
                 attribute1, "value1",
                 attribute2, "value2");
 
@@ -238,9 +235,9 @@ class AccessJsonLayoutTest {
         when(event.getAttribute(attribute2)).thenReturn(attributes.get(attribute2));
         when(event.getAttribute(attribute3)).thenReturn(null);
 
-        accessJsonLayout.setRequestAttributes(Sets.of(attribute1, attribute2, attribute3));
+        accessJsonLayout.setRequestAttributes(Set.of(attribute1, attribute2, attribute3));
         assertThat(accessJsonLayout.toJsonMap(event))
-            .containsEntry("requestAttributes", Maps.of(attribute1, "value1", attribute2, "value2"));
+            .containsEntry("requestAttributes", Map.of(attribute1, "value1", attribute2, "value2"));
 
     }
 

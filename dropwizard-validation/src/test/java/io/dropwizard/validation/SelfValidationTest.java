@@ -6,7 +6,6 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.LoggingEvent;
 import ch.qos.logback.core.AppenderBase;
-import io.dropwizard.util.Maps;
 import io.dropwizard.validation.selfvalidating.SelfValidating;
 import io.dropwizard.validation.selfvalidating.SelfValidation;
 import io.dropwizard.validation.selfvalidating.ViolationCollector;
@@ -21,6 +20,7 @@ import jakarta.validation.Validator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -199,17 +199,17 @@ class SelfValidationTest {
         @SelfValidation
         public void validateFail(ViolationCollector col) {
             col.addViolation("{1+1}");
-            col.addViolation("{value}", Collections.singletonMap("value", "VALUE"));
-            col.addViolation("No parameter", Collections.singletonMap("value", "VALUE"));
-            col.addViolation("{value} {unsetParameter}", Collections.singletonMap("value", "VALUE"));
-            col.addViolation("{value", Collections.singletonMap("value", "VALUE"));
-            col.addViolation("value}", Collections.singletonMap("value", "VALUE"));
-            col.addViolation("{  value  }", Collections.singletonMap("value", "VALUE"));
-            col.addViolation("Mixed ${'value'} {value}", Collections.singletonMap("value", "VALUE"));
-            col.addViolation("Nested {value}", Collections.singletonMap("value", "${'nested'}"));
-            col.addViolation("{property}", "{value}", Maps.of("property", "PROPERTY", "value", "VALUE"));
-            col.addViolation("{property}", 1, "{value}", Maps.of("property", "PROPERTY", "value", "VALUE"));
-            col.addViolation("{property}", "{key}", "{value}", Maps.of("property", "PROPERTY", "key", "KEY", "value", "VALUE"));
+            col.addViolation("{value}", Map.of("value", "VALUE"));
+            col.addViolation("No parameter", Map.of("value", "VALUE"));
+            col.addViolation("{value} {unsetParameter}", Map.of("value", "VALUE"));
+            col.addViolation("{value", Map.of("value", "VALUE"));
+            col.addViolation("value}", Map.of("value", "VALUE"));
+            col.addViolation("{  value  }", Map.of("value", "VALUE"));
+            col.addViolation("Mixed ${'value'} {value}", Map.of("value", "VALUE"));
+            col.addViolation("Nested {value}", Map.of("value", "${'nested'}"));
+            col.addViolation("{property}", "{value}", Map.of("property", "PROPERTY", "value", "VALUE"));
+            col.addViolation("{property}", 1, "{value}", Map.of("property", "PROPERTY", "value", "VALUE"));
+            col.addViolation("{property}", "{key}", "{value}", Map.of("property", "PROPERTY", "key", "KEY", "value", "VALUE"));
         }
     }
 

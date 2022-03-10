@@ -15,7 +15,7 @@ import static io.dropwizard.testing.ConfigOverride.config;
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 
 @ExtendWith(DropwizardExtensionsSupport.class)
-class Http2WithConscryptTest extends AbstractHttp2Test {
+class Http2WithConscryptTest extends Http2TestCommon {
 
     static {
         Security.addProvider(new OpenSSLProvider());

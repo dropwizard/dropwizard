@@ -13,7 +13,6 @@ import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.logging.LoggingUtil;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import io.dropwizard.util.Sets;
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
@@ -158,7 +157,9 @@ public class DropwizardTestSupport<C extends Configuration> {
         this.applicationClass = applicationClass;
         this.configPath = configPath;
         this.configSourceProvider = configSourceProvider;
-        this.configOverrides = configOverrides == null ? Collections.emptySet() : Sets.of(configOverrides);
+        this.configOverrides = Optional.ofNullable(configOverrides)
+            .map(Set::of)
+            .orElse(Set.of());
         this.customPropertyPrefix = customPropertyPrefix;
         this.explicitConfig = false;
         this.commandInstantiator = commandInstantiator;

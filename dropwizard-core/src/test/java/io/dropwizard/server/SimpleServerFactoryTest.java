@@ -14,7 +14,6 @@ import io.dropwizard.logging.FileAppenderFactory;
 import io.dropwizard.logging.SyslogAppenderFactory;
 import io.dropwizard.servlets.tasks.Task;
 import io.dropwizard.setup.Environment;
-import io.dropwizard.util.ByteStreams;
 import io.dropwizard.validation.BaseValidator;
 import org.eclipse.jetty.server.AbstractNetworkConnector;
 import org.eclipse.jetty.server.Server;
@@ -121,7 +120,7 @@ public class SimpleServerFactoryTest {
         connection.setRequestMethod(requestMethod);
         connection.connect();
         try (InputStream in = connection.getInputStream()) {
-            return new String(ByteStreams.toByteArray(in), StandardCharsets.UTF_8);
+            return new String(in.readAllBytes(), StandardCharsets.UTF_8);
         }
     }
 

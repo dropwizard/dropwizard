@@ -1,6 +1,5 @@
 package io.dropwizard.migrations;
 
-import io.dropwizard.util.Maps;
 import net.jcip.annotations.NotThreadSafe;
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.jdbi.v3.core.Handle;
@@ -12,14 +11,14 @@ import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.io.PrintWriter;
-import java.util.Collections;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @NotThreadSafe
-class DbFastForwardCommandTest extends AbstractMigrationTest {
+class DbFastForwardCommandTest {
 
     private static final Pattern NEWLINE_PATTERN = Pattern.compile(System.lineSeparator());
     private final DbFastForwardCommand<TestMigrationConfiguration> fastForwardCommand = new DbFastForwardCommand<>(
@@ -30,8 +29,8 @@ class DbFastForwardCommandTest extends AbstractMigrationTest {
 
     @BeforeEach
     void setUp() {
-        final String databaseUrl = getDatabaseUrl();
-        conf = createConfiguration(databaseUrl);
+        final String databaseUrl = MigrationTestSupport.getDatabaseUrl();
+        conf = MigrationTestSupport.createConfiguration(databaseUrl);
         dbi = Jdbi.create(databaseUrl, "sa", "");
     }
 
@@ -43,12 +42,12 @@ class DbFastForwardCommandTest extends AbstractMigrationTest {
         }
 
         // Fast-forward one change
-        fastForwardCommand.run(null, new Namespace(Maps.of("all", false, "dry-run", false)), conf);
+        fastForwardCommand.run(null, new Namespace(Map.of("all", false, "dry-run", false)), conf);
 
         // 2nd and 3rd migrations is performed
         new DbMigrateCommand<>(
             TestMigrationConfiguration::getDataSource, TestMigrationConfiguration.class, "migrations.xml")
-            .run(null, new Namespace(Collections.emptyMap()), conf);
+            .run(null, new Namespace(Map.of()), conf);
 
         // 1 entry has been added to the persons table
         try (Handle handle = dbi.open()) {
@@ -68,12 +67,12 @@ class DbFastForwardCommandTest extends AbstractMigrationTest {
         }
 
         // Fast-forward all the changes
-        fastForwardCommand.run(null, new Namespace(Maps.of("all", true, "dry-run", false)), conf);
+        fastForwardCommand.run(null, new Namespace(Map.of("all", true, "dry-run", false)), conf);
 
         // No migrations is performed
         new DbMigrateCommand<>(
             TestMigrationConfiguration::getDataSource, TestMigrationConfiguration.class, "migrations.xml")
-            .run(null, new Namespace(Collections.emptyMap()), conf);
+            .run(null, new Namespace(Map.of()), conf);
 
         // Nothing is added to the persons table
         try (Handle handle = dbi.open()) {
@@ -90,7 +89,7 @@ class DbFastForwardCommandTest extends AbstractMigrationTest {
         fastForwardCommand.setPrintStream(new PrintStream(baos));
 
         // Fast-forward one change
-        fastForwardCommand.run(null, new Namespace(Maps.of("all", false, "dry-run", true)), conf);
+        fastForwardCommand.run(null, new Namespace(Map.of("all", false, "dry-run", true)), conf);
 
         assertThat(NEWLINE_PATTERN.splitAsStream(baos.toString(UTF_8.name()))
             .filter(s -> s.startsWith("INSERT INTO PUBLIC.DATABASECHANGELOG (")))
@@ -103,7 +102,7 @@ class DbFastForwardCommandTest extends AbstractMigrationTest {
         fastForwardCommand.setPrintStream(new PrintStream(baos));
 
         // Fast-forward 3 changes
-        fastForwardCommand.run(null, new Namespace(Maps.of("all", true, "dry-run", true)), conf);
+        fastForwardCommand.run(null, new Namespace(Map.of("all", true, "dry-run", true)), conf);
 
         assertThat(NEWLINE_PATTERN.splitAsStream(baos.toString(UTF_8.name()))
             .filter(s -> s.startsWith("INSERT INTO PUBLIC.DATABASECHANGELOG (")))
@@ -113,7 +112,7 @@ class DbFastForwardCommandTest extends AbstractMigrationTest {
     @Test
     void testPrintHelp() throws Exception {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        createSubparser(fastForwardCommand).printHelp(new PrintWriter(new OutputStreamWriter(baos, UTF_8), true));
+        MigrationTestSupport.createSubparser(fastForwardCommand).printHelp(new PrintWriter(new OutputStreamWriter(baos, UTF_8), true));
         assertThat(baos.toString(UTF_8.name())).isEqualTo(String.format(
             "usage: db fast-forward [-h] [--migrations MIGRATIONS-FILE]%n" +
                 "          [--catalog CATALOG] [--schema SCHEMA] [-n] [-a] [-i CONTEXTS]%n" +

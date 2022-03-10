@@ -1,6 +1,5 @@
 package io.dropwizard.testing;
 
-import io.dropwizard.util.ByteStreams;
 import io.dropwizard.util.Resources;
 
 import java.io.IOException;
@@ -11,7 +10,11 @@ import java.nio.charset.StandardCharsets;
 
 /**
  * A set of helper method for fixture files.
+ *
+ * @deprecated use {@link Class#getResource(String)} to obtain a {@link URL} to the resource to use with
+ *             {@link com.fasterxml.jackson.databind.ObjectMapper#readValue(URL, Class)}
  */
+@Deprecated
 public class FixtureHelpers {
     private FixtureHelpers() { /* singleton */ }
 
@@ -39,7 +42,7 @@ public class FixtureHelpers {
     private static String fixture(String filename, Charset charset) {
         final URL resource = Resources.getResource(filename);
         try (InputStream inputStream = resource.openStream()) {
-            return new String(ByteStreams.toByteArray(inputStream), charset).trim();
+            return new String(inputStream.readAllBytes(), charset).trim();
         } catch (IOException e) {
             throw new IllegalArgumentException(e);
         }

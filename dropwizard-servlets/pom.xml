@@ -12,6 +12,10 @@
     <artifactId>dropwizard-servlets</artifactId>
     <name>Dropwizard Servlet Support</name>
 
+    <properties>
+        <module.name>io.dropwizard.servlets</module.name>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.slf4j</groupId>

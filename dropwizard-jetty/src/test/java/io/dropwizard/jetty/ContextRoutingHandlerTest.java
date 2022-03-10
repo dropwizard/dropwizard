@@ -1,6 +1,5 @@
 package io.dropwizard.jetty;
 
-import io.dropwizard.util.Maps;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Request;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,6 +10,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
+import java.util.Map;
 
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -34,7 +35,7 @@ class ContextRoutingHandlerTest {
 
     @BeforeEach
     void setUp() {
-        this.handler = new ContextRoutingHandler(Maps.of(
+        this.handler = new ContextRoutingHandler(Map.of(
                 "/", handler1,
                 "/admin", handler2
         ));

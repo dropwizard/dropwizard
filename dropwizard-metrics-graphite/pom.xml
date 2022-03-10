@@ -12,6 +12,10 @@
     <artifactId>dropwizard-metrics-graphite</artifactId>
     <name>Dropwizard Metrics Support for Graphite</name>
 
+    <properties>
+        <module.name>io.dropwizard.metrics.graphite</module.name>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>io.dropwizard</groupId>

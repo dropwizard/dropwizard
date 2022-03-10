@@ -10,11 +10,11 @@ import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.github.benmanes.caffeine.cache.stats.CacheStats;
 import com.github.benmanes.caffeine.cache.stats.StatsCounter;
 import com.google.common.annotations.VisibleForTesting;
-import io.dropwizard.util.Sets;
 
 import javax.annotation.Nullable;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import java.security.Principal;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.CompletionException;
 import java.util.function.Predicate;
@@ -161,7 +161,9 @@ public class CachingAuthorizer<P extends Principal> implements Authorizer<P> {
      * @param principals a list of principals
      */
     public void invalidateAll(Iterable<P> principals) {
-        final Set<P> principalSet = Sets.of(principals);
+        final Set<P> principalSet = new HashSet<>();
+        principals.forEach(principalSet::add);
+
         final Set<AuthorizationContext<P>> keys = cache.asMap().keySet().stream()
                 .filter(cacheKey -> principalSet.contains(cacheKey.getPrincipal()))
                 .collect(Collectors.toSet());

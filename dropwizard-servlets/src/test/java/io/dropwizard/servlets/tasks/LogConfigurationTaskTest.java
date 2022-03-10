@@ -3,15 +3,12 @@ package io.dropwizard.servlets.tasks;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
-import io.dropwizard.util.Maps;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.time.Duration;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Timer;
@@ -37,9 +34,9 @@ class LogConfigurationTaskTest {
 
         // given
         Level twoEffectiveBefore = logger2.getEffectiveLevel();
-        Map<String, List<String>> parameters = Maps.of(
-                "logger", Collections.singletonList("logger.one"),
-                "level", Collections.singletonList("debug"));
+        Map<String, List<String>> parameters = Map.of(
+                "logger", List.of("logger.one"),
+                "level", List.of("debug"));
 
         // when
         task.execute(parameters, output);
@@ -56,10 +53,10 @@ class LogConfigurationTaskTest {
 
         // given
         Level oneEffectiveBefore = logger1.getEffectiveLevel();
-        Map<String, List<String>> parameters = Maps.of(
-            "logger", Collections.singletonList("logger.one"),
-            "level", Collections.singletonList("debug"),
-            "duration", Collections.singletonList(Duration.ofMillis(2_000).toString()));
+        Map<String, List<String>> parameters = Map.of(
+            "logger", List.of("logger.one"),
+            "level", List.of("debug"),
+            "duration", List.of(Duration.ofMillis(2_000).toString()));
 
         Timer timer = mock(Timer.class);
         ArgumentCaptor<TimerTask> timerAction = ArgumentCaptor.forClass(TimerTask.class);
@@ -84,7 +81,7 @@ class LogConfigurationTaskTest {
         // given
         Level oneEffectiveBefore = logger1.getEffectiveLevel();
         Level twoEffectiveBefore = logger2.getEffectiveLevel();
-        Map<String, List<String>> parameters = Collections.singletonMap("logger", Collections.singletonList("logger.one"));
+        Map<String, List<String>> parameters = Map.of("logger", List.of("logger.one"));
 
         // when
         task.execute(parameters, output);
@@ -100,9 +97,9 @@ class LogConfigurationTaskTest {
     @Test
     void configuresLevelForMultipleLoggers() throws Exception {
         // given
-        Map<String, List<String>> parameters = Maps.of(
-                "logger", Arrays.asList("logger.one", "logger.two"),
-                "level", Collections.singletonList("INFO"));
+        Map<String, List<String>> parameters = Map.of(
+                "logger", List.of("logger.one", "logger.two"),
+                "level", List.of("INFO"));
 
         // when
         task.execute(parameters, output);

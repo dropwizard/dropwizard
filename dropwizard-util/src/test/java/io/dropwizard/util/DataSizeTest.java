@@ -672,32 +672,6 @@ class DataSizeTest {
         assertThat(DataSize.parse("128", DataSizeUnit.KIBIBYTES)).isEqualTo(DataSize.kibibytes(128L));
     }
 
-    @Deprecated
-    @Test
-    void testToSize() {
-        assertThat(DataSize.bytes(5L).toSize()).isEqualTo(Size.bytes(5L));
-        assertThat(DataSize.kilobytes(5L).toSize()).isEqualTo(Size.bytes(5L * 1000L));
-        assertThat(DataSize.kibibytes(5L).toSize()).isEqualTo(Size.kilobytes(5L));
-        assertThat(DataSize.megabytes(5L).toSize()).isEqualTo(Size.bytes(5L * 1000L * 1000L));
-        assertThat(DataSize.mebibytes(5L).toSize()).isEqualTo(Size.megabytes(5L));
-        assertThat(DataSize.gigabytes(5L).toSize()).isEqualTo(Size.bytes(5L * 1000L * 1000L * 1000L));
-        assertThat(DataSize.gibibytes(5L).toSize()).isEqualTo(Size.gigabytes(5L));
-        assertThat(DataSize.terabytes(5L).toSize()).isEqualTo(Size.bytes(5L * 1000L * 1000L * 1000L * 1000L));
-        assertThat(DataSize.tebibytes(5L).toSize()).isEqualTo(Size.terabytes(5L));
-        assertThat(DataSize.petabytes(5L).toSize()).isEqualTo(Size.bytes(5L * 1000L * 1000L * 1000L * 1000L * 1000L));
-        assertThat(DataSize.pebibytes(5L).toSize()).isEqualTo(Size.terabytes(5L * 1024L));
-    }
-
-    @Deprecated
-    @Test
-    void testFromSize() {
-        assertThat(DataSize.fromSize(Size.bytes(5L))).isEqualTo(DataSize.bytes(5L));
-        assertThat(DataSize.fromSize(Size.kilobytes(5L))).isEqualTo(DataSize.kibibytes(5L));
-        assertThat(DataSize.fromSize(Size.megabytes(5L))).isEqualTo(DataSize.mebibytes(5L));
-        assertThat(DataSize.fromSize(Size.gigabytes(5L))).isEqualTo(DataSize.gibibytes(5L));
-        assertThat(DataSize.fromSize(Size.terabytes(5L))).isEqualTo(DataSize.tebibytes(5L));
-    }
-
     @Test
     void testSerialization() throws IOException, ClassNotFoundException {
         final DataSize size = DataSize.kibibytes(42L);

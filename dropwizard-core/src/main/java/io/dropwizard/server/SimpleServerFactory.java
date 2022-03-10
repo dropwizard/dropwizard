@@ -6,7 +6,6 @@ import io.dropwizard.jetty.ConnectorFactory;
 import io.dropwizard.jetty.ContextRoutingHandler;
 import io.dropwizard.jetty.HttpConnectorFactory;
 import io.dropwizard.setup.Environment;
-import io.dropwizard.util.Maps;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
@@ -128,7 +127,7 @@ public class SimpleServerFactory extends AbstractServerFactory {
 
         server.addConnector(conn);
 
-        final Map<String, Handler> handlers = Maps.of(
+        final Map<String, Handler> handlers = Map.of(
                 applicationContextPath, applicationHandler,
                 adminContextPath, adminHandler);
         final ContextRoutingHandler routingHandler = new ContextRoutingHandler(handlers);

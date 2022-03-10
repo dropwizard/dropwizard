@@ -12,6 +12,10 @@
     <artifactId>dropwizard-logging</artifactId>
     <name>Dropwizard Logging Support</name>
 
+    <properties>
+        <module.name>io.dropwizard.logging</module.name>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>io.dropwizard</groupId>

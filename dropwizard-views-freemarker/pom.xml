@@ -12,6 +12,10 @@
     <artifactId>dropwizard-views-freemarker</artifactId>
     <name>Dropwizard Freemarker Views</name>
 
+    <properties>
+        <module.name>io.dropwizard.views.freemarker</module.name>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>io.dropwizard</groupId>

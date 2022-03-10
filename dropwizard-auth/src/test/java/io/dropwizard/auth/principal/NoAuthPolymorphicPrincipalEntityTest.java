@@ -4,8 +4,6 @@ import io.dropwizard.auth.AbstractAuthResourceConfig;
 import io.dropwizard.auth.PolymorphicAuthDynamicFeature;
 import io.dropwizard.auth.PolymorphicAuthValueFactoryProvider;
 import io.dropwizard.logging.BootstrapLogging;
-import io.dropwizard.util.Maps;
-import io.dropwizard.util.Sets;
 import org.glassfish.jersey.internal.inject.AbstractBinder;
 import org.glassfish.jersey.servlet.ServletProperties;
 import org.glassfish.jersey.test.DeploymentContext;
@@ -22,6 +20,8 @@ import jakarta.ws.rs.container.DynamicFeature;
 import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.MediaType;
 import java.security.Principal;
+import java.util.Map;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -77,11 +77,11 @@ class NoAuthPolymorphicPrincipalEntityTest extends JerseyTest {
 
         @Override protected AbstractBinder getAuthBinder() {
             return new PolymorphicAuthValueFactoryProvider.Binder<>(
-                Sets.of(JsonPrincipal.class, NullPrincipal.class));
+                Set.of(JsonPrincipal.class, NullPrincipal.class));
         }
 
         @Override protected DynamicFeature getAuthDynamicFeature(ContainerRequestFilter authFilter) {
-            return new PolymorphicAuthDynamicFeature<>(Maps.of(
+            return new PolymorphicAuthDynamicFeature<>(Map.of(
                 JsonPrincipal.class, getAuthFilter(),
                 NullPrincipal.class, getAuthFilter()
             ));

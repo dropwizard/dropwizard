@@ -1,6 +1,5 @@
 package io.dropwizard.migrations;
 
-import io.dropwizard.util.Maps;
 import net.jcip.annotations.NotThreadSafe;
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.inf.Namespace;
@@ -22,7 +21,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @NotThreadSafe
-class DbMigrateCommandTest extends AbstractMigrationTest {
+class DbMigrateCommandTest {
 
     private final DbMigrateCommand<TestMigrationConfiguration> migrateCommand = new DbMigrateCommand<>(
         TestMigrationConfiguration::getDataSource, TestMigrationConfiguration.class, "migrations.xml");
@@ -31,8 +30,8 @@ class DbMigrateCommandTest extends AbstractMigrationTest {
 
     @BeforeEach
     void setUp() {
-        databaseUrl = getDatabaseUrl();
-        conf = createConfiguration(databaseUrl);
+        databaseUrl = MigrationTestSupport.getDatabaseUrl();
+        conf = MigrationTestSupport.createConfiguration(databaseUrl);
     }
 
     @Test
@@ -42,7 +41,7 @@ class DbMigrateCommandTest extends AbstractMigrationTest {
             final ResultIterable<Map<String, Object>> rows = handle.select("select * from persons").mapToMap();
             assertThat(rows).hasSize(1);
             assertThat(rows.first()).isEqualTo(
-                    Maps.of("id", 1,
+                    Map.of("id", 1,
                             "name", "Bill Smith",
                             "email", "bill@smith.me"));
         }

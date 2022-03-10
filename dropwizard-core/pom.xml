@@ -12,6 +12,10 @@
     <artifactId>dropwizard-core</artifactId>
     <name>Dropwizard</name>
 
+    <properties>
+        <module.name>io.dropwizard.core</module.name>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>io.dropwizard</groupId>

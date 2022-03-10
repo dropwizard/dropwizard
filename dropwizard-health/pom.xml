@@ -12,6 +12,10 @@
     <artifactId>dropwizard-health</artifactId>
     <name>Dropwizard Health Checking Support</name>
 
+    <properties>
+        <module.name>io.dropwizard.health</module.name>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>io.dropwizard</groupId>

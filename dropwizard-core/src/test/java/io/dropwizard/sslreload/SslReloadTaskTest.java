@@ -1,10 +1,10 @@
 package io.dropwizard.sslreload;
 
 import io.dropwizard.jetty.SslReload;
-import io.dropwizard.util.Sets;
 import org.junit.jupiter.api.Test;
 
 import java.io.PrintWriter;
+import java.util.Set;
 
 import static java.util.Collections.emptyMap;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -23,7 +23,7 @@ class SslReloadTaskTest {
 
         assertThatNoException().isThrownBy(() -> reloadTask.execute(emptyMap(), mock(PrintWriter.class)));
 
-        reloadTask.setReloaders(Sets.of());
+        reloadTask.setReloaders(Set.of());
         assertThatNoException().isThrownBy(() -> reloadTask.execute(emptyMap(), mock(PrintWriter.class)));
     }
 
@@ -34,7 +34,7 @@ class SslReloadTaskTest {
         SslReload ok = mock(SslReload.class);
 
         SslReloadTask reloadTask = new SslReloadTask();
-        reloadTask.setReloaders(Sets.of(failingDryRun, ok));
+        reloadTask.setReloaders(Set.of(failingDryRun, ok));
 
         assertThat(catchRuntimeException(() -> reloadTask.execute(emptyMap(), mock(PrintWriter.class)))
             .getMessage())
@@ -50,7 +50,7 @@ class SslReloadTaskTest {
         SslReload ok2 = mock(SslReload.class);
 
         SslReloadTask reloadTask = new SslReloadTask();
-        reloadTask.setReloaders(Sets.of(ok1, ok2));
+        reloadTask.setReloaders(Set.of(ok1, ok2));
 
         reloadTask.execute(emptyMap(), mock(PrintWriter.class));
 

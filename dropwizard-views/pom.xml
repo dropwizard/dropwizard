@@ -12,6 +12,10 @@
     <artifactId>dropwizard-views</artifactId>
     <name>Dropwizard Views</name>
 
+    <properties>
+        <module.name>io.dropwizard.views</module.name>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>io.dropwizard</groupId>
@@ -20,10 +24,6 @@
         <dependency>
             <groupId>io.dropwizard</groupId>
             <artifactId>dropwizard-jersey</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.dropwizard</groupId>
-            <artifactId>dropwizard-util</artifactId>
         </dependency>
         <dependency>
             <groupId>io.dropwizard.metrics</groupId>

@@ -1,6 +1,5 @@
 package io.dropwizard.servlets.assets;
 
-import io.dropwizard.util.ByteStreams;
 import io.dropwizard.util.Resources;
 
 import javax.annotation.Nullable;
@@ -310,7 +309,7 @@ public class AssetServlet extends HttpServlet {
 
     protected byte[] readResource(URL requestedResourceURL) throws IOException {
         try (InputStream inputStream = requestedResourceURL.openStream()) {
-            return ByteStreams.toByteArray(inputStream);
+            return inputStream.readAllBytes();
         }
     }
 

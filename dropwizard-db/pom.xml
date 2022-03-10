@@ -12,6 +12,10 @@
     <artifactId>dropwizard-db</artifactId>
     <name>Dropwizard Database Support</name>
 
+    <properties>
+        <module.name>io.dropwizard.db</module.name>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>io.dropwizard</groupId>

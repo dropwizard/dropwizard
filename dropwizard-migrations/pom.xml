@@ -12,6 +12,10 @@
     <artifactId>dropwizard-migrations</artifactId>
     <name>Dropwizard Migrations</name>
 
+    <properties>
+        <module.name>io.dropwizard.migrations</module.name>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>io.dropwizard</groupId>
@@ -59,11 +63,6 @@
             <scope>runtime</scope>
         </dependency>
 
-        <dependency>
-            <groupId>io.dropwizard</groupId>
-            <artifactId>dropwizard-util</artifactId>
-            <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>

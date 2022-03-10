@@ -1,6 +1,5 @@
 package io.dropwizard.migrations;
 
-import io.dropwizard.util.Maps;
 import liquibase.change.CheckSum;
 import net.jcip.annotations.NotThreadSafe;
 import net.sourceforge.argparse4j.inf.Namespace;
@@ -9,14 +8,15 @@ import org.junit.jupiter.api.Test;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @NotThreadSafe
-class DbCalculateChecksumCommandTest extends AbstractMigrationTest {
+class DbCalculateChecksumCommandTest {
 
     private final DbCalculateChecksumCommand<TestMigrationConfiguration> migrateCommand = new DbCalculateChecksumCommand<>(
         TestMigrationConfiguration::getDataSource, TestMigrationConfiguration.class, "migrations.xml");
@@ -28,17 +28,17 @@ class DbCalculateChecksumCommandTest extends AbstractMigrationTest {
             assertThat(checkSum).isEqualTo(CheckSum.parse("8:0f3683b37321ccfb1694a044986de4d9"));
             checkSumVerified.set(true);
         });
-        migrateCommand.run(null, new Namespace(Maps.of(
-                "id", Collections.singletonList("2"),
-                "author", Collections.singletonList("db_dev"))),
-                createConfiguration(getDatabaseUrl()));
+        migrateCommand.run(null, new Namespace(Map.of(
+                "id", List.of("2"),
+                "author", List.of("db_dev"))),
+            MigrationTestSupport.createConfiguration());
         assertThat(checkSumVerified).isTrue();
     }
 
     @Test
     void testHelpPage() throws Exception {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        createSubparser(migrateCommand).printHelp(new PrintWriter(new OutputStreamWriter(out, UTF_8), true));
+        MigrationTestSupport.createSubparser(migrateCommand).printHelp(new PrintWriter(new OutputStreamWriter(out, UTF_8), true));
         assertThat(out.toString(UTF_8.name())).isEqualTo(String.format(
             "usage: db calculate-checksum [-h] [--migrations MIGRATIONS-FILE]%n" +
                 "          [--catalog CATALOG] [--schema SCHEMA] [file] id author%n" +

@@ -1,6 +1,5 @@
 package io.dropwizard.jetty;
 
-import io.dropwizard.util.Maps;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.HttpChannel;
@@ -14,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Arrays;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -30,7 +30,7 @@ class RoutingHandlerTest {
     private final Handler handler1 = spy(new ContextHandler());
     private final Handler handler2 = spy(new ContextHandler());
 
-    private final RoutingHandler handler = new RoutingHandler(Maps.of(connector1,
+    private final RoutingHandler handler = new RoutingHandler(Map.of(connector1,
                                                                       handler1,
                                                                       connector2,
                                                                       handler2));
@@ -77,7 +77,7 @@ class RoutingHandlerTest {
         final ServletContextHandler handler2 = new ServletContextHandler();
         final SessionHandler childHandler1 = new SessionHandler();
         handler2.setSessionHandler(childHandler1);
-        final RoutingHandler handler = new RoutingHandler(Maps.of(connector1, handler1, connector2, handler2));
+        final RoutingHandler handler = new RoutingHandler(Map.of(connector1, handler1, connector2, handler2));
         new Server().setHandler(handler);
 
         handler.start();

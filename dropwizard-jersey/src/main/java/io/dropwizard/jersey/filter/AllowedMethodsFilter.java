@@ -1,6 +1,5 @@
 package io.dropwizard.jersey.filter;
 
-import io.dropwizard.util.Sets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,7 +19,7 @@ import java.util.Set;
 public class AllowedMethodsFilter implements Filter {
 
     public static final String ALLOWED_METHODS_PARAM = "allowedMethods";
-    public static final Set<String> DEFAULT_ALLOWED_METHODS = Sets.of(
+    public static final Set<String> DEFAULT_ALLOWED_METHODS = Set.of(
             "GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS", "PATCH"
     );
 
@@ -31,7 +30,7 @@ public class AllowedMethodsFilter implements Filter {
     @Override
     public void init(FilterConfig config) {
         allowedMethods = Optional.ofNullable(config.getInitParameter(ALLOWED_METHODS_PARAM))
-            .map(p -> Sets.of(p.split(",")))
+            .map(p -> Set.of(p.split(",")))
             .orElse(DEFAULT_ALLOWED_METHODS);
     }
 
