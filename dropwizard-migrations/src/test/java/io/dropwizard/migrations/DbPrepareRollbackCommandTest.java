@@ -15,7 +15,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @NotThreadSafe
-class DbPrepareRollbackCommandTest extends AbstractMigrationTest {
+class DbPrepareRollbackCommandTest {
 
     private final DbPrepareRollbackCommand<TestMigrationConfiguration> prepareRollbackCommand =
         new DbPrepareRollbackCommand<>(new TestMigrationDatabaseConfiguration(), TestMigrationConfiguration.class,
@@ -24,8 +24,8 @@ class DbPrepareRollbackCommandTest extends AbstractMigrationTest {
 
     @BeforeEach
     void setUp() {
-        final String databaseUrl = getDatabaseUrl();
-        conf = createConfiguration(databaseUrl);
+        final String databaseUrl = MigrationTestSupport.getDatabaseUrl();
+        conf = MigrationTestSupport.createConfiguration(databaseUrl);
     }
 
     @Test
@@ -49,7 +49,7 @@ class DbPrepareRollbackCommandTest extends AbstractMigrationTest {
     @Test
     void testPrintHelp() throws Exception {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        createSubparser(prepareRollbackCommand).printHelp(new PrintWriter(new OutputStreamWriter(out, UTF_8), true));
+        MigrationTestSupport.createSubparser(prepareRollbackCommand).printHelp(new PrintWriter(new OutputStreamWriter(out, UTF_8), true));
         assertThat(out.toString(UTF_8.name())).isEqualTo(String.format(
             "usage: db prepare-rollback [-h] [--migrations MIGRATIONS-FILE]%n" +
                 "          [--catalog CATALOG] [--schema SCHEMA] [-c COUNT] [-i CONTEXTS]%n" +

@@ -23,7 +23,7 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-public class LiquibaseScopingTest extends AbstractMigrationTest implements CustomTaskChange {
+public class LiquibaseScopingTest implements CustomTaskChange {
     private final DbCommand<TestMigrationConfiguration> dbCommand = new DbCommand<>(
         "db",
         TestMigrationConfiguration::getDataSource,
@@ -42,8 +42,8 @@ public class LiquibaseScopingTest extends AbstractMigrationTest implements Custo
 
     @BeforeEach
     void setUpTest() {
-        databaseUrl = getDatabaseUrl();
-        conf = createConfiguration(databaseUrl);
+        databaseUrl = MigrationTestSupport.getDatabaseUrl();
+        conf = MigrationTestSupport.createConfiguration(databaseUrl);
     }
 
     private static class Person {

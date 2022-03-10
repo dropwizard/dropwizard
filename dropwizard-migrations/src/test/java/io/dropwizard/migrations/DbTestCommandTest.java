@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
 
 @NotThreadSafe
-class DbTestCommandTest extends AbstractMigrationTest {
+class DbTestCommandTest {
 
     private final DbTestCommand<TestMigrationConfiguration> dbTestCommand = new DbTestCommand<>(
         new TestMigrationDatabaseConfiguration(), TestMigrationConfiguration.class, "migrations-ddl.xml");
@@ -22,7 +22,7 @@ class DbTestCommandTest extends AbstractMigrationTest {
     @Test
     void testRun() throws Exception {
         // Apply and rollback some DDL changes
-        final TestMigrationConfiguration conf = createConfiguration(getDatabaseUrl());
+        final TestMigrationConfiguration conf = MigrationTestSupport.createConfiguration();
         assertThatNoException()
             .isThrownBy(() -> dbTestCommand.run(null, new Namespace(Collections.emptyMap()), conf));
     }
@@ -30,7 +30,7 @@ class DbTestCommandTest extends AbstractMigrationTest {
     @Test
     void testPrintHelp() throws Exception {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        createSubparser(dbTestCommand).printHelp(new PrintWriter(new OutputStreamWriter(baos, UTF_8), true));
+        MigrationTestSupport.createSubparser(dbTestCommand).printHelp(new PrintWriter(new OutputStreamWriter(baos, UTF_8), true));
         assertThat(baos.toString(UTF_8.name())).isEqualTo(String.format(
             "usage: db test [-h] [--migrations MIGRATIONS-FILE] [--catalog CATALOG]%n" +
                 "          [--schema SCHEMA] [-i CONTEXTS] [file]%n" +

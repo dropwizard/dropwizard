@@ -31,7 +31,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @NotThreadSafe
-class DbDumpCommandTest extends AbstractMigrationTest {
+class DbDumpCommandTest {
 
     private static final List<String> ATTRIBUTE_NAMES = Arrays.asList("columns", "foreign-keys", "indexes",
             "primary-keys", "sequences", "tables", "unique-constraints", "views");
@@ -51,7 +51,7 @@ class DbDumpCommandTest extends AbstractMigrationTest {
     void setUp() throws Exception {
         final String existedDbPath = getClass().getResource("/test-db.mv.db").getPath();
         final String existedDbUrl = "jdbc:h2:" + existedDbPath.substring(0, existedDbPath.length() - ".mv.db".length());
-        existedDbConf = createConfiguration(existedDbUrl);
+        existedDbConf = MigrationTestSupport.createConfiguration(existedDbUrl);
         dumpCommand.setOutputStream(new PrintStream(baos));
     }
 
@@ -93,7 +93,7 @@ class DbDumpCommandTest extends AbstractMigrationTest {
 
     @Test
     void testHelpPage() throws Exception {
-        createSubparser(dumpCommand).printHelp(new PrintWriter(new OutputStreamWriter(baos, UTF_8), true));
+        MigrationTestSupport.createSubparser(dumpCommand).printHelp(new PrintWriter(new OutputStreamWriter(baos, UTF_8), true));
         assertThat(baos.toString(UTF_8.name())).isEqualTo(String.format(
                 "usage: db dump [-h] [--migrations MIGRATIONS-FILE] [--catalog CATALOG]%n" +
                         "          [--schema SCHEMA] [-o OUTPUT] [--tables] [--ignore-tables]%n" +

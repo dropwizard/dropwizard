@@ -11,7 +11,7 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @NotThreadSafe
-class DbMigrateCustomSchemaTest extends AbstractMigrationTest {
+class DbMigrateCustomSchemaTest {
 
     private final DbMigrateCommand<TestMigrationConfiguration> migrateCommand = new DbMigrateCommand<>(
         TestMigrationConfiguration::getDataSource, TestMigrationConfiguration.class, "migrations-custom-schema.xml");
@@ -20,8 +20,8 @@ class DbMigrateCustomSchemaTest extends AbstractMigrationTest {
 
     @BeforeEach
     void setUp() {
-        databaseUrl = getDatabaseUrl();
-        conf = createConfiguration(databaseUrl);
+        databaseUrl = MigrationTestSupport.getDatabaseUrl();
+        conf = MigrationTestSupport.createConfiguration(databaseUrl);
     }
 
     @Test
