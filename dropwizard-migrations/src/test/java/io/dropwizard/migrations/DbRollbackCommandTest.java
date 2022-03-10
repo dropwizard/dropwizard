@@ -19,7 +19,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @NotThreadSafe
-class DbRollbackCommandTest extends AbstractMigrationTest {
+class DbRollbackCommandTest {
 
     private final String migrationsFileName = "migrations-ddl.xml";
     private final DbRollbackCommand<TestMigrationConfiguration> rollbackCommand = new DbRollbackCommand<>(
@@ -32,8 +32,8 @@ class DbRollbackCommandTest extends AbstractMigrationTest {
 
     @BeforeEach
     void setUp() {
-        final String databaseUrl = getDatabaseUrl();
-        conf = createConfiguration(databaseUrl);
+        final String databaseUrl = MigrationTestSupport.getDatabaseUrl();
+        conf = MigrationTestSupport.createConfiguration(databaseUrl);
         dbi = Jdbi.create(databaseUrl, "sa", "");
     }
 
@@ -43,7 +43,7 @@ class DbRollbackCommandTest extends AbstractMigrationTest {
         migrateCommand.run(null, new Namespace(Map.of()), conf);
 
         try (Handle handle = dbi.open()) {
-            assertThat(columnExists(handle, "PERSONS", "EMAIL"))
+            assertThat(MigrationTestSupport.columnExists(handle, "PERSONS", "EMAIL"))
                 .isTrue();
         }
 
@@ -51,7 +51,7 @@ class DbRollbackCommandTest extends AbstractMigrationTest {
         rollbackCommand.run(null, new Namespace(Map.of("count", 1)), conf);
 
         try (Handle handle = dbi.open()) {
-            assertThat(columnExists(handle, "PERSONS", "EMAIL"))
+            assertThat(MigrationTestSupport.columnExists(handle, "PERSONS", "EMAIL"))
                 .isFalse();
         }
     }
@@ -75,7 +75,7 @@ class DbRollbackCommandTest extends AbstractMigrationTest {
         migrateCommand.run(null, new Namespace(Map.of()), conf);
 
         try (Handle handle = dbi.open()) {
-            assertThat(tableExists(handle, "PERSONS"))
+            assertThat(MigrationTestSupport.tableExists(handle, "PERSONS"))
                 .isTrue();
         }
 
@@ -84,7 +84,7 @@ class DbRollbackCommandTest extends AbstractMigrationTest {
             conf);
 
         try (Handle handle = dbi.open()) {
-            assertThat(tableExists(handle, "PERSONS"))
+            assertThat(MigrationTestSupport.tableExists(handle, "PERSONS"))
                 .isFalse();
         }
     }
@@ -117,7 +117,7 @@ class DbRollbackCommandTest extends AbstractMigrationTest {
         tagCommand.run(null, new Namespace(Map.of("tag-name", List.of("v1"))), conf);
 
         try (Handle handle = dbi.open()) {
-            assertThat(columnExists(handle, "PERSONS", "EMAIL"))
+            assertThat(MigrationTestSupport.columnExists(handle, "PERSONS", "EMAIL"))
                 .isFalse();
         }
 
@@ -125,7 +125,7 @@ class DbRollbackCommandTest extends AbstractMigrationTest {
         migrateCommand.run(null, new Namespace(Map.of()), conf);
 
         try (Handle handle = dbi.open()) {
-            assertThat(columnExists(handle, "PERSONS", "EMAIL"))
+            assertThat(MigrationTestSupport.columnExists(handle, "PERSONS", "EMAIL"))
                 .isTrue();
         }
 
@@ -133,7 +133,7 @@ class DbRollbackCommandTest extends AbstractMigrationTest {
         rollbackCommand.run(null, new Namespace(Map.of("tag", "v1")), conf);
 
         try (Handle handle = dbi.open()) {
-            assertThat(columnExists(handle, "PERSONS", "EMAIL"))
+            assertThat(MigrationTestSupport.columnExists(handle, "PERSONS", "EMAIL"))
                 .isFalse();
         }
     }
@@ -160,7 +160,7 @@ class DbRollbackCommandTest extends AbstractMigrationTest {
 
     @Test
     void testPrintHelp() throws Exception {
-        createSubparser(rollbackCommand).printHelp(new PrintWriter(new OutputStreamWriter(baos, UTF_8), true));
+        MigrationTestSupport.createSubparser(rollbackCommand).printHelp(new PrintWriter(new OutputStreamWriter(baos, UTF_8), true));
         assertThat(baos.toString(UTF_8.name())).isEqualTo(String.format(
             "usage: db rollback [-h] [--migrations MIGRATIONS-FILE] [--catalog CATALOG]%n" +
             "          [--schema SCHEMA] [-n] [-t TAG] [-d DATE] [-c COUNT]%n" +

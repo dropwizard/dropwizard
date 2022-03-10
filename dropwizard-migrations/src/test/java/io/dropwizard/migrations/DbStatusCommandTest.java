@@ -15,7 +15,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @NotThreadSafe
-class DbStatusCommandTest extends AbstractMigrationTest {
+class DbStatusCommandTest {
 
     private final DbStatusCommand<TestMigrationConfiguration> statusCommand =
             new DbStatusCommand<>(new TestMigrationDatabaseConfiguration(), TestMigrationConfiguration.class, "migrations.xml");
@@ -24,7 +24,7 @@ class DbStatusCommandTest extends AbstractMigrationTest {
 
     @BeforeEach
     void setUp() {
-        conf = createConfiguration(getDatabaseUrl());
+        conf = MigrationTestSupport.createConfiguration();
 
         statusCommand.setOutputStream(new PrintStream(baos));
     }
@@ -33,7 +33,7 @@ class DbStatusCommandTest extends AbstractMigrationTest {
     void testRunOnMigratedDb() throws Exception {
         final String existedDbPath = getClass().getResource("/test-db.mv.db").getPath();
         final String existedDbUrl = "jdbc:h2:" + existedDbPath.substring(0, existedDbPath.length() - ".mv.db".length());
-        final TestMigrationConfiguration existedDbConf = createConfiguration(existedDbUrl);
+        final TestMigrationConfiguration existedDbConf = MigrationTestSupport.createConfiguration(existedDbUrl);
 
         statusCommand.run(null, new Namespace(Collections.emptyMap()), existedDbConf);
         assertThat(baos.toString(UTF_8.name())).matches("\\S+ is up to date" + System.lineSeparator());
@@ -58,7 +58,7 @@ class DbStatusCommandTest extends AbstractMigrationTest {
 
     @Test
     void testPrintHelp() throws Exception {
-        createSubparser(statusCommand).printHelp(new PrintWriter(new OutputStreamWriter(baos, UTF_8), true));
+        MigrationTestSupport.createSubparser(statusCommand).printHelp(new PrintWriter(new OutputStreamWriter(baos, UTF_8), true));
         assertThat(baos.toString(UTF_8.name())).isEqualTo(String.format(
                 "usage: db status [-h] [--migrations MIGRATIONS-FILE] [--catalog CATALOG]%n" +
                         "          [--schema SCHEMA] [-v] [-i CONTEXTS] [file]%n" +

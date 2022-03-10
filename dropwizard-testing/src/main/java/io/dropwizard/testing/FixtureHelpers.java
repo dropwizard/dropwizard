@@ -10,7 +10,11 @@ import java.nio.charset.StandardCharsets;
 
 /**
  * A set of helper method for fixture files.
+ *
+ * @deprecated use {@link Class#getResource(String)} to obtain a {@link URL} to the resource to use with
+ *             {@link com.fasterxml.jackson.databind.ObjectMapper#readValue(URL, Class)}
  */
+@Deprecated
 public class FixtureHelpers {
     private FixtureHelpers() { /* singleton */ }
 

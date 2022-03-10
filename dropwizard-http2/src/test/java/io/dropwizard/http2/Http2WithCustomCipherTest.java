@@ -12,7 +12,7 @@ import static io.dropwizard.testing.ConfigOverride.config;
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 
 @ExtendWith(DropwizardExtensionsSupport.class)
-class Http2WithCustomCipherTest extends AbstractHttp2Test {
+class Http2WithCustomCipherTest extends Http2TestCommon {
     private static final String PREFIX = "tls_custom_http2";
 
     final DropwizardAppExtension<Configuration> appRule = new DropwizardAppExtension<>(
