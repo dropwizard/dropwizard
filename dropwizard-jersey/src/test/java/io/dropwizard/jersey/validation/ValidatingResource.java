@@ -5,8 +5,6 @@ import io.dropwizard.jersey.jackson.JacksonMessageBodyProviderTest.ListExample;
 import io.dropwizard.jersey.jackson.JacksonMessageBodyProviderTest.Partial1;
 import io.dropwizard.jersey.jackson.JacksonMessageBodyProviderTest.Partial2;
 import io.dropwizard.jersey.jackson.JacksonMessageBodyProviderTest.PartialExample;
-import io.dropwizard.jersey.params.IntParam;
-import io.dropwizard.jersey.params.LongParam;
 import io.dropwizard.jersey.params.NonEmptyStringParam;
 import io.dropwizard.validation.Validated;
 import org.hibernate.validator.constraints.Length;
@@ -41,6 +39,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.OptionalInt;
+import java.util.OptionalLong;
 import java.util.Set;
 
 @Path("/valid/")
@@ -85,16 +84,16 @@ public class ValidatingResource {
     @Path("paramValidation")
     public Long paramValidation(@NotNull(payload = Unwrapping.Skip.class)
                                 @Min(2) @Max(5)
-                                @QueryParam("length") LongParam length) {
-        return length.get();
+                                @QueryParam("length") OptionalLong length) {
+        return length.orElseThrow();
     }
 
     @GET
     @Path("messageValidation")
     public Long messageValidation(@NotNull(payload = Unwrapping.Skip.class)
                                   @Min(value = 2, message = "The value ${validatedValue} is less then {value}")
-                                  @QueryParam("length") LongParam length) {
-        return length.get();
+                                  @QueryParam("length") OptionalLong length) {
+        return length.orElseThrow();
     }
 
     @GET
@@ -214,14 +213,14 @@ public class ValidatingResource {
 
     @GET
     @Path("headCopy")
-    public String heads(@QueryParam("cheese") @NotNull(payload = Unwrapping.Skip.class) IntParam secretSauce) {
-        return secretSauce.get().toString();
+    public String heads(@QueryParam("cheese") @NotNull(payload = Unwrapping.Skip.class) OptionalInt secretSauce) {
+        return String.valueOf(secretSauce.orElseThrow());
     }
 
     @GET
     @Path("nullable-int-param")
-    public String nullableIntParam(@QueryParam("num") @Max(3) IntParam secretSauce) {
-        return secretSauce == null ? "I was null" : secretSauce.get().toString();
+    public String nullableIntParam(@QueryParam("num") @Max(3) OptionalInt secretSauce) {
+        return secretSauce == null ? "I was null" : String.valueOf(secretSauce.orElseThrow());
     }
 
     @GET
@@ -299,46 +298,46 @@ public class ValidatingResource {
 
     @GET
     @Path("longParam")
-    public Long longParam(@QueryParam("num") @Min(23) LongParam longParam) {
-        return longParam.get();
+    public Long longParam(@QueryParam("num") @Min(23) OptionalLong longParam) {
+        return longParam.orElseThrow();
     }
 
     @GET
     @Path("longParamNotNull")
     public Long longParamNotNull(@QueryParam("num")
-                                 @NotNull(payload = Unwrapping.Skip.class) @Min(23) LongParam longParam) {
-        return longParam.get();
+                                 @NotNull(payload = Unwrapping.Skip.class) @Min(23) OptionalLong longParam) {
+        return longParam.orElseThrow();
     }
 
     @GET
     @Path("longParamWithDefault")
-    public Long longParamWithDefault(@QueryParam("num") @DefaultValue("42") @Min(23) LongParam longParam) {
-        return longParam.get();
+    public Long longParamWithDefault(@QueryParam("num") @DefaultValue("42") @Min(23) OptionalLong longParam) {
+        return longParam.orElseThrow();
     }
 
     @GET
     @Path("intParam")
-    public Integer intParam(@QueryParam("num") @Min(23) IntParam intParam) {
-        return intParam.get();
+    public Integer intParam(@QueryParam("num") @Min(23) OptionalInt intParam) {
+        return intParam.orElseThrow();
     }
 
     @GET
     @Path("intParamNotNull")
     public Integer intParamNotNull(@QueryParam("num")
-                                   @NotNull(payload = Unwrapping.Skip.class) @Min(23) IntParam intParam) {
-        return intParam.get();
+                                   @NotNull(payload = Unwrapping.Skip.class) @Min(23) OptionalInt intParam) {
+        return intParam.orElseThrow();
     }
 
     @GET
     @Path("intParamWithDefault")
-    public Integer intParamWithDefault(@QueryParam("num") @DefaultValue("42") @Min(23) IntParam intParam) {
-        return intParam.get();
+    public Integer intParamWithDefault(@QueryParam("num") @DefaultValue("42") @Min(23) OptionalInt intParam) {
+        return intParam.orElseThrow();
     }
 
     @GET
     @Path("intParamWithOptionalInside")
-    public Integer intParamWithOptionalInside(@QueryParam("num") @Min(23) IntParam intParam) {
-        return Optional.ofNullable(intParam).orElse(new IntParam("42")).get();
+    public Integer intParamWithOptionalInside(@QueryParam("num") @Min(23) OptionalInt intParam) {
+        return Optional.ofNullable(intParam).orElse(OptionalInt.of(42)).orElseThrow();
     }
 
     @GET

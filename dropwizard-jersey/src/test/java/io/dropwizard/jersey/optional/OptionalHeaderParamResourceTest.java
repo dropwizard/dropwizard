@@ -4,7 +4,6 @@ import io.dropwizard.jersey.AbstractJerseyTest;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.jersey.MyMessage;
 import io.dropwizard.jersey.MyMessageParamConverterProvider;
-import io.dropwizard.jersey.params.UUIDParam;
 import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.BadRequestException;
@@ -13,6 +12,7 @@ import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Application;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -97,8 +97,8 @@ class OptionalHeaderParamResourceTest extends AbstractJerseyTest {
 
         @GET
         @Path("/uuid")
-        public String getUUID(@HeaderParam("uuid") Optional<UUIDParam> uuid) {
-            return uuid.orElse(new UUIDParam("d5672fa8-326b-40f6-bf71-d9dacf44bcdc")).get().toString();
+        public String getUUID(@HeaderParam("uuid") Optional<UUID> uuid) {
+            return uuid.orElseGet(() -> UUID.fromString("d5672fa8-326b-40f6-bf71-d9dacf44bcdc")).toString();
         }
     }
 }

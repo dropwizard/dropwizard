@@ -1,6 +1,5 @@
 package io.dropwizard.jersey.validation;
 
-import io.dropwizard.jersey.params.IntParam;
 import io.dropwizard.jersey.params.NonEmptyStringParam;
 import org.hibernate.validator.constraints.Length;
 import org.junit.jupiter.api.Test;
@@ -11,6 +10,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.valueextraction.Unwrapping;
+import java.util.OptionalInt;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -19,7 +19,7 @@ class ParamValidatorUnwrapperTest {
     private static class Example {
         @NotNull(payload = Unwrapping.Skip.class)
         @Min(3)
-        IntParam inter = new IntParam("4");
+        OptionalInt inter = OptionalInt.of(4);
 
         @NotNull(payload = Unwrapping.Skip.class)
         @NotEmpty
@@ -39,7 +39,7 @@ class ParamValidatorUnwrapperTest {
     @Test
     void failsWithInvalidIntParam() {
         final Example example = new Example();
-        example.inter = new IntParam("2");
+        example.inter = OptionalInt.of(2);
         final Set<ConstraintViolation<Example>> validate = validator.validate(example);
         assertThat(validate).hasSize(1);
     }

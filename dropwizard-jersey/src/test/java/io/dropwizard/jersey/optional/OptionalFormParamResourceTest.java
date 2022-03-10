@@ -4,7 +4,6 @@ import io.dropwizard.jersey.AbstractJerseyTest;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.jersey.MyMessage;
 import io.dropwizard.jersey.MyMessageParamConverterProvider;
-import io.dropwizard.jersey.params.UUIDParam;
 import org.glassfish.jersey.internal.util.collection.MultivaluedStringMap;
 import org.junit.jupiter.api.Test;
 
@@ -16,6 +15,7 @@ import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Form;
 import javax.ws.rs.core.Response;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -113,8 +113,8 @@ class OptionalFormParamResourceTest extends AbstractJerseyTest {
 
         @POST
         @Path("/uuid")
-        public String getUUID(@FormParam("uuid") Optional<UUIDParam> uuid) {
-            return uuid.orElse(new UUIDParam("d5672fa8-326b-40f6-bf71-d9dacf44bcdc")).get().toString();
+        public String getUUID(@FormParam("uuid") Optional<UUID> uuid) {
+            return uuid.orElseGet(() -> UUID.fromString("d5672fa8-326b-40f6-bf71-d9dacf44bcdc")).toString();
         }
     }
 }
