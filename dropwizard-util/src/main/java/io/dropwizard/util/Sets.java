@@ -8,7 +8,11 @@ import static java.util.Collections.unmodifiableSet;
 
 /**
  * @since 2.0
+ *
+ * @deprecated this class exists to help users transition from Guava. It will be removed in Dropwizard 3.0 in favour
+ *             of Java 9+'s JCL Collection methods.
  */
+@Deprecated
 public final class Sets {
     private Sets() {
     }
