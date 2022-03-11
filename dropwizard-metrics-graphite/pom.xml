@@ -15,10 +15,6 @@
     <dependencies>
         <dependency>
             <groupId>io.dropwizard</groupId>
-            <artifactId>dropwizard-jackson</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.dropwizard</groupId>
             <artifactId>dropwizard-metrics</artifactId>
         </dependency>
         <dependency>
@@ -44,6 +40,11 @@
         <dependency>
             <groupId>io.dropwizard</groupId>
             <artifactId>dropwizard-configuration</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.dropwizard</groupId>
+            <artifactId>dropwizard-jackson</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
