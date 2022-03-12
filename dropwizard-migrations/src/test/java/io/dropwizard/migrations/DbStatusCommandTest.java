@@ -9,7 +9,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.io.PrintWriter;
+import java.net.URI;
+import java.nio.file.Paths;
 import java.util.Collections;
+import java.util.Objects;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -31,7 +34,8 @@ class DbStatusCommandTest {
 
     @Test
     void testRunOnMigratedDb() throws Exception {
-        final String existedDbPath = getClass().getResource("/test-db.mv.db").getPath();
+        final URI existedDbPathUri = Objects.requireNonNull(getClass().getResource("/test-db.mv.db")).toURI();
+        final String existedDbPath = Paths.get(existedDbPathUri).toString();
         final String existedDbUrl = "jdbc:h2:" + existedDbPath.substring(0, existedDbPath.length() - ".mv.db".length());
         final TestMigrationConfiguration existedDbConf = MigrationTestSupport.createConfiguration(existedDbUrl);
 
