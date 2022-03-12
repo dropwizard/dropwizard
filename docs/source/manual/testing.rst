@@ -104,7 +104,7 @@ Next, write a test for serializing a ``Person`` instance to JSON:
             final Person person = new Person("Luther Blissett", "lb@example.com");
 
             final String expected = MAPPER.writeValueAsString(
-                    MAPPER.readValue(getClass().getResource("/person.json"), Person.class));
+                    MAPPER.readValue(getClass().getResource("/fixtures/person.json"), Person.class));
 
             assertThat(MAPPER.writeValueAsString(person)).isEqualTo(expected);
         }
@@ -126,20 +126,20 @@ Next, write a test for deserializing a ``Person`` instance from JSON:
 
 .. code-block:: java
 
-    import static io.dropwizard.testing.FixtureHelpers.*;
-    import static org.assertj.core.api.Assertions.assertThat;
-    import io.dropwizard.jackson.Jackson;
-    import org.junit.jupiter.api.Test;
     import com.fasterxml.jackson.databind.ObjectMapper;
+    import org.junit.jupiter.api.Test;
+
+    import static io.dropwizard.jackson.Jackson.newObjectMapper;
+    import static org.assertj.core.api.Assertions.assertThat;
 
     public class PersonTest {
 
-        private static final ObjectMapper MAPPER = Jackson.newObjectMapper();
+        private static final ObjectMapper MAPPER = newObjectMapper();
 
         @Test
         public void deserializesFromJSON() throws Exception {
             final Person person = new Person("Luther Blissett", "lb@example.com");
-            assertThat(MAPPER.readValue(fixture("fixtures/person.json"), Person.class))
+            assertThat(MAPPER.readValue(getClass().getResource("/fixtures/person.json"), Person.class))
                     .isEqualTo(person);
         }
     }

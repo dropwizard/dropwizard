@@ -22,4 +22,11 @@ class PersonTest {
 
         assertThat(MAPPER.writeValueAsString(person)).isEqualTo(expected);
     }
+
+    @Test
+    public void deserializesFromJSON() throws Exception {
+        final Person person = new Person("Luther Blissett", "Lead Tester", 1902);
+        assertThat(MAPPER.readValue(getClass().getResource("/person.json"), Person.class))
+            .isEqualTo(person);
+    }
 }
