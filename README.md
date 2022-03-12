@@ -1,3 +1,7 @@
+# Please check out the [`release/2.1.x`](https://github.com/dropwizard/dropwizard/tree/release/2.1.x) branch
+
+----
+
 Dropwizard
 ==========
 [![Build](https://github.com/dropwizard/dropwizard/workflows/Java%20CI/badge.svg)](https://github.com/dropwizard/dropwizard/actions?query=workflow%3A%22Java+CI%22)
