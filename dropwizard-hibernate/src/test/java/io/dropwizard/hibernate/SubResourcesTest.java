@@ -122,7 +122,7 @@ class SubResourcesTest {
     }
 
     public static class TestApplication extends Application<TestConfiguration> {
-        final HibernateBundle<TestConfiguration> hibernate = new HibernateBundle<TestConfiguration>(Person.class, Dog.class) {
+        final HibernateBundle<TestConfiguration> hibernate = new HibernateBundle<>(Person.class, Dog.class) {
             @Override
             public PooledDataSourceFactory getDataSourceFactory(TestConfiguration configuration) {
                 return configuration.dataSource;
@@ -217,11 +217,7 @@ class SubResourcesTest {
         @POST
         @UnitOfWork
         public Dog create(@PathParam("ownerName") String ownerName, Dog dog) {
-            Optional<Person> person = personDAO.findByName(ownerName);
-            if (!person.isPresent()) {
-                throw new WebApplicationException(404);
-            }
-            dog.setOwner(person.get());
+            dog.setOwner(personDAO.findByName(ownerName).orElseThrow(() -> new WebApplicationException(404)));
             return dogDAO.persist(dog);
         }
     }

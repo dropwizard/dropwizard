@@ -114,7 +114,7 @@ class LogbackExcludedTest {
             classFilter.accept(name);
             Class<?> clazz = getClassSystemLoader(name);
             Optional<URL> url = getUrl(clazz);
-            if (!url.isPresent()) {
+            if (url.isEmpty()) {
                 // no URL associated with class; must be standard Java
                 return clazz;
             }

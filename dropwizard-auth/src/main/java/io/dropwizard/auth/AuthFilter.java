@@ -136,7 +136,7 @@ public abstract class AuthFilter<C, P extends Principal> implements ContainerReq
             }
 
             final Optional<P> principal = authenticator.authenticate(credentials);
-            if (!principal.isPresent()) {
+            if (principal.isEmpty()) {
                 return false;
             }
 
