@@ -108,7 +108,7 @@ public class TaskServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req,
                          HttpServletResponse resp) throws ServletException, IOException {
-        if (!Optional.ofNullable(req.getPathInfo()).filter(s -> !s.isEmpty()).isPresent()) {
+        if (Optional.ofNullable(req.getPathInfo()).filter(s -> !s.isEmpty()).isEmpty()) {
             try (final PrintWriter output = resp.getWriter()) {
                 resp.setContentType(DEFAULT_CONTENT_TYPE);
                 getTasks().stream()
@@ -226,7 +226,7 @@ public class TaskServlet extends HttpServlet {
     }
 
     private static class TimedTask extends TaskExecutor {
-        private TaskExecutor underlying;
+        private final TaskExecutor underlying;
         private final Timer timer;
 
         private TimedTask(TaskExecutor underlying, Timer timer) {
@@ -247,7 +247,7 @@ public class TaskServlet extends HttpServlet {
     }
 
     private static class MeteredTask extends TaskExecutor {
-        private TaskExecutor underlying;
+        private final TaskExecutor underlying;
         private final Meter meter;
 
         private MeteredTask(TaskExecutor underlying, Meter meter) {
@@ -264,7 +264,7 @@ public class TaskServlet extends HttpServlet {
     }
 
     private static class ExceptionMeteredTask extends TaskExecutor {
-        private TaskExecutor underlying;
+        private final TaskExecutor underlying;
         private final Meter exceptionMeter;
         private final Class<?> exceptionClass;
 
