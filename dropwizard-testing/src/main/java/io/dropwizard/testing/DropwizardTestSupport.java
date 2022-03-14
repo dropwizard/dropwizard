@@ -91,17 +91,6 @@ public class DropwizardTestSupport<C extends Configuration> {
     }
 
     /**
-     * @deprecated Use {@link #DropwizardTestSupport(Class, String, String, ConfigOverride...)} instead.
-     */
-    @Deprecated
-    public DropwizardTestSupport(Class<? extends Application<C>> applicationClass,
-                                 @Nullable String configPath,
-                                 Optional<String> customPropertyPrefix,
-                                 ConfigOverride... configOverrides) {
-        this(applicationClass, configPath, customPropertyPrefix.orElse(null), ServerCommand::new, configOverrides);
-    }
-
-    /**
      * @since 2.0
      */
     public DropwizardTestSupport(Class<? extends Application<C>> applicationClass,
@@ -120,18 +109,6 @@ public class DropwizardTestSupport<C extends Configuration> {
                                  @Nullable String customPropertyPrefix,
                                  ConfigOverride... configOverrides) {
         this(applicationClass, configPath, customPropertyPrefix, ServerCommand::new, configOverrides);
-    }
-
-    /**
-     * @deprecated Use {@link #DropwizardTestSupport(Class, String, String, Function, ConfigOverride...)} instead.
-     */
-    @Deprecated
-    public DropwizardTestSupport(Class<? extends Application<C>> applicationClass,
-                                 @Nullable String configPath,
-                                 Optional<String> customPropertyPrefix,
-                                 Function<Application<C>, Command> commandInstantiator,
-                                 ConfigOverride... configOverrides) {
-        this(applicationClass, configPath, customPropertyPrefix.orElse(null), commandInstantiator, configOverrides);
     }
 
     /**

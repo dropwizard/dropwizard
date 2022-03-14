@@ -17,7 +17,6 @@ import org.glassfish.jersey.client.JerseyClientBuilder;
 
 import javax.annotation.Nullable;
 import javax.ws.rs.client.Client;
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import org.junit.jupiter.api.extension.AfterAllCallback;
@@ -70,17 +69,6 @@ public class DropwizardAppExtension<C extends Configuration> implements Dropwiza
     }
 
     /**
-     * @deprecated Use {@link #DropwizardAppExtension(Class, String, String, ConfigOverride...)} instead.
-     */
-    @Deprecated
-    public DropwizardAppExtension(Class<? extends Application<C>> applicationClass,
-                                  @Nullable String configPath,
-                                  Optional<String> customPropertyPrefix,
-                                  ConfigOverride... configOverrides) {
-        this(applicationClass, configPath, customPropertyPrefix.orElse(null), configOverrides);
-    }
-
-    /**
      * @since 2.0
      */
     public DropwizardAppExtension(Class<? extends Application<C>> applicationClass,
@@ -99,18 +87,6 @@ public class DropwizardAppExtension<C extends Configuration> implements Dropwiza
                                   @Nullable String customPropertyPrefix,
                                   ConfigOverride... configOverrides) {
         this(applicationClass, configPath, configSourceProvider, customPropertyPrefix, ServerCommand::new, configOverrides);
-    }
-
-    /**
-     * @deprecated Use {@link #DropwizardAppExtension(Class, String, String, Function, ConfigOverride...)} instead.
-     */
-    @Deprecated
-    public DropwizardAppExtension(Class<? extends Application<C>> applicationClass,
-                                  @Nullable String configPath,
-                                  Optional<String> customPropertyPrefix,
-                                  Function<Application<C>, Command> commandInstantiator,
-                                  ConfigOverride... configOverrides) {
-        this(applicationClass, configPath, customPropertyPrefix.orElse(null), commandInstantiator, configOverrides);
     }
 
     public DropwizardAppExtension(Class<? extends Application<C>> applicationClass,

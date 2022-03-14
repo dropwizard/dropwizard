@@ -123,8 +123,6 @@ public class GzipHandlerFactory {
     @Max(Deflater.BEST_COMPRESSION)
     private int deflateCompressionLevel = Deflater.DEFAULT_COMPRESSION;
 
-    private boolean gzipCompatibleInflation = true;
-
     private boolean syncFlush = false;
 
     @JsonProperty
@@ -193,24 +191,6 @@ public class GzipHandlerFactory {
     @JsonProperty
     public void setDeflateCompressionLevel(int level) {
         this.deflateCompressionLevel = level;
-    }
-
-    /**
-     * @deprecated  gzip handler no longer supports inflate streams
-     */
-    @Deprecated
-    @JsonProperty
-    public boolean isGzipCompatibleInflation() {
-        return gzipCompatibleInflation;
-    }
-
-    /**
-     * @deprecated gzip handler no longer supports inflate streams
-     */
-    @Deprecated
-    @JsonProperty
-    public void setGzipCompatibleInflation(boolean gzipCompatibleInflation) {
-        this.gzipCompatibleInflation = gzipCompatibleInflation;
     }
 
     /**
