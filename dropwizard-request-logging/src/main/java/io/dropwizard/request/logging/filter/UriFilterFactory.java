@@ -32,7 +32,7 @@ public class UriFilterFactory implements FilterFactory<IAccessEvent> {
 
     @Override
     public Filter<IAccessEvent> build() {
-        return new Filter<IAccessEvent>() {
+        return new Filter<>() {
             @Override
             public FilterReply decide(final IAccessEvent event) {
                 if (uris.contains(event.getRequestURI())) {

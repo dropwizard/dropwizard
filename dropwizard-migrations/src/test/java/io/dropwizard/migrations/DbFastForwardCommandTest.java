@@ -12,7 +12,6 @@ import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -20,7 +19,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 @NotThreadSafe
 class DbFastForwardCommandTest {
 
-    private static final Pattern NEWLINE_PATTERN = Pattern.compile(System.lineSeparator());
     private final DbFastForwardCommand<TestMigrationConfiguration> fastForwardCommand = new DbFastForwardCommand<>(
         TestMigrationConfiguration::getDataSource, TestMigrationConfiguration.class, "migrations.xml");
     private TestMigrationConfiguration conf;
@@ -91,8 +89,9 @@ class DbFastForwardCommandTest {
         // Fast-forward one change
         fastForwardCommand.run(null, new Namespace(Map.of("all", false, "dry-run", true)), conf);
 
-        assertThat(NEWLINE_PATTERN.splitAsStream(baos.toString(UTF_8.name()))
-            .filter(s -> s.startsWith("INSERT INTO PUBLIC.DATABASECHANGELOG (")))
+        assertThat(baos.toString(UTF_8)
+                .lines()
+                .filter(s -> s.startsWith("INSERT INTO PUBLIC.DATABASECHANGELOG (")))
             .hasSize(1);
     }
 
@@ -104,8 +103,9 @@ class DbFastForwardCommandTest {
         // Fast-forward 3 changes
         fastForwardCommand.run(null, new Namespace(Map.of("all", true, "dry-run", true)), conf);
 
-        assertThat(NEWLINE_PATTERN.splitAsStream(baos.toString(UTF_8.name()))
-            .filter(s -> s.startsWith("INSERT INTO PUBLIC.DATABASECHANGELOG (")))
+        assertThat(baos.toString(UTF_8)
+                .lines()
+                .filter(s -> s.startsWith("INSERT INTO PUBLIC.DATABASECHANGELOG (")))
             .hasSize(3);
     }
 

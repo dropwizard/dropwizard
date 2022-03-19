@@ -18,11 +18,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 class EventJsonLayoutBaseFactoryTest {
-    private static final String LINE_SEPARATOR = System.getProperty("line.separator");
-
     // Use unique spelling to guard against false positive matches
-    private ThrowableProxy proxy = new ThrowableProxy(new RuntimeException("wrapp3d", new IOException("r00t")));
-    private ILoggingEvent event = Mockito.mock(ILoggingEvent.class);
+    private final ThrowableProxy proxy = new ThrowableProxy(new RuntimeException("wrapp3d", new IOException("r00t")));
+    private final ILoggingEvent event = Mockito.mock(ILoggingEvent.class);
 
     @BeforeEach
     void before() {
@@ -65,7 +63,7 @@ class EventJsonLayoutBaseFactoryTest {
 
         assertThat(converter.isStarted()).isTrue();
 
-        int originalSize = getStackTraceAsString(proxy.getThrowable()).split(LINE_SEPARATOR).length;
+        int originalSize = (int)getStackTraceAsString(proxy.getThrowable()).lines().count();
 
         assertThat(converter.convert(event))
             .hasLineCount(originalSize) // Verify that the full stack is included

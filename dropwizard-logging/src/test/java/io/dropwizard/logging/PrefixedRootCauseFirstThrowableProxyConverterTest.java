@@ -7,11 +7,11 @@ import org.junit.jupiter.api.Test;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
+import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -22,7 +22,7 @@ class PrefixedRootCauseFirstThrowableProxyConverterTest {
     private final PrefixedRootCauseFirstThrowableProxyConverter converter
             = new PrefixedRootCauseFirstThrowableProxyConverter();
 
-    private final ThrowableProxy proxy = new ThrowableProxy(getException());
+    private final ThrowableProxy proxy = new ThrowableProxy(requireNonNull(getException()));
 
     @Nullable
     private Exception getException() {
@@ -63,11 +63,12 @@ class PrefixedRootCauseFirstThrowableProxyConverterTest {
 
     @Test
     void prefixesExceptionsWithExclamationMarks()  {
-        assertThat(Arrays.stream(converter.throwableProxyToString(proxy).split(System.lineSeparator()))
+        assertThat(converter.throwableProxyToString(proxy)
+                .lines()
                 .filter(Objects::nonNull)
                 .filter(s -> !s.isEmpty()))
-                .isNotEmpty()
-                .allSatisfy(line -> assertThat(line).startsWith("!"));
+            .isNotEmpty()
+            .allSatisfy(line -> assertThat(line).startsWith("!"));
     }
 
     @Test

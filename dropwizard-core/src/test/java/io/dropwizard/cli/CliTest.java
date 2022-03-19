@@ -74,7 +74,7 @@ class CliTest {
     }
 
     public static final class CustomCommand extends Command {
-        protected CustomCommand() {
+        CustomCommand() {
             super("custom", "I'm custom");
         }
 
