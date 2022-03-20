@@ -193,7 +193,7 @@ Here's what our configuration class will look like, full `example conf here`_:
 
     package com.example.helloworld;
 
-    import io.dropwizard.Configuration;
+    import io.dropwizard.core.Configuration;
     import com.fasterxml.jackson.annotation.JsonProperty;
     import javax.validation.constraints.NotEmpty;
 
