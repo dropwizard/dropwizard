@@ -1,10 +1,10 @@
 package com.example.sslreload;
 
-import io.dropwizard.Application;
-import io.dropwizard.Configuration;
-import io.dropwizard.setup.Bootstrap;
-import io.dropwizard.setup.Environment;
-import io.dropwizard.sslreload.SslReloadBundle;
+import io.dropwizard.core.Application;
+import io.dropwizard.core.Configuration;
+import io.dropwizard.core.setup.Bootstrap;
+import io.dropwizard.core.setup.Environment;
+import io.dropwizard.core.sslreload.SslReloadBundle;
 
 public class SslReloadApp extends Application<Configuration> {
     @Override

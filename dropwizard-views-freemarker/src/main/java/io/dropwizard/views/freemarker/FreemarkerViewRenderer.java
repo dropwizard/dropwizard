@@ -8,9 +8,9 @@ import freemarker.template.Configuration;
 import freemarker.template.DefaultObjectWrapperBuilder;
 import freemarker.template.Template;
 import freemarker.template.Version;
-import io.dropwizard.views.View;
-import io.dropwizard.views.ViewRenderException;
-import io.dropwizard.views.ViewRenderer;
+import io.dropwizard.views.common.View;
+import io.dropwizard.views.common.ViewRenderException;
+import io.dropwizard.views.common.ViewRenderer;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;

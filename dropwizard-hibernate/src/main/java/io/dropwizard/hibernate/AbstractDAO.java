@@ -9,10 +9,9 @@ import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 import org.hibernate.query.internal.AbstractProducedQuery;
 
+import javax.persistence.criteria.CriteriaQuery;
 import java.io.Serializable;
 import java.util.List;
-
-import javax.persistence.criteria.CriteriaQuery;
 
 import static java.util.Objects.requireNonNull;
 

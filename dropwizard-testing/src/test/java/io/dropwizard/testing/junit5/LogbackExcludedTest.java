@@ -1,5 +1,10 @@
 package io.dropwizard.testing.junit5;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.dropwizard.configuration.ConfigurationMetadata;
+import io.dropwizard.core.Configuration;
+import org.junit.jupiter.api.Test;
+
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
@@ -8,13 +13,6 @@ import java.net.URLClassLoader;
 import java.security.CodeSource;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
-
-import org.junit.jupiter.api.Test;
-
-import io.dropwizard.Configuration;
-import io.dropwizard.configuration.ConfigurationMetadata;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;

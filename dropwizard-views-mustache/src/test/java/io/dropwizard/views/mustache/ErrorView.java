@@ -1,6 +1,6 @@
 package io.dropwizard.views.mustache;
 
-import io.dropwizard.views.View;
+import io.dropwizard.views.common.View;
 
 public class ErrorView extends View {
     protected ErrorView() {

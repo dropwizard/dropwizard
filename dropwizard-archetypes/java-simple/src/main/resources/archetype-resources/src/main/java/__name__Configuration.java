@@ -1,6 +1,6 @@
 package ${package};
 
-import io.dropwizard.Configuration;
+import io.dropwizard.core.Configuration;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.validator.constraints.*;
 import javax.validation.constraints.*;

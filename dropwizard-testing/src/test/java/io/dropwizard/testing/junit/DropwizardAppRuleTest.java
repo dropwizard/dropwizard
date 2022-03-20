@@ -1,7 +1,7 @@
 package io.dropwizard.testing.junit;
 
 import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
-import io.dropwizard.setup.Environment;
+import io.dropwizard.core.setup.Environment;
 import io.dropwizard.testing.app.DropwizardTestApplication;
 import io.dropwizard.testing.app.TestConfiguration;
 import org.junit.ClassRule;

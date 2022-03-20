@@ -1,14 +1,17 @@
 package io.dropwizard.testing;
 
+import io.dropwizard.core.Configuration;
+import io.dropwizard.core.server.DefaultServerFactory;
+
 import javax.annotation.Nullable;
 
 /**
  * Override port configuration setting for application and admin connectors and choose a random port.
  *
  * @see io.dropwizard.jetty.HttpConnectorFactory#getPort()
- * @see io.dropwizard.Configuration#getServerFactory()
- * @see io.dropwizard.server.DefaultServerFactory#getApplicationConnectors()
- * @see io.dropwizard.server.DefaultServerFactory#getAdminConnectors()
+ * @see Configuration#getServerFactory()
+ * @see DefaultServerFactory#getApplicationConnectors()
+ * @see DefaultServerFactory#getAdminConnectors()
  */
 public class ConfigOverrideRandomPorts extends ConfigOverride {
 

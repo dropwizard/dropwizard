@@ -1,7 +1,7 @@
 package io.dropwizard.testing;
 
 import io.dropwizard.configuration.UrlConfigurationSourceProvider;
-import io.dropwizard.setup.Environment;
+import io.dropwizard.core.setup.Environment;
 import io.dropwizard.testing.app.TestApplication;
 import io.dropwizard.testing.app.TestConfiguration;
 import org.junit.jupiter.api.AfterAll;

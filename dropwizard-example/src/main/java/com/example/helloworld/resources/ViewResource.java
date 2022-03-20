@@ -1,6 +1,6 @@
 package com.example.helloworld.resources;
 
-import io.dropwizard.views.View;
+import io.dropwizard.views.common.View;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;

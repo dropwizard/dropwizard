@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.configuration.BaseConfigurationFactoryTest.Example;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.validation.BaseValidator;
-
 import org.junit.jupiter.api.Test;
 
 import javax.validation.Validator;
