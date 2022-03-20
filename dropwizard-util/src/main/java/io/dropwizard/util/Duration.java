@@ -4,50 +4,43 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 import java.io.Serializable;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static java.util.Map.entry;
 import static java.util.Objects.requireNonNull;
 
 public class Duration implements Comparable<Duration>, Serializable {
     private static final long serialVersionUID = 1445611723318059801L;
 
     private static final Pattern DURATION_PATTERN = Pattern.compile("(\\d+)\\s*(\\S+)");
-    private static final Map<String, TimeUnit> SUFFIXES;
-
-    static {
-        final Map<String, TimeUnit> suffixes = new HashMap<>();
-        suffixes.put("ns", TimeUnit.NANOSECONDS);
-        suffixes.put("nanosecond", TimeUnit.NANOSECONDS);
-        suffixes.put("nanoseconds", TimeUnit.NANOSECONDS);
-        suffixes.put("us", TimeUnit.MICROSECONDS);
-        suffixes.put("microsecond", TimeUnit.MICROSECONDS);
-        suffixes.put("microseconds", TimeUnit.MICROSECONDS);
-        suffixes.put("ms", TimeUnit.MILLISECONDS);
-        suffixes.put("millisecond", TimeUnit.MILLISECONDS);
-        suffixes.put("milliseconds", TimeUnit.MILLISECONDS);
-        suffixes.put("s", TimeUnit.SECONDS);
-        suffixes.put("second", TimeUnit.SECONDS);
-        suffixes.put("seconds", TimeUnit.SECONDS);
-        suffixes.put("m", TimeUnit.MINUTES);
-        suffixes.put("min", TimeUnit.MINUTES);
-        suffixes.put("mins", TimeUnit.MINUTES);
-        suffixes.put("minute", TimeUnit.MINUTES);
-        suffixes.put("minutes", TimeUnit.MINUTES);
-        suffixes.put("h", TimeUnit.HOURS);
-        suffixes.put("hour", TimeUnit.HOURS);
-        suffixes.put("hours", TimeUnit.HOURS);
-        suffixes.put("d", TimeUnit.DAYS);
-        suffixes.put("day", TimeUnit.DAYS);
-        suffixes.put("days", TimeUnit.DAYS);
-        SUFFIXES = Collections.unmodifiableMap(suffixes);
-
-    }
+    private static final Map<String, TimeUnit> SUFFIXES = Map.ofEntries(
+        entry("ns", TimeUnit.NANOSECONDS),
+        entry("nanosecond", TimeUnit.NANOSECONDS),
+        entry("nanoseconds", TimeUnit.NANOSECONDS),
+        entry("us", TimeUnit.MICROSECONDS),
+        entry("microsecond", TimeUnit.MICROSECONDS),
+        entry("microseconds", TimeUnit.MICROSECONDS),
+        entry("ms", TimeUnit.MILLISECONDS),
+        entry("millisecond", TimeUnit.MILLISECONDS),
+        entry("milliseconds", TimeUnit.MILLISECONDS),
+        entry("s", TimeUnit.SECONDS),
+        entry("second", TimeUnit.SECONDS),
+        entry("seconds", TimeUnit.SECONDS),
+        entry("m", TimeUnit.MINUTES),
+        entry("min", TimeUnit.MINUTES),
+        entry("mins", TimeUnit.MINUTES),
+        entry("minute", TimeUnit.MINUTES),
+        entry("minutes", TimeUnit.MINUTES),
+        entry("h", TimeUnit.HOURS),
+        entry("hour", TimeUnit.HOURS),
+        entry("hours", TimeUnit.HOURS),
+        entry("d", TimeUnit.DAYS),
+        entry("day", TimeUnit.DAYS),
+        entry("days", TimeUnit.DAYS));
 
     public static Duration nanoseconds(long count) {
         return new Duration(count, TimeUnit.NANOSECONDS);

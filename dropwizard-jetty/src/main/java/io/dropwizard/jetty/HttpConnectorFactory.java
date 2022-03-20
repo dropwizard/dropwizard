@@ -31,6 +31,7 @@ import javax.annotation.Nullable;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.valueextraction.Unwrapping;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -650,16 +651,13 @@ public class HttpConnectorFactory implements ConnectorFactory {
         connector.setPort(port);
         connector.setHost(bindHost);
         connector.setInheritChannel(inheritChannel);
-        if (acceptQueueSize != null) {
-            connector.setAcceptQueueSize(acceptQueueSize);
-        } else {
-            // if we do not set the acceptQueueSize, when jetty
-            // creates the ServerSocket, it uses the default backlog of 50, and
-            // not the value from the OS.  Therefore we set to the value
-            // obtained from NetUtil, which will attempt to read the value from the OS.
-            // somaxconn setting
-            connector.setAcceptQueueSize(NetUtil.getTcpBacklog());
-        }
+        // if we do not set the acceptQueueSize, when jetty
+        // creates the ServerSocket, it uses the default backlog of 50, and
+        // not the value from the OS.  Therefore we set to the value
+        // obtained from NetUtil, which will attempt to read the value from the OS.
+        // somaxconn setting
+        int actualAcceptQueueSize = Objects.requireNonNullElseGet(acceptQueueSize, NetUtil::getTcpBacklog);
+        connector.setAcceptQueueSize(actualAcceptQueueSize);
 
         connector.setReuseAddress(reuseAddress);
         connector.setIdleTimeout(idleTimeout.toMilliseconds());

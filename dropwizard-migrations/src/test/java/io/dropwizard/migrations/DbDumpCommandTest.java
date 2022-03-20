@@ -20,8 +20,6 @@ import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.net.URI;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
@@ -91,14 +89,14 @@ class DbDumpCommandTest {
         final File file = File.createTempFile("migration", ".xml");
         dumpCommand.run(null, new Namespace(Collections.singletonMap("output", file.getAbsolutePath())), existedDbConf);
         // Check that file is exist, and has some XML content (no reason to make a full-blown XML assertion)
-        assertThat(new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8))
+        assertThat(file).content(UTF_8)
             .startsWith("<?xml version=\"1.1\" encoding=\"UTF-8\" standalone=\"no\"?>");
     }
 
     @Test
-    void testHelpPage() throws Exception {
+    void testHelpPage() {
         MigrationTestSupport.createSubparser(dumpCommand).printHelp(new PrintWriter(new OutputStreamWriter(baos, UTF_8), true));
-        assertThat(baos.toString(UTF_8.name())).isEqualTo(String.format(
+        assertThat(baos.toString(UTF_8)).isEqualTo(String.format(
                 "usage: db dump [-h] [--migrations MIGRATIONS-FILE] [--catalog CATALOG]%n" +
                         "          [--schema SCHEMA] [-o OUTPUT] [--tables] [--ignore-tables]%n" +
                         "          [--columns] [--ignore-columns] [--views] [--ignore-views]%n" +
