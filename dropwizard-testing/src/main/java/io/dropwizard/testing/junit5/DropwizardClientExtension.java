@@ -1,7 +1,7 @@
 package io.dropwizard.testing.junit5;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.dropwizard.setup.Environment;
+import io.dropwizard.core.setup.Environment;
 import io.dropwizard.testing.common.DropwizardClient;
 
 import java.net.URI;

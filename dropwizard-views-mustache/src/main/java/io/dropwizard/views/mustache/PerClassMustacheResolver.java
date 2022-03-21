@@ -1,7 +1,7 @@
 package io.dropwizard.views.mustache;
 
 import com.github.mustachejava.MustacheResolver;
-import io.dropwizard.views.View;
+import io.dropwizard.views.common.View;
 
 import javax.annotation.Nullable;
 import java.io.BufferedReader;

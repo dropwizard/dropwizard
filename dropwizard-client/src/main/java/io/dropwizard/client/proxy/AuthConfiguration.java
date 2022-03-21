@@ -1,9 +1,9 @@
 package io.dropwizard.client.proxy;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import javax.validation.constraints.NotEmpty;
 
 import javax.annotation.Nullable;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
 
 /**

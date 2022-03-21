@@ -1,9 +1,8 @@
 package io.dropwizard.auth;
 
-import java.security.Principal;
-
 import javax.annotation.Nullable;
 import javax.ws.rs.container.ContainerRequestContext;
+import java.security.Principal;
 
 /**
  * The default implementation of {@link AuthorizationContext},

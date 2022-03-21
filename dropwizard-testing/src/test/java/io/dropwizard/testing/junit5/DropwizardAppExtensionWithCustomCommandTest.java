@@ -1,8 +1,8 @@
 package io.dropwizard.testing.junit5;
 
-import io.dropwizard.cli.Command;
 import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
-import io.dropwizard.setup.Bootstrap;
+import io.dropwizard.core.cli.Command;
+import io.dropwizard.core.setup.Bootstrap;
 import io.dropwizard.testing.app.DropwizardTestApplication;
 import io.dropwizard.testing.app.TestConfiguration;
 import net.sourceforge.argparse4j.inf.Namespace;

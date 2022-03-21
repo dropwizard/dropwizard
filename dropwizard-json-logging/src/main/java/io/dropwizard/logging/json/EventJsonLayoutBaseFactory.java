@@ -9,15 +9,15 @@ import ch.qos.logback.core.LayoutBase;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.dropwizard.logging.json.layout.EventJsonLayout;
-
 import io.dropwizard.logging.json.layout.ExceptionFormat;
+
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TimeZone;
-import javax.annotation.Nullable;
 
 /**
  * <table>

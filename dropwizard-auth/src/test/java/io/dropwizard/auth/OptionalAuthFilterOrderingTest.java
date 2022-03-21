@@ -1,7 +1,5 @@
 package io.dropwizard.auth;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import io.dropwizard.auth.principal.NullPrincipal;
 import org.glassfish.jersey.internal.inject.AbstractBinder;
 import org.glassfish.jersey.servlet.ServletProperties;
@@ -13,8 +11,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.security.Principal;
-
 import javax.annotation.Priority;
 import javax.ws.rs.Priorities;
 import javax.ws.rs.container.ContainerRequestContext;
@@ -22,6 +18,9 @@ import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.DynamicFeature;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
+import java.security.Principal;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 class OptionalAuthFilterOrderingTest extends JerseyTest {
 

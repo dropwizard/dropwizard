@@ -3,13 +3,13 @@ package io.dropwizard.client;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.httpclient5.HttpClientMetricNameStrategy;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.dropwizard.core.setup.Environment;
 import io.dropwizard.jersey.gzip.ConfiguredGZipEncoder;
 import io.dropwizard.jersey.gzip.GZipDecoder;
 import io.dropwizard.jersey.jackson.JacksonFeature;
 import io.dropwizard.jersey.validation.HibernateValidationBinder;
 import io.dropwizard.jersey.validation.Validators;
 import io.dropwizard.lifecycle.Managed;
-import io.dropwizard.setup.Environment;
 import org.apache.hc.client5.http.DnsResolver;
 import org.apache.hc.client5.http.HttpRequestRetryStrategy;
 import org.apache.hc.client5.http.auth.CredentialsStore;
@@ -166,7 +166,7 @@ public class JerseyClientBuilder {
      * @param executorService a thread pool
      * @param objectMapper    an object mapper
      * @return {@code this}
-     * @see #using(io.dropwizard.setup.Environment)
+     * @see #using(Environment)
      */
     public JerseyClientBuilder using(ExecutorService executorService, ObjectMapper objectMapper) {
         this.executorService = executorService;
@@ -179,7 +179,7 @@ public class JerseyClientBuilder {
      *
      * @param executorService a thread pool
      * @return {@code this}
-     * @see #using(io.dropwizard.setup.Environment)
+     * @see #using(Environment)
      */
     public JerseyClientBuilder using(ExecutorService executorService) {
         this.executorService = executorService;
@@ -191,7 +191,7 @@ public class JerseyClientBuilder {
      *
      * @param objectMapper    an object mapper
      * @return {@code this}
-     * @see #using(io.dropwizard.setup.Environment)
+     * @see #using(Environment)
      */
     public JerseyClientBuilder using(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;

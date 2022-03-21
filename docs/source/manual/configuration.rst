@@ -890,11 +890,10 @@ port                         514            The port on which the UDP server is 
 FilterFactories
 ---------------
 
-
-A factory used for request logging appenders should implement ``io.dropwizard.logging.filter.FilterFactory<IAccessEvent>``
-while one used for regular logging should implement ``io.dropwizard.logging.filter.FilterFactory<ILoggingEvent>``.
+A factory used for request logging appenders should implement ``io.dropwizard.logging.common.filter.FilterFactory<IAccessEvent>``
+while one used for regular logging should implement ``io.dropwizard.logging.common.filter.FilterFactory<ILoggingEvent>``.
 To register a factory, its fully qualified classname must be listed in
-``META-INF/services/io.dropwizard.logging.filter.FilterFactory``. The factory then can be referenced in the configuration
+``META-INF/services/io.dropwizard.logging.common.filter.FilterFactory``. The factory then can be referenced in the configuration
 either via its simple classname or via type name, if factory class annotated with ``@JsonTypeName``.
 
 

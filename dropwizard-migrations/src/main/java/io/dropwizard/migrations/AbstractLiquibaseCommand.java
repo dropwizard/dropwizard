@@ -1,12 +1,12 @@
 package io.dropwizard.migrations;
 
 import com.codahale.metrics.MetricRegistry;
-import io.dropwizard.Configuration;
-import io.dropwizard.cli.ConfiguredCommand;
+import io.dropwizard.core.Configuration;
+import io.dropwizard.core.cli.ConfiguredCommand;
+import io.dropwizard.core.setup.Bootstrap;
 import io.dropwizard.db.DatabaseConfiguration;
 import io.dropwizard.db.ManagedDataSource;
 import io.dropwizard.db.PooledDataSourceFactory;
-import io.dropwizard.setup.Bootstrap;
 import liquibase.Liquibase;
 import liquibase.database.Database;
 import liquibase.database.DatabaseConnection;

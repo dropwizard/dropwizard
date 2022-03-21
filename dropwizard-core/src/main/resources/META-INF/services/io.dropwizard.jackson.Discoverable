@@ -1,1 +1,1 @@
-io.dropwizard.server.ServerFactory
+io.dropwizard.core.server.ServerFactory

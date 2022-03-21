@@ -1,6 +1,6 @@
 package io.dropwizard.views.mustache;
 
-import io.dropwizard.views.View;
+import io.dropwizard.views.common.View;
 
 public class AbsoluteView extends View {
     private final String name;
