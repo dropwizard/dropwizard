@@ -41,24 +41,24 @@ class DbTagCommandTest {
     void testPrintHelp() throws Exception {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         MigrationTestSupport.createSubparser(dbTagCommand).printHelp(new PrintWriter(new OutputStreamWriter(baos, UTF_8), true));
-        assertThat(baos.toString(UTF_8.name())).isEqualTo(String.format(
-            "usage: db tag [-h] [--migrations MIGRATIONS-FILE] [--catalog CATALOG]%n" +
-            "          [--schema SCHEMA] [file] tag-name%n" +
-            "%n" +
-            "Tag the database schema.%n" +
-            "%n" +
-            "positional arguments:%n" +
-            "  file                   application configuration file%n" +
-            "  tag-name               The tag name%n" +
-            "%n" +
-            "named arguments:%n" +
-            "  -h, --help             show this help message and exit%n" +
-            "  --migrations MIGRATIONS-FILE%n" +
-            "                         the file containing  the  Liquibase migrations for%n" +
-            "                         the application%n" +
-            "  --catalog CATALOG      Specify  the   database   catalog   (use  database%n" +
-            "                         default if omitted)%n" +
-            "  --schema SCHEMA        Specify the database schema  (use database default%n" +
-            "                         if omitted)%n"));
+        assertThat(baos.toString(UTF_8.name())).isEqualToNormalizingNewlines(
+            "usage: db tag [-h] [--migrations MIGRATIONS-FILE] [--catalog CATALOG]\n" +
+            "          [--schema SCHEMA] [file] tag-name\n" +
+            "\n" +
+            "Tag the database schema.\n" +
+            "\n" +
+            "positional arguments:\n" +
+            "  file                   application configuration file\n" +
+            "  tag-name               The tag name\n" +
+            "\n" +
+            "named arguments:\n" +
+            "  -h, --help             show this help message and exit\n" +
+            "  --migrations MIGRATIONS-FILE\n" +
+            "                         the file containing  the  Liquibase migrations for\n" +
+            "                         the application\n" +
+            "  --catalog CATALOG      Specify  the   database   catalog   (use  database\n" +
+            "                         default if omitted)\n" +
+            "  --schema SCHEMA        Specify the database schema  (use database default\n" +
+            "                         if omitted)\n");
     }
 }
