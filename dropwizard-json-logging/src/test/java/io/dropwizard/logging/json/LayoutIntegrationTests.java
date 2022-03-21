@@ -193,7 +193,7 @@ class LayoutIntegrationTests {
             Response response = mock(Response.class);
             when(response.getStatus()).thenReturn(200);
             when(response.getContentCount()).thenReturn(8290L);
-            HttpFields httpFields = new HttpFields();
+            HttpFields.Mutable httpFields = HttpFields.build();
             httpFields.add("Date", "Mon, 16 Nov 2012 05:00:48 GMT");
             httpFields.add("Server", "Apache/2.4.12");
             when(response.getHttpFields()).thenReturn(httpFields);

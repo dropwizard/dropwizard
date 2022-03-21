@@ -1,7 +1,6 @@
 package io.dropwizard.jetty;
 
 import com.codahale.metrics.MetricRegistry;
-import com.codahale.metrics.jetty9.InstrumentedConnectionFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
@@ -10,6 +9,7 @@ import io.dropwizard.jackson.Jackson;
 import io.dropwizard.logging.ConsoleAppenderFactory;
 import io.dropwizard.logging.FileAppenderFactory;
 import io.dropwizard.logging.SyslogAppenderFactory;
+import io.dropwizard.metrics.jetty10.InstrumentedConnectionFactory;
 import io.dropwizard.util.DataSize;
 import io.dropwizard.util.Duration;
 import io.dropwizard.validation.BaseValidator;
@@ -162,7 +162,7 @@ class HttpConnectorFactoryTest {
                     .asInstanceOf(InstanceOfAssertFactories.type(HttpConnectionFactory.class))
                     .satisfies(factory -> {
                         assertThat(factory.getInputBufferSize()).isEqualTo(8192);
-                        assertThat(factory.getHttpCompliance()).isEqualByComparingTo(HttpCompliance.RFC7230);
+                        assertThat(factory.getHttpConfiguration().getHttpCompliance()).isEqualTo(HttpCompliance.RFC7230);
                     })
                     .extracting(HttpConnectionFactory::getHttpConfiguration)
                     .satisfies(config -> {

@@ -1,12 +1,12 @@
 package io.dropwizard.server;
 
 import com.codahale.metrics.MetricRegistry;
-import com.codahale.metrics.jetty9.InstrumentedQueuedThreadPool;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.dropwizard.jetty.ConnectorFactory;
 import io.dropwizard.jetty.HttpConnectorFactory;
 import io.dropwizard.jetty.RoutingHandler;
+import io.dropwizard.metrics.jetty10.InstrumentedQueuedThreadPool;
 import io.dropwizard.setup.Environment;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;

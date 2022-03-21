@@ -24,7 +24,7 @@ public class SslReloadBundle implements ConfiguredBundle<Configuration> {
 
     @Override
     public void run(Configuration configuration, Environment environment) {
-        environment.getApplicationContext().addLifeCycleListener(new LifeCycle.Listener() {
+        environment.getApplicationContext().addEventListener(new LifeCycle.Listener() {
             @Override
             public void lifeCycleStarted(LifeCycle event) {
                 final Set<SslReload> reloaders = new HashSet<>();

@@ -1,11 +1,11 @@
 package io.dropwizard.jetty;
 
 import com.codahale.metrics.MetricRegistry;
-import com.codahale.metrics.jetty9.InstrumentedConnectionFactory;
 import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.DiscoverableSubtypeResolver;
 import io.dropwizard.jackson.Jackson;
+import io.dropwizard.metrics.jetty10.InstrumentedConnectionFactory;
 import io.dropwizard.validation.BaseValidator;
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.eclipse.jetty.server.ConnectionFactory;

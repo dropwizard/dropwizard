@@ -42,7 +42,6 @@ class GzipHandlerTest {
         request.setHeader("Connection", "close");
         request.setURI("/banner");
 
-        gzipHandler.setExcludedAgentPatterns();
         gzipHandler.addIncludedMethods("POST");
         servletTester.addServlet(BannerServlet.class, "/banner");
         servletTester.getContext().setGzipHandler(gzipHandler);

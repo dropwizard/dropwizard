@@ -22,6 +22,7 @@ server:
         keyStorePassword: password
         trustStoreType: PKCS12
         supportedProtocols: ["TLSv1.2"]
+        disableSniHostCheck: true
       - type: https
         port: 0
         keyStoreType: PKCS12
@@ -34,6 +35,7 @@ server:
         keyStorePassword: password
         trustStoreType: PKCS12
         supportedProtocols: ["TLSv1.2"]
+        disableSniHostCheck: true
   adminConnectors:
       - type: http
         port: 0
