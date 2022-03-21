@@ -49,8 +49,8 @@ class ResilientSocketOutputStreamTest {
     void testGetDescription() throws IOException {
         try (ServerSocket ss = new ServerSocket(0); ResilientSocketOutputStream resilientSocketOutputStream = new ResilientSocketOutputStream("localhost", ss.getLocalPort(),
             1024, 500, SocketFactory.getDefault())) {
-            assertThat(resilientSocketOutputStream.getDescription()).isEqualTo(String.format("tcp [localhost:%d]",
-                ss.getLocalPort()));
+            assertThat(resilientSocketOutputStream.getDescription())
+                .isEqualTo("tcp [localhost:%d]", ss.getLocalPort());
         }
     }
 }

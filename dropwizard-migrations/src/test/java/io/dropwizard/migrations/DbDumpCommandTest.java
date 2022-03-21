@@ -98,70 +98,70 @@ class DbDumpCommandTest {
     @Test
     void testHelpPage() throws Exception {
         MigrationTestSupport.createSubparser(dumpCommand).printHelp(new PrintWriter(new OutputStreamWriter(baos, UTF_8), true));
-        assertThat(baos.toString(UTF_8.name())).isEqualTo(String.format(
-                "usage: db dump [-h] [--migrations MIGRATIONS-FILE] [--catalog CATALOG]%n" +
-                        "          [--schema SCHEMA] [-o OUTPUT] [--tables] [--ignore-tables]%n" +
-                        "          [--columns] [--ignore-columns] [--views] [--ignore-views]%n" +
-                        "          [--primary-keys] [--ignore-primary-keys] [--unique-constraints]%n" +
-                        "          [--ignore-unique-constraints] [--indexes] [--ignore-indexes]%n" +
-                        "          [--foreign-keys] [--ignore-foreign-keys] [--sequences]%n" +
-                        "          [--ignore-sequences] [--data] [--ignore-data] [file]%n" +
-                        "%n" +
-                        "Generate a dump of the existing database state.%n" +
-                        "%n" +
-                        "positional arguments:%n" +
-                        "  file                   application configuration file%n" +
-                        "%n" +
-                        "named arguments:%n" +
-                        "  -h, --help             show this help message and exit%n" +
-                        "  --migrations MIGRATIONS-FILE%n" +
-                        "                         the file containing  the  Liquibase migrations for%n" +
-                        "                         the application%n" +
-                        "  --catalog CATALOG      Specify  the   database   catalog   (use  database%n" +
-                        "                         default if omitted)%n" +
-                        "  --schema SCHEMA        Specify the database schema  (use database default%n" +
-                        "                         if omitted)%n" +
-                        "  -o OUTPUT, --output OUTPUT%n" +
-                        "                         Write output to <file> instead of stdout%n" +
-                        "%n" +
-                        "Tables:%n" +
-                        "  --tables               Check for added or removed tables (default)%n" +
-                        "  --ignore-tables        Ignore tables%n" +
-                        "%n" +
-                        "Columns:%n" +
-                        "  --columns              Check for  added,  removed,  or  modified  columns%n" +
-                        "                         (default)%n" +
-                        "  --ignore-columns       Ignore columns%n" +
-                        "%n" +
-                        "Views:%n" +
-                        "  --views                Check  for  added,  removed,   or  modified  views%n" +
-                        "                         (default)%n" +
-                        "  --ignore-views         Ignore views%n" +
-                        "%n" +
-                        "Primary Keys:%n" +
-                        "  --primary-keys         Check for changed primary keys (default)%n" +
-                        "  --ignore-primary-keys  Ignore primary keys%n" +
-                        "%n" +
-                        "Unique Constraints:%n" +
-                        "  --unique-constraints   Check for changed unique constraints (default)%n" +
-                        "  --ignore-unique-constraints%n" +
-                        "                         Ignore unique constraints%n" +
-                        "%n" +
-                        "Indexes:%n" +
-                        "  --indexes              Check for changed indexes (default)%n" +
-                        "  --ignore-indexes       Ignore indexes%n" +
-                        "%n" +
-                        "Foreign Keys:%n" +
-                        "  --foreign-keys         Check for changed foreign keys (default)%n" +
-                        "  --ignore-foreign-keys  Ignore foreign keys%n" +
-                        "%n" +
-                        "Sequences:%n" +
-                        "  --sequences            Check for changed sequences (default)%n" +
-                        "  --ignore-sequences     Ignore sequences%n" +
-                        "%n" +
-                        "Data:%n" +
-                        "  --data                 Check for changed data%n" +
-                        "  --ignore-data          Ignore data (default)%n"));
+        assertThat(baos.toString(UTF_8.name())).isEqualToNormalizingNewlines(
+                "usage: db dump [-h] [--migrations MIGRATIONS-FILE] [--catalog CATALOG]\n" +
+                        "          [--schema SCHEMA] [-o OUTPUT] [--tables] [--ignore-tables]\n" +
+                        "          [--columns] [--ignore-columns] [--views] [--ignore-views]\n" +
+                        "          [--primary-keys] [--ignore-primary-keys] [--unique-constraints]\n" +
+                        "          [--ignore-unique-constraints] [--indexes] [--ignore-indexes]\n" +
+                        "          [--foreign-keys] [--ignore-foreign-keys] [--sequences]\n" +
+                        "          [--ignore-sequences] [--data] [--ignore-data] [file]\n" +
+                        "\n" +
+                        "Generate a dump of the existing database state.\n" +
+                        "\n" +
+                        "positional arguments:\n" +
+                        "  file                   application configuration file\n" +
+                        "\n" +
+                        "named arguments:\n" +
+                        "  -h, --help             show this help message and exit\n" +
+                        "  --migrations MIGRATIONS-FILE\n" +
+                        "                         the file containing  the  Liquibase migrations for\n" +
+                        "                         the application\n" +
+                        "  --catalog CATALOG      Specify  the   database   catalog   (use  database\n" +
+                        "                         default if omitted)\n" +
+                        "  --schema SCHEMA        Specify the database schema  (use database default\n" +
+                        "                         if omitted)\n" +
+                        "  -o OUTPUT, --output OUTPUT\n" +
+                        "                         Write output to <file> instead of stdout\n" +
+                        "\n" +
+                        "Tables:\n" +
+                        "  --tables               Check for added or removed tables (default)\n" +
+                        "  --ignore-tables        Ignore tables\n" +
+                        "\n" +
+                        "Columns:\n" +
+                        "  --columns              Check for  added,  removed,  or  modified  columns\n" +
+                        "                         (default)\n" +
+                        "  --ignore-columns       Ignore columns\n" +
+                        "\n" +
+                        "Views:\n" +
+                        "  --views                Check  for  added,  removed,   or  modified  views\n" +
+                        "                         (default)\n" +
+                        "  --ignore-views         Ignore views\n" +
+                        "\n" +
+                        "Primary Keys:\n" +
+                        "  --primary-keys         Check for changed primary keys (default)\n" +
+                        "  --ignore-primary-keys  Ignore primary keys\n" +
+                        "\n" +
+                        "Unique Constraints:\n" +
+                        "  --unique-constraints   Check for changed unique constraints (default)\n" +
+                        "  --ignore-unique-constraints\n" +
+                        "                         Ignore unique constraints\n" +
+                        "\n" +
+                        "Indexes:\n" +
+                        "  --indexes              Check for changed indexes (default)\n" +
+                        "  --ignore-indexes       Ignore indexes\n" +
+                        "\n" +
+                        "Foreign Keys:\n" +
+                        "  --foreign-keys         Check for changed foreign keys (default)\n" +
+                        "  --ignore-foreign-keys  Ignore foreign keys\n" +
+                        "\n" +
+                        "Sequences:\n" +
+                        "  --sequences            Check for changed sequences (default)\n" +
+                        "  --ignore-sequences     Ignore sequences\n" +
+                        "\n" +
+                        "Data:\n" +
+                        "  --data                 Check for changed data\n" +
+                        "  --ignore-data          Ignore data (default)\n");
     }
 
 

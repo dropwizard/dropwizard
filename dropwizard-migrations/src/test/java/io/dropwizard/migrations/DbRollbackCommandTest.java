@@ -161,31 +161,31 @@ class DbRollbackCommandTest {
     @Test
     void testPrintHelp() throws Exception {
         MigrationTestSupport.createSubparser(rollbackCommand).printHelp(new PrintWriter(new OutputStreamWriter(baos, UTF_8), true));
-        assertThat(baos.toString(UTF_8.name())).isEqualTo(String.format(
-            "usage: db rollback [-h] [--migrations MIGRATIONS-FILE] [--catalog CATALOG]%n" +
-            "          [--schema SCHEMA] [-n] [-t TAG] [-d DATE] [-c COUNT]%n" +
-            "          [-i CONTEXTS] [file]%n" +
-            "%n" +
-            "Rollback the database schema to a previous version.%n" +
-            "%n" +
-            "positional arguments:%n" +
-            "  file                   application configuration file%n" +
-            "%n" +
-            "named arguments:%n" +
-            "  -h, --help             show this help message and exit%n" +
-            "  --migrations MIGRATIONS-FILE%n" +
-            "                         the file containing  the  Liquibase migrations for%n" +
-            "                         the application%n" +
-            "  --catalog CATALOG      Specify  the   database   catalog   (use  database%n" +
-            "                         default if omitted)%n" +
-            "  --schema SCHEMA        Specify the database schema  (use database default%n" +
-            "                         if omitted)%n" +
-            "  -n, --dry-run          Output the DDL to stdout, don't run it%n" +
-            "  -t TAG, --tag TAG      Rollback to the given tag%n" +
-            "  -d DATE, --date DATE   Rollback to the given date%n" +
-            "  -c COUNT, --count COUNT%n" +
-            "                         Rollback the specified number of change sets%n" +
-            "  -i CONTEXTS, --include CONTEXTS%n" +
-            "                         include change sets from the given context%n"));
+        assertThat(baos.toString(UTF_8.name())).isEqualToNormalizingNewlines(
+            "usage: db rollback [-h] [--migrations MIGRATIONS-FILE] [--catalog CATALOG]\n" +
+            "          [--schema SCHEMA] [-n] [-t TAG] [-d DATE] [-c COUNT]\n" +
+            "          [-i CONTEXTS] [file]\n" +
+            "\n" +
+            "Rollback the database schema to a previous version.\n" +
+            "\n" +
+            "positional arguments:\n" +
+            "  file                   application configuration file\n" +
+            "\n" +
+            "named arguments:\n" +
+            "  -h, --help             show this help message and exit\n" +
+            "  --migrations MIGRATIONS-FILE\n" +
+            "                         the file containing  the  Liquibase migrations for\n" +
+            "                         the application\n" +
+            "  --catalog CATALOG      Specify  the   database   catalog   (use  database\n" +
+            "                         default if omitted)\n" +
+            "  --schema SCHEMA        Specify the database schema  (use database default\n" +
+            "                         if omitted)\n" +
+            "  -n, --dry-run          Output the DDL to stdout, don't run it\n" +
+            "  -t TAG, --tag TAG      Rollback to the given tag\n" +
+            "  -d DATE, --date DATE   Rollback to the given date\n" +
+            "  -c COUNT, --count COUNT\n" +
+            "                         Rollback the specified number of change sets\n" +
+            "  -i CONTEXTS, --include CONTEXTS\n" +
+            "                         include change sets from the given context\n");
     }
 }
