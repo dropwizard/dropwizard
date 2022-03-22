@@ -29,7 +29,7 @@ jobs:
         java-version: ${{ matrix.java_version }}
         cache: 'maven'
     - name: Cache SonarCloud packages
-      uses: actions/cache@v2.1.7
+      uses: actions/cache@v3
       if: ${{ env.SONAR_TOKEN != null && env.SONAR_TOKEN != '' && matrix.java_version == '11' }}
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
