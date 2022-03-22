@@ -104,7 +104,7 @@ create a new ``MessageQueueFactory`` class:
 
 .. literalinclude:: /examples/core/src/main/java/io/dropwizard/documentation/mq/MessageQueueFactory.java
     :language: java
-    :lines: 10-
+    :start-after: //example: MessageQueueFactory
 
 In this example our factory will automatically tie our ``MessageQueueClient`` connection to the
 lifecycle of our application's ``Environment``.
@@ -113,21 +113,23 @@ Your main ``Configuration`` subclass can then include this as a member field:
 
 .. literalinclude:: /examples/core/src/main/java/io/dropwizard/documentation/config/ExampleConfiguration.java
     :language: java
-    :lines: 10-
+    :start-after: //example: ExampleConfiguration
 
 And your ``Application`` subclass can then use your factory to directly construct a client for the
 message queue:
 
 .. literalinclude:: /examples/core/src/main/java/io/dropwizard/documentation/ExampleApp.java
     :language: java
-    :lines: 22-25
+    :start-after: //example: ExampleApp#run
+    :end-before: //example: ExampleApp#run
     :dedent: 4
 
 Then, in your application's YAML file, you can use a nested ``messageQueue`` field:
 
 .. literalinclude:: /examples/core/src/config/config.yml
     :language: yaml
-    :lines: 1-3
+    :start-after: #example: config#messageQueue
+    :end-before: #example: config#messageQueue
 
 The ``@NotNull``, ``@NotEmpty``, ``@Min``, ``@Max``, and ``@Valid`` annotations are part of
 :ref:`man-validation` functionality. If your YAML configuration file's
@@ -183,7 +185,8 @@ value of environment variables using a ``SubstitutingSourceProvider`` and ``Envi
 
 .. literalinclude:: /examples/core/src/main/java/io/dropwizard/documentation/ExampleApp.java
     :language: java
-    :lines: 13-19
+    :start-after: //example: ExampleApp#initialize
+    :end-before: //example: ExampleApp#initialize
     :dedent: 4
 
 The configuration settings which should be substituted need to be explicitly written in the configuration file and
@@ -191,7 +194,8 @@ follow the substitution rules of StringSubstitutor_ from the Apache Commons Text
 
 .. literalinclude:: /examples/core/src/config/config.yml
     :language: yaml
-    :lines: 4-5
+    :start-after: #example: config#stringSubstitutor
+    :end-before: #example: config#stringSubstitutor
 
 In general ``SubstitutingSourceProvider`` isn't restricted to substitute environment variables but can be used to replace
 variables in the configuration source with arbitrary values by passing a custom ``StringSubstitutor`` implementation.
@@ -236,12 +240,14 @@ in your app:
 
 .. literalinclude:: /examples/conscrypt/pom.xml
     :language: xml
-    :lines: 24-28
+    :start-after: <!-- example: conscrypt-openjdk-uber -->
+    :end-before: <!-- example: conscrypt-openjdk-uber -->
     :dedent: 8
 
 .. literalinclude:: /examples/conscrypt/src/main/java/io/dropwizard/documentation/ConscryptApp.java
     :language: java
-    :lines: 11-13
+    :start-after: //example: ConscryptApp#Security
+    :end-before: //example: ConscryptApp#Security
     :dedent: 4
 
 and setting the JCE provider in the configuration:
@@ -253,7 +259,8 @@ For HTTP/2 servers you need to add an ALPN Conscrypt provider as a dependency.
 
 .. literalinclude:: /examples/conscrypt/pom.xml
     :language: xml
-    :lines: 29-32
+    :start-after: <!-- example: jetty-alpn-conscrypt-server -->
+    :end-before: <!-- example: jetty-alpn-conscrypt-server -->
     :dedent: 8
 
 .. note::

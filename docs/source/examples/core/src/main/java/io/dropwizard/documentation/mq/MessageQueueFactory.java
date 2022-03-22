@@ -8,6 +8,7 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 
+//example: MessageQueueFactory
 public final class MessageQueueFactory {
     @NotEmpty
     private String host;

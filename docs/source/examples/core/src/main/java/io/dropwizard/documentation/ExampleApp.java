@@ -10,6 +10,7 @@ import io.dropwizard.documentation.mq.MessageQueueClient;
 
 public class ExampleApp extends Application<ExampleConfiguration> {
     @Override
+    //example: ExampleApp#initialize
     public void initialize(Bootstrap<ExampleConfiguration> bootstrap) {
         // Enable variable substitution with environment variables
         EnvironmentVariableSubstitutor substitutor = new EnvironmentVariableSubstitutor(false);
@@ -17,10 +18,13 @@ public class ExampleApp extends Application<ExampleConfiguration> {
                 new SubstitutingSourceProvider(bootstrap.getConfigurationSourceProvider(), substitutor);
         bootstrap.setConfigurationSourceProvider(provider);
     }
+    //example: ExampleApp#initialize
 
     @Override
+    //example: ExampleApp#run
     public void run(ExampleConfiguration configuration,
                     Environment environment) {
         MessageQueueClient messageQueue = configuration.getMessageQueueFactory().build(environment);
     }
+    //example: ExampleApp#run
 }

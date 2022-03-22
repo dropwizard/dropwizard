@@ -8,9 +8,11 @@ import org.conscrypt.OpenSSLProvider;
 import java.security.Security;
 
 public class ConscryptApp extends Application<Configuration> {
+    //example: ConscryptApp#Security
     static {
         Security.insertProviderAt(new OpenSSLProvider(), 1);
     }
+    //example: ConscryptApp#Security
 
     @Override
     public void run(Configuration configuration, Environment environment) throws Exception {

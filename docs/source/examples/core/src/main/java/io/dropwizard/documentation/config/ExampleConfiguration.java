@@ -7,6 +7,7 @@ import io.dropwizard.documentation.mq.MessageQueueFactory;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+//example: ExampleConfiguration
 public class ExampleConfiguration extends Configuration {
     @Valid
     @NotNull

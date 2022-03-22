@@ -1,8 +1,12 @@
+#example: config#messageQueue
 messageQueue:
   host: mq.example.com
   port: 5673
+#example: config#messageQueue
+#example: config#stringSubstitutor
 mySetting: ${DW_MY_SETTING}
 defaultSetting: ${DW_DEFAULT_SETTING:-default value}
+#example: config#stringSubstitutor
 server:
   applicationConnectors:
     - type: https

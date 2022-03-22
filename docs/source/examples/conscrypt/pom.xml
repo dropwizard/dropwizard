@@ -21,14 +21,18 @@
             <groupId>io.dropwizard</groupId>
             <artifactId>dropwizard-core</artifactId>
         </dependency>
+        <!-- example: conscrypt-openjdk-uber -->
         <dependency>
             <groupId>org.conscrypt</groupId>
             <artifactId>conscrypt-openjdk-uber</artifactId>
             <version>${conscrypt.version}</version>
         </dependency>
+        <!-- example: conscrypt-openjdk-uber -->
+        <!-- example: jetty-alpn-conscrypt-server -->
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-alpn-conscrypt-server</artifactId>
         </dependency>
+        <!-- example: jetty-alpn-conscrypt-server -->
     </dependencies>
 </project>
