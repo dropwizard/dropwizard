@@ -1,0 +1,5 @@
+views:
+  mustache:
+    cache: false
+  freemarker:
+    strict_syntax: true

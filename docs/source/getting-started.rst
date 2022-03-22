@@ -141,31 +141,24 @@ You have three alternatives from here:
 Tutorial
 --------
 
-First, add a ``dropwizard.version`` property to your POM with the current version of Dropwizard
-(which is |release|):
+First, add the ``dropwizard-bom`` bill of materials (BOM) into the ``dependencyManagement`` section of your POM
+with the current version of Dropwizard (which is |release|):
 
-.. code-block:: xml
-
-    <properties>
-        <dropwizard.version>INSERT VERSION HERE</dropwizard.version>
-    </properties>
+.. literalinclude:: /examples/getting-started/pom.xml
+    :language: xml
+    :lines: 14-25
+    :dedent: 4
 
 Add the ``dropwizard-core`` library as a dependency:
 
 .. _gs-pom-dependencies:
 
-.. code-block:: xml
+.. literalinclude:: /examples/getting-started/pom.xml
+    :language: xml
+    :lines: 26-32
+    :dedent: 4
 
-    <dependencies>
-        <dependency>
-            <groupId>io.dropwizard</groupId>
-            <artifactId>dropwizard-core</artifactId>
-            <version>${dropwizard.version}</version>
-        </dependency>
-    </dependencies>
-
-Alright, that's enough XML. We've got a Maven project set up now, and it's time to start writing
-real code.
+Alright, that's enough XML. We've got a Maven project set up now, and it's time to start writing real code.
 
 .. _gs-configuration:
 
@@ -189,41 +182,8 @@ Here's what our configuration class will look like, full `example conf here`_:
 
 .. _gs-configuration-class:
 
-.. code-block:: java
-
-    package com.example.helloworld;
-
-    import io.dropwizard.core.Configuration;
-    import com.fasterxml.jackson.annotation.JsonProperty;
-    import javax.validation.constraints.NotEmpty;
-
-    public class HelloWorldConfiguration extends Configuration {
-        @NotEmpty
-        private String template;
-
-        @NotEmpty
-        private String defaultName = "Stranger";
-
-        @JsonProperty
-        public String getTemplate() {
-            return template;
-        }
-
-        @JsonProperty
-        public void setTemplate(String template) {
-            this.template = template;
-        }
-
-        @JsonProperty
-        public String getDefaultName() {
-            return defaultName;
-        }
-
-        @JsonProperty
-        public void setDefaultName(String name) {
-            this.defaultName = name;
-        }
-    }
+.. literalinclude:: /examples/getting-started/src/main/java/com/example/helloworld/HelloWorldConfiguration.java
+    :language: java
 
 There's a lot going on here, so let's unpack a bit of it.
 
@@ -254,10 +214,8 @@ Our YAML file will then look like the below, full `example yml here`_:
 
 .. _gs-yaml-file:
 
-.. code-block:: yaml
-
-    template: Hello, %s!
-    defaultName: Stranger
+.. literalinclude:: /examples/getting-started/src/config/hello-world.yaml
+    :language: yaml
 
 Dropwizard has *many* more configuration parameters than that, but they all have sane defaults so
 you can keep your configuration files small and focused.
@@ -275,38 +233,8 @@ of your Dropwizard application. The ``Application`` class pulls together the var
 commands which provide basic functionality. (More on that later.) For now, though, our
 ``HelloWorldApplication`` looks like this:
 
-.. code-block:: java
-
-    package com.example.helloworld;
-
-    import io.dropwizard.core.Application;
-    import io.dropwizard.core.setup.Bootstrap;
-    import io.dropwizard.core.setup.Environment;
-    import com.example.helloworld.resources.HelloWorldResource;
-    import com.example.helloworld.health.TemplateHealthCheck;
-
-    public class HelloWorldApplication extends Application<HelloWorldConfiguration> {
-        public static void main(String[] args) throws Exception {
-            new HelloWorldApplication().run(args);
-        }
-
-        @Override
-        public String getName() {
-            return "hello-world";
-        }
-
-        @Override
-        public void initialize(Bootstrap<HelloWorldConfiguration> bootstrap) {
-            // nothing to do yet
-        }
-
-        @Override
-        public void run(HelloWorldConfiguration configuration,
-                        Environment environment) {
-            // nothing to do yet
-        }
-
-    }
+.. literalinclude:: /examples/getting-started/src/main/java/com/example/helloworld/HelloWorldApplicationStart.java
+    :language: java
 
 As you can see, ``HelloWorldApplication`` is parameterized with the application's configuration
 type, ``HelloWorldConfiguration``. An ``initialize`` method is used to configure aspects of the
@@ -339,36 +267,8 @@ representation of the saying. (Thankfully, this is a fairly straight-forward ind
 
 To model this representation, we'll create a representation class:
 
-.. code-block:: java
-
-    package com.example.helloworld.api;
-
-    import com.fasterxml.jackson.annotation.JsonProperty;
-
-    public class Saying {
-        private long id;
-
-        private String content;
-
-        public Saying() {
-            // Jackson deserialization
-        }
-
-        public Saying(long id, String content) {
-            this.id = id;
-            this.content = content;
-        }
-
-        @JsonProperty
-        public long getId() {
-            return id;
-        }
-
-        @JsonProperty
-        public String getContent() {
-            return content;
-        }
-    }
+.. literalinclude:: /examples/getting-started/src/main/java/com/example/helloworld/api/Saying.java
+    :language: java
 
 This is a pretty simple POJO, but there are a few things worth noting here.
 
@@ -398,41 +298,8 @@ Jersey resources are the meat-and-potatoes of a Dropwizard application. Each res
 associated with a URI template. For our application, we need a resource which returns new ``Saying``
 instances from the URI ``/hello-world``, so our resource class looks like this:
 
-.. code-block:: java
-
-    package com.example.helloworld.resources;
-
-    import com.example.helloworld.api.Saying;
-    import com.codahale.metrics.annotation.Timed;
-
-    import javax.ws.rs.GET;
-    import javax.ws.rs.Path;
-    import javax.ws.rs.Produces;
-    import javax.ws.rs.QueryParam;
-    import javax.ws.rs.core.MediaType;
-    import java.util.concurrent.atomic.AtomicLong;
-    import java.util.Optional;
-
-    @Path("/hello-world")
-    @Produces(MediaType.APPLICATION_JSON)
-    public class HelloWorldResource {
-        private final String template;
-        private final String defaultName;
-        private final AtomicLong counter;
-
-        public HelloWorldResource(String template, String defaultName) {
-            this.template = template;
-            this.defaultName = defaultName;
-            this.counter = new AtomicLong();
-        }
-
-        @GET
-        @Timed
-        public Saying sayHello(@QueryParam("name") Optional<String> name) {
-            final String value = String.format(template, name.orElse(defaultName));
-            return new Saying(counter.incrementAndGet(), value);
-        }
-    }
+.. literalinclude:: /examples/getting-started/src/main/java/com/example/helloworld/resources/HelloWorldResource.java
+    :language: java
 
 Finally, we're in the thick of it! Let's start from the top and work our way down.
 
@@ -488,17 +355,10 @@ new resource class. In its ``run`` method we can read the template and default n
 ``HelloWorldConfiguration`` instance, create a new ``HelloWorldResource`` instance, and then add
 it to the application's Jersey environment:
 
-.. code-block:: java
-
-    @Override
-    public void run(HelloWorldConfiguration configuration,
-                    Environment environment) {
-        final HelloWorldResource resource = new HelloWorldResource(
-            configuration.getTemplate(),
-            configuration.getDefaultName()
-        );
-        environment.jersey().register(resource);
-    }
+.. literalinclude:: /examples/getting-started/src/main/java/com/example/helloworld/HelloWorldApplication.java
+    :language: java
+    :lines: 26-30
+    :dedent: 8
 
 When our application starts, we create a new instance of our resource class with the parameters from
 the configuration file and hand it off to the ``Environment``, which acts like a registry of all the
@@ -530,29 +390,8 @@ Since formatting strings is not likely to fail while an application is running (
 database connection pool), we'll have to get a little creative here. We'll add a health check to
 make sure we can actually format the provided template:
 
-.. code-block:: java
-
-    package com.example.helloworld.health;
-
-    import com.codahale.metrics.health.HealthCheck;
-
-    public class TemplateHealthCheck extends HealthCheck {
-        private final String template;
-
-        public TemplateHealthCheck(String template) {
-            this.template = template;
-        }
-
-        @Override
-        protected Result check() throws Exception {
-            final String saying = String.format(template, "TEST");
-            if (!saying.contains("TEST")) {
-                return Result.unhealthy("template doesn't include a name");
-            }
-            return Result.healthy();
-        }
-    }
-
+.. literalinclude:: /examples/getting-started/src/main/java/com/example/helloworld/health/TemplateHealthCheck.java
+    :language: java
 
 ``TemplateHealthCheck`` checks for two things: that the provided template is actually a well-formed
 format string, and that the template actually produces output with the given name.
@@ -570,21 +409,10 @@ Adding A Health Check
 As with most things in Dropwizard, we create a new instance with the appropriate parameters and add
 it to the ``Environment``:
 
-.. code-block:: java
-
-    @Override
-    public void run(HelloWorldConfiguration configuration,
-                    Environment environment) {
-        final HelloWorldResource resource = new HelloWorldResource(
-            configuration.getTemplate(),
-            configuration.getDefaultName()
-        );
-        final TemplateHealthCheck healthCheck =
-            new TemplateHealthCheck(configuration.getTemplate());
-        environment.healthChecks().register("template", healthCheck);
-        environment.jersey().register(resource);
-    }
-
+.. literalinclude:: /examples/getting-started/src/main/java/com/example/helloworld/HelloWorldApplication.java
+    :language: java
+    :lines: 26-33
+    :dedent: 8
 
 Now we're almost ready to go!
 
@@ -601,43 +429,11 @@ libraries. To start building our Hello World application as a fat JAR, we need t
 plugin called ``maven-shade``. In the ``<build><plugins>`` section of your ``pom.xml`` file, add
 this:
 
-.. code-block:: xml
+.. literalinclude:: /examples/getting-started/pom.xml
+    :language: xml
+    :lines: 36-71
     :emphasize-lines: 6,8,9,10,11,12,13,14,15,26,27,28,29
-
-    <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-shade-plugin</artifactId>
-        <version>2.3</version>
-        <configuration>
-            <createDependencyReducedPom>true</createDependencyReducedPom>
-            <filters>
-                <filter>
-                    <artifact>*:*</artifact>
-                    <excludes>
-                        <exclude>META-INF/*.SF</exclude>
-                        <exclude>META-INF/*.DSA</exclude>
-                        <exclude>META-INF/*.RSA</exclude>
-                    </excludes>
-                </filter>
-            </filters>
-        </configuration>
-        <executions>
-            <execution>
-                <phase>package</phase>
-                <goals>
-                    <goal>shade</goal>
-                </goals>
-                <configuration>
-                    <transformers>
-                        <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
-                        <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                            <mainClass>com.example.helloworld.HelloWorldApplication</mainClass>
-                        </transformer>
-                    </transformers>
-                </configuration>
-            </execution>
-        </executions>
-    </plugin>
+    :dedent: 12
 
 This configures Maven to do a couple of things during its ``package`` phase:
 
@@ -675,20 +471,10 @@ Dropwizard can also use the project version if it's embedded in the JAR's manife
 ``Implementation-Version``. To embed this information using Maven, add the following to the
 ``<build><plugins>`` section of your ``pom.xml`` file:
 
-.. code-block:: xml
-
-    <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <version>2.4</version>
-        <configuration>
-            <archive>
-                <manifest>
-                    <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                </manifest>
-            </archive>
-        </configuration>
-    </plugin>
+.. literalinclude:: /examples/getting-started/pom.xml
+    :language: xml
+    :lines: 72-83
+    :dedent: 12
 
 This can be handy when trying to figure out what version of your application you have deployed on a
 machine.

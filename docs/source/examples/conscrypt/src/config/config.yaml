@@ -1,0 +1,5 @@
+server:
+  type: simple
+  connector:
+    type: https
+    jceProvider: Conscrypt
