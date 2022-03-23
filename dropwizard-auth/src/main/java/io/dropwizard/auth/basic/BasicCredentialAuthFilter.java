@@ -6,7 +6,6 @@ import io.dropwizard.auth.Authenticator;
 import javax.annotation.Nullable;
 import javax.annotation.Priority;
 import javax.ws.rs.Priorities;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.SecurityContext;
@@ -26,7 +25,7 @@ public class BasicCredentialAuthFilter<P extends Principal> extends AuthFilter<B
         final BasicCredentials credentials =
                 getCredentials(requestContext.getHeaders().getFirst(HttpHeaders.AUTHORIZATION));
         if (!authenticate(requestContext, credentials, SecurityContext.BASIC_AUTH)) {
-            throw new WebApplicationException(unauthorizedHandler.buildResponse(prefix, realm));
+            throw unauthorizedHandler.buildException(prefix, realm);
         }
     }
 
