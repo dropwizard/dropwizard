@@ -5,10 +5,9 @@ import io.dropwizard.auth.AuthBaseTest;
 import io.dropwizard.auth.AuthResource;
 import io.dropwizard.auth.util.AuthUtil;
 import io.dropwizard.jersey.DropwizardResourceConfig;
+import jakarta.ws.rs.container.ContainerRequestFilter;
 
 import java.util.Arrays;
-
-import jakarta.ws.rs.container.ContainerRequestFilter;
 
 public class OAuthCustomProviderTest extends AuthBaseTest<OAuthCustomProviderTest.OAuthTestResourceConfig> {
     public static class OAuthTestResourceConfig extends AbstractAuthResourceConfig {

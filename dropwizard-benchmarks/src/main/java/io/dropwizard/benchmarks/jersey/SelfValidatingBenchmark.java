@@ -1,7 +1,7 @@
 package io.dropwizard.benchmarks.jersey;
 
 import io.dropwizard.jersey.validation.Validators;
-import io.dropwizard.logging.BootstrapLogging;
+import io.dropwizard.logging.common.BootstrapLogging;
 import io.dropwizard.validation.ValidationMethod;
 import io.dropwizard.validation.selfvalidating.SelfValidating;
 import io.dropwizard.validation.selfvalidating.SelfValidation;

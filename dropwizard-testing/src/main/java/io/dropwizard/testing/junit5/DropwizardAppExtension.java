@@ -1,28 +1,27 @@
 package io.dropwizard.testing.junit5;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.dropwizard.Application;
-import io.dropwizard.Configuration;
-import io.dropwizard.cli.Command;
-import io.dropwizard.cli.ServerCommand;
 import io.dropwizard.configuration.ConfigurationSourceProvider;
+import io.dropwizard.core.Application;
+import io.dropwizard.core.Configuration;
+import io.dropwizard.core.cli.Command;
+import io.dropwizard.core.cli.ServerCommand;
+import io.dropwizard.core.setup.Environment;
 import io.dropwizard.jersey.jackson.JacksonFeature;
 import io.dropwizard.lifecycle.Managed;
-import io.dropwizard.setup.Environment;
 import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.DropwizardTestSupport;
+import jakarta.ws.rs.client.Client;
 import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.client.HttpUrlConnectorProvider;
 import org.glassfish.jersey.client.JerseyClientBuilder;
-
-import javax.annotation.Nullable;
-import jakarta.ws.rs.client.Client;
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Function;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
+
+import javax.annotation.Nullable;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
 
 //@formatter:off
 /**
@@ -70,17 +69,6 @@ public class DropwizardAppExtension<C extends Configuration> implements Dropwiza
     }
 
     /**
-     * @deprecated Use {@link #DropwizardAppExtension(Class, String, String, ConfigOverride...)} instead.
-     */
-    @Deprecated
-    public DropwizardAppExtension(Class<? extends Application<C>> applicationClass,
-                                  @Nullable String configPath,
-                                  Optional<String> customPropertyPrefix,
-                                  ConfigOverride... configOverrides) {
-        this(applicationClass, configPath, customPropertyPrefix.orElse(null), configOverrides);
-    }
-
-    /**
      * @since 2.0
      */
     public DropwizardAppExtension(Class<? extends Application<C>> applicationClass,
@@ -99,18 +87,6 @@ public class DropwizardAppExtension<C extends Configuration> implements Dropwiza
                                   @Nullable String customPropertyPrefix,
                                   ConfigOverride... configOverrides) {
         this(applicationClass, configPath, configSourceProvider, customPropertyPrefix, ServerCommand::new, configOverrides);
-    }
-
-    /**
-     * @deprecated Use {@link #DropwizardAppExtension(Class, String, String, Function, ConfigOverride...)} instead.
-     */
-    @Deprecated
-    public DropwizardAppExtension(Class<? extends Application<C>> applicationClass,
-                                  @Nullable String configPath,
-                                  Optional<String> customPropertyPrefix,
-                                  Function<Application<C>, Command> commandInstantiator,
-                                  ConfigOverride... configOverrides) {
-        this(applicationClass, configPath, customPropertyPrefix.orElse(null), commandInstantiator, configOverrides);
     }
 
     public DropwizardAppExtension(Class<? extends Application<C>> applicationClass,

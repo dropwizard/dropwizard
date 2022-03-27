@@ -1,8 +1,5 @@
 package io.dropwizard.jersey.filter;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.Locale;
 import jakarta.annotation.Priority;
 import jakarta.ws.rs.Priorities;
 import jakarta.ws.rs.container.ContainerRequestContext;
@@ -11,6 +8,10 @@ import jakarta.ws.rs.container.ContainerResponseFilter;
 import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.ext.Provider;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Locale;
 
 /**
  * This class ensures that any HTTP response that includes a Content-Type

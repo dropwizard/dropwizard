@@ -1,19 +1,20 @@
 package com.example.app1;
 
 import com.github.mustachejava.MustacheNotFoundException;
-import io.dropwizard.Application;
-import io.dropwizard.Configuration;
+import io.dropwizard.core.Application;
+import io.dropwizard.core.Configuration;
+import io.dropwizard.core.setup.Bootstrap;
+import io.dropwizard.core.setup.Environment;
 import io.dropwizard.jersey.optional.EmptyOptionalNoContentExceptionMapper;
-import io.dropwizard.setup.Bootstrap;
-import io.dropwizard.setup.Environment;
-import io.dropwizard.views.ViewBundle;
-import org.apache.commons.lang3.exception.ExceptionUtils;
+import io.dropwizard.views.common.ViewBundle;
 import org.eclipse.jetty.io.EofException;
 import org.glassfish.jersey.spi.ExtendedExceptionMapper;
 
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
+
+import static io.dropwizard.util.Throwables.findThrowableInChain;
 
 public class App1 extends Application<Configuration> {
     public volatile boolean wasEofExceptionHit = false;
@@ -50,7 +51,7 @@ public class App1 extends Application<Configuration> {
 
             @Override
             public boolean isMappable(WebApplicationException e) {
-                return ExceptionUtils.indexOfThrowable(e, MustacheNotFoundException.class) != -1;
+                return findThrowableInChain(t -> t.getClass() == MustacheNotFoundException.class, e).isPresent();
             }
         });
 

@@ -1,10 +1,10 @@
 package io.dropwizard.configuration;
 
-import javax.annotation.Nullable;
-import jakarta.validation.Validator;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import jakarta.validation.Validator;
+
+import javax.annotation.Nullable;
 
 /**
  * A factory class for loading YAML configuration files, binding them to configuration objects, and

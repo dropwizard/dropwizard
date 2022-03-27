@@ -293,18 +293,8 @@ public class AssetServlet extends HttpServlet {
         return new CachedAsset(readResource(requestedResourceURL), lastModified);
     }
 
-    /**
-     * @deprecated use/override {@link AssetServlet#getResourceURL(String)} instead
-     */
-    @Deprecated
-    protected URL getResourceUrl(String absoluteRequestedResourcePath) {
-        return Resources.getResource(absoluteRequestedResourcePath);
-    }
-
-    @SuppressWarnings("deprecation")
     protected URL getResourceURL(String absoluteRequestedResourcePath) {
-        // Delegate to the deprecated method as it may have been overridden in existing code.
-        return getResourceUrl(absoluteRequestedResourcePath);
+        return Resources.getResource(absoluteRequestedResourcePath);
     }
 
     protected byte[] readResource(URL requestedResourceURL) throws IOException {

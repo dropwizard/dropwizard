@@ -12,7 +12,6 @@ import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -20,7 +19,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 @NotThreadSafe
 class DbFastForwardCommandTest {
 
-    private static final Pattern NEWLINE_PATTERN = Pattern.compile(System.lineSeparator());
     private final DbFastForwardCommand<TestMigrationConfiguration> fastForwardCommand = new DbFastForwardCommand<>(
         TestMigrationConfiguration::getDataSource, TestMigrationConfiguration.class, "migrations.xml");
     private TestMigrationConfiguration conf;
@@ -91,8 +89,9 @@ class DbFastForwardCommandTest {
         // Fast-forward one change
         fastForwardCommand.run(null, new Namespace(Map.of("all", false, "dry-run", true)), conf);
 
-        assertThat(NEWLINE_PATTERN.splitAsStream(baos.toString(UTF_8.name()))
-            .filter(s -> s.startsWith("INSERT INTO PUBLIC.DATABASECHANGELOG (")))
+        assertThat(baos.toString(UTF_8)
+                .lines()
+                .filter(s -> s.startsWith("INSERT INTO PUBLIC.DATABASECHANGELOG (")))
             .hasSize(1);
     }
 
@@ -104,8 +103,9 @@ class DbFastForwardCommandTest {
         // Fast-forward 3 changes
         fastForwardCommand.run(null, new Namespace(Map.of("all", true, "dry-run", true)), conf);
 
-        assertThat(NEWLINE_PATTERN.splitAsStream(baos.toString(UTF_8.name()))
-            .filter(s -> s.startsWith("INSERT INTO PUBLIC.DATABASECHANGELOG (")))
+        assertThat(baos.toString(UTF_8)
+                .lines()
+                .filter(s -> s.startsWith("INSERT INTO PUBLIC.DATABASECHANGELOG (")))
             .hasSize(3);
     }
 
@@ -113,29 +113,29 @@ class DbFastForwardCommandTest {
     void testPrintHelp() throws Exception {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         MigrationTestSupport.createSubparser(fastForwardCommand).printHelp(new PrintWriter(new OutputStreamWriter(baos, UTF_8), true));
-        assertThat(baos.toString(UTF_8.name())).isEqualTo(String.format(
-            "usage: db fast-forward [-h] [--migrations MIGRATIONS-FILE]%n" +
-                "          [--catalog CATALOG] [--schema SCHEMA] [-n] [-a] [-i CONTEXTS]%n" +
-                "          [file]%n" +
-                "%n" +
-                "Mark the next pending change set as applied without running it%n" +
-                "%n" +
-                "positional arguments:%n" +
-                "  file                   application configuration file%n" +
-                "%n" +
-                "named arguments:%n" +
-                "  -h, --help             show this help message and exit%n" +
-                "  --migrations MIGRATIONS-FILE%n" +
-                "                         the file containing  the  Liquibase migrations for%n" +
-                "                         the application%n" +
-                "  --catalog CATALOG      Specify  the   database   catalog   (use  database%n" +
-                "                         default if omitted)%n" +
-                "  --schema SCHEMA        Specify the database schema  (use database default%n" +
-                "                         if omitted)%n" +
-                "  -n, --dry-run          output the DDL to stdout, don't run it%n" +
-                "  -a, --all              mark all pending change sets as applied%n" +
-                "  -i CONTEXTS, --include CONTEXTS%n" +
-                "                         include change sets from the given context%n"));
+        assertThat(baos.toString(UTF_8.name())).isEqualToNormalizingNewlines(
+            "usage: db fast-forward [-h] [--migrations MIGRATIONS-FILE]\n" +
+                "          [--catalog CATALOG] [--schema SCHEMA] [-n] [-a] [-i CONTEXTS]\n" +
+                "          [file]\n" +
+                "\n" +
+                "Mark the next pending change set as applied without running it\n" +
+                "\n" +
+                "positional arguments:\n" +
+                "  file                   application configuration file\n" +
+                "\n" +
+                "named arguments:\n" +
+                "  -h, --help             show this help message and exit\n" +
+                "  --migrations MIGRATIONS-FILE\n" +
+                "                         the file containing  the  Liquibase migrations for\n" +
+                "                         the application\n" +
+                "  --catalog CATALOG      Specify  the   database   catalog   (use  database\n" +
+                "                         default if omitted)\n" +
+                "  --schema SCHEMA        Specify the database schema  (use database default\n" +
+                "                         if omitted)\n" +
+                "  -n, --dry-run          output the DDL to stdout, don't run it\n" +
+                "  -a, --all              mark all pending change sets as applied\n" +
+                "  -i CONTEXTS, --include CONTEXTS\n" +
+                "                         include change sets from the given context\n");
 
     }
 }

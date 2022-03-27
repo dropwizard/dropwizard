@@ -193,7 +193,7 @@ Here's what our configuration class will look like, full `example conf here`_:
 
     package com.example.helloworld;
 
-    import io.dropwizard.Configuration;
+    import io.dropwizard.core.Configuration;
     import com.fasterxml.jackson.annotation.JsonProperty;
     import jakarta.validation.constraints.NotEmpty;
 
@@ -279,9 +279,9 @@ commands which provide basic functionality. (More on that later.) For now, thoug
 
     package com.example.helloworld;
 
-    import io.dropwizard.Application;
-    import io.dropwizard.setup.Bootstrap;
-    import io.dropwizard.setup.Environment;
+    import io.dropwizard.core.Application;
+    import io.dropwizard.core.setup.Bootstrap;
+    import io.dropwizard.core.setup.Environment;
     import com.example.helloworld.resources.HelloWorldResource;
     import com.example.helloworld.health.TemplateHealthCheck;
 
@@ -754,11 +754,11 @@ You should see something like the following:
 
 .. code-block:: text
 
-    INFO  [2011-12-03 00:38:32,927] io.dropwizard.cli.ServerCommand: Starting hello-world
+    INFO  [2011-12-03 00:38:32,927] io.dropwizard.core.cli.ServerCommand: Starting hello-world
     INFO  [2011-12-03 00:38:32,931] org.eclipse.jetty.server.Server: jetty-7.x.y-SNAPSHOT
     INFO  [2011-12-03 00:38:32,936] org.eclipse.jetty.server.handler.ContextHandler: started o.e.j.s.ServletContextHandler{/,null}
     INFO  [2011-12-03 00:38:32,999] com.sun.jersey.server.impl.application.WebApplicationImpl: Initiating Jersey application, version 'Jersey: 1.10 11/02/2011 03:53 PM'
-    INFO  [2011-12-03 00:38:33,041] io.dropwizard.setup.Environment:
+    INFO  [2011-12-03 00:38:33,041] io.dropwizard.core.setup.Environment:
 
         GET     /hello-world (com.example.helloworld.resources.HelloWorldResource)
 

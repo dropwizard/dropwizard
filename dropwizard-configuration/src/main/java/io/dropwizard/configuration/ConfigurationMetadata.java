@@ -94,7 +94,7 @@ public class ConfigurationMetadata extends JsonFormatVisitorWrapper.Base {
     public boolean isCollectionOfStrings(String fieldName) {
         Optional<JavaType> propertyType = getTypeOfField(fieldName);
 
-        if (!propertyType.isPresent()) {
+        if (propertyType.isEmpty()) {
             return false;
         }
 

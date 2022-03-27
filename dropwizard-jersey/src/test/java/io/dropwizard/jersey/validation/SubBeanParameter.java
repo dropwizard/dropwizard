@@ -3,8 +3,8 @@ package io.dropwizard.jersey.validation;
 import io.dropwizard.jersey.jackson.JacksonMessageBodyProviderTest;
 import io.dropwizard.validation.ValidationMethod;
 import jakarta.validation.constraints.NotEmpty;
-
 import jakarta.ws.rs.QueryParam;
+
 import java.util.Locale;
 
 public class SubBeanParameter extends BeanParameter {

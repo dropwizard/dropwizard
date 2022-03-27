@@ -1,10 +1,10 @@
 package io.dropwizard.hibernate;
 
 import com.codahale.metrics.MetricRegistry;
+import io.dropwizard.core.setup.Environment;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
-import io.dropwizard.logging.BootstrapLogging;
-import io.dropwizard.setup.Environment;
+import io.dropwizard.logging.common.BootstrapLogging;
 import org.hibernate.CacheMode;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;

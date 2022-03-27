@@ -1,6 +1,6 @@
 package com.example.app1;
 
-import io.dropwizard.views.View;
+import io.dropwizard.views.common.View;
 
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;

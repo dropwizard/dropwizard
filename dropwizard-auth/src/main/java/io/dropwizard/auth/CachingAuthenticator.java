@@ -100,7 +100,7 @@ public class CachingAuthenticator<C, P extends Principal> implements Authenticat
             loader = key -> {
                 cacheMisses.mark();
                 final Optional<P> optPrincipal = authenticator.authenticate(key);
-                if (!optPrincipal.isPresent()) {
+                if (optPrincipal.isEmpty()) {
                     // Prevent caching of unknown credentials
                     throw new InvalidCredentialsException();
                 }

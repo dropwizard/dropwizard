@@ -1,6 +1,7 @@
 package io.dropwizard.hibernate;
 
 import com.codahale.metrics.MetricRegistry;
+import io.dropwizard.core.setup.Environment;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.DropwizardResourceConfig;
@@ -8,15 +9,15 @@ import io.dropwizard.jersey.errors.ErrorMessage;
 import io.dropwizard.jersey.jackson.JacksonFeature;
 import io.dropwizard.jersey.optional.EmptyOptionalExceptionMapper;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
-import io.dropwizard.logging.BootstrapLogging;
-import io.dropwizard.setup.Environment;
+import io.dropwizard.logging.common.BootstrapLogging;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
+
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -165,7 +166,7 @@ class JerseyIntegrationTest extends JerseyTest {
                 .isEqualTo("coda@example.com");
 
         assertThat(coda.getBirthday())
-                .isEqualTo(new DateTime(1979, 1, 2, 0, 22, DateTimeZone.UTC));
+                .isEqualTo(ZonedDateTime.of(1979, 1, 2, 0, 22, 0, 0, ZoneId.of("UTC")));
     }
 
     @Test
@@ -181,7 +182,7 @@ class JerseyIntegrationTest extends JerseyTest {
         final Person person = new Person();
         person.setName("Hank");
         person.setEmail("hank@example.com");
-        person.setBirthday(new DateTime(1971, 3, 14, 19, 12, DateTimeZone.UTC));
+        person.setBirthday(ZonedDateTime.of(1971,3, 14, 14, 19, 12, 0, ZoneId.of("UTC")));
 
         target("/people/Hank").request().put(Entity.entity(person, MediaType.APPLICATION_JSON));
 
@@ -205,7 +206,7 @@ class JerseyIntegrationTest extends JerseyTest {
         final Person person = new Person();
         person.setName("Jeff");
         person.setEmail("jeff.hammersmith@targetprocessinc.com");
-        person.setBirthday(new DateTime(1984, 2, 11, 0, 0, DateTimeZone.UTC));
+        person.setBirthday(ZonedDateTime.of(1984, 2, 11, 0, 0, 0, 0, ZoneId.of("UTC")));
 
         final Response response = target("/people/Jeff").request().
                 put(Entity.entity(person, MediaType.APPLICATION_JSON));

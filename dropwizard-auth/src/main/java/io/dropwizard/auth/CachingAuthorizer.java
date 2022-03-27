@@ -105,11 +105,6 @@ public class CachingAuthorizer<P extends Principal> implements Authorizer<P> {
     }
 
     @Override
-    public boolean authorize(P principal, String role) {
-        return authorize(principal, role, null);
-    }
-
-    @Override
     public boolean authorize(P principal, String role, @Nullable ContainerRequestContext requestContext) {
         try (Timer.Context context = getsTimer.time()) {
             final AuthorizationContext<P> cacheKey = getAuthorizationContext(principal, role, requestContext);

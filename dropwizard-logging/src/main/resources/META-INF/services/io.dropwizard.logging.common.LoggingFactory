@@ -1,0 +1,2 @@
+io.dropwizard.logging.common.DefaultLoggingFactory
+io.dropwizard.logging.common.ExternalLoggingFactory

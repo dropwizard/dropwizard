@@ -1,11 +1,12 @@
 package io.dropwizard.hibernate;
 
 import com.codahale.metrics.MetricRegistry;
+import io.dropwizard.core.setup.Environment;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.db.ManagedPooledDataSource;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
-import io.dropwizard.logging.BootstrapLogging;
-import io.dropwizard.setup.Environment;
+import io.dropwizard.logging.common.BootstrapLogging;
+import io.dropwizard.core.setup.Environment;
 import org.hibernate.EmptyInterceptor;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -13,14 +14,14 @@ import org.hibernate.Transaction;
 import org.hibernate.boot.registry.BootstrapServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import javax.annotation.Nullable;
+import java.time.ZonedDateTime;
+import java.time.ZoneId;
 import java.util.Collections;
 import java.util.Map;
 
@@ -43,7 +44,7 @@ class SessionFactoryFactoryTest {
     private final Environment environment = mock(Environment.class);
     private final MetricRegistry metricRegistry = new MetricRegistry();
 
-    private DataSourceFactory config = new DataSourceFactory();
+    private final DataSourceFactory config = new DataSourceFactory();
 
     @Nullable
     private SessionFactory sessionFactory;
@@ -66,21 +67,21 @@ class SessionFactoryFactoryTest {
     }
 
     @AfterEach
-    void tearDown() throws Exception {
+    void tearDown() {
         if (sessionFactory != null) {
             sessionFactory.close();
         }
     }
 
     @Test
-    void managesTheSessionFactory() throws Exception {
+    void managesTheSessionFactory() {
         build();
 
         verify(lifecycleEnvironment).manage(any(SessionFactoryManager.class));
     }
 
     @Test
-    void callsBundleToConfigure() throws Exception {
+    void callsBundleToConfigure() {
         build();
 
         verify(bundle).configure(any(Configuration.class));
@@ -110,7 +111,7 @@ class SessionFactoryFactoryTest {
     }
 
     @Test
-    void buildsAWorkingSessionFactory() throws Exception {
+    void buildsAWorkingSessionFactory() {
         build();
 
         try (Session session = requireNonNull(sessionFactory).openSession()) {
@@ -128,8 +129,8 @@ class SessionFactoryFactoryTest {
             assertThat(entity.getEmail())
                 .isEqualTo("coda@example.com");
 
-            assertThat(requireNonNull(entity.getBirthday()).toDateTime(DateTimeZone.UTC))
-                .isEqualTo(new DateTime(1979, 1, 2, 0, 22, DateTimeZone.UTC));
+            assertThat(requireNonNull(entity.getBirthday()))
+                .isEqualTo(ZonedDateTime.of(1979, 1, 2, 0, 22, 0, 0, ZoneId.of("UTC")));
         }
     }
 

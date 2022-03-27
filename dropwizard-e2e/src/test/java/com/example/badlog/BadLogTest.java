@@ -1,7 +1,7 @@
 package com.example.badlog;
 
-import io.dropwizard.Configuration;
 import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
+import io.dropwizard.core.Configuration;
 import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.DropwizardTestSupport;
 import org.junit.jupiter.api.AfterAll;
@@ -86,7 +86,7 @@ class BadLogTest {
 
         // and the file should have our logging statements
         await().atMost(10, TimeUnit.SECONDS).untilAsserted(
-                () -> assertThat(Files.readAllBytes(logFile)).asString(UTF_8).contains("Mayday we're going down"));
+                () -> assertThat(logFile).content(UTF_8).contains("Mayday we're going down"));
 
         // Clear out the log file
         Files.write(logFile, new byte[0]);
@@ -104,8 +104,7 @@ class BadLogTest {
         out.reset();
 
         // and the old log file shouldn't
-        final String contents2 = new String(Files.readAllBytes(logFile), UTF_8);
-        assertThat(contents2).doesNotContain("Mayday we're going down");
+        assertThat(logFile).content(UTF_8).doesNotContain("Mayday we're going down");
 
         // And for the final set of assertions will make sure that going back to the app
         // that logs to a file is still behaviorally correct.
@@ -129,6 +128,6 @@ class BadLogTest {
 
         // and the file should have our logging statements
         await().atMost(10, TimeUnit.SECONDS).untilAsserted(
-                () -> assertThat(Files.readAllBytes(logFile)).asString(UTF_8).contains("Mayday we're going down"));
+                () -> assertThat(logFile).content(UTF_8).contains("Mayday we're going down"));
     }
 }

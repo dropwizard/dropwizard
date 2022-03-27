@@ -1,6 +1,7 @@
 package io.dropwizard.hibernate;
 
 import io.dropwizard.util.Generics;
+import jakarta.persistence.criteria.CriteriaQuery;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
@@ -11,8 +12,6 @@ import org.hibernate.query.internal.AbstractProducedQuery;
 
 import java.io.Serializable;
 import java.util.List;
-
-import jakarta.persistence.criteria.CriteriaQuery;
 
 import static java.util.Objects.requireNonNull;
 

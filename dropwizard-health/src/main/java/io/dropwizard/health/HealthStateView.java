@@ -1,9 +1,10 @@
 package io.dropwizard.health;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import java.util.Objects;
-import javax.annotation.Nonnull;
 import jakarta.validation.constraints.NotNull;
+
+import javax.annotation.Nonnull;
+import java.util.Objects;
 
 public final class HealthStateView implements Comparable<HealthStateView> {
     @NotNull

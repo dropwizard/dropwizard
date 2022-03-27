@@ -5,12 +5,11 @@ import ch.qos.logback.core.filter.Filter;
 import ch.qos.logback.core.spi.FilterReply;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import io.dropwizard.logging.filter.FilterFactory;
+import io.dropwizard.logging.common.filter.FilterFactory;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.Collections;
 import java.util.Set;
-
-import jakarta.validation.constraints.NotNull;
 
 /**
  * @since 2.0
@@ -32,7 +31,7 @@ public class UriFilterFactory implements FilterFactory<IAccessEvent> {
 
     @Override
     public Filter<IAccessEvent> build() {
-        return new Filter<IAccessEvent>() {
+        return new Filter<>() {
             @Override
             public FilterReply decide(final IAccessEvent event) {
                 if (uris.contains(event.getRequestURI())) {

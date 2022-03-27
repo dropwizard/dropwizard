@@ -19,16 +19,6 @@ public class SslReload {
     }
 
     /**
-     * Reload a given {@link SslContextFactory}'s configuration
-     *
-     * @deprecated Use #reload() or #reloadDryRun() instead.
-     */
-    @Deprecated
-    public void reload(SslContextFactory factory) throws Exception {
-        factory.reload(configurer);
-    }
-
-    /**
      * Perform a mock configuration reload
      *
      * @since 2.1.0

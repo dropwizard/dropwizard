@@ -1,13 +1,13 @@
 package io.dropwizard.hibernate;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.joda.time.DateTime;
-
-import javax.annotation.Nullable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+
+import javax.annotation.Nullable;
+import java.time.ZonedDateTime;
 
 @Entity
 @Table(name = "people")
@@ -20,7 +20,7 @@ public class Person {
 
     @Column
     @Nullable
-    private DateTime birthday;
+    private ZonedDateTime birthday;
 
     @JsonProperty
     @Nullable
@@ -45,12 +45,12 @@ public class Person {
 
     @JsonProperty
     @Nullable
-    public DateTime getBirthday() {
+    public ZonedDateTime getBirthday() {
         return birthday;
     }
 
     @JsonProperty
-    public void setBirthday(DateTime birthday) {
+    public void setBirthday(@Nullable ZonedDateTime birthday) {
         this.birthday = birthday;
     }
 }

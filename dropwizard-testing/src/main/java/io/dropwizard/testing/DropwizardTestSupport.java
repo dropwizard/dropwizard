@@ -1,18 +1,18 @@
 package io.dropwizard.testing;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.dropwizard.Application;
-import io.dropwizard.Configuration;
-import io.dropwizard.cli.Command;
-import io.dropwizard.cli.ConfiguredCommand;
-import io.dropwizard.cli.EnvironmentCommand;
-import io.dropwizard.cli.ServerCommand;
 import io.dropwizard.configuration.ConfigurationSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
+import io.dropwizard.core.Application;
+import io.dropwizard.core.Configuration;
+import io.dropwizard.core.cli.Command;
+import io.dropwizard.core.cli.ConfiguredCommand;
+import io.dropwizard.core.cli.EnvironmentCommand;
+import io.dropwizard.core.cli.ServerCommand;
+import io.dropwizard.core.setup.Bootstrap;
+import io.dropwizard.core.setup.Environment;
 import io.dropwizard.lifecycle.Managed;
-import io.dropwizard.logging.LoggingUtil;
-import io.dropwizard.setup.Bootstrap;
-import io.dropwizard.setup.Environment;
+import io.dropwizard.logging.common.LoggingUtil;
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
@@ -91,17 +91,6 @@ public class DropwizardTestSupport<C extends Configuration> {
     }
 
     /**
-     * @deprecated Use {@link #DropwizardTestSupport(Class, String, String, ConfigOverride...)} instead.
-     */
-    @Deprecated
-    public DropwizardTestSupport(Class<? extends Application<C>> applicationClass,
-                                 @Nullable String configPath,
-                                 Optional<String> customPropertyPrefix,
-                                 ConfigOverride... configOverrides) {
-        this(applicationClass, configPath, customPropertyPrefix.orElse(null), ServerCommand::new, configOverrides);
-    }
-
-    /**
      * @since 2.0
      */
     public DropwizardTestSupport(Class<? extends Application<C>> applicationClass,
@@ -120,18 +109,6 @@ public class DropwizardTestSupport<C extends Configuration> {
                                  @Nullable String customPropertyPrefix,
                                  ConfigOverride... configOverrides) {
         this(applicationClass, configPath, customPropertyPrefix, ServerCommand::new, configOverrides);
-    }
-
-    /**
-     * @deprecated Use {@link #DropwizardTestSupport(Class, String, String, Function, ConfigOverride...)} instead.
-     */
-    @Deprecated
-    public DropwizardTestSupport(Class<? extends Application<C>> applicationClass,
-                                 @Nullable String configPath,
-                                 Optional<String> customPropertyPrefix,
-                                 Function<Application<C>, Command> commandInstantiator,
-                                 ConfigOverride... configOverrides) {
-        this(applicationClass, configPath, customPropertyPrefix.orElse(null), commandInstantiator, configOverrides);
     }
 
     /**

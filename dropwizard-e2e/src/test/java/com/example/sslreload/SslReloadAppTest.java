@@ -1,7 +1,7 @@
 package com.example.sslreload;
 
-import io.dropwizard.Configuration;
 import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
+import io.dropwizard.core.Configuration;
 import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
@@ -24,6 +24,7 @@ import java.nio.file.Path;
 import java.security.cert.X509Certificate;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(DropwizardExtensionsSupport.class)
@@ -57,7 +58,7 @@ public class SslReloadAppTest {
     @BeforeAll
     public static void setupClass(@TempDir Path tempDir) throws IOException {
         keystore = tempDir.resolve("keystore.jks");
-        try (InputStream inputStream = SslReloadAppTest.class.getResourceAsStream("/sslreload/keystore.jks")) {
+        try (InputStream inputStream = requireNonNull(SslReloadAppTest.class.getResourceAsStream("/sslreload/keystore.jks"))) {
             Files.write(keystore, inputStream.readAllBytes());
         }
     }
@@ -146,7 +147,7 @@ public class SslReloadAppTest {
     }
 
     private void writeKeystore(String source) throws IOException {
-        try (final InputStream inputStream = getClass().getResourceAsStream(source)) {
+        try (final InputStream inputStream = requireNonNull(getClass().getResourceAsStream(source))) {
             Files.write(keystore, inputStream.readAllBytes());
         }
     }

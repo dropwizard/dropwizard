@@ -17,15 +17,16 @@ import io.dropwizard.jersey.setup.JerseyEnvironment;
 import io.dropwizard.jetty.setup.ServletEnvironment;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import io.dropwizard.util.Duration;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ThreadFactory;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadFactory;
 
 import static java.util.Collections.singletonList;
 
@@ -134,22 +135,6 @@ public class DefaultHealthFactory implements HealthFactory {
         this.healthResponderFactory = healthResponderFactory;
     }
 
-    /**
-     * @deprecated use {@link #getHealthCheckConfigurations()} instead
-     */
-    @Deprecated
-    public List<HealthCheckConfiguration> getHealthChecks() {
-        return healthChecks;
-    }
-
-    /**
-     * @deprecated use {@link #setHealthCheckConfigurations(List)} instead
-     */
-    @Deprecated
-    public void setHealthChecks(List<HealthCheckConfiguration> healthChecks) {
-        this.healthChecks = healthChecks;
-    }
-
     @Override
     public void configure(final LifecycleEnvironment lifecycle, final ServletEnvironment servlets,
                           final JerseyEnvironment jersey, final HealthEnvironment health, final ObjectMapper mapper,
@@ -195,7 +180,7 @@ public class DefaultHealthFactory implements HealthFactory {
         // Set the health state aggregator on the HealthEnvironment
         health.setHealthStateAggregator(healthCheckManager);
 
-        LOGGER.debug("Configured ongoing health check monitoring for healthChecks: {}", getHealthChecks());
+        LOGGER.debug("Configured ongoing health check monitoring for healthChecks: {}", getHealthCheckConfigurations());
     }
 
     private ScheduledExecutorService createScheduledExecutorForHealthChecks(

@@ -15,6 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import jakarta.ws.rs.core.MediaType;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -22,6 +23,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -127,6 +129,8 @@ class JsonHealthResponseProviderTest {
     }
 
     private String fixture(final String filename) throws IOException {
-        return new String(getClass().getResourceAsStream(filename).readAllBytes(), UTF_8);
+        try (InputStream is = getClass().getResourceAsStream(filename)) {
+            return new String(requireNonNull(is).readAllBytes(), UTF_8);
+        }
     }
 }

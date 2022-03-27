@@ -2,15 +2,15 @@ package io.dropwizard.jetty;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.util.DataSize;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.handler.gzip.GzipHandler;
 import org.eclipse.jetty.util.compression.CompressionPool;
 import org.eclipse.jetty.util.compression.DeflaterPool;
 
 import javax.annotation.Nullable;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
 import java.util.Set;
 import java.util.zip.Deflater;
 
@@ -115,8 +115,6 @@ public class GzipHandlerFactory {
     @Max(Deflater.BEST_COMPRESSION)
     private int deflateCompressionLevel = Deflater.DEFAULT_COMPRESSION;
 
-    private boolean gzipCompatibleInflation = true;
-
     private boolean syncFlush = false;
 
     @JsonProperty
@@ -186,25 +184,7 @@ public class GzipHandlerFactory {
     public void setDeflateCompressionLevel(int level) {
         this.deflateCompressionLevel = level;
     }
-
-    /**
-     * @deprecated  gzip handler no longer supports inflate streams
-     */
-    @Deprecated
-    @JsonProperty
-    public boolean isGzipCompatibleInflation() {
-        return gzipCompatibleInflation;
-    }
-
-    /**
-     * @deprecated gzip handler no longer supports inflate streams
-     */
-    @Deprecated
-    @JsonProperty
-    public void setGzipCompatibleInflation(boolean gzipCompatibleInflation) {
-        this.gzipCompatibleInflation = gzipCompatibleInflation;
-    }
-
+    
     @JsonProperty
     @Nullable
     public Set<String> getIncludedMethods() {

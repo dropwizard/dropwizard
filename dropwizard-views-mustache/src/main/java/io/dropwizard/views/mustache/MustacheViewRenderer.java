@@ -7,9 +7,9 @@ import com.github.mustachejava.DefaultMustacheFactory;
 import com.github.mustachejava.Mustache;
 import com.github.mustachejava.MustacheFactory;
 import com.github.mustachejava.resolver.FileSystemResolver;
-import io.dropwizard.views.View;
-import io.dropwizard.views.ViewRenderException;
-import io.dropwizard.views.ViewRenderer;
+import io.dropwizard.views.common.View;
+import io.dropwizard.views.common.ViewRenderException;
+import io.dropwizard.views.common.ViewRenderer;
 
 import java.io.File;
 import java.io.IOException;

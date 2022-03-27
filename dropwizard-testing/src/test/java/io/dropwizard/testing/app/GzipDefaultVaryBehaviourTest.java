@@ -2,10 +2,9 @@ package io.dropwizard.testing.app;
 
 import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.testing.junit.DropwizardAppRule;
+import jakarta.ws.rs.core.Response;
 import org.junit.ClassRule;
 import org.junit.Test;
-
-import jakarta.ws.rs.core.Response;
 
 import java.util.Collections;
 

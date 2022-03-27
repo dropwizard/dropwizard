@@ -1,10 +1,10 @@
 package io.dropwizard.auth;
 
-import java.security.Principal;
-import java.util.Objects;
+import jakarta.ws.rs.container.ContainerRequestContext;
 
 import javax.annotation.Nullable;
-import jakarta.ws.rs.container.ContainerRequestContext;
+import java.security.Principal;
+import java.util.Objects;
 
 public abstract class AuthorizationContext<P extends Principal> {
     private final P principal;

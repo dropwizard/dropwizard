@@ -19,6 +19,9 @@ import io.dropwizard.util.Duration;
 import io.dropwizard.validation.MinDataSize;
 import io.dropwizard.validation.MinDuration;
 import io.dropwizard.validation.PortRange;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.valueextraction.Unwrapping;
 import org.eclipse.jetty.http.CookieCompliance;
 import org.eclipse.jetty.http.HttpCompliance;
 import org.eclipse.jetty.io.ArrayByteBufferPool;
@@ -37,10 +40,8 @@ import org.eclipse.jetty.util.thread.Scheduler;
 import org.eclipse.jetty.util.thread.ThreadPool;
 
 import javax.annotation.Nullable;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.valueextraction.Unwrapping;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -739,16 +740,13 @@ public class HttpConnectorFactory implements ConnectorFactory {
         connector.setPort(port);
         connector.setHost(bindHost);
         connector.setInheritChannel(inheritChannel);
-        if (acceptQueueSize != null) {
-            connector.setAcceptQueueSize(acceptQueueSize);
-        } else {
-            // if we do not set the acceptQueueSize, when jetty
-            // creates the ServerSocket, it uses the default backlog of 50, and
-            // not the value from the OS.  Therefore we set to the value
-            // obtained from NetUtil, which will attempt to read the value from the OS.
-            // somaxconn setting
-            connector.setAcceptQueueSize(NetUtil.getTcpBacklog());
-        }
+        // if we do not set the acceptQueueSize, when jetty
+        // creates the ServerSocket, it uses the default backlog of 50, and
+        // not the value from the OS.  Therefore we set to the value
+        // obtained from NetUtil, which will attempt to read the value from the OS.
+        // somaxconn setting
+        int actualAcceptQueueSize = Objects.requireNonNullElseGet(acceptQueueSize, NetUtil::getTcpBacklog);
+        connector.setAcceptQueueSize(actualAcceptQueueSize);
 
         connector.setReuseAddress(reuseAddress);
         connector.setIdleTimeout(idleTimeout.toMilliseconds());

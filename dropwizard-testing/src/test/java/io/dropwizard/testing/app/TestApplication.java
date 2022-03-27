@@ -1,7 +1,7 @@
 package io.dropwizard.testing.app;
 
-import io.dropwizard.Application;
-import io.dropwizard.setup.Environment;
+import io.dropwizard.core.Application;
+import io.dropwizard.core.setup.Environment;
 
 public class TestApplication extends Application<TestConfiguration> {
     @Override

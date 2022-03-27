@@ -46,8 +46,6 @@ class DefaultHealthFactoryTest {
         assertThat(healthFactory.getShutdownWaitPeriod().toMilliseconds()).isEqualTo(1L);
         assertThat(healthFactory.getHealthCheckUrlPaths()).isEqualTo(singletonList("/health-check"));
 
-        assertThat(healthFactory.getHealthChecks()).isEqualTo(healthFactory.getHealthCheckConfigurations());
-
         assertThat(healthFactory.getHealthCheckConfigurations()
             .stream()
             .map(HealthCheckConfiguration::getName)

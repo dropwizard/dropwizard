@@ -5,11 +5,10 @@ import io.dropwizard.auth.AuthBaseTest;
 import io.dropwizard.auth.AuthResource;
 import io.dropwizard.auth.util.AuthUtil;
 import io.dropwizard.jersey.DropwizardResourceConfig;
+import jakarta.ws.rs.container.ContainerRequestFilter;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
-
-import jakarta.ws.rs.container.ContainerRequestFilter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

@@ -2,7 +2,7 @@ package io.dropwizard.request.logging.async;
 
 import ch.qos.logback.access.spi.IAccessEvent;
 import ch.qos.logback.core.AsyncAppenderBase;
-import io.dropwizard.logging.async.AsyncAppenderFactory;
+import io.dropwizard.logging.common.async.AsyncAppenderFactory;
 
 /**
  * An implementation of {@link AsyncAppenderFactory} for {@link IAccessEvent}.
