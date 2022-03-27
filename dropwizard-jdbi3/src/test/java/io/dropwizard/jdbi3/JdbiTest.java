@@ -7,13 +7,14 @@ import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.logging.common.BootstrapLogging;
 import org.eclipse.jetty.util.component.LifeCycle;
 import org.jdbi.v3.core.Jdbi;
-import org.joda.time.DateTime;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -128,15 +129,15 @@ class JdbiTest {
     }
 
     @Test
-    void testJodaTimeWorksForDateTimes() {
+    void testQueriesWorkForLocalDateTimes() {
         dbi.useHandle(h -> assertThat(h.createQuery("SELECT played_at FROM games " +
             "WHERE home_scored > visitor_scored " +
             "AND played_at > :played_at")
-            .bind("played_at", org.joda.time.LocalDate.parse("2016-02-15").toDateTimeAtStartOfDay())
-            .mapTo(DateTime.class)
+            .bind("played_at", LocalDateTime.parse("2016-02-15T02:03:04").truncatedTo(ChronoUnit.DAYS))
+            .mapTo(LocalDateTime.class)
             .stream()
-            .map(DateTime::toLocalDate)
+            .map(LocalDateTime::toLocalDate)
             .collect(Collectors.toList())).containsOnly(
-            org.joda.time.LocalDate.parse("2016-05-14"), org.joda.time.LocalDate.parse("2016-03-10")));
+            LocalDate.parse("2016-05-14"), LocalDate.parse("2016-03-10")));
     }
 }
