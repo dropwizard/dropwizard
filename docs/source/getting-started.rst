@@ -89,7 +89,6 @@ you ship more quickly and with fewer regrets.
 * Liquibase_ is a great way to keep your database schema in check throughout your development and
   release cycles, applying high-level database refactorings instead of one-off DDL scripts.
 * Freemarker_ and Mustache_ are simple templating systems for more user-facing applications.
-* `Joda Time`_ is a very complete, sane library for handling dates and times.
 
 .. _Logback: https://logback.qos.ch/
 .. _slf4j: https://www.slf4j.org/
@@ -100,7 +99,6 @@ you ship more quickly and with fewer regrets.
 .. _Liquibase: http://www.liquibase.org
 .. _Freemarker: http://freemarker.org/
 .. _Mustache: https://mustache.github.io/
-.. _Joda Time: http://www.joda.org/joda-time/
 
 Now that you've gotten the lay of the land, let's dig in!
 

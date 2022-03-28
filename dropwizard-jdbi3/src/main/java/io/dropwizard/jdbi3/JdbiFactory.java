@@ -12,7 +12,6 @@ import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.core.statement.SqlStatements;
 import org.jdbi.v3.core.statement.TemplateEngine;
 import org.jdbi.v3.guava.GuavaPlugin;
-import org.jdbi.v3.jodatime2.JodaTimePlugin;
 import org.jdbi.v3.sqlobject.SqlObjectPlugin;
 
 import java.util.Optional;
@@ -132,7 +131,6 @@ public class JdbiFactory {
      */
     protected void configure(final Jdbi jdbi) {
         jdbi.installPlugin(new SqlObjectPlugin());
-        jdbi.installPlugin(new JodaTimePlugin());
         jdbi.installPlugin(new GuavaPlugin());
     }
 }
