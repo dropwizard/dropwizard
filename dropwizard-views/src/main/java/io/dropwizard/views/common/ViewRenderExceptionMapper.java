@@ -1,6 +1,5 @@
 package io.dropwizard.views.common;
 
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.glassfish.jersey.spi.ExtendedExceptionMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,6 +8,8 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
+
+import static io.dropwizard.util.Throwables.findThrowableInChain;
 
 /**
  * An {@link ExtendedExceptionMapper} that returns a 500 error response with a generic
@@ -41,6 +42,6 @@ public class ViewRenderExceptionMapper implements ExtendedExceptionMapper<WebApp
 
     @Override
     public boolean isMappable(WebApplicationException e) {
-        return ExceptionUtils.indexOfThrowable(e, ViewRenderException.class) != -1;
+        return findThrowableInChain(t -> t.getClass() == ViewRenderException.class, e).isPresent();
     }
 }

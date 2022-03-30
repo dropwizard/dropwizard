@@ -9,8 +9,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
-import java.nio.charset.StandardCharsets;
 import java.util.OptionalLong;
+
+import static java.nio.charset.StandardCharsets.US_ASCII;
 
 @Provider
 @Produces(MediaType.WILDCARD)
@@ -34,10 +35,7 @@ public class OptionalLongMessageBodyWriter implements MessageBodyWriter<Optional
                         MediaType mediaType,
                         MultivaluedMap<String, Object> httpHeaders,
                         OutputStream entityStream) throws IOException {
-        if (!entity.isPresent()) {
-            throw EmptyOptionalException.INSTANCE;
-        }
-
-        entityStream.write(Long.toString(entity.getAsLong()).getBytes(StandardCharsets.US_ASCII));
+        final String body = Long.toString(entity.orElseThrow(() -> EmptyOptionalException.INSTANCE));
+        entityStream.write(body.getBytes(US_ASCII));
     }
 }

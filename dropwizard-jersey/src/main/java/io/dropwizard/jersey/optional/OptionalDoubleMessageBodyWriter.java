@@ -9,8 +9,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
-import java.nio.charset.StandardCharsets;
 import java.util.OptionalDouble;
+
+import static java.nio.charset.StandardCharsets.US_ASCII;
 
 @Provider
 @Produces(MediaType.WILDCARD)
@@ -34,10 +35,7 @@ public class OptionalDoubleMessageBodyWriter implements MessageBodyWriter<Option
                         MediaType mediaType,
                         MultivaluedMap<String, Object> httpHeaders,
                         OutputStream entityStream) throws IOException {
-        if (!entity.isPresent()) {
-            throw EmptyOptionalException.INSTANCE;
-        }
-
-        entityStream.write(Double.toString(entity.getAsDouble()).getBytes(StandardCharsets.US_ASCII));
+        final String body = Double.toString(entity.orElseThrow(() -> EmptyOptionalException.INSTANCE));
+        entityStream.write(body.getBytes(US_ASCII));
     }
 }

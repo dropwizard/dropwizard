@@ -44,18 +44,20 @@ class JsonFormatterTest {
     @Test
     void testPrettyPrintWithLineSeparator() {
         JsonFormatter formatter = new JsonFormatter(objectMapper, true, true);
-        assertThat(formatter.toJson(map)).isEqualTo(String.format("{%n" +
-                "  \"hobbies\" : [ \"Reading\", \"Biking\", \"Snorkeling\" ],%n" +
-                "  \"name\" : \"Jim\"%n" +
-                "}%n"));
+        assertThat(formatter.toJson(map)).isEqualToNormalizingNewlines(
+                "{\n" +
+                "  \"hobbies\" : [ \"Reading\", \"Biking\", \"Snorkeling\" ],\n" +
+                "  \"name\" : \"Jim\"\n" +
+                "}\n");
     }
 
     @Test
     void testPrettyPrintNoLineSeparator() {
         JsonFormatter formatter = new JsonFormatter(objectMapper, true, false);
-        assertThat(formatter.toJson(map)).isEqualTo(String.format("{%n" +
-                "  \"hobbies\" : [ \"Reading\", \"Biking\", \"Snorkeling\" ],%n" +
-                "  \"name\" : \"Jim\"%n" +
-                "}"));
+        assertThat(formatter.toJson(map)).isEqualToNormalizingNewlines(
+                "{\n" +
+                "  \"hobbies\" : [ \"Reading\", \"Biking\", \"Snorkeling\" ],\n" +
+                "  \"name\" : \"Jim\"\n" +
+                "}");
     }
 }

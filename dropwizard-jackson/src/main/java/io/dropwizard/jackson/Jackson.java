@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.guava.GuavaModule;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
-import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.blackbird.BlackbirdModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
@@ -20,8 +19,8 @@ public class Jackson {
     private Jackson() { /* singleton */ }
 
     /**
-     * Creates a new {@link ObjectMapper} with Guava, Logback, and Joda Time support, as well as
-     * support for {@link JsonSnakeCase}. Also includes all {@link Discoverable} interface implementations.
+     * Creates a new {@link ObjectMapper} with Guava and Logback support, as well as support for
+	  * {@link JsonSnakeCase}. Also includes all {@link Discoverable} interface implementations.
      */
     public static ObjectMapper newObjectMapper() {
         final ObjectMapper mapper = new ObjectMapper();
@@ -31,7 +30,7 @@ public class Jackson {
 
     /**
      * Creates a new {@link ObjectMapper} with a custom {@link com.fasterxml.jackson.core.JsonFactory}
-     * with Guava, Logback, and Joda Time support, as well as support for {@link JsonSnakeCase}.
+     * with Guava and Logback support, as well as support for {@link JsonSnakeCase}.
      * Also includes all {@link Discoverable} interface implementations.
      *
      * @param jsonFactory instance of {@link com.fasterxml.jackson.core.JsonFactory} to use
@@ -59,7 +58,6 @@ public class Jackson {
         mapper.registerModule(new GuavaModule());
         mapper.registerModule(new GuavaExtrasModule());
         mapper.registerModule(new CaffeineModule());
-        mapper.registerModule(new JodaModule());
         mapper.registerModule(new BlackbirdModule());
         mapper.registerModule(new FuzzyEnumModule());
         mapper.registerModule(new ParameterNamesModule());
