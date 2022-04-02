@@ -22,7 +22,7 @@
         <argparse4j.version>0.9.0</argparse4j.version>
         <byte-buddy.version>1.12.8</byte-buddy.version>
         <caffeine.version>3.0.6</caffeine.version>
-        <checker-qual.version>3.21.3</checker-qual.version>
+        <checker-qual.version>3.21.4</checker-qual.version>
         <classmate.version>1.5.1</classmate.version>
         <commons-codec.version>1.15</commons-codec.version>
         <commons-text.version>1.9</commons-text.version>
@@ -49,7 +49,7 @@
         <jdbi3.version>3.28.0</jdbi3.version>
         <jersey.version>2.35</jersey.version>
         <jetty-setuid-java.version>1.0.4</jetty-setuid-java.version>
-        <jetty.version>10.0.7</jetty.version>
+        <jetty.version>10.0.9</jetty.version>
         <jsr305.version>3.0.2</jsr305.version>
         <liquibase-core.version>4.9.1</liquibase-core.version>
         <liquibase-slf4j.version>4.1.0</liquibase-slf4j.version>
@@ -59,7 +59,7 @@
         <mustache-compiler.version>0.9.10</mustache-compiler.version>
         <nullaway.version>0.9.6</nullaway.version>
         <slf4j.version>1.7.36</slf4j.version>
-        <tomcat-jdbc.version>10.0.18</tomcat-jdbc.version>
+        <tomcat-jdbc.version>10.0.20</tomcat-jdbc.version>
         <usertype.core.version>7.0.0.CR1</usertype.core.version>
 
         <!-- Test dependencies -->
