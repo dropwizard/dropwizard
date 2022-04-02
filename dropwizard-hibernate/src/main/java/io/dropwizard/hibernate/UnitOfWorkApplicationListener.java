@@ -9,9 +9,10 @@ import org.glassfish.jersey.server.monitoring.RequestEventListener;
 import org.hibernate.SessionFactory;
 
 import javax.ws.rs.ext.Provider;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -27,7 +28,7 @@ import java.util.concurrent.ConcurrentMap;
 @Provider
 public class UnitOfWorkApplicationListener implements ApplicationEventListener {
 
-    private final ConcurrentMap<ResourceMethod, Optional<UnitOfWork>> methodMap = new ConcurrentHashMap<>();
+    private final ConcurrentMap<ResourceMethod, Collection<UnitOfWork>> methodMap = new ConcurrentHashMap<>();
     private final Map<String, SessionFactory> sessionFactories = new HashMap<>();
 
     public UnitOfWorkApplicationListener() {
@@ -58,41 +59,53 @@ public class UnitOfWorkApplicationListener implements ApplicationEventListener {
     }
 
     private static class UnitOfWorkEventListener implements RequestEventListener {
-        private final ConcurrentMap<ResourceMethod, Optional<UnitOfWork>> methodMap;
-        private final UnitOfWorkAspect unitOfWorkAspect;
+        private final ConcurrentMap<ResourceMethod, Collection<UnitOfWork>> methodMap;
+        private final ConcurrentMap<String, UnitOfWorkAspect> unitOfWorkAspects = new ConcurrentHashMap<>();
+        private final Map<String, SessionFactory> sessionFactories;
 
-        UnitOfWorkEventListener(ConcurrentMap<ResourceMethod, Optional<UnitOfWork>> methodMap,
+        UnitOfWorkEventListener(ConcurrentMap<ResourceMethod, Collection<UnitOfWork>> methodMap,
                                 Map<String, SessionFactory> sessionFactories) {
             this.methodMap = methodMap;
-            unitOfWorkAspect = new UnitOfWorkAspect(sessionFactories);
+            this.sessionFactories = sessionFactories;
         }
 
         @Override
         public void onEvent(RequestEvent event) {
             final RequestEvent.Type eventType = event.getType();
             if (eventType == RequestEvent.Type.RESOURCE_METHOD_START) {
-                Optional<UnitOfWork> unitOfWork = methodMap.computeIfAbsent(event.getUriInfo()
-                        .getMatchedResourceMethod(), UnitOfWorkEventListener::registerUnitOfWorkAnnotations);
-                unitOfWorkAspect.beforeStart(unitOfWork.orElse(null));
+                methodMap
+                    .computeIfAbsent(event.getUriInfo().getMatchedResourceMethod(), UnitOfWorkEventListener::registerUnitOfWorkAnnotations)
+                    .forEach(unitOfWork ->
+                        unitOfWorkAspects
+                            .computeIfAbsent(unitOfWork.value(), hibernateName -> new UnitOfWorkAspect(sessionFactories))
+                            .beforeStart(unitOfWork)
+                );
             } else if (eventType == RequestEvent.Type.RESP_FILTERS_START) {
                 try {
-                    unitOfWorkAspect.afterEnd();
+                    unitOfWorkAspects
+                        .values()
+                        .forEach(UnitOfWorkAspect::afterEnd);
                 } catch (Exception e) {
                     throw new MappableException(e);
                 }
             } else if (eventType == RequestEvent.Type.ON_EXCEPTION) {
-                unitOfWorkAspect.onError();
+                unitOfWorkAspects
+                        .values()
+                        .forEach(UnitOfWorkAspect::onError);
             } else if (eventType == RequestEvent.Type.FINISHED) {
-                unitOfWorkAspect.onFinish();
+                unitOfWorkAspects
+                        .values()
+                        .forEach(UnitOfWorkAspect::onFinish);
             }
         }
 
-        private static Optional<UnitOfWork> registerUnitOfWorkAnnotations(ResourceMethod method) {
-            UnitOfWork annotation = method.getInvocable().getDefinitionMethod().getAnnotation(UnitOfWork.class);
-            if (annotation == null) {
-                annotation = method.getInvocable().getHandlingMethod().getAnnotation(UnitOfWork.class);
-            }
-            return Optional.ofNullable(annotation);
+        private static Collection<UnitOfWork> registerUnitOfWorkAnnotations(ResourceMethod method) {
+            Map<String, UnitOfWork> unitOfWorkMap = new HashMap<>();
+            Arrays.stream(method.getInvocable().getHandlingMethod().getAnnotationsByType(UnitOfWork.class))
+                .forEach(unitOfWork -> unitOfWorkMap.put(unitOfWork.value(), unitOfWork));
+            Arrays.stream(method.getInvocable().getDefinitionMethod().getAnnotationsByType(UnitOfWork.class))
+                .forEach(unitOfWork -> unitOfWorkMap.put(unitOfWork.value(), unitOfWork));
+            return unitOfWorkMap.values();
         }
     }
 
