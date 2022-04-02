@@ -148,6 +148,21 @@ This will automatically open a session, begin a transaction, call ``findById``, 
 transaction, and finally close the session. If an exception is thrown, the transaction is rolled
 back.
 
+If you are using more than one Hibernate bundle in your application, you can repeat the ``@UnitOfWork`` annotation:
+
+.. code-block:: java
+
+    @GET
+    @Path("...")
+    @Timed
+    @UnitOfWork(value = "hibernate.<db-name-1>")
+    @UnitOfWork(value = "hibernate.<db-name-2>")
+    public ...
+
+In this case, the above specified behaviour applies to all given databases.
+
+If multiple ``@UnitOfWork`` annotations with the same ``value()`` are provided, the last one is used.
+
 .. important:: The Hibernate session is closed **before** your resource method's return value (e.g.,
                the ``Person`` from the database), which means your resource method (or DAO) is
                responsible for initializing all lazily-loaded collections, etc., before returning.
