@@ -175,9 +175,9 @@ public class DefaultLoggingFactory implements LoggingFactory {
             // mechanism built into logback, we wait for a short period of time before
             // giving up that the appender will be completely flushed.
             final Logger logger = loggerContext.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
-            final Iterator<Appender<ILoggingEvent>> appenders = logger.iteratorForAppenders();
-            while (appenders.hasNext()) {
-                final Appender<ILoggingEvent> appender = appenders.next();
+            final Iterator<Appender<ILoggingEvent>> appenderIterator = logger.iteratorForAppenders();
+            while (appenderIterator.hasNext()) {
+                final Appender<ILoggingEvent> appender = appenderIterator.next();
                 if (appender instanceof AsyncAppenderBase) {
                     flushAppender((AsyncAppenderBase<?>) appender);
                 } else if (appender instanceof AsyncAppenderBaseProxy) {

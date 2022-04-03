@@ -136,10 +136,6 @@ create a new ``MessageQueueFactory`` class:
             MessageQueueClient client = new MessageQueueClient(getHost(), getPort());
             environment.lifecycle().manage(new Managed() {
                 @Override
-                public void start() {
-                }
-
-                @Override
                 public void stop() {
                     client.close();
                 }
@@ -524,7 +520,7 @@ settings in configuration:
 ``https://<hostname>:<port>/health-check?type=<type>&name=<name>``
 
 * replace ``<type>`` with ``ready`` or ``alive``; defaults to ``ready`` if the ``type`` parameter is not provided
-* replace ``<name>`` with the name of the health check to query. Multiple names can be provided, or no no names. If all checks are desired, 
+* replace ``<name>`` with the name of the health check to query. Multiple names can be provided, or no no names. If all checks are desired,
   ``name=all`` can be specified to retrieve all checks
 
 .. _man-core-health-providedchecks:
@@ -566,7 +562,7 @@ In the `Application.run()` method, you can access views of the health state data
 **Accessing data directly**
 
 .. code-block:: java
-    
+
     @Override
     public void run(final AppConfiguration configuration, final Environment environment) {
         ...
@@ -574,9 +570,9 @@ In the `Application.run()` method, you can access views of the health state data
     }
 
 **Listening to data changes**
-    
+
 .. code-block:: java
-    
+
     @Override
     public void run(final AppConfiguration configuration, final Environment environment) {
         ...
@@ -605,12 +601,11 @@ Managed Objects
 ===============
 
 Most applications involve objects which need to be started and stopped: thread pools, database
-connections, etc. Dropwizard provides the ``Managed`` interface for this. You can either have the
-class in question implement the ``#start()`` and ``#stop()`` methods, or write a wrapper class which
-does so. Adding a ``Managed`` instance to your application's ``Environment`` ties that object's
-lifecycle to that of the application's HTTP server. Before the server starts, the ``#start()`` method is
-called. After the server has stopped (and after its graceful shutdown period) the ``#stop()`` method
-is called.
+connections, etc. Dropwizard provides the ``Managed`` interface for this. You can either have the class
+in question implement the ``#start()`` and/or ``#stop()`` methods, or write a wrapper class which does
+so. Adding a ``Managed`` instance to your application's ``Environment`` ties that object's lifecycle to
+that of the application's HTTP server. Before the server starts, the ``#start()`` method is called.
+After the server has stopped (and after its graceful shutdown period) the ``#stop()`` method is called.
 
 For example, given a theoretical Riak__ client which needs to be started and stopped:
 
@@ -1825,6 +1820,34 @@ Adding a ``Cache-Control`` statement to your resource class is simple with Dropw
     }
 
 The ``@CacheControl`` annotation will take all of the parameters of the ``Cache-Control`` header.
+
+Sessions
+--------
+
+Although Dropwizard's main purpose is to build stateless RESTful APIs, a stateful web service can
+be built using HTTP sessions. As most users won't profit from having session support enabled by
+default, session support is implemented as opt-in.
+
+The underlying Jetty server will handle sessions only if a ``SessionHandler`` is provided at
+application startup. Therefore the following code has to be added to the ``run`` method of the
+``Application`` class:
+
+.. code-block:: java
+
+    @Override
+    public void run(final TestConfiguration configuration, final Environment environment) {
+        environment.servlets().setSessionHandler(new org.eclipse.jetty.server.session.SessionHandler());
+    }
+
+This will provide Jetty's default ``SessionHandler`` to the servlet environment and session support is enabled.
+To get an ``HttpSession`` object injected into a Jersey resource method, Dropwizard provides a ``@Session``
+annotation:
+
+.. code-block:: java
+
+    public Response doSomethingWithSessions(@Session HttpSession httpSession) {
+        return Response.ok().build();
+    }
 
 .. _man-core-representations:
 

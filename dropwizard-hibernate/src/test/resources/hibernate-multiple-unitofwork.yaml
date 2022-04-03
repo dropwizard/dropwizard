@@ -1,0 +1,13 @@
+server:
+  applicationConnectors:
+    - type: http
+      port: 0
+  adminConnectors:
+    - type: http
+      port: 0
+dataSource:
+  url: 'jdbc:h2:mem:multiple-unitofwork-dog'
+  driverClass: "org.h2.Driver"
+personDataSource:
+  url: 'jdbc:h2:mem:multiple-unitofwork-person'
+  driverClass: "org.h2.Driver"

@@ -1,8 +1,8 @@
 package com.example.health;
 
 import io.dropwizard.Configuration;
+import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.testing.ConfigOverride;
-import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import org.awaitility.Awaitility;
@@ -38,14 +38,15 @@ class HealthIntegrationTest {
 
     public final DropwizardAppExtension<Configuration> TEST_APP_RULE = new DropwizardAppExtension<>(
             HealthApp.class,
-            ResourceHelpers.resourceFilePath(CONFIG_PATH),
+            CONFIG_PATH,
+            new ResourceConfigurationSourceProvider(),
             ConfigOverride.config(APP_PORT_KEY, APP_PORT));
 
     private final Client client = new JerseyClientBuilder().build();
     private String hostUrl;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         hostUrl = "http://" + HOST + ":" + TEST_APP_RULE.getLocalPort();
         Awaitility.waitAtMost(APP_STARTUP_MAX_TIMEOUT)
                 .pollInSameThread()
@@ -77,9 +78,9 @@ class HealthIntegrationTest {
                 .pollDelay(POLL_DELAY)
                 .until(this::isAppHealthy);
 
-        assertThat(app.getStateChangeCounter().get()).isPositive();
-        assertThat(app.getHealthyCheckCounter().get()).isPositive();
-        assertThat(app.getUnhealthyCheckCounter().get()).isPositive();
+        assertThat(app.getStateChangeCounter()).hasPositiveValue();
+        assertThat(app.getHealthyCheckCounter()).hasPositiveValue();
+        assertThat(app.getUnhealthyCheckCounter()).hasPositiveValue();
     }
 
     @Test
@@ -94,9 +95,9 @@ class HealthIntegrationTest {
                 .atMost(testTimeout)
                 .pollDelay(POLL_DELAY)
                 .until(this::isAppHealthy);
-        assertThat(app.getStateChangeCounter().get()).isPositive();
-        assertThat(app.getHealthyCheckCounter().get()).isPositive();
-        assertThat(app.getUnhealthyCheckCounter().get()).isPositive();
+        assertThat(app.getStateChangeCounter()).hasPositiveValue();
+        assertThat(app.getHealthyCheckCounter()).hasPositiveValue();
+        assertThat(app.getUnhealthyCheckCounter()).hasPositiveValue();
     }
 
     @Test
@@ -112,9 +113,9 @@ class HealthIntegrationTest {
                 .pollDelay(POLL_DELAY)
                 .until(this::isAppHealthy);
 
-        assertThat(app.getStateChangeCounter().get()).isPositive();
-        assertThat(app.getHealthyCheckCounter().get()).isPositive();
-        assertThat(app.getUnhealthyCheckCounter().get()).isPositive();
+        assertThat(app.getStateChangeCounter()).hasPositiveValue();
+        assertThat(app.getHealthyCheckCounter()).hasPositiveValue();
+        assertThat(app.getUnhealthyCheckCounter()).hasPositiveValue();
     }
 
     @Test
@@ -127,9 +128,9 @@ class HealthIntegrationTest {
                 .pollDelay(POLL_DELAY)
                 .until(() -> !isAppHealthy());
         // 2 state changes (to unhealthy) for critical checks, because of initial value of false
-        assertThat(app.getStateChangeCounter().get()).isPositive();
-        assertThat(app.getHealthyCheckCounter().get()).isZero();
-        assertThat(app.getUnhealthyCheckCounter().get()).isPositive();
+        assertThat(app.getStateChangeCounter()).hasPositiveValue();
+        assertThat(app.getHealthyCheckCounter()).hasValue(0);
+        assertThat(app.getUnhealthyCheckCounter()).hasPositiveValue();
     }
 
     @Test
@@ -150,9 +151,9 @@ class HealthIntegrationTest {
                 .pollDelay(POLL_DELAY)
                 .until(this::isAppHealthy);
 
-        assertThat(app.getStateChangeCounter().get()).isPositive();
-        assertThat(app.getHealthyCheckCounter().get()).isPositive();
-        assertThat(app.getUnhealthyCheckCounter().get()).isPositive();
+        assertThat(app.getStateChangeCounter()).hasPositiveValue();
+        assertThat(app.getHealthyCheckCounter()).hasPositiveValue();
+        assertThat(app.getUnhealthyCheckCounter()).hasPositiveValue();
     }
 
     private boolean isAppHealthy() {

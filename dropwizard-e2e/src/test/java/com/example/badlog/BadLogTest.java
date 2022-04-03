@@ -1,9 +1,9 @@
 package com.example.badlog;
 
 import io.dropwizard.Configuration;
+import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.DropwizardTestSupport;
-import io.dropwizard.testing.ResourceHelpers;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,6 +17,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.concurrent.TimeUnit;
 
+import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -30,7 +31,7 @@ class BadLogTest {
     private ByteArrayOutputStream err;
 
     @BeforeEach
-    void setup() throws Exception {
+    void setup() {
         out = new ByteArrayOutputStream();
         err = new ByteArrayOutputStream();
         System.setOut(new PrintStream(out));
@@ -63,8 +64,8 @@ class BadLogTest {
         final Path logFile = Files.write(tempDir.resolve("example.log"), new byte[0]);
 
         final ConfigOverride logOverride = ConfigOverride.config("logging.appenders[0].currentLogFilename", logFile.toString());
-        final String configPath = ResourceHelpers.resourceFilePath("badlog/config.yaml");
-        final DropwizardTestSupport<Configuration> app = new DropwizardTestSupport<>(BadLogApp.class, configPath, logOverride);
+        final String configResource = "badlog/config.yaml";
+        final DropwizardTestSupport<Configuration> app = new DropwizardTestSupport<>(BadLogApp.class, configResource, new ResourceConfigurationSourceProvider(), logOverride);
         assertThatThrownBy(app::before).hasMessage("I'm a bad app");
 
         // Dropwizard test support resets configuration overrides if `before` throws an exception
@@ -74,7 +75,7 @@ class BadLogTest {
         logOverride.addToSystemProperties();
 
         // Explicitly run the command so that the fatal error function runs
-        app.getApplication().run("server", configPath);
+        app.getApplication().run("server", resourceFilePath(configResource));
         app.after();
         Thread.sleep(100L);
 
@@ -111,14 +112,14 @@ class BadLogTest {
         // Clear out the log file
         Files.write(logFile, new byte[0]);
 
-        final DropwizardTestSupport<Configuration> app3 = new DropwizardTestSupport<>(BadLogApp.class, configPath, logOverride);
+        final DropwizardTestSupport<Configuration> app3 = new DropwizardTestSupport<>(BadLogApp.class, configResource, new ResourceConfigurationSourceProvider(), logOverride);
         assertThatThrownBy(app3::before).hasMessage("I'm a bad app");
 
         // See comment above about manually adding config to system properties
         logOverride.addToSystemProperties();
 
         // Explicitly run the command so that the fatal error function runs
-        app3.getApplication().run("server", configPath);
+        app3.getApplication().run("server", resourceFilePath(configResource));
         app3.after();
         Thread.sleep(100L);
 

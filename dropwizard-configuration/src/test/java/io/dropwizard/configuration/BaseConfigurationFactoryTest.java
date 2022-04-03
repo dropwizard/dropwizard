@@ -27,8 +27,6 @@ import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException
 
 public abstract class BaseConfigurationFactoryTest {
 
-    private static final String NEWLINE = System.lineSeparator();
-
     @SuppressWarnings("UnusedDeclaration")
     public static class ExampleServer {
 
@@ -144,6 +142,7 @@ public abstract class BaseConfigurationFactoryTest {
         }
     };
     protected String malformedFile = "/";
+    protected String malformedFileError = "value-not-overridden";
     protected String emptyFile = "/";
     protected String invalidFile = "/";
     protected String validFile = "/";
@@ -151,6 +150,7 @@ public abstract class BaseConfigurationFactoryTest {
     protected String typoFile = "/";
     protected String wrongTypeFile = "/";
     protected String malformedAdvancedFile = "/";
+    protected String malformedAdvancedFileError = "value-not-overridden";
 
     protected ConfigurationSourceProvider configurationSourceProvider = new ResourceConfigurationSourceProvider();
 
@@ -334,7 +334,8 @@ public abstract class BaseConfigurationFactoryTest {
     @Test
     void throwsAnExceptionOnMalformedFiles() {
         assertThatExceptionOfType(ConfigurationParsingException.class)
-            .isThrownBy(() -> factory.build(configurationSourceProvider, malformedFile));
+            .isThrownBy(() -> factory.build(configurationSourceProvider, malformedFile))
+            .withMessageContaining(malformedFileError);
     }
 
     @Test
@@ -411,12 +412,14 @@ public abstract class BaseConfigurationFactoryTest {
     void incorrectTypeIsFound() {
         assertThatExceptionOfType(ConfigurationParsingException.class)
             .isThrownBy(() -> factory.build(configurationSourceProvider, wrongTypeFile))
-            .withMessage(String.format("%s has an error:" + NEWLINE +
-                "  * Incorrect type of value at: age; is of type: String, expected: int" + NEWLINE, wrongTypeFile));
+            .withMessage("%s has an error:%n" +
+                "  * Incorrect type of value at: age; is of type: String, expected: int%n", wrongTypeFile);
     }
 
     @Test
-    void printsDetailedInformationOnMalformedContent() throws Exception {
-        factory.build(configurationSourceProvider, malformedAdvancedFile);
+    void printsDetailedInformationOnMalformedContent() {
+        assertThatExceptionOfType(ConfigurationParsingException.class)
+            .isThrownBy(() -> factory.build(configurationSourceProvider, malformedAdvancedFile))
+            .withMessageContaining(malformedAdvancedFileError);
     }
 }

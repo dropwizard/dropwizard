@@ -1,7 +1,7 @@
 package io.dropwizard.http2;
 
 import io.dropwizard.Configuration;
-import io.dropwizard.testing.ResourceHelpers;
+import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import org.eclipse.jetty.client.HttpClient;
@@ -17,10 +17,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(DropwizardExtensionsSupport.class)
-class Http2CIntegrationTest extends AbstractHttp2Test {
+class Http2CIntegrationTest extends Http2TestCommon {
 
     final DropwizardAppExtension<Configuration> appRule = new DropwizardAppExtension<>(
-            FakeApplication.class, ResourceHelpers.resourceFilePath("test-http2c.yml"));
+            FakeApplication.class, "test-http2c.yml", new ResourceConfigurationSourceProvider());
 
     @BeforeEach
     @Override
@@ -43,17 +43,17 @@ class Http2CIntegrationTest extends AbstractHttp2Test {
 
     @Test
     void testHttp1() throws Exception {
-        AbstractHttp2Test.assertResponse(http1Client.GET("http://localhost:" + appRule.getLocalPort() + "/api/test"), HttpVersion.HTTP_1_1);
+        assertResponse(http1Client.GET("http://localhost:" + appRule.getLocalPort() + "/api/test"), HttpVersion.HTTP_1_1);
     }
 
     @Test
     void testHttp2c() throws Exception {
-        AbstractHttp2Test.assertResponse(http2Client.GET("http://localhost:" + appRule.getLocalPort() + "/api/test"), HttpVersion.HTTP_2);
+        assertResponse(http2Client.GET("http://localhost:" + appRule.getLocalPort() + "/api/test"), HttpVersion.HTTP_2);
     }
 
     @Test
     void testHttp2cManyRequests() throws Exception {
-        assertThat(AbstractHttp2Test.performManyAsyncRequests(http2Client, "http://localhost:" + appRule.getLocalPort() + "/api/test"))
+        assertThat(performManyAsyncRequests(http2Client, "http://localhost:" + appRule.getLocalPort() + "/api/test"))
             .isTrue();
     }
 }

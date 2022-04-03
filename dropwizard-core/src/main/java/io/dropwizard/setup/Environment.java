@@ -93,9 +93,9 @@ public class Environment {
 
         this.jerseyServletContainer = new JerseyContainerHolder(new JerseyServletContainer(jerseyConfig));
 
-        final JerseyEnvironment jerseyEnvironment = new JerseyEnvironment(jerseyServletContainer, jerseyConfig);
-        jerseyEnvironment.register(new InjectValidatorFeature(validatorFactory));
-        this.jerseyEnvironment = jerseyEnvironment;
+        final JerseyEnvironment jerseyEnv = new JerseyEnvironment(jerseyServletContainer, jerseyConfig);
+        jerseyEnv.register(new InjectValidatorFeature(validatorFactory));
+        this.jerseyEnvironment = jerseyEnv;
 
         final HealthCheckConfiguration healthCheckConfig = adminFactory.getHealthChecks();
         this.healthCheckExecutorService = this.lifecycle().executorService("TimeBoundHealthCheck-pool-%d")

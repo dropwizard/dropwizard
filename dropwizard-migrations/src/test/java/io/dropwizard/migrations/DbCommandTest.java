@@ -15,15 +15,15 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @NotThreadSafe
-class DbCommandTest extends AbstractMigrationTest {
+class DbCommandTest {
 
     private final DbCommand<TestMigrationConfiguration> dbCommand = new DbCommand<>("db",
         new TestMigrationDatabaseConfiguration(), TestMigrationConfiguration.class, "migrations.xml");
 
     @Test
     void testRunSubCommand() throws Exception {
-        final String databaseUrl = getDatabaseUrl();
-        final TestMigrationConfiguration conf = createConfiguration(databaseUrl);
+        final String databaseUrl = MigrationTestSupport.getDatabaseUrl();
+        final TestMigrationConfiguration conf = MigrationTestSupport.createConfiguration(databaseUrl);
         dbCommand.run(null, new Namespace(Collections.singletonMap("subcommand", "migrate")), conf);
 
         try (Handle handle = Jdbi.create(databaseUrl, "sa", "").open()) {
@@ -36,18 +36,18 @@ class DbCommandTest extends AbstractMigrationTest {
     @Test
     void testPrintHelp() throws Exception {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        createSubparser(dbCommand).printHelp(new PrintWriter(new OutputStreamWriter(baos, UTF_8), true));
-        assertThat(baos.toString(UTF_8.name())).isEqualTo(String.format(
-            "usage: db db [-h]%n" +
-                "          {calculate-checksum,clear-checksums,drop-all,dump,fast-forward,generate-docs,locks,migrate,prepare-rollback,rollback,status,tag,test}%n" +
-                "          ...%n" +
-                "%n" +
-                "Run database migration tasks%n" +
-                "%n" +
-                "positional arguments:%n" +
-                "  {calculate-checksum,clear-checksums,drop-all,dump,fast-forward,generate-docs,locks,migrate,prepare-rollback,rollback,status,tag,test}%n" +
-                "%n" +
-                "named arguments:%n" +
-                "  -h, --help             show this help message and exit%n"));
+        MigrationTestSupport.createSubparser(dbCommand).printHelp(new PrintWriter(new OutputStreamWriter(baos, UTF_8), true));
+        assertThat(baos.toString(UTF_8.name())).isEqualToNormalizingNewlines(
+            "usage: db db [-h]\n" +
+                "          {calculate-checksum,clear-checksums,drop-all,dump,fast-forward,generate-docs,locks,migrate,prepare-rollback,rollback,status,tag,test}\n" +
+                "          ...\n" +
+                "\n" +
+                "Run database migration tasks\n" +
+                "\n" +
+                "positional arguments:\n" +
+                "  {calculate-checksum,clear-checksums,drop-all,dump,fast-forward,generate-docs,locks,migrate,prepare-rollback,rollback,status,tag,test}\n" +
+                "\n" +
+                "named arguments:\n" +
+                "  -h, --help             show this help message and exit\n");
     }
 }

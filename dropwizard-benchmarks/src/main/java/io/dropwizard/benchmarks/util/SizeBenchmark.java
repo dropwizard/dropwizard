@@ -12,9 +12,14 @@ import org.openjdk.jmh.runner.options.OptionsBuilder;
 
 import java.util.concurrent.TimeUnit;
 
+/**
+ * @deprecated {@link Size} is deprecated in favour of {@link io.dropwizard.util.DataSize}
+ */
+
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @State(Scope.Benchmark)
+@Deprecated
 public class SizeBenchmark {
 
     /**

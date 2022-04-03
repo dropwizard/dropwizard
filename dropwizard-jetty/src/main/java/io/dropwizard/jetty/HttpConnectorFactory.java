@@ -85,10 +85,10 @@ import static com.codahale.metrics.MetricRegistry.name;
  *         <td>{@code maxRequestHeaderSize}</td>
  *         <td>8KiB</td>
  *         <td>
- *             The maximum size of a request header. Larger headers will allow for more and/or
- *             larger cookies plus larger form content encoded  in a URL. However, larger headers
- *             consume more memory and can make a server more vulnerable to denial of service
- *             attacks.
+ *             The maximum allowed size in bytes for the HTTP request line and HTTP request headers.
+ *             Larger headers will allow for more and/or larger cookies plus larger form content
+ *             encoded in a URL. However, larger headers consume more memory and can make a server
+ *             more vulnerable to denial of service attacks.
  *         </td>
  *     </tr>
  *     <tr>

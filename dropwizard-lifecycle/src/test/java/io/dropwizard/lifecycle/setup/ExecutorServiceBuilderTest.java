@@ -5,6 +5,8 @@ import com.codahale.metrics.MetricRegistry;
 import io.dropwizard.util.Duration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.exceptions.verification.WantedButNotInvoked;
 import org.slf4j.Logger;
 
@@ -131,39 +133,37 @@ class ExecutorServiceBuilderTest {
                 assertThat(castedExec.getThreadFactory()).isInstanceOf(InstrumentedThreadFactory.class));
     }
 
-    @Test
-    void nameWithoutFormat() {
-        final String[][] tests = new String[][] {
-            { "my-client-%d", "my-client" },
-            { "my-client--%d", "my-client-" },
-            { "my-client-%d-abc", "my-client-abc" },
-            { "my-client%d", "my-client" },
-            { "my-client%d-abc", "my-client-abc" },
-            { "my-client%s", "my-client" },
-            { "my-client%sabc", "my-clientabc" },
-            { "my-client%10d", "my-client" },
-            { "my-client%10d0", "my-client0" },
-            { "my-client%-10d", "my-client" },
-            { "my-client%-10d0", "my-client0" },
-            { "my-client-%10d", "my-client" },
-            { "my-client-%10dabc", "my-clientabc" },
-            { "my-client-%1$d", "my-client" },
-            { "my-client-%1$d-abc", "my-client-abc" },
-            { "-%d", "" },
-            { "%d", "" },
-            { "%d-abc", "-abc" },
-            { "%10d", "" },
-            { "%10dabc", "abc" },
-            { "%-10d", "" },
-            { "%-10dabc", "abc" },
-            { "%10s", "" },
-            { "%10sabc", "abc" },
-        };
-        for (String[] t : tests) {
-            assertThat(ExecutorServiceBuilder.getNameWithoutFormat(t[0]))
-                .describedAs("%s -> %s", t[0], t[1])
-                .isEqualTo(t[1]);
-        }
+    @CsvSource(value = {
+        "my-client-%d,my-client",
+        "my-client--%d,my-client-",
+        "my-client-%d-abc,my-client-abc",
+        "my-client%d,my-client",
+        "my-client%d-abc,my-client-abc",
+        "my-client%s,my-client",
+        "my-client%sabc,my-clientabc",
+        "my-client%10d,my-client",
+        "my-client%10d0,my-client0",
+        "my-client%-10d,my-client",
+        "my-client%-10d0,my-client0",
+        "my-client-%10d,my-client",
+        "my-client-%10dabc,my-clientabc",
+        "my-client-%1$d,my-client",
+        "my-client-%1$d-abc,my-client-abc",
+        "-%d,''",
+        "%d,''",
+        "%d-abc,-abc",
+        "%10d,''",
+        "%10dabc,abc",
+        "%-10d,''",
+        "%-10dabc,abc",
+        "%10s,''" ,
+        "%10sabc,abc",
+    })
+    @ParameterizedTest
+    void nameWithoutFormat(String format, String name) {
+        assertThat(ExecutorServiceBuilder.getNameWithoutFormat(format))
+            .describedAs("%s -> %s", format, name)
+            .isEqualTo(name);
     }
 
     /**

@@ -6,6 +6,8 @@ import com.codahale.metrics.health.HealthCheck;
 import io.dropwizard.util.Duration;
 import io.dropwizard.util.Maps;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
@@ -52,6 +54,10 @@ class HealthCheckManagerTest {
 
         // then
         verifyNoInteractions(scheduler);
+        assertThat(manager.healthStateView(NAME))
+            .isEmpty();
+        assertThat(manager.healthStateViews())
+            .isEmpty();
     }
 
     @Test
@@ -69,6 +75,10 @@ class HealthCheckManagerTest {
 
         // then
         verifyCheckWasScheduled(scheduler, true);
+        assertThat(manager.healthStateViews())
+            .singleElement()
+            .isEqualTo(manager.healthStateView(NAME).orElseThrow(IllegalStateException::new))
+            .satisfies(view -> assertThat(view.getName()).isEqualTo(NAME));
     }
 
     @Test
@@ -84,6 +94,11 @@ class HealthCheckManagerTest {
 
         // then
         verify(scheduler).unschedule(NAME);
+        assertThat(manager.healthStateView(NAME))
+            .isEmpty();
+        assertThat(manager.healthStateViews())
+            .singleElement()
+            .isNull();
     }
 
     @Test
@@ -341,6 +356,7 @@ class HealthCheckManagerTest {
     }
 
     @Test
+    @DisabledOnOs(OS.WINDOWS)
     void shouldContinueScheduledCheckingWhileDelayingShutdown() throws Exception {
         // given
         final int checkIntervalMillis = 10;
@@ -381,7 +397,7 @@ class HealthCheckManagerTest {
         long afterCount = check.getCount();
 
         // then
-        assertThat(shutdownFailure.get()).isFalse();
+        assertThat(shutdownFailure).isFalse();
         assertThat(afterCount - beforeCount).isGreaterThanOrEqualTo(expectedCount);
     }
 

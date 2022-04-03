@@ -4,15 +4,15 @@
 
 In general, the currently stable and the previously stable major & minor versions are supported.
 
-For example, Dropwizard 1.3.x will receive critical security fixes while Dropwizard 2.0.x is the current stable version.
+For example, Dropwizard 2.0.x will receive critical security fixes while Dropwizard 2.1.x is the current stable version.
 
-Once Dropwizard 2.1.x has been released, Dropwizard 1.3.x will be unsupported and Dropwizard 2.0.x will receive critical security fixes.
+Once Dropwizard 2.2.x has been released, Dropwizard 2.0.x will be unsupported and Dropwizard 2.1.x will only receive critical security fixes.
 
 | Version | Supported          |
-| ------- | ------------------ |
+|---------|--------------------|
+| 2.1.x   | :white_check_mark: |
 | 2.0.x   | :white_check_mark: |
-| 1.3.x   | :white_check_mark: |
-| < 1.3   | :x:                |
+| < 2.0   | :x:                |
 
 ## Reporting a Vulnerability
 

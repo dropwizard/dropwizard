@@ -55,7 +55,7 @@ class TaskServletTest {
 
         servlet.service(request, response);
 
-        verify(response).sendError(404);
+        verify(response).setStatus(404);
     }
 
     @Test
@@ -211,7 +211,7 @@ class TaskServletTest {
         when(request.getPathInfo()).thenReturn("/absent");
         servlet.service(request, response);
 
-        verify(response).sendError(404);
+        verify(response).setStatus(404);
     }
 
     @Test
@@ -220,7 +220,7 @@ class TaskServletTest {
         when(request.getPathInfo()).thenReturn("/gc");
         servlet.service(request, response);
 
-        verify(response).sendError(405);
+        verify(response).setStatus(405);
     }
 
     @Test
@@ -306,7 +306,7 @@ class TaskServletTest {
 
         servlet.service(request, response);
 
-        verify(response).sendError(404);
+        verify(response).setStatus(404);
     }
 
     @Test

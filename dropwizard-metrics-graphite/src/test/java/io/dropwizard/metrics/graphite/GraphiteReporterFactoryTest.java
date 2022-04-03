@@ -11,8 +11,6 @@ import io.dropwizard.validation.BaseValidator;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
-import java.lang.reflect.Field;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -43,20 +41,21 @@ class GraphiteReporterFactoryTest {
     }
 
     @Test
-    void testNoAddressResolutionForGraphite() throws Exception {
+    void testNoAddressResolutionForGraphite() {
         graphiteReporterFactory.build(new MetricRegistry());
 
         final ArgumentCaptor<Graphite> argument = ArgumentCaptor.forClass(Graphite.class);
         verify(builderSpy).build(argument.capture());
 
         final Graphite graphite = argument.getValue();
-        assertThat(getField(graphite, "hostname")).isEqualTo("localhost");
-        assertThat(getField(graphite, "port")).isEqualTo(2003);
-        assertThat(getField(graphite, "address")).isNull();
+        assertThat(graphite)
+            .satisfies(g -> assertThat(g).extracting("hostname").isEqualTo("localhost"))
+            .satisfies(g -> assertThat(g).extracting("port").isEqualTo(2003))
+            .satisfies(g -> assertThat(g).extracting("address").isNull());
     }
 
     @Test
-    void testCorrectTransportForGraphiteUDP() throws Exception {
+    void testCorrectTransportForGraphiteUDP() {
         graphiteReporterFactory.setTransport("udp");
         graphiteReporterFactory.build(new MetricRegistry());
 
@@ -64,30 +63,9 @@ class GraphiteReporterFactoryTest {
         verify(builderSpy).build(argument.capture());
 
         final GraphiteUDP graphite = argument.getValue();
-        assertThat(getField(graphite, "hostname")).isEqualTo("localhost");
-        assertThat(getField(graphite, "port")).isEqualTo(2003);
-        assertThat(getField(graphite, "address")).isNull();
-    }
-
-    private static Object getField(GraphiteUDP graphite, String name) throws NoSuchFieldException {
-        try {
-            return getInaccessibleField(GraphiteUDP.class, name).get(graphite);
-        } catch (IllegalAccessException e) {
-            throw new IllegalStateException(e);
-        }
-    }
-
-    private static Object getField(Graphite graphite, String name) throws NoSuchFieldException {
-        try {
-            return getInaccessibleField(Graphite.class, name).get(graphite);
-        } catch (IllegalAccessException e) {
-            throw new IllegalStateException(e);
-        }
-    }
-
-    private static Field getInaccessibleField(Class klass, String name) throws NoSuchFieldException {
-        Field field = klass.getDeclaredField(name);
-        field.setAccessible(true);
-        return field;
+        assertThat(graphite)
+            .satisfies(g -> assertThat(g).extracting("hostname").isEqualTo("localhost"))
+            .satisfies(g -> assertThat(g).extracting("port").isEqualTo(2003))
+            .satisfies(g -> assertThat(g).extracting("address").isNull());
     }
 }

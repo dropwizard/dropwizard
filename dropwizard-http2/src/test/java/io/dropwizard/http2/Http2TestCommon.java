@@ -1,7 +1,6 @@
 package io.dropwizard.http2;
 
 import io.dropwizard.logging.BootstrapLogging;
-import io.dropwizard.testing.ResourceHelpers;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.api.ContentResponse;
 import org.eclipse.jetty.client.api.Result;
@@ -18,11 +17,12 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.eclipse.jetty.util.resource.Resource.newResource;
 
 /**
  * Common code for HTTP/2 connector tests
  */
-class AbstractHttp2Test {
+class Http2TestCommon {
 
     static {
         BootstrapLogging.bootstrap();
@@ -34,7 +34,7 @@ class AbstractHttp2Test {
 
     @BeforeEach
     void setUp() throws Exception {
-        sslContextFactory.setTrustStorePath(ResourceHelpers.resourceFilePath("stores/http2_client.jts"));
+        sslContextFactory.setTrustStoreResource(newResource(getClass().getResource("/stores/http2_client.jts")));
         sslContextFactory.setTrustStorePassword("http2_client");
         sslContextFactory.start();
 

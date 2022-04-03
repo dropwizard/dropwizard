@@ -3,13 +3,12 @@ package io.dropwizard.hibernate;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
+import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.db.PooledDataSourceFactory;
 import io.dropwizard.jersey.errors.ErrorMessage;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import io.dropwizard.testing.ConfigOverride;
-import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import org.hibernate.FlushMode;
@@ -35,14 +34,14 @@ import javax.ws.rs.ext.ExceptionMapper;
 import java.util.Arrays;
 import java.util.Optional;
 
+import static io.dropwizard.testing.ConfigOverride.config;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(DropwizardExtensionsSupport.class)
 class LazyLoadingTest {
     private final DropwizardAppExtension<TestConfiguration> appExtension = new DropwizardAppExtension<>(
-        TestApplication.class,
-        ResourceHelpers.resourceFilePath("hibernate-integration-test.yaml"),
-        ConfigOverride.config("dataSource.url", "jdbc:h2:mem:DbTest" + System.nanoTime())
+        TestApplication.class, "hibernate-integration-test.yaml", new ResourceConfigurationSourceProvider(),
+        config("dataSource.url", "jdbc:h2:mem:DbTest" + System.nanoTime())
     );
 
     @Test
@@ -68,11 +67,11 @@ class LazyLoadingTest {
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     @ExtendWith(DropwizardExtensionsSupport.class)
-    class LazyLoadingDisabled {
+    class LazyLoadingDisabledTest {
         private final DropwizardAppExtension<TestConfiguration> appExtension = new DropwizardAppExtension<>(
-            TestApplicationWithDisabledLazyLoading.class,
-            ResourceHelpers.resourceFilePath("hibernate-integration-test.yaml"),
-            ConfigOverride.config("dataSource.url", "jdbc:h2:mem:DbTest" + System.nanoTime())
+            TestApplicationWithDisabledLazyLoading.class, "hibernate-integration-test.yaml",
+            new ResourceConfigurationSourceProvider(),
+            config("dataSource.url", "jdbc:h2:mem:DbTest" + System.nanoTime())
         );
 
         @Test
@@ -107,7 +106,7 @@ class LazyLoadingTest {
         }
 
         @Override
-        public void run(TestConfiguration configuration, Environment environment) throws Exception {
+        public void run(TestConfiguration configuration, Environment environment) {
             final SessionFactory sessionFactory = hibernate.getSessionFactory();
             initDatabase(sessionFactory);
 

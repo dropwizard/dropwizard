@@ -25,5 +25,10 @@ class DropwizardExecutorProvider implements ExecutorServiceProvider {
 
     @Override
     public void dispose(ExecutorService executorService) {
+        /*
+         Jersey makes copies of clients, including the executor
+         This means we cannot shut down the ExecutorService here as it may be in use elsewhere
+         https://github.com/dropwizard/dropwizard/issues/2218
+         */
     }
 }

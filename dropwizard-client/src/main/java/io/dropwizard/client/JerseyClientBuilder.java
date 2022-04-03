@@ -24,7 +24,6 @@ import javax.annotation.Nullable;
 import javax.net.ssl.HostnameVerifier;
 import javax.validation.Validator;
 import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.RxInvokerProvider;
 import javax.ws.rs.core.Configuration;
 import java.util.ArrayList;
@@ -369,18 +368,14 @@ public class JerseyClientBuilder {
             apacheHttpClientBuilder.disableContentCompression(true);
         }
 
-        final Client client = ClientBuilder.newClient(buildConfig(name, threadPool, objectMapper, validator));
+        final Client client = org.glassfish.jersey.client.JerseyClientBuilder.createClient(buildConfig(name, threadPool, objectMapper, validator));
         client.register(new JerseyIgnoreRequestUserAgentHeaderFilter());
 
         // Tie the client to server lifecycle
         if (environment != null) {
             environment.lifecycle().manage(new Managed() {
                 @Override
-                public void start() throws Exception {
-                }
-
-                @Override
-                public void stop() throws Exception {
+                public void stop() {
                     client.close();
                 }
             });

@@ -10,7 +10,7 @@ public class BadLogApp extends Application<Configuration> {
     private static final Logger LOGGER = LoggerFactory.getLogger(BadLogApp.class);
 
     @Override
-    protected void onFatalError() {
+    protected void onFatalError(Throwable t) {
         LOGGER.warn("Mayday we're going down");
     }
 

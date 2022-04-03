@@ -13,7 +13,7 @@ import java.util.Collections;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @NotThreadSafe
-class DbMigrateDifferentFileCommandTest extends AbstractMigrationTest {
+class DbMigrateDifferentFileCommandTest {
 
     private final DbMigrateCommand<TestMigrationConfiguration> migrateCommand = new DbMigrateCommand<>(
         TestMigrationConfiguration::getDataSource, TestMigrationConfiguration.class, "migrations-ddl.xml");
@@ -22,8 +22,8 @@ class DbMigrateDifferentFileCommandTest extends AbstractMigrationTest {
 
     @BeforeEach
     void setUp() {
-        databaseUrl = getDatabaseUrl();
-        conf = createConfiguration(databaseUrl);
+        databaseUrl = MigrationTestSupport.getDatabaseUrl();
+        conf = MigrationTestSupport.createConfiguration(databaseUrl);
     }
 
     @Test

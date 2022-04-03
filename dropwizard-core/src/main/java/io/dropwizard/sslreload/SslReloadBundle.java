@@ -5,7 +5,6 @@ import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.jetty.MutableServletContextHandler;
 import io.dropwizard.jetty.SslReload;
 import io.dropwizard.setup.Environment;
-import org.eclipse.jetty.util.component.AbstractLifeCycle;
 import org.eclipse.jetty.util.component.LifeCycle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +24,7 @@ public class SslReloadBundle implements ConfiguredBundle<Configuration> {
 
     @Override
     public void run(Configuration configuration, Environment environment) {
-        environment.getApplicationContext().addLifeCycleListener(new AbstractLifeCycle.AbstractLifeCycleListener() {
+        environment.getApplicationContext().addLifeCycleListener(new LifeCycle.Listener() {
             @Override
             public void lifeCycleStarted(LifeCycle event) {
                 final Set<SslReload> reloaders = new HashSet<>();

@@ -86,7 +86,6 @@ public class JsonHealthResponseProvider implements HealthResponseProvider {
     private Collection<HealthStateView> getViews(final Map<String, Collection<String>> queryParams) {
         final Set<String> names = getNamesFromQueryParams(queryParams);
 
-        final Collection<HealthStateView> views;
         if (shouldReturnAllViews(names)) {
             return unmodifiableList(new ArrayList<>(healthStateAggregator.healthStateViews()));
         } else {

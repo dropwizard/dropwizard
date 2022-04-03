@@ -1,4 +1,4 @@
 lesscpy==0.15.0
-Sphinx==4.3.2
+Sphinx==4.5.0
 sphinx-autobuild==2021.3.14
 sphinx-rtd-theme==1.0.0

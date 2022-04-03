@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Locale;
-import java.util.Optional;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
@@ -231,7 +230,12 @@ public class DataSize implements Comparable<DataSize>, Serializable {
         return Long.compare(toBytes(), other.toBytes());
     }
 
-    @SuppressWarnings("deprecation")
+    /**
+     * Construct an equivalent {@link Size} object from this {@link DataSize}
+     *
+     * @deprecated {@link Size} is deprecated in favour of {@link DataSize}
+     */
+    @Deprecated
     public Size toSize() {
         switch (unit) {
             case BYTES:
@@ -258,7 +262,12 @@ public class DataSize implements Comparable<DataSize>, Serializable {
         }
     }
 
-    @SuppressWarnings("deprecation")
+    /**
+     * Construct an equivalent {@link DataSize} object from a {@link Size} object
+     *
+     * @deprecated {@link Size} is deprecated in favour of {@link DataSize}
+     */
+    @Deprecated
     public static DataSize fromSize(Size size) {
         switch (size.getUnit()) {
             case BYTES:

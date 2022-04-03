@@ -21,9 +21,12 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * whose value must be higher or equal to the specified minimum.
  * <p/>
  * <code>null</code> elements are considered valid
+ *
+ * @deprecated Use {@link MinDataSize} for correct SI and IEC prefixes.
  */
 @Target({ METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE })
 @Retention(RUNTIME)
+@Deprecated
 @Documented
 @Constraint(validatedBy = MinSizeValidator.class)
 public @interface MinSize {

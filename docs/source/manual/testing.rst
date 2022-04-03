@@ -19,8 +19,8 @@ Testing Representations
 
 While Jackson's JSON support is powerful and fairly easy-to-use, you shouldn't just rely on
 eyeballing your representation classes to ensure you're producing the API you think you
-are. By using the helper methods in `FixtureHelpers`, you can add unit tests for serializing and
-deserializing your representation classes to and from JSON.
+are. You can add unit tests for serializing and deserializing your representation classes to and
+from JSON.
 
 Let's assume we have a ``Person`` class which your API uses as both a request entity (e.g., when
 writing via a ``PUT`` request) and a response entity (e.g., when reading via a ``GET`` request):
@@ -89,22 +89,22 @@ Next, write a test for serializing a ``Person`` instance to JSON:
 
 .. code-block:: java
 
-    import static io.dropwizard.testing.FixtureHelpers.*;
-    import static org.assertj.core.api.Assertions.assertThat;
-    import io.dropwizard.jackson.Jackson;
-    import org.junit.jupiter.api.Test;
     import com.fasterxml.jackson.databind.ObjectMapper;
+    import org.junit.jupiter.api.Test;
 
-    public class PersonTest {
+    import static io.dropwizard.jackson.Jackson.newObjectMapper;
+    import static org.assertj.core.api.Assertions.assertThat;
 
-        private static final ObjectMapper MAPPER = Jackson.newObjectMapper();
+    class PersonTest {
+
+        private static final ObjectMapper MAPPER = newObjectMapper();
 
         @Test
-        public void serializesToJSON() throws Exception {
+        void seralizesToJSON() throws Exception {
             final Person person = new Person("Luther Blissett", "lb@example.com");
 
             final String expected = MAPPER.writeValueAsString(
-                    MAPPER.readValue(fixture("fixtures/person.json"), Person.class));
+                    MAPPER.readValue(getClass().getResource("/fixtures/person.json"), Person.class));
 
             assertThat(MAPPER.writeValueAsString(person)).isEqualTo(expected);
         }
@@ -126,20 +126,20 @@ Next, write a test for deserializing a ``Person`` instance from JSON:
 
 .. code-block:: java
 
-    import static io.dropwizard.testing.FixtureHelpers.*;
-    import static org.assertj.core.api.Assertions.assertThat;
-    import io.dropwizard.jackson.Jackson;
-    import org.junit.jupiter.api.Test;
     import com.fasterxml.jackson.databind.ObjectMapper;
+    import org.junit.jupiter.api.Test;
+
+    import static io.dropwizard.jackson.Jackson.newObjectMapper;
+    import static org.assertj.core.api.Assertions.assertThat;
 
     public class PersonTest {
 
-        private static final ObjectMapper MAPPER = Jackson.newObjectMapper();
+        private static final ObjectMapper MAPPER = newObjectMapper();
 
         @Test
         public void deserializesFromJSON() throws Exception {
             final Person person = new Person("Luther Blissett", "lb@example.com");
-            assertThat(MAPPER.readValue(fixture("fixtures/person.json"), Person.class))
+            assertThat(MAPPER.readValue(getClass().getResource("/fixtures/person.json"), Person.class))
                     .isEqualTo(person);
         }
     }

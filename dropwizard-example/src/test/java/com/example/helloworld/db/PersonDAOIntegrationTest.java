@@ -36,7 +36,7 @@ class PersonDAOIntegrationTest {
             .setUrl(MY_SQL_CONTAINER.getJdbcUrl())
             .setUsername(MY_SQL_CONTAINER.getUsername())
             .setPassword(MY_SQL_CONTAINER.getPassword())
-            .setProperty(PropertyKey.enabledTLSProtocols.getKeyName(), "TLSv1.1,TLSv1.2,TLSv1.3")
+            .setProperty(PropertyKey.tlsVersions.getKeyName(), "TLSv1.1,TLSv1.2,TLSv1.3")
             .addEntityClass(Person.class)
             .build();
 

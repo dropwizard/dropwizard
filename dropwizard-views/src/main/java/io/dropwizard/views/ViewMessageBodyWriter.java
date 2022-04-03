@@ -40,6 +40,10 @@ public class ViewMessageBodyWriter implements MessageBodyWriter<View> {
     private final Iterable<ViewRenderer> renderers;
     private final MetricRegistry metricRegistry;
 
+    /**
+     * @deprecated use {@link #ViewMessageBodyWriter(MetricRegistry, Iterable)} instead
+     * @param metricRegistry
+     */
     @Deprecated
     public ViewMessageBodyWriter(MetricRegistry metricRegistry) {
         this(metricRegistry, ServiceLoader.load(ViewRenderer.class));

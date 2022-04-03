@@ -7,15 +7,17 @@ import org.eclipse.jetty.util.component.ContainerLifeCycle;
 import org.eclipse.jetty.util.component.LifeCycle;
 import org.junit.jupiter.api.Test;
 
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
+import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.InstanceOfAssertFactories.BOOLEAN;
+import static org.assertj.core.api.InstanceOfAssertFactories.STRING;
 import static org.mockito.Mockito.mock;
 
 class LifecycleEnvironmentTest {
@@ -45,49 +47,53 @@ class LifecycleEnvironmentTest {
         assertThat(container.getBeans())
             .singleElement()
             .isInstanceOfSatisfying(JettyManaged.class, jettyManaged ->
-                assertThat(jettyManaged.getManaged()).isEqualTo(managed));
+                assertThat(jettyManaged.getManaged()).isSameAs(managed));
     }
 
     @Test
-    void scheduledExecutorServiceBuildsDaemonThreads() throws ExecutionException, InterruptedException {
+    void scheduledExecutorServiceBuildsDaemonThreads() {
         final ScheduledExecutorService executorService = environment.scheduledExecutorService("daemon-%d", true).build();
-        final Future<Boolean> isDaemon = executorService.submit(() -> Thread.currentThread().isDaemon());
 
-        assertThat(isDaemon.get()).isTrue();
+        assertThat(executorService.submit(() -> Thread.currentThread().isDaemon()))
+            .succeedsWithin(1, TimeUnit.SECONDS, as(BOOLEAN))
+            .isTrue();
     }
 
     @Test
-    void scheduledExecutorServiceBuildsUserThreadsByDefault() throws ExecutionException, InterruptedException {
+    void scheduledExecutorServiceBuildsUserThreadsByDefault() {
         final ScheduledExecutorService executorService = environment.scheduledExecutorService("user-%d").build();
-        final Future<Boolean> isDaemon = executorService.submit(() -> Thread.currentThread().isDaemon());
 
-        assertThat(isDaemon.get()).isFalse();
+        assertThat(executorService.submit(() -> Thread.currentThread().isDaemon()))
+            .succeedsWithin(1, TimeUnit.SECONDS, as(BOOLEAN))
+            .isFalse();
     }
 
     @Test
-    void scheduledExecutorServiceThreadFactory() throws ExecutionException, InterruptedException {
+    void scheduledExecutorServiceThreadFactory() {
         final String expectedName = "DropWizard ThreadFactory Test";
         final String expectedNamePattern = expectedName + "-%d";
 
         final ThreadFactory tfactory = buildThreadFactory(expectedNamePattern);
 
         final ScheduledExecutorService executorService = environment.scheduledExecutorService("DropWizard Service", tfactory).build();
-        final Future<Boolean> isFactoryInUse = executorService.submit(() -> Thread.currentThread().getName().startsWith(expectedName));
 
-        assertThat(isFactoryInUse.get()).isTrue();
+        assertThat(executorService.submit(() -> Thread.currentThread().getName()))
+            .succeedsWithin(1, TimeUnit.SECONDS, as(STRING))
+            .startsWith(expectedName);
     }
 
     @Test
-    void executorServiceThreadFactory() throws ExecutionException, InterruptedException {
+    void executorServiceThreadFactory() {
         final String expectedName = "DropWizard ThreadFactory Test";
         final String expectedNamePattern = expectedName + "-%d";
 
         final ThreadFactory tfactory = buildThreadFactory(expectedNamePattern);
 
         final ExecutorService executorService = environment.executorService("Dropwizard Service", tfactory).build();
-        final Future<Boolean> isFactoryInUse = executorService.submit(() -> Thread.currentThread().getName().startsWith(expectedName));
 
-        assertThat(isFactoryInUse.get()).isTrue();
+        assertThat(executorService.submit(() -> Thread.currentThread().getName()))
+            .succeedsWithin(1, TimeUnit.SECONDS, as(STRING))
+            .startsWith(expectedName);
     }
 
     private ThreadFactory buildThreadFactory(String expectedNamePattern) {

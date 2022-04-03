@@ -33,7 +33,7 @@ class PeopleResourceTest {
     public static final ResourceExtension RESOURCES = ResourceExtension.builder()
             .addResource(new PeopleResource(PERSON_DAO))
             .build();
-    private ArgumentCaptor<Person> personCaptor = ArgumentCaptor.forClass(Person.class);
+    private final ArgumentCaptor<Person> personCaptor = ArgumentCaptor.forClass(Person.class);
     private Person person;
 
     @BeforeEach
@@ -86,7 +86,7 @@ class PeopleResourceTest {
     }
 
     @Test
-    void listPeople() throws Exception {
+    void listPeople() {
         final List<Person> people = Collections.singletonList(person);
         when(PERSON_DAO.findAll()).thenReturn(people);
 

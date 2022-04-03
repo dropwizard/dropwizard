@@ -71,10 +71,8 @@ class ViewMessageBodyWriterTest {
         when(metricRegistry.timer(anyString())).thenReturn(timer);
         when(timer.time()).thenReturn(timerContext);
 
-        assertThatExceptionOfType(WebApplicationException.class).isThrownBy(() -> {
-            writer.writeTo(view, Class.class, Class.class, new Annotation[]{}, new MediaType(),
-                new MultivaluedHashMap<>(), stream);
-        }).withCauseExactlyInstanceOf(ViewRenderException.class);
+        assertThatExceptionOfType(WebApplicationException.class)
+            .isThrownBy(() -> writer.writeTo(view, Class.class, Class.class, new Annotation[]{}, new MediaType(), new MultivaluedHashMap<>(), stream)).withCauseExactlyInstanceOf(ViewRenderException.class);
 
         verify(timerContext).stop();
     }
@@ -95,10 +93,9 @@ class ViewMessageBodyWriterTest {
         doReturn(locale).when(writer).detectLocale(any());
         writer.setHeaders(mock(HttpHeaders.class));
 
-        assertThatExceptionOfType(WebApplicationException.class).isThrownBy(() -> {
-            writer.writeTo(view, Class.class, Class.class, new Annotation[]{}, new MediaType(),
-                new MultivaluedHashMap<>(), stream);
-        }).withCause(exception);
+        assertThatExceptionOfType(WebApplicationException.class)
+            .isThrownBy(() -> writer.writeTo(view, Class.class, Class.class, new Annotation[]{}, new MediaType(), new MultivaluedHashMap<>(), stream))
+            .withCause(exception);
 
         verify(timerContext).stop();
     }
@@ -109,9 +106,8 @@ class ViewMessageBodyWriterTest {
 
         final ViewMessageBodyWriter writer = new ViewMessageBodyWriter(metricRegistry, Collections.emptyList());
 
-        assertThatExceptionOfType(WebApplicationException.class).isThrownBy(() -> {
-            writer.detectLocale(headers);
-        });
+        assertThatExceptionOfType(WebApplicationException.class)
+            .isThrownBy(() -> writer.detectLocale(headers));
     }
 
     @Test
