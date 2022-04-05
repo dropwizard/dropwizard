@@ -2,12 +2,12 @@ package io.dropwizard.health.check.http;
 
 import com.codahale.metrics.health.HealthCheck;
 import org.glassfish.jersey.client.ClientProperties;
+import org.glassfish.jersey.client.JerseyClientBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.Response;
 import java.time.Duration;
 import java.util.Objects;
@@ -32,7 +32,7 @@ public class HttpHealthCheck extends HealthCheck {
         if (readTimeout.toMillis() <= 0L || connectionTimeout.toMillis() <= 0L) {
             throw new IllegalStateException();
         }
-        this.client = ClientBuilder.newClient()
+        this.client = JerseyClientBuilder.createClient()
             .property(ClientProperties.CONNECT_TIMEOUT, (int) connectionTimeout.toMillis())
             .property(ClientProperties.READ_TIMEOUT, (int) readTimeout.toMillis());
     }

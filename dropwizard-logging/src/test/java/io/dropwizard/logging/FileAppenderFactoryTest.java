@@ -6,7 +6,6 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.FileAppender;
-import ch.qos.logback.core.OutputStreamAppender;
 import ch.qos.logback.core.rolling.FixedWindowRollingPolicy;
 import ch.qos.logback.core.rolling.RollingFileAppender;
 import ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy;
@@ -32,7 +31,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.validation.Validator;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -195,7 +193,7 @@ class FileAppenderFactoryTest {
     }
 
     @Test
-    void hasMaxFileSize(@TempDir Path tempDir) throws Exception {
+    void hasMaxFileSize(@TempDir Path tempDir) {
         FileAppenderFactory<ILoggingEvent> fileAppenderFactory = new FileAppenderFactory<>();
         fileAppenderFactory.setCurrentLogFilename(tempDir.resolve("logfile.log").toString());
         fileAppenderFactory.setArchive(true);
@@ -204,14 +202,13 @@ class FileAppenderFactoryTest {
         RollingFileAppender<ILoggingEvent> appender = (RollingFileAppender<ILoggingEvent>) fileAppenderFactory.buildAppender(new LoggerContext());
 
         assertThat(appender.getTriggeringPolicy()).isInstanceOf(SizeAndTimeBasedRollingPolicy.class);
-        final Field maxFileSizeField = SizeAndTimeBasedRollingPolicy.class.getDeclaredField("maxFileSize");
-        maxFileSizeField.setAccessible(true);
-        final FileSize maxFileSize = (FileSize) maxFileSizeField.get(appender.getRollingPolicy());
-        assertThat(maxFileSize.getSize()).isEqualTo(1024L);
+        assertThat(appender.getRollingPolicy())
+            .extracting("maxFileSize")
+            .isInstanceOfSatisfying(FileSize.class, maxFileSize -> assertThat(maxFileSize.getSize()).isEqualTo(1024L));
     }
 
     @Test
-    void hasMaxFileSizeFixedWindow(@TempDir Path tempDir) throws Exception {
+    void hasMaxFileSizeFixedWindow(@TempDir Path tempDir) {
         FileAppenderFactory<ILoggingEvent> fileAppenderFactory = new FileAppenderFactory<>();
         fileAppenderFactory.setCurrentLogFilename(tempDir.resolve("logfile.log").toString());
         fileAppenderFactory.setArchive(true);
@@ -222,11 +219,10 @@ class FileAppenderFactoryTest {
         assertThat(appender.getRollingPolicy()).isInstanceOf(FixedWindowRollingPolicy.class);
         assertThat(appender.getRollingPolicy().isStarted()).isTrue();
 
-        assertThat(appender.getTriggeringPolicy()).isInstanceOf(SizeBasedTriggeringPolicy.class);
-        assertThat(appender.getTriggeringPolicy().isStarted()).isTrue();
-        final Field maxFileSizeField = SizeBasedTriggeringPolicy.class.getDeclaredField("maxFileSize");
-        maxFileSizeField.setAccessible(true);
-        assertThat(maxFileSizeField.get(appender.getTriggeringPolicy()))
+        assertThat(appender.getTriggeringPolicy())
+            .isInstanceOf(SizeBasedTriggeringPolicy.class)
+            .satisfies(policy -> assertThat(policy.isStarted()).isTrue())
+            .extracting("maxFileSize")
             .isInstanceOfSatisfying(FileSize.class, maxFileSize -> assertThat(maxFileSize.getSize()).isEqualTo(1024L));
     }
 
@@ -293,7 +289,7 @@ class FileAppenderFactoryTest {
     }
 
     @Test
-    void overrideBufferSize() throws NoSuchFieldException, IllegalAccessException {
+    void overrideBufferSize() {
         FileAppenderFactory<ILoggingEvent> fileAppenderFactory = new FileAppenderFactory<>();
         fileAppenderFactory.setArchive(false);
         fileAppenderFactory.setBufferSize(DataSize.kibibytes(256));
@@ -301,90 +297,66 @@ class FileAppenderFactoryTest {
         final Appender<ILoggingEvent> fileAppender = asyncAppender.getAppender("file-appender");
         assertThat(fileAppender).isInstanceOf(FileAppender.class);
 
-        final Field bufferSizeField = FileAppender.class.getDeclaredField("bufferSize");
-        bufferSizeField.setAccessible(true);
-
-        assertThat(bufferSizeField.get(fileAppender))
+        assertThat(fileAppender)
+            .extracting("bufferSize")
             .isInstanceOfSatisfying(FileSize.class, bufferSize ->
                 assertThat(bufferSize.getSize()).isEqualTo(fileAppenderFactory.getBufferSize().toBytes()));
     }
 
     @Test
-    void isImmediateFlushed() throws Exception {
+    void isImmediateFlushed() {
         FileAppenderFactory<ILoggingEvent> fileAppenderFactory = new FileAppenderFactory<>();
         fileAppenderFactory.setArchive(false);
-
-        Field isImmediateFlushField = OutputStreamAppender.class.getDeclaredField("immediateFlush");
-        isImmediateFlushField.setAccessible(true);
 
         fileAppenderFactory.setImmediateFlush(false);
         assertThat(fileAppenderFactory.build(new LoggerContext(), "test", new DropwizardLayoutFactory(), new NullLevelFilterFactory<>(), new AsyncLoggingEventAppenderFactory()))
             .isInstanceOfSatisfying(AsyncAppender.class, asyncAppender -> assertThat(asyncAppender)
                 .extracting(appender -> appender.getAppender("file-appender"))
-                .satisfies(fileAppender -> assertThat(isImmediateFlushField.get(fileAppender)).isEqualTo(fileAppenderFactory.isImmediateFlush())));
+                .satisfies(fileAppender -> assertThat(fileAppender)
+                    .extracting("immediateFlush")
+                    .isEqualTo(fileAppenderFactory.isImmediateFlush())));
 
         fileAppenderFactory.setImmediateFlush(true);
         assertThat(fileAppenderFactory.build(new LoggerContext(), "test", new DropwizardLayoutFactory(), new NullLevelFilterFactory<>(), new AsyncLoggingEventAppenderFactory()))
             .isInstanceOfSatisfying(AsyncAppender.class, asyncAppender -> assertThat(asyncAppender)
                 .extracting(appender -> appender.getAppender("file-appender"))
-                    .satisfies(fileAppender -> assertThat(isImmediateFlushField.get(fileAppender)).isEqualTo(fileAppenderFactory.isImmediateFlush())));
+                .satisfies(fileAppender -> assertThat(fileAppender)
+                    .extracting("immediateFlush")
+                    .isEqualTo(fileAppenderFactory.isImmediateFlush())));
     }
 
     @Test
-    void validSetTotalSizeCap() throws IOException, ConfigurationException, NoSuchFieldException {
-        final Field totalSizeCap = TimeBasedRollingPolicy.class.getDeclaredField("totalSizeCap");
-        totalSizeCap.setAccessible(true);
-
-        final Field maxFileSize = SizeAndTimeBasedRollingPolicy.class.getDeclaredField("maxFileSize");
-        maxFileSize.setAccessible(true);
-
+    void validSetTotalSizeCap() throws IOException, ConfigurationException {
         final YamlConfigurationFactory<FileAppenderFactory> factory =
             new YamlConfigurationFactory<>(FileAppenderFactory.class, validator, mapper, "dw");
 
-        final FileAppender appender = factory.build(new ResourceConfigurationSourceProvider(), "yaml/appender_file_cap.yaml")
-            .buildAppender(new LoggerContext());
-        assertThat(appender).isInstanceOfSatisfying(RollingFileAppender.class, roller ->
-            assertThat(roller.getRollingPolicy()).isInstanceOfSatisfying(SizeAndTimeBasedRollingPolicy.class, policy -> {
-                try {
-                    assertThat(totalSizeCap.get(policy))
-                        .isInstanceOfSatisfying(FileSize.class, x ->
-                            assertThat(x.getSize()).isEqualTo(DataSize.mebibytes(50).toBytes()));
-
-                    assertThat(maxFileSize.get(policy))
-                        .isInstanceOfSatisfying(FileSize.class, x ->
-                            assertThat(x.getSize()).isEqualTo(DataSize.mebibytes(10).toBytes()));
-
-                    assertThat(policy.getMaxHistory()).isEqualTo(5);
-                } catch (IllegalAccessException e) {
-                    throw new RuntimeException("Unexpected illegal access", e);
-                }
-            })
-        );
+        assertThat(factory.build(new ResourceConfigurationSourceProvider(), "yaml/appender_file_cap.yaml")
+                .buildAppender(new LoggerContext()))
+            .isInstanceOfSatisfying(RollingFileAppender.class, roller -> assertThat(roller.getRollingPolicy())
+                .isInstanceOfSatisfying(SizeAndTimeBasedRollingPolicy.class, policy -> assertThat(policy)
+                    .satisfies(p -> assertThat(p)
+                        .extracting("totalSizeCap")
+                        .isInstanceOfSatisfying(FileSize.class, x -> assertThat(x.getSize()).isEqualTo(DataSize.mebibytes(50).toBytes())))
+                    .satisfies(p -> assertThat(p)
+                        .extracting("maxFileSize")
+                        .isInstanceOfSatisfying(FileSize.class, x -> assertThat(x.getSize()).isEqualTo(DataSize.mebibytes(10).toBytes())))
+                    .satisfies(p -> assertThat(p.getMaxHistory()).isEqualTo(5))));
     }
 
     @Test
-    void validSetTotalSizeCapNoMaxFileSize() throws IOException, ConfigurationException, NoSuchFieldException {
-        final Field totalSizeCap = TimeBasedRollingPolicy.class.getDeclaredField("totalSizeCap");
-        totalSizeCap.setAccessible(true);
-
+    void validSetTotalSizeCapNoMaxFileSize() throws IOException, ConfigurationException {
         final YamlConfigurationFactory<FileAppenderFactory> factory =
             new YamlConfigurationFactory<>(FileAppenderFactory.class, validator, mapper, "dw");
 
         final FileAppender appender = factory.build(new ResourceConfigurationSourceProvider(), "yaml/appender_file_cap2.yaml")
             .buildAppender(new LoggerContext());
-        assertThat(appender).isInstanceOfSatisfying(RollingFileAppender.class, roller -> {
-            assertThat(roller.getRollingPolicy()).isInstanceOfSatisfying(TimeBasedRollingPolicy.class, policy -> {
-                try {
-                    assertThat(totalSizeCap.get(policy))
-                        .isInstanceOfSatisfying(FileSize.class, x ->
-                            assertThat(x.getSize()).isEqualTo(DataSize.mebibytes(50).toBytes()));
-
-                    assertThat(policy.getMaxHistory()).isEqualTo(5);
-                } catch (IllegalAccessException e) {
-                    throw new RuntimeException("Unexpected illegal access", e);
-                }
-            });
-        });
+        assertThat(appender).isInstanceOfSatisfying(RollingFileAppender.class, roller -> assertThat(roller.getRollingPolicy())
+            .isInstanceOfSatisfying(TimeBasedRollingPolicy.class, policy -> assertThat(policy)
+                .satisfies(p -> assertThat(p)
+                    .extracting("totalSizeCap")
+                    .isInstanceOfSatisfying(FileSize.class, x ->
+                        assertThat(x.getSize()).isEqualTo(DataSize.mebibytes(50).toBytes())))
+                .satisfies(p -> assertThat(p.getMaxHistory()).isEqualTo(5))));
     }
 
     @Test

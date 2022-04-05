@@ -27,8 +27,6 @@ import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException
 
 public abstract class BaseConfigurationFactoryTest {
 
-    private static final String NEWLINE = System.lineSeparator();
-
     @SuppressWarnings("UnusedDeclaration")
     public static class ExampleServer {
 
@@ -414,8 +412,8 @@ public abstract class BaseConfigurationFactoryTest {
     void incorrectTypeIsFound() {
         assertThatExceptionOfType(ConfigurationParsingException.class)
             .isThrownBy(() -> factory.build(configurationSourceProvider, wrongTypeFile))
-            .withMessage(String.format("%s has an error:" + NEWLINE +
-                "  * Incorrect type of value at: age; is of type: String, expected: int" + NEWLINE, wrongTypeFile));
+            .withMessage("%s has an error:%n" +
+                "  * Incorrect type of value at: age; is of type: String, expected: int%n", wrongTypeFile);
     }
 
     @Test

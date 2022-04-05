@@ -111,9 +111,13 @@ class ScheduledHealthCheck implements Runnable {
         sb.append(", healthCheck=").append(healthCheck);
         sb.append(", schedule=").append(schedule);
         sb.append(", state=").append(state);
-        sb.append(", healthyCheckCounter=").append(healthyCheckCounter);
-        sb.append(", unhealthyCheckCounter=").append(unhealthyCheckCounter);
+        sb.append(", healthyCheckCounter=").append(getCounterString(healthyCheckCounter));
+        sb.append(", unhealthyCheckCounter=").append(getCounterString(unhealthyCheckCounter));
         sb.append('}');
         return sb.toString();
+    }
+
+    private String getCounterString(Counter counter) {
+        return Counter.class.equals(counter.getClass()) ? String.valueOf(counter.getCount()) : counter.toString();
     }
 }

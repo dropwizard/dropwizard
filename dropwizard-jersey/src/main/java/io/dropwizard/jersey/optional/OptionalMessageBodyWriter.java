@@ -49,16 +49,14 @@ public class OptionalMessageBodyWriter implements MessageBodyWriter<Optional<?>>
                         MultivaluedMap<String, Object> httpHeaders,
                         OutputStream entityStream)
             throws IOException {
-        if (!entity.isPresent()) {
-            throw EmptyOptionalException.INSTANCE;
-        }
+        final Object entityObj = entity.orElseThrow(() -> EmptyOptionalException.INSTANCE);
 
         final Type innerGenericType = (genericType instanceof ParameterizedType) ?
-            ((ParameterizedType) genericType).getActualTypeArguments()[0] : entity.get().getClass();
+            ((ParameterizedType) genericType).getActualTypeArguments()[0] : entityObj.getClass();
 
-        final MessageBodyWriter writer = requireNonNull(mbw).get().getMessageBodyWriter(entity.get().getClass(),
+        final MessageBodyWriter writer = requireNonNull(mbw).get().getMessageBodyWriter(entityObj.getClass(),
             innerGenericType, annotations, mediaType);
-        writer.writeTo(entity.get(), entity.get().getClass(),
+        writer.writeTo(entityObj, entityObj.getClass(),
             innerGenericType, annotations, mediaType, httpHeaders, entityStream);
     }
 

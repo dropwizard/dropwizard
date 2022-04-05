@@ -19,11 +19,6 @@ public class ExecutorServiceManager implements Managed {
         this.poolName = poolName;
     }
 
-    @Override
-    public void start() throws Exception {
-        // OK BOSS
-    }
-
     /**
      * {@inheritDoc}
      *
