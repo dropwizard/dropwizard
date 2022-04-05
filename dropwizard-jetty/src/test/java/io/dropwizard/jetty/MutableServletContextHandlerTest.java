@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MutableServletContextHandlerTest {
+class MutableServletContextHandlerTest {
     private final MutableServletContextHandler handler = new MutableServletContextHandler();
 
     @Test

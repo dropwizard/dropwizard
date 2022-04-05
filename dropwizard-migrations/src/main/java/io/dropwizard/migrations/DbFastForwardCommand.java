@@ -55,14 +55,15 @@ public class DbFastForwardCommand<T extends Configuration> extends AbstractLiqui
     public void run(Namespace namespace,
                     Liquibase liquibase) throws Exception {
         final String context = getContext(namespace);
-        if (namespace.getBoolean("all")) {
-            if (namespace.getBoolean("dry-run")) {
+        final boolean isDryRun = Boolean.TRUE.equals(namespace.getBoolean("dry-run"));
+        if (Boolean.TRUE.equals(namespace.getBoolean("all"))) {
+            if (isDryRun) {
                 liquibase.changeLogSync(context, new OutputStreamWriter(printStream, StandardCharsets.UTF_8));
             } else {
                 liquibase.changeLogSync(context);
             }
         } else {
-            if (namespace.getBoolean("dry-run")) {
+            if (isDryRun) {
                 liquibase.markNextChangeSetRan(context, new OutputStreamWriter(printStream, StandardCharsets.UTF_8));
             } else {
                 liquibase.markNextChangeSetRan(context);

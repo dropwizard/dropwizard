@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
-public class JerseyEnvironmentTest {
+class JerseyEnvironmentTest {
 
     private final JerseyContainerHolder holder = mock(JerseyContainerHolder.class);
     private final DropwizardResourceConfig config = new DropwizardResourceConfig();

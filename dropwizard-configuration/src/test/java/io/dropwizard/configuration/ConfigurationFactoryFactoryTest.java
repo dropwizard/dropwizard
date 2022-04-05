@@ -4,57 +4,54 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.configuration.BaseConfigurationFactoryTest.Example;
 import io.dropwizard.jackson.Jackson;
-import io.dropwizard.util.Resources;
 import io.dropwizard.validation.BaseValidator;
 
 import org.junit.jupiter.api.Test;
 
 import javax.validation.Validator;
-import java.io.File;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 
-public class ConfigurationFactoryFactoryTest {
+class ConfigurationFactoryFactoryTest {
 
+    private final ConfigurationSourceProvider configurationSourceProvider = new ResourceConfigurationSourceProvider();
     private final ConfigurationFactoryFactory<Example> factoryFactory = new DefaultConfigurationFactoryFactory<>();
     private final Validator validator = BaseValidator.newValidator();
 
     @Test
     void createDefaultFactory() throws Exception {
-        File validFile = new File(Resources.getResource("factory-test-valid.yml").toURI());
+        String validFile = "factory-test-valid.yml";
         ConfigurationFactory<Example> factory =
             factoryFactory.create(Example.class, validator, Jackson.newObjectMapper(), "dw");
-        final Example example = factory.build(validFile);
+        final Example example = factory.build(configurationSourceProvider, validFile);
         assertThat(example.getName())
             .isEqualTo("Coda Hale");
     }
 
     @Test
-    void createDefaultFactoryFailsUnknownProperty() throws Exception {
-        File validFileWithUnknownProp = new File(
-            Resources.getResource("factory-test-unknown-property.yml").toURI());
+    void createDefaultFactoryFailsUnknownProperty() {
+        String validFileWithUnknownProp = "factory-test-unknown-property.yml";
         ConfigurationFactory<Example> factory =
             factoryFactory.create(Example.class, validator, Jackson.newObjectMapper(), "dw");
 
         assertThatExceptionOfType(ConfigurationException.class)
-            .isThrownBy(() -> factory.build(validFileWithUnknownProp))
+            .isThrownBy(() -> factory.build(configurationSourceProvider, validFileWithUnknownProp))
             .withMessageContaining("Unrecognized field at: trait");
     }
 
     @Test
     void createFactoryAllowingUnknownProperties() throws Exception {
         ConfigurationFactoryFactory<Example> customFactory = new PassThroughConfigurationFactoryFactory();
-        File validFileWithUnknownProp = new File(
-            Resources.getResource("factory-test-unknown-property.yml").toURI());
+        String validFileWithUnknownProp = "factory-test-unknown-property.yml";
         ConfigurationFactory<Example> factory =
             customFactory.create(
                 Example.class,
                 validator,
                 Jackson.newObjectMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES),
                 "dw");
-        Example example = factory.build(validFileWithUnknownProp);
+        Example example = factory.build(configurationSourceProvider, validFileWithUnknownProp);
         assertThat(example.getName())
             .isEqualTo("Mighty Wizard");
     }

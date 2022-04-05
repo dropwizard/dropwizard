@@ -22,7 +22,7 @@ import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
-public class DefaultLoggingFactoryPrintErrorMessagesTest {
+class DefaultLoggingFactoryPrintErrorMessagesTest {
     private DefaultLoggingFactory factory;
     private ByteArrayOutputStream output;
 
@@ -33,7 +33,7 @@ public class DefaultLoggingFactoryPrintErrorMessagesTest {
     }
 
     @AfterEach
-    void tearDown() throws Exception {
+    void tearDown() {
         factory.stop();
         factory.reset();
     }
@@ -58,14 +58,14 @@ public class DefaultLoggingFactoryPrintErrorMessagesTest {
     }
 
     @Test
-    void testWhenUsingDefaultConstructor_SystemErrIsSet() throws Exception {
+    void testWhenUsingDefaultConstructor_SystemErrIsSet() {
         PrintStream configurationErrorsStream = new DefaultLoggingFactory().getConfigurationErrorsStream();
 
         assertThat(configurationErrorsStream).isSameAs(System.err);
     }
 
     @Test
-    void testWhenUsingDefaultConstructor_StaticILoggerFactoryIsSet() throws Exception {
+    void testWhenUsingDefaultConstructor_StaticILoggerFactoryIsSet() {
         LoggerContext loggerContext = new DefaultLoggingFactory().getLoggerContext();
 
         assertThat(loggerContext).isSameAs(LoggerFactory.getILoggerFactory());
@@ -99,7 +99,7 @@ public class DefaultLoggingFactoryPrintErrorMessagesTest {
         Field field = StatusPrinter.class.getDeclaredField("ps");
         field.setAccessible(true);
 
-        PrintStream out = (PrintStream) field.get(null);
-        assertThat(out).isSameAs(System.out);
+        assertThat(field.get(null))
+            .isInstanceOfSatisfying(PrintStream.class, printStream -> assertThat(printStream).isSameAs(System.out));
     }
 }

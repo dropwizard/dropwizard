@@ -22,7 +22,7 @@ import static org.assertj.core.api.Assertions.fail;
 /**
  * Verify that Logback can be excluded from the classpath without generating any noise.
  */
-public class LogbackExcludedTest {
+class LogbackExcludedTest {
 
     @Test
     void testLogbackExcludedClassNotFound() throws Exception {
@@ -92,7 +92,7 @@ public class LogbackExcludedTest {
         return byteStream;
     }
 
-    private static interface CheckedConsumer<T> {
+    private interface CheckedConsumer<T> {
 
         void accept(T t) throws ClassNotFoundException;
     }
@@ -136,7 +136,7 @@ public class LogbackExcludedTest {
             return ClassLoader.getSystemClassLoader().loadClass(name);
         }
 
-        private static Optional<URL> getUrl(Class<?> clazz) throws ClassNotFoundException {
+        private static Optional<URL> getUrl(Class<?> clazz) {
             return Optional.ofNullable(clazz.getProtectionDomain().getCodeSource()).map(CodeSource::getLocation);
         }
     }

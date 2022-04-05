@@ -25,7 +25,6 @@ import java.util.Optional;
 
 import static com.codahale.metrics.MetricRegistry.name;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -56,7 +55,7 @@ class TaskServletTest {
 
         servlet.service(request, response);
 
-        verify(response).sendError(404);
+        verify(response).setStatus(404);
     }
 
     @Test
@@ -176,15 +175,19 @@ class TaskServletTest {
      * depends on this to perform record metrics on Tasks
      */
     @Test
-    void verifyTaskExecuteMethod() {
-        assertThatCode(() -> Task.class.getMethod("execute", Map.class, PrintWriter.class))
-            .doesNotThrowAnyException();
+    void verifyTaskExecuteMethod() throws NoSuchMethodException {
+        assertThat(Task.class
+                .getMethod("execute", Map.class, PrintWriter.class)
+                .getReturnType())
+            .isEqualTo(Void.TYPE);
     }
 
     @Test
-    void verifyPostBodyTaskExecuteMethod() {
-        assertThatCode(() -> PostBodyTask.class.getMethod("execute", Map.class, String.class, PrintWriter.class))
-            .doesNotThrowAnyException();
+    void verifyPostBodyTaskExecuteMethod() throws NoSuchMethodException {
+        assertThat(PostBodyTask.class
+                .getMethod("execute", Map.class, String.class, PrintWriter.class)
+                .getReturnType())
+            .isEqualTo(Void.TYPE);
     }
 
     @Test
@@ -208,7 +211,7 @@ class TaskServletTest {
         when(request.getPathInfo()).thenReturn("/absent");
         servlet.service(request, response);
 
-        verify(response).sendError(404);
+        verify(response).setStatus(404);
     }
 
     @Test
@@ -217,7 +220,7 @@ class TaskServletTest {
         when(request.getPathInfo()).thenReturn("/gc");
         servlet.service(request, response);
 
-        verify(response).sendError(405);
+        verify(response).setStatus(405);
     }
 
     @Test
@@ -303,7 +306,7 @@ class TaskServletTest {
 
         servlet.service(request, response);
 
-        verify(response).sendError(404);
+        verify(response).setStatus(404);
     }
 
     @Test

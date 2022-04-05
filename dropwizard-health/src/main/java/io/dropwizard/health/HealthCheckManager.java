@@ -65,8 +65,8 @@ class HealthCheckManager implements HealthCheckRegistryListener, HealthStatusChe
 
         this.aggregateHealthyName = MetricRegistry.name("health", "aggregate", "healthy");
         this.aggregateUnhealthyName = MetricRegistry.name("health", "aggregate", "unhealthy");
-        metrics.register(aggregateHealthyName, (Gauge) this::calculateNumberOfHealthyChecks);
-        metrics.register(aggregateUnhealthyName, (Gauge) this::calculateNumberOfUnhealthyChecks);
+        metrics.register(aggregateHealthyName, (Gauge<Long>) this::calculateNumberOfHealthyChecks);
+        metrics.register(aggregateUnhealthyName, (Gauge<Long>) this::calculateNumberOfUnhealthyChecks);
     }
 
     // visible for testing
@@ -174,7 +174,14 @@ class HealthCheckManager implements HealthCheckRegistryListener, HealthStatusChe
                     return;
             }
         } else {
-            LOGGER.error("A critical dependency is now unhealthy: name={}, type={}", name, type);
+            ScheduledHealthCheck healthCheck = checks.get(name);
+            HealthCheckConfiguration healthCheckConfiguration = configs.get(name);
+            if (healthCheck != null && healthCheckConfiguration != null
+                && !healthCheckConfiguration.isInitialState() && !healthCheck.isPreviouslyRecovered()) {
+                LOGGER.warn("A critical unhealthy initialized dependency has not yet recovered: name={}, type={}", name, type);
+            } else {
+                LOGGER.error("A critical dependency is now unhealthy: name={}, type={}", name, type);
+            }
             switch (type) {
                 case ALIVE:
                     updateCriticalStatus(isAppAlive, unhealthyCriticalAliveChecks.incrementAndGet());
@@ -196,7 +203,14 @@ class HealthCheckManager implements HealthCheckRegistryListener, HealthStatusChe
         if (isNowHealthy) {
             LOGGER.info("A non-critical dependency is now healthy: name={}, type={}", name, type);
         } else {
-            LOGGER.warn("A non-critical dependency is now unhealthy: name={}, type={}", name, type);
+            ScheduledHealthCheck healthCheck = checks.get(name);
+            HealthCheckConfiguration healthCheckConfiguration = configs.get(name);
+            if (healthCheck != null && healthCheckConfiguration != null
+                && !healthCheckConfiguration.isInitialState() && !healthCheck.isPreviouslyRecovered()) {
+                LOGGER.info("A non-critical unhealthy initialized dependency has not yet recovered: name={}, type={}", name, type);
+            } else {
+                LOGGER.warn("A non-critical dependency is now unhealthy: name={}, type={}", name, type);
+            }
         }
     }
 

@@ -3,8 +3,8 @@ package com.example.app1;
 import io.dropwizard.Configuration;
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.client.JerseyClientConfiguration;
+import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.jackson.Jackson;
-import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import io.dropwizard.util.Duration;
@@ -31,7 +31,7 @@ import static org.awaitility.Awaitility.await;
 @ExtendWith(DropwizardExtensionsSupport.class)
 public class App1Test {
     public static final DropwizardAppExtension<Configuration> RULE =
-        new DropwizardAppExtension<>(App1.class, ResourceHelpers.resourceFilePath("app1/config.yml"));
+        new DropwizardAppExtension<>(App1.class, "app1/config.yml", new ResourceConfigurationSourceProvider());
 
     private static Client client;
 
@@ -64,7 +64,7 @@ public class App1Test {
     }
 
     @Test
-    void earlyEofTest() throws IOException, InterruptedException {
+    void earlyEofTest() throws IOException {
         // Only eof test so we ensure it's false before test
         ((App1)RULE.getApplication()).wasEofExceptionHit = false;
 

@@ -14,7 +14,7 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class GuavaOptionalValueExtractorTest {
+class GuavaOptionalValueExtractorTest {
 
     public static class Example {
 

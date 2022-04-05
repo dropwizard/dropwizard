@@ -11,7 +11,6 @@ import javax.validation.constraints.NotEmpty;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.List;
 
 /**
@@ -400,22 +399,22 @@ public class TlsSocketAppenderFactory<E extends DeferredProcessingAware> extends
             }
 
             @Override
-            public Socket createSocket(String host, int port) throws IOException, UnknownHostException {
+            public Socket createSocket(String host, int port) {
                 return unsupported();
             }
 
             @Override
-            public Socket createSocket(String host, int port, InetAddress localHost, int localPort) throws IOException, UnknownHostException {
+            public Socket createSocket(String host, int port, InetAddress localHost, int localPort) {
                 return unsupported();
             }
 
             @Override
-            public Socket createSocket(InetAddress host, int port) throws IOException {
+            public Socket createSocket(InetAddress host, int port) {
                 return unsupported();
             }
 
             @Override
-            public Socket createSocket(InetAddress address, int port, InetAddress localAddress, int localPort) throws IOException {
+            public Socket createSocket(InetAddress address, int port, InetAddress localAddress, int localPort) {
                 return unsupported();
             }
 

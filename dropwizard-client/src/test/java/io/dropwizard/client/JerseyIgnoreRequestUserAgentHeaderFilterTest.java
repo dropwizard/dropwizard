@@ -8,7 +8,6 @@ import io.dropwizard.setup.Environment;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import io.dropwizard.util.Duration;
-import io.dropwizard.util.Resources;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,9 +22,9 @@ import java.util.concurrent.Executors;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(DropwizardExtensionsSupport.class)
-public class JerseyIgnoreRequestUserAgentHeaderFilterTest {
+class JerseyIgnoreRequestUserAgentHeaderFilterTest {
     public static final DropwizardAppExtension<Configuration> APP_RULE =
-            new DropwizardAppExtension<>(TestApplication.class, Resources.getResource("yaml/jerseyIgnoreRequestUserAgentHeaderFilterTest.yml").getPath());
+            new DropwizardAppExtension<>(TestApplication.class, JerseyIgnoreRequestUserAgentHeaderFilterTest.class.getResource("/yaml/jerseyIgnoreRequestUserAgentHeaderFilterTest.yml").getPath());
 
     private final URI testUri = URI.create("http://localhost:" + APP_RULE.getLocalPort());
     private JerseyClientBuilder clientBuilder;

@@ -66,14 +66,14 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class JerseyClientBuilderTest {
+class JerseyClientBuilderTest {
     private final MetricRegistry metricRegistry = new MetricRegistry();
     private final JerseyClientBuilder builder = new JerseyClientBuilder(metricRegistry);
     private final LifecycleEnvironment lifecycleEnvironment = spy(new LifecycleEnvironment(metricRegistry));
@@ -98,22 +98,24 @@ public class JerseyClientBuilderTest {
 
     @Test
     void throwsAnExceptionWithoutAnEnvironmentOrAThreadPoolAndObjectMapper() {
-        assertThatExceptionOfType(IllegalStateException.class)
+        assertThatIllegalStateException()
             .isThrownBy(() -> builder.build("test"))
             .withMessage("Must have either an environment or both an executor service and an object mapper");
     }
 
     @Test
     void throwsAnExceptionWithoutAnEnvironmentAndOnlyObjectMapper() {
-        assertThatExceptionOfType(IllegalStateException.class)
-            .isThrownBy(() -> builder.using(objectMapper).build("test"))
+        JerseyClientBuilder configuredBuilder = builder.using(objectMapper);
+        assertThatIllegalStateException()
+            .isThrownBy(() -> configuredBuilder.build("test"))
             .withMessage("Must have either an environment or both an executor service and an object mapper");
     }
 
     @Test
     void throwsAnExceptionWithoutAnEnvironmentAndOnlyAThreadPool() {
-        assertThatExceptionOfType(IllegalStateException.class)
-            .isThrownBy(() -> builder.using(executorService).build("test"))
+        JerseyClientBuilder configuredBuilder = builder.using(executorService);
+        assertThatIllegalStateException()
+            .isThrownBy(() -> configuredBuilder.build("test"))
             .withMessage("Must have either an environment or both an executor service and an object mapper");
     }
 
@@ -234,7 +236,7 @@ public class JerseyClientBuilderTest {
 
     @Test
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public void usesAnExecutorServiceFromTheEnvironment() {
+    void usesAnExecutorServiceFromTheEnvironment() {
         final JerseyClientConfiguration configuration = new JerseyClientConfiguration();
         configuration.setMinThreads(7);
         configuration.setMaxThreads(532);

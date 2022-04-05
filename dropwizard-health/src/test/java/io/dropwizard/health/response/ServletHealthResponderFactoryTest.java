@@ -1,7 +1,7 @@
 package io.dropwizard.health.response;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.io.Resources;
+import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.health.HealthEnvironment;
 import io.dropwizard.jackson.DiscoverableSubtypeResolver;
@@ -26,7 +26,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import javax.servlet.ServletRegistration;
 import javax.validation.Validator;
 import javax.ws.rs.core.MediaType;
-import java.io.File;
 import java.util.Collections;
 import java.util.List;
 
@@ -36,7 +35,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class ServletHealthResponderFactoryTest {
+class ServletHealthResponderFactoryTest {
     private static final String NAME = "tests";
     private static final String HEALTH_CHECK_URI = "/health-check";
     private static final HealthResponse SUCCESS = new HealthResponse(true, "healthy", MediaType.TEXT_PLAIN,
@@ -94,13 +93,12 @@ public class ServletHealthResponderFactoryTest {
     @Test
     void testBuildHealthServlet() throws Exception {
         // given
-        File yml = new File(Resources.getResource("yml/servlet-responder-factory-caching.yml").toURI());
+        HealthResponderFactory factory = configFactory.build(new ResourceConfigurationSourceProvider(), "/yml/servlet-responder-factory-caching.yml");
         setupServletStubbing();
 
         // when
         // succeed first, fail second
         when(healthResponseProvider.healthResponse(Collections.emptyMap())).thenReturn(SUCCESS, FAIL);
-        HealthResponderFactory factory = configFactory.build(yml);
         factory.configure(NAME, Collections.singletonList(HEALTH_CHECK_URI), healthResponseProvider, health, jersey,
             servlets, mapper);
         servletTester.addServlet(new ServletHolder(servletCaptor.getValue()), HEALTH_CHECK_URI);
@@ -116,13 +114,12 @@ public class ServletHealthResponderFactoryTest {
     @Test
     void testBuildHealthServletWithCacheControlDisabled() throws Exception {
         // given
-        File yml = new File(Resources.getResource("yml/servlet-responder-factory-caching-header-disabled.yml").toURI());
+        HealthResponderFactory factory = configFactory.build(new ResourceConfigurationSourceProvider(), "/yml/servlet-responder-factory-caching-header-disabled.yml");
         setupServletStubbing();
 
         // when
         // succeed first, fail second
         when(healthResponseProvider.healthResponse(Collections.emptyMap())).thenReturn(SUCCESS, FAIL);
-        HealthResponderFactory factory = configFactory.build(yml);
         factory.configure(NAME, Collections.singletonList(HEALTH_CHECK_URI), healthResponseProvider, health, jersey,
             servlets, mapper);
         servletTester.addServlet(new ServletHolder(servletCaptor.getValue()), HEALTH_CHECK_URI);

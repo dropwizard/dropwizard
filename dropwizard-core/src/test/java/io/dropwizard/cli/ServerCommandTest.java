@@ -14,11 +14,11 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.assertThatIOException;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class ServerCommandTest {
+class ServerCommandTest {
     private static class MyApplication extends Application<Configuration> {
         @Override
         public void run(Configuration configuration, Environment environment) throws Exception {
@@ -91,7 +91,7 @@ public class ServerCommandTest {
             }
         });
 
-        assertThatExceptionOfType(IOException.class)
+        assertThatIOException()
             .isThrownBy(() -> command.run(environment, namespace, configuration))
             .withMessage("oh crap");
 

@@ -10,14 +10,15 @@ import io.dropwizard.cli.ServerCommand;
 import io.dropwizard.configuration.ConfigurationSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.lifecycle.Managed;
+import io.dropwizard.logging.LoggingUtil;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.util.Sets;
-import io.dropwizard.util.Strings;
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
+import org.slf4j.Logger;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
@@ -252,10 +253,9 @@ public class DropwizardTestSupport<C extends Configuration> {
             }
             try {
                 jettyServer.stop();
+            } catch (RuntimeException e) {
+                throw e;
             } catch (Exception e) {
-                if (e instanceof RuntimeException) {
-                  throw (RuntimeException) e;
-                }
                 throw new RuntimeException(e);
             } finally {
                 jettyServer = null;
@@ -265,6 +265,8 @@ public class DropwizardTestSupport<C extends Configuration> {
         // Don't leak logging appenders into other test cases
         if (configuration != null) {
             configuration.getLoggingFactory().reset();
+        } else {
+            LoggingUtil.getLoggerContext().getLogger(Logger.ROOT_LOGGER_NAME).detachAndStopAllAppenders();
         }
     }
 
@@ -314,12 +316,10 @@ public class DropwizardTestSupport<C extends Configuration> {
         }
 
 
-        final Map<String, Object> namespaceAttributes;
-        if (!Strings.isNullOrEmpty(configPath)) {
-            namespaceAttributes = Collections.singletonMap("file", configPath);
-        } else {
-            namespaceAttributes = Collections.emptyMap();
-        }
+        final Map<String, Object> namespaceAttributes = Optional.ofNullable(configPath)
+            .filter(path -> !path.isEmpty())
+            .map(path -> Collections.singletonMap("file", (Object)path))
+            .orElse(Collections.emptyMap());
 
         final Namespace namespace = new Namespace(namespaceAttributes);
         final Command command = commandInstantiator.apply(application);

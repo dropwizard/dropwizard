@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class ScheduledHealthCheckTest {
+class ScheduledHealthCheckTest {
     private static final HealthStateListener LISTENER = new HealthStateListener() {
         @Override
         public void onHealthyCheck(String healthCheckName) {
@@ -33,7 +33,7 @@ public class ScheduledHealthCheckTest {
     private Schedule schedule;
 
     @Test
-    public void healthyCheckShouldResultInSuccess() {
+    void healthyCheckShouldResultInSuccess() {
         when(schedule.getSuccessAttempts()).thenReturn(1);
         when(schedule.getFailureAttempts()).thenReturn(1);
 
@@ -41,13 +41,17 @@ public class ScheduledHealthCheckTest {
 
         final Counter healthyCounter = metrics.counter("test.healthy");
         final Counter unhealthyCounter = metrics.counter("test.unhealthy");
-        final State state = new State(name, schedule.getFailureAttempts(), schedule.getSuccessAttempts(), true, LISTENER);
+        final State state = new State(name, schedule.getFailureAttempts(), schedule.getSuccessAttempts(), false, LISTENER);
         final ScheduledHealthCheck scheduledHealthCheck = new ScheduledHealthCheck(name, HealthCheckType.READY, true,
             healthCheck, schedule, state, healthyCounter, unhealthyCounter);
 
         when(healthCheck.execute()).thenReturn(HealthCheck.Result.healthy());
 
+        assertThat(scheduledHealthCheck.isPreviouslyRecovered()).isFalse();
+
         scheduledHealthCheck.run();
+
+        assertThat(scheduledHealthCheck.isPreviouslyRecovered()).isTrue();
 
         assertThat(scheduledHealthCheck.isHealthy()).isTrue();
         assertThat(healthyCounter.getCount()).isEqualTo(1L);
@@ -55,19 +59,23 @@ public class ScheduledHealthCheckTest {
     }
 
     @Test
-    public void unhealthyCheckShouldResultInFail() {
+    void unhealthyCheckShouldResultInFail() {
         when(schedule.getSuccessAttempts()).thenReturn(1);
         when(schedule.getFailureAttempts()).thenReturn(1);
 
         final String name = "test";
         final Counter healthyCounter = metrics.counter("test.healthy");
         final Counter unhealthyCounter = metrics.counter("test.unhealthy");
-        final State state = new State(name, schedule.getFailureAttempts(), schedule.getSuccessAttempts(), true, LISTENER);
+        final State state = new State(name, schedule.getFailureAttempts(), schedule.getSuccessAttempts(), false, LISTENER);
         final ScheduledHealthCheck scheduledHealthCheck = new ScheduledHealthCheck(name, HealthCheckType.READY, true,
             healthCheck, schedule, state, healthyCounter, unhealthyCounter);
         when(healthCheck.execute()).thenReturn(HealthCheck.Result.unhealthy("something happened"));
 
+        assertThat(scheduledHealthCheck.isPreviouslyRecovered()).isFalse();
+
         scheduledHealthCheck.run();
+
+        assertThat(scheduledHealthCheck.isPreviouslyRecovered()).isFalse();
 
         assertThat(scheduledHealthCheck.isHealthy()).isFalse();
         assertThat(healthyCounter.getCount()).isZero();

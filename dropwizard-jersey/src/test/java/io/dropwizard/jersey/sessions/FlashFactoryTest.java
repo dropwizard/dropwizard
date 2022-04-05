@@ -21,7 +21,7 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class FlashFactoryTest extends AbstractJerseyTest {
+class FlashFactoryTest extends AbstractJerseyTest {
 
     @Override
     protected TestContainerFactory getTestContainerFactory()

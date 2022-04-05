@@ -17,7 +17,7 @@ import javax.ws.rs.core.Application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class OptionalQueryParamResourceTest extends AbstractJerseyTest {
+class OptionalQueryParamResourceTest extends AbstractJerseyTest {
 
     @Override
     protected Application configure() {

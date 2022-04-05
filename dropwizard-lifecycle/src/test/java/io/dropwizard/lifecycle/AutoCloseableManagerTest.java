@@ -5,7 +5,7 @@ import static org.mockito.Mockito.verify;
 
 import org.junit.jupiter.api.Test;
 
-public class AutoCloseableManagerTest {
+class AutoCloseableManagerTest {
 
     private final AutoCloseable managed = mock(AutoCloseable.class);
     private final AutoCloseableManager closeableManager = new AutoCloseableManager(this.managed);

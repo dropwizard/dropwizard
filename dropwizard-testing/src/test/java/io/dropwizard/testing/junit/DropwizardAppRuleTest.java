@@ -1,27 +1,26 @@
 package io.dropwizard.testing.junit;
 
+import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.testing.app.DropwizardTestApplication;
 import io.dropwizard.testing.app.TestConfiguration;
 import org.junit.ClassRule;
 import org.junit.Test;
 
-import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 
-import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class DropwizardAppRuleTest {
     @SuppressWarnings("deprecation")
     @ClassRule
     public static final DropwizardAppRule<TestConfiguration> RULE =
-        new DropwizardAppRule<>(DropwizardTestApplication.class, resourceFilePath("test-config.yaml"));
+        new DropwizardAppRule<>(DropwizardTestApplication.class, "test-config.yaml", new ResourceConfigurationSourceProvider());
 
     @Test
     public void canGetExpectedResourceOverHttp() {
-        final String content = ClientBuilder.newClient().target(
+        final String content = RULE.client().target(
             "http://localhost:" + RULE.getLocalPort() + "/test").request().get(String.class);
 
         assertThat(content).isEqualTo("Yes, it's here");

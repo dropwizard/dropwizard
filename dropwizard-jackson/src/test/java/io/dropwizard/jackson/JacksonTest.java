@@ -1,6 +1,7 @@
 package io.dropwizard.jackson;
 
 import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -11,9 +12,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatCode;
 
-public class JacksonTest {
+class JacksonTest {
     @Test
     void objectMapperUsesGivenCustomJsonFactory() {
         JsonFactory factory = Mockito.mock(JsonFactory.class);
@@ -48,11 +48,11 @@ public class JacksonTest {
     }
 
     @Test
-    void objectMapperIgnoresUnknownProperties() {
-        assertThatCode(() ->
-            Jackson.newObjectMapper()
-                .readValue("{\"unknown\": 4711, \"path\": \"/var/log/app/server.log\"}", LogMetadata.class)
-        ).doesNotThrowAnyException();
+    void objectMapperIgnoresUnknownProperties() throws JsonProcessingException {
+        assertThat(Jackson.newObjectMapper()
+                .readValue("{\"unknown\": 4711, \"path\": \"/var/log/app/objectMapperIgnoresUnknownProperties.log\"}", LogMetadata.class)
+                .path)
+            .hasFileName("objectMapperIgnoresUnknownProperties.log");
     }
 
     static class LogMetadata {

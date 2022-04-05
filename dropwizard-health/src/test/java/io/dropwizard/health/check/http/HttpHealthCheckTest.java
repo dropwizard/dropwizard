@@ -11,7 +11,7 @@ import java.net.InetSocketAddress;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class HttpHealthCheckTest {
+class HttpHealthCheckTest {
     private static final String SUCCESS_PATH = "/ping";
     private static final String FAIL_PATH = "/fail";
     private static final String TIMEOUT_PATH = "/timeout";
@@ -30,7 +30,7 @@ public class HttpHealthCheckTest {
     }
 
     @Test
-    public void httpHealthCheckShouldConsiderA200ResponseHealthy() {
+    void httpHealthCheckShouldConsiderA200ResponseHealthy() {
         httpServer.createContext(SUCCESS_PATH, httpExchange -> {
             try {
                 httpExchange.sendResponseHeaders(200, 0);
@@ -45,7 +45,7 @@ public class HttpHealthCheckTest {
     }
 
     @Test
-    public void httpHealthCheckShouldConsiderA500ResponseUnhealthy() {
+    void httpHealthCheckShouldConsiderA500ResponseUnhealthy() {
         httpServer.createContext(FAIL_PATH, httpExchange -> {
             try {
                 httpExchange.sendResponseHeaders(500, 0);
@@ -60,7 +60,7 @@ public class HttpHealthCheckTest {
     }
 
     @Test
-    public void httpHealthCheckShouldConsiderATimeoutUnhealthy() {
+    void httpHealthCheckShouldConsiderATimeoutUnhealthy() {
         httpServer.createContext(TIMEOUT_PATH, httpExchange -> {
             try {
                 Thread.sleep(HttpHealthCheck.DEFAULT_TIMEOUT.toMillis() * 2);

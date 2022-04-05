@@ -3,16 +3,14 @@ package io.dropwizard.hibernate;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
+import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.db.PooledDataSourceFactory;
 import io.dropwizard.jersey.errors.ErrorMessage;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import io.dropwizard.testing.ConfigOverride;
-import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
-import io.dropwizard.util.Strings;
 import org.hibernate.FlushMode;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -36,14 +34,14 @@ import javax.ws.rs.ext.ExceptionMapper;
 import java.util.Arrays;
 import java.util.Optional;
 
+import static io.dropwizard.testing.ConfigOverride.config;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(DropwizardExtensionsSupport.class)
 class LazyLoadingTest {
     private final DropwizardAppExtension<TestConfiguration> appExtension = new DropwizardAppExtension<>(
-        TestApplication.class,
-        ResourceHelpers.resourceFilePath("hibernate-integration-test.yaml"),
-        ConfigOverride.config("dataSource.url", "jdbc:hsqldb:mem:DbTest" + System.nanoTime() + "?hsqldb.translate_dti_types=false")
+        TestApplication.class, "hibernate-integration-test.yaml", new ResourceConfigurationSourceProvider(),
+        config("dataSource.url", "jdbc:h2:mem:DbTest" + System.nanoTime())
     );
 
     @Test
@@ -63,17 +61,17 @@ class LazyLoadingTest {
         final Response response = appExtension.client().target("http://localhost:" + appExtension.getLocalPort()).path("/dogs/Raf").request().put(Entity.entity(raf, MediaType.APPLICATION_JSON));
         assertThat(response.getStatusInfo()).isEqualTo(Response.Status.BAD_REQUEST);
         assertThat(response.getHeaderString(HttpHeaders.CONTENT_TYPE)).isEqualTo(MediaType.APPLICATION_JSON);
-        assertThat(response.readEntity(ErrorMessage.class).getMessage()).contains("unique constraint", "table: DOGS");
+        assertThat(response.readEntity(ErrorMessage.class).getMessage()).contains("Unique index or primary key violation", "PUBLIC.DOGS(NAME)");
     }
 
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     @ExtendWith(DropwizardExtensionsSupport.class)
-    class LazyLoadingDisabled {
+    class LazyLoadingDisabledTest {
         private final DropwizardAppExtension<TestConfiguration> appExtension = new DropwizardAppExtension<>(
-            TestApplicationWithDisabledLazyLoading.class,
-            ResourceHelpers.resourceFilePath("hibernate-integration-test.yaml"),
-            ConfigOverride.config("dataSource.url", "jdbc:hsqldb:mem:DbTest" + System.nanoTime() + "?hsqldb.translate_dti_types=false")
+            TestApplicationWithDisabledLazyLoading.class, "hibernate-integration-test.yaml",
+            new ResourceConfigurationSourceProvider(),
+            config("dataSource.url", "jdbc:h2:mem:DbTest" + System.nanoTime())
         );
 
         @Test
@@ -108,7 +106,7 @@ class LazyLoadingTest {
         }
 
         @Override
-        public void run(TestConfiguration configuration, Environment environment) throws Exception {
+        public void run(TestConfiguration configuration, Environment environment) {
             final SessionFactory sessionFactory = hibernate.getSessionFactory();
             initDatabase(sessionFactory);
 
@@ -187,7 +185,7 @@ class LazyLoadingTest {
         @Override
         public Response toResponse(ConstraintViolationException e) {
             return Response.status(Response.Status.BAD_REQUEST)
-                .entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(), Strings.nullToEmpty(e.getCause().getMessage())))
+                .entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(), Optional.ofNullable(e.getCause().getMessage()).orElse("")))
                 .build();
         }
     }

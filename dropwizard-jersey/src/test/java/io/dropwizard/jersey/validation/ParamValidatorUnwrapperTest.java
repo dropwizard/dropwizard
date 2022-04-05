@@ -15,7 +15,7 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ParamValidatorUnwrapperTest {
+class ParamValidatorUnwrapperTest {
     private static class Example {
         @NotNull(payload = Unwrapping.Skip.class)
         @Min(3)

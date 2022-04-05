@@ -31,7 +31,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class AllowedMethodsFilterTest extends AbstractJerseyTest {
+class AllowedMethodsFilterTest extends AbstractJerseyTest {
 
     private static final int DISALLOWED_STATUS_CODE = Response.Status.METHOD_NOT_ALLOWED.getStatusCode();
     private static final int OK_STATUS_CODE = Response.Status.OK.getStatusCode();
@@ -68,14 +68,10 @@ public class AllowedMethodsFilterTest extends AbstractJerseyTest {
     }
 
     private int getResponseStatusForRequestMethod(String method, boolean includeEntity) {
-        final Response resourceResponse = includeEntity
-                ? target("/ping").request().method(method, Entity.entity("", MediaType.TEXT_PLAIN))
-                : target("/ping").request().method(method);
-
-        try {
+        try (Response resourceResponse = includeEntity
+            ? target("/ping").request().method(method, Entity.entity("", MediaType.TEXT_PLAIN))
+            : target("/ping").request().method(method)) {
             return resourceResponse.getStatus();
-        } finally {
-            resourceResponse.close();
         }
     }
 

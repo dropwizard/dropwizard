@@ -21,6 +21,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Form;
 import javax.ws.rs.core.MediaType;
@@ -30,7 +31,7 @@ import java.util.Collections;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class FreemarkerViewRendererTest extends JerseyTest {
+class FreemarkerViewRendererTest extends JerseyTest {
     static {
         BootstrapLogging.bootstrap();
     }
@@ -107,8 +108,9 @@ public class FreemarkerViewRendererTest extends JerseyTest {
 
     @Test
     void returnsA500ForViewsWithBadTemplatePaths() {
+        Invocation.Builder request = target("/test/bad").request();
         assertThatExceptionOfType(WebApplicationException.class)
-            .isThrownBy(() -> target("/test/bad").request().get(String.class))
+            .isThrownBy(() -> request.get(String.class))
             .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(500))
             .satisfies(e -> assertThat(e.getResponse().readEntity(String.class))
                 .isEqualTo(ViewRenderExceptionMapper.TEMPLATE_ERROR_MSG));
@@ -116,9 +118,10 @@ public class FreemarkerViewRendererTest extends JerseyTest {
 
     @Test
     @Disabled("Flaky on JUnit5")
-    public void returnsA500ForViewsThatCantCompile() {
+    void returnsA500ForViewsThatCantCompile() {
+        Invocation.Builder request = target("/test/error").request();
         assertThatExceptionOfType(WebApplicationException.class)
-            .isThrownBy(() -> target("/test/error").request().get(String.class))
+            .isThrownBy(() -> request.get(String.class))
             .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(500))
             .satisfies(e -> assertThat(e.getResponse().readEntity(String.class))
                 .isEqualTo(ViewRenderExceptionMapper.TEMPLATE_ERROR_MSG));

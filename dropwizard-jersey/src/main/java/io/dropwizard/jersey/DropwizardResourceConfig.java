@@ -10,7 +10,6 @@ import io.dropwizard.jersey.params.AbstractParamConverterProvider;
 import io.dropwizard.jersey.sessions.SessionFactoryProvider;
 import io.dropwizard.jersey.validation.FuzzyEnumParamConverterProvider;
 import io.dropwizard.util.JavaVersion;
-import io.dropwizard.util.Strings;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.LoaderClassPath;
@@ -78,7 +77,6 @@ public class DropwizardResourceConfig extends ResourceConfig {
         register(io.dropwizard.jersey.optional.OptionalDoubleMessageBodyWriter.class);
         register(io.dropwizard.jersey.optional.OptionalIntMessageBodyWriter.class);
         register(io.dropwizard.jersey.optional.OptionalLongMessageBodyWriter.class);
-        register(new io.dropwizard.jersey.optional.OptionalParamBinder());
         register(AbstractParamConverterProvider.class);
         register(new FuzzyEnumParamConverterProvider());
         register(new SessionFactoryProvider.Binder());
@@ -181,34 +179,6 @@ public class DropwizardResourceConfig extends ResourceConfig {
 
     static String cleanUpPath(String path) {
         return PATH_DIRTY_SLASHES.matcher(path).replaceAll("/").trim();
-    }
-
-    private static String mergePaths(@NotNull String context, String... pathSegments) {
-        if (pathSegments == null || pathSegments.length == 0) {
-            return cleanUpPath(context);
-        }
-
-        final StringBuilder path = new StringBuilder();
-        if (context.endsWith("/")) {
-            path.append(context, 0, context.length() - 1);
-        } else {
-            path.append(context);
-        }
-
-        for (String segment : pathSegments) {
-            if (Strings.isNullOrEmpty(segment)) {
-                continue;
-            }
-            if ("/".equals(segment)) {
-                path.append('/');
-            } else {
-                final int startIndex = segment.startsWith("/") ? 1 : 0;
-                final int endIndex = segment.endsWith("/") ? segment.length() - 1 : segment.length();
-                path.append('/').append(segment, startIndex, endIndex);
-            }
-        }
-
-        return cleanUpPath(path.toString());
     }
 
     /**
@@ -322,6 +292,24 @@ public class DropwizardResourceConfig extends ResourceConfig {
             }
 
             return methodLines;
+        }
+
+        private static String mergePaths(@NotNull String context, String subPath) {
+            if (subPath == null || subPath.isEmpty()) {
+                return cleanUpPath(context);
+            }
+
+            final StringBuilder path = new StringBuilder(context);
+            if (!context.endsWith("/")) {
+                path.append('/');
+            }
+            if (!"/".equals(subPath)) {
+                final int startIndex = subPath.startsWith("/") ? 1 : 0;
+                final int endIndex = subPath.endsWith("/") ? subPath.length() - 1 : subPath.length();
+                path.append(subPath, startIndex, endIndex);
+            }
+
+            return cleanUpPath(path.toString());
         }
 
         private List<EndpointLogLine> logResourceLines(Resource resource, String contextPath) {

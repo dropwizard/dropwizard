@@ -4,8 +4,9 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
-public class StringsTest {
+class StringsTest {
 
   @Test
   void emptyToNull() {
@@ -31,9 +32,9 @@ public class StringsTest {
 
   @Test
   void repeatExceptions() {
-    assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> Strings.repeat("", -2_147_483_647))
+      assertThatIllegalArgumentException().isThrownBy(() -> Strings.repeat("", -2_147_483_647))
         .withMessage("invalid count: -2147483647" );
-    assertThatExceptionOfType(ArrayIndexOutOfBoundsException.class).isThrownBy(() -> Strings.repeat("00000000", 319_979_524))
+      assertThatExceptionOfType(ArrayIndexOutOfBoundsException.class).isThrownBy(() -> Strings.repeat("00000000", 319_979_524))
         .withMessage("Required array size too large: 2559836192");
   }
 

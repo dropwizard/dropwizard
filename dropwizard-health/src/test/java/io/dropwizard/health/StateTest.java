@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-public class StateTest {
+class StateTest {
     private static final String NAME = "test";
 
     private final AtomicBoolean didStateChange = new AtomicBoolean(false);
@@ -33,103 +33,103 @@ public class StateTest {
     private HealthStateListener listenerMock;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         didStateChange.set(false);
     }
 
     @Test
-    public void singleFailureShouldNotChangeStateIfThresholdNotExceeded() {
+    void singleFailureShouldNotChangeStateIfThresholdNotExceeded() {
         final State state = new State(NAME, 2, 1, true, listener);
         state.failure();
 
-        assertThat(didStateChange.get()).isFalse();
-        assertThat(state.getHealthy().get()).isTrue();
+        assertThat(didStateChange).isFalse();
+        assertThat(state.getHealthy()).isTrue();
     }
 
     @Test
-    public void singleFailureShouldChangeStateIfThresholdExceeded() {
+    void singleFailureShouldChangeStateIfThresholdExceeded() {
         final State state = new State(NAME, 1, 1, true, listener);
-        assertThat(state.getHealthy().get()).isTrue();
+        assertThat(state.getHealthy()).isTrue();
 
         state.failure();
 
-        assertThat(didStateChange.get()).isTrue();
-        assertThat(state.getHealthy().get()).isFalse();
+        assertThat(didStateChange).isTrue();
+        assertThat(state.getHealthy()).isFalse();
     }
 
     @Test
-    public void singleSuccessShouldNotChangeStateIfThresholdNotExceeded() {
+    void singleSuccessShouldNotChangeStateIfThresholdNotExceeded() {
         final State state = new State(NAME, 1, 2, false, listener);
-        assertThat(state.getHealthy().get()).isFalse();
+        assertThat(state.getHealthy()).isFalse();
 
         state.success();
 
-        assertThat(didStateChange.get()).isFalse();
-        assertThat(state.getHealthy().get()).isFalse();
+        assertThat(didStateChange).isFalse();
+        assertThat(state.getHealthy()).isFalse();
     }
 
     @Test
-    public void singleSuccessShouldChangeStateIfThresholdExceeded() {
+    void singleSuccessShouldChangeStateIfThresholdExceeded() {
         final State state = new State(NAME, 1, 1, false, listener);
-        assertThat(state.getHealthy().get()).isFalse();
+        assertThat(state.getHealthy()).isFalse();
 
         state.success();
 
-        assertThat(didStateChange.get()).isTrue();
-        assertThat(state.getHealthy().get()).isTrue();
+        assertThat(didStateChange).isTrue();
+        assertThat(state.getHealthy()).isTrue();
     }
 
     @Test
-    public void failureFollowedByRecoveryShouldAllowAStateChangeToUnhealthyAfterAnotherFailureOccurs() {
+    void failureFollowedByRecoveryShouldAllowAStateChangeToUnhealthyAfterAnotherFailureOccurs() {
         final State state = new State(NAME, 1, 1, true, listener);
 
         state.failure();
 
-        assertThat(didStateChange.get()).isTrue();
-        assertThat(state.getHealthy().get()).isFalse();
+        assertThat(didStateChange).isTrue();
+        assertThat(state.getHealthy()).isFalse();
 
         didStateChange.set(false);
 
         state.success();
 
-        assertThat(didStateChange.get()).isTrue();
-        assertThat(state.getHealthy().get()).isTrue();
+        assertThat(didStateChange).isTrue();
+        assertThat(state.getHealthy()).isTrue();
 
         didStateChange.set(false);
 
         state.failure();
 
-        assertThat(didStateChange.get()).isTrue();
-        assertThat(state.getHealthy().get()).isFalse();
+        assertThat(didStateChange).isTrue();
+        assertThat(state.getHealthy()).isFalse();
     }
 
     @Test
-    public void successFollowedByFailureShouldAllowAStateChangeToHealthyAfterAnotherSuccessOccurs() {
+    void successFollowedByFailureShouldAllowAStateChangeToHealthyAfterAnotherSuccessOccurs() {
         final State state = new State(NAME, 1, 1, false, listener);
-        assertThat(state.getHealthy().get()).isFalse();
+        assertThat(state.getHealthy()).isFalse();
 
         state.success();
 
-        assertThat(didStateChange.get()).isTrue();
-        assertThat(state.getHealthy().get()).isTrue();
+        assertThat(didStateChange).isTrue();
+        assertThat(state.getHealthy()).isTrue();
 
         didStateChange.set(false);
 
         state.failure();
 
-        assertThat(didStateChange.get()).isTrue();
-        assertThat(state.getHealthy().get()).isFalse();
+        assertThat(didStateChange).isTrue();
+        assertThat(state.getHealthy()).isFalse();
 
         didStateChange.set(false);
 
         state.success();
 
-        assertThat(didStateChange.get()).isTrue();
-        assertThat(state.getHealthy().get()).isTrue();
+        assertThat(didStateChange).isTrue();
+        assertThat(state.getHealthy()).isTrue();
     }
 
     @Test
-    public void dependencyFailingThenRecoveringTriggersStateChangeEventsCorrectly() {
+    void dependencyFailingThenRecoveringTriggersStateChangeEventsCorrectly() {
         // given
         final State state = new State(NAME, 3, 2, true, listenerMock);
 

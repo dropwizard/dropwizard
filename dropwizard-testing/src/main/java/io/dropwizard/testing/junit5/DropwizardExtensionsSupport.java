@@ -65,14 +65,14 @@ public class DropwizardExtensionsSupport implements BeforeAllCallback, BeforeEac
     }
 
     private void afterEach(Object testInstance, Class<?> cls) throws Throwable {
-        final Class<?> enclosingClass = testInstance.getClass().getEnclosingClass();
+        final Class<?> enclosingClass = cls.getEnclosingClass();
         if (enclosingClass != null) {
             final Object enclosing = getEnclosingInstance(testInstance);
             if (enclosing != null) {
-                afterEach(enclosing, enclosingClass);
+                afterEach(enclosing, cls);
             }
         }
-        for (Field member : findAnnotatedFields(cls, false)) {
+        for (Field member : findAnnotatedFields(testInstance.getClass(), false)) {
             getDropwizardExtension(member, testInstance).after();
         }
     }

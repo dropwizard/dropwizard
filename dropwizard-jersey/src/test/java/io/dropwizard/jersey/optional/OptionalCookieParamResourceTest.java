@@ -17,7 +17,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class OptionalCookieParamResourceTest extends AbstractJerseyTest {
+class OptionalCookieParamResourceTest extends AbstractJerseyTest {
 
     @Override
     protected Application configure() {

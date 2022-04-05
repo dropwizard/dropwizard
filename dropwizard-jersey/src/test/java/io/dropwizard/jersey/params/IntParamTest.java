@@ -8,7 +8,7 @@ import javax.ws.rs.WebApplicationException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class IntParamTest {
+class IntParamTest {
     @Test
     void anIntegerReturnsAnInteger() {
         assertThat(new IntParam("200").get()).isEqualTo(200);

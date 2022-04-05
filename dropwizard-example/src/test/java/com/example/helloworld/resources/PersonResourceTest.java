@@ -5,7 +5,6 @@ import com.example.helloworld.db.PersonDAO;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import io.dropwizard.testing.junit5.ResourceExtension;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -19,18 +18,11 @@ import static org.mockito.Mockito.*;
  * Unit tests for {@link PersonResource}.
  */
 @ExtendWith(DropwizardExtensionsSupport.class)
-public class PersonResourceTest {
+class PersonResourceTest {
     private static final PersonDAO DAO = mock(PersonDAO.class);
     public static final ResourceExtension RULE = ResourceExtension.builder()
             .addResource(new PersonResource(DAO))
             .build();
-    private Person person;
-
-    @BeforeEach
-    void setup() {
-        person = new Person();
-        person.setId(1L);
-    }
 
     @AfterEach
     void tearDown() {
@@ -39,6 +31,9 @@ public class PersonResourceTest {
 
     @Test
     void getPersonSuccess() {
+        final Person person = new Person();
+        person.setId(1L);
+
         when(DAO.findById(1L)).thenReturn(Optional.of(person));
 
         Person found = RULE.target("/people/1").request().get(Person.class);

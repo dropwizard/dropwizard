@@ -13,6 +13,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -21,7 +22,7 @@ import java.util.OptionalDouble;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class OptionalDoubleMessageBodyWriterTest extends AbstractJerseyTest {
+class OptionalDoubleMessageBodyWriterTest extends AbstractJerseyTest {
 
     @Override
     protected Application configure() {
@@ -48,8 +49,9 @@ public class OptionalDoubleMessageBodyWriterTest extends AbstractJerseyTest {
 
     @Test
     void absentOptionalsThrowANotFound() {
+        Invocation.Builder request = target("optional-return").request();
         assertThatExceptionOfType(WebApplicationException.class)
-            .isThrownBy(() -> target("optional-return").request().get(Double.class))
+            .isThrownBy(() -> request.get(Double.class))
             .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(404));
     }
 
@@ -68,22 +70,22 @@ public class OptionalDoubleMessageBodyWriterTest extends AbstractJerseyTest {
     }
 
     @Test
-    void valueEmptyReturnsDefault() {
-        assertThat(target("optional-return/default").queryParam("id", "")
-            .request().get(Double.class))
-            .isEqualTo(target("optional-return/double/default").queryParam("id", "")
-                .request().get(Double.class))
-            .isEqualTo(0);
+    void valueEmptyReturns404() {
+        assertThat(target("optional-return/default").queryParam("id", "").request().get())
+            .extracting(Response::getStatus)
+            .isEqualTo(404);
     }
 
     @Test
     void valueInvalidReturns404() {
+        Invocation.Builder request = target("optional-return/default").queryParam("id", "invalid")
+            .request();
         assertThatExceptionOfType(NotFoundException.class)
-            .isThrownBy(() -> target("optional-return/default").queryParam("id", "invalid")
-                .request().get(Double.class));
+            .isThrownBy(() -> request.get(Double.class));
+        Invocation.Builder doubleRequest = target("optional-return/double/default").queryParam("id", "invalid")
+            .request();
         assertThatExceptionOfType(NotFoundException.class)
-            .isThrownBy(() -> target("optional-return/double/default").queryParam("id", "invalid")
-                .request().get(Double.class));
+            .isThrownBy(() -> doubleRequest.get(Double.class));
     }
 
     @Path("optional-return")

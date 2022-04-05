@@ -126,7 +126,7 @@ public class DataSize implements Comparable<DataSize>, Serializable {
 
         final long count = Long.parseLong(matcher.group(1));
         final String unit = matcher.group(2);
-        final DataSizeUnit dataSizeUnit = Strings.isNullOrEmpty(unit) ? defaultUnit : SUFFIXES.get(unit);
+        final DataSizeUnit dataSizeUnit = unit == null || unit.isEmpty() ? defaultUnit : SUFFIXES.get(unit);
         if (dataSizeUnit == null) {
             throw new IllegalArgumentException("Invalid size: " + size + ". Wrong size unit");
         }
@@ -230,7 +230,12 @@ public class DataSize implements Comparable<DataSize>, Serializable {
         return Long.compare(toBytes(), other.toBytes());
     }
 
-    @SuppressWarnings("deprecation")
+    /**
+     * Construct an equivalent {@link Size} object from this {@link DataSize}
+     *
+     * @deprecated {@link Size} is deprecated in favour of {@link DataSize}
+     */
+    @Deprecated
     public Size toSize() {
         switch (unit) {
             case BYTES:
@@ -257,7 +262,12 @@ public class DataSize implements Comparable<DataSize>, Serializable {
         }
     }
 
-    @SuppressWarnings("deprecation")
+    /**
+     * Construct an equivalent {@link DataSize} object from a {@link Size} object
+     *
+     * @deprecated {@link Size} is deprecated in favour of {@link DataSize}
+     */
+    @Deprecated
     public static DataSize fromSize(Size size) {
         switch (size.getUnit()) {
             case BYTES:

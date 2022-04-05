@@ -16,11 +16,11 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class TimeBoundHealthCheckTest {
+class TimeBoundHealthCheckTest {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void testCheck() throws InterruptedException, ExecutionException, TimeoutException {
+    void testCheck() throws InterruptedException, ExecutionException, TimeoutException {
         final ExecutorService executorService = mock(ExecutorService.class);
         final Duration duration = mock(Duration.class);
         when(duration.getQuantity()).thenReturn(5L);

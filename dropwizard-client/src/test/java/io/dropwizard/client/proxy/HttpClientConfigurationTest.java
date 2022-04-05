@@ -5,13 +5,11 @@ import io.dropwizard.client.HttpClientConfiguration;
 import io.dropwizard.configuration.ConfigurationParsingException;
 import io.dropwizard.configuration.ConfigurationValidationException;
 import io.dropwizard.configuration.DefaultConfigurationFactoryFactory;
-import io.dropwizard.configuration.YamlConfigurationFactory;
+import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.validation.Validators;
-import io.dropwizard.util.Resources;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.util.List;
 
 import static java.util.Objects.requireNonNull;
@@ -19,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 
-public class HttpClientConfigurationTest {
+class HttpClientConfigurationTest {
 
     private final ObjectMapper objectMapper = Jackson.newObjectMapper();
     private HttpClientConfiguration configuration = new HttpClientConfiguration();
@@ -30,7 +28,7 @@ public class HttpClientConfigurationTest {
                 HttpClientConfiguration.class,
                 Validators.newValidator(),
                 objectMapper, "dw"
-            ).build(new File(Resources.getResource(configLocation).toURI()));
+            ).build(new ResourceConfigurationSourceProvider(), configLocation);
     }
 
     @Test

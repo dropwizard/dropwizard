@@ -12,7 +12,7 @@ import static io.dropwizard.validation.ConstraintViolations.format;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
-public class OneOfValidatorTest {
+class OneOfValidatorTest {
     @SuppressWarnings("UnusedDeclaration")
     public static class Example {
         @OneOf({"one", "two", "three"})

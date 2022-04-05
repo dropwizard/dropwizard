@@ -252,7 +252,9 @@ public class HttpClientBuilder {
      *
      * @param serviceUnavailableRetryStrategy a {@link ServiceUnavailableRetryStrategy} instance
      * @return {@code} this
+     * @deprecated will be combined with {@link #using(HttpRequestRetryHandler)} in {@code using(HttpRequestRetryStrategy)}
      */
+    @Deprecated
     public HttpClientBuilder using(ServiceUnavailableRetryStrategy serviceUnavailableRetryStrategy) {
         this.serviceUnavailableRetryStrategy = serviceUnavailableRetryStrategy;
         return this;
@@ -280,10 +282,6 @@ public class HttpClientBuilder {
         // If the environment is present, we tie the client with the server lifecycle
         if (environment != null) {
             environment.lifecycle().manage(new Managed() {
-                @Override
-                public void start() throws Exception {
-                }
-
                 @Override
                 public void stop() throws Exception {
                     client.close();
@@ -487,14 +485,13 @@ public class HttpClientBuilder {
     protected InstrumentedHttpClientConnectionManager createConnectionManager(Registry<ConnectionSocketFactory> registry,
                                                                               String name) {
         final Duration ttl = configuration.getTimeToLive();
-        final InstrumentedHttpClientConnectionManager manager = new InstrumentedHttpClientConnectionManager(
-                metricRegistry,
-                registry,
-                null, null,
-                resolver,
-                ttl.getQuantity(),
-                ttl.getUnit(),
-                name);
+        final InstrumentedHttpClientConnectionManager manager = InstrumentedHttpClientConnectionManager.builder(metricRegistry)
+            .socketFactoryRegistry(registry)
+            .dnsResolver(resolver)
+            .connTTL(ttl.getQuantity())
+            .connTTLTimeUnit(ttl.getUnit())
+            .name(name)
+            .build();
         return configureConnectionManager(manager);
     }
 

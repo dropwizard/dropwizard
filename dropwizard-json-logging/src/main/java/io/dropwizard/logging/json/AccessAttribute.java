@@ -24,5 +24,5 @@ public enum AccessAttribute {
     @JsonProperty("localPort") LOCAL_PORT,
     @JsonProperty("requestContent") REQUEST_CONTENT,
     @JsonProperty("responseContent") RESPONSE_CONTENT,
-    @JsonProperty("timestamp") TIMESTAMP;
+    @JsonProperty("timestamp") TIMESTAMP
 }

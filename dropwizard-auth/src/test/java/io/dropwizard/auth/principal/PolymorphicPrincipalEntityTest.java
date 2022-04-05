@@ -20,6 +20,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.client.Invocation;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.DynamicFeature;
 import javax.ws.rs.core.HttpHeaders;
@@ -129,8 +130,9 @@ class PolymorphicPrincipalEntityTest extends JerseyTest {
 
     @Test
     void jsonPrincipalEntityResourceNoAuth401() {
+        Invocation.Builder request = target("/auth-test/json-principal-entity").request();
         assertThatExceptionOfType(WebApplicationException.class)
-            .isThrownBy(() -> target("/auth-test/json-principal-entity").request().get(String.class))
+            .isThrownBy(() -> request.get(String.class))
             .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(401));
     }
 
@@ -144,8 +146,9 @@ class PolymorphicPrincipalEntityTest extends JerseyTest {
 
     @Test
     void nullPrincipalEntityResourceNoAuth401() {
+        Invocation.Builder request = target("/auth-test/null-principal-entity").request();
         assertThatExceptionOfType(WebApplicationException.class)
-            .isThrownBy(() -> target("/auth-test/null-principal-entity").request().get(String.class))
+            .isThrownBy(() -> request.get(String.class))
             .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(401));
     }
 

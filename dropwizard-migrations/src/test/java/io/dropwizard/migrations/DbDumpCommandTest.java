@@ -1,6 +1,5 @@
 package io.dropwizard.migrations;
 
-import io.dropwizard.util.Resources;
 import net.jcip.annotations.NotThreadSafe;
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,11 +19,14 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.io.PrintWriter;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -32,7 +34,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @NotThreadSafe
-public class DbDumpCommandTest extends AbstractMigrationTest {
+class DbDumpCommandTest {
 
     private static final List<String> ATTRIBUTE_NAMES = Arrays.asList("columns", "foreign-keys", "indexes",
             "primary-keys", "sequences", "tables", "unique-constraints", "views");
@@ -50,9 +52,10 @@ public class DbDumpCommandTest extends AbstractMigrationTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        final String existedDbPath = new File(Resources.getResource("test-db.mv.db").toURI()).getAbsolutePath();
+        final URI existedDbPathUri = Objects.requireNonNull(getClass().getResource("/test-db.mv.db")).toURI();
+        final String existedDbPath = Paths.get(existedDbPathUri).toString();
         final String existedDbUrl = "jdbc:h2:" + existedDbPath.substring(0, existedDbPath.length() - ".mv.db".length());
-        existedDbConf = createConfiguration(existedDbUrl);
+        existedDbConf = MigrationTestSupport.createConfiguration(existedDbUrl);
         dumpCommand.setOutputStream(new PrintStream(baos));
     }
 
@@ -94,71 +97,71 @@ public class DbDumpCommandTest extends AbstractMigrationTest {
 
     @Test
     void testHelpPage() throws Exception {
-        createSubparser(dumpCommand).printHelp(new PrintWriter(new OutputStreamWriter(baos, UTF_8), true));
-        assertThat(baos.toString(UTF_8.name())).isEqualTo(String.format(
-                "usage: db dump [-h] [--migrations MIGRATIONS-FILE] [--catalog CATALOG]%n" +
-                        "          [--schema SCHEMA] [-o OUTPUT] [--tables] [--ignore-tables]%n" +
-                        "          [--columns] [--ignore-columns] [--views] [--ignore-views]%n" +
-                        "          [--primary-keys] [--ignore-primary-keys] [--unique-constraints]%n" +
-                        "          [--ignore-unique-constraints] [--indexes] [--ignore-indexes]%n" +
-                        "          [--foreign-keys] [--ignore-foreign-keys] [--sequences]%n" +
-                        "          [--ignore-sequences] [--data] [--ignore-data] [file]%n" +
-                        "%n" +
-                        "Generate a dump of the existing database state.%n" +
-                        "%n" +
-                        "positional arguments:%n" +
-                        "  file                   application configuration file%n" +
-                        "%n" +
-                        "named arguments:%n" +
-                        "  -h, --help             show this help message and exit%n" +
-                        "  --migrations MIGRATIONS-FILE%n" +
-                        "                         the file containing  the  Liquibase migrations for%n" +
-                        "                         the application%n" +
-                        "  --catalog CATALOG      Specify  the   database   catalog   (use  database%n" +
-                        "                         default if omitted)%n" +
-                        "  --schema SCHEMA        Specify the database schema  (use database default%n" +
-                        "                         if omitted)%n" +
-                        "  -o OUTPUT, --output OUTPUT%n" +
-                        "                         Write output to <file> instead of stdout%n" +
-                        "%n" +
-                        "Tables:%n" +
-                        "  --tables               Check for added or removed tables (default)%n" +
-                        "  --ignore-tables        Ignore tables%n" +
-                        "%n" +
-                        "Columns:%n" +
-                        "  --columns              Check for  added,  removed,  or  modified  columns%n" +
-                        "                         (default)%n" +
-                        "  --ignore-columns       Ignore columns%n" +
-                        "%n" +
-                        "Views:%n" +
-                        "  --views                Check  for  added,  removed,   or  modified  views%n" +
-                        "                         (default)%n" +
-                        "  --ignore-views         Ignore views%n" +
-                        "%n" +
-                        "Primary Keys:%n" +
-                        "  --primary-keys         Check for changed primary keys (default)%n" +
-                        "  --ignore-primary-keys  Ignore primary keys%n" +
-                        "%n" +
-                        "Unique Constraints:%n" +
-                        "  --unique-constraints   Check for changed unique constraints (default)%n" +
-                        "  --ignore-unique-constraints%n" +
-                        "                         Ignore unique constraints%n" +
-                        "%n" +
-                        "Indexes:%n" +
-                        "  --indexes              Check for changed indexes (default)%n" +
-                        "  --ignore-indexes       Ignore indexes%n" +
-                        "%n" +
-                        "Foreign Keys:%n" +
-                        "  --foreign-keys         Check for changed foreign keys (default)%n" +
-                        "  --ignore-foreign-keys  Ignore foreign keys%n" +
-                        "%n" +
-                        "Sequences:%n" +
-                        "  --sequences            Check for changed sequences (default)%n" +
-                        "  --ignore-sequences     Ignore sequences%n" +
-                        "%n" +
-                        "Data:%n" +
-                        "  --data                 Check for changed data%n" +
-                        "  --ignore-data          Ignore data (default)%n"));
+        MigrationTestSupport.createSubparser(dumpCommand).printHelp(new PrintWriter(new OutputStreamWriter(baos, UTF_8), true));
+        assertThat(baos.toString(UTF_8.name())).isEqualToNormalizingNewlines(
+                "usage: db dump [-h] [--migrations MIGRATIONS-FILE] [--catalog CATALOG]\n" +
+                        "          [--schema SCHEMA] [-o OUTPUT] [--tables] [--ignore-tables]\n" +
+                        "          [--columns] [--ignore-columns] [--views] [--ignore-views]\n" +
+                        "          [--primary-keys] [--ignore-primary-keys] [--unique-constraints]\n" +
+                        "          [--ignore-unique-constraints] [--indexes] [--ignore-indexes]\n" +
+                        "          [--foreign-keys] [--ignore-foreign-keys] [--sequences]\n" +
+                        "          [--ignore-sequences] [--data] [--ignore-data] [file]\n" +
+                        "\n" +
+                        "Generate a dump of the existing database state.\n" +
+                        "\n" +
+                        "positional arguments:\n" +
+                        "  file                   application configuration file\n" +
+                        "\n" +
+                        "named arguments:\n" +
+                        "  -h, --help             show this help message and exit\n" +
+                        "  --migrations MIGRATIONS-FILE\n" +
+                        "                         the file containing  the  Liquibase migrations for\n" +
+                        "                         the application\n" +
+                        "  --catalog CATALOG      Specify  the   database   catalog   (use  database\n" +
+                        "                         default if omitted)\n" +
+                        "  --schema SCHEMA        Specify the database schema  (use database default\n" +
+                        "                         if omitted)\n" +
+                        "  -o OUTPUT, --output OUTPUT\n" +
+                        "                         Write output to <file> instead of stdout\n" +
+                        "\n" +
+                        "Tables:\n" +
+                        "  --tables               Check for added or removed tables (default)\n" +
+                        "  --ignore-tables        Ignore tables\n" +
+                        "\n" +
+                        "Columns:\n" +
+                        "  --columns              Check for  added,  removed,  or  modified  columns\n" +
+                        "                         (default)\n" +
+                        "  --ignore-columns       Ignore columns\n" +
+                        "\n" +
+                        "Views:\n" +
+                        "  --views                Check  for  added,  removed,   or  modified  views\n" +
+                        "                         (default)\n" +
+                        "  --ignore-views         Ignore views\n" +
+                        "\n" +
+                        "Primary Keys:\n" +
+                        "  --primary-keys         Check for changed primary keys (default)\n" +
+                        "  --ignore-primary-keys  Ignore primary keys\n" +
+                        "\n" +
+                        "Unique Constraints:\n" +
+                        "  --unique-constraints   Check for changed unique constraints (default)\n" +
+                        "  --ignore-unique-constraints\n" +
+                        "                         Ignore unique constraints\n" +
+                        "\n" +
+                        "Indexes:\n" +
+                        "  --indexes              Check for changed indexes (default)\n" +
+                        "  --ignore-indexes       Ignore indexes\n" +
+                        "\n" +
+                        "Foreign Keys:\n" +
+                        "  --foreign-keys         Check for changed foreign keys (default)\n" +
+                        "  --ignore-foreign-keys  Ignore foreign keys\n" +
+                        "\n" +
+                        "Sequences:\n" +
+                        "  --sequences            Check for changed sequences (default)\n" +
+                        "  --ignore-sequences     Ignore sequences\n" +
+                        "\n" +
+                        "Data:\n" +
+                        "  --data                 Check for changed data\n" +
+                        "  --ignore-data          Ignore data (default)\n");
     }
 
 
@@ -180,23 +183,26 @@ public class DbDumpCommandTest extends AbstractMigrationTest {
 
         final NodeList columns = createTable.getElementsByTagName("column");
 
-        final Element idColumn = (Element) columns.item(0);
-        assertThat(idColumn.getAttribute("autoIncrement")).isEqualTo("true");
-        assertThat(idColumn.getAttribute("name")).isEqualTo("ID");
-        assertThat(idColumn.getAttribute("type")).isEqualTo("INT");
-        final Element idColumnConstraints = getFirstElement(idColumn, "constraints");
-        assertThat(idColumnConstraints.getAttribute("primaryKey")).isEqualTo("true");
-        assertThat(idColumnConstraints.getAttribute("primaryKeyName")).isEqualTo("PK_PERSONS");
+        assertThat(columns.item(0))
+            .isInstanceOfSatisfying(Element.class, column -> assertThat(column)
+                .satisfies(idColumn -> assertThat(idColumn.getAttribute("autoIncrement")).isEqualTo("true"))
+                .satisfies(idColumn -> assertThat(idColumn.getAttribute("name")).isEqualTo("ID"))
+                .satisfies(idColumn -> assertThat(idColumn.getAttribute("type")).isEqualTo("INT"))
+                .extracting(idColumn -> getFirstElement(idColumn, "constraints"))
+                .satisfies(idColumnConstraints -> assertThat(idColumnConstraints.getAttribute("primaryKey")).isEqualTo("true"))
+                .satisfies(idColumnConstraints -> assertThat(idColumnConstraints.getAttribute("primaryKeyName")).isEqualTo("PK_PERSONS")));
 
-        final Element nameColumn = (Element) columns.item(1);
-        assertThat(nameColumn.getAttribute("name")).isEqualTo("NAME");
-        assertThat(nameColumn.getAttribute("type")).isEqualTo("VARCHAR(256)");
-        final Element nameColumnConstraints = getFirstElement(nameColumn, "constraints");
-        assertThat(nameColumnConstraints.getAttribute("nullable")).isEqualTo("false");
+        assertThat(columns.item(1))
+            .isInstanceOfSatisfying(Element.class, column -> assertThat(column)
+                .satisfies(nameColumn -> assertThat(nameColumn.getAttribute("name")).isEqualTo("NAME"))
+                .satisfies(nameColumn -> assertThat(nameColumn.getAttribute("type")).isEqualTo("VARCHAR(256)"))
+                .extracting(nameColumn -> getFirstElement(nameColumn, "constraints"))
+                .satisfies(nameColumnConstraints -> assertThat(nameColumnConstraints.getAttribute("nullable")).isEqualTo("false")));
 
-        final Element emailColumn = (Element) columns.item(2);
-        assertThat(emailColumn.getAttribute("name")).isEqualTo("EMAIL");
-        assertThat(emailColumn.getAttribute("type")).isEqualTo("VARCHAR(128)");
+        assertThat(columns.item(2))
+            .isInstanceOfSatisfying(Element.class, column -> assertThat(column)
+                .satisfies(emailColumn -> assertThat(emailColumn.getAttribute("name")).isEqualTo("EMAIL"))
+                .satisfies(emailColumn -> assertThat(emailColumn.getAttribute("type")).isEqualTo("VARCHAR(128)")));
     }
 
     /**
@@ -213,17 +219,20 @@ public class DbDumpCommandTest extends AbstractMigrationTest {
 
         final NodeList columns = insert.getElementsByTagName("column");
 
-        final Element idColumn = (Element) columns.item(0);
-        assertThat(idColumn.getAttribute("name")).isEqualTo("ID");
-        assertThat(idColumn.getAttribute("valueNumeric")).isEqualTo("1");
+        assertThat(columns.item(0))
+            .isInstanceOfSatisfying(Element.class, column -> assertThat(column)
+                .satisfies(idColumn -> assertThat(idColumn.getAttribute("name")).isEqualTo("ID"))
+                .satisfies(idColumn -> assertThat(idColumn.getAttribute("valueNumeric")).isEqualTo("1")));
 
-        final Element nameColumn = (Element) columns.item(1);
-        assertThat(nameColumn.getAttribute("name")).isEqualTo("NAME");
-        assertThat(nameColumn.getAttribute("value")).isEqualTo("Bill Smith");
+        assertThat(columns.item(1))
+            .isInstanceOfSatisfying(Element.class, column -> assertThat(column)
+                .satisfies(nameColumn -> assertThat(nameColumn.getAttribute("name")).isEqualTo("NAME"))
+                .satisfies(nameColumn -> assertThat(nameColumn.getAttribute("value")).isEqualTo("Bill Smith")));
 
-        final Element emailColumn = (Element) columns.item(2);
-        assertThat(emailColumn.getAttribute("name")).isEqualTo("EMAIL");
-        assertThat(emailColumn.getAttribute("value")).isEqualTo("bill@smith.me");
+        assertThat(columns.item(2))
+            .isInstanceOfSatisfying(Element.class, column -> assertThat(column)
+                .satisfies(nameColumn -> assertThat(nameColumn.getAttribute("name")).isEqualTo("EMAIL"))
+                .satisfies(nameColumn -> assertThat(nameColumn.getAttribute("value")).isEqualTo("bill@smith.me")));
     }
 
     private static Element getFirstElement(Element root, String tagName) {

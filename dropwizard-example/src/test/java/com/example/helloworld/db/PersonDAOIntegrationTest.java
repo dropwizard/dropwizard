@@ -26,7 +26,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 @Testcontainers(disabledWithoutDocker = true)
 @ExtendWith(DropwizardExtensionsSupport.class)
 @DisabledForJreRange(min = JRE.JAVA_16)
-public class PersonDAOIntegrationTest {
+class PersonDAOIntegrationTest {
     @Container
     private static final MySQLContainer<?> MY_SQL_CONTAINER = new MySQLContainer<>(DockerImageName.parse("mysql:8.0.24"));
 
@@ -36,7 +36,7 @@ public class PersonDAOIntegrationTest {
             .setUrl(MY_SQL_CONTAINER.getJdbcUrl())
             .setUsername(MY_SQL_CONTAINER.getUsername())
             .setPassword(MY_SQL_CONTAINER.getPassword())
-            .setProperty(PropertyKey.enabledTLSProtocols.getKeyName(), "TLSv1.1,TLSv1.2,TLSv1.3")
+            .setProperty(PropertyKey.tlsVersions.getKeyName(), "TLSv1.1,TLSv1.2,TLSv1.3")
             .addEntityClass(Person.class)
             .build();
 

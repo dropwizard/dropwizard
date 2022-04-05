@@ -220,7 +220,7 @@ public class DefaultServerFactory extends AbstractServerFactory {
         for (ConnectorFactory factory : adminConnectors) {
             final Connector connector = factory.build(server, metricRegistry, "admin", threadPool);
             if (connector instanceof ContainerLifeCycle) {
-                ((ContainerLifeCycle) connector).unmanage(threadPool);
+                connector.unmanage(threadPool);
             }
             connectors.add(connector);
         }

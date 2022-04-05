@@ -7,19 +7,32 @@ import java.io.OutputStream;
 
 /**
  * @since 2.0
+ *
+ * @deprecated this class exists for compatibility with Java 8 and will be removed in Dropwizard 3.0.
  */
+@Deprecated
 public final class ByteStreams {
 
     private ByteStreams() {
     }
 
+    /**
+     * @deprecated For users of Java 11+, consider {@link InputStream#readAllBytes()} instead.
+     */
     public static byte[] toByteArray(InputStream in) throws IOException {
         ByteArrayOutputStream to = new ByteArrayOutputStream();
-        copy(in, to);
+        copyInternal(in, to);
         return to.toByteArray();
     }
 
+    /**
+     * @deprecated this is an internal method to dropwizard-util. Consider apache-commons instead.
+     */
     public static void copy(InputStream in, OutputStream to) throws IOException {
+        copyInternal(in, to);
+    }
+
+    static void copyInternal(InputStream in, OutputStream to) throws IOException {
         byte[] buffer = new byte[4096];
         int length;
         while ((length = in.read(buffer)) != -1) {

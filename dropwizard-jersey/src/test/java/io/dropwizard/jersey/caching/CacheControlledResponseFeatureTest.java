@@ -11,7 +11,7 @@ import javax.ws.rs.core.Response;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class CacheControlledResponseFeatureTest extends AbstractJerseyTest {
+class CacheControlledResponseFeatureTest extends AbstractJerseyTest {
 
     @Override
     protected Application configure() {

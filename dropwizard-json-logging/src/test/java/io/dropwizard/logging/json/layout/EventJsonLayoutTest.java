@@ -5,7 +5,6 @@ import ch.qos.logback.classic.pattern.ThrowableProxyConverter;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.LoggerContextVO;
 import ch.qos.logback.classic.spi.ThrowableProxyVO;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.logging.json.EventAttribute;
 import io.dropwizard.util.Maps;
@@ -26,7 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class EventJsonLayoutTest {
+class EventJsonLayoutTest {
     private static final String timestamp = "2018-01-02T15:19:21.000+0000";
     private static final String logger = "com.example.user.service";
     private static final String message = "User[18] has been registered";

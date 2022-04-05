@@ -1,9 +1,8 @@
 package com.example.health;
 
-import com.google.common.primitives.Longs;
 import io.dropwizard.Configuration;
+import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.testing.ConfigOverride;
-import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import org.awaitility.Awaitility;
@@ -21,7 +20,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(DropwizardExtensionsSupport.class)
-public class HealthIntegrationTest {
+class HealthIntegrationTest {
     private static final String CONFIG_PATH = "health/config.yml";
     private static final String HOST = "localhost";
     private static final String APP_PORT_KEY = "server.connector.port";
@@ -32,21 +31,22 @@ public class HealthIntegrationTest {
     private static final Duration POLL_DELAY = Duration.ofMillis(10);
 
     private static final Duration testTimeout = Optional.ofNullable(System.getenv(TEST_TIMEOUT_MS_OVERRIDE_ENV_VAR))
-            .map(Longs::tryParse)
+            .map(Long::parseLong)
             .map(Duration::ofMillis)
             // Default to 5 seconds
             .orElse(Duration.ofSeconds(5));
 
     public final DropwizardAppExtension<Configuration> TEST_APP_RULE = new DropwizardAppExtension<>(
             HealthApp.class,
-            ResourceHelpers.resourceFilePath(CONFIG_PATH),
+            CONFIG_PATH,
+            new ResourceConfigurationSourceProvider(),
             ConfigOverride.config(APP_PORT_KEY, APP_PORT));
 
     private final Client client = new JerseyClientBuilder().build();
     private String hostUrl;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         hostUrl = "http://" + HOST + ":" + TEST_APP_RULE.getLocalPort();
         Awaitility.waitAtMost(APP_STARTUP_MAX_TIMEOUT)
                 .pollInSameThread()
@@ -60,12 +60,12 @@ public class HealthIntegrationTest {
     }
 
     @Test
-    public void healthCheckShouldReportUnhealthyOnInitialStart() {
+    void healthCheckShouldReportUnhealthyOnInitialStart() {
         assertThat(isAppHealthy()).isFalse();
     }
 
     @Test
-    public void healthCheckShouldReportHealthyWhenInitialStateFalseCriticalCheckGoesHealthy() {
+    void healthCheckShouldReportHealthyWhenInitialStateFalseCriticalCheckGoesHealthy() {
         final HealthApp app = TEST_APP_RULE.getApplication();
 
         assertThat(isAppHealthy()).isFalse();
@@ -78,13 +78,13 @@ public class HealthIntegrationTest {
                 .pollDelay(POLL_DELAY)
                 .until(this::isAppHealthy);
 
-        assertThat(app.getStateChangeCounter().get()).isPositive();
-        assertThat(app.getHealthyCheckCounter().get()).isPositive();
-        assertThat(app.getUnhealthyCheckCounter().get()).isPositive();
+        assertThat(app.getStateChangeCounter()).hasPositiveValue();
+        assertThat(app.getHealthyCheckCounter()).hasPositiveValue();
+        assertThat(app.getUnhealthyCheckCounter()).hasPositiveValue();
     }
 
     @Test
-    public void healthCheckShouldReportHealthyWhenAllHealthChecksHealthy() {
+    void healthCheckShouldReportHealthyWhenAllHealthChecksHealthy() {
         final HealthApp app = TEST_APP_RULE.getApplication();
         app.getCriticalCheckHealthy1().set(true);
         app.getCriticalCheckHealthy2().set(true);
@@ -95,13 +95,13 @@ public class HealthIntegrationTest {
                 .atMost(testTimeout)
                 .pollDelay(POLL_DELAY)
                 .until(this::isAppHealthy);
-        assertThat(app.getStateChangeCounter().get()).isPositive();
-        assertThat(app.getHealthyCheckCounter().get()).isPositive();
-        assertThat(app.getUnhealthyCheckCounter().get()).isPositive();
+        assertThat(app.getStateChangeCounter()).hasPositiveValue();
+        assertThat(app.getHealthyCheckCounter()).hasPositiveValue();
+        assertThat(app.getUnhealthyCheckCounter()).hasPositiveValue();
     }
 
     @Test
-    public void nonCriticalHealthCheckFailureShouldNotResultInUnhealthyApp() {
+    void nonCriticalHealthCheckFailureShouldNotResultInUnhealthyApp() {
         final HealthApp app = TEST_APP_RULE.getApplication();
         app.getCriticalCheckHealthy1().set(true);
         app.getCriticalCheckHealthy2().set(true);
@@ -113,13 +113,13 @@ public class HealthIntegrationTest {
                 .pollDelay(POLL_DELAY)
                 .until(this::isAppHealthy);
 
-        assertThat(app.getStateChangeCounter().get()).isPositive();
-        assertThat(app.getHealthyCheckCounter().get()).isPositive();
-        assertThat(app.getUnhealthyCheckCounter().get()).isPositive();
+        assertThat(app.getStateChangeCounter()).hasPositiveValue();
+        assertThat(app.getHealthyCheckCounter()).hasPositiveValue();
+        assertThat(app.getUnhealthyCheckCounter()).hasPositiveValue();
     }
 
     @Test
-    public void criticalHealthCheckFailureShouldResultInUnhealthyApp() {
+    void criticalHealthCheckFailureShouldResultInUnhealthyApp() {
         final HealthApp app = TEST_APP_RULE.getApplication();
         app.getCriticalCheckHealthy1().set(false);
 
@@ -128,13 +128,13 @@ public class HealthIntegrationTest {
                 .pollDelay(POLL_DELAY)
                 .until(() -> !isAppHealthy());
         // 2 state changes (to unhealthy) for critical checks, because of initial value of false
-        assertThat(app.getStateChangeCounter().get()).isPositive();
-        assertThat(app.getHealthyCheckCounter().get()).isZero();
-        assertThat(app.getUnhealthyCheckCounter().get()).isPositive();
+        assertThat(app.getStateChangeCounter()).hasPositiveValue();
+        assertThat(app.getHealthyCheckCounter()).hasValue(0);
+        assertThat(app.getUnhealthyCheckCounter()).hasPositiveValue();
     }
 
     @Test
-    public void appShouldRecoverOnceCriticalCheckReturnsToHealthyStatus() {
+    void appShouldRecoverOnceCriticalCheckReturnsToHealthyStatus() {
         final HealthApp app = TEST_APP_RULE.getApplication();
         app.getCriticalCheckHealthy1().set(false);
 
@@ -151,9 +151,9 @@ public class HealthIntegrationTest {
                 .pollDelay(POLL_DELAY)
                 .until(this::isAppHealthy);
 
-        assertThat(app.getStateChangeCounter().get()).isPositive();
-        assertThat(app.getHealthyCheckCounter().get()).isPositive();
-        assertThat(app.getUnhealthyCheckCounter().get()).isPositive();
+        assertThat(app.getStateChangeCounter()).hasPositiveValue();
+        assertThat(app.getHealthyCheckCounter()).hasPositiveValue();
+        assertThat(app.getUnhealthyCheckCounter()).hasPositiveValue();
     }
 
     private boolean isAppHealthy() {

@@ -25,7 +25,7 @@ import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assumptions.assumeThat;
 
-public class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
+class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
     private static final Locale DEFAULT_LOCALE = Locale.getDefault();
 
     @Override
@@ -37,13 +37,13 @@ public class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
     }
 
     @BeforeAll
-    public static void init() {
+    static void init() {
         // Set default locale to English because some tests assert localized error messages
         Locale.setDefault(Locale.ENGLISH);
     }
 
     @AfterAll
-    public static void shutdown() {
+    static void shutdown() {
         Locale.setDefault(DEFAULT_LOCALE);
     }
 
@@ -540,11 +540,13 @@ public class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
                 .request().post(Entity.json("[ {\"examples\": [ {\"id\":1 } ] } ]"));
 
         assertThat(response.getStatus()).isEqualTo(200);
-        List<ListExample> res = response.readEntity(new GenericType<List<ListExample>>() {
-        });
-        assertThat(res).hasSize(1);
-        assertThat(res.get(0).examples).hasSize(1);
-        assertThat(res.get(0).examples.get(0).id).isEqualTo(1);
+        assertThat(response.readEntity(new GenericType<List<ListExample>>() {
+        }))
+            .singleElement()
+            .extracting("examples").asList()
+            .singleElement()
+            .extracting("id")
+            .isEqualTo(1);
     }
 
     @Test
@@ -1140,14 +1142,13 @@ public class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
     }
 
     @Test
-    void optionalInt_succeeds_with_empty_string() {
+    void optionalInt_fails_with_empty_string() {
         final Response response = target("/valid/optionalInt")
                 .queryParam("num", "")
                 .request()
                 .get();
 
-        assertThat(response.getStatus()).isEqualTo(200);
-        assertThat(response.readEntity(Integer.class)).isEqualTo(42);
+        assertThat(response.getStatus()).isEqualTo(404);
     }
 
     @Test
@@ -1169,8 +1170,7 @@ public class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
                 .request()
                 .get();
 
-        assertThat(response.getStatus()).isEqualTo(200);
-        assertThat(response.readEntity(Integer.class)).isEqualTo(42);
+        assertThat(response.getStatus()).isEqualTo(404);
     }
 
     @Test
@@ -1202,8 +1202,7 @@ public class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
                 .request()
                 .get();
 
-        assertThat(response.getStatus()).isEqualTo(200);
-        assertThat(response.readEntity(Integer.class)).isEqualTo(23);
+        assertThat(response.getStatus()).isEqualTo(404);
     }
 
     @Test
@@ -1219,14 +1218,13 @@ public class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
     }
 
     @Test
-    void optionalIntWithDefault_succeeds_with_string() {
+    void optionalIntWithDefault_fails_with_string() {
         final Response response = target("/valid/optionalIntWithDefault")
                 .queryParam("num", "test")
                 .request()
                 .get();
 
-        assertThat(response.getStatus()).isEqualTo(200);
-        assertThat(response.readEntity(Integer.class)).isEqualTo(42);
+        assertThat(response.getStatus()).isEqualTo(404);
     }
 
     @Test

@@ -65,7 +65,8 @@ public class SessionFactoryHealthCheck extends HealthCheck {
         });
     }
 
-    private Boolean isValidConnection(Session session) {
-        return session.doReturningWork(connection -> connection.isValid(validationQueryTimeout));
+    private boolean isValidConnection(Session session) {
+        return Boolean.TRUE.equals(session.doReturningWork(connection
+                -> connection.isValid(validationQueryTimeout)));
     }
 }

@@ -8,7 +8,7 @@ import java.io.File;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ApplicationTest {
+class ApplicationTest {
     private static class FakeConfiguration extends Configuration {
     }
 

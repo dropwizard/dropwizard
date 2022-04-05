@@ -18,6 +18,7 @@ class ScheduledHealthCheck implements Runnable {
     private final State state;
     private final Counter healthyCheckCounter;
     private final Counter unhealthyCheckCounter;
+    private boolean previouslyRecovered = false;
 
     ScheduledHealthCheck(final String name,
                          final HealthCheckType type,
@@ -57,9 +58,15 @@ class ScheduledHealthCheck implements Runnable {
         return state.getHealthy().get();
     }
 
+    public boolean isPreviouslyRecovered() {
+        return previouslyRecovered;
+    }
+
     @Override
     public void run() {
         LOGGER.trace("executing health check: name={}", name);
+
+        final boolean previousState = state.getHealthy().get();
 
         HealthCheck.Result result;
         try {
@@ -73,6 +80,9 @@ class ScheduledHealthCheck implements Runnable {
             LOGGER.trace("health check result: name={} result=success", name);
             state.success();
             healthyCheckCounter.inc();
+            if (!previouslyRecovered && !previousState) {
+                previouslyRecovered = true;
+            }
         } else {
             LOGGER.trace("health check result: name={} result=failure result={}", name, result);
             state.failure();
@@ -111,9 +121,14 @@ class ScheduledHealthCheck implements Runnable {
         sb.append(", healthCheck=").append(healthCheck);
         sb.append(", schedule=").append(schedule);
         sb.append(", state=").append(state);
-        sb.append(", healthyCheckCounter=").append(healthyCheckCounter);
-        sb.append(", unhealthyCheckCounter=").append(unhealthyCheckCounter);
+        sb.append(", healthyCheckCounter=").append(getCounterString(healthyCheckCounter));
+        sb.append(", unhealthyCheckCounter=").append(getCounterString(unhealthyCheckCounter));
+        sb.append(", previouslyRecovered=").append(previouslyRecovered);
         sb.append('}');
         return sb.toString();
+    }
+
+    private String getCounterString(Counter counter) {
+        return Counter.class.equals(counter.getClass()) ? String.valueOf(counter.getCount()) : counter.toString();
     }
 }

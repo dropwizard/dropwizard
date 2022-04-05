@@ -16,7 +16,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 
-public class UriFilterFactoryTest {
+class UriFilterFactoryTest {
     private final IAccessEvent accessEvent = mock(IAccessEvent.class);
     private final UriFilterFactory filterFactory = new UriFilterFactory();
 

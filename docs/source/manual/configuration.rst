@@ -314,6 +314,7 @@ HTTP
           useServerHeader: false
           useDateHeader: true
           useForwardedHeaders: false
+          useProxyProtocol: false
           httpCompliance: RFC7230
 
 
@@ -329,10 +330,10 @@ outputBufferSize         32KiB               The size of the buffer into which r
                                              the client. A larger buffer can improve performance by allowing a content producer
                                              to run without blocking, however larger buffers consume more memory and may induce
                                              some latency before a client starts processing the content.
-maxRequestHeaderSize     8KiB                The maximum size of a request header. Larger headers will allow for more and/or
-                                             larger cookies plus larger form content encoded in a URL. However, larger headers
-                                             consume more memory and can make a server more vulnerable to denial of service
-                                             attacks.
+maxRequestHeaderSize     8KiB                The maximum allowed size in bytes for the HTTP request line and HTTP request headers.
+                                             Larger headers will allow for more and/or larger cookies plus larger form content
+                                             encoded in a URL. However, larger headers consume more memory and can make a server
+                                             more vulnerable to denial of service attacks.
 maxResponseHeaderSize    8KiB                The maximum size of a response header. Larger headers will allow for more and/or
                                              larger cookies and longer HTTP headers (eg for redirection).  However, larger headers
                                              will also consume more memory.
@@ -359,6 +360,8 @@ useServerHeader          false               Whether or not to add the ``Server`
 useDateHeader            true                Whether or not to add the ``Date`` header to each response.
 useForwardedHeaders      false               Whether or not to look at ``X-Forwarded-*`` headers added by proxies. See
                                              `ForwardedRequestCustomizer`_ for details.
+useProxyProtocol         false               Whether or not to accept ``PROXY`` protocol requests from a reverse proxy such as `HAProxy`_.
+                                             `ProxyConnectionFactory`_ supports version 1 and 2 of the ``PROXY`` protocol.
 httpCompliance           RFC7230             This sets the http compliance level used by Jetty when parsing http, this
                                              can be useful when using a non-RFC7230 compliant front end, such as nginx,
                                              which can produce multi-line headers when forwarding client certificates
@@ -391,7 +394,9 @@ responseCookieCompliance RFC6265             This sets the cookie compliance lev
 ======================== ==================  ======================================================================================
 
 .. _`java.net.Socket#setSoTimeout(int)`: https://docs.oracle.com/javase/8/docs/api/java/net/Socket.html#setSoTimeout-int-
-.. _`ForwardedRequestCustomizer`: https://www.eclipse.org/jetty/javadoc/9.4.12.v20180830/org/eclipse/jetty/server/ForwardedRequestCustomizer.html
+.. _`ForwardedRequestCustomizer`: https://www.eclipse.org/jetty/javadoc/jetty-9/org/eclipse/jetty/server/ForwardedRequestCustomizer.html
+.. _`ProxyConnectionFactory`: https://www.eclipse.org/jetty/javadoc/jetty-9/org/eclipse/jetty/server/ProxyConnectionFactory.html
+.. _`HAProxy`: https://www.haproxy.org/
 
 .. _`Server::Starter`:  https://github.com/kazuho/p5-Server-Starter
 
@@ -614,14 +619,14 @@ Health checks
         workQueueSize: 1
 
 
-============= ======= ==========================================================
-Name          Default Description
-============= ======= ==========================================================
+============== ======= ==========================================================
+Name           Default Default Description
+============== ======= ==========================================================
 servletEnabled true    Whether to enable or disable the health check servlet.
 minThreads     1       The minimum number of threads for executing health checks.
 maxThreads     4       The maximum number of threads for executing health checks.
 workQueueSize  1       The length of the work queue for health check executions.
-============= ======= ==========================================================
+============== ======= ==========================================================
 
 .. _man-configuration-adminservlet:
 
@@ -1351,7 +1356,7 @@ shutdownWaitPeriod             15 seconds               Amount of time to delay 
 healthCheckUrlPaths            \["/health-check"\]      URLs to expose the app's health check on.
 healthChecks                   []                       A list of configured health checks. See the [Health Check Configuration section](#health-check-configuration) for more details.
 initialOverallState            true                     Flag indicating whether the overall health state of the application should start as healthy or unhealthy. A value of ``true`` indicates an initial state of healthy while a value of ``false`` indicates an initial state of unhealthy.
-responseProvider               json            The health response provider that is used to respond to generate responses to return to health check requests. This can be implemented using Jersey, Jetty, or other technologies if desired. See the :ref:`detailed JSON health response provider section <man-configuration-health-responseprovider>` for more details.
+responseProvider               json                     The health response provider that is used to respond to generate responses to return to health check requests. This can be implemented using Jersey, Jetty, or other technologies if desired. See the :ref:`detailed JSON health response provider section <man-configuration-health-responseprovider>` for more details.
 responder                      servlet                  The health responder that is used to respond to health check requests. This can be implemented using Jersey, Jetty, or other technologies if desired. See the :ref:`servlet health responder section <man-configuration-health-responder>` for more details.
 ============================== =======================  ====================================================================================================
 
@@ -1364,7 +1369,7 @@ Health Checks
 Options around a particular health check which is registered in an Application
 
   .. code-block:: yaml
-     
+
       health:
         healthChecks:
           - name: file-system

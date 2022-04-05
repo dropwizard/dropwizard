@@ -51,7 +51,7 @@ public class DropwizardSSLConnectionSocketFactory {
         if (supportedCiphers == null) {
             return null;
         }
-        return supportedCiphers.toArray(new String[supportedCiphers.size()]);
+        return supportedCiphers.toArray(new String[0]);
     }
 
     @Nullable
@@ -60,7 +60,7 @@ public class DropwizardSSLConnectionSocketFactory {
         if (supportedProtocols == null) {
             return null;
         }
-        return supportedProtocols.toArray(new String[supportedProtocols.size()]);
+        return supportedProtocols.toArray(new String[0]);
     }
 
     private HostnameVerifier chooseHostnameVerifier() {

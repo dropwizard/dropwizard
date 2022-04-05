@@ -14,14 +14,14 @@ import org.hibernate.Transaction;
 import org.hibernate.boot.registry.BootstrapServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import javax.annotation.Nullable;
+import java.time.ZonedDateTime;
+import java.time.ZoneId;
 import java.util.Collections;
 import java.util.Map;
 
@@ -32,7 +32,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class SessionFactoryFactoryTest {
+class SessionFactoryFactoryTest {
     static {
         BootstrapLogging.bootstrap();
     }
@@ -44,7 +44,7 @@ public class SessionFactoryFactoryTest {
     private final Environment environment = mock(Environment.class);
     private final MetricRegistry metricRegistry = new MetricRegistry();
 
-    private DataSourceFactory config = new DataSourceFactory();
+    private final DataSourceFactory config = new DataSourceFactory();
 
     @Nullable
     private SessionFactory sessionFactory;
@@ -54,34 +54,34 @@ public class SessionFactoryFactoryTest {
         when(environment.metrics()).thenReturn(metricRegistry);
         when(environment.lifecycle()).thenReturn(lifecycleEnvironment);
 
-        config.setUrl("jdbc:hsqldb:mem:DbTest-" + System.currentTimeMillis());
+        config.setUrl("jdbc:h2:mem:DbTest-" + System.currentTimeMillis());
         config.setUser("sa");
-        config.setDriverClass("org.hsqldb.jdbcDriver");
-        config.setValidationQuery("SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS");
+        config.setDriverClass("org.h2.Driver");
+        config.setValidationQuery("SELECT 1");
 
         final Map<String, String> properties = Maps.of(
             "hibernate.show_sql", "true",
-            "hibernate.dialect", "org.hibernate.dialect.HSQLDialect",
+            "hibernate.dialect", "org.hibernate.dialect.H2Dialect",
             "hibernate.jdbc.time_zone", "UTC");
         config.setProperties(properties);
     }
 
     @AfterEach
-    void tearDown() throws Exception {
+    void tearDown() {
         if (sessionFactory != null) {
             sessionFactory.close();
         }
     }
 
     @Test
-    void managesTheSessionFactory() throws Exception {
+    void managesTheSessionFactory() {
         build();
 
         verify(lifecycleEnvironment).manage(any(SessionFactoryManager.class));
     }
 
     @Test
-    void callsBundleToConfigure() throws Exception {
+    void callsBundleToConfigure() {
         build();
 
         verify(bundle).configure(any(Configuration.class));
@@ -93,8 +93,9 @@ public class SessionFactoryFactoryTest {
 
         ArgumentCaptor<SessionFactoryManager> sessionFactoryManager = ArgumentCaptor.forClass(SessionFactoryManager.class);
         verify(lifecycleEnvironment).manage(sessionFactoryManager.capture());
-        ManagedPooledDataSource dataSource = (ManagedPooledDataSource) sessionFactoryManager.getValue().getDataSource();
-        assertThat(dataSource.getPool().getName()).isEqualTo("hibernate");
+        assertThat(sessionFactoryManager.getValue().getDataSource())
+            .isInstanceOfSatisfying(ManagedPooledDataSource.class, dataSource ->
+                assertThat(dataSource.getPool().getName()).isEqualTo("hibernate"));
     }
 
     @Test
@@ -104,12 +105,13 @@ public class SessionFactoryFactoryTest {
 
         ArgumentCaptor<SessionFactoryManager> sessionFactoryManager = ArgumentCaptor.forClass(SessionFactoryManager.class);
         verify(lifecycleEnvironment).manage(sessionFactoryManager.capture());
-        ManagedPooledDataSource dataSource = (ManagedPooledDataSource) sessionFactoryManager.getValue().getDataSource();
-        assertThat(dataSource.getPool().getName()).isEqualTo("custom-hibernate-db");
+        assertThat(sessionFactoryManager.getValue().getDataSource())
+            .isInstanceOfSatisfying(ManagedPooledDataSource.class, dataSource ->
+                assertThat(dataSource.getPool().getName()).isEqualTo("custom-hibernate-db"));
     }
 
     @Test
-    void buildsAWorkingSessionFactory() throws Exception {
+    void buildsAWorkingSessionFactory() {
         build();
 
         try (Session session = requireNonNull(sessionFactory).openSession()) {
@@ -127,8 +129,8 @@ public class SessionFactoryFactoryTest {
             assertThat(entity.getEmail())
                 .isEqualTo("coda@example.com");
 
-            assertThat(requireNonNull(entity.getBirthday()).toDateTime(DateTimeZone.UTC))
-                .isEqualTo(new DateTime(1979, 1, 2, 0, 22, DateTimeZone.UTC));
+            assertThat(requireNonNull(entity.getBirthday()))
+                .isEqualTo(ZonedDateTime.of(1979, 1, 2, 0, 22, 0, 0, ZoneId.of("UTC")));
         }
     }
 

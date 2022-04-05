@@ -2,14 +2,13 @@ package io.dropwizard.jetty;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.jetty9.InstrumentedConnectionFactory;
+import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.DiscoverableSubtypeResolver;
 import io.dropwizard.jackson.Jackson;
-import io.dropwizard.util.Resources;
 import io.dropwizard.validation.BaseValidator;
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.eclipse.jetty.server.ConnectionFactory;
-import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.SecureRequestCustomizer;
@@ -63,7 +62,7 @@ class HttpsConnectorFactoryTest {
     void testParsingConfiguration() throws Exception {
         HttpsConnectorFactory https = new YamlConfigurationFactory<>(HttpsConnectorFactory.class, validator,
                 Jackson.newObjectMapper(), "dw-https")
-                .build(new File(Resources.getResource("yaml/https-connector.yml").toURI()));
+                .build(new ResourceConfigurationSourceProvider(), "yaml/https-connector.yml");
 
         assertThat(https.getPort()).isEqualTo(8443);
         assertThat(https.getKeyStorePath()).isEqualTo("/path/to/ks_file");
@@ -249,18 +248,18 @@ class HttpsConnectorFactoryTest {
     @Test
     void nonWindowsKeyStoreValidation() {
         HttpsConnectorFactory factory = new HttpsConnectorFactory();
-        Collection<String> properties = getViolationProperties(validator.validate(factory));
-        assertThat(properties).contains("validKeyStorePassword");
-        assertThat(properties).contains("validKeyStorePath");
+        assertThat(getViolationProperties(validator.validate(factory)))
+                .contains("validKeyStorePassword")
+                .contains("validKeyStorePath");
     }
 
     @Test
     void windowsKeyStoreValidation() {
         HttpsConnectorFactory factory = new HttpsConnectorFactory();
         factory.setKeyStoreType(WINDOWS_MY_KEYSTORE_NAME);
-        Collection<String> properties = getViolationProperties(validator.validate(factory));
-        assertThat(properties).doesNotContain("validKeyStorePassword");
-        assertThat(properties).doesNotContain("validKeyStorePath");
+        assertThat(getViolationProperties(validator.validate(factory)))
+                .doesNotContain("validKeyStorePassword")
+                .doesNotContain("validKeyStorePath");
     }
 
     @Test
@@ -319,10 +318,8 @@ class HttpsConnectorFactoryTest {
         final Server server = new Server();
         final MetricRegistry metrics = new MetricRegistry();
         final ThreadPool threadPool = new QueuedThreadPool();
-        final Connector connector = https.build(server, metrics, "test-https-connector", threadPool);
-        assertThat(connector).isInstanceOf(ServerConnector.class);
 
-        try (final ServerConnector serverConnector = (ServerConnector) connector) {
+        try (final ServerConnector serverConnector = (ServerConnector) https.build(server, metrics, "test-https-connector", threadPool)) {
             assertThat(serverConnector.getPort()).isEqualTo(8443);
             assertThat(serverConnector.getHost()).isEqualTo("127.0.0.1");
             assertThat(serverConnector.getName()).isEqualTo("test-https-connector");
@@ -377,7 +374,6 @@ class HttpsConnectorFactoryTest {
             assertThat(httpConfiguration.getSecurePort()).isEqualTo(8443);
             assertThat(httpConfiguration.getCustomizers()).hasAtLeastOneElementOfType(SecureRequestCustomizer.class);
         } finally {
-            connector.stop();
             server.stop();
         }
     }

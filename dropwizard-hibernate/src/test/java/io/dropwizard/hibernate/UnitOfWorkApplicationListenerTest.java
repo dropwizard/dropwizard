@@ -17,7 +17,7 @@ import org.mockito.InOrder;
 import java.lang.reflect.Method;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.hibernate.resource.transaction.spi.TransactionStatus.ACTIVE;
 import static org.hibernate.resource.transaction.spi.TransactionStatus.NOT_ACTIVE;
 import static org.mockito.Mockito.doAnswer;
@@ -29,7 +29,7 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @SuppressWarnings("HibernateResourceOpenedButNotSafelyClosed")
-public class UnitOfWorkApplicationListenerTest {
+class UnitOfWorkApplicationListenerTest {
     private final SessionFactory sessionFactory = mock(SessionFactory.class);
     private final SessionFactory analyticsSessionFactory = mock(SessionFactory.class);
     private final UnitOfWorkApplicationListener listener = new UnitOfWorkApplicationListener();
@@ -235,7 +235,7 @@ public class UnitOfWorkApplicationListenerTest {
     @Test
     void throwsExceptionOnNotRegisteredDatabase() throws Exception {
         prepareResourceMethod("methodWithUnitOfWorkOnNotRegisteredDatabase");
-        assertThatExceptionOfType(IllegalArgumentException.class)
+        assertThatIllegalArgumentException()
             .isThrownBy(this::execute)
             .withMessage("Unregistered Hibernate bundle: 'warehouse'");
     }

@@ -198,13 +198,14 @@ public class GzipHandlerFactory {
     /**
      * @deprecated  gzip handler no longer supports inflate streams
      */
+    @Deprecated
     @JsonProperty
     public boolean isGzipCompatibleInflation() {
         return gzipCompatibleInflation;
     }
 
     /**
-     * @deprecated  gzip handler no longer supports inflate streams
+     * @deprecated gzip handler no longer supports inflate streams
      */
     @Deprecated
     @JsonProperty
@@ -212,10 +213,18 @@ public class GzipHandlerFactory {
         this.gzipCompatibleInflation = gzipCompatibleInflation;
     }
 
+    /**
+     * @deprecated excluding by user agent will be removed in Jetty 10
+     */
+    @Deprecated
     public Set<String> getExcludedUserAgentPatterns() {
         return excludedUserAgentPatterns;
     }
 
+    /**
+     * @deprecated excluding by user agent will be removed in Jetty 10
+     */
+    @Deprecated
     public void setExcludedUserAgentPatterns(Set<String> excludedUserAgentPatterns) {
         this.excludedUserAgentPatterns = excludedUserAgentPatterns;
     }
@@ -276,7 +285,7 @@ public class GzipHandlerFactory {
     }
 
     public GzipHandler build(@Nullable Handler handler) {
-        final GzipHandler gzipHandler = new GzipHandler();
+        final ZipExceptionHandlingGzipHandler gzipHandler = new ZipExceptionHandlingGzipHandler();
         gzipHandler.setHandler(handler);
         gzipHandler.setMinGzipSize((int) minimumEntitySize.toBytes());
         gzipHandler.setInflateBufferSize((int) bufferSize.toBytes());

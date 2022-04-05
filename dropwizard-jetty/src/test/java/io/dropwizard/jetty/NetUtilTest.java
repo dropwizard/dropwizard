@@ -6,12 +6,11 @@ import java.io.File;
 import java.net.InetAddress;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
-import java.util.Collection;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assumptions.assumeThat;
 
-public class NetUtilTest {
+class NetUtilTest {
 
     private static final String OS_NAME_PROPERTY = "os.name";
 
@@ -62,17 +61,17 @@ public class NetUtilTest {
     void testAllLocalIps() throws Exception {
         NetUtil.setLocalIpFilter((nif, adr) ->
             (adr != null) && !adr.isLoopbackAddress() && (nif.isPointToPoint() || !adr.isLinkLocalAddress()));
-        final Collection<InetAddress> addresses = NetUtil.getAllLocalIPs();
-        assertThat(addresses).isNotEmpty();
-        assertThat(addresses).doesNotContain(InetAddress.getLoopbackAddress());
+        assertThat(NetUtil.getAllLocalIPs())
+                .isNotEmpty()
+                .doesNotContain(InetAddress.getLoopbackAddress());
     }
 
     @Test
     void testLocalIpsWithLocalFilter() throws Exception {
         NetUtil.setLocalIpFilter((inf, adr) -> adr != null);
-        final Collection<InetAddress> addresses = NetUtil.getAllLocalIPs();
-        assertThat(addresses).isNotEmpty();
-        assertThat(addresses).contains(InetAddress.getLoopbackAddress());
+        assertThat(NetUtil.getAllLocalIPs())
+                .isNotEmpty()
+                .contains(InetAddress.getLoopbackAddress());
     }
 
     private boolean isTcpBacklogSettingReadable() {

@@ -26,7 +26,6 @@ import io.dropwizard.logging.filter.LevelFilterFactory;
 import io.dropwizard.logging.filter.ThresholdLevelFilterFactory;
 import io.dropwizard.logging.layout.DropwizardLayoutFactory;
 import io.dropwizard.logging.layout.LayoutFactory;
-import io.dropwizard.util.Lists;
 
 import javax.annotation.Nullable;
 import javax.management.InstanceAlreadyExistsException;
@@ -42,6 +41,7 @@ import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
@@ -70,17 +70,12 @@ public class DefaultLoggingFactory implements LoggingFactory {
     @JsonIgnore
     private final PrintStream configurationErrorsStream;
 
-    @JsonIgnore
-    @Nullable
-    private volatile String loggerName;
-
     public DefaultLoggingFactory() {
         this(LoggingUtil.getLoggerContext(), System.err);
     }
 
     DefaultLoggingFactory(LoggerContext loggerContext, PrintStream configurationErrorsStream) {
         super();
-        this.loggerName = null;
         this.loggerContext = requireNonNull(loggerContext);
         this.configurationErrorsStream = requireNonNull(configurationErrorsStream);
     }
@@ -91,31 +86,6 @@ public class DefaultLoggingFactory implements LoggingFactory {
 
     PrintStream getConfigurationErrorsStream() {
         return configurationErrorsStream;
-    }
-
-    /**
-     * This method is designed to be used by unit tests only.
-     */
-    void clear() {
-
-        // This is volatile, read once for performance.
-        final String name = loggerName;
-        if (name != null) {
-            CHANGE_LOGGER_CONTEXT_LOCK.lock();
-            try {
-                loggerContext.stop();
-
-                final Logger logger = loggerContext.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
-                logger.detachAndStopAllAppenders();
-
-                // Additional cleanup/reset for this name
-                configureLoggers(name);
-            } finally {
-                CHANGE_LOGGER_CONTEXT_LOCK.unlock();
-            }
-
-            StatusPrinter.setPrintStream(System.out);
-        }
     }
 
     @JsonProperty
@@ -159,8 +129,6 @@ public class DefaultLoggingFactory implements LoggingFactory {
         } finally {
             CHANGE_LOGGER_CONTEXT_LOCK.unlock();
         }
-
-        loggerName = name;
 
         final LevelFilterFactory<ILoggingEvent> levelFilterFactory = new ThresholdLevelFilterFactory();
         final AsyncAppenderFactory<ILoggingEvent> asyncAppenderFactory = new AsyncLoggingEventAppenderFactory();
@@ -207,8 +175,9 @@ public class DefaultLoggingFactory implements LoggingFactory {
             // mechanism built into logback, we wait for a short period of time before
             // giving up that the appender will be completely flushed.
             final Logger logger = loggerContext.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
-            final List<Appender<ILoggingEvent>> appenders = Lists.of(logger.iteratorForAppenders());
-            for (Appender<ILoggingEvent> appender : appenders) {
+            final Iterator<Appender<ILoggingEvent>> appenderIterator = logger.iteratorForAppenders();
+            while (appenderIterator.hasNext()) {
+                final Appender<ILoggingEvent> appender = appenderIterator.next();
                 if (appender instanceof AsyncAppenderBase) {
                     flushAppender((AsyncAppenderBase<?>) appender);
                 } else if (appender instanceof AsyncAppenderBaseProxy) {

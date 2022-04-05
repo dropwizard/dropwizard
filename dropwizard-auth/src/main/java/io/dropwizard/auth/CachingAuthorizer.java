@@ -9,7 +9,6 @@ import com.github.benmanes.caffeine.cache.CaffeineSpec;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.github.benmanes.caffeine.cache.stats.CacheStats;
 import com.github.benmanes.caffeine.cache.stats.StatsCounter;
-import com.google.common.annotations.VisibleForTesting;
 import io.dropwizard.util.Sets;
 
 import javax.annotation.Nullable;
@@ -48,7 +47,6 @@ public class CachingAuthorizer<P extends Principal> implements Authorizer<P> {
     // thus result in read through to the underlying `Authorizer`.
     //
     // Field is package-private to be visible for unit tests
-    @VisibleForTesting
     final LoadingCache<AuthorizationContext<P>, Boolean> cache;
 
     /**
@@ -113,8 +111,7 @@ public class CachingAuthorizer<P extends Principal> implements Authorizer<P> {
     public boolean authorize(P principal, String role, @Nullable ContainerRequestContext requestContext) {
         try (Timer.Context context = getsTimer.time()) {
             final AuthorizationContext<P> cacheKey = getAuthorizationContext(principal, role, requestContext);
-            final Boolean result = cache.get(cacheKey);
-            return result == null ? false : result;
+            return Boolean.TRUE.equals(cache.get(cacheKey));
         } catch (CompletionException e) {
             Throwable cause = e.getCause();
             if (cause instanceof RuntimeException) {

@@ -14,7 +14,7 @@ import java.util.Set;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assumptions.assumeThat;
 
-public class ConfigurationValidationExceptionTest {
+class ConfigurationValidationExceptionTest {
     private static class Example {
         @NotNull
         @Nullable // Weird combination, but Hibernate Validator is not good with the compile nullable checks
@@ -24,7 +24,7 @@ public class ConfigurationValidationExceptionTest {
     private ConfigurationValidationException e;
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() {
         assumeThat(Locale.getDefault().getLanguage()).isEqualTo("en");
 
         final Validator validator = BaseValidator.newValidator();
@@ -35,10 +35,9 @@ public class ConfigurationValidationExceptionTest {
     @Test
     void formatsTheViolationsIntoAHumanReadableMessage() {
         assertThat(e.getMessage())
-                .isEqualTo(String.format(
-                        "config.yml has an error:%n" +
-                                "  * woo must not be null%n"
-                ));
+            .isEqualToNormalizingNewlines(
+                "config.yml has an error:\n" +
+                "  * woo must not be null\n");
     }
 
     @Test

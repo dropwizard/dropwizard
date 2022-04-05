@@ -7,15 +7,13 @@ import ch.qos.logback.core.spi.DeferredProcessingAware;
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.logging.BootstrapLogging;
 import io.dropwizard.logging.ConsoleAppenderFactory;
 import io.dropwizard.logging.DefaultLoggingFactory;
-import io.dropwizard.logging.json.layout.ExceptionFormat;
-import io.dropwizard.logging.layout.DiscoverableLayoutFactory;
 import io.dropwizard.request.logging.LogbackAccessRequestLogFactory;
-import io.dropwizard.util.Resources;
 import io.dropwizard.validation.BaseValidator;
 import org.eclipse.jetty.http.HttpFields;
 import org.eclipse.jetty.server.Request;
@@ -28,20 +26,18 @@ import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
-import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 import static org.awaitility.Awaitility.await;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class LayoutIntegrationTests {
+class LayoutIntegrationTests {
 
     static {
         BootstrapLogging.bootstrap(Level.INFO, new EventJsonLayoutBaseFactory());
@@ -60,65 +56,66 @@ public class LayoutIntegrationTests {
 
     @SuppressWarnings("unchecked")
     private <T extends DeferredProcessingAware> ConsoleAppenderFactory<T> getAppenderFactory(String s) throws Exception {
-        return yamlFactory.build(new File(Resources.getResource(s).toURI()));
+        return yamlFactory.build(new ResourceConfigurationSourceProvider(), s);
     }
 
     @Test
     void testDeserializeJson() throws Exception {
-        ConsoleAppenderFactory<ILoggingEvent> appenderFactory = getAppenderFactory("yaml/json-log.yml");
-        DiscoverableLayoutFactory<?> layout = requireNonNull(appenderFactory.getLayout());
-        assertThat(layout).isInstanceOf(EventJsonLayoutBaseFactory.class);
-        EventJsonLayoutBaseFactory factory = (EventJsonLayoutBaseFactory) layout;
-        assertThat(factory).isNotNull();
-        assertThat(factory.getTimestampFormat()).isEqualTo("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-        assertThat(factory.isPrettyPrint()).isFalse();
-        assertThat(factory.isAppendLineSeparator()).isTrue();
-        assertThat(factory.getIncludes()).contains(
-            EventAttribute.LEVEL,
-            EventAttribute.MDC,
-            EventAttribute.MESSAGE,
-            EventAttribute.LOGGER_NAME,
-            EventAttribute.EXCEPTION,
-            EventAttribute.TIMESTAMP,
-            EventAttribute.CALLER_DATA);
-        assertThat(factory.isFlattenMdc()).isTrue();
-        assertThat(factory.getCustomFieldNames()).containsOnly(entry("timestamp", "@timestamp"));
-        assertThat(factory.getAdditionalFields()).containsOnly(entry("service-name", "user-service"),
-            entry("service-build", 218));
-        assertThat(factory.getIncludesMdcKeys()).containsOnly("userId");
-
-        ExceptionFormat exceptionFormat = requireNonNull(factory.getExceptionFormat());
-        assertThat(exceptionFormat.getDepth()).isEqualTo("10");
-        assertThat(exceptionFormat.isRootFirst()).isFalse();
-        assertThat(exceptionFormat.getEvaluators()).contains("io.dropwizard");
+        assertThat(getAppenderFactory("yaml/json-log.yml"))
+            .extracting(ConsoleAppenderFactory::getLayout)
+            .isInstanceOfSatisfying(EventJsonLayoutBaseFactory.class, eventJsonLayoutBaseFactory -> assertThat(eventJsonLayoutBaseFactory)
+                .satisfies(factory -> assertThat(factory).isNotNull())
+                .satisfies(factory -> assertThat(factory.getTimestampFormat()).isEqualTo("yyyy-MM-dd'T'HH:mm:ss.SSSZ"))
+                .satisfies(factory -> assertThat(factory.isPrettyPrint()).isFalse())
+                .satisfies(factory -> assertThat(factory.isAppendLineSeparator()).isTrue())
+                .satisfies(factory -> assertThat(factory.getIncludes()).contains(
+                    EventAttribute.LEVEL,
+                    EventAttribute.MDC,
+                    EventAttribute.MESSAGE,
+                    EventAttribute.LOGGER_NAME,
+                    EventAttribute.EXCEPTION,
+                    EventAttribute.TIMESTAMP,
+                    EventAttribute.CALLER_DATA))
+                .satisfies(factory -> assertThat(factory.isFlattenMdc()).isTrue())
+                .satisfies(factory -> assertThat(factory.getCustomFieldNames()).containsOnly(entry("timestamp", "@timestamp")))
+                .satisfies(factory -> assertThat(factory.getAdditionalFields()).containsOnly(
+                    entry("service-name", "user-service"),
+                    entry("service-build", 218)))
+                .satisfies(factory -> assertThat(factory.getIncludesMdcKeys()).containsOnly("userId"))
+                .extracting(EventJsonLayoutBaseFactory::getExceptionFormat)
+                .satisfies(exceptionFormat -> assertThat(exceptionFormat.getDepth()).isEqualTo("10"))
+                .satisfies(exceptionFormat -> assertThat(exceptionFormat.isRootFirst()).isFalse())
+                .satisfies(exceptionFormat -> assertThat(exceptionFormat.getEvaluators()).contains("io.dropwizard")));
     }
 
     @Test
     void testDeserializeAccessJson() throws Exception {
-        ConsoleAppenderFactory<IAccessEvent> appenderFactory = getAppenderFactory("yaml/json-access-log.yml");
-        DiscoverableLayoutFactory<?> layout = requireNonNull(appenderFactory.getLayout());
-        assertThat(layout).isInstanceOf(AccessJsonLayoutBaseFactory.class);
-        AccessJsonLayoutBaseFactory factory = (AccessJsonLayoutBaseFactory) layout;
-        assertThat(factory.getTimestampFormat()).isEqualTo("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-        assertThat(factory.isPrettyPrint()).isFalse();
-        assertThat(factory.isAppendLineSeparator()).isTrue();
-        assertThat(factory.getIncludes()).contains(AccessAttribute.TIMESTAMP,
-            AccessAttribute.REMOTE_USER,
-            AccessAttribute.STATUS_CODE,
-            AccessAttribute.METHOD,
-            AccessAttribute.REQUEST_URL,
-            AccessAttribute.REMOTE_HOST,
-            AccessAttribute.REQUEST_PARAMETERS,
-            AccessAttribute.REQUEST_CONTENT,
-            AccessAttribute.TIMESTAMP,
-            AccessAttribute.USER_AGENT,
-            AccessAttribute.PATH_QUERY);
-        assertThat(factory.getResponseHeaders()).containsOnly("X-Request-Id");
-        assertThat(factory.getRequestHeaders()).containsOnly("User-Agent", "X-Request-Id");
-        assertThat(factory.getCustomFieldNames()).containsOnly(entry("statusCode", "status_code"),
-            entry("userAgent", "user_agent"));
-        assertThat(factory.getAdditionalFields()).containsOnly(entry("service-name", "shipping-service"),
-            entry("service-version", "1.2.3"));
+        assertThat(getAppenderFactory("yaml/json-access-log.yml"))
+            .extracting(ConsoleAppenderFactory::getLayout)
+            .isInstanceOfSatisfying(AccessJsonLayoutBaseFactory.class, accessJsonLayoutBaseFactory -> assertThat(accessJsonLayoutBaseFactory)
+                .satisfies(factory -> assertThat(factory.getTimestampFormat()).isEqualTo("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"))
+                .satisfies(factory -> assertThat(factory.isPrettyPrint()).isFalse())
+                .satisfies(factory -> assertThat(factory.isAppendLineSeparator()).isTrue())
+                .satisfies(factory -> assertThat(factory.getIncludes()).contains(
+                    AccessAttribute.TIMESTAMP,
+                    AccessAttribute.REMOTE_USER,
+                    AccessAttribute.STATUS_CODE,
+                    AccessAttribute.METHOD,
+                    AccessAttribute.REQUEST_URL,
+                    AccessAttribute.REMOTE_HOST,
+                    AccessAttribute.REQUEST_PARAMETERS,
+                    AccessAttribute.REQUEST_CONTENT,
+                    AccessAttribute.TIMESTAMP,
+                    AccessAttribute.USER_AGENT,
+                    AccessAttribute.PATH_QUERY))
+                .satisfies(factory -> assertThat(factory.getResponseHeaders()).containsOnly("X-Request-Id"))
+                .satisfies(factory -> assertThat(factory.getRequestHeaders()).containsOnly("User-Agent", "X-Request-Id"))
+                .satisfies(factory -> assertThat(factory.getCustomFieldNames()).containsOnly(
+                    entry("statusCode", "status_code"),
+                    entry("userAgent", "user_agent")))
+                .satisfies(factory -> assertThat(factory.getAdditionalFields()).containsOnly(
+                    entry("service-name", "shipping-service"),
+                    entry("service-version", "1.2.3"))));
     }
 
     @Test
@@ -127,21 +124,21 @@ public class LayoutIntegrationTests {
         DefaultLoggingFactory defaultLoggingFactory = new DefaultLoggingFactory();
         defaultLoggingFactory.setAppenders(Collections.singletonList(consoleAppenderFactory));
 
-        DiscoverableLayoutFactory<?> layout = requireNonNull(consoleAppenderFactory.getLayout());
-        assertThat(layout).isInstanceOf(EventJsonLayoutBaseFactory.class);
-        EventJsonLayoutBaseFactory factory = (EventJsonLayoutBaseFactory) layout;
-        assertThat(factory).isNotNull();
-        assertThat(factory.getIncludes()).contains(EventAttribute.LEVEL,
-            EventAttribute.THREAD_NAME,
-            EventAttribute.MDC,
-            EventAttribute.MARKER,
-            EventAttribute.LOGGER_NAME,
-            EventAttribute.MESSAGE,
-            EventAttribute.EXCEPTION,
-            EventAttribute.TIMESTAMP);
-        assertThat(factory.isFlattenMdc()).isFalse();
-        assertThat(factory.getIncludesMdcKeys()).isEmpty();
-        assertThat(factory.getExceptionFormat()).isNull();
+        assertThat(consoleAppenderFactory.getLayout())
+            .isInstanceOfSatisfying(EventJsonLayoutBaseFactory.class, eventJsonLayoutBaseFactory -> assertThat(eventJsonLayoutBaseFactory)
+                .satisfies(factory -> assertThat(factory).isNotNull())
+                .satisfies(factory -> assertThat(factory.getIncludes()).contains(
+                    EventAttribute.LEVEL,
+                    EventAttribute.THREAD_NAME,
+                    EventAttribute.MDC,
+                    EventAttribute.MARKER,
+                    EventAttribute.LOGGER_NAME,
+                    EventAttribute.MESSAGE,
+                    EventAttribute.EXCEPTION,
+                    EventAttribute.TIMESTAMP))
+                .satisfies(factory -> assertThat(factory.isFlattenMdc()).isFalse())
+                .satisfies(factory -> assertThat(factory.getIncludesMdcKeys()).isEmpty())
+                .satisfies(factory -> assertThat(factory.getExceptionFormat()).isNull()));
 
         PrintStream old = System.out;
         ByteArrayOutputStream redirectedStream = new ByteArrayOutputStream();

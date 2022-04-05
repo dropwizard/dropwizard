@@ -8,7 +8,7 @@ import org.mockito.Mockito;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ConfiguredCloseableHttpClientTest {
+class ConfiguredCloseableHttpClientTest {
     private ConfiguredCloseableHttpClient configuredClient;
 
     private CloseableHttpClient closeableHttpClientMock = Mockito.mock(CloseableHttpClient.class);

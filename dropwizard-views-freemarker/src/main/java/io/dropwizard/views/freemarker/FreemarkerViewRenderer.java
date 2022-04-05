@@ -63,6 +63,7 @@ public class FreemarkerViewRenderer implements ViewRenderer {
     /**
      * @deprecated Use {@link #FreemarkerViewRenderer(Version)} instead.
      */
+    @Deprecated
     public FreemarkerViewRenderer() {
         this(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
     }

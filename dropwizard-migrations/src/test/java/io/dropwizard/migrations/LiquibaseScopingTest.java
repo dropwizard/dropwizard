@@ -6,7 +6,6 @@ import liquibase.database.Database;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.exception.CustomChangeException;
 import liquibase.exception.LiquibaseException;
-import liquibase.exception.SetupException;
 import liquibase.exception.ValidationErrors;
 import liquibase.resource.ResourceAccessor;
 import net.sourceforge.argparse4j.inf.Namespace;
@@ -19,26 +18,20 @@ import org.junit.jupiter.api.Test;
 import javax.annotation.Nullable;
 import java.sql.PreparedStatement;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-public class LiquibaseScopingTest extends AbstractMigrationTest implements CustomTaskChange {
-
-    private static final Map<String, Object> scopedObjects = new HashMap<>();
-    static {
-        scopedObjects.put("person", new Person("Bill Smith"));
-    }
-    private DbCommand<TestMigrationConfiguration> dbCommand = new DbCommand<>(
+public class LiquibaseScopingTest implements CustomTaskChange {
+    private final DbCommand<TestMigrationConfiguration> dbCommand = new DbCommand<>(
         "db",
         TestMigrationConfiguration::getDataSource,
         TestMigrationConfiguration.class,
         "migrations-custom-change.xml",
-        scopedObjects
+        Collections.singletonMap("person", new Person("Bill Smith"))
     );
-    private DbCommand<TestMigrationConfiguration> dbCommandWithoutScopedObjects = new DbCommand<>(
+    private final DbCommand<TestMigrationConfiguration> dbCommandWithoutScopedObjects = new DbCommand<>(
         "db",
         TestMigrationConfiguration::getDataSource,
         TestMigrationConfiguration.class,
@@ -49,8 +42,8 @@ public class LiquibaseScopingTest extends AbstractMigrationTest implements Custo
 
     @BeforeEach
     void setUpTest() {
-        databaseUrl = getDatabaseUrl();
-        conf = createConfiguration(databaseUrl);
+        databaseUrl = MigrationTestSupport.getDatabaseUrl();
+        conf = MigrationTestSupport.createConfiguration(databaseUrl);
     }
 
     private static class Person {
@@ -77,9 +70,8 @@ public class LiquibaseScopingTest extends AbstractMigrationTest implements Custo
             final ResultIterable<Map<String, Object>> rows = handle.select("select * from persons").mapToMap();
             assertThat(rows).hasSize(1);
             Map<String, Object> dbPerson = rows.first();
-            String name = (String) dbPerson.getOrDefault("name", null);
-            assertThat(name).isNotNull();
-            assertThat(name).isEqualTo(((Person)scopedObjects.get("person")).getName());
+            assertThat(dbPerson.getOrDefault("name", null))
+                .isInstanceOfSatisfying(String.class, name -> assertThat(name).isEqualTo("Bill Smith"));
         }
     }
 
@@ -111,12 +103,15 @@ public class LiquibaseScopingTest extends AbstractMigrationTest implements Custo
     public String getConfirmationMessage() {
         return "";
     }
+
     @Override
-    public void setUp() throws SetupException {
+    public void setUp() {
     }
+
     @Override
     public void setFileOpener(ResourceAccessor resourceAccessor) {
     }
+
     @Override
     @Nullable
     public ValidationErrors validate(Database database) {

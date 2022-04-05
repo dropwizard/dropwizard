@@ -8,6 +8,7 @@ import com.fasterxml.classmate.TypeResolver;
 import com.fasterxml.classmate.members.ResolvedMethod;
 import io.dropwizard.validation.BaseValidator;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
@@ -15,52 +16,65 @@ import java.util.Arrays;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
-public class SelfValidatingValidatorTest {
-    private SelfValidatingValidator selfValidatingValidator = new SelfValidatingValidator();
+class SelfValidatingValidatorTest {
+    private final Logger log = mock(Logger.class);
+    private final SelfValidatingValidator selfValidatingValidator = new SelfValidatingValidator(log);
 
     @Test
-    void validObjectHasNoViolations() throws Exception {
+    void validObjectHasNoViolations() {
         final Validator validator = BaseValidator.newValidator();
         final Set<ConstraintViolation<ValidExample>> violations = validator.validate(new ValidExample(1));
         assertThat(violations).isEmpty();
     }
 
     @Test
-    void invalidObjectHasViolations() throws Exception {
+    void invalidObjectHasViolations() {
         final Validator validator = BaseValidator.newValidator();
         final Set<ConstraintViolation<ValidExample>> violations = validator.validate(new ValidExample(-1));
         assertThat(violations)
-                .isNotEmpty()
-                .allSatisfy(violation -> assertThat(violation.getMessage()).isEqualTo("n must be positive!"));
+                .singleElement()
+                .extracting(ConstraintViolation::getMessage)
+                .isEqualTo("n must be positive!");
     }
 
     @Test
-    void correctMethod() throws Exception {
+    void correctMethod() {
         assertThat(selfValidatingValidator.isMethodCorrect(
                 getMethod("validateCorrect", ViolationCollector.class)))
                 .isTrue();
     }
 
     @Test
-    void voidIsNotAccepted() throws Exception {
+    void voidIsNotAccepted() {
         assertThat(selfValidatingValidator.isMethodCorrect(
                 getMethod("validateFailReturn", ViolationCollector.class)))
                 .isFalse();
     }
 
     @Test
-    void privateIsNotAccepted() throws Exception {
+    @SuppressWarnings("Slf4jFormatShouldBeConst")
+    void privateIsNotAccepted() throws NoSuchMethodException {
         assertThat(selfValidatingValidator.isMethodCorrect(
                 getMethod("validateFailPrivate", ViolationCollector.class)))
                 .isFalse();
+
+        verify(log).error("The method {} is annotated with @SelfValidation but is not public",
+            InvalidExample.class.getDeclaredMethod("validateFailPrivate", ViolationCollector.class));
     }
 
     @Test
-    void additionalParametersAreNotAccepted() throws Exception {
+    @SuppressWarnings("Slf4jFormatShouldBeConst")
+    void additionalParametersAreNotAccepted() throws NoSuchMethodException {
         assertThat(selfValidatingValidator.isMethodCorrect(
                 getMethod("validateFailAdditionalParameters", ViolationCollector.class, int.class)))
                 .isFalse();
+
+        verify(log).error("The method {} is annotated with @SelfValidation but does not have a single parameter of type {}",
+            InvalidExample.class.getMethod("validateFailAdditionalParameters", ViolationCollector.class, int.class),
+            ViolationCollector.class);
     }
 
     private ResolvedMethod getMethod(String name, Class<?>... params) {

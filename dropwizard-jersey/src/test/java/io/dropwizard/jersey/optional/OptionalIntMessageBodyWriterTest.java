@@ -13,6 +13,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -21,7 +22,7 @@ import java.util.OptionalInt;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class OptionalIntMessageBodyWriterTest extends AbstractJerseyTest {
+class OptionalIntMessageBodyWriterTest extends AbstractJerseyTest {
 
     @Override
     protected Application configure() {
@@ -48,8 +49,9 @@ public class OptionalIntMessageBodyWriterTest extends AbstractJerseyTest {
 
     @Test
     void absentOptionalsThrowANotFound() {
+        Invocation.Builder request = target("optional-return").request();
         assertThatExceptionOfType(WebApplicationException.class)
-            .isThrownBy(() -> target("optional-return").request().get(Integer.class))
+            .isThrownBy(() -> request.get(Integer.class))
             .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(404));
     }
 
@@ -70,29 +72,22 @@ public class OptionalIntMessageBodyWriterTest extends AbstractJerseyTest {
     }
 
     @Test
-    void valueEmptyReturnsDefault() {
-        assertThat(target("optional-return/default").queryParam("id", "")
-            .request().get(Integer.class))
-            .isEqualTo(target("optional-return/int/default").queryParam("id", "")
-                .request().get(Integer.class))
-            .isEqualTo(0);
+    void valueEmptyReturns404() {
+        assertThat(target("optional-return/default").queryParam("id", "").request().get())
+            .extracting(Response::getStatus)
+            .isEqualTo(404);
     }
 
     @Test
     void valueInvalidReturns404() {
+        Invocation.Builder request = target("optional-return/default").queryParam("id", "invalid")
+            .request();
         assertThatExceptionOfType(NotFoundException.class)
-            .isThrownBy(() -> target("optional-return/default").queryParam("id", "invalid")
-                .request().get(Integer.class));
+            .isThrownBy(() -> request.get(Integer.class));
+        Invocation.Builder intRequest = target("optional-return/int/default").queryParam("id", "invalid")
+            .request();
         assertThatExceptionOfType(NotFoundException.class)
-            .isThrownBy(() -> target("optional-return/int/default").queryParam("id", "invalid")
-                .request().get(Integer.class));
-    }
-
-    @Test
-    void verifyInvalidDefaultValueFailsFast() {
-        assertThatExceptionOfType(NumberFormatException.class)
-            .isThrownBy(() -> new OptionalIntParamConverterProvider.OptionalIntParamConverter("invalid")
-                .fromString("invalid"));
+            .isThrownBy(() -> intRequest.get(Integer.class));
     }
 
     @Path("optional-return")

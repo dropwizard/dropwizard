@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-public class SessionFactoryManagerTest {
+class SessionFactoryManagerTest {
     private final SessionFactory factory = mock(SessionFactory.class);
     private final ManagedDataSource dataSource = mock(ManagedDataSource.class);
     private final SessionFactoryManager manager = new SessionFactoryManager(factory, dataSource);

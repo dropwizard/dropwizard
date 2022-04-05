@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 @SuppressWarnings("serial")
-public class GenericsTest<T> {
+class GenericsTest<T> {
 
     public static Stream<Arguments> data() {
         return Stream.of(
@@ -30,7 +30,7 @@ public class GenericsTest<T> {
 
     @ParameterizedTest
     @MethodSource("data")
-    public void testTypeParameter(Class<?> klass, Class<?> typeParameter, Class<? super T> bound, Class<?> boundTypeParameter,
+    void testTypeParameter(Class<?> klass, Class<?> typeParameter, Class<? super T> bound, Class<?> boundTypeParameter,
                                   Class<? extends Exception> expectedException, String expectedMessage) {
         if (expectedException == null) {
             assertThat(Generics.getTypeParameter(klass)).isEqualTo(typeParameter);
@@ -42,7 +42,7 @@ public class GenericsTest<T> {
 
     @ParameterizedTest
     @MethodSource("data")
-    public void testBoundTypeParameter(Class<?> klass, Class<?> typeParameter, Class<? super T> bound, Class<?> boundTypeParameter,
+    void testBoundTypeParameter(Class<?> klass, Class<?> typeParameter, Class<? super T> bound, Class<?> boundTypeParameter,
                                        Class<? extends Exception> expectedException, String expectedMessage) {
         if (expectedException == null) {
             assertThat(Generics.getTypeParameter(klass, bound)).isEqualTo(boundTypeParameter);

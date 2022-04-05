@@ -1,5 +1,6 @@
 package io.dropwizard.testing.junit5;
 
+import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.testing.app.DropwizardTestApplication;
 import io.dropwizard.testing.app.TestConfiguration;
 import org.junit.jupiter.api.Test;
@@ -8,17 +9,17 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 
-import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ReuseDropwizardAppExtensionTestSuite {
     static final DropwizardAppExtension<TestConfiguration> EXTENSION =
-        new DropwizardAppExtension<>(DropwizardTestApplication.class, resourceFilePath("test-config.yaml"));
+        new DropwizardAppExtension<>(DropwizardTestApplication.class, "test-config.yaml",
+            new ResourceConfigurationSourceProvider());
 
 }
 
 @ExtendWith(DropwizardExtensionsSupport.class)
-class DropwizardAppExtensionTestSuiteFoo {
+class DropwizardAppExtensionTestSuiteFooTest {
     static final DropwizardAppExtension<TestConfiguration> EXTENSION = ReuseDropwizardAppExtensionTestSuite.EXTENSION;
 
     @Test
@@ -33,7 +34,7 @@ class DropwizardAppExtensionTestSuiteFoo {
 }
 
 @ExtendWith(DropwizardExtensionsSupport.class)
-class DropwizardAppExtensionTestSuiteBar {
+class DropwizardAppExtensionTestSuiteBarTest {
     static final DropwizardAppExtension<TestConfiguration> EXTENSION = ReuseDropwizardAppExtensionTestSuite.EXTENSION;
 
     @Test

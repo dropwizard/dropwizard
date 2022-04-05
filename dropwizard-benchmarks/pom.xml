@@ -12,7 +12,7 @@
     <properties>
         <!-- see https://issues.apache.org/jira/browse/MCOMPILER-235 -->
         <maven.compiler.useIncrementalCompilation>false</maven.compiler.useIncrementalCompilation>
-        <jmh.version>1.33</jmh.version>
+        <jmh.version>1.35</jmh.version>
         <!-- Skip deployment of this sub-module -->
         <maven.source.skip>true</maven.source.skip>
         <maven.javadoc.skip>true</maven.javadoc.skip>
@@ -21,6 +21,9 @@
         <maven.site.skip>true</maven.site.skip>
         <maven.site.deploy.skip>true</maven.site.deploy.skip>
         <skipNexusStagingDeployMojo>true</skipNexusStagingDeployMojo>
+        <!-- Ignore test coverage metrics for this module  -->
+        <jacoco.skip>true</jacoco.skip>
+        <sonar.coverage.exclusions>**/*.java</sonar.coverage.exclusions>
     </properties>
 
     <artifactId>dropwizard-benchmarks</artifactId>

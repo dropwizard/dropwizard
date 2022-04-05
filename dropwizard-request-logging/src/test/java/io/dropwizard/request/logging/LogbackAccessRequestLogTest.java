@@ -18,7 +18,7 @@ import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class LogbackAccessRequestLogTest {
+class LogbackAccessRequestLogTest {
 
     @SuppressWarnings("unchecked")
     private final Appender<IAccessEvent> appender = mock(Appender.class);

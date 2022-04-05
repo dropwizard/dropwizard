@@ -1,7 +1,6 @@
 package io.dropwizard.health.check.tcp;
 
 import com.codahale.metrics.health.HealthCheck;
-import com.google.common.base.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,9 +31,12 @@ public class TcpHealthCheck extends HealthCheck {
                           final Duration connectionTimeout) {
         this.host = Objects.requireNonNull(host);
         this.port = port;
-        Preconditions.checkState(!connectionTimeout.isNegative(), "connectionTimeout must be a non-negative value.");
-        Preconditions.checkState(connectionTimeout.toMillis() <= Integer.MAX_VALUE,
-            "Cannot configure a connectionTimeout greater than the max integer value");
+        if (connectionTimeout.isNegative()) {
+            throw new IllegalStateException("connectionTimeout must be a non-negative value.");
+        }
+        if (connectionTimeout.toMillis() > Integer.MAX_VALUE) {
+            throw new IllegalStateException("Cannot configure a connectionTimeout greater than the max integer value");
+        }
         this.connectionTimeout = connectionTimeout;
     }
 

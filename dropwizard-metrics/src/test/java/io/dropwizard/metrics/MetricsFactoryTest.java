@@ -2,11 +2,11 @@ package io.dropwizard.metrics;
 
 import com.codahale.metrics.MetricAttribute;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.logging.BootstrapLogging;
 import io.dropwizard.util.Duration;
-import io.dropwizard.util.Resources;
 import io.dropwizard.validation.BaseValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,7 +16,7 @@ import java.util.EnumSet;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MetricsFactoryTest {
+class MetricsFactoryTest {
     static {
         BootstrapLogging.bootstrap();
     }
@@ -31,16 +31,16 @@ public class MetricsFactoryTest {
         objectMapper.getSubtypeResolver().registerSubtypes(ConsoleReporterFactory.class, CsvReporterFactory.class,
             Slf4jReporterFactory.class);
 
-        this.config = factory.build(new File(Resources.getResource("yaml/metrics.yml").toURI()));
+        this.config = factory.build(new ResourceConfigurationSourceProvider(), "yaml/metrics.yml");
     }
 
     @Test
-    void hasADefaultFrequency() throws Exception {
+    void hasADefaultFrequency() {
         assertThat(config.getFrequency()).isEqualTo(Duration.seconds(10));
     }
 
     @Test
-    void hasReporters() throws Exception {
+    void hasReporters() {
         CsvReporterFactory csvReporter = new CsvReporterFactory();
         csvReporter.setFile(new File("metrics"));
         assertThat(config.getReporters()).hasSize(3);
@@ -48,23 +48,23 @@ public class MetricsFactoryTest {
 
     @Test
     void canReadExcludedAndIncludedAttributes() {
-        assertThat(config.getReporters()).hasSize(3);
-        final ReporterFactory reporterFactory = config.getReporters().get(0);
-        assertThat(reporterFactory).isInstanceOf(ConsoleReporterFactory.class);
-        final ConsoleReporterFactory consoleReporterFactory = (ConsoleReporterFactory) reporterFactory;
-        assertThat(consoleReporterFactory.getIncludesAttributes()).isEqualTo(EnumSet.of(
-            MetricAttribute.P50, MetricAttribute.P95, MetricAttribute.P98, MetricAttribute.P99));
-        assertThat(consoleReporterFactory.getExcludesAttributes()).isEqualTo(EnumSet.of(MetricAttribute.P98));
+        assertThat(config.getReporters())
+            .hasSize(3)
+            .element(0)
+            .isInstanceOfSatisfying(ConsoleReporterFactory.class, consoleReporterFactory -> assertThat(consoleReporterFactory)
+                .satisfies(factory -> assertThat(factory.getIncludesAttributes())
+                    .isEqualTo(EnumSet.of(MetricAttribute.P50, MetricAttribute.P95, MetricAttribute.P98, MetricAttribute.P99)))
+                    .satisfies(factory -> assertThat(factory.getExcludesAttributes()).isEqualTo(EnumSet.of(MetricAttribute.P98))));
     }
 
     @Test
     void canReadDefaultExcludedAndIncludedAttributes() {
-        assertThat(config.getReporters()).hasSize(3);
-        final ReporterFactory reporterFactory = config.getReporters().get(1);
-        assertThat(reporterFactory).isInstanceOf(CsvReporterFactory.class);
-        final CsvReporterFactory csvReporterFactory = (CsvReporterFactory) reporterFactory;
-        assertThat(csvReporterFactory.getIncludesAttributes()).isEqualTo(EnumSet.allOf(MetricAttribute.class));
-        assertThat(csvReporterFactory.getExcludesAttributes()).isEmpty();
+        assertThat(config.getReporters())
+            .hasSize(3)
+            .element(1)
+            .isInstanceOfSatisfying(CsvReporterFactory.class, csvReporterFactory -> assertThat(csvReporterFactory)
+                .satisfies(factory -> assertThat(factory.getIncludesAttributes()).isEqualTo(EnumSet.allOf(MetricAttribute.class)))
+                .satisfies(factory -> assertThat(factory.getExcludesAttributes()).isEmpty()));
     }
 
     @Test
@@ -74,7 +74,7 @@ public class MetricsFactoryTest {
 
     @Test
     void reportOnStopCanBeTrue() throws Exception {
-        config = factory.build(new File(Resources.getResource("yaml/metrics-report-on-stop.yml").toURI()));
+        config = factory.build(new ResourceConfigurationSourceProvider(), "yaml/metrics-report-on-stop.yml");
         assertThat(config.isReportOnStop()).isTrue();
     }
 

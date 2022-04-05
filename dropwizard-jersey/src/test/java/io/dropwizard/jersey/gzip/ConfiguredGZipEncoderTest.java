@@ -21,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class ConfiguredGZipEncoderTest {
+class ConfiguredGZipEncoderTest {
     @Test
     void gzipParametersSpec() throws IOException {
         ClientRequestContext context = mock(ClientRequestContext.class);
@@ -76,7 +76,7 @@ public class ConfiguredGZipEncoderTest {
         private final MultivaluedMap<String, Object> headers;
         private OutputStream os = new OutputStream() {
             @Override
-            public void write(int i) throws IOException {
+            public void write(int i) {
                 //void
             }
         };
@@ -87,7 +87,7 @@ public class ConfiguredGZipEncoderTest {
         }
 
         @Override
-        public void proceed() throws IOException, WebApplicationException {
+        public void proceed() throws WebApplicationException {
             proceedCalled = true;
         }
 

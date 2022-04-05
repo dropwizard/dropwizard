@@ -3,8 +3,8 @@ package io.dropwizard.client;
 import com.codahale.metrics.health.HealthCheck;
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
+import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.setup.Environment;
-import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import io.dropwizard.util.Duration;
@@ -33,6 +33,7 @@ import org.mockito.Mockito;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.ProcessingException;
+import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.Response;
@@ -47,7 +48,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(DropwizardExtensionsSupport.class)
-public class DropwizardApacheConnectorTest {
+class DropwizardApacheConnectorTest {
 
     private static final int SLEEP_TIME_IN_MILLIS = 1000;
     private static final int DEFAULT_CONNECT_TIMEOUT_IN_MILLIS = 500;
@@ -57,7 +58,8 @@ public class DropwizardApacheConnectorTest {
 
     private static final DropwizardAppExtension<Configuration> APP_RULE = new DropwizardAppExtension<>(
             TestApplication.class,
-            ResourceHelpers.resourceFilePath("yaml/dropwizardApacheConnectorTest.yml"));
+            "yaml/dropwizardApacheConnectorTest.yml",
+            new ResourceConfigurationSourceProvider());
 
 
     private final URI testUri = URI.create("http://localhost:" + APP_RULE.getLocalPort());
@@ -90,8 +92,9 @@ public class DropwizardApacheConnectorTest {
 
     @Test
     void when_no_read_timeout_override_then_client_request_times_out() {
+        Invocation.Builder request = client.target(testUri + "/long_running").request();
         assertThatExceptionOfType(ProcessingException.class)
-            .isThrownBy(() ->client.target(testUri + "/long_running").request().get())
+            .isThrownBy(request::get)
             .withCauseInstanceOf(SocketTimeoutException.class);
     }
 
