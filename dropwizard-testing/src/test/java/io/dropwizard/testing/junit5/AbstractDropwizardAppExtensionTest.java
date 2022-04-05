@@ -3,9 +3,9 @@ package io.dropwizard.testing.junit5;
 import io.dropwizard.core.setup.Environment;
 import io.dropwizard.testing.app.DropwizardTestApplication;
 import io.dropwizard.testing.app.TestConfiguration;
-import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.MediaType;
+import org.glassfish.jersey.client.JerseyClientBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -18,7 +18,7 @@ abstract class AbstractDropwizardAppExtensionTest {
 
     @Test
     void canGetExpectedResourceOverHttp() {
-        final String content = ClientBuilder.newClient().target(
+        final String content = JerseyClientBuilder.createClient().target(
                 "http://localhost:" + getExtension().getLocalPort() + "/test").request().get(String.class);
 
         assertThat(content).isEqualTo("Yes, it's here");

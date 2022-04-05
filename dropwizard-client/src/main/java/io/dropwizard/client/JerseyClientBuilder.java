@@ -10,6 +10,10 @@ import io.dropwizard.jersey.jackson.JacksonFeature;
 import io.dropwizard.jersey.validation.HibernateValidationBinder;
 import io.dropwizard.jersey.validation.Validators;
 import io.dropwizard.lifecycle.Managed;
+import jakarta.validation.Validator;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.RxInvokerProvider;
+import jakarta.ws.rs.core.Configuration;
 import org.apache.hc.client5.http.DnsResolver;
 import org.apache.hc.client5.http.HttpRequestRetryStrategy;
 import org.apache.hc.client5.http.auth.CredentialsStore;
@@ -21,11 +25,6 @@ import org.glassfish.jersey.client.spi.ConnectorProvider;
 
 import javax.annotation.Nullable;
 import javax.net.ssl.HostnameVerifier;
-import jakarta.validation.Validator;
-import jakarta.ws.rs.client.Client;
-import jakarta.ws.rs.client.ClientBuilder;
-import jakarta.ws.rs.client.RxInvokerProvider;
-import jakarta.ws.rs.core.Configuration;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -355,7 +354,7 @@ public class JerseyClientBuilder {
             apacheHttpClientBuilder.disableContentCompression(true);
         }
 
-        final Client client = ClientBuilder.newClient(buildConfig(name, threadPool, objectMapper, validator));
+        final Client client = org.glassfish.jersey.client.JerseyClientBuilder.createClient(buildConfig(name, threadPool, objectMapper, validator));
         client.register(new JerseyIgnoreRequestUserAgentHeaderFilter());
 
         // Tie the client to server lifecycle

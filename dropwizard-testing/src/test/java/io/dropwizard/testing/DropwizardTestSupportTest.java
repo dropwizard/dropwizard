@@ -14,9 +14,9 @@ import io.dropwizard.servlets.tasks.Task;
 import io.dropwizard.testing.app.TestConfiguration;
 import io.dropwizard.validation.BaseValidator;
 import jakarta.validation.Validator;
-import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.MediaType;
+import org.glassfish.jersey.client.JerseyClientBuilder;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -58,7 +58,7 @@ class DropwizardTestSupportTest {
 
     @Test
     void canGetExpectedResourceOverHttp() {
-        final String content = ClientBuilder.newClient().target(
+        final String content = JerseyClientBuilder.createClient().target(
                 "http://localhost:" + TEST_SUPPORT.getLocalPort() + "/test").request().get(String.class);
 
         assertThat(content).isEqualTo("Yes, it's here");
@@ -85,7 +85,7 @@ class DropwizardTestSupportTest {
     @Test
     void canPerformAdminTask() {
         final String response
-                = ClientBuilder.newClient().target("http://localhost:"
+                = JerseyClientBuilder.createClient().target("http://localhost:"
                 + TEST_SUPPORT.getAdminPort() + "/tasks/hello?name=test_user")
                 .request()
                 .post(Entity.entity("", MediaType.TEXT_PLAIN), String.class);
@@ -96,7 +96,7 @@ class DropwizardTestSupportTest {
     @Test
     void canPerformAdminTaskWithPostBody() {
         final String response
-                = ClientBuilder.newClient().target("http://localhost:"
+                = JerseyClientBuilder.createClient().target("http://localhost:"
                 + TEST_SUPPORT.getAdminPort() + "/tasks/echo")
                 .request()
                 .post(Entity.entity("Custom message", MediaType.TEXT_PLAIN), String.class);

@@ -99,12 +99,11 @@ Plugins
 =======
 
 JDBI3 is built using plugins_ to add features to its core implementation.
-Dropwizard adds the sqlobject_, jodatime_, and guava_ plugins by default,
-but you are free to add other existing plugins you might need or create your own.
+Dropwizard adds the sqlobject_ and guava_ plugins by default, but you are free
+to add other existing plugins you might need or create your own.
 
 .. _plugins: http://jdbi.org/#_third_party_integration
 .. _sqlobject: http://jdbi.org/#_sql_objects
-.. _jodatime: http://jdbi.org/#_jodatime
 .. _guava: http://jdbi.org/#_google_guava
 
 Usage

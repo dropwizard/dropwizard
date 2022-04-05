@@ -2,14 +2,13 @@ package io.dropwizard.auth.basic;
 
 import io.dropwizard.auth.AuthFilter;
 import io.dropwizard.auth.Authenticator;
-
-import javax.annotation.Nullable;
 import jakarta.annotation.Priority;
 import jakarta.ws.rs.Priorities;
-import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.SecurityContext;
+
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.Principal;
@@ -26,7 +25,7 @@ public class BasicCredentialAuthFilter<P extends Principal> extends AuthFilter<B
         final BasicCredentials credentials =
                 getCredentials(requestContext.getHeaders().getFirst(HttpHeaders.AUTHORIZATION));
         if (!authenticate(requestContext, credentials, SecurityContext.BASIC_AUTH)) {
-            throw new WebApplicationException(unauthorizedHandler.buildResponse(prefix, realm));
+            throw unauthorizedHandler.buildException(prefix, realm);
         }
     }
 

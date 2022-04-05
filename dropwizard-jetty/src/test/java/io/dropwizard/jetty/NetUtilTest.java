@@ -3,7 +3,6 @@ package io.dropwizard.jetty;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
-import java.net.InetAddress;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 
@@ -55,23 +54,6 @@ class NetUtilTest {
         assertThat(NetUtil.getTcpBacklog())
             .as("NetUtil should read more than the first character of somaxconn")
             .isGreaterThan(2);
-    }
-
-    @Test
-    void testAllLocalIps() throws Exception {
-        NetUtil.setLocalIpFilter((nif, adr) ->
-            (adr != null) && !adr.isLoopbackAddress() && (nif.isPointToPoint() || !adr.isLinkLocalAddress()));
-        assertThat(NetUtil.getAllLocalIPs())
-                .isNotEmpty()
-                .doesNotContain(InetAddress.getLoopbackAddress());
-    }
-
-    @Test
-    void testLocalIpsWithLocalFilter() throws Exception {
-        NetUtil.setLocalIpFilter((inf, adr) -> adr != null);
-        assertThat(NetUtil.getAllLocalIPs())
-                .isNotEmpty()
-                .contains(InetAddress.getLoopbackAddress());
     }
 
     private boolean isTcpBacklogSettingReadable() {

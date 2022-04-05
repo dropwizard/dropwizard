@@ -4,6 +4,7 @@ import org.hibernate.CacheMode;
 import org.hibernate.FlushMode;
 
 import java.lang.annotation.Documented;
+import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
@@ -21,6 +22,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target(METHOD)
 @Retention(RUNTIME)
 @Documented
+@Repeatable(UnitsOfWork.class)
 public @interface UnitOfWork {
     /**
      * If {@code true}, the Hibernate session will default to loading read-only entities.

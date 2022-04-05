@@ -4,12 +4,10 @@ import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.core.setup.Environment;
 import io.dropwizard.testing.app.DropwizardTestApplication;
 import io.dropwizard.testing.app.TestConfiguration;
-import org.junit.ClassRule;
-import org.junit.Test;
-
-import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.MediaType;
+import org.junit.ClassRule;
+import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -21,7 +19,7 @@ public class DropwizardAppRuleTest {
 
     @Test
     public void canGetExpectedResourceOverHttp() {
-        final String content = ClientBuilder.newClient().target(
+        final String content = RULE.client().target(
             "http://localhost:" + RULE.getLocalPort() + "/test").request().get(String.class);
 
         assertThat(content).isEqualTo("Yes, it's here");
