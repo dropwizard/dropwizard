@@ -7,7 +7,6 @@ import io.dropwizard.testing.app.TestConfiguration;
 import org.junit.ClassRule;
 import org.junit.Test;
 
-import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 
@@ -21,7 +20,7 @@ public class DropwizardAppRuleTest {
 
     @Test
     public void canGetExpectedResourceOverHttp() {
-        final String content = ClientBuilder.newClient().target(
+        final String content = RULE.client().target(
             "http://localhost:" + RULE.getLocalPort() + "/test").request().get(String.class);
 
         assertThat(content).isEqualTo("Yes, it's here");

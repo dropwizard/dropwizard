@@ -7,7 +7,6 @@ import com.codahale.metrics.health.HealthCheckRegistry;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import io.dropwizard.health.response.HealthResponderFactory;
 import io.dropwizard.health.response.HealthResponseProvider;
 import io.dropwizard.health.response.HealthResponseProviderFactory;
@@ -27,8 +26,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicLong;
 
 import static java.util.Collections.singletonList;
+import static java.util.concurrent.Executors.defaultThreadFactory;
 
 @JsonTypeName("default")
 public class DefaultHealthFactory implements HealthFactory {
@@ -188,11 +189,16 @@ public class DefaultHealthFactory implements HealthFactory {
             final MetricRegistry metrics,
             final LifecycleEnvironment lifecycle,
             final String fullName) {
-        final ThreadFactory threadFactory = new ThreadFactoryBuilder()
-                .setNameFormat(fullName + "-%d")
-                .setDaemon(true)
-                .setUncaughtExceptionHandler((t, e) -> LOGGER.error("Thread={} died due to uncaught exception", t, e))
-                .build();
+        final AtomicLong threadNum = new AtomicLong(0L);
+        final ThreadFactory defaultThreadFactory = defaultThreadFactory();
+
+        final ThreadFactory threadFactory = (Runnable runnable) -> {
+            Thread thread = defaultThreadFactory.newThread(runnable);
+            thread.setName(String.format("%s-%d", fullName, threadNum.incrementAndGet()));
+            thread.setDaemon(true);
+            thread.setUncaughtExceptionHandler((t, e) -> LOGGER.error("Thread={} died due to uncaught exception", t, e));
+            return thread;
+        };
 
         final InstrumentedThreadFactory instrumentedThreadFactory =
                 new InstrumentedThreadFactory(threadFactory, metrics);

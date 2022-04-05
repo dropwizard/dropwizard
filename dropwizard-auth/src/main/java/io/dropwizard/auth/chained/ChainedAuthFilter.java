@@ -54,7 +54,7 @@ public class ChainedAuthFilter<C, P extends Principal> extends AuthFilter<C, P> 
         }
 
         if (firstException == null) {
-            throw new WebApplicationException(unauthorizedHandler.buildResponse(prefix, realm));
+            throw unauthorizedHandler.buildException(prefix, realm);
         }
         throw firstException;
     }
