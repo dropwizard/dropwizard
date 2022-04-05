@@ -32,7 +32,7 @@
         <guava.version>31.1-jre</guava.version>
         <hibernate-core.version>5.6.7.Final</hibernate-core.version>
         <hibernate-validator.version>6.2.3.Final</hibernate-validator.version>
-        <hk2.version>2.6.1</hk2.version>
+        <hk2.version>3.0.2</hk2.version>
         <httpclient.version>4.5.13</httpclient.version>
         <httpcore.version>4.4.15</httpcore.version>
         <jackson.version>2.13.2.20220328</jackson.version>
