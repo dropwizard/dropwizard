@@ -1,11 +1,15 @@
 package io.dropwizard.auth;
 
-import org.glassfish.jersey.server.model.AnnotatedMethod;
-
 import jakarta.ws.rs.container.ContainerRequestFilter;
 import jakarta.ws.rs.container.DynamicFeature;
 import jakarta.ws.rs.container.ResourceInfo;
+import jakarta.ws.rs.core.Feature;
 import jakarta.ws.rs.core.FeatureContext;
+import org.glassfish.jersey.InjectionManagerProvider;
+import org.glassfish.jersey.internal.inject.InjectionManager;
+import org.glassfish.jersey.server.model.AnnotatedMethod;
+
+import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -18,9 +22,12 @@ import java.util.Optional;
  * to resource methods annotated with the {@link Auth} according to
  * the type of the annotated method parameter.
  */
-public class PolymorphicAuthDynamicFeature<T extends Principal> implements DynamicFeature {
+public class PolymorphicAuthDynamicFeature<T extends Principal> implements Feature, DynamicFeature {
 
     private final Map<Class<? extends T>,  ContainerRequestFilter> authFilterMap;
+
+    @Nullable
+    private InjectionManager injectionManager;
 
     public PolymorphicAuthDynamicFeature(Map<Class<? extends T>,  ContainerRequestFilter> authFilterMap) {
         this.authFilterMap = authFilterMap;
@@ -45,10 +52,24 @@ public class PolymorphicAuthDynamicFeature<T extends Principal> implements Dynam
             for (final Annotation annotation : parameterAnnotations[i]) {
                 if (annotation instanceof Auth && authFilterMap.containsKey(paramType)) {
                     final ContainerRequestFilter filter = authFilterMap.get(paramType);
-                    context.register(type == Optional.class ? new WebApplicationExceptionCatchingFilter(filter) : filter);
+                    final ContainerRequestFilter injectingFilter = new InjectingFilter(
+                        this.injectionManager,
+                        type == Optional.class ? new WebApplicationExceptionCatchingFilter(filter) : filter
+                    );
+                    context.register(injectingFilter);
                     return;
                 }
             }
+        }
+    }
+
+    @Override
+    public boolean configure(FeatureContext context) {
+        try {
+            this.injectionManager = InjectionManagerProvider.getInjectionManager(context);
+            return true;
+        } catch (IllegalArgumentException illegalArgumentException) {
+            return false;
         }
     }
 }

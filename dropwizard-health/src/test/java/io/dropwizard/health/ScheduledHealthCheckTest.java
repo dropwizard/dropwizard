@@ -41,13 +41,17 @@ class ScheduledHealthCheckTest {
 
         final Counter healthyCounter = metrics.counter("test.healthy");
         final Counter unhealthyCounter = metrics.counter("test.unhealthy");
-        final State state = new State(name, schedule.getFailureAttempts(), schedule.getSuccessAttempts(), true, LISTENER);
+        final State state = new State(name, schedule.getFailureAttempts(), schedule.getSuccessAttempts(), false, LISTENER);
         final ScheduledHealthCheck scheduledHealthCheck = new ScheduledHealthCheck(name, HealthCheckType.READY, true,
             healthCheck, schedule, state, healthyCounter, unhealthyCounter);
 
         when(healthCheck.execute()).thenReturn(HealthCheck.Result.healthy());
 
+        assertThat(scheduledHealthCheck.isPreviouslyRecovered()).isFalse();
+
         scheduledHealthCheck.run();
+
+        assertThat(scheduledHealthCheck.isPreviouslyRecovered()).isTrue();
 
         assertThat(scheduledHealthCheck.isHealthy()).isTrue();
         assertThat(healthyCounter.getCount()).isEqualTo(1L);
@@ -62,12 +66,16 @@ class ScheduledHealthCheckTest {
         final String name = "test";
         final Counter healthyCounter = metrics.counter("test.healthy");
         final Counter unhealthyCounter = metrics.counter("test.unhealthy");
-        final State state = new State(name, schedule.getFailureAttempts(), schedule.getSuccessAttempts(), true, LISTENER);
+        final State state = new State(name, schedule.getFailureAttempts(), schedule.getSuccessAttempts(), false, LISTENER);
         final ScheduledHealthCheck scheduledHealthCheck = new ScheduledHealthCheck(name, HealthCheckType.READY, true,
             healthCheck, schedule, state, healthyCounter, unhealthyCounter);
         when(healthCheck.execute()).thenReturn(HealthCheck.Result.unhealthy("something happened"));
 
+        assertThat(scheduledHealthCheck.isPreviouslyRecovered()).isFalse();
+
         scheduledHealthCheck.run();
+
+        assertThat(scheduledHealthCheck.isPreviouslyRecovered()).isFalse();
 
         assertThat(scheduledHealthCheck.isHealthy()).isFalse();
         assertThat(healthyCounter.getCount()).isZero();

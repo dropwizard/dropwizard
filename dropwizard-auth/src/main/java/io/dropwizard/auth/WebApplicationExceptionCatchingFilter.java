@@ -23,6 +23,10 @@ class WebApplicationExceptionCatchingFilter implements ContainerRequestFilter {
         this.underlying = underlying;
     }
 
+    ContainerRequestFilter getUnderlying() {
+        return underlying;
+    }
+
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
         try {
