@@ -16,7 +16,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.*;
 
 @NotThreadSafe
-class DbLocksCommandTest extends AbstractMigrationTest {
+class DbLocksCommandTest {
 
     private final DbLocksCommand<TestMigrationConfiguration> locksCommand = new DbLocksCommand<>(
         TestMigrationConfiguration::getDataSource, TestMigrationConfiguration.class, "migrations.xml");
@@ -61,26 +61,26 @@ class DbLocksCommandTest extends AbstractMigrationTest {
     @Test
     void testPrintHelp() throws Exception {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        createSubparser(locksCommand).printHelp(new PrintWriter(new OutputStreamWriter(out, UTF_8), true));
-        assertThat(out.toString(UTF_8.name())).isEqualTo(String.format(
-            "usage: db locks [-h] [--migrations MIGRATIONS-FILE] [--catalog CATALOG]%n" +
-                "          [--schema SCHEMA] [-l] [-r] [file]%n" +
-                "%n" +
-                "Manage database migration locks%n" +
-                "%n" +
-                "positional arguments:%n" +
-                "  file                   application configuration file%n" +
-                "%n" +
-                "named arguments:%n" +
-                "  -h, --help             show this help message and exit%n" +
-                "  --migrations MIGRATIONS-FILE%n" +
-                "                         the file containing  the  Liquibase migrations for%n" +
-                "                         the application%n" +
-                "  --catalog CATALOG      Specify  the   database   catalog   (use  database%n" +
-                "                         default if omitted)%n" +
-                "  --schema SCHEMA        Specify the database schema  (use database default%n" +
-                "                         if omitted)%n" +
-                "  -l, --list             list all open locks%n" +
-                "  -r, --force-release    forcibly release all open locks%n"));
+        MigrationTestSupport.createSubparser(locksCommand).printHelp(new PrintWriter(new OutputStreamWriter(out, UTF_8), true));
+        assertThat(out.toString(UTF_8.name())).isEqualToNormalizingNewlines(
+            "usage: db locks [-h] [--migrations MIGRATIONS-FILE] [--catalog CATALOG]\n" +
+                "          [--schema SCHEMA] [-l] [-r] [file]\n" +
+                "\n" +
+                "Manage database migration locks\n" +
+                "\n" +
+                "positional arguments:\n" +
+                "  file                   application configuration file\n" +
+                "\n" +
+                "named arguments:\n" +
+                "  -h, --help             show this help message and exit\n" +
+                "  --migrations MIGRATIONS-FILE\n" +
+                "                         the file containing  the  Liquibase migrations for\n" +
+                "                         the application\n" +
+                "  --catalog CATALOG      Specify  the   database   catalog   (use  database\n" +
+                "                         default if omitted)\n" +
+                "  --schema SCHEMA        Specify the database schema  (use database default\n" +
+                "                         if omitted)\n" +
+                "  -l, --list             list all open locks\n" +
+                "  -r, --force-release    forcibly release all open locks\n");
     }
 }

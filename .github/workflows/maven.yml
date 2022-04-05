@@ -27,9 +27,8 @@ jobs:
       with:
         distribution: 'temurin'
         java-version: ${{ matrix.java_version }}
-        cache: 'maven'
     - name: Cache SonarCloud packages
-      uses: actions/cache@v2.1.7
+      uses: actions/cache@v3.0.1
       if: ${{ env.SONAR_TOKEN != null && env.SONAR_TOKEN != '' && matrix.java_version == '11' }}
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -52,7 +51,7 @@ jobs:
       # If the CI run is not initiated from the primary repository, it is highly likely that this is a PR from a user who doesn't have commit rights.
       # Hence, skip this step to avoid permission failures.
       if: github.event.pull_request.head.repo.full_name == 'dropwizard/dropwizard'
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: test-reports-${{ matrix.os }}-java${{ matrix.java_version }}
         path: '**/*-reports'

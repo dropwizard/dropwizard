@@ -5,9 +5,12 @@ import javassist.util.proxy.ProxyFactory;
 import org.hibernate.SessionFactory;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * A factory for creating proxies for components that use Hibernate data access objects
@@ -76,21 +79,26 @@ public class UnitOfWorkAwareProxyFactory {
                     factory.createClass().getConstructor().newInstance() :
                     factory.create(constructorParamTypes, constructorArguments));
             proxy.setHandler((self, overridden, proceed, args) -> {
-                final UnitOfWork unitOfWork = overridden.getAnnotation(UnitOfWork.class);
-                final UnitOfWorkAspect unitOfWorkAspect = newAspect(sessionFactories);
+                final UnitOfWork[] unitsOfWork = overridden.getAnnotationsByType(UnitOfWork.class);
+                final Map<UnitOfWork, UnitOfWorkAspect> unitOfWorkAspectMap = new HashMap<>();
+                Arrays
+                    .stream(unitsOfWork)
+                    .collect(Collectors.toMap(UnitOfWork::value, Function.identity(), (first, second) -> second))
+                    .values()
+                    .forEach(unitOfWork -> unitOfWorkAspectMap.put(unitOfWork, newAspect(sessionFactories)));
                 try {
-                    unitOfWorkAspect.beforeStart(unitOfWork);
+                    unitOfWorkAspectMap.forEach((unitOfWork, unitOfWorkAspect) -> unitOfWorkAspect.beforeStart(unitOfWork));
                     Object result = proceed.invoke(self, args);
-                    unitOfWorkAspect.afterEnd();
+                    unitOfWorkAspectMap.values().forEach(UnitOfWorkAspect::afterEnd);
                     return result;
                 } catch (InvocationTargetException e) {
-                    unitOfWorkAspect.onError();
+                    unitOfWorkAspectMap.values().forEach(UnitOfWorkAspect::onError);
                     throw e.getCause();
                 } catch (Exception e) {
-                    unitOfWorkAspect.onError();
+                    unitOfWorkAspectMap.values().forEach(UnitOfWorkAspect::onError);
                     throw e;
                 } finally {
-                    unitOfWorkAspect.onFinish();
+                    unitOfWorkAspectMap.values().forEach(UnitOfWorkAspect::onFinish);
                 }
             });
             return (T) proxy;

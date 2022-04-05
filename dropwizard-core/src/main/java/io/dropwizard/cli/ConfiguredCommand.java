@@ -99,6 +99,8 @@ public abstract class ConfiguredCommand<T extends Configuration> extends Command
         } finally {
             if (!asynchronous) {
                 cleanup();
+            } else if (configuration != null) {
+                configuration.getLoggingFactory().stop();
             }
         }
     }

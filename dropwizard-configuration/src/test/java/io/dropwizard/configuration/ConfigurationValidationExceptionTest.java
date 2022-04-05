@@ -24,7 +24,7 @@ class ConfigurationValidationExceptionTest {
     private ConfigurationValidationException e;
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() {
         assumeThat(Locale.getDefault().getLanguage()).isEqualTo("en");
 
         final Validator validator = BaseValidator.newValidator();
@@ -35,10 +35,9 @@ class ConfigurationValidationExceptionTest {
     @Test
     void formatsTheViolationsIntoAHumanReadableMessage() {
         assertThat(e.getMessage())
-                .isEqualTo(String.format(
-                        "config.yml has an error:%n" +
-                                "  * woo must not be null%n"
-                ));
+            .isEqualToNormalizingNewlines(
+                "config.yml has an error:\n" +
+                "  * woo must not be null\n");
     }
 
     @Test

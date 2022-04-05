@@ -241,9 +241,7 @@ public class HttpClientBuilder {
      *
      * @param httpProcessor a {@link HttpProcessor} instance
      * @return {@code} this
-     * @deprecated
      */
-    @Deprecated
     public HttpClientBuilder using(HttpProcessor httpProcessor) {
         this.httpProcessor = httpProcessor;
         return this;
