@@ -22,11 +22,11 @@ public abstract class HibernateBundle<T> implements ConfiguredBundle<T>, Databas
     public static final String DEFAULT_NAME = "hibernate";
 
     @Nullable
-    private SessionFactory sessionFactory;
-    private boolean lazyLoadingEnabled = true;
+    protected SessionFactory sessionFactory;
+    protected boolean lazyLoadingEnabled = true;
 
-    private final List<Class<?>> entities;
-    private final SessionFactoryFactory sessionFactoryFactory;
+    protected final List<Class<?>> entities;
+    protected final SessionFactoryFactory sessionFactoryFactory;
 
     protected HibernateBundle(Class<?> entity, Class<?>... entities) {
         final List<Class<?>> entityClasses = new ArrayList<>();
@@ -68,7 +68,7 @@ public abstract class HibernateBundle<T> implements ConfiguredBundle<T>, Databas
     }
 
     @Override
-    public final void run(T configuration, Environment environment) throws Exception {
+    public void run(T configuration, Environment environment) throws Exception {
         final PooledDataSourceFactory dbConfig = getDataSourceFactory(configuration);
         this.sessionFactory = requireNonNull(sessionFactoryFactory.build(this, environment, dbConfig,
             entities, name()));
@@ -81,7 +81,7 @@ public abstract class HibernateBundle<T> implements ConfiguredBundle<T>, Databas
                                                     dbConfig.getValidationQuery()));
     }
 
-    private UnitOfWorkApplicationListener registerUnitOfWorkListenerIfAbsent(Environment environment) {
+    protected UnitOfWorkApplicationListener registerUnitOfWorkListenerIfAbsent(Environment environment) {
         for (Object singleton : environment.jersey().getResourceConfig().getSingletons()) {
             if (singleton instanceof UnitOfWorkApplicationListener) {
                 return (UnitOfWorkApplicationListener) singleton;
