@@ -9,6 +9,7 @@ Dropwizard wouldn't exist without the hard work contributed by numerous individu
 Many, many thanks to:
 
 * :ghuser:`_ Kilemensi <kilemensi>`
+* :ghuser:`Aaron Curley <accwebs>`
 * :ghuser:`Aaron Ingram <aingram>`
 * :ghuser:`Adam Jordens <adamjordens>`
 * :ghuser:`Adam Jordens <ajordens>`
@@ -29,16 +30,16 @@ Many, many thanks to:
 * :ghuser:`Alexey Gavrilov <agavrilov76>`
 * :ghuser:`alexey-wg2 <alexey-wg2>`
 * :ghuser:`Alice Chen <chena>`
-* :ghuser:`Amr Mostafa <amr>`
+* :ghuser:`Amr Youssef <amr>`
 * :ghuser:`Anders Hedström <andershedstrom>`
 * :ghuser:`Anders Jansson <aaanders>`
 * :ghuser:`Andreas Petersson <apetersson>`
 * :ghuser:`Andreas Stührk <Trundle>`
 * :ghuser:`Andrei Savu <andreisavu>`
 * :ghuser:`Andrew Clay Shafer <littleidea>`
-* :ghuser:`AnDyXX <AnDyXX>`
-* :ghuser:`anikiej <anikiej>`
+* :ghuser:`Andrzej Kurzeja <AnDyXX>`
 * :ghuser:`Anna Goncharova <agoncharova>`
+* :ghuser:`Anna G <anna1go>`
 * :ghuser:`Anthony Milbourne <ant3>`
 * :ghuser:`Anthony Wat <acwwat>`
 * :ghuser:`Arien Kock <arienkock>`
@@ -137,6 +138,7 @@ Many, many thanks to:
 * :ghuser:`Dylan Scott <dylanscott>`
 * :ghuser:`Eduardo Caceres <nedcg>`
 * :ghuser:`egginbag <egginbag>`
+* :ghuser:`Eike Nils Knopp <eikenilsknopp>`
 * :ghuser:`Emeka Mosanya <emeka>`
 * :ghuser:`Emrullah YILDIRIM <Sangaibisi>`
 * :ghuser:`eocantu <eocantu>`
@@ -158,6 +160,7 @@ Many, many thanks to:
 * :ghuser:`Gabe Henkes <ghenkes>`
 * :ghuser:`Gary Dusbabek <gdusbabek>`
 * :ghuser:`Gautam Gupta <GautamGupta>`
+* :ghuser:`Gireesh Sreepathi <gisripa>`
 * :ghuser:`Glenn McAllister <glennmcallister>`
 * :ghuser:`Graham O'Regan <grahamoregan>`
 * :ghuser:`Grzegorz Rożniecki <Xaerxess>`
@@ -214,6 +217,7 @@ Many, many thanks to:
 * :ghuser:`Justin Miller <justinrmiller>`
 * :ghuser:`Justin Plock <jplock>`
 * :ghuser:`Jérémie Panzer <Athou>`
+* :ghuser:`Kamil Anikiej <anikiej>`
 * :ghuser:`Kashyap Paidimarri <kashyapp>`
 * :ghuser:`Kirill Vlasov <kirill-vlasov>`
 * :ghuser:`Konstantin Yegupov <KonstantinYegupov>`
@@ -263,7 +267,6 @@ Many, many thanks to:
 * :ghuser:`Michael McCarthy <mikeycmccarthy>`
 * :ghuser:`Michael Rice <mrice>`
 * :ghuser:`Michael Silvanovich <Silvmike>`
-* :ghuser:`Michael Zamani <mzamani1>`
 * :ghuser:`Michal Rutkowski <velocipedist>`
 * :ghuser:`Michel Decima <lehcim>`
 * :ghuser:`Michiel Leegwater <mleegwt>`
@@ -272,17 +275,19 @@ Many, many thanks to:
 * :ghuser:`Mike Miller <mikemil>`
 * :ghuser:`Mikhail Gromov <mgtriffid>`
 * :ghuser:`Mohammad Nasir Rasul <mnrasul>`
-* :ghuser:`Moritz Kammerer <phxql>`
+* :ghuser:`Moritz Halbritter (born Kammerer) <phxql>`
 * :ghuser:`Moxie Marlinspike <moxie0>`
 * :ghuser:`Mårten Gustafson <chids>`
 * :ghuser:`nanreh <nanreh>`
 * :ghuser:`Nasir <mnrasul>`
+* :ghuser:`Natalie Zamani <natalie-zamani>`
 * :ghuser:`Natan Abolafya <natnan>`
 * :ghuser:`Nicholas Heitz <nheitz>`
 * :ghuser:`Nick Babcock <nickbabcock>`
 * :ghuser:`Nick Smith <clickthisnick>`
 * :ghuser:`Nick Telford <nicktelford>`
 * :ghuser:`Nikhil Bafna <zodvik>`
+* :ghuser:`Nikolaos Georgiou <ngeor>`
 * :ghuser:`Nisarg Shah <nisargshah95>`
 * :ghuser:`Oddmar Sandvik <oddmar>`
 * :ghuser:`Oleg <olegzzz>`
@@ -312,6 +317,7 @@ Many, many thanks to:
 * :ghuser:`Quoc-Viet Nguyen <nqv>`
 * :ghuser:`Rachel Normand <rnewstead1>`
 * :ghuser:`Radoslav Petrov <zloster>`
+* :ghuser:`Rassul Yunussov <RassulYunussov>`
 * :ghuser:`RawToast <RawToast>`
 * :ghuser:`Richard Kettelerij <rkettelerij>`
 * :ghuser:`Richard Nyström <ricn>`
@@ -324,7 +330,7 @@ Many, many thanks to:
 * :ghuser:`Rémi Alvergnat <Toilal>`
 * :ghuser:`Rüdiger zu Dohna <t1>`
 * :ghuser:`Sam Quigley <emerose>`
-* :ghuser:`Satoshi "Moris" Tagomori <tagomoris>`
+* :ghuser:`Satoshi Tagomori <tagomoris>`
 * :ghuser:`Scott D. <isaki>`
 * :ghuser:`Sean Scanlon <sps>`
 * :ghuser:`Sergio Escalante <sergioescala>`
@@ -335,9 +341,11 @@ Many, many thanks to:
 * :ghuser:`Simon Collins <simoncollins>`
 * :ghuser:`Simon Dean <msmsimondean>`
 * :ghuser:`Sjoerd Talsma <sjoerdtalsma>`
+* :ghuser:`Slava Korolev <slavadev>`
 * :ghuser:`smolloy <smolloy>`
 * :ghuser:`Sourav Mitra <souravmitra>`
 * :ghuser:`Stan Svec <StanSvec>`
+* :ghuser:`Steffen Nießing <zUniQueX>`
 * :ghuser:`Stephen Huenneke <skastel>`
 * :ghuser:`Stephen Souness <Sounie>`
 * :ghuser:`Steve Agalloco <stve>`
@@ -348,9 +356,9 @@ Many, many thanks to:
 * :ghuser:`sullis <sullis>`
 * :ghuser:`Suryatej Mukkamalla <suryatej16>`
 * :ghuser:`Szymon Pacanowski <spacanowski>`
-* :ghuser:`Takuma Tsutsumi <t-tsutsumi>`
-* :ghuser:`Tatu Saloranta <tatu-at-salesforce>`
+* :ghuser:`Tatsuya <t-tsutsumi>`
 * :ghuser:`Tatu Saloranta <cowtowncoder>`
+* :ghuser:`Tatu Saloranta <tatu-at-salesforce>`
 * :ghuser:`Ted Nyman <tnm>`
 * :ghuser:`terezivy <terezivy>`
 * :ghuser:`Thiago Moretto <thiagomoretto>`
@@ -384,6 +392,7 @@ Many, many thanks to:
 * :ghuser:`Will Sommers <Will-Sommers>`
 * :ghuser:`William Herbert <WilliamHerbert>`
 * :ghuser:`William Palmer <willp-bl>`
+* :ghuser:`Winton DeShong <wintondeshong>`
 * :ghuser:`Xavier Shay <xaviershay>`
 * :ghuser:`Xiaodong Xie <xiaodong-xie>`
 * :ghuser:`Yaroslav Admin <devoto13>`
