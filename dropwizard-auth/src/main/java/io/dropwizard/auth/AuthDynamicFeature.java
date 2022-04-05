@@ -1,14 +1,18 @@
 package io.dropwizard.auth;
 
+import org.glassfish.jersey.InjectionManagerProvider;
+import org.glassfish.jersey.internal.inject.InjectionManager;
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 import org.glassfish.jersey.server.model.AnnotatedMethod;
 
+import javax.annotation.Nullable;
 import javax.annotation.security.DenyAll;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.DynamicFeature;
 import javax.ws.rs.container.ResourceInfo;
+import javax.ws.rs.core.Feature;
 import javax.ws.rs.core.FeatureContext;
 import java.lang.annotation.Annotation;
 import java.util.Optional;
@@ -22,17 +26,15 @@ import java.util.Optional;
  * <p>If authorization is not a concern, then {@link RolesAllowedDynamicFeature}
  * could be omitted. But to enable authentication, the {@link PermitAll} annotation
  * should be placed on the corresponding resource methods.</p>
- * <p>Note that registration of the filter will follow the semantics of
- * {@link FeatureContext#register(Class)} and {@link FeatureContext#register(Object)}:
- * passing the filter as a {@link Class} to the {@link #AuthDynamicFeature(Class)}
- * constructor will result in dependency injection, while objects passed to
- * the {@link #AuthDynamicFeature(ContainerRequestFilter)} will be used directly.</p>
  */
-public class AuthDynamicFeature implements DynamicFeature {
+public class AuthDynamicFeature implements Feature, DynamicFeature {
 
     private final ContainerRequestFilter authFilter;
 
     private final Class<? extends ContainerRequestFilter> authFilterClass;
+
+    @Nullable
+    private InjectionManager injectionManager;
 
     // We suppress the null away checks, as adding `@Nullable` to the auth
     // filter fields, causes Jersey to try and resolve the fields to a concrete
@@ -60,7 +62,7 @@ public class AuthDynamicFeature implements DynamicFeature {
             if (containsAuthAnnotation(parameterAnnotations[i])) {
                 // Optional auth requires that a concrete AuthFilter be provided.
                 if (parameterTypes[i].equals(Optional.class) && authFilter != null) {
-                    context.register(new WebApplicationExceptionCatchingFilter(authFilter));
+                    registerAuthFilter(context, new WebApplicationExceptionCatchingFilter(authFilter));
                 } else {
                     registerAuthFilter(context);
                 }
@@ -90,10 +92,26 @@ public class AuthDynamicFeature implements DynamicFeature {
     }
 
     private void registerAuthFilter(FeatureContext context) {
-        if (authFilter != null) {
-            context.register(authFilter);
+        registerAuthFilter(context, null);
+    }
+
+    private void registerAuthFilter(FeatureContext context, @Nullable ContainerRequestFilter decoratedAuthFilter) {
+        if (decoratedAuthFilter != null) {
+            context.register(new InjectingFilter(injectionManager, decoratedAuthFilter));
+        } else if (authFilter != null) {
+            context.register(new InjectingFilter(injectionManager, authFilter));
         } else if (authFilterClass != null) {
             context.register(authFilterClass);
+        }
+    }
+
+    @Override
+    public boolean configure(FeatureContext context) {
+        try {
+            this.injectionManager = InjectionManagerProvider.getInjectionManager(context);
+            return true;
+        } catch (IllegalArgumentException illegalArgumentException) {
+            return false;
         }
     }
 }
