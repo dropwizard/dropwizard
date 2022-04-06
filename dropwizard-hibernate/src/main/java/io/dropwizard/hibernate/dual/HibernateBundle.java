@@ -2,10 +2,10 @@ package io.dropwizard.hibernate.dual;
 
 import static java.util.Objects.requireNonNull;
 
+import io.dropwizard.core.setup.Environment;
 import io.dropwizard.db.PooledDataSourceFactory;
 import io.dropwizard.hibernate.SessionFactoryFactory;
 import io.dropwizard.hibernate.SessionFactoryHealthCheck;
-import io.dropwizard.setup.Environment;
 import io.dropwizard.util.Duration;
 import org.hibernate.SessionFactory;
 
@@ -42,7 +42,7 @@ public abstract class HibernateBundle<T> extends io.dropwizard.hibernate.Hiberna
 
         final DualSessionFactory factory = new DualSessionFactory(primary, reader);
         registerUnitOfWorkListenerIfAbsent(environment).registerSessionFactory(name, factory);
- 
+
         final ExecutorService exec = environment.getHealthCheckExecutorService();
         environment.healthChecks().register(primaryName,
                                             new SessionFactoryHealthCheck(
