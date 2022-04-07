@@ -7,6 +7,7 @@ import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.spi.FilterReply;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Response;
+import org.eclipse.jetty.util.component.LifeCycle;
 
 import java.util.Iterator;
 
@@ -14,7 +15,7 @@ import java.util.Iterator;
  * The Dropwizard request log uses logback-access, but we override it to remove the requirement for logback-access.xml
  * based configuration.
  */
-public class LogbackAccessRequestLog extends RequestLogImpl {
+public class LogbackAccessRequestLog extends RequestLogImpl implements LifeCycle {
     @Override
     public void configure() {
         setName("LogbackAccessRequestLog");
