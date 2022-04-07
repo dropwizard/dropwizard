@@ -9,6 +9,7 @@ import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Response;
 import org.eclipse.jetty.util.component.LifeCycle;
 
+import java.util.EventListener;
 import java.util.Iterator;
 
 /**
@@ -24,7 +25,7 @@ public class LogbackAccessRequestLog extends RequestLogImpl implements LifeCycle
     @Override
     public void log(Request jettyRequest, Response jettyResponse) {
         DropwizardJettyServerAdapter adapter = new DropwizardJettyServerAdapter(jettyRequest, jettyResponse);
-        IAccessEvent accessEvent = new AccessEvent(jettyRequest, jettyResponse, adapter);
+        IAccessEvent accessEvent = new AccessEvent(this, jettyRequest, jettyResponse, adapter);
         if (getFilterChainDecision(accessEvent) == FilterReply.DENY) {
             return;
         }

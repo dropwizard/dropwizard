@@ -184,11 +184,7 @@ public class GzipHandlerFactory {
     public void setDeflateCompressionLevel(int level) {
         this.deflateCompressionLevel = level;
     }
-<<<<<<< HEAD
-    
-=======
 
->>>>>>> release/3.0.x
     @JsonProperty
     @Nullable
     public Set<String> getIncludedMethods() {
