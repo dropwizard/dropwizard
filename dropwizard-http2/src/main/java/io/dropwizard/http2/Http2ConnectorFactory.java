@@ -1,11 +1,11 @@
 package io.dropwizard.http2;
 
 import com.codahale.metrics.MetricRegistry;
-import com.codahale.metrics.jetty9.InstrumentedConnectionFactory;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.dropwizard.jetty.HttpsConnectorFactory;
 import io.dropwizard.jetty.SslReload;
+import io.dropwizard.metrics.jetty10.InstrumentedConnectionFactory;
 import org.eclipse.jetty.alpn.server.ALPNServerConnectionFactory;
 import org.eclipse.jetty.http2.server.HTTP2ServerConnectionFactory;
 import org.eclipse.jetty.server.Connector;
@@ -105,8 +105,8 @@ public class Http2ConnectorFactory extends HttpsConnectorFactory {
         final NegotiatingServerConnectionFactory alpn = new ALPNServerConnectionFactory();
         alpn.setDefaultProtocol("http/1.1"); // Speak HTTP 1.1 over TLS if negotiation fails
 
-        final SslContextFactory sslContextFactory = configureSslContextFactory(new SslContextFactory.Server());
-        sslContextFactory.addLifeCycleListener(logSslParameters(sslContextFactory));
+        final SslContextFactory.Server sslContextFactory = configureSslContextFactory(new SslContextFactory.Server());
+        sslContextFactory.addEventListener(logSslParameters(sslContextFactory));
         server.addBean(sslContextFactory);
         server.addBean(new SslReload(sslContextFactory, this::configureSslContextFactory));
 

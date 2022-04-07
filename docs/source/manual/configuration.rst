@@ -441,6 +441,7 @@ Extends the attributes that are available to the :ref:`HTTP connector <man-confi
           excludedCipherSuites: [.*_(MD5|SHA|SHA1)$] # (Jetty's default)
           allowRenegotiation: true
           endpointIdentificationAlgorithm: (none)
+          disableSniHostCheck: false
 
 ================================ ================================ ======================================================================================
 Name                             Default                          Description
@@ -487,6 +488,7 @@ excludedCipherSuites             (none)                           A list of ciph
                                                                   blacklisted, it is recommended to use the tool `sslyze`_.
 allowRenegotiation               true                             Whether or not TLS renegotiation is allowed.
 endpointIdentificationAlgorithm  (none)                           Which endpoint identification algorithm, if any, to use during the TLS handshake.
+disableSniHostCheck              false                            Whether to disable server-side SNI host checking.
 ================================ ================================ ======================================================================================
 
 .. _sslyze: https://github.com/nabla-c0d3/sslyze

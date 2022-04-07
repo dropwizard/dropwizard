@@ -1,9 +1,18 @@
 package io.dropwizard.jetty;
 
 import com.codahale.metrics.MetricRegistry;
-import com.codahale.metrics.jetty9.InstrumentedConnectionFactory;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.fasterxml.jackson.core.JacksonException;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+import com.fasterxml.jackson.databind.ser.std.StdSerializer;
+import io.dropwizard.metrics.jetty10.InstrumentedConnectionFactory;
 import io.dropwizard.util.DataSize;
 import io.dropwizard.util.DataSizeUnit;
 import io.dropwizard.util.Duration;
@@ -31,6 +40,7 @@ import javax.annotation.Nullable;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.valueextraction.Unwrapping;
+import java.io.IOException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -331,8 +341,14 @@ public class HttpConnectorFactory implements ConnectorFactory {
     private boolean useDateHeader = true;
     private boolean useForwardedHeaders = false;
     private boolean useProxyProtocol = false;
+    @JsonSerialize(using = HttpComplianceSerializer.class)
+    @JsonDeserialize(using = HttpComplianceDeserializer.class)
     private HttpCompliance httpCompliance = HttpCompliance.RFC7230;
+    @JsonSerialize(using = CookieComplianceSerializer.class)
+    @JsonDeserialize(using = CookieComplianceDeserializer.class)
     private CookieCompliance requestCookieCompliance = CookieCompliance.RFC6265;
+    @JsonSerialize(using = CookieComplianceSerializer.class)
+    @JsonDeserialize(using = CookieComplianceDeserializer.class)
     private CookieCompliance responseCookieCompliance = CookieCompliance.RFC6265;
 
     @JsonProperty
@@ -605,6 +621,79 @@ public class HttpConnectorFactory implements ConnectorFactory {
         this.responseCookieCompliance = responseCookieCompliance;
     }
 
+    private static class HttpComplianceSerializer extends StdSerializer<HttpCompliance> {
+        public HttpComplianceSerializer() {
+            this(null);
+        }
+
+        protected HttpComplianceSerializer(@Nullable Class<HttpCompliance> t) {
+            super(t);
+        }
+
+        @Override
+        public void serialize(HttpCompliance httpCompliance, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
+            if (httpCompliance == null) {
+                jsonGenerator.writeNull();
+            } else {
+                jsonGenerator.writeString(httpCompliance.getName());
+            }
+        }
+    }
+
+    private static class HttpComplianceDeserializer extends StdDeserializer<HttpCompliance> {
+        public HttpComplianceDeserializer() {
+            this(null);
+        }
+
+        protected HttpComplianceDeserializer(@Nullable Class<?> vc) {
+            super(vc);
+        }
+
+        @Override
+        public @Nullable HttpCompliance deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
+            if (jsonParser.getText() != null && !jsonParser.getText().isEmpty()) {
+                return HttpCompliance.valueOf(jsonParser.getText());
+            }
+            return null;
+        }
+    }
+
+    private static class CookieComplianceSerializer extends StdSerializer<CookieCompliance> {
+        public CookieComplianceSerializer() {
+            this(null);
+        }
+
+        protected CookieComplianceSerializer(@Nullable Class<CookieCompliance> t) {
+            super(t);
+        }
+
+        @Override
+        public void serialize(CookieCompliance cookieCompliance, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
+            if (cookieCompliance == null) {
+                jsonGenerator.writeNull();
+            } else {
+                jsonGenerator.writeString(cookieCompliance.getName());
+            }
+        }
+    }
+
+    private static class CookieComplianceDeserializer extends StdDeserializer<CookieCompliance> {
+        public CookieComplianceDeserializer() {
+            this(null);
+        }
+
+        protected CookieComplianceDeserializer(@Nullable Class<?> vc) {
+            super(vc);
+        }
+
+        @Override
+        public @Nullable CookieCompliance deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException, JacksonException {
+            if (jsonParser.getText() != null && !jsonParser.getText().isEmpty()) {
+                return CookieCompliance.valueOf(jsonParser.getText());
+            }
+            return null;
+        }
+    }
 
     @Override
     public Connector build(Server server,
@@ -667,7 +756,9 @@ public class HttpConnectorFactory implements ConnectorFactory {
     }
 
     protected HttpConnectionFactory buildHttpConnectionFactory(HttpConfiguration httpConfig) {
-        final HttpConnectionFactory httpConnectionFactory = new HttpConnectionFactory(httpConfig, httpCompliance);
+        HttpConfiguration clonedConfiguration = new HttpConfiguration(httpConfig);
+        clonedConfiguration.setHttpCompliance(httpCompliance);
+        final HttpConnectionFactory httpConnectionFactory = new HttpConnectionFactory(clonedConfiguration);
         httpConnectionFactory.setInputBufferSize((int) inputBufferSize.toBytes());
         return httpConnectionFactory;
     }

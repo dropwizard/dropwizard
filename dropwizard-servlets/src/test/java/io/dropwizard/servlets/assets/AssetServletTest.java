@@ -152,7 +152,7 @@ public class AssetServletTest {
 
     @Test
     void cacheIfModifiedSinceOverwrittenByIfNoneMatch() throws Exception{
-        request.setHeader(HttpHeader.IF_MODIFIED_SINCE.toString(), "Sat, 05 Nov 1955 22:57:05 GMT"); 
+        request.setHeader(HttpHeader.IF_MODIFIED_SINCE.toString(), "Sat, 05 Nov 1955 22:57:05 GMT");
         request.setURI(DUMMY_SERVLET + "index.htm");
         response = HttpTester.parseResponse(SERVLET_TESTER.getResponses(request.generate()));
 
@@ -497,7 +497,7 @@ public class AssetServletTest {
         request.setURI(NOINDEX_SERVLET + '/');
         response = HttpTester.parseResponse(SERVLET_TESTER.getResponses(request.generate()));
         assertThat(response.getStatus())
-                .isEqualTo(404);
+                .isEqualTo(400);
 
         // Subdirectory listing:
         request.setURI(NOINDEX_SERVLET + "some_directory");
@@ -525,7 +525,7 @@ public class AssetServletTest {
         request.setURI(DUMMY_SERVLET + "/etc/passwd");
         response = HttpTester.parseResponse(SERVLET_TESTER.getResponses(request.generate()));
         assertThat(response.getStatus())
-                .isEqualTo(404);
+                .isEqualTo(400);
     }
 
     @Test

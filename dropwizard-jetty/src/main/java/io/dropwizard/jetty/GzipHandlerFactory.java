@@ -4,12 +4,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.util.DataSize;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.handler.gzip.GzipHandler;
+import org.eclipse.jetty.util.compression.CompressionPool;
+import org.eclipse.jetty.util.compression.DeflaterPool;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.zip.Deflater;
 
@@ -42,12 +43,6 @@ import static java.util.Objects.requireNonNull;
  *         <td>{@code bufferSize}</td>
  *         <td>8KiB</td>
  *         <td>The DataSize of the buffer to use when compressing.</td>
- *     </tr>
- *     <tr>
- *         <td>{@code excludedUserAgentPatterns}</td>
- *         <td>(Jetty's default)</td>
- *         <td>A list of regex patterns for User-Agent names from which requests should not be compressed. The default
- *             is {@code [".*MSIE 6.0.*"]}</td>
  *     </tr>
  *     <tr>
  *         <td>{@code compressedMimeTypes}</td>
@@ -100,9 +95,6 @@ public class GzipHandlerFactory {
 
     @NotNull
     private DataSize bufferSize = DataSize.kibibytes(8);
-
-    // By default compress responses for all user-agents
-    private Set<String> excludedUserAgentPatterns = new HashSet<>();
 
     @Nullable
     private Set<String> compressedMimeTypes;
@@ -193,22 +185,6 @@ public class GzipHandlerFactory {
         this.deflateCompressionLevel = level;
     }
 
-    /**
-     * @deprecated excluding by user agent will be removed in Jetty 10
-     */
-    @Deprecated
-    public Set<String> getExcludedUserAgentPatterns() {
-        return excludedUserAgentPatterns;
-    }
-
-    /**
-     * @deprecated excluding by user agent will be removed in Jetty 10
-     */
-    @Deprecated
-    public void setExcludedUserAgentPatterns(Set<String> excludedUserAgentPatterns) {
-        this.excludedUserAgentPatterns = excludedUserAgentPatterns;
-    }
-
     @JsonProperty
     @Nullable
     public Set<String> getIncludedMethods() {
@@ -269,7 +245,7 @@ public class GzipHandlerFactory {
         gzipHandler.setHandler(handler);
         gzipHandler.setMinGzipSize((int) minimumEntitySize.toBytes());
         gzipHandler.setInflateBufferSize((int) bufferSize.toBytes());
-        gzipHandler.setCompressionLevel(deflateCompressionLevel);
+        gzipHandler.setDeflaterPool(new DeflaterPool(CompressionPool.DEFAULT_CAPACITY, deflateCompressionLevel, true));
         gzipHandler.setSyncFlush(syncFlush);
 
         if (compressedMimeTypes != null) {
@@ -291,8 +267,6 @@ public class GzipHandlerFactory {
         if (includedPaths != null) {
             gzipHandler.setIncludedPaths(includedPaths.toArray(new String[0]));
         }
-
-        gzipHandler.setExcludedAgentPatterns(excludedUserAgentPatterns.toArray(new String[0]));
 
         return gzipHandler;
     }

@@ -1,9 +1,9 @@
 package io.dropwizard.jetty;
 
 import com.codahale.metrics.MetricRegistry;
-import com.codahale.metrics.jetty9.InstrumentedConnectionFactory;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import io.dropwizard.metrics.jetty10.InstrumentedConnectionFactory;
 import io.dropwizard.validation.ValidationMethod;
 import org.eclipse.jetty.http.HttpVersion;
 import org.eclipse.jetty.io.ByteBufferPool;
@@ -216,6 +216,11 @@ import java.util.stream.Collectors;
  *             Which endpoint identification algorithm, if any, to use during the TLS handshake.
  *         </td>
  *     </tr>
+ *     <tr>
+ *         <td>{@code disableSniHostCheck}</td>
+ *         <td>false</td>
+ *         <td>If true, server-side SNI host checking is disabled</td>
+ *     </tr>
  * </table>
  * <p/>
  * For more configuration parameters, see {@link HttpConnectorFactory}.
@@ -299,6 +304,8 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
 
     @Nullable
     private String endpointIdentificationAlgorithm;
+
+    private boolean disableSniHostCheck = false;
 
     @JsonProperty
     public boolean getAllowRenegotiation() {
@@ -581,6 +588,16 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
         this.validateCerts = validateCerts;
     }
 
+    @JsonProperty
+    public boolean isDisableSniHostCheck() {
+        return disableSniHostCheck;
+    }
+
+    @JsonProperty
+    public void setDisableSniHostCheck(boolean disableSniHostCheck) {
+        this.disableSniHostCheck = disableSniHostCheck;
+    }
+
     @ValidationMethod(message = "keyStorePath should not be null")
     public boolean isValidKeyStorePath() {
         return keyStoreType.startsWith("Windows-") || keyStorePath != null;
@@ -598,8 +615,8 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
 
         final HttpConnectionFactory httpConnectionFactory = buildHttpConnectionFactory(httpConfig);
 
-        final SslContextFactory sslContextFactory = configureSslContextFactory(new SslContextFactory.Server());
-        sslContextFactory.addLifeCycleListener(logSslParameters(sslContextFactory));
+        final SslContextFactory.Server sslContextFactory = configureSslContextFactory(new SslContextFactory.Server());
+        sslContextFactory.addEventListener(logSslParameters(sslContextFactory));
 
         server.addBean(sslContextFactory);
         server.addBean(new SslReload(sslContextFactory, this::configureSslContextFactory));
@@ -623,7 +640,7 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
         final HttpConfiguration config = super.buildHttpConfiguration();
         config.setSecureScheme("https");
         config.setSecurePort(getPort());
-        config.addCustomizer(new SecureRequestCustomizer());
+        config.addCustomizer(new SecureRequestCustomizer(!disableSniHostCheck));
         return config;
     }
 
@@ -713,7 +730,11 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
         }
     }
 
-    protected SslContextFactory configureSslContextFactory(SslContextFactory factory) {
+    protected SslContextFactory.Server configureSslContextFactory(SslContextFactory sslContextFactory) {
+        if (!(sslContextFactory instanceof SslContextFactory.Server)) {
+            throw new IllegalArgumentException("SslContextFactory must be of type SslContextFactory.Server");
+        }
+        SslContextFactory.Server factory = (SslContextFactory.Server) sslContextFactory;
         if (keyStorePath != null) {
             factory.setKeyStorePath(keyStorePath);
         }
@@ -765,12 +786,12 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
             factory.setKeyManagerPassword(keyManagerPassword);
         }
 
-        if (needClientAuth != null && factory instanceof SslContextFactory.Server) {
-            ((SslContextFactory.Server) factory).setNeedClientAuth(needClientAuth);
+        if (needClientAuth != null) {
+            factory.setNeedClientAuth(needClientAuth);
         }
 
-        if (wantClientAuth != null && factory instanceof SslContextFactory.Server) {
-            ((SslContextFactory.Server) factory).setWantClientAuth(wantClientAuth);
+        if (wantClientAuth != null) {
+            factory.setWantClientAuth(wantClientAuth);
         }
 
         if (certAlias != null) {

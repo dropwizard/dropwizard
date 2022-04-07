@@ -2,8 +2,6 @@ package io.dropwizard.core.server;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheckRegistry;
-import com.codahale.metrics.jetty9.InstrumentedHandler;
-import com.codahale.metrics.jetty9.InstrumentedQueuedThreadPool;
 import com.codahale.metrics.servlets.AdminServlet;
 import com.codahale.metrics.servlets.HealthCheckServlet;
 import com.codahale.metrics.servlets.MetricsServlet;
@@ -20,6 +18,8 @@ import io.dropwizard.jetty.GzipHandlerFactory;
 import io.dropwizard.jetty.MutableServletContextHandler;
 import io.dropwizard.jetty.ServerPushFilterFactory;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
+import io.dropwizard.metrics.jetty10.InstrumentedHandler;
+import io.dropwizard.metrics.jetty10.InstrumentedQueuedThreadPool;
 import io.dropwizard.request.logging.LogbackAccessRequestLogFactory;
 import io.dropwizard.request.logging.RequestLogFactory;
 import io.dropwizard.servlets.ThreadNameFilter;
@@ -620,7 +620,7 @@ public abstract class AbstractServerFactory implements ServerFactory {
     protected Server buildServer(LifecycleEnvironment lifecycle,
                                  ThreadPool threadPool) {
         final Server server = new Server(threadPool);
-        server.addLifeCycleListener(buildSetUIDListener());
+        server.addEventListener(buildSetUIDListener());
         lifecycle.attach(server);
         final ErrorHandler errorHandler = new ErrorHandler();
         errorHandler.setServer(server);

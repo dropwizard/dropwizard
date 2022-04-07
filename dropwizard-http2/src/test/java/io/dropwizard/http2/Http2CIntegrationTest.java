@@ -7,7 +7,6 @@ import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.http.HttpVersion;
 import org.eclipse.jetty.http2.client.HTTP2Client;
-import org.eclipse.jetty.http2.client.HTTP2ClientConnectionFactory;
 import org.eclipse.jetty.http2.client.http.HttpClientTransportOverHTTP2;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,8 +25,9 @@ class Http2CIntegrationTest extends Http2TestCommon {
     @Override
     void setUp() throws Exception {
         final HTTP2Client http2Client = new HTTP2Client();
-        http2Client.setClientConnectionFactory(new HTTP2ClientConnectionFactory()); // No need for ALPN
-        this.http2Client = new HttpClient(new HttpClientTransportOverHTTP2(http2Client), null);
+        HttpClientTransportOverHTTP2 httpClientTransportOverHTTP2 = new HttpClientTransportOverHTTP2(http2Client);
+        httpClientTransportOverHTTP2.setUseALPN(false);
+        this.http2Client = new HttpClient(httpClientTransportOverHTTP2);
         this.http2Client.start();
 
         this.http1Client = new HttpClient();
