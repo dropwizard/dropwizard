@@ -1,5 +1,7 @@
 package io.dropwizard.hibernate.dual;
 
+import static java.util.Objects.requireNonNull;
+
 import io.dropwizard.core.setup.Environment;
 import io.dropwizard.db.PooledDataSourceFactory;
 import io.dropwizard.hibernate.SessionFactoryFactory;
