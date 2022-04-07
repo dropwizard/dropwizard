@@ -9,6 +9,7 @@ import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Response;
 import org.eclipse.jetty.util.component.LifeCycle;
 
+import java.util.EventListener;
 import java.util.Iterator;
 
 /**
@@ -36,5 +37,23 @@ public class LogbackAccessRequestLog extends RequestLogImpl implements LifeCycle
         while (appenderIterator.hasNext()) {
             appenderIterator.next().doAppend(iAccessEvent);
         }
+    }
+
+    @Override
+    public boolean addEventListener(EventListener eventListener) {
+        if (eventListener instanceof Listener) {
+            addLifeCycleListener((Listener) eventListener);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean removeEventListener(EventListener eventListener) {
+        if (eventListener instanceof Listener) {
+            removeLifeCycleListener((Listener) eventListener);
+            return true;
+        }
+        return false;
     }
 }
