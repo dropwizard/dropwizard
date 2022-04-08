@@ -12,10 +12,6 @@
     <artifactId>dropwizard-assets</artifactId>
     <name>Dropwizard Asset Bundle</name>
 
-    <properties>
-        <module.name>io.dropwizard.assets</module.name>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>io.dropwizard</groupId>
