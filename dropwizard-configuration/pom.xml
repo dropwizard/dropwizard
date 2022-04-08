@@ -12,10 +12,6 @@
     <artifactId>dropwizard-configuration</artifactId>
     <name>Dropwizard Configuration Support</name>
 
-    <properties>
-        <module.name>io.dropwizard.configuration</module.name>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>io.dropwizard</groupId>

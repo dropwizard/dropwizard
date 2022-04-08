@@ -14,7 +14,6 @@
 
     <properties>
         <argLine>-Duser.language=en -Duser.region=US</argLine>
-        <module.name>io.dropwizard.http2</module.name>
     </properties>
 
     <dependencies>

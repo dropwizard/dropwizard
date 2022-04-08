@@ -12,10 +12,6 @@
     <artifactId>dropwizard-jersey</artifactId>
     <name>Dropwizard Jersey Support</name>
 
-    <properties>
-        <module.name>io.dropwizard.jersey</module.name>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>io.dropwizard</groupId>

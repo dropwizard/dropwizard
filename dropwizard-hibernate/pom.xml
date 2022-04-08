@@ -12,10 +12,6 @@
     <artifactId>dropwizard-hibernate</artifactId>
     <name>Dropwizard Hibernate Support</name>
 
-    <properties>
-        <module.name>io.dropwizard.hibernate</module.name>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>io.dropwizard</groupId>
