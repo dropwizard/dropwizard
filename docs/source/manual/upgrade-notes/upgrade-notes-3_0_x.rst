@@ -25,3 +25,8 @@ Maven module            Old package                New package
 ======================  =========================  ================================
 
 This means that imports of core classes such as ``io.dropwizard.Application`` have to be updated for the new package structure and refer to ``io.dropwizard.core.Application``.
+
+JUnit 4.x support
+=================
+
+Support for testing with JUnit 4.x has been moved from `dropwizard-testing` to `dropwizard-testing-junit4 <https://github.com/dropwizard/dropwizard-testing-junit4>`_.
