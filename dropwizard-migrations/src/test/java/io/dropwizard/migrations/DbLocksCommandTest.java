@@ -1,9 +1,9 @@
 package io.dropwizard.migrations;
 
 import liquibase.Liquibase;
-import net.jcip.annotations.NotThreadSafe;
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
 import org.mockito.Mockito;
 
 import java.io.ByteArrayOutputStream;
@@ -15,8 +15,9 @@ import java.util.Map;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.junit.jupiter.api.parallel.ExecutionMode.SAME_THREAD;
 
-@NotThreadSafe
+@Execution(SAME_THREAD)
 class DbLocksCommandTest {
 
     private final DbLocksCommand<TestMigrationConfiguration> locksCommand = new DbLocksCommand<>(

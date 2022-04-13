@@ -1,10 +1,10 @@
 package io.dropwizard.migrations;
 
-import net.jcip.annotations.NotThreadSafe;
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -30,8 +30,9 @@ import java.util.stream.Stream;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.parallel.ExecutionMode.SAME_THREAD;
 
-@NotThreadSafe
+@Execution(SAME_THREAD)
 class DbDumpCommandTest {
 
     private static final List<String> ATTRIBUTE_NAMES = Arrays.asList("columns", "foreign-keys", "indexes",
