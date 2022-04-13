@@ -45,7 +45,6 @@
         <javassist.version>3.28.0-GA</javassist.version>
         <javax.persistence-api.version>2.2</javax.persistence-api.version>
         <jaxb-api.version>2.3.3</jaxb-api.version>
-        <jcip-annotations.version>1.0</jcip-annotations.version>
         <jdbi3.version>3.28.0</jdbi3.version>
         <jersey.version>2.35</jersey.version>
         <jetty-setuid-java.version>1.0.4</jetty-setuid-java.version>
@@ -282,11 +281,6 @@
                         <artifactId>liquibase-core</artifactId>
                     </exclusion>
                 </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>net.jcip</groupId>
-                <artifactId>jcip-annotations</artifactId>
-                <version>${jcip-annotations.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.github.spullara.mustache.java</groupId>
