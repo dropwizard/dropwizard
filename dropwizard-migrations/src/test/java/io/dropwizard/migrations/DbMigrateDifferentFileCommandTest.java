@@ -4,7 +4,6 @@ import net.sourceforge.argparse4j.inf.Namespace;
 import org.jdbi.v3.core.Handle;
 import org.jdbi.v3.core.Jdbi;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 
@@ -37,7 +36,6 @@ class DbMigrateDifferentFileCommandTest {
     }
 
     @Test
-    @Disabled("Ignored until https://liquibase.jira.com/browse/CORE-3262 has been solved")
     void testRunForFileFromFilesystem() throws Exception {
         final String migrationsPath = getClass().getResource("/migrations.xml").getPath();
         migrateCommand.run(null, new Namespace(Collections.singletonMap("migrations-file", migrationsPath)), conf);
