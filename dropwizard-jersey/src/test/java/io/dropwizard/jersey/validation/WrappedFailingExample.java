@@ -1,7 +1,7 @@
 package io.dropwizard.jersey.validation;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.jetbrains.annotations.Nullable;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import javax.validation.Valid;
 

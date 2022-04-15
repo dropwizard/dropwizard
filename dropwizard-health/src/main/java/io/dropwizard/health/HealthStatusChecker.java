@@ -1,6 +1,6 @@
 package io.dropwizard.health;
 
-import org.jetbrains.annotations.Nullable;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 public interface HealthStatusChecker {
     default boolean isHealthy() {

@@ -1,6 +1,6 @@
 package io.dropwizard.jersey;
 
-import org.jetbrains.annotations.Nullable;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import javax.ws.rs.DefaultValue;
 import java.lang.annotation.Annotation;

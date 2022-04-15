@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.health.HealthStateAggregator;
 import io.dropwizard.health.HealthStateView;
 import io.dropwizard.health.HealthStatusChecker;
-import org.jetbrains.annotations.NotNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,22 +26,22 @@ public class JsonHealthResponseProvider implements HealthResponseProvider {
     private static final Logger LOGGER = LoggerFactory.getLogger(JsonHealthResponseProvider.class);
     private static final String MEDIA_TYPE = MediaType.APPLICATION_JSON;
 
-    @NotNull
+    @NonNull
     private final HealthStatusChecker healthStatusChecker;
-    @NotNull
+    @NonNull
     private final HealthStateAggregator healthStateAggregator;
-    @NotNull
+    @NonNull
     private final ObjectMapper mapper;
 
-    public JsonHealthResponseProvider(@NotNull final HealthStatusChecker healthStatusChecker,
-                                      @NotNull final HealthStateAggregator healthStateAggregator,
-                                      @NotNull final ObjectMapper mapper) {
+    public JsonHealthResponseProvider(@NonNull final HealthStatusChecker healthStatusChecker,
+                                      @NonNull final HealthStateAggregator healthStateAggregator,
+                                      @NonNull final ObjectMapper mapper) {
         this.healthStatusChecker = Objects.requireNonNull(healthStatusChecker);
         this.healthStateAggregator = Objects.requireNonNull(healthStateAggregator);
         this.mapper = Objects.requireNonNull(mapper);
     }
 
-    @NotNull
+    @NonNull
     @Override
     public HealthResponse healthResponse(final Map<String, Collection<String>> queryParams) {
         final String type = queryParams.getOrDefault(CHECK_TYPE_QUERY_PARAM, Collections.emptyList())

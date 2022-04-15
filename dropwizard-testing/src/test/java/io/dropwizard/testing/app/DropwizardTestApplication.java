@@ -7,7 +7,7 @@ import io.dropwizard.core.setup.Environment;
 import io.dropwizard.jersey.PATCH;
 import io.dropwizard.servlets.tasks.PostBodyTask;
 import io.dropwizard.servlets.tasks.Task;
-import org.jetbrains.annotations.Nullable;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;

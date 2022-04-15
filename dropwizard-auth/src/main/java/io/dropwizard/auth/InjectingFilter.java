@@ -1,7 +1,7 @@
 package io.dropwizard.auth;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.glassfish.jersey.internal.inject.InjectionManager;
-import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Priority;
 import javax.ws.rs.Priorities;

@@ -1,6 +1,6 @@
 package io.dropwizard.util;
 
-import org.jetbrains.annotations.Nullable;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.junit.jupiter.api.Test;
 
 import static io.dropwizard.util.Throwables.findThrowableInChain;

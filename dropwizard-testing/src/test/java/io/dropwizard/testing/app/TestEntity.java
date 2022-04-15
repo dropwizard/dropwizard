@@ -1,6 +1,6 @@
 package io.dropwizard.testing.app;
 
-import org.jetbrains.annotations.Nullable;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

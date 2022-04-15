@@ -3,7 +3,7 @@ package io.dropwizard.client.proxy;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.validation.OneOf;
 import io.dropwizard.validation.PortRange;
-import org.jetbrains.annotations.Nullable;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;

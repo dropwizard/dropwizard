@@ -2,7 +2,7 @@ package com.example.helloworld.auth;
 
 import com.example.helloworld.core.User;
 import io.dropwizard.auth.Authorizer;
-import org.jetbrains.annotations.Nullable;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import javax.ws.rs.container.ContainerRequestContext;
 

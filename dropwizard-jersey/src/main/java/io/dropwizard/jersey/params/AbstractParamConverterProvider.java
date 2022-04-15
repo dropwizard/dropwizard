@@ -2,7 +2,7 @@ package io.dropwizard.jersey.params;
 
 import io.dropwizard.jersey.DefaultValueUtils;
 import io.dropwizard.jersey.validation.JerseyParameterNameProvider;
-import org.jetbrains.annotations.Nullable;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import javax.ws.rs.ext.ParamConverter;
 import javax.ws.rs.ext.ParamConverterProvider;

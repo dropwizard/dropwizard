@@ -1,7 +1,7 @@
 package io.dropwizard.client.proxy;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.jetbrains.annotations.Nullable;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;

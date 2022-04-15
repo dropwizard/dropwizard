@@ -1,12 +1,12 @@
 package io.dropwizard.auth;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.glassfish.jersey.internal.inject.InjectionManager;
 import org.glassfish.jersey.servlet.ServletProperties;
 import org.glassfish.jersey.test.DeploymentContext;
 import org.glassfish.jersey.test.JerseyTest;
 import org.glassfish.jersey.test.ServletDeploymentContext;
 import org.glassfish.jersey.test.TestProperties;
-import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;

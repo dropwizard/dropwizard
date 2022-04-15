@@ -1,6 +1,6 @@
 package io.dropwizard.auth;
 
-import org.jetbrains.annotations.Nullable;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import javax.ws.rs.container.ContainerRequestContext;
 import java.security.Principal;

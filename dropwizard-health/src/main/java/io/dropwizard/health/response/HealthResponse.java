@@ -1,18 +1,18 @@
 package io.dropwizard.health.response;
 
-import org.jetbrains.annotations.NotNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Objects;
 
 public final class HealthResponse {
     private final boolean healthy;
-    @NotNull
+    @NonNull
     private final String message;
-    @NotNull
+    @NonNull
     private final String contentType;
     private final int status;
 
-    public HealthResponse(boolean healthy, @NotNull final String message, @NotNull final String contentType,
+    public HealthResponse(boolean healthy, @NonNull final String message, @NonNull final String contentType,
                           int status) {
         this.healthy = healthy;
         this.message = Objects.requireNonNull(message);
@@ -24,12 +24,12 @@ public final class HealthResponse {
         return healthy;
     }
 
-    @NotNull
+    @NonNull
     public String getMessage() {
         return message;
     }
 
-    @NotNull
+    @NonNull
     public String getContentType() {
         return contentType;
     }

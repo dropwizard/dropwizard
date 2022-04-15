@@ -1,8 +1,8 @@
 package io.dropwizard.jersey.params;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.glassfish.jersey.internal.inject.ExtractorException;
 import org.glassfish.jersey.server.internal.LocalizationMessages;
-import org.jetbrains.annotations.Nullable;
 
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.WebApplicationException;

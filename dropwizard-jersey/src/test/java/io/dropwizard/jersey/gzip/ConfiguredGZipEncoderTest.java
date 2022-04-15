@@ -1,6 +1,6 @@
 package io.dropwizard.jersey.gzip;
 
-import org.jetbrains.annotations.Nullable;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.WebApplicationException;

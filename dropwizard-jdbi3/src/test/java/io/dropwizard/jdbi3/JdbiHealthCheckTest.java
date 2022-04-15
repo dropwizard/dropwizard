@@ -2,9 +2,9 @@ package io.dropwizard.jdbi3;
 
 import com.codahale.metrics.health.HealthCheck;
 import io.dropwizard.util.Duration;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.jdbi.v3.core.Handle;
 import org.jdbi.v3.core.Jdbi;
-import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

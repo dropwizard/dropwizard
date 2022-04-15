@@ -1,8 +1,8 @@
 package io.dropwizard.hibernate;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.glassfish.jersey.spi.ExtendedExceptionMapper;
 import org.hibernate.exception.DataException;
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

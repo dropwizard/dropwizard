@@ -6,7 +6,7 @@
  */
 package io.dropwizard.validation;
 
-import org.jetbrains.annotations.Nullable;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

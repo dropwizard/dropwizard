@@ -1,7 +1,7 @@
 package io.dropwizard.jersey.validation;
 
 import io.dropwizard.jersey.errors.ErrorMessage;
-import org.jetbrains.annotations.Nullable;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.WebApplicationException;

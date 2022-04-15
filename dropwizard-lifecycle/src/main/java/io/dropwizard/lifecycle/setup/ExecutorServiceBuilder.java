@@ -3,7 +3,7 @@ package io.dropwizard.lifecycle.setup;
 import com.codahale.metrics.InstrumentedThreadFactory;
 import io.dropwizard.lifecycle.ExecutorServiceManager;
 import io.dropwizard.util.Duration;
-import org.jetbrains.annotations.NotNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,7 +23,7 @@ public class ExecutorServiceBuilder {
 
     private static final AtomicLong COUNT = new AtomicLong(0);
     private final LifecycleEnvironment environment;
-    @NotNull
+    @NonNull
     private final String nameFormat;
     private int corePoolSize;
     private int maximumPoolSize;

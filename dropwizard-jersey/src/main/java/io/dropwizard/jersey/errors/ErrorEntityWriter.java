@@ -1,7 +1,7 @@
 package io.dropwizard.jersey.errors;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.glassfish.jersey.message.MessageBodyWorkers;
-import org.jetbrains.annotations.Nullable;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
@@ -74,6 +74,5 @@ public abstract class ErrorEntityWriter<T, U> implements MessageBodyWriter<T> {
     private HttpHeaders headers;
 
     @Context
-    @Nullable
-    private javax.inject.Provider<MessageBodyWorkers> mbw;
+    private javax.inject.@Nullable Provider<MessageBodyWorkers> mbw;
 }

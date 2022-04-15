@@ -1,11 +1,11 @@
 package io.dropwizard.health.response;
 
-import org.jetbrains.annotations.NotNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Collection;
 import java.util.Map;
 
 public interface HealthResponseProvider {
-    @NotNull
+    @NonNull
     HealthResponse healthResponse(Map<String, Collection<String>> queryParams);
 }

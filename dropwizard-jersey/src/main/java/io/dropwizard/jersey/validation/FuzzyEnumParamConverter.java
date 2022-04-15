@@ -2,7 +2,7 @@ package io.dropwizard.jersey.validation;
 
 import io.dropwizard.jersey.errors.ErrorMessage;
 import io.dropwizard.util.Enums;
-import org.jetbrains.annotations.Nullable;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -1,7 +1,7 @@
 package io.dropwizard.health.check.tcp;
 
 import com.codahale.metrics.health.HealthCheck;
-import org.jetbrains.annotations.NotNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,17 +16,17 @@ public class TcpHealthCheck extends HealthCheck {
 
     private static final Duration DEFAULT_CONNECTION_TIMEOUT = Duration.ofSeconds(2);
 
-    @NotNull
+    @NonNull
     private final String host;
     private final int port;
     private final Duration connectionTimeout;
 
-    public TcpHealthCheck(@NotNull final String host,
+    public TcpHealthCheck(@NonNull final String host,
                           final int port) {
         this(host, port, DEFAULT_CONNECTION_TIMEOUT);
     }
 
-    public TcpHealthCheck(@NotNull final String host,
+    public TcpHealthCheck(@NonNull final String host,
                           final int port,
                           final Duration connectionTimeout) {
         this.host = Objects.requireNonNull(host);

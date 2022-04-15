@@ -3,8 +3,8 @@ package io.dropwizard.servlets.tasks;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.LoggerFactory;
 
@@ -129,7 +129,7 @@ public class LogConfigurationTask extends Task {
     /**
      * Lazy create the timer to avoid unnecessary thread creation unless an expirable log configuration task is submitted
      */
-    @NotNull
+    @NonNull
     private Timer getTimer() {
         return timerReference.updateAndGet(timer -> timer == null ? timerSupplier.get() : timer);
     }

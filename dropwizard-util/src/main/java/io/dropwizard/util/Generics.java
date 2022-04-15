@@ -1,6 +1,6 @@
 package io.dropwizard.util;
 
-import org.jetbrains.annotations.Nullable;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;

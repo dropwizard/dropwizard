@@ -2,8 +2,8 @@ package io.dropwizard.views.common;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.glassfish.jersey.message.internal.HeaderValueException;
-import org.jetbrains.annotations.Nullable;
 
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;

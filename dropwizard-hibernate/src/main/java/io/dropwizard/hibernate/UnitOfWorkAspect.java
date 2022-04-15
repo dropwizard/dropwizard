@@ -1,11 +1,11 @@
 package io.dropwizard.hibernate;
 
 import io.dropwizard.hibernate.dual.DualSessionFactory;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.context.internal.ManagedSessionContext;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 

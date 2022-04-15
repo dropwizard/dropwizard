@@ -1,7 +1,7 @@
 package io.dropwizard.configuration;
 
 import io.dropwizard.validation.BaseValidator;
-import org.jetbrains.annotations.Nullable;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

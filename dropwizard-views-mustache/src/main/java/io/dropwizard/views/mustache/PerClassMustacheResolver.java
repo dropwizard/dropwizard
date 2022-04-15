@@ -2,7 +2,7 @@ package io.dropwizard.views.mustache;
 
 import com.github.mustachejava.MustacheResolver;
 import io.dropwizard.views.common.View;
-import org.jetbrains.annotations.Nullable;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.io.BufferedReader;
 import java.io.InputStream;

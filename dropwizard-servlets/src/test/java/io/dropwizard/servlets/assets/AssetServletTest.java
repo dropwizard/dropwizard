@@ -1,11 +1,11 @@
 package io.dropwizard.servlets.assets;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpTester;
 import org.eclipse.jetty.http.HttpVersion;
 import org.eclipse.jetty.http.MimeTypes;
 import org.eclipse.jetty.servlet.ServletTester;
-import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -84,8 +84,7 @@ public class AssetServletTest {
 
     private static final ServletTester SERVLET_TESTER = new ServletTester();
     private final HttpTester.Request request = HttpTester.newRequest();
-    @Nullable
-    private HttpTester.Response response;
+    private HttpTester.@Nullable Response response;
 
     @BeforeAll
     public static void startServletTester() throws Exception {

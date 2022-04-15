@@ -19,6 +19,7 @@ import io.dropwizard.util.Duration;
 import io.dropwizard.validation.MinDataSize;
 import io.dropwizard.validation.MinDuration;
 import io.dropwizard.validation.PortRange;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.eclipse.jetty.http.CookieCompliance;
 import org.eclipse.jetty.http.HttpCompliance;
 import org.eclipse.jetty.io.ArrayByteBufferPool;
@@ -35,7 +36,6 @@ import org.eclipse.jetty.util.ArrayUtil;
 import org.eclipse.jetty.util.thread.ScheduledExecutorScheduler;
 import org.eclipse.jetty.util.thread.Scheduler;
 import org.eclipse.jetty.util.thread.ThreadPool;
-import org.jetbrains.annotations.Nullable;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;

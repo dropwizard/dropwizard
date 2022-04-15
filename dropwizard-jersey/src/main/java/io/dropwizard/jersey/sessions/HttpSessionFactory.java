@@ -1,6 +1,6 @@
 package io.dropwizard.jersey.sessions;
 
-import org.jetbrains.annotations.Nullable;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
