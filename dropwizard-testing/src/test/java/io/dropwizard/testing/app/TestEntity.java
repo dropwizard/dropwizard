@@ -1,6 +1,7 @@
 package io.dropwizard.testing.app;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

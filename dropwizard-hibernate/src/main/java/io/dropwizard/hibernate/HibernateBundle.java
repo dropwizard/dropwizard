@@ -9,8 +9,8 @@ import io.dropwizard.db.DatabaseConfiguration;
 import io.dropwizard.db.PooledDataSourceFactory;
 import io.dropwizard.util.Duration;
 import org.hibernate.SessionFactory;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;

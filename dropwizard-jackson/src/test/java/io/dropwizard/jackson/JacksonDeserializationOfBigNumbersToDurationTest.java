@@ -3,9 +3,9 @@ package io.dropwizard.jackson;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 
-import javax.annotation.Nullable;
 import java.time.Duration;
 
 import static org.assertj.core.api.Assertions.assertThat;

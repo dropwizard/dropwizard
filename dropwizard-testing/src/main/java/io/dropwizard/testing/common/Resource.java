@@ -16,8 +16,8 @@ import org.glassfish.jersey.test.ServletDeploymentContext;
 import org.glassfish.jersey.test.TestProperties;
 import org.glassfish.jersey.test.inmemory.InMemoryTestContainerFactory;
 import org.glassfish.jersey.test.spi.TestContainerFactory;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import javax.validation.Validator;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;

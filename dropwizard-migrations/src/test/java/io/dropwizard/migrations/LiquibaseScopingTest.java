@@ -12,10 +12,10 @@ import net.sourceforge.argparse4j.inf.Namespace;
 import org.jdbi.v3.core.Handle;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.core.result.ResultIterable;
+import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import javax.annotation.Nullable;
 import java.sql.PreparedStatement;
 import java.util.Collections;
 import java.util.Map;

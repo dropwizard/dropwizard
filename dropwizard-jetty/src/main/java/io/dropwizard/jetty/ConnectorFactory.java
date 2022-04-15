@@ -6,8 +6,7 @@ import io.dropwizard.jackson.Discoverable;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.thread.ThreadPool;
-
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * A factory for creating Jetty {@link Connector}s.

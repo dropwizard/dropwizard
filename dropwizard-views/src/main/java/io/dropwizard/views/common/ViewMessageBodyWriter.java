@@ -3,8 +3,8 @@ package io.dropwizard.views.common;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
 import org.glassfish.jersey.message.internal.HeaderValueException;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;

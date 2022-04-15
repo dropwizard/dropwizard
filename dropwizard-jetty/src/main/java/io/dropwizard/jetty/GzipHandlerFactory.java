@@ -6,8 +6,8 @@ import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.handler.gzip.GzipHandler;
 import org.eclipse.jetty.util.compression.CompressionPool;
 import org.eclipse.jetty.util.compression.DeflaterPool;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;

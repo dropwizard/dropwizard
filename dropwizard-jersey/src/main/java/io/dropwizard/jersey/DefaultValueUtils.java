@@ -1,6 +1,7 @@
 package io.dropwizard.jersey;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
+
 import javax.ws.rs.DefaultValue;
 import java.lang.annotation.Annotation;
 

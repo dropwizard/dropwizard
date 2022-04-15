@@ -4,12 +4,12 @@ import com.codahale.metrics.health.HealthCheck;
 import io.dropwizard.util.Duration;
 import org.jdbi.v3.core.Handle;
 import org.jdbi.v3.core.Jdbi;
+import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.stubbing.Answer;
 
-import javax.annotation.Nullable;
 import java.sql.Connection;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;

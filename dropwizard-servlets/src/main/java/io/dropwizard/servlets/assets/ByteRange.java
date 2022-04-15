@@ -1,6 +1,7 @@
 package io.dropwizard.servlets.assets;
 
-import javax.annotation.concurrent.Immutable;
+import com.google.errorprone.annotations.Immutable;
+
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;

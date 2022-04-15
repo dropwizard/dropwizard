@@ -7,9 +7,9 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.ConsoleAppender;
 import ch.qos.logback.core.Layout;
 import ch.qos.logback.core.encoder.LayoutWrappingEncoder;
+import com.google.errorprone.annotations.concurrent.GuardedBy;
 import io.dropwizard.logging.common.layout.DiscoverableLayoutFactory;
 
-import javax.annotation.concurrent.GuardedBy;
 import java.util.TimeZone;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;

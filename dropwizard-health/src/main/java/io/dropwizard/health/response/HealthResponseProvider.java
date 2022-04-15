@@ -1,10 +1,11 @@
 package io.dropwizard.health.response;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Collection;
 import java.util.Map;
 
 public interface HealthResponseProvider {
-    @Nonnull
+    @NotNull
     HealthResponse healthResponse(Map<String, Collection<String>> queryParams);
 }

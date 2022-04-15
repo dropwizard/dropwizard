@@ -17,8 +17,8 @@ import io.dropwizard.jersey.validation.Validators;
 import io.dropwizard.jetty.MutableServletContextHandler;
 import io.dropwizard.jetty.setup.ServletEnvironment;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import javax.servlet.Servlet;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;

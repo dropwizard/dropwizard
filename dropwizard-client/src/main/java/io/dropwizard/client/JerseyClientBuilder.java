@@ -18,8 +18,8 @@ import org.apache.hc.client5.http.socket.ConnectionSocketFactory;
 import org.apache.hc.core5.http.config.Registry;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.spi.ConnectorProvider;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import javax.net.ssl.HostnameVerifier;
 import javax.validation.Validator;
 import javax.ws.rs.client.Client;

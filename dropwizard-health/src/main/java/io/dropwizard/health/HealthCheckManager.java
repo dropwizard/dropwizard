@@ -6,11 +6,11 @@ import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheck;
 import com.codahale.metrics.health.HealthCheckRegistryListener;
 import io.dropwizard.util.Duration;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -30,21 +30,21 @@ class HealthCheckManager implements HealthCheckRegistryListener, HealthStatusChe
     private final AtomicBoolean isAppHealthy = new AtomicBoolean(false);
     private final AtomicInteger unhealthyCriticalHealthChecks = new AtomicInteger();
     private final AtomicInteger unhealthyCriticalAliveChecks = new AtomicInteger();
-    @Nonnull
+    @NotNull
     private final HealthCheckScheduler scheduler;
-    @Nonnull
+    @NotNull
     private final Map<String, HealthCheckConfiguration> configs;
-    @Nonnull
+    @NotNull
     private final Collection<HealthStateListener> healthStateListeners;
-    @Nonnull
+    @NotNull
     private final MetricRegistry metrics;
     private final Duration shutdownWaitPeriod;
     private final boolean initialOverallState;
-    @Nonnull
+    @NotNull
     private final String aggregateHealthyName;
-    @Nonnull
+    @NotNull
     private final String aggregateUnhealthyName;
-    @Nonnull
+    @NotNull
     private Map<String, ScheduledHealthCheck> checks;
     private volatile boolean shuttingDown = false;
 
@@ -276,7 +276,7 @@ class HealthCheckManager implements HealthCheckRegistryListener, HealthStatusChe
         });
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Collection<HealthStateView> healthStateViews() {
         return checks.values()
@@ -285,9 +285,9 @@ class HealthCheckManager implements HealthCheckRegistryListener, HealthStatusChe
             .collect(Collectors.toList());
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public Optional<HealthStateView> healthStateView(@Nonnull final String name) {
+    public Optional<HealthStateView> healthStateView(@NotNull final String name) {
         return Optional.ofNullable(checks.get(name))
             .map(ScheduledHealthCheck::view);
     }

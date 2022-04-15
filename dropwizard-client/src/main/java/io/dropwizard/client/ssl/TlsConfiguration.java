@@ -2,8 +2,8 @@ package io.dropwizard.client.ssl;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.validation.ValidationMethod;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import javax.validation.constraints.NotEmpty;
 import java.io.File;
 import java.util.List;

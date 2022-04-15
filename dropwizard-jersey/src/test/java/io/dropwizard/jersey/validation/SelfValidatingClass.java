@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.validation.selfvalidating.SelfValidating;
 import io.dropwizard.validation.selfvalidating.SelfValidation;
 import io.dropwizard.validation.selfvalidating.ViolationCollector;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.QueryParam;
 

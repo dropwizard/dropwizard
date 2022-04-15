@@ -1,13 +1,12 @@
 package io.dropwizard.hibernate;
 
 import io.dropwizard.hibernate.dual.DualSessionFactory;
-
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.context.internal.ManagedSessionContext;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.Map;
 
 import static java.util.Objects.requireNonNull;

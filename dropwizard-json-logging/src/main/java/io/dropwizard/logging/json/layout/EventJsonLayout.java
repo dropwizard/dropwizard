@@ -3,8 +3,8 @@ package io.dropwizard.logging.json.layout;
 import ch.qos.logback.classic.pattern.ThrowableHandlingConverter;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import io.dropwizard.logging.json.EventAttribute;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;

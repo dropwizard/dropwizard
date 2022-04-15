@@ -1,9 +1,9 @@
 package io.dropwizard.jersey.validation;
 
 import io.dropwizard.jersey.errors.ErrorMessage;
+import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 
-import javax.annotation.Nullable;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ParamConverter;

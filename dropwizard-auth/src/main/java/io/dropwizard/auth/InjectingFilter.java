@@ -1,8 +1,8 @@
 package io.dropwizard.auth;
 
 import org.glassfish.jersey.internal.inject.InjectionManager;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import javax.annotation.Priority;
 import javax.ws.rs.Priorities;
 import javax.ws.rs.container.ContainerRequestContext;

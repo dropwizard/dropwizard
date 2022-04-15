@@ -1,8 +1,8 @@
 package io.dropwizard.jersey.jackson;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.time.LocalDate;
 
 public class OkRepresentation {

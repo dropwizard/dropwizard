@@ -33,12 +33,12 @@ import org.glassfish.jersey.client.ClientRequest;
 import org.glassfish.jersey.client.JerseyClient;
 import org.glassfish.jersey.client.rx.rxjava2.RxFlowableInvokerProvider;
 import org.glassfish.jersey.client.spi.ConnectorProvider;
+import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
-import javax.annotation.Nullable;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;

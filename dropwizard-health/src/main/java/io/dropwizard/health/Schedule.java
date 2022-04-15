@@ -2,8 +2,8 @@ package io.dropwizard.health;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.util.Duration;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.Objects;

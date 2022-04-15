@@ -1,6 +1,6 @@
 package io.dropwizard.jersey.params;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * A parameter encapsulating integer values. All non-decimal values will return a

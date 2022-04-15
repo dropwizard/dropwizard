@@ -82,8 +82,8 @@
             <artifactId>jackson-jaxrs-json-provider</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.google.code.findbugs</groupId>
-            <artifactId>jsr305</artifactId>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>

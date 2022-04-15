@@ -4,8 +4,8 @@ import com.codahale.metrics.annotation.Timed;
 import io.dropwizard.jersey.params.IntParam;
 import io.dropwizard.validation.Validated;
 import org.eclipse.jetty.io.EofException;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.groups.Default;

@@ -2,8 +2,8 @@ package com.example.helloworld.auth;
 
 import com.example.helloworld.core.User;
 import io.dropwizard.auth.Authorizer;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import javax.ws.rs.container.ContainerRequestContext;
 
 public class ExampleAuthorizer implements Authorizer<User> {

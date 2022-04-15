@@ -6,9 +6,9 @@ import org.glassfish.jersey.test.DeploymentContext;
 import org.glassfish.jersey.test.JerseyTest;
 import org.glassfish.jersey.test.ServletDeploymentContext;
 import org.glassfish.jersey.test.TestProperties;
+import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 
-import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.WebApplicationException;

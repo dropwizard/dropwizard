@@ -2,8 +2,8 @@ package io.dropwizard.auth.basic;
 
 import io.dropwizard.auth.AuthFilter;
 import io.dropwizard.auth.Authenticator;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import javax.annotation.Priority;
 import javax.ws.rs.Priorities;
 import javax.ws.rs.container.ContainerRequestContext;

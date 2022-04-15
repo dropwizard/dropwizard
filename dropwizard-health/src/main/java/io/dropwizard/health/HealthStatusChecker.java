@@ -1,6 +1,6 @@
 package io.dropwizard.health;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 public interface HealthStatusChecker {
     default boolean isHealthy() {

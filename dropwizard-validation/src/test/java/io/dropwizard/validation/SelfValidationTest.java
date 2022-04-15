@@ -13,9 +13,10 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.concurrent.NotThreadSafe;
 import javax.validation.Validator;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,7 +25,7 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@NotThreadSafe
+@Execution(ExecutionMode.SAME_THREAD)
 class SelfValidationTest {
 
     private static final String FAILED = "failed";

@@ -3,8 +3,8 @@ package io.dropwizard.jersey.guava;
 import com.google.common.base.Optional;
 import io.dropwizard.jersey.optional.EmptyOptionalException;
 import org.glassfish.jersey.message.MessageBodyWorkers;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;

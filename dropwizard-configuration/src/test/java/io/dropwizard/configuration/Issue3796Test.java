@@ -8,9 +8,9 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.fasterxml.jackson.databind.node.TextNode;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.validation.BaseValidator;
+import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 
-import javax.annotation.Nullable;
 import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;

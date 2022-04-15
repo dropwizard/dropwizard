@@ -1,6 +1,7 @@
 package io.dropwizard.logging.common;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
+
 import javax.net.SocketFactory;
 import java.io.BufferedOutputStream;
 import java.io.IOException;

@@ -1,17 +1,18 @@
 package io.dropwizard.health.response;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Objects;
 
 public final class HealthResponse {
     private final boolean healthy;
-    @Nonnull
+    @NotNull
     private final String message;
-    @Nonnull
+    @NotNull
     private final String contentType;
     private final int status;
 
-    public HealthResponse(boolean healthy, @Nonnull final String message, @Nonnull final String contentType,
+    public HealthResponse(boolean healthy, @NotNull final String message, @NotNull final String contentType,
                           int status) {
         this.healthy = healthy;
         this.message = Objects.requireNonNull(message);
@@ -23,12 +24,12 @@ public final class HealthResponse {
         return healthy;
     }
 
-    @Nonnull
+    @NotNull
     public String getMessage() {
         return message;
     }
 
-    @Nonnull
+    @NotNull
     public String getContentType() {
         return contentType;
     }

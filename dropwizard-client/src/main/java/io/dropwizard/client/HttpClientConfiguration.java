@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.client.proxy.ProxyConfiguration;
 import io.dropwizard.client.ssl.TlsConfiguration;
 import io.dropwizard.util.Duration;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;

@@ -2,10 +2,10 @@ package io.dropwizard.hibernate;
 
 import org.glassfish.jersey.spi.ExtendedExceptionMapper;
 import org.hibernate.exception.DataException;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nullable;
 import javax.persistence.PersistenceException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;

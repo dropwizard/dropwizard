@@ -4,8 +4,8 @@ import org.glassfish.jersey.InjectionManagerProvider;
 import org.glassfish.jersey.internal.inject.InjectionManager;
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 import org.glassfish.jersey.server.model.AnnotatedMethod;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import javax.annotation.security.DenyAll;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;

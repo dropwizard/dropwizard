@@ -3,8 +3,8 @@ package io.dropwizard.logging.json.layout;
 import ch.qos.logback.core.CoreConstants;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Map;

@@ -1,8 +1,8 @@
 package io.dropwizard.jersey.validation;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import javax.validation.Valid;
 
 public class WrappedValidRepresentation {

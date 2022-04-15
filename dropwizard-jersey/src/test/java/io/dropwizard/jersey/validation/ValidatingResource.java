@@ -10,8 +10,8 @@ import io.dropwizard.jersey.params.LongParam;
 import io.dropwizard.jersey.params.NonEmptyStringParam;
 import io.dropwizard.validation.Validated;
 import org.hibernate.validator.constraints.Length;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import javax.servlet.ServletContext;
 import javax.validation.Valid;
 import javax.validation.constraints.Email;

@@ -1,8 +1,8 @@
 package io.dropwizard.jersey.errors;
 
 import org.glassfish.jersey.message.MessageBodyWorkers;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
