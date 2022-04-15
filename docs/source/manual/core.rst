@@ -102,88 +102,36 @@ configuration parameters into independent configuration classes. If your applica
 configuration parameters in order to connect to a message queue, for example, we recommend that you
 create a new ``MessageQueueFactory`` class:
 
-.. code-block:: java
-
-    public class MessageQueueFactory {
-        @NotEmpty
-        private String host;
-
-        @Min(1)
-        @Max(65535)
-        private int port = 5672;
-
-        @JsonProperty
-        public String getHost() {
-            return host;
-        }
-
-        @JsonProperty
-        public void setHost(String host) {
-            this.host = host;
-        }
-
-        @JsonProperty
-        public int getPort() {
-            return port;
-        }
-
-        @JsonProperty
-        public void setPort(int port) {
-            this.port = port;
-        }
-
-        public MessageQueueClient build(Environment environment) {
-            MessageQueueClient client = new MessageQueueClient(getHost(), getPort());
-            environment.lifecycle().manage(new Managed() {
-                @Override
-                public void stop() {
-                    client.close();
-                }
-            });
-            return client;
-        }
-    }
+.. literalinclude:: /examples/core/src/main/java/io/dropwizard/documentation/mq/MessageQueueFactory.java
+    :language: java
+    :start-after: // core: MessageQueueFactory
+    :end-before: // core: MessageQueueFactory
 
 In this example our factory will automatically tie our ``MessageQueueClient`` connection to the
 lifecycle of our application's ``Environment``.
 
 Your main ``Configuration`` subclass can then include this as a member field:
 
-.. code-block:: java
-
-    public class ExampleConfiguration extends Configuration {
-        @Valid
-        @NotNull
-        private MessageQueueFactory messageQueue = new MessageQueueFactory();
-
-        @JsonProperty("messageQueue")
-        public MessageQueueFactory getMessageQueueFactory() {
-            return messageQueue;
-        }
-
-        @JsonProperty("messageQueue")
-        public void setMessageQueueFactory(MessageQueueFactory factory) {
-            this.messageQueue = factory;
-        }
-    }
+.. literalinclude:: /examples/core/src/main/java/io/dropwizard/documentation/config/ExampleConfiguration.java
+    :language: java
+    :start-after: // core: ExampleConfiguration
+    :end-before: // core: ExampleConfiguration
 
 And your ``Application`` subclass can then use your factory to directly construct a client for the
 message queue:
 
-.. code-block:: java
-
-    public void run(ExampleConfiguration configuration,
-                    Environment environment) {
-        MessageQueueClient messageQueue = configuration.getMessageQueueFactory().build(environment);
-    }
+.. literalinclude:: /examples/core/src/main/java/io/dropwizard/documentation/ExampleApp.java
+    :language: java
+    :start-after: // core: ExampleApp#run
+    :end-before: // core: ExampleApp#run
+    :dedent: 4
 
 Then, in your application's YAML file, you can use a nested ``messageQueue`` field:
 
-.. code-block:: java
-
-    messageQueue:
-      host: mq.example.com
-      port: 5673
+.. literalinclude:: /examples/core/src/config/config.yml
+    :language: yaml
+    :start-after: # core: config->messageQueue
+    :end-before: # core: config->messageQueue
 
 The ``@NotNull``, ``@NotEmpty``, ``@Min``, ``@Max``, and ``@Valid`` annotations are part of
 :ref:`man-validation` functionality. If your YAML configuration file's
@@ -237,31 +185,19 @@ Environment variables
 The ``dropwizard-configuration`` module also provides the capabilities to substitute configuration settings with the
 value of environment variables using a ``SubstitutingSourceProvider`` and ``EnvironmentVariableSubstitutor``.
 
-.. code-block:: java
-
-    public class MyApplication extends Application<MyConfiguration> {
-        // [...]
-        @Override
-        public void initialize(Bootstrap<MyConfiguration> bootstrap) {
-            // Enable variable substitution with environment variables
-            bootstrap.setConfigurationSourceProvider(
-                    new SubstitutingSourceProvider(bootstrap.getConfigurationSourceProvider(),
-                                                       new EnvironmentVariableSubstitutor(false)
-                    )
-            );
-
-        }
-
-        // [...]
-    }
+.. literalinclude:: /examples/core/src/main/java/io/dropwizard/documentation/ExampleApp.java
+    :language: java
+    :start-after: // core: ExampleApp#initialize
+    :end-before: // core: ExampleApp#initialize
+    :dedent: 4
 
 The configuration settings which should be substituted need to be explicitly written in the configuration file and
 follow the substitution rules of StringSubstitutor_ from the Apache Commons Text library.
 
-.. code-block:: yaml
-
-    mySetting: ${DW_MY_SETTING}
-    defaultSetting: ${DW_DEFAULT_SETTING:-default value}
+.. literalinclude:: /examples/core/src/config/config.yml
+    :language: yaml
+    :start-after: # core: config->mySetting-defaultSetting
+    :end-before: # core: config->mySetting-defaultSetting
 
 In general ``SubstitutingSourceProvider`` isn't restricted to substitute environment variables but can be used to replace
 variables in the configuration source with arbitrary values by passing a custom ``StringSubstitutor`` implementation.
@@ -281,15 +217,8 @@ test keystore you can use in the `Dropwizard example project`__.
 .. _`Jetty's documentation`: http://www.eclipse.org/jetty/documentation/current/configuring-ssl.html
 .. __: https://github.com/dropwizard/dropwizard/tree/master/dropwizard-example
 
-.. code-block:: yaml
-
-    server:
-      applicationConnectors:
-        - type: https
-          port: 8443
-          keyStorePath: example.keystore
-          keyStorePassword: example
-          validateCerts: false
+.. literalinclude:: /examples/core/src/config/config-https.yml
+    :language: yaml
 
 By default, only secure TLSv1.2 cipher suites are allowed. Older versions of cURL, Java 6 and 7, and
 other clients may be unable to communicate with the allowed cipher suites, but this was a conscious
@@ -302,20 +231,8 @@ excluded protocols or cipher suites are specified, then the defaults are inherit
 The following list of excluded cipher suites will allow for TLSv1 and TLSv1.1 clients to negotiate a
 connection similar to pre-Dropwizard 1.0.
 
-.. code-block:: yaml
-
-    server:
-      applicationConnectors:
-        - type: https
-          port: 8443
-          excludedCipherSuites:
-            - SSL_RSA_WITH_DES_CBC_SHA
-            - SSL_DHE_RSA_WITH_DES_CBC_SHA
-            - SSL_DHE_DSS_WITH_DES_CBC_SHA
-            - SSL_RSA_EXPORT_WITH_RC4_40_MD5
-            - SSL_RSA_EXPORT_WITH_DES40_CBC_SHA
-            - SSL_DHE_RSA_EXPORT_WITH_DES40_CBC_SHA
-            - SSL_DHE_DSS_EXPORT_WITH_DES40_CBC_SHA
+.. literalinclude:: /examples/core/src/config/config-https-ciphers.yml
+    :language: yaml
 
 .. _man-core-bootstrapping:
 
@@ -323,38 +240,30 @@ Since the version 9.4.8 (Dropwizard 1.2.3) Jetty supports native SSL via Google'
 (Google's fork of OpenSSL) for handling cryptography. You can enable it in Dropwizard by registering the provider
 in your app:
 
-.. code-block:: xml
+.. literalinclude:: /examples/conscrypt/pom.xml
+    :language: xml
+    :start-after: <!-- conscrypt: conscrypt-openjdk-uber -->
+    :end-before: <!-- conscrypt: conscrypt-openjdk-uber -->
+    :dedent: 8
 
-    <dependency>
-        <groupId>org.conscrypt</groupId>
-        <artifactId>conscrypt-openjdk-uber</artifactId>
-        <version>${conscrypt.version}</version>
-    </dependency>
-
-.. code-block:: java
-
-    static {
-        Security.insertProviderAt(new OpenSSLProvider(), 1);
-    }
+.. literalinclude:: /examples/conscrypt/src/main/java/io/dropwizard/documentation/ConscryptApp.java
+    :language: java
+    :start-after: // conscrypt: ConscryptApp->OpenSSLProvider
+    :end-before: // conscrypt: ConscryptApp->OpenSSLProvider
+    :dedent: 4
 
 and setting the JCE provider in the configuration:
 
-.. code-block:: yaml
-
-    server:
-      type: simple
-      connector:
-        type: https
-        jceProvider: Conscrypt
+.. literalinclude:: /examples/conscrypt/src/config/config.yaml
+    :language: yaml
 
 For HTTP/2 servers you need to add an ALPN Conscrypt provider as a dependency.
 
-.. code-block:: xml
-
-    <dependency>
-        <groupId>org.eclipse.jetty</groupId>
-        <artifactId>jetty-alpn-conscrypt-server</artifactId>
-    </dependency>
+.. literalinclude:: /examples/conscrypt/pom.xml
+    :language: xml
+    :start-after: <!-- conscrypt: jetty-alpn-conscrypt-server -->
+    :end-before: <!-- conscrypt: jetty-alpn-conscrypt-server -->
+    :dedent: 8
 
 .. note::
 
@@ -411,30 +320,18 @@ A health check is a runtime test which you can use to verify your application's 
 production environment. For example, you may want to ensure that your database client is connected
 to the database:
 
-.. code-block:: java
-
-    public class DatabaseHealthCheck extends HealthCheck {
-        private final Database database;
-
-        public DatabaseHealthCheck(Database database) {
-            this.database = database;
-        }
-
-        @Override
-        protected Result check() throws Exception {
-            if (database.isConnected()) {
-                return Result.healthy();
-            } else {
-                return Result.unhealthy("Cannot connect to " + database.getUrl());
-            }
-        }
-    }
+.. literalinclude:: /examples/core/src/main/java/io/dropwizard/documentation/db/DatabaseHealthCheck.java
+    :language: java
+    :start-after: // core: DatabaseHealthCheck
+    :end-before: // core: DatabaseHealthCheck
 
 You can then add this health check to your application's environment:
 
-.. code-block:: java
-
-    environment.healthChecks().register("database", new DatabaseHealthCheck(database));
+.. literalinclude:: /examples/core/src/main/java/io/dropwizard/documentation/HealthCheckApp.java
+    :language: java
+    :start-after: // core: HealthCheckApp#run->DatabaseHealthCheck
+    :end-before: // core: HealthCheckApp#run->DatabaseHealthCheck
+    :dedent: 8
 
 By sending a ``GET`` request to ``/healthcheck`` on the admin port you can run these tests and view
 the results::
@@ -611,36 +508,15 @@ For example, given a theoretical Riak__ client which needs to be started and sto
 
 .. __: http://basho.com/products/
 
-.. code-block:: java
+.. literalinclude:: /examples/core/src/main/java/io/dropwizard/documentation/riak/RiakClientManager.java
+    :language: java
+    :start-after: // core: RiakClientManager
+    :end-before: // core: RiakClientManager
 
-    public class RiakClientManager implements Managed {
-        private final RiakClient client;
-
-        public RiakClientManager(RiakClient client) {
-            this.client = client;
-        }
-
-        @Override
-        public void start() throws Exception {
-            client.start();
-        }
-
-        @Override
-        public void stop() throws Exception {
-            client.stop();
-        }
-    }
-
-.. code-block:: java
-
-    public class MyApplication extends Application<MyConfiguration>{
-        @Override
-        public void run(MyConfiguration configuration, Environment environment) {
-            RiakClient client = ...;
-            RiakClientManager riakClientManager = new RiakClientManager(client);
-            environment.lifecycle().manage(riakClientManager);
-        }
-    }
+.. literalinclude:: /examples/core/src/main/java/io/dropwizard/documentation/ManagedApp.java
+    :language: java
+    :start-after: // core: ManagedApp
+    :end-before: // core: ManagedApp
 
 If ``RiakClientManager#start()`` throws an exception--e.g., an error connecting to the server--your
 application will not start and a full exception will be logged. If ``RiakClientManager#stop()`` throws
@@ -650,22 +526,11 @@ It should be noted that ``Environment`` has built-in factory methods for ``Execu
 ``ScheduledExecutorService`` instances which are managed. These managed instances use ``InstrumentedThreadFactory``
 that monitors the number of threads created, running and terminated
 
-.. code-block:: java
-
-    public class MyApplication extends Application<MyConfiguration> {
-        @Override
-        public void run(MyConfiguration configuration, Environment environment) {
-
-            ExecutorService executorService = environment.lifecycle()
-                .executorService(nameFormat)
-                .maxThreads(maxThreads)
-                .build();
-
-            ScheduledExecutorService scheduledExecutorService = environment.lifecycle()
-                .scheduledExecutorService(nameFormat)
-                .build();
-        }
-    }
+.. literalinclude:: /examples/core/src/main/java/io/dropwizard/documentation/ManagedExecutorApp.java
+    :language: java
+    :start-after: // core: ManagedExecutorApp#run
+    :end-before: // core: ManagedExecutorApp#run
+    :dedent: 4
 
 .. _man-core-bundles:
 
@@ -682,23 +547,15 @@ available from ``/assets/*`` (or any other path) in your application.
 Given the bundle ``MyConfiguredBundle`` and the interface ``MyConfiguredBundleConfig`` below,
 your application's ``Configuration`` subclass would need to implement ``MyConfiguredBundleConfig``.
 
-.. code-block:: java
+.. literalinclude:: /examples/core/src/main/java/io/dropwizard/documentation/bundle/MyConfiguredBundle.java
+    :language: java
+    :start-after: // core: MyConfiguredBundle
+    :end-before: // core: MyConfiguredBundle
 
-    public class MyConfiguredBundle implements ConfiguredBundle<MyConfiguredBundleConfig> {
-        @Override
-        public void run(MyConfiguredBundleConfig applicationConfig, Environment environment) {
-            applicationConfig.getBundleSpecificConfig();
-        }
-
-        @Override
-        public void initialize(Bootstrap<?> bootstrap) {
-
-        }
-    }
-
-    public interface MyConfiguredBundleConfig {
-        String getBundleSpecificConfig();
-    }
+.. literalinclude:: /examples/core/src/main/java/io/dropwizard/documentation/bundle/MyConfiguredBundleConfig.java
+    :language: java
+    :start-after: // core: MyConfiguredBundleConfig
+    :end-before: // core: MyConfiguredBundleConfig
 
 
 Serving Assets
@@ -723,25 +580,21 @@ Then use an extended ``AssetsBundle`` constructor to serve resources in the
 ``assets`` folder from the root path. ``index.htm`` is served as the default
 page.
 
-.. code-block:: java
-
-    @Override
-    public void initialize(Bootstrap<HelloWorldConfiguration> bootstrap) {
-        bootstrap.addBundle(new AssetsBundle("/assets/", "/"));
-    }
+.. literalinclude:: /examples/core/src/main/java/io/dropwizard/documentation/AssetsApp.java
+    :language: java
+    :start-after: // core: AssetsApp#initialize->AssetsBundle
+    :end-before: // core: AssetsApp#initialize->AssetsBundle
+    :dedent: 8
 
 When an ``AssetBundle`` is added to the application, it is registered as a servlet
 using a default name of ``assets``. If the application needs to have multiple ``AssetBundle``
 instances, the extended constructor should be used to specify a unique name for the ``AssetBundle``.
 
-.. code-block:: java
-
-    @Override
-    public void initialize(Bootstrap<HelloWorldConfiguration> bootstrap) {
-        bootstrap.addBundle(new AssetsBundle("/assets/css", "/css", null, "css"));
-        bootstrap.addBundle(new AssetsBundle("/assets/js", "/js", null, "js"));
-        bootstrap.addBundle(new AssetsBundle("/assets/fonts", "/fonts", null, "fonts"));
-    }
+.. literalinclude:: /examples/core/src/main/java/io/dropwizard/documentation/AssetsApp.java
+    :language: java
+    :start-after: // core: AssetsApp#initialize->AssetsBundle->subfolders
+    :end-before: // core: AssetsApp#initialize->AssetsBundle->subfolders
+    :dedent: 8
 
 .. _man-core-bundles-ssl-reload:
 
@@ -751,12 +604,11 @@ SSL Reload
 By registering the ``SslReloadBundle`` your application can have new certificate information
 reloaded at runtime, so a restart is not necessary.
 
-.. code-block:: java
-
-    @Override
-    public void initialize(Bootstrap<HelloWorldConfiguration> bootstrap) {
-        bootstrap.addBundle(new SslReloadBundle());
-    }
+.. literalinclude:: /examples/core/src/main/java/io/dropwizard/documentation/SslReloadApp.java
+    :language: java
+    :start-after: // core: SslReloadApp#initialize
+    :end-before: // core: SslReloadApp#initialize
+    :dedent: 4
 
 To trigger a reload send a ``POST`` request to ``ssl-reload``
 
@@ -789,41 +641,17 @@ parse the given command line arguments.
 
 Below is an example on how to add a command and have Dropwizard recognize it.
 
-.. code-block:: java
-
-    public class MyCommand extends Command {
-        public MyCommand() {
-            // The name of our command is "hello" and the description printed is
-            // "Prints a greeting"
-            super("hello", "Prints a greeting");
-        }
-
-        @Override
-        public void configure(Subparser subparser) {
-            // Add a command line option
-            subparser.addArgument("-u", "--user")
-                    .dest("user")
-                    .type(String.class)
-                    .required(true)
-                    .help("The user of the program");
-        }
-
-        @Override
-        public void run(Bootstrap<?> bootstrap, Namespace namespace) throws Exception {
-            System.out.println("Hello " + namespace.getString("user"));
-        }
-    }
+.. literalinclude:: /examples/core/src/main/java/io/dropwizard/documentation/MyCommand.java
+    :language: java
+    :start-after: // core: MyCommand
+    :end-before: // core: MyCommand
 
 Dropwizard recognizes our command once we add it in the ``initialize`` stage of our application.
 
-.. code-block:: java
-
-    public class MyApplication extends Application<MyConfiguration>{
-        @Override
-        public void initialize(Bootstrap<DropwizardConfiguration> bootstrap) {
-            bootstrap.addCommand(new MyCommand());
-        }
-    }
+.. literalinclude:: /examples/core/src/main/java/io/dropwizard/documentation/CustomCommandApp.java
+    :language: java
+    :start-after: // core: CustomCommandApp
+    :end-before: // core: CustomCommandApp
 
 To invoke the new functionality, run the following:
 
@@ -844,19 +672,10 @@ file, parse and validate it, and provide your command with an instance of the co
 A ``ConfiguredCommand`` can have additional command line options specified, while keeping the last
 argument the path to the YAML configuration.
 
-.. code-block:: java
-
-    @Override
-    public void configure(Subparser subparser) {
-        super.configure(subparser);
-
-        // Add a command line option
-        subparser.addArgument("-u", "--user")
-                .dest("user")
-                .type(String.class)
-                .required(true)
-                .help("The user of the program");
-    }
+.. literalinclude:: /examples/core/src/main/java/io/dropwizard/documentation/MyConfiguredCommand.java
+    :language: java
+    :start-after: // core: MyConfiguredCommand
+    :end-before: // core: MyConfiguredCommand
 
 For more advanced customization of the command line (for example, having the configuration file
 location specified by ``-c``), adapt the ConfiguredCommand_ class as needed.
@@ -881,27 +700,18 @@ of any number of loggers at runtime (akin to Logback's ``JmxConfigurator``). The
 can be annotated with ``@Timed``, ``@Metered``, and ``@ExceptionMetered``. Dropwizard will automatically
 record runtime information about your tasks. Here's a basic task class:
 
-.. code-block:: java
-
-    public class TruncateDatabaseTask extends Task {
-        private final Database database;
-
-        public TruncateDatabaseTask(Database database) {
-            super("truncate");
-            this.database = database;
-        }
-
-        @Override
-        public void execute(Map<String,List<String>> parameters, PrintWriter output) throws Exception {
-            this.database.truncate();
-        }
-    }
+.. literalinclude:: /examples/core/src/main/java/io/dropwizard/documentation/TruncateDatabaseTask.java
+    :language: java
+    :start-after: // core: TruncateDatabaseTask
+    :end-before: // core: TruncateDatabaseTask
 
 You can then add this task to your application's environment:
 
-.. code-block:: java
-
-    environment.admin().addTask(new TruncateDatabaseTask(database));
+.. literalinclude:: /examples/core/src/main/java/io/dropwizard/documentation/CustomTaskApp.java
+    :language: java
+    :start-after: // core: CustomTaskApp#run
+    :end-before: // core: CustomTaskApp#run
+    :dedent: 4
 
 Running a task can be done by sending a ``POST`` request to ``/tasks/{task-name}`` on the admin
 port. The task will receive any query parameters as arguments. For example::
@@ -912,19 +722,10 @@ port. The task will receive any query parameters as arguments. For example::
 
 You can also extend ``PostBodyTask`` to create a task which uses the body of the post request. Here's an example:
 
-.. code-block:: java
-
-    public class EchoTask extends PostBodyTask {
-        public EchoTask() {
-            super("echo");
-        }
-
-        @Override
-        public void execute(ImmutableMultimap<String, String> parameters, String postBody, PrintWriter output) throws Exception {
-            output.write(postBody);
-            output.flush();
-        }
-    }
+.. literalinclude:: /examples/core/src/main/java/io/dropwizard/documentation/EchoTask.java
+    :language: java
+    :start-after: // core: EchoTask
+    :end-before: // core: EchoTask
 
 .. _man-core-logging:
 
@@ -1355,27 +1156,10 @@ Testing Applications
 All of Dropwizard's APIs are designed with testability in mind, so even your applications can have unit
 tests:
 
-.. code-block:: java
-
-    public class MyApplicationTest {
-        private final Environment environment = mock(Environment.class);
-        private final JerseyEnvironment jersey = mock(JerseyEnvironment.class);
-        private final MyApplication application = new MyApplication();
-        private final MyConfiguration config = new MyConfiguration();
-
-        @BeforeEach
-        public void setup() throws Exception {
-            config.setMyParam("yay");
-            when(environment.jersey()).thenReturn(jersey);
-        }
-
-        @Test
-        public void buildsAThingResource() throws Exception {
-            application.run(config, environment);
-
-            verify(jersey).register(isA(ThingResource.class));
-        }
-    }
+.. literalinclude:: /examples/core/src/test/java/io/dropwizard/documentation/MyApplicationTest.java
+    :language: java
+    :start-after: // core: MyApplicationTest
+    :end-before: // core: MyApplicationTest
 
 We highly recommend Mockito_ for all your mocking needs.
 
@@ -1420,7 +1204,7 @@ Unsurprisingly, most of your day-to-day work with a Dropwizard application will 
 classes, which model the resources exposed in your RESTful API. Dropwizard uses Jersey__ for this,
 so most of this section is just re-hashing or collecting various bits of Jersey documentation.
 
-.. __: http://jersey.github.io/
+.. __: https://jersey.github.io/
 
 Jersey is a framework for mapping various aspects of incoming HTTP requests to POJOs and then
 mapping various aspects of POJOs to outgoing HTTP responses. Here's a basic resource class:
