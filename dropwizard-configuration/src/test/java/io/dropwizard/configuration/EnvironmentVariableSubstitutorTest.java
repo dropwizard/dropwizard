@@ -29,12 +29,6 @@ class EnvironmentVariableSubstitutorTest {
     }
 
     @Test
-    void substitutorUsesEnvironmentVariableLookup() {
-        EnvironmentVariableSubstitutor substitutor = new EnvironmentVariableSubstitutor();
-        assertThat(substitutor.getStringLookup()).isInstanceOf(EnvironmentVariableLookup.class);
-    }
-
-    @Test
     void substitutorReplacesWithEnvironmentVariables() {
         EnvironmentVariableSubstitutor substitutor = new EnvironmentVariableSubstitutor(false);
 
