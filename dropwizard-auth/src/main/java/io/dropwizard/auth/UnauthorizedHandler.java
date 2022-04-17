@@ -1,6 +1,7 @@
 package io.dropwizard.auth;
 
-import javax.annotation.Nullable;
+import org.checkerframework.checker.nullness.qual.Nullable;
+
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 

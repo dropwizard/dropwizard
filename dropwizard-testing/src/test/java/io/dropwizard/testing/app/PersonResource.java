@@ -3,9 +3,9 @@ package io.dropwizard.testing.app;
 import com.codahale.metrics.annotation.Timed;
 import io.dropwizard.jersey.params.IntParam;
 import io.dropwizard.validation.Validated;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.eclipse.jetty.io.EofException;
 
-import javax.annotation.Nullable;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.groups.Default;

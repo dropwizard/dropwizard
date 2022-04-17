@@ -1,5 +1,6 @@
 package io.dropwizard.hibernate;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -9,7 +10,6 @@ import org.hibernate.query.NativeQuery;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 
-import javax.annotation.Nullable;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;

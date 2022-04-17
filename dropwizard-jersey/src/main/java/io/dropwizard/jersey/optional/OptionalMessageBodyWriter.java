@@ -1,8 +1,8 @@
 package io.dropwizard.jersey.optional;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.glassfish.jersey.message.MessageBodyWorkers;
 
-import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
@@ -23,8 +23,7 @@ import static java.util.Objects.requireNonNull;
 public class OptionalMessageBodyWriter implements MessageBodyWriter<Optional<?>> {
 
     @Inject
-    @Nullable
-    private javax.inject.Provider<MessageBodyWorkers> mbw;
+    private javax.inject.@Nullable Provider<MessageBodyWorkers> mbw;
 
     // Jersey ignores this
     @Override

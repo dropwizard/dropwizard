@@ -11,8 +11,8 @@ import freemarker.template.Version;
 import io.dropwizard.views.common.View;
 import io.dropwizard.views.common.ViewRenderException;
 import io.dropwizard.views.common.ViewRenderer;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -39,7 +39,7 @@ public class FreemarkerViewRenderer implements ViewRenderer {
         }
 
         @Override
-        public Configuration load(@Nonnull Class<?> key) throws Exception {
+        public Configuration load(@NonNull Class<?> key) throws Exception {
             final Configuration configuration = new Configuration(incompatibleImprovementsVersion);
             configuration.setObjectWrapper(new DefaultObjectWrapperBuilder(incompatibleImprovementsVersion).build());
             configuration.loadBuiltInEncodingMap();

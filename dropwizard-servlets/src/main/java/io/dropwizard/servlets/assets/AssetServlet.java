@@ -1,8 +1,8 @@
 package io.dropwizard.servlets.assets;
 
 import io.dropwizard.util.Resources;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
-import javax.annotation.Nullable;
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
