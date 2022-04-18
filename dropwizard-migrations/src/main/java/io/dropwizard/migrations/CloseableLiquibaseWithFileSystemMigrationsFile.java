@@ -8,35 +8,42 @@ import liquibase.exception.LiquibaseException;
 import liquibase.resource.FileSystemResourceAccessor;
 
 import java.io.File;
-import java.net.URISyntaxException;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class CloseableLiquibaseWithFileSystemMigrationsFile extends CloseableLiquibase implements AutoCloseable {
-
     CloseableLiquibaseWithFileSystemMigrationsFile(
         ManagedDataSource dataSource,
         Database database,
         String file
     ) throws LiquibaseException, SQLException {
+        this(dataSource,
+            database,
+            file,
+            FileSystems.getDefault());
+    }
+
+    CloseableLiquibaseWithFileSystemMigrationsFile(
+        ManagedDataSource dataSource,
+        Database database,
+        String file,
+        FileSystem fileSystem
+    ) throws LiquibaseException, SQLException {
         super(file,
-            new FileSystemResourceAccessor(getRootPaths().toArray(new File[0])),
+            new FileSystemResourceAccessor(getRootPaths(fileSystem).toArray(new File[0])),
             database,
             dataSource);
     }
 
-    private static List<File> getRootPaths() {
+    private static List<File> getRootPaths(FileSystem fileSystem) {
         List<File> rootPaths = new ArrayList<>();
-        boolean isWindows = System.getProperty("os.name", "").toLowerCase().contains("win");
-        if (isWindows) {
-            rootPaths.add(new File("C:\\"));
-        } else {
-            rootPaths.add(new File("/"));
-        }
+        fileSystem.getRootDirectories().forEach(path -> rootPaths.add(path.toFile()));
         try {
             rootPaths.add(new File(CloseableLiquibase.class.getProtectionDomain().getCodeSource().getLocation().toURI()));
-        } catch (URISyntaxException ignored) {
+        } catch (Exception ignored) {
             // if we cannot acquire the path of the executing jar, skip it
         }
         return rootPaths;
