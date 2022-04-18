@@ -3,6 +3,7 @@ package io.dropwizard.configuration;
 import io.dropwizard.validation.BaseValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 
 import javax.annotation.Nullable;
 import javax.validation.ConstraintViolation;
@@ -12,8 +13,8 @@ import java.util.Locale;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assumptions.assumeThat;
 
+@EnabledIf("isDefaultLocaleEnglish")
 class ConfigurationValidationExceptionTest {
     private static class Example {
         @NotNull
@@ -25,8 +26,6 @@ class ConfigurationValidationExceptionTest {
 
     @BeforeEach
     void setUp() {
-        assumeThat(Locale.getDefault().getLanguage()).isEqualTo("en");
-
         final Validator validator = BaseValidator.newValidator();
         final Set<ConstraintViolation<Example>> violations = validator.validate(new Example());
         this.e = new ConfigurationValidationException("config.yml", violations);
@@ -44,5 +43,9 @@ class ConfigurationValidationExceptionTest {
     void retainsTheSetOfExceptions() {
         assertThat(e.getConstraintViolations())
                 .isNotEmpty();
+    }
+
+    private static boolean isDefaultLocaleEnglish() {
+        return "en".equals(Locale.getDefault().getLanguage());
     }
 }
