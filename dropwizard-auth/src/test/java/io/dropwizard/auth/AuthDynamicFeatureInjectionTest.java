@@ -1,5 +1,6 @@
 package io.dropwizard.auth;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.glassfish.jersey.servlet.ServletProperties;
 import org.glassfish.jersey.test.DeploymentContext;
 import org.glassfish.jersey.test.JerseyTest;
@@ -10,7 +11,6 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.security.Principal;
 
-import javax.annotation.Nullable;
 import javax.annotation.Priority;
 import javax.ws.rs.Priorities;
 import javax.ws.rs.client.WebTarget;

@@ -1,5 +1,6 @@
 package io.dropwizard.auth;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.glassfish.jersey.servlet.ServletProperties;
 import org.glassfish.jersey.test.DeploymentContext;
 import org.glassfish.jersey.test.JerseyTest;
@@ -11,7 +12,6 @@ import java.io.IOException;
 import java.security.Principal;
 import java.util.Optional;
 
-import javax.annotation.Nullable;
 import javax.annotation.Priority;
 import javax.ws.rs.Priorities;
 import javax.ws.rs.WebApplicationException;
@@ -49,11 +49,6 @@ class AuthDynamicFeatureAuthFilterInjectionTest extends JerseyTest {
         @Nullable
         @Context
         private HttpHeaders headers;
-
-        @Override
-        public boolean authorize(Principal principal, String role) {
-            return false;
-        }
 
         @Override
         public boolean authorize(Principal principal, String role, @Nullable ContainerRequestContext requestContext) {
