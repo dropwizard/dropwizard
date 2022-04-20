@@ -4,7 +4,6 @@ import org.glassfish.jersey.InjectionManagerProvider;
 import org.glassfish.jersey.internal.inject.InjectionManager;
 import org.glassfish.jersey.server.model.AnnotatedMethod;
 
-import javax.annotation.Nullable;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.DynamicFeature;
 import javax.ws.rs.container.ResourceInfo;
@@ -25,9 +24,6 @@ import java.util.Optional;
 public class PolymorphicAuthDynamicFeature<T extends Principal> implements Feature, DynamicFeature {
 
     private final Map<Class<? extends T>,  ContainerRequestFilter> authFilterMap;
-
-    @Nullable
-    private InjectionManager injectionManager;
 
     public PolymorphicAuthDynamicFeature(Map<Class<? extends T>,  ContainerRequestFilter> authFilterMap) {
         this.authFilterMap = authFilterMap;
@@ -52,11 +48,7 @@ public class PolymorphicAuthDynamicFeature<T extends Principal> implements Featu
             for (final Annotation annotation : parameterAnnotations[i]) {
                 if (annotation instanceof Auth && authFilterMap.containsKey(paramType)) {
                     final ContainerRequestFilter filter = authFilterMap.get(paramType);
-                    final ContainerRequestFilter injectingFilter = new InjectingFilter(
-                        this.injectionManager,
-                        type == Optional.class ? new WebApplicationExceptionCatchingFilter(filter) : filter
-                    );
-                    context.register(injectingFilter);
+                    context.register(type == Optional.class ? new WebApplicationExceptionCatchingFilter(filter) : filter);
                     return;
                 }
             }
@@ -66,7 +58,12 @@ public class PolymorphicAuthDynamicFeature<T extends Principal> implements Featu
     @Override
     public boolean configure(FeatureContext context) {
         try {
-            this.injectionManager = InjectionManagerProvider.getInjectionManager(context);
+            final InjectionManager injectionManager = InjectionManagerProvider.getInjectionManager(context);
+            if (injectionManager != null) {
+                for (ContainerRequestFilter authFilter : authFilterMap.values()) {
+                    AuthInjectionHelper.inject(injectionManager, authFilter);
+                }
+            }
             return true;
         } catch (IllegalArgumentException illegalArgumentException) {
             return false;
