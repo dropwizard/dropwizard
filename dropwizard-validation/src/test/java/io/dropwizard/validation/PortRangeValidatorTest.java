@@ -1,7 +1,7 @@
 package io.dropwizard.validation;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 
 import javax.validation.Valid;
 import javax.validation.Validator;
@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.Locale;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assumptions.assumeThat;
 
+@EnabledIf("isDefaultLocaleEnglish")
 class PortRangeValidatorTest {
     @SuppressWarnings("PublicField")
     public static class Example {
@@ -29,13 +29,8 @@ class PortRangeValidatorTest {
     private final Validator validator = BaseValidator.newValidator();
     private final Example example = new Example();
 
-    @BeforeEach
-    void setUp() throws Exception {
-        assumeThat(Locale.getDefault().getLanguage()).isEqualTo("en");
-    }
-
     @Test
-    void acceptsNonPrivilegedPorts() throws Exception {
+    void acceptsNonPrivilegedPorts() {
         example.port = 2048;
 
         assertThat(validator.validate(example))
@@ -43,7 +38,7 @@ class PortRangeValidatorTest {
     }
 
     @Test
-    void acceptsDynamicPorts() throws Exception {
+    void acceptsDynamicPorts() {
         example.port = 0;
 
         assertThat(validator.validate(example))
@@ -51,7 +46,7 @@ class PortRangeValidatorTest {
     }
 
     @Test
-    void rejectsNegativePorts() throws Exception {
+    void rejectsNegativePorts() {
         example.port = -1;
 
         assertThat(ConstraintViolations.format(validator.validate(example)))
@@ -59,7 +54,7 @@ class PortRangeValidatorTest {
     }
 
     @Test
-    void allowsForCustomMinimumPorts() throws Exception {
+    void allowsForCustomMinimumPorts() {
         example.otherPort = 8080;
 
         assertThat(ConstraintViolations.format(validator.validate(example)))
@@ -67,7 +62,7 @@ class PortRangeValidatorTest {
     }
 
     @Test
-    void allowsForCustomMaximumPorts() throws Exception {
+    void allowsForCustomMaximumPorts() {
         example.otherPort = 16000;
 
         assertThat(ConstraintViolations.format(validator.validate(example)))
@@ -79,5 +74,9 @@ class PortRangeValidatorTest {
         example.ports = Collections.singletonList(-1);
         assertThat(ConstraintViolations.format(validator.validate(example)))
             .containsOnly("ports[0].<list element> must be between 1 and 65535");
+    }
+
+    private static boolean isDefaultLocaleEnglish() {
+        return "en".equals(Locale.getDefault().getLanguage());
     }
 }

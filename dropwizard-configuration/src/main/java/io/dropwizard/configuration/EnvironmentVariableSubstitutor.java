@@ -22,7 +22,7 @@ public class EnvironmentVariableSubstitutor extends StringSubstitutor {
      * @see org.apache.commons.text.StringSubstitutor#setEnableSubstitutionInVariables(boolean)
      */
     public EnvironmentVariableSubstitutor(boolean strict, boolean substitutionInVariables) {
-        super(new EnvironmentVariableLookup());
+        super(System::getenv);
         this.setEnableUndefinedVariableException(strict);
         this.setEnableSubstitutionInVariables(substitutionInVariables);
     }
