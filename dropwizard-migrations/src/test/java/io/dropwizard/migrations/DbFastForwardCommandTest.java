@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.parallel.ExecutionMode.SAME_THREAD;
 @Execution(SAME_THREAD)
 class DbFastForwardCommandTest {
 
-    private static final Pattern NEWLINE_PATTERN = Pattern.compile(System.lineSeparator());
+    private static final Pattern NEWLINE_PATTERN = Pattern.compile("\\R");
     private final DbFastForwardCommand<TestMigrationConfiguration> fastForwardCommand = new DbFastForwardCommand<>(
         TestMigrationConfiguration::getDataSource, TestMigrationConfiguration.class, "migrations.xml");
     private TestMigrationConfiguration conf;
