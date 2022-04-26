@@ -69,6 +69,8 @@ logging:
 
   appenders:
     - type: console
+      # add target for test
+      target: stdout
     - type: file
       threshold: INFO
       logFormat: "%-6level [%d{HH:mm:ss.SSS}] [%t] %logger{5} - %X{code} %msg %n"

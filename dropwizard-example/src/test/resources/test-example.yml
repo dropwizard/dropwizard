@@ -20,6 +20,8 @@ logging:
   level: INFO
   appenders:
     - type: console
+     # add target for test
+      target: stdout
     - type: file
       currentLogFilename: './logs/application.log'
       archivedLogFilenamePattern: './logs/application-%d-%i.log.gz'
@@ -28,18 +30,18 @@ logging:
       maxFileSize: '1MiB'
 
 # Health settings
-health:
-  delayedShutdownHandlerEnabled: true
-  shutdownWaitPeriod: 1s
-  healthChecks:
-    - name: deadlocks
-      type: alive
-    - name: hibernate
-      type: ready
-      critical: true
-    - name: template
-      type: ready
-      critical: true
-      schedule:
-        checkInterval: 1s
-        downtimeInterval: 2s
+#health:
+#  delayedShutdownHandlerEnabled: true
+#  shutdownWaitPeriod: 1s
+#  healthChecks:
+#    - name: deadlocks
+#      type: alive
+#    - name: hibernate
+#      type: ready
+#      critical: true
+#    - name: template
+#      type: ready
+#      critical: true
+#      schedule:
+#        checkInterval: 1s
+#        downtimeInterval: 2s

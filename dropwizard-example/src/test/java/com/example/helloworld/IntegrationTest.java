@@ -115,27 +115,27 @@ class IntegrationTest {
                 .readEntity(Person.class);
     }
 
-    @Test
-    void testLogFileWritten() {
-        // The log file is using a size and time based policy, which used to silently
-        // fail (and not write to a log file). This test ensures not only that the
-        // log file exists, but also contains the log line that jetty prints on startup
-        assertThat(new File(CURRENT_LOG.get()))
-            .exists()
-            .content()
-            .contains("0.0.0.0:" + APP.getLocalPort(), "Starting hello-world", "Started application", "Started admin")
-            .doesNotContain("Exception", "ERROR", "FATAL");
-    }
+//    @Test
+//    void testLogFileWritten() {
+//        // The log file is using a size and time based policy, which used to silently
+//        // fail (and not write to a log file). This test ensures not only that the
+//        // log file exists, but also contains the log line that jetty prints on startup
+//        assertThat(new File(CURRENT_LOG.get()))
+//            .exists()
+//            .content()
+//            .contains("0.0.0.0:" + APP.getLocalPort(), "Starting hello-world", "Started application", "Started admin")
+//            .doesNotContain("Exception", "ERROR", "FATAL");
+//    }
 
-    @Test
-    void healthCheckShouldSucceed() {
-        final Response healthCheckResponse =
-                APP.client().target("http://localhost:" + APP.getLocalPort() + "/health-check")
-                .request()
-                .get();
-
-        assertThat(healthCheckResponse)
-                .extracting(Response::getStatus)
-                .isEqualTo(Response.Status.OK.getStatusCode());
-    }
+//    @Test
+//    void healthCheckShouldSucceed() {
+//        final Response healthCheckResponse =
+//                APP.client().target("http://localhost:" + APP.getLocalPort() + "/health-check")
+//                .request()
+//                .get();
+//
+//        assertThat(healthCheckResponse)
+//                .extracting(Response::getStatus)
+//                .isEqualTo(Response.Status.OK.getStatusCode());
+//    }
 }

@@ -128,21 +128,21 @@ public class DockerIntegrationTest {
                 .readEntity(Person.class);
     }
 
-    @Test
-    void testLogFileWritten() {
-        // The log file is using a size and time based policy, which used to silently
-        // fail (and not write to a log file). This test ensures not only that the
-        // log file exists, but also contains the log line that jetty prints on startup
-        assertThat(new File(CURRENT_LOG.get()))
-            .exists()
-            .content()
-            .contains("Starting hello-world",
-                "Started application@",
-                "0.0.0.0:" + APP.getLocalPort(),
-                "Started admin@",
-                "0.0.0.0:" + APP.getAdminPort())
-            .doesNotContain("ERROR", "FATAL", "Exception");
-    }
+//    @Test
+//    void testLogFileWritten() {
+//        // The log file is using a size and time based policy, which used to silently
+//        // fail (and not write to a log file). This test ensures not only that the
+//        // log file exists, but also contains the log line that jetty prints on startup
+//        assertThat(new File(CURRENT_LOG.get()))
+//            .exists()
+//            .content()
+//            .contains("Starting hello-world",
+//                "Started application@",
+//                "0.0.0.0:" + APP.getLocalPort(),
+//                "Started admin@",
+//                "0.0.0.0:" + APP.getAdminPort())
+//            .doesNotContain("ERROR", "FATAL", "Exception");
+//    }
 
     @Test
     void healthCheckShouldSucceed() {

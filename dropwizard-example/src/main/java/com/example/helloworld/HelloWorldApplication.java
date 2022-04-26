@@ -16,6 +16,7 @@ import com.example.helloworld.resources.PersonResource;
 import com.example.helloworld.resources.ProtectedResource;
 import com.example.helloworld.resources.ViewResource;
 import com.example.helloworld.tasks.EchoTask;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import io.dropwizard.Application;
 import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.auth.AuthDynamicFeature;
@@ -60,6 +61,10 @@ public class HelloWorldApplication extends Application<HelloWorldConfiguration> 
                         new EnvironmentVariableSubstitutor(false)
                 )
         );
+        // Using customized JSON Deserialization Settings
+        bootstrap.getObjectMapper()
+              //  .enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL)
+        .enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE);
 
         bootstrap.addCommand(new RenderCommand());
         bootstrap.addBundle(new AssetsBundle());
