@@ -12,21 +12,21 @@ public abstract class AuthorizationContext<P extends Principal> {
     private final @Nullable
     ContainerRequestContext requestContext;
 
-    protected AuthorizationContext(P principal, String role, @Nullable ContainerRequestContext requestContext) {
+    public AuthorizationContext(P principal, String role, @Nullable ContainerRequestContext requestContext) {
         this.principal = principal;
         this.role = role;
         this.requestContext = requestContext;
     }
 
-    protected P getPrincipal() {
+    public P getPrincipal() {
         return principal;
     }
 
-    protected String getRole() {
+    public String getRole() {
         return role;
     }
 
-    @Nullable protected ContainerRequestContext getRequestContext() {
+    @Nullable public ContainerRequestContext getRequestContext() {
         return requestContext;
     }
 
