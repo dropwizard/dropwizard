@@ -24,12 +24,9 @@ class DbStatusCommandTest {
     private final DbStatusCommand<TestMigrationConfiguration> statusCommand =
             new DbStatusCommand<>(new TestMigrationDatabaseConfiguration(), TestMigrationConfiguration.class, "migrations.xml");
     private final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    private TestMigrationConfiguration conf;
 
     @BeforeEach
     void setUp() {
-        conf = MigrationTestSupport.createConfiguration();
-
         statusCommand.setOutputStream(new PrintStream(baos));
     }
 
@@ -41,24 +38,24 @@ class DbStatusCommandTest {
         final TestMigrationConfiguration existedDbConf = MigrationTestSupport.createConfiguration(existedDbUrl);
 
         statusCommand.run(null, new Namespace(Collections.emptyMap()), existedDbConf);
-        assertThat(baos.toString(UTF_8.name())).matches("\\S+ is up to date" + System.lineSeparator());
+        assertThat(baos.toString(UTF_8.name())).matches("\\S+ is up to date\\R");
     }
 
     @Test
     void testRun() throws Exception {
-        statusCommand.run(null, new Namespace(Collections.emptyMap()), conf);
+        statusCommand.run(null, new Namespace(Collections.emptyMap()), MigrationTestSupport.createConfiguration());
         assertThat(baos.toString(UTF_8.name())).matches(
-                "3 change sets have not been applied to \\S+" + System.lineSeparator());
+                "3 change sets have not been applied to \\S+\\R");
     }
 
     @Test
     void testVerbose() throws Exception {
-        statusCommand.run(null, new Namespace(Collections.singletonMap("verbose", true)), conf);
+        statusCommand.run(null, new Namespace(Collections.singletonMap("verbose", true)), MigrationTestSupport.createConfiguration());
         assertThat(baos.toString(UTF_8.name())).matches(
-                "3 change sets have not been applied to \\S+" + System.lineSeparator() +
-                        "\\s*migrations\\.xml::1::db_dev"  + System.lineSeparator() +
-                        "\\s*migrations\\.xml::2::db_dev"  + System.lineSeparator() +
-                        "\\s*migrations\\.xml::3::db_dev" + System.lineSeparator());
+                "3 change sets have not been applied to \\S+\\R" +
+                        "\\s*migrations\\.xml::1::db_dev\\R" +
+                        "\\s*migrations\\.xml::2::db_dev\\R" +
+                        "\\s*migrations\\.xml::3::db_dev\\R");
     }
 
     @Test

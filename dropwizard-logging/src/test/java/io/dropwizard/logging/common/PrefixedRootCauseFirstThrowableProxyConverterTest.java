@@ -63,12 +63,11 @@ class PrefixedRootCauseFirstThrowableProxyConverterTest {
 
     @Test
     void prefixesExceptionsWithExclamationMarks()  {
-        assertThat(converter.throwableProxyToString(proxy)
-                .lines()
-                .filter(Objects::nonNull)
-                .filter(s -> !s.isEmpty()))
-            .isNotEmpty()
-            .allSatisfy(line -> assertThat(line).startsWith("!"));
+        assertThat(converter.throwableProxyToString(proxy).split("\\R"))
+                .filteredOn(Objects::nonNull)
+                .filteredOn(s -> !s.isEmpty())
+                .isNotEmpty()
+                .allSatisfy(line -> assertThat(line).startsWith("!"));
     }
 
     @Test
