@@ -142,7 +142,7 @@ Tutorial
 First, add the ``dropwizard-bom`` bill of materials (BOM) into the ``dependencyManagement`` section of your POM
 with the current version of Dropwizard (which is |release|):
 
-.. literalinclude:: /examples/getting-started/pom.xml
+.. dropwizard_literalinclude:: /examples/getting-started/pom.xml
     :language: xml
     :start-after: <!-- getting-started: dependencyManagement -->
     :end-before: <!-- getting-started: dependencyManagement -->
@@ -152,7 +152,7 @@ Add the ``dropwizard-core`` library as a dependency:
 
 .. _gs-pom-dependencies:
 
-.. literalinclude:: /examples/getting-started/pom.xml
+.. dropwizard_literalinclude:: /examples/getting-started/pom.xml
     :language: xml
     :start-after: <!-- getting-started: dependencies -->
     :end-before: <!-- getting-started: dependencies -->
@@ -182,7 +182,7 @@ Here's what our configuration class will look like, full `example conf here`_:
 
 .. _gs-configuration-class:
 
-.. literalinclude:: /examples/getting-started/src/main/java/com/example/helloworld/HelloWorldConfiguration.java
+.. dropwizard_literalinclude:: /examples/getting-started/src/main/java/com/example/helloworld/HelloWorldConfiguration.java
     :language: java
 
 There's a lot going on here, so let's unpack a bit of it.
@@ -214,7 +214,7 @@ Our YAML file will then look like the below, full `example yml here`_:
 
 .. _gs-yaml-file:
 
-.. literalinclude:: /examples/getting-started/src/config/hello-world.yaml
+.. dropwizard_literalinclude:: /examples/getting-started/src/config/hello-world.yaml
     :language: yaml
 
 Dropwizard has *many* more configuration parameters than that, but they all have sane defaults so
@@ -233,7 +233,7 @@ of your Dropwizard application. The ``Application`` class pulls together the var
 commands which provide basic functionality. (More on that later.) For now, though, our
 ``HelloWorldApplication`` looks like this:
 
-.. literalinclude:: /examples/getting-started/src/main/java/com/example/helloworld/HelloWorldApplicationStart.java
+.. dropwizard_literalinclude:: /examples/getting-started/src/main/java/com/example/helloworld/HelloWorldApplicationStart.java
     :language: java
 
 As you can see, ``HelloWorldApplication`` is parameterized with the application's configuration
@@ -267,7 +267,7 @@ representation of the saying. (Thankfully, this is a fairly straight-forward ind
 
 To model this representation, we'll create a representation class:
 
-.. literalinclude:: /examples/getting-started/src/main/java/com/example/helloworld/api/Saying.java
+.. dropwizard_literalinclude:: /examples/getting-started/src/main/java/com/example/helloworld/api/Saying.java
     :language: java
 
 This is a pretty simple POJO, but there are a few things worth noting here.
@@ -298,7 +298,7 @@ Jersey resources are the meat-and-potatoes of a Dropwizard application. Each res
 associated with a URI template. For our application, we need a resource which returns new ``Saying``
 instances from the URI ``/hello-world``, so our resource class looks like this:
 
-.. literalinclude:: /examples/getting-started/src/main/java/com/example/helloworld/resources/HelloWorldResource.java
+.. dropwizard_literalinclude:: /examples/getting-started/src/main/java/com/example/helloworld/resources/HelloWorldResource.java
     :language: java
 
 Finally, we're in the thick of it! Let's start from the top and work our way down.
@@ -355,7 +355,7 @@ new resource class. In its ``run`` method we can read the template and default n
 ``HelloWorldConfiguration`` instance, create a new ``HelloWorldResource`` instance, and then add
 it to the application's Jersey environment:
 
-.. literalinclude:: /examples/getting-started/src/main/java/com/example/helloworld/HelloWorldApplication.java
+.. dropwizard_literalinclude:: /examples/getting-started/src/main/java/com/example/helloworld/HelloWorldApplication.java
     :language: java
     :start-after: // getting-started: HelloWorldApplication#run->HelloWorldResource
     :end-before: // getting-started: HelloWorldApplication#run->HelloWorldResource
@@ -391,7 +391,7 @@ Since formatting strings is not likely to fail while an application is running (
 database connection pool), we'll have to get a little creative here. We'll add a health check to
 make sure we can actually format the provided template:
 
-.. literalinclude:: /examples/getting-started/src/main/java/com/example/helloworld/health/TemplateHealthCheck.java
+.. dropwizard_literalinclude:: /examples/getting-started/src/main/java/com/example/helloworld/health/TemplateHealthCheck.java
     :language: java
 
 ``TemplateHealthCheck`` checks for two things: that the provided template is actually a well-formed
@@ -410,7 +410,7 @@ Adding A Health Check
 As with most things in Dropwizard, we create a new instance with the appropriate parameters and add
 it to the ``Environment``:
 
-.. literalinclude:: /examples/getting-started/src/main/java/com/example/helloworld/HelloWorldApplication.java
+.. dropwizard_literalinclude:: /examples/getting-started/src/main/java/com/example/helloworld/HelloWorldApplication.java
     :language: java
     :start-after: // getting-started: HelloWorldApplication#run->TemplateHealthCheck
     :end-before: // getting-started: HelloWorldApplication#run->TemplateHealthCheck
@@ -431,7 +431,7 @@ libraries. To start building our Hello World application as a fat JAR, we need t
 plugin called ``maven-shade``. In the ``<build><plugins>`` section of your ``pom.xml`` file, add
 this:
 
-.. literalinclude:: /examples/getting-started/pom.xml
+.. dropwizard_literalinclude:: /examples/getting-started/pom.xml
     :language: xml
     :start-after: <!-- getting-started: maven-shade-plugin -->
     :end-before: <!-- getting-started: maven-shade-plugin -->
@@ -474,7 +474,7 @@ Dropwizard can also use the project version if it's embedded in the JAR's manife
 ``Implementation-Version``. To embed this information using Maven, add the following to the
 ``<build><plugins>`` section of your ``pom.xml`` file:
 
-.. literalinclude:: /examples/getting-started/pom.xml
+.. dropwizard_literalinclude:: /examples/getting-started/pom.xml
     :language: xml
     :start-after: <!-- getting-started: maven-jar-plugin -->
     :end-before: <!-- getting-started: maven-jar-plugin -->

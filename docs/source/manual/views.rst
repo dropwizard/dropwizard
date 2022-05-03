@@ -13,7 +13,7 @@ Dropwizard Views
 
 To enable views for your :ref:`Application <man-core-application>`, add the ``ViewBundle`` in the ``initialize`` method of your Application class:
 
-.. literalinclude:: /examples/views/src/main/java/io/dropwizard/documentation/ViewsApp.java
+.. dropwizard_literalinclude:: /examples/views/src/main/java/io/dropwizard/documentation/ViewsApp.java
     :language: java
     :start-after: // views: ViewsApp#initialize->ViewBundle
     :end-before: // views: ViewsApp#initialize->ViewBundle
@@ -21,7 +21,7 @@ To enable views for your :ref:`Application <man-core-application>`, add the ``Vi
 
 You can pass configuration through to view renderers by overriding ``getViewConfiguration``:
 
-.. literalinclude:: /examples/views/src/main/java/io/dropwizard/documentation/ViewsApp.java
+.. dropwizard_literalinclude:: /examples/views/src/main/java/io/dropwizard/documentation/ViewsApp.java
     :language: java
     :start-after: // views: ViewsApp#initialize->ViewBundle->custom
     :end-before: // views: ViewsApp#initialize->ViewBundle->custom
@@ -29,12 +29,12 @@ You can pass configuration through to view renderers by overriding ``getViewConf
 
 The returned map should have, for each renderer (such as ``freemarker`` or ``mustache``), a ``Map<String, String>`` describing how to configure the renderer. Specific keys and their meanings can be found in the FreeMarker and Mustache documentation:
 
-.. literalinclude:: /examples/views/src/config/config.yml
+.. dropwizard_literalinclude:: /examples/views/src/config/config.yml
     :language: yaml
 
 Then, in your :ref:`resource method <man-core-resources>`, add a ``View`` class:
 
-.. literalinclude:: /examples/views/src/main/java/io/dropwizard/documentation/PersonView.java
+.. dropwizard_literalinclude:: /examples/views/src/main/java/io/dropwizard/documentation/PersonView.java
     :language: java
 
 ``person.ftl`` is the path of the template relative to the class name. If this class was
@@ -52,7 +52,7 @@ If your template path contains ``.ftl``, ``.ftlh``, or ``.ftlx``, it'll be inter
 
 Your template file might look something like this:
 
-.. literalinclude:: /examples/views/src/main/resources/person.ftl
+.. dropwizard_literalinclude:: /examples/views/src/main/resources/person.ftl
     :language: none
     :emphasize-lines: 1,5
 
@@ -63,7 +63,7 @@ your IDE.
 
 Once you have your view and template, you can simply return an instance of your ``View`` subclass:
 
-.. literalinclude:: /examples/views/src/main/java/io/dropwizard/documentation/PersonResource.java
+.. dropwizard_literalinclude:: /examples/views/src/main/java/io/dropwizard/documentation/PersonResource.java
     :language: java
 
 .. tip::
@@ -89,7 +89,7 @@ generic HTML message. The exact error will logged under error mode.
 To customize the behavior, create an exception mapper that will override the default one by looking
 for ``ViewRenderException``:
 
-.. literalinclude:: /examples/views/src/main/java/io/dropwizard/documentation/ViewsApp.java
+.. dropwizard_literalinclude:: /examples/views/src/main/java/io/dropwizard/documentation/ViewsApp.java
     :language: java
     :start-after: // views: ViewsApp#run->ExtendedExceptionMapper->ViewRenderException
     :end-before: // views: ViewsApp#run->ExtendedExceptionMapper->ViewRenderException
@@ -98,7 +98,7 @@ for ``ViewRenderException``:
 As an example, to return a 404 instead of a internal server error when one's
 mustache templates can't be found:
 
-.. literalinclude:: /examples/views/src/main/java/io/dropwizard/documentation/ViewsApp.java
+.. dropwizard_literalinclude:: /examples/views/src/main/java/io/dropwizard/documentation/ViewsApp.java
     :language: java
     :start-after: // views: ViewsApp#run->ExtendedExceptionMapper->MustacheNotFoundException
     :end-before: // views: ViewsApp#run->ExtendedExceptionMapper->MustacheNotFoundException
@@ -110,7 +110,7 @@ Caching
 By default templates are cached to improve loading time. If you want to disable it during the development mode,
 set the ``cache`` property to ``false`` in the view configuration.
 
-.. literalinclude:: /examples/views/src/config/config.yml
+.. dropwizard_literalinclude:: /examples/views/src/config/config.yml
     :language: yaml
     :start-after: # views: config->mustache
     :end-before: # views: config->mustache
@@ -122,7 +122,7 @@ To get HTML error pages that fit in with your application, you can use a custom 
 takes an ``ErrorMessage`` parameter in its constructor, and hook it up by registering a instance of
 ``ErrorEntityWriter``.
 
-.. literalinclude:: /examples/views/src/main/java/io/dropwizard/documentation/ViewsApp.java
+.. dropwizard_literalinclude:: /examples/views/src/main/java/io/dropwizard/documentation/ViewsApp.java
     :language: java
     :start-after: // views: ViewsApp#run->ErrorEntityWriter->ErrorMessage
     :end-before: // views: ViewsApp#run->ErrorEntityWriter->ErrorMessage
@@ -131,7 +131,7 @@ takes an ``ErrorMessage`` parameter in its constructor, and hook it up by regist
 For validation error messages, you'll need to register another ``ErrorEntityWriter`` that handles
 ``ValidationErrorMessage`` objects.
 
-.. literalinclude:: /examples/views/src/main/java/io/dropwizard/documentation/ViewsApp.java
+.. dropwizard_literalinclude:: /examples/views/src/main/java/io/dropwizard/documentation/ViewsApp.java
     :language: java
     :start-after: // views: ViewsApp#run->ErrorEntityWriter->ValidationErrorMessage
     :end-before: // views: ViewsApp#run->ErrorEntityWriter->ValidationErrorMessage
