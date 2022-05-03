@@ -15,30 +15,9 @@ import sys
 import os
 import re
 
-import xml.dom.minidom
+sys.path.append('../')
 
-def child_node(node, name):
-    for i in node.childNodes:
-        if (i.nodeType == i.ELEMENT_NODE) and (i.tagName == name):
-            return i
-    return None
-
-
-def node_text(node):
-    return node.childNodes[0].data
-
-
-def maven_version(pom):
-    dom = xml.dom.minidom.parse(pom)
-    project = dom.childNodes[0]
-
-    version = child_node(project, 'version')
-    if version:
-        return node_text(version)
-
-    parent = child_node(project, 'parent')
-    version = child_node(parent, 'version')
-    return node_text(version)
+from source.utils import maven_version
 
 
 def get_version():
@@ -53,9 +32,11 @@ def setup(app):
 # If your documentation needs a minimal Sphinx version, state it here.
 #needs_sphinx = '1.0'
 
+sys.path.append(os.path.abspath("./_ext"))
+
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
-extensions = ['sphinx.ext.extlinks']
+extensions = ['sphinx.ext.extlinks', 'dropwizard_literalinclude']
 
 # Add any paths that contain templates here, relative to this directory.
 #templates_path = ['ytemplates']
