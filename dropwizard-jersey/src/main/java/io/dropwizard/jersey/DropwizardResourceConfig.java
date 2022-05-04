@@ -13,6 +13,7 @@ import io.dropwizard.util.JavaVersion;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.LoaderClassPath;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.glassfish.jersey.internal.inject.AbstractBinder;
 import org.glassfish.jersey.internal.inject.Providers;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -26,7 +27,6 @@ import org.glassfish.jersey.server.monitoring.RequestEventListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.ArrayList;

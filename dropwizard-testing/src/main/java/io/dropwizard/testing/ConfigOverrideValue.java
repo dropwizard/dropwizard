@@ -1,6 +1,7 @@
 package io.dropwizard.testing;
 
-import javax.annotation.Nullable;
+import org.checkerframework.checker.nullness.qual.Nullable;
+
 import java.util.function.Supplier;
 
 public class ConfigOverrideValue extends ConfigOverride {

@@ -1,14 +1,15 @@
 package io.dropwizard.health.check.http;
 
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
+
 import java.util.Objects;
 
 public class HttpHealthResponse {
     private final int status;
-    @Nonnull
+    @NonNull
     private final String body;
 
-    public HttpHealthResponse(final int status, @Nonnull final String body) {
+    public HttpHealthResponse(final int status, @NonNull final String body) {
         this.status = status;
         this.body = Objects.requireNonNull(body);
     }
@@ -17,7 +18,7 @@ public class HttpHealthResponse {
         return status;
     }
 
-    @Nonnull
+    @NonNull
     public String getBody() {
         return body;
     }

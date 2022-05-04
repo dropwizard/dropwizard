@@ -10,6 +10,7 @@ import org.apache.hc.core5.http.Header;
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.io.entity.AbstractHttpEntity;
 import org.apache.hc.core5.util.VersionInfo;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.client.ClientRequest;
 import org.glassfish.jersey.client.ClientResponse;
@@ -17,7 +18,6 @@ import org.glassfish.jersey.client.spi.AsyncConnectorCallback;
 import org.glassfish.jersey.client.spi.Connector;
 import org.glassfish.jersey.message.internal.Statuses;
 
-import javax.annotation.Nullable;
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;

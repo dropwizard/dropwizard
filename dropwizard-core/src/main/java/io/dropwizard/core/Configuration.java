@@ -8,8 +8,8 @@ import io.dropwizard.health.HealthFactory;
 import io.dropwizard.logging.common.DefaultLoggingFactory;
 import io.dropwizard.logging.common.LoggingFactory;
 import io.dropwizard.metrics.common.MetricsFactory;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
-import javax.annotation.Nullable;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.Optional;

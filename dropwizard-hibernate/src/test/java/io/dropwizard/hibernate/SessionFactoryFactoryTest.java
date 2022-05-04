@@ -6,7 +6,7 @@ import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.db.ManagedPooledDataSource;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import io.dropwizard.logging.common.BootstrapLogging;
-import io.dropwizard.core.setup.Environment;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.hibernate.EmptyInterceptor;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -19,9 +19,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
-import javax.annotation.Nullable;
-import java.time.ZonedDateTime;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.Map;
 

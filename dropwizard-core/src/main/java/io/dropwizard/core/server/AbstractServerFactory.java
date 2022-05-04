@@ -26,6 +26,7 @@ import io.dropwizard.servlets.ThreadNameFilter;
 import io.dropwizard.util.Duration;
 import io.dropwizard.validation.MinDuration;
 import io.dropwizard.validation.ValidationMethod;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ErrorHandler;
@@ -39,7 +40,6 @@ import org.eclipse.jetty.util.thread.ThreadPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nullable;
 import javax.servlet.DispatcherType;
 import javax.servlet.Servlet;
 import javax.validation.Valid;
@@ -50,7 +50,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URL;
 import java.util.EnumSet;
 import java.util.Optional;
 import java.util.Set;
@@ -705,17 +704,17 @@ public abstract class AbstractServerFactory implements ServerFactory {
     @SuppressWarnings("Slf4jFormatShouldBeConst")
     protected void printBanner(String name) {
         String msg = "Starting " + name;
-        final URL resource = Thread.currentThread().getContextClassLoader().getResource("banner.txt");
-        if (resource != null) {
-            try (final InputStream resourceStream = resource.openStream();
-                 final InputStreamReader inputStreamReader = new InputStreamReader(resourceStream);
-                 final BufferedReader bufferedReader = new BufferedReader(inputStreamReader)) {
-                final String banner = bufferedReader
+        try (final InputStream resourceStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("banner.txt")) {
+            if (resourceStream != null) {
+                try (final InputStreamReader inputStreamReader = new InputStreamReader(resourceStream);
+                     final BufferedReader bufferedReader = new BufferedReader(inputStreamReader)) {
+                    final String banner = bufferedReader
                         .lines()
                         .collect(Collectors.joining(System.lineSeparator()));
-                msg = String.format("Starting %s%n%s", name, banner);
-            } catch (IllegalArgumentException | IOException ignored) {
+                    msg = String.format("Starting %s%n%s", name, banner);
+                }
             }
+        } catch (IllegalArgumentException | IOException ignored) {
         }
         LOGGER.info(msg);
     }

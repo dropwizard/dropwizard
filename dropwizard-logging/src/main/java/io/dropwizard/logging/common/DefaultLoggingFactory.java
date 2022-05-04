@@ -26,8 +26,8 @@ import io.dropwizard.logging.common.filter.LevelFilterFactory;
 import io.dropwizard.logging.common.filter.ThresholdLevelFilterFactory;
 import io.dropwizard.logging.common.layout.DropwizardLayoutFactory;
 import io.dropwizard.logging.common.layout.LayoutFactory;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
-import javax.annotation.Nullable;
 import javax.management.InstanceAlreadyExistsException;
 import javax.management.MBeanRegistrationException;
 import javax.management.MBeanServer;

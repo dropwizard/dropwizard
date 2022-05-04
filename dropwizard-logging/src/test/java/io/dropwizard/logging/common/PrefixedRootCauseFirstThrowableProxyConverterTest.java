@@ -1,10 +1,10 @@
 package io.dropwizard.logging.common;
 
 import ch.qos.logback.classic.spi.ThrowableProxy;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import javax.annotation.Nullable;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.util.Collections;
@@ -63,12 +63,11 @@ class PrefixedRootCauseFirstThrowableProxyConverterTest {
 
     @Test
     void prefixesExceptionsWithExclamationMarks()  {
-        assertThat(converter.throwableProxyToString(proxy)
-                .lines()
-                .filter(Objects::nonNull)
-                .filter(s -> !s.isEmpty()))
-            .isNotEmpty()
-            .allSatisfy(line -> assertThat(line).startsWith("!"));
+        assertThat(converter.throwableProxyToString(proxy).split("\\R"))
+                .filteredOn(Objects::nonNull)
+                .filteredOn(s -> !s.isEmpty())
+                .isNotEmpty()
+                .allSatisfy(line -> assertThat(line).startsWith("!"));
     }
 
     @Test

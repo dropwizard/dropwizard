@@ -7,10 +7,10 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.validation.Validated;
-import org.junit.jupiter.api.BeforeEach;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 
-import javax.annotation.Nullable;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
@@ -33,13 +33,13 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.assertj.core.api.Assumptions.assumeThat;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 @SuppressWarnings("unchecked")
+@EnabledIf("isDefaultLocaleEnglish")
 public class JacksonMessageBodyProviderTest {
     private static final Annotation[] NONE = new Annotation[0];
 
@@ -103,11 +103,6 @@ public class JacksonMessageBodyProviderTest {
     private final ObjectMapper mapper = spy(Jackson.newObjectMapper());
     private final JacksonMessageBodyProvider provider =
             new JacksonMessageBodyProvider(mapper);
-
-    @BeforeEach
-    void setUp() throws Exception {
-        assumeThat(Locale.getDefault().getLanguage()).isEqualTo("en");
-    }
 
     @Test
     void readsDeserializableTypes() {
@@ -289,4 +284,7 @@ public class JacksonMessageBodyProviderTest {
         assertThat((Iterable<Example>) obj).extracting(item -> item.id).contains(1 , 2);
     }
 
+    private static boolean isDefaultLocaleEnglish() {
+        return "en".equals(Locale.getDefault().getLanguage());
+    }
 }

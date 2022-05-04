@@ -1,8 +1,7 @@
 package io.dropwizard.util;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.junit.jupiter.api.Test;
-
-import javax.annotation.Nullable;
 
 import static io.dropwizard.util.Throwables.findThrowableInChain;
 import static org.assertj.core.api.Assertions.assertThat;

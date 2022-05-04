@@ -1,8 +1,8 @@
 package io.dropwizard.jersey.jsr310;
 
 import io.dropwizard.jersey.params.AbstractParam;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
-import javax.annotation.Nullable;
 import java.time.Year;
 
 /**

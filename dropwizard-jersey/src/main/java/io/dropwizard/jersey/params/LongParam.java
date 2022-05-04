@@ -1,6 +1,6 @@
 package io.dropwizard.jersey.params;
 
-import javax.annotation.Nullable;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * A parameter encapsulating long values. All non-decimal values will return a {@code 400 Bad

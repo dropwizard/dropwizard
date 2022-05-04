@@ -6,8 +6,8 @@ import io.dropwizard.jackson.Jackson;
 import io.dropwizard.logging.common.layout.DiscoverableLayoutFactory;
 import io.dropwizard.logging.json.layout.JsonFormatter;
 import io.dropwizard.logging.json.layout.TimestampFormatter;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
-import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 import java.util.Collections;
 import java.util.Map;

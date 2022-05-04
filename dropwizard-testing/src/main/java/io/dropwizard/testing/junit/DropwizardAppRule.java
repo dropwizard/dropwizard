@@ -11,12 +11,12 @@ import io.dropwizard.jersey.jackson.JacksonFeature;
 import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.DropwizardTestSupport;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.client.HttpUrlConnectorProvider;
 import org.glassfish.jersey.client.JerseyClientBuilder;
 import org.junit.rules.ExternalResource;
 
-import javax.annotation.Nullable;
 import javax.ws.rs.client.Client;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;

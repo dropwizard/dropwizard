@@ -19,7 +19,6 @@ import static org.junit.jupiter.api.parallel.ExecutionMode.SAME_THREAD;
 
 @Execution(SAME_THREAD)
 class DbFastForwardCommandTest {
-
     private final DbFastForwardCommand<TestMigrationConfiguration> fastForwardCommand = new DbFastForwardCommand<>(
         TestMigrationConfiguration::getDataSource, TestMigrationConfiguration.class, "migrations.xml");
     private TestMigrationConfiguration conf;

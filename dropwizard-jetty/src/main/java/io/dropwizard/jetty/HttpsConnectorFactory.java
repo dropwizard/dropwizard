@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.dropwizard.metrics.jetty10.InstrumentedConnectionFactory;
 import io.dropwizard.validation.ValidationMethod;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.eclipse.jetty.http.HttpVersion;
 import org.eclipse.jetty.io.ByteBufferPool;
 import org.eclipse.jetty.server.Connector;
@@ -21,7 +22,6 @@ import org.eclipse.jetty.util.thread.ThreadPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nullable;
 import javax.net.ssl.SSLEngine;
 import javax.validation.constraints.NotEmpty;
 import java.io.File;
