@@ -14,7 +14,7 @@ def get_version():
 
 def get_dropwizard_link(path, from_line, to_line):
     version = get_version()
-    return 'https://github.com/dropwizard/dropwizard/tree/release/{}.x/docs/source/{}#L{}-L{}'\
+    return '`Source file <https://github.com/dropwizard/dropwizard/tree/release/{}.x/docs/source/{}#L{}-L{}>`__'\
         .format(version, path.lstrip('/'), from_line, to_line)
 
 
