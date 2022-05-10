@@ -11,4 +11,5 @@ import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
 public interface HealthFactory extends Discoverable {
     void configure(LifecycleEnvironment lifecycle, ServletEnvironment servlets, JerseyEnvironment jersey,
                    HealthEnvironment health, ObjectMapper mapper, String name);
+    boolean isOnAdminServlet();
 }

@@ -11,3 +11,4 @@ delayedShutdownHandlerEnabled: true
 shutdownWaitPeriod: 1ms
 servletFactory:
   type: default
+onAdminServlet: true

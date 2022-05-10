@@ -51,6 +51,9 @@ public class DefaultHealthFactory implements HealthFactory {
     @JsonProperty
     private boolean delayedShutdownHandlerEnabled = false;
 
+    @JsonProperty
+    private boolean onAdminServlet = false;
+
     @NotNull
     @JsonProperty
     private Duration shutdownWaitPeriod = Duration.seconds(15);
@@ -134,6 +137,16 @@ public class DefaultHealthFactory implements HealthFactory {
     public void setHealthResponderFactory(HealthResponderFactory healthResponderFactory) {
         this.healthResponderFactory = healthResponderFactory;
     }
+
+    @Override
+    public boolean isOnAdminServlet() {
+        return onAdminServlet;
+    }
+
+    public void setOnAdminServlet(final boolean onAdminServlet) {
+        this.onAdminServlet = onAdminServlet;
+    }
+
 
     /**
      * @deprecated use {@link #getHealthCheckConfigurations()} instead
