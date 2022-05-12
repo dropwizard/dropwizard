@@ -22,7 +22,7 @@
         <argparse4j.version>0.9.0</argparse4j.version>
         <byte-buddy.version>1.12.10</byte-buddy.version>
         <caffeine.version>2.9.3</caffeine.version>
-        <checker-qual.version>3.21.4</checker-qual.version>
+        <checker-qual.version>3.22.0</checker-qual.version>
         <classmate.version>1.5.1</classmate.version>
         <commons-codec.version>1.15</commons-codec.version>
         <commons-text.version>1.9</commons-text.version>
@@ -51,13 +51,13 @@
         <jetty.version>9.4.46.v20220331</jetty.version>
         <joda-time.version>2.10.14</joda-time.version>
         <jsr305.version>3.0.2</jsr305.version>
-        <liquibase-core.version>4.9.1</liquibase-core.version>
+        <liquibase-core.version>4.10.0</liquibase-core.version>
         <liquibase-slf4j.version>4.1.0</liquibase-slf4j.version>
         <logback-throttling-appender.version>1.1.9</logback-throttling-appender.version>
         <logback.version>1.2.11</logback.version>
         <metrics4.version>4.2.9</metrics4.version>
         <mustache-compiler.version>0.9.10</mustache-compiler.version>
-        <nullaway.version>0.9.6</nullaway.version>
+        <nullaway.version>0.9.7</nullaway.version>
         <slf4j.version>1.7.36</slf4j.version>
         <tomcat-jdbc.version>9.0.62</tomcat-jdbc.version>
         <usertype.core.version>7.0.0.CR1</usertype.core.version>
