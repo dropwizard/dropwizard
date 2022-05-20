@@ -84,6 +84,7 @@ class LogbackClassicRequestLogFactoryTest {
             // isn't a way for us to set our own clock
             when(request.getTimeStamp()).thenReturn(System.currentTimeMillis());
             when(request.getMethod()).thenReturn("GET");
+            when(request.getOriginalURI()).thenReturn("/test/things?yay");
             when(request.getRequestURI()).thenReturn("/test/things");
             when(request.getProtocol()).thenReturn("HTTP/1.1");
             when(request.getHttpChannelState()).thenReturn(channelState);
@@ -101,7 +102,7 @@ class LogbackClassicRequestLogFactoryTest {
             assertThat(event.getFormattedMessage())
                 .startsWith("10.0.0.1")
                 .doesNotContain("%")
-                .contains("\"GET /test/things HTTP/1.1\"")
+                .contains("\"GET /test/things?yay HTTP/1.1\"")
                 .contains("-0500");
         } catch (Exception e) {
             if (logger != null) {
