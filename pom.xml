@@ -50,6 +50,7 @@
 
         <module>dropwizard-archetypes</module>
         <module>dropwizard-example</module>
+        <module>docs/source/examples</module>
     </modules>
 
     <properties>
