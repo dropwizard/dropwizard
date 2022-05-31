@@ -6,8 +6,10 @@ import org.glassfish.jersey.server.monitoring.ApplicationEvent;
 import org.glassfish.jersey.server.monitoring.ApplicationEventListener;
 import org.glassfish.jersey.server.monitoring.RequestEvent;
 import org.glassfish.jersey.server.monitoring.RequestEventListener;
+import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
 
+import javax.persistence.PersistenceException;
 import javax.ws.rs.ext.Provider;
 import java.util.Arrays;
 import java.util.Collection;
@@ -73,13 +75,17 @@ public class UnitOfWorkApplicationListener implements ApplicationEventListener {
         public void onEvent(RequestEvent event) {
             final RequestEvent.Type eventType = event.getType();
             if (eventType == RequestEvent.Type.RESOURCE_METHOD_START) {
-                methodMap
-                    .computeIfAbsent(event.getUriInfo().getMatchedResourceMethod(), UnitOfWorkEventListener::registerUnitOfWorkAnnotations)
-                    .forEach(unitOfWork ->
-                        unitOfWorkAspects
-                            .computeIfAbsent(unitOfWork.value(), hibernateName -> new UnitOfWorkAspect(sessionFactories))
-                            .beforeStart(unitOfWork)
-                );
+                try {
+                    methodMap
+                        .computeIfAbsent(event.getUriInfo().getMatchedResourceMethod(), UnitOfWorkEventListener::registerUnitOfWorkAnnotations)
+                        .forEach(unitOfWork ->
+                            unitOfWorkAspects
+                                .computeIfAbsent(unitOfWork.value(), hibernateName -> new UnitOfWorkAspect(sessionFactories))
+                                .beforeStart(unitOfWork)
+                    );
+                } catch (HibernateException e) {
+                    throw new MappableException(e);
+                }
             } else if (eventType == RequestEvent.Type.RESP_FILTERS_START) {
                 try {
                     unitOfWorkAspects
