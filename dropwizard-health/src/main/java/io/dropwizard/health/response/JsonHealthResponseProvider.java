@@ -5,10 +5,10 @@ import io.dropwizard.health.HealthStateAggregator;
 import io.dropwizard.health.HealthStateView;
 import io.dropwizard.health.HealthStatusChecker;
 import jakarta.ws.rs.core.MediaType;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -26,22 +26,22 @@ public class JsonHealthResponseProvider implements HealthResponseProvider {
     private static final Logger LOGGER = LoggerFactory.getLogger(JsonHealthResponseProvider.class);
     private static final String MEDIA_TYPE = MediaType.APPLICATION_JSON;
 
-    @Nonnull
+    @NonNull
     private final HealthStatusChecker healthStatusChecker;
-    @Nonnull
+    @NonNull
     private final HealthStateAggregator healthStateAggregator;
-    @Nonnull
+    @NonNull
     private final ObjectMapper mapper;
 
-    public JsonHealthResponseProvider(@Nonnull final HealthStatusChecker healthStatusChecker,
-                                      @Nonnull final HealthStateAggregator healthStateAggregator,
-                                      @Nonnull final ObjectMapper mapper) {
+    public JsonHealthResponseProvider(@NonNull final HealthStatusChecker healthStatusChecker,
+                                      @NonNull final HealthStateAggregator healthStateAggregator,
+                                      @NonNull final ObjectMapper mapper) {
         this.healthStatusChecker = Objects.requireNonNull(healthStatusChecker);
         this.healthStateAggregator = Objects.requireNonNull(healthStateAggregator);
         this.mapper = Objects.requireNonNull(mapper);
     }
 
-    @Nonnull
+    @NonNull
     @Override
     public HealthResponse healthResponse(final Map<String, Collection<String>> queryParams) {
         final String type = queryParams.getOrDefault(CHECK_TYPE_QUERY_PARAM, Collections.emptyList())

@@ -1,12 +1,11 @@
 package io.dropwizard.jersey.errors;
 
-import org.glassfish.jersey.server.internal.LocalizationMessages;
-import org.slf4j.LoggerFactory;
-
 import jakarta.ws.rs.NotSupportedException;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.Provider;
+import org.glassfish.jersey.server.internal.LocalizationMessages;
+import org.slf4j.LoggerFactory;
 
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON_TYPE;
 

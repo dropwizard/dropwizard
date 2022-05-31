@@ -3,7 +3,6 @@ package io.dropwizard.health;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;
 
-import javax.annotation.Nonnull;
 import java.util.Objects;
 
 public final class HealthStateView implements Comparable<HealthStateView> {
@@ -21,7 +20,7 @@ public final class HealthStateView implements Comparable<HealthStateView> {
     @JsonProperty
     private boolean critical;
 
-    public HealthStateView(@Nonnull final String name, boolean healthy, @Nonnull final HealthCheckType type,
+    public HealthStateView(@NotNull final String name, boolean healthy, @NotNull final HealthCheckType type,
                            boolean critical) {
         this.name = Objects.requireNonNull(name);
         this.healthy = healthy;

@@ -1,11 +1,11 @@
 package io.dropwizard.jersey.validation;
 
+import jakarta.validation.ConstraintViolation;
+import jakarta.ws.rs.core.Request;
 import org.glassfish.jersey.process.Inflector;
 import org.glassfish.jersey.server.model.Invocable;
 import org.junit.jupiter.api.Test;
 
-import jakarta.validation.ConstraintViolation;
-import jakarta.ws.rs.core.Request;
 import java.util.Collections;
 import java.util.Set;
 

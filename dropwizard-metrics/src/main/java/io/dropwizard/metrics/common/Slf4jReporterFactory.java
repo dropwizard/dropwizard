@@ -6,11 +6,10 @@ import com.codahale.metrics.Slf4jReporter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import jakarta.validation.constraints.NotEmpty;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MarkerFactory;
-
-import javax.annotation.Nullable;
 
 /**
  * A {@link ReporterFactory} for {@link Slf4jReporter} instances.

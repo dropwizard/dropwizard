@@ -1,17 +1,16 @@
 package io.dropwizard.hibernate;
 
-import org.glassfish.jersey.spi.ExtendedExceptionMapper;
-import org.hibernate.exception.DataException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.annotation.Nullable;
 import jakarta.persistence.PersistenceException;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
 import jakarta.ws.rs.ext.Providers;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.glassfish.jersey.spi.ExtendedExceptionMapper;
+import org.hibernate.exception.DataException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static java.util.Objects.requireNonNull;
 

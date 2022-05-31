@@ -1,11 +1,10 @@
 package io.dropwizard.jersey.dummy;
 
-import org.glassfish.jersey.server.ManagedAsync;
-
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.container.AsyncResponse;
 import jakarta.ws.rs.container.Suspended;
+import org.glassfish.jersey.server.ManagedAsync;
 
 @Path("/")
 public class DummyResource {

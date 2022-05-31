@@ -6,9 +6,6 @@ import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.jersey.MyMessage;
 import io.dropwizard.jersey.MyMessageParamConverterProvider;
 import io.dropwizard.jersey.params.UUIDParam;
-import org.glassfish.jersey.internal.util.collection.MultivaluedStringMap;
-import org.junit.jupiter.api.Test;
-
 import jakarta.ws.rs.FormParam;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
@@ -16,6 +13,8 @@ import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.Application;
 import jakarta.ws.rs.core.Form;
 import jakarta.ws.rs.core.Response;
+import org.glassfish.jersey.internal.util.collection.MultivaluedStringMap;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

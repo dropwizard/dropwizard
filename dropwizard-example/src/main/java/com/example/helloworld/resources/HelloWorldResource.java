@@ -6,15 +6,15 @@ import com.example.helloworld.api.Saying;
 import com.example.helloworld.core.Template;
 import io.dropwizard.jersey.caching.CacheControl;
 import io.dropwizard.jersey.jsr310.LocalDateParam;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;

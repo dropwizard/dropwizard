@@ -1,7 +1,6 @@
 package io.dropwizard.configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import jakarta.validation.Validator;
 
 public interface ConfigurationFactoryFactory<T> {

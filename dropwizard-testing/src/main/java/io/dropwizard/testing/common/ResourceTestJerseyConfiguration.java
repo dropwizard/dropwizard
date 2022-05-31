@@ -3,10 +3,10 @@ package io.dropwizard.testing.common;
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.testing.junit5.ResourceExtension;
+import jakarta.validation.Validator;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.test.spi.TestContainerFactory;
 
-import jakarta.validation.Validator;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;

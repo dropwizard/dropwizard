@@ -25,11 +25,11 @@ import io.dropwizard.logging.common.layout.DropwizardLayoutFactory;
 import io.dropwizard.util.DataSize;
 import io.dropwizard.validation.BaseValidator;
 import io.dropwizard.validation.ConstraintViolations;
+import jakarta.validation.Validator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.slf4j.LoggerFactory;
 
-import jakarta.validation.Validator;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.time.LocalDateTime;

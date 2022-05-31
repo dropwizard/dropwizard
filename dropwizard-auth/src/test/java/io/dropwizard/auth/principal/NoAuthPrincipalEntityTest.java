@@ -4,6 +4,11 @@ import io.dropwizard.auth.AbstractAuthResourceConfig;
 import io.dropwizard.auth.AuthDynamicFeature;
 import io.dropwizard.auth.AuthValueFactoryProvider;
 import io.dropwizard.logging.common.BootstrapLogging;
+import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.container.ContainerRequestFilter;
+import jakarta.ws.rs.container.DynamicFeature;
+import jakarta.ws.rs.core.HttpHeaders;
+import jakarta.ws.rs.core.MediaType;
 import org.glassfish.jersey.internal.inject.AbstractBinder;
 import org.glassfish.jersey.servlet.ServletProperties;
 import org.glassfish.jersey.test.DeploymentContext;
@@ -14,11 +19,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import jakarta.ws.rs.client.Entity;
-import jakarta.ws.rs.container.ContainerRequestFilter;
-import jakarta.ws.rs.container.DynamicFeature;
-import jakarta.ws.rs.core.HttpHeaders;
-import jakarta.ws.rs.core.MediaType;
 import java.security.Principal;
 
 import static org.assertj.core.api.Assertions.assertThat;

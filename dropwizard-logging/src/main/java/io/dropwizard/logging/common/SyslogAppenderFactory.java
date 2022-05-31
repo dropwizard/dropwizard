@@ -10,10 +10,10 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.dropwizard.logging.common.async.AsyncAppenderFactory;
 import io.dropwizard.logging.common.filter.LevelFilterFactory;
 import io.dropwizard.logging.common.layout.LayoutFactory;
-
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+
 import java.lang.management.ManagementFactory;
 import java.util.Locale;
 import java.util.regex.Matcher;

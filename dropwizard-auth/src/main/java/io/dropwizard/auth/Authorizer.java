@@ -1,7 +1,8 @@
 package io.dropwizard.auth;
 
-import javax.annotation.Nullable;
 import jakarta.ws.rs.container.ContainerRequestContext;
+import org.checkerframework.checker.nullness.qual.Nullable;
+
 import java.security.Principal;
 
 /**

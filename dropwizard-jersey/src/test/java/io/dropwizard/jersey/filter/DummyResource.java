@@ -1,7 +1,6 @@
 package io.dropwizard.jersey.filter;
 
 import io.dropwizard.jersey.PATCH;
-
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;

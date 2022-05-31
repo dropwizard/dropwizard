@@ -2,9 +2,9 @@ package io.dropwizard.core.setup;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.servlets.tasks.TaskConfiguration;
-
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+
 import java.util.StringJoiner;
 
 /**

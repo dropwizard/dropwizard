@@ -2,10 +2,10 @@ package io.dropwizard.jersey.errors;
 
 import com.codahale.metrics.Counter;
 import com.codahale.metrics.MetricRegistry;
+import jakarta.ws.rs.ext.WriterInterceptorContext;
 import org.eclipse.jetty.io.EofException;
 import org.junit.jupiter.api.Test;
 
-import jakarta.ws.rs.ext.WriterInterceptorContext;
 import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;

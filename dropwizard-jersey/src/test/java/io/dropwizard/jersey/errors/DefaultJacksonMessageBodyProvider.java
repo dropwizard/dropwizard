@@ -2,7 +2,6 @@ package io.dropwizard.jersey.errors;
 
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.jackson.JacksonMessageBodyProvider;
-
 import jakarta.ws.rs.ext.Provider;
 
 @Provider

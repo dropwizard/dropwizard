@@ -2,9 +2,9 @@ package io.dropwizard.logging.common;
 
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
-
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

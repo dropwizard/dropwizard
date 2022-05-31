@@ -1,7 +1,7 @@
 package io.dropwizard.jersey.setup;
 
-import javax.annotation.Nullable;
 import jakarta.servlet.Servlet;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 public class JerseyContainerHolder {
 

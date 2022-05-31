@@ -17,11 +17,11 @@ import io.dropwizard.jersey.validation.Validators;
 import io.dropwizard.jetty.MutableServletContextHandler;
 import io.dropwizard.jetty.setup.ServletEnvironment;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
-
-import javax.annotation.Nullable;
 import jakarta.servlet.Servlet;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
+import org.checkerframework.checker.nullness.qual.Nullable;
+
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;

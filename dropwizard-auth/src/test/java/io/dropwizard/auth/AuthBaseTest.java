@@ -2,6 +2,9 @@ package io.dropwizard.auth;
 
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.logging.common.BootstrapLogging;
+import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.client.Invocation;
+import jakarta.ws.rs.core.HttpHeaders;
 import org.glassfish.jersey.servlet.ServletProperties;
 import org.glassfish.jersey.test.DeploymentContext;
 import org.glassfish.jersey.test.JerseyTest;
@@ -13,10 +16,6 @@ import org.glassfish.jersey.test.spi.TestContainerFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import jakarta.ws.rs.WebApplicationException;
-import jakarta.ws.rs.client.Invocation;
-import jakarta.ws.rs.core.HttpHeaders;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;

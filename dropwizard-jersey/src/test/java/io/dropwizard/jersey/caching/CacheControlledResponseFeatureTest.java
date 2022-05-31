@@ -2,12 +2,11 @@ package io.dropwizard.jersey.caching;
 
 import io.dropwizard.jersey.AbstractJerseyTest;
 import io.dropwizard.jersey.DropwizardResourceConfig;
-import org.glassfish.jersey.server.ResourceConfig;
-import org.junit.jupiter.api.Test;
-
 import jakarta.ws.rs.core.Application;
 import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.Response;
+import org.glassfish.jersey.server.ResourceConfig;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

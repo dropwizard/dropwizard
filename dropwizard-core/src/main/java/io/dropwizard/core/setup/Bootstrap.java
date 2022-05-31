@@ -22,9 +22,9 @@ import io.dropwizard.core.cli.Command;
 import io.dropwizard.core.cli.ConfiguredCommand;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.validation.Validators;
-
-import javax.annotation.Nullable;
 import jakarta.validation.ValidatorFactory;
+import org.checkerframework.checker.nullness.qual.Nullable;
+
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.List;

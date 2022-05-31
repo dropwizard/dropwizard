@@ -5,6 +5,7 @@ import jakarta.ws.rs.Priorities;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerRequestFilter;
+
 import java.io.IOException;
 
 import static java.util.Objects.requireNonNull;
@@ -21,10 +22,6 @@ class WebApplicationExceptionCatchingFilter implements ContainerRequestFilter {
     public WebApplicationExceptionCatchingFilter(ContainerRequestFilter underlying) {
         requireNonNull(underlying, "Underlying ContainerRequestFilter is not set");
         this.underlying = underlying;
-    }
-
-    ContainerRequestFilter getUnderlying() {
-        return underlying;
     }
 
     @Override

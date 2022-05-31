@@ -10,12 +10,11 @@ import io.dropwizard.configuration.FileConfigurationSourceProvider;
 import io.dropwizard.core.Application;
 import io.dropwizard.core.Configuration;
 import io.dropwizard.jackson.Jackson;
+import jakarta.validation.Validation;
+import jakarta.validation.ValidatorFactory;
 import org.hibernate.validator.HibernateValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import jakarta.validation.Validation;
-import jakarta.validation.ValidatorFactory;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

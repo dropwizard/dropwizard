@@ -1,10 +1,10 @@
 package com.example.helloworld.resources;
 
 import io.dropwizard.views.common.View;
-
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
+
 import java.nio.charset.StandardCharsets;
 
 @Path("/views")

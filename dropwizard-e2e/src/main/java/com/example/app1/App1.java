@@ -7,12 +7,11 @@ import io.dropwizard.core.setup.Bootstrap;
 import io.dropwizard.core.setup.Environment;
 import io.dropwizard.jersey.optional.EmptyOptionalNoContentExceptionMapper;
 import io.dropwizard.views.common.ViewBundle;
-import org.eclipse.jetty.io.EofException;
-import org.glassfish.jersey.spi.ExtendedExceptionMapper;
-
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
+import org.eclipse.jetty.io.EofException;
+import org.glassfish.jersey.spi.ExtendedExceptionMapper;
 
 import static io.dropwizard.util.Throwables.findThrowableInChain;
 

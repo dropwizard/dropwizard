@@ -11,11 +11,11 @@ import io.dropwizard.auth.basic.BasicCredentials;
 import io.dropwizard.auth.oauth.OAuthCredentialAuthFilter;
 import io.dropwizard.auth.util.AuthUtil;
 import io.dropwizard.jersey.DropwizardResourceConfig;
+import jakarta.ws.rs.core.HttpHeaders;
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 import org.glassfish.jersey.test.TestProperties;
 import org.junit.jupiter.api.Test;
 
-import jakarta.ws.rs.core.HttpHeaders;
 import java.security.Principal;
 import java.util.Arrays;
 import java.util.List;

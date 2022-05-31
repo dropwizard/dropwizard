@@ -4,10 +4,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.validation.selfvalidating.SelfValidating;
 import io.dropwizard.validation.selfvalidating.SelfValidation;
 import io.dropwizard.validation.selfvalidating.ViolationCollector;
-
-import javax.annotation.Nullable;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.QueryParam;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 @SelfValidating
 public class SelfValidatingClass {

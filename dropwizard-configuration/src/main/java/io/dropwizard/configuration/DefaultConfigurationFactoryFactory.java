@@ -2,7 +2,6 @@ package io.dropwizard.configuration;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import jakarta.validation.Validator;
 
 public class DefaultConfigurationFactoryFactory<T> implements ConfigurationFactoryFactory<T> {

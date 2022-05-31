@@ -2,9 +2,7 @@ package io.dropwizard.auth;
 
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
-
-import javax.annotation.Nullable;
-
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 public interface UnauthorizedHandler {
     @Nullable

@@ -2,7 +2,6 @@ package io.dropwizard.configuration;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import jakarta.validation.Validator;
 
 /**

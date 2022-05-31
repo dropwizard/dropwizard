@@ -9,9 +9,9 @@ import com.github.benmanes.caffeine.cache.CaffeineSpec;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.github.benmanes.caffeine.cache.stats.CacheStats;
 import com.github.benmanes.caffeine.cache.stats.StatsCounter;
-
-import javax.annotation.Nullable;
 import jakarta.ws.rs.container.ContainerRequestContext;
+import org.checkerframework.checker.nullness.qual.Nullable;
+
 import java.security.Principal;
 import java.util.HashSet;
 import java.util.Set;

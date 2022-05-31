@@ -1,10 +1,10 @@
 package io.dropwizard.jackson;
 
 import com.fasterxml.jackson.databind.jsontype.impl.StdSubtypeResolver;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nullable;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;

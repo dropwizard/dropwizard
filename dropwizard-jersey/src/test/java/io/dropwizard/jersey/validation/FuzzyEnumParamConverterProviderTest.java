@@ -1,12 +1,12 @@
 package io.dropwizard.jersey.validation;
 
 import io.dropwizard.jersey.errors.ErrorMessage;
-import org.junit.jupiter.api.Test;
-
-import javax.annotation.Nullable;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ParamConverter;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.junit.jupiter.api.Test;
+
 import java.lang.annotation.Annotation;
 
 import static java.util.Objects.requireNonNull;

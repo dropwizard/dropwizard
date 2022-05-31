@@ -4,7 +4,6 @@ import com.example.helloworld.core.Person;
 import com.example.helloworld.db.PersonDAO;
 import com.example.helloworld.views.PersonView;
 import io.dropwizard.hibernate.UnitOfWork;
-
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.NotFoundException;
@@ -12,6 +11,7 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
+
 import java.util.OptionalLong;
 
 @Path("/people/{personId}")

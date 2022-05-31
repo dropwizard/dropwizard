@@ -2,10 +2,10 @@ package io.dropwizard.jersey.params;
 
 import io.dropwizard.jersey.DefaultValueUtils;
 import io.dropwizard.jersey.validation.JerseyParameterNameProvider;
-
-import javax.annotation.Nullable;
 import jakarta.ws.rs.ext.ParamConverter;
 import jakarta.ws.rs.ext.ParamConverterProvider;
+import org.checkerframework.checker.nullness.qual.Nullable;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Type;

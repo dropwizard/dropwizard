@@ -3,9 +3,9 @@ package io.dropwizard.jersey.jackson;
 import com.fasterxml.jackson.annotation.JsonIgnoreType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.jakarta.rs.json.JacksonXmlBindJsonProvider;
-
-import javax.annotation.Nullable;
 import jakarta.ws.rs.core.MediaType;
+import org.checkerframework.checker.nullness.qual.Nullable;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 

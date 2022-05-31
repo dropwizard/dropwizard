@@ -18,12 +18,12 @@ import io.dropwizard.logging.common.filter.LevelFilterFactory;
 import io.dropwizard.logging.common.filter.NullLevelFilterFactory;
 import io.dropwizard.logging.common.layout.LayoutFactory;
 import io.dropwizard.request.logging.RequestLogFactory;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.eclipse.jetty.server.CustomRequestLog;
 import org.eclipse.jetty.server.RequestLog;
 import org.slf4j.LoggerFactory;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;

@@ -1,7 +1,6 @@
 package com.example.httpsessions;
 
 import io.dropwizard.jersey.sessions.Session;
-
 import jakarta.servlet.http.HttpSession;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;

@@ -7,6 +7,8 @@ import io.dropwizard.jackson.DiscoverableSubtypeResolver;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.metrics.jetty11.InstrumentedConnectionFactory;
 import io.dropwizard.validation.BaseValidator;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validator;
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.eclipse.jetty.server.ConnectionFactory;
 import org.eclipse.jetty.server.HttpConfiguration;
@@ -24,8 +26,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledForJreRange;
 import org.junit.jupiter.api.condition.JRE;
 
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validator;
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;

@@ -2,6 +2,7 @@ package io.dropwizard.jersey.optional;
 
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
+
 import java.util.Optional;
 
 /**

@@ -1,7 +1,6 @@
 package io.dropwizard.auth;
 
 import io.dropwizard.jersey.errors.ErrorMessage;
-
 import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;

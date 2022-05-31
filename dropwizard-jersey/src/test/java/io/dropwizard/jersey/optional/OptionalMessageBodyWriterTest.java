@@ -2,8 +2,6 @@ package io.dropwizard.jersey.optional;
 
 import io.dropwizard.jersey.AbstractJerseyTest;
 import io.dropwizard.jersey.DropwizardResourceConfig;
-import org.junit.jupiter.api.Test;
-
 import jakarta.ws.rs.FormParam;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
@@ -15,6 +13,8 @@ import jakarta.ws.rs.client.Invocation;
 import jakarta.ws.rs.core.Application;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import org.junit.jupiter.api.Test;
+
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;

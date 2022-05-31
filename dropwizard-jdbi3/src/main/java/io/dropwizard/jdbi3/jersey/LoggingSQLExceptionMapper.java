@@ -1,10 +1,10 @@
 package io.dropwizard.jdbi3.jersey;
 
 import io.dropwizard.jersey.errors.LoggingExceptionMapper;
+import jakarta.ws.rs.ext.Provider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import jakarta.ws.rs.ext.Provider;
 import java.sql.SQLException;
 
 /**

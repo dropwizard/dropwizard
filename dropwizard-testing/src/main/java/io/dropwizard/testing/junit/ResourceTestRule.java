@@ -2,15 +2,15 @@ package io.dropwizard.testing.junit;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.testing.common.Resource;
+import jakarta.validation.Validator;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.WebTarget;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
-import jakarta.validation.Validator;
-import jakarta.ws.rs.client.Client;
-import jakarta.ws.rs.client.WebTarget;
 import java.util.function.Consumer;
 
 import static java.util.Objects.requireNonNull;

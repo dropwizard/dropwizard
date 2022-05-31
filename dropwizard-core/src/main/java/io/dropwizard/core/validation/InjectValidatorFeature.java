@@ -1,14 +1,13 @@
 package io.dropwizard.core.validation;
 
 import io.dropwizard.jersey.validation.MutableValidatorFactory;
-import org.glassfish.jersey.server.validation.internal.InjectingConstraintValidatorFactory;
-
 import jakarta.inject.Inject;
 import jakarta.validation.ConstraintValidatorFactory;
 import jakarta.validation.ValidatorFactory;
 import jakarta.ws.rs.container.ResourceContext;
 import jakarta.ws.rs.core.Feature;
 import jakarta.ws.rs.core.FeatureContext;
+import org.glassfish.jersey.server.validation.internal.InjectingConstraintValidatorFactory;
 
 /**
  * @since 2.0

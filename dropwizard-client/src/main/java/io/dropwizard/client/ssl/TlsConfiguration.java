@@ -2,9 +2,9 @@ package io.dropwizard.client.ssl;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.validation.ValidationMethod;
-
-import javax.annotation.Nullable;
 import jakarta.validation.constraints.NotEmpty;
+import org.checkerframework.checker.nullness.qual.Nullable;
+
 import java.io.File;
 import java.util.List;
 import java.util.Optional;

@@ -1,8 +1,8 @@
 package io.dropwizard.views.common;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
-import javax.annotation.Nullable;
 import java.nio.charset.Charset;
 import java.util.Optional;
 

@@ -1,10 +1,9 @@
 package io.dropwizard.jersey.errors;
 
-import org.glassfish.jersey.server.internal.LocalizationMessages;
-import org.junit.jupiter.api.Test;
-
 import jakarta.ws.rs.NotSupportedException;
 import jakarta.ws.rs.core.Response;
+import org.glassfish.jersey.server.internal.LocalizationMessages;
+import org.junit.jupiter.api.Test;
 
 import static jakarta.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR;
 import static jakarta.ws.rs.core.Response.Status.UNSUPPORTED_MEDIA_TYPE;

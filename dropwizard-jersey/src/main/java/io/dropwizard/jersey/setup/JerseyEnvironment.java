@@ -1,10 +1,10 @@
 package io.dropwizard.jersey.setup;
 
 import io.dropwizard.jersey.DropwizardResourceConfig;
+import jakarta.servlet.Servlet;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.glassfish.jersey.server.ResourceConfig;
 
-import javax.annotation.Nullable;
-import jakarta.servlet.Servlet;
 import java.util.function.Function;
 
 import static java.util.Objects.requireNonNull;

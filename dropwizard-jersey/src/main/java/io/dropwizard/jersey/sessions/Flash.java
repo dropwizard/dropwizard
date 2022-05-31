@@ -1,6 +1,7 @@
 package io.dropwizard.jersey.sessions;
 
 import jakarta.servlet.http.HttpSession;
+
 import java.util.Optional;
 
 public class Flash<T> {

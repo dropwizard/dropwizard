@@ -1,7 +1,6 @@
 package io.dropwizard.jersey.jackson;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import jakarta.ws.rs.core.Feature;
 import jakarta.ws.rs.core.FeatureContext;
 import jakarta.ws.rs.ext.MessageBodyReader;

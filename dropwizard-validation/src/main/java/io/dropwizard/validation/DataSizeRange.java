@@ -1,11 +1,11 @@
 package io.dropwizard.validation;
 
 import io.dropwizard.util.DataSizeUnit;
-
 import jakarta.validation.Constraint;
 import jakarta.validation.OverridesAttribute;
 import jakarta.validation.Payload;
 import jakarta.validation.ReportAsSingleViolation;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;

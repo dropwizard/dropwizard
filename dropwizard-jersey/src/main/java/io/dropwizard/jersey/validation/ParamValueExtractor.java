@@ -1,11 +1,10 @@
 package io.dropwizard.jersey.validation;
 
 import io.dropwizard.jersey.params.AbstractParam;
-import org.hibernate.validator.internal.engine.valueextraction.ValueExtractorDescriptor;
-
 import jakarta.validation.valueextraction.ExtractedValue;
 import jakarta.validation.valueextraction.UnwrapByDefault;
 import jakarta.validation.valueextraction.ValueExtractor;
+import org.hibernate.validator.internal.engine.valueextraction.ValueExtractorDescriptor;
 
 /**
  * Let's the validator know that when validating a class that is an {@link AbstractParam} to

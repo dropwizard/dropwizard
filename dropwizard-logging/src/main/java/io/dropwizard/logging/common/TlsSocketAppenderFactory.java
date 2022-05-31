@@ -3,11 +3,11 @@ package io.dropwizard.logging.common;
 import ch.qos.logback.core.spi.DeferredProcessingAware;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import jakarta.validation.constraints.NotEmpty;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 
-import javax.annotation.Nullable;
 import javax.net.SocketFactory;
-import jakarta.validation.constraints.NotEmpty;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;

@@ -2,7 +2,6 @@ package com.example.helloworld.resources;
 
 import com.example.helloworld.core.User;
 import io.dropwizard.auth.Auth;
-
 import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.ws.rs.GET;

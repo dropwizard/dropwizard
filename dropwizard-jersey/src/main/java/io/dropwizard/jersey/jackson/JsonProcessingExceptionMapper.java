@@ -5,11 +5,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.exc.InvalidDefinitionException;
 import io.dropwizard.jersey.errors.ErrorMessage;
 import io.dropwizard.jersey.errors.LoggingExceptionMapper;
-import org.slf4j.LoggerFactory;
-
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.Provider;
+import org.slf4j.LoggerFactory;
 
 @Provider
 public class JsonProcessingExceptionMapper extends LoggingExceptionMapper<JsonProcessingException> {

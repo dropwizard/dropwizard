@@ -3,10 +3,10 @@ package io.dropwizard.testing.junit5;
 import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.testing.app.TestApplication;
 import io.dropwizard.testing.app.TestConfiguration;
+import jakarta.ws.rs.core.Response;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import jakarta.ws.rs.core.Response;
 import java.util.Collections;
 
 import static jakarta.ws.rs.core.HttpHeaders.ACCEPT_ENCODING;

@@ -2,8 +2,8 @@ package io.dropwizard.views.mustache;
 
 import com.github.mustachejava.MustacheResolver;
 import io.dropwizard.views.common.View;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
-import javax.annotation.Nullable;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;

@@ -1,12 +1,12 @@
 package io.dropwizard.testing.junit;
 
 import io.dropwizard.testing.app.TestEntity;
+import jakarta.validation.ConstraintViolationException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.junit.Rule;
 import org.junit.Test;
 
-import jakarta.validation.ConstraintViolationException;
 import java.io.Serializable;
 
 import static org.assertj.core.api.Assertions.assertThat;

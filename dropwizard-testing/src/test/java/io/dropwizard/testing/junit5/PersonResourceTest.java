@@ -6,15 +6,15 @@ import io.dropwizard.jackson.Jackson;
 import io.dropwizard.testing.app.PeopleStore;
 import io.dropwizard.testing.app.Person;
 import io.dropwizard.testing.app.PersonResource;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;

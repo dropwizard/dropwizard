@@ -3,7 +3,6 @@ package io.dropwizard.client;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.validation.ValidationMethod;
-
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 

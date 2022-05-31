@@ -9,9 +9,6 @@ import io.dropwizard.jersey.params.IntParam;
 import io.dropwizard.jersey.params.LongParam;
 import io.dropwizard.jersey.params.NonEmptyStringParam;
 import io.dropwizard.validation.Validated;
-import org.hibernate.validator.constraints.Length;
-
-import javax.annotation.Nullable;
 import jakarta.servlet.ServletContext;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
@@ -36,6 +33,9 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.hibernate.validator.constraints.Length;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;

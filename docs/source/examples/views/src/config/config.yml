@@ -1,0 +1,7 @@
+# views: config->mustache
+views:
+  mustache:
+    cache: false
+# views: config->mustache
+  freemarker:
+    strict_syntax: true

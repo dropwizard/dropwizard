@@ -1,8 +1,8 @@
 package io.dropwizard.metrics.common;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import jakarta.validation.constraints.NotNull;
+
 import java.util.Locale;
 
 /**

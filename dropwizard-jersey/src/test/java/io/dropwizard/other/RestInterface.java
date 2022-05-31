@@ -1,7 +1,6 @@
 package io.dropwizard.other;
 
 import io.dropwizard.jersey.validation.ValidRepresentation;
-
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.Consumes;

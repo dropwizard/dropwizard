@@ -14,11 +14,11 @@ import io.dropwizard.logging.common.filter.NullLevelFilterFactory;
 import io.dropwizard.logging.common.layout.LayoutFactory;
 import io.dropwizard.request.logging.async.AsyncAccessEventAppenderFactory;
 import io.dropwizard.request.logging.layout.LogbackAccessRequestLayoutFactory;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.eclipse.jetty.server.RequestLog;
 import org.slf4j.LoggerFactory;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import java.util.Collections;
 import java.util.List;
 

@@ -5,11 +5,11 @@ import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.util.Duration;
 import io.dropwizard.validation.BaseValidator;
+import jakarta.servlet.DispatcherType;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlets.PushCacheFilter;
 import org.junit.jupiter.api.Test;
 
-import jakarta.servlet.DispatcherType;
 import java.util.Arrays;
 import java.util.EnumSet;
 

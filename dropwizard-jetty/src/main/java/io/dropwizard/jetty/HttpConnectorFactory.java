@@ -22,6 +22,7 @@ import io.dropwizard.validation.PortRange;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.valueextraction.Unwrapping;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.eclipse.jetty.http.CookieCompliance;
 import org.eclipse.jetty.http.HttpCompliance;
 import org.eclipse.jetty.io.ArrayByteBufferPool;
@@ -39,10 +40,6 @@ import org.eclipse.jetty.util.thread.ScheduledExecutorScheduler;
 import org.eclipse.jetty.util.thread.Scheduler;
 import org.eclipse.jetty.util.thread.ThreadPool;
 
-import javax.annotation.Nullable;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.valueextraction.Unwrapping;
 import java.io.IOException;
 import java.util.Objects;
 import java.util.Optional;

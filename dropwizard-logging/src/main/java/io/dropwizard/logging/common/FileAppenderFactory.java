@@ -18,9 +18,8 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.dropwizard.util.DataSize;
 import io.dropwizard.validation.MinDataSize;
 import io.dropwizard.validation.ValidationMethod;
-
-import javax.annotation.Nullable;
 import jakarta.validation.constraints.Min;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import static java.util.Objects.requireNonNull;
 

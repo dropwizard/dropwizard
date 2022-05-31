@@ -3,9 +3,6 @@ package io.dropwizard.testing.app;
 import com.codahale.metrics.annotation.Timed;
 import io.dropwizard.jersey.params.IntParam;
 import io.dropwizard.validation.Validated;
-import org.eclipse.jetty.io.EofException;
-
-import javax.annotation.Nullable;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.groups.Default;
@@ -17,6 +14,9 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.eclipse.jetty.io.EofException;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;

@@ -14,12 +14,12 @@ import io.dropwizard.jetty.setup.ServletEnvironment;
 import io.dropwizard.lifecycle.ExecutorServiceManager;
 import io.dropwizard.lifecycle.JettyManaged;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
-import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
-
 import jakarta.servlet.Servlet;
 import jakarta.servlet.ServletRegistration;
 import jakarta.validation.Validator;
+import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+
 import java.util.stream.Collectors;
 
 import static java.util.Collections.singletonList;

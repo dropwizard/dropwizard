@@ -2,7 +2,6 @@ package io.dropwizard.validation;
 
 import io.dropwizard.util.DataSize;
 import io.dropwizard.util.DataSizeUnit;
-
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 

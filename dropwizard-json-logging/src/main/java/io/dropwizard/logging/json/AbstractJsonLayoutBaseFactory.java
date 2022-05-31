@@ -6,9 +6,9 @@ import io.dropwizard.jackson.Jackson;
 import io.dropwizard.logging.common.layout.DiscoverableLayoutFactory;
 import io.dropwizard.logging.json.layout.JsonFormatter;
 import io.dropwizard.logging.json.layout.TimestampFormatter;
-
-import javax.annotation.Nullable;
 import jakarta.validation.constraints.NotNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+
 import java.util.Collections;
 import java.util.Map;
 import java.util.TimeZone;

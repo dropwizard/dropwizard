@@ -2,11 +2,11 @@ package io.dropwizard.auth;
 
 import com.codahale.metrics.MetricRegistry;
 import com.github.benmanes.caffeine.cache.CaffeineSpec;
+import jakarta.ws.rs.container.ContainerRequestContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 
-import jakarta.ws.rs.container.ContainerRequestContext;
 import java.security.Principal;
 import java.util.Set;
 

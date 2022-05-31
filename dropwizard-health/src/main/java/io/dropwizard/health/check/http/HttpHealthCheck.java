@@ -3,12 +3,12 @@ package io.dropwizard.health.check.http;
 import com.codahale.metrics.health.HealthCheck;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.core.Response;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.client.JerseyClientBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
 import java.time.Duration;
 import java.util.Objects;
 
@@ -16,16 +16,16 @@ public class HttpHealthCheck extends HealthCheck {
     // visible for testing
     static final Duration DEFAULT_TIMEOUT = Duration.ofSeconds(2);
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpHealthCheck.class);
-    @Nonnull
+    @NonNull
     private final String url;
-    @Nonnull
+    @NonNull
     private final Client client;
 
-    public HttpHealthCheck(@Nonnull final String url) {
+    public HttpHealthCheck(@NonNull final String url) {
         this(url, DEFAULT_TIMEOUT, DEFAULT_TIMEOUT);
     }
 
-    public HttpHealthCheck(@Nonnull final String url,
+    public HttpHealthCheck(@NonNull final String url,
                            final Duration readTimeout,
                            final Duration connectionTimeout) {
         this.url = Objects.requireNonNull(url);
@@ -37,8 +37,8 @@ public class HttpHealthCheck extends HealthCheck {
             .property(ClientProperties.READ_TIMEOUT, (int) readTimeout.toMillis());
     }
 
-    public HttpHealthCheck(@Nonnull final String url,
-                           @Nonnull final Client client) {
+    public HttpHealthCheck(@NonNull final String url,
+                           @NonNull final Client client) {
         this.url = Objects.requireNonNull(url);
         this.client = Objects.requireNonNull(client);
     }

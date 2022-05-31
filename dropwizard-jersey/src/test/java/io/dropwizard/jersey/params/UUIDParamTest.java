@@ -1,9 +1,9 @@
 package io.dropwizard.jersey.params;
 
 import io.dropwizard.jersey.errors.ErrorMessage;
+import jakarta.ws.rs.WebApplicationException;
 import org.junit.jupiter.api.Test;
 
-import jakarta.ws.rs.WebApplicationException;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;

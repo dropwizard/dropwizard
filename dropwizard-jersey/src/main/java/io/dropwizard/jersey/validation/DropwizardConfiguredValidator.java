@@ -2,12 +2,6 @@ package io.dropwizard.jersey.validation;
 
 import io.dropwizard.validation.ConstraintViolations;
 import io.dropwizard.validation.Validated;
-import org.glassfish.jersey.server.internal.inject.ConfiguredValidator;
-import org.glassfish.jersey.server.model.Invocable;
-import org.glassfish.jersey.server.model.Parameter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
@@ -15,6 +9,12 @@ import jakarta.validation.executable.ExecutableValidator;
 import jakarta.validation.groups.Default;
 import jakarta.validation.metadata.BeanDescriptor;
 import jakarta.ws.rs.WebApplicationException;
+import org.glassfish.jersey.server.internal.inject.ConfiguredValidator;
+import org.glassfish.jersey.server.model.Invocable;
+import org.glassfish.jersey.server.model.Parameter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;

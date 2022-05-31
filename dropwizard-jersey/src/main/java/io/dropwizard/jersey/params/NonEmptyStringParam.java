@@ -1,6 +1,7 @@
 package io.dropwizard.jersey.params;
 
-import javax.annotation.Nullable;
+import org.checkerframework.checker.nullness.qual.Nullable;
+
 import java.util.Optional;
 
 /**

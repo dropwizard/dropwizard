@@ -1,10 +1,10 @@
 package io.dropwizard.client;
 
-import org.glassfish.jersey.client.ClientRequest;
-
 import jakarta.ws.rs.client.ClientRequestContext;
 import jakarta.ws.rs.client.ClientRequestFilter;
 import jakarta.ws.rs.ext.Provider;
+import org.glassfish.jersey.client.ClientRequest;
+
 import java.io.IOException;
 
 /**

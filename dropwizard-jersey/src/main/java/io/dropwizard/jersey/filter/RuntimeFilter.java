@@ -1,13 +1,13 @@
 package io.dropwizard.jersey.filter;
 
 import io.dropwizard.util.Duration;
-
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerRequestFilter;
 import jakarta.ws.rs.container.ContainerResponseContext;
 import jakarta.ws.rs.container.ContainerResponseFilter;
 import jakarta.ws.rs.container.PreMatching;
 import jakarta.ws.rs.ext.Provider;
+
 import java.io.IOException;
 import java.util.Locale;
 import java.util.function.Supplier;

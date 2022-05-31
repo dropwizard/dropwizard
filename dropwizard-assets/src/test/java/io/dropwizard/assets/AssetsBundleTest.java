@@ -5,11 +5,11 @@ import io.dropwizard.core.setup.Environment;
 import io.dropwizard.jetty.setup.ServletEnvironment;
 import io.dropwizard.servlets.assets.AssetServlet;
 import io.dropwizard.servlets.assets.ResourceURL;
+import jakarta.servlet.ServletRegistration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
-import jakarta.servlet.ServletRegistration;
 import java.net.URL;
 
 import static org.assertj.core.api.Assertions.assertThat;

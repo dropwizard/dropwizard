@@ -6,6 +6,9 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.dropwizard.jetty.HttpsConnectorFactory;
 import io.dropwizard.jetty.SslReload;
 import io.dropwizard.metrics.jetty11.InstrumentedConnectionFactory;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.eclipse.jetty.alpn.server.ALPNServerConnectionFactory;
 import org.eclipse.jetty.http2.server.HTTP2ServerConnectionFactory;
 import org.eclipse.jetty.server.Connector;
@@ -18,9 +21,6 @@ import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.util.thread.ScheduledExecutorScheduler;
 import org.eclipse.jetty.util.thread.ThreadPool;
 
-import javax.annotation.Nullable;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import java.util.Arrays;
 import java.util.Collections;
 

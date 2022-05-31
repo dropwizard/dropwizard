@@ -9,7 +9,6 @@ import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Response;
 import org.eclipse.jetty.util.component.LifeCycle;
 
-import java.util.EventListener;
 import java.util.Iterator;
 
 /**

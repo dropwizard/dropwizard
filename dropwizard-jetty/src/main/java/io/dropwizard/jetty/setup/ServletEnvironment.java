@@ -1,6 +1,10 @@
 package io.dropwizard.jetty.setup;
 
 import io.dropwizard.jetty.MutableServletContextHandler;
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterRegistration;
+import jakarta.servlet.Servlet;
+import jakarta.servlet.ServletRegistration;
 import org.eclipse.jetty.security.SecurityHandler;
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.servlet.FilterHolder;
@@ -11,10 +15,6 @@ import org.eclipse.jetty.util.resource.ResourceCollection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import jakarta.servlet.Filter;
-import jakarta.servlet.FilterRegistration;
-import jakarta.servlet.Servlet;
-import jakarta.servlet.ServletRegistration;
 import java.util.Arrays;
 import java.util.EventListener;
 import java.util.HashSet;

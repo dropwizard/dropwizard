@@ -1,8 +1,8 @@
 package io.dropwizard.logging.json.layout;
 
 import ch.qos.logback.core.LayoutBase;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.Map;
 
 /**

@@ -5,8 +5,8 @@ import io.dropwizard.auth.AuthBaseTest;
 import io.dropwizard.auth.AuthResource;
 import io.dropwizard.auth.util.AuthUtil;
 import io.dropwizard.jersey.DropwizardResourceConfig;
-
 import jakarta.ws.rs.container.ContainerRequestFilter;
+
 import java.security.Principal;
 import java.util.Arrays;
 

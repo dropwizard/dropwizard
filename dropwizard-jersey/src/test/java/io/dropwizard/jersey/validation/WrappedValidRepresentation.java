@@ -1,9 +1,8 @@
 package io.dropwizard.jersey.validation;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import javax.annotation.Nullable;
 import jakarta.validation.Valid;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 public class WrappedValidRepresentation {
     @Valid

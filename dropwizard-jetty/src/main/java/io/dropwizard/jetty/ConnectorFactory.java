@@ -3,11 +3,10 @@ package io.dropwizard.jetty;
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import io.dropwizard.jackson.Discoverable;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.thread.ThreadPool;
-
-import javax.annotation.Nullable;
 
 /**
  * A factory for creating Jetty {@link Connector}s.

@@ -1,9 +1,9 @@
 package io.dropwizard.jersey.sessions;
 
-import javax.annotation.Nullable;
 import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 public final class HttpSessionFactory {
     private final HttpServletRequest request;

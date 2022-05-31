@@ -1,12 +1,12 @@
 package io.dropwizard.auth.principal;
 
 import io.dropwizard.auth.Auth;
-
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
+
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;

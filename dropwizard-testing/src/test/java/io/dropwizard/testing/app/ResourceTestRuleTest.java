@@ -2,6 +2,11 @@ package io.dropwizard.testing.app;
 
 import io.dropwizard.testing.junit.MockitoTestRule;
 import io.dropwizard.testing.junit.ResourceTestRule;
+import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.core.GenericType;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.ext.ExceptionMapper;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -9,11 +14,6 @@ import org.junit.rules.RuleChain;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 
-import jakarta.ws.rs.WebApplicationException;
-import jakarta.ws.rs.client.Entity;
-import jakarta.ws.rs.core.GenericType;
-import jakarta.ws.rs.core.Response;
-import jakarta.ws.rs.ext.ExceptionMapper;
 import java.util.Collections;
 import java.util.List;
 

@@ -5,17 +5,16 @@ import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.jersey.jackson.JacksonMessageBodyProviderTest.Example;
 import io.dropwizard.jersey.jackson.JacksonMessageBodyProviderTest.ListExample;
 import io.dropwizard.jersey.jackson.JacksonMessageBodyProviderTest.PartialExample;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.Application;
 import jakarta.ws.rs.core.Form;
 import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
@@ -23,7 +22,6 @@ import java.util.Map;
 
 import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assumptions.assumeThat;
 
 class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
     private static final Locale DEFAULT_LOCALE = Locale.getDefault();
@@ -45,12 +43,6 @@ class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
     @AfterAll
     static void shutdown() {
         Locale.setDefault(DEFAULT_LOCALE);
-    }
-
-    @BeforeEach
-    public void setUp() throws Exception {
-        assumeThat(Locale.getDefault().getLanguage()).isEqualTo("en");
-        super.setUp();
     }
 
     @Test

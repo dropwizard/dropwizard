@@ -1,13 +1,13 @@
 package io.dropwizard.servlets.assets;
 
 import io.dropwizard.util.Resources;
-
-import javax.annotation.Nullable;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.checkerframework.checker.nullness.qual.Nullable;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;

@@ -2,15 +2,15 @@ package io.dropwizard.jersey.validation;
 
 import io.dropwizard.jersey.params.IntParam;
 import io.dropwizard.jersey.params.NonEmptyStringParam;
-import org.hibernate.validator.constraints.Length;
-import org.junit.jupiter.api.Test;
-
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.valueextraction.Unwrapping;
+import org.hibernate.validator.constraints.Length;
+import org.junit.jupiter.api.Test;
+
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;

@@ -1,7 +1,5 @@
 package io.dropwizard.jersey.caching;
 
-import org.glassfish.jersey.server.model.AnnotatedMethod;
-
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerResponseContext;
 import jakarta.ws.rs.container.ContainerResponseFilter;
@@ -10,6 +8,8 @@ import jakarta.ws.rs.container.ResourceInfo;
 import jakarta.ws.rs.core.FeatureContext;
 import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.ext.Provider;
+import org.glassfish.jersey.server.model.AnnotatedMethod;
+
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 

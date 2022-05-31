@@ -3,12 +3,12 @@ package io.dropwizard.jetty;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.util.Duration;
 import io.dropwizard.validation.MinDuration;
+import jakarta.servlet.DispatcherType;
+import jakarta.validation.constraints.Min;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlets.PushCacheFilter;
 
-import javax.annotation.Nullable;
-import jakarta.servlet.DispatcherType;
-import jakarta.validation.constraints.Min;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.concurrent.TimeUnit;

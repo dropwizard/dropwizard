@@ -1,7 +1,6 @@
 package io.dropwizard.jersey.validation;
 
 import io.dropwizard.validation.ValidationMethod;
-
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.QueryParam;

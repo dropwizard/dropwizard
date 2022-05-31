@@ -9,6 +9,9 @@ import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
 import io.dropwizard.jersey.validation.Validators;
 import io.dropwizard.jetty.setup.ServletEnvironment;
+import jakarta.servlet.ServletRegistration;
+import jakarta.validation.Validator;
+import jakarta.ws.rs.core.MediaType;
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpMethod;
 import org.eclipse.jetty.http.HttpTester;
@@ -23,9 +26,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import jakarta.servlet.ServletRegistration;
-import jakarta.validation.Validator;
-import jakarta.ws.rs.core.MediaType;
 import java.util.Collections;
 import java.util.List;
 

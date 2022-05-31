@@ -2,7 +2,6 @@ package io.dropwizard.testing.app;
 
 import com.codahale.metrics.annotation.Timed;
 import io.dropwizard.jersey.PATCH;
-
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;

@@ -1,9 +1,8 @@
 package io.dropwizard.logging.json.layout;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.dropwizard.jackson.Jackson;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.IOException;
 import java.util.List;
@@ -11,6 +10,7 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import static io.dropwizard.jackson.Jackson.newObjectMapper;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class JsonFormatterTest {
@@ -18,46 +18,32 @@ class JsonFormatterTest {
     private final SortedMap<String, Object> map = new TreeMap<>(Map.of(
             "name", "Jim",
             "hobbies", List.of("Reading", "Biking", "Snorkeling")));
-    private final ObjectMapper objectMapper = Jackson.newObjectMapper();
+    private final ObjectMapper objectMapper = newObjectMapper();
 
-    @Test
-    void testNoPrettyPrintNoLineSeparator() throws IOException {
-        JsonFormatter formatter = new JsonFormatter(objectMapper, false, false);
-
-        final JsonNode actual = objectMapper.readTree(formatter.toJson(map));
-        final JsonNode expected = objectMapper.readTree("{\"name\":\"Jim\",\"hobbies\":[\"Reading\",\"Biking\",\"Snorkeling\"]}");
-        assertThat(actual).isEqualTo(expected);
-    }
-
-
-    @Test
-    void testNoPrettyPrintWithLineSeparator() throws IOException {
-        JsonFormatter formatter = new JsonFormatter(objectMapper, false, true);
+    @ParameterizedTest
+    @ValueSource(booleans={true, false})
+    void testNoPrettyPrint(boolean appendLineSeparator) throws IOException {
+        JsonFormatter formatter = new JsonFormatter(objectMapper, false, appendLineSeparator);
 
         final String content = formatter.toJson(map);
-        assertThat(content).endsWith(System.lineSeparator());
-        final JsonNode actual = objectMapper.readTree(content);
-        final JsonNode expected = objectMapper.readTree("{\"name\":\"Jim\",\"hobbies\":[\"Reading\",\"Biking\",\"Snorkeling\"]}");
-        assertThat(actual).isEqualTo(expected);
+        if (appendLineSeparator) {
+            assertThat(content).endsWith(System.lineSeparator());
+        } else {
+            assertThat(content).doesNotEndWith(System.lineSeparator());
+        }
+
+        assertThat(objectMapper.readTree(content))
+            .isEqualTo(objectMapper.readTree("{\"name\":\"Jim\",\"hobbies\":[\"Reading\",\"Biking\",\"Snorkeling\"]}"));
     }
 
-    @Test
-    void testPrettyPrintWithLineSeparator() {
-        JsonFormatter formatter = new JsonFormatter(objectMapper, true, true);
+    @ParameterizedTest
+    @ValueSource(booleans={true, false})
+    void testPrettyPrint(boolean appendLineSeparator) {
+        JsonFormatter formatter = new JsonFormatter(objectMapper, true, appendLineSeparator);
         assertThat(formatter.toJson(map)).isEqualToNormalizingNewlines(
                 "{\n" +
                 "  \"hobbies\" : [ \"Reading\", \"Biking\", \"Snorkeling\" ],\n" +
                 "  \"name\" : \"Jim\"\n" +
-                "}\n");
-    }
-
-    @Test
-    void testPrettyPrintNoLineSeparator() {
-        JsonFormatter formatter = new JsonFormatter(objectMapper, true, false);
-        assertThat(formatter.toJson(map)).isEqualToNormalizingNewlines(
-                "{\n" +
-                "  \"hobbies\" : [ \"Reading\", \"Biking\", \"Snorkeling\" ],\n" +
-                "  \"name\" : \"Jim\"\n" +
-                "}");
+                "}" + (appendLineSeparator ? "\n" : ""));
     }
 }

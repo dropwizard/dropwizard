@@ -1,13 +1,13 @@
 package io.dropwizard.testing.junit5;
 
 import io.dropwizard.testing.app.TestEntity;
+import jakarta.validation.ConstraintViolationException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import jakarta.validation.ConstraintViolationException;
 import java.io.Serializable;
 
 import static org.assertj.core.api.Assertions.assertThat;

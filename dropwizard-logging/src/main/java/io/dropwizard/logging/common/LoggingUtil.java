@@ -1,12 +1,12 @@
 package io.dropwizard.logging.common;
 
 import ch.qos.logback.classic.LoggerContext;
+import com.google.errorprone.annotations.concurrent.GuardedBy;
 import io.dropwizard.util.Duration;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
-import javax.annotation.concurrent.GuardedBy;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 

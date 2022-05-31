@@ -1,11 +1,11 @@
 package io.dropwizard.health;
 
 import com.codahale.metrics.health.HealthCheckRegistry;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
@@ -13,9 +13,9 @@ import java.util.Objects;
 public class HealthEnvironment {
     private static final Logger LOGGER = LoggerFactory.getLogger(HealthEnvironment.class);
 
-    @Nonnull
+    @NonNull
     private final HealthCheckRegistry healthCheckRegistry;
-    @Nonnull
+    @NonNull
     private final Collection<HealthStateListener> healthStateListeners;
     @Nullable
     private HealthStateAggregator healthStateAggregator;
@@ -29,17 +29,17 @@ public class HealthEnvironment {
         healthStateListeners.add(listener);
     }
 
-    @Nonnull
+    @NonNull
     public HealthCheckRegistry healthChecks() {
         return healthCheckRegistry;
     }
 
-    @Nonnull
+    @NonNull
     public Collection<HealthStateListener> healthStateListeners() {
         return healthStateListeners;
     }
 
-    @Nonnull
+    @NonNull
     public HealthStateAggregator healthStateAggregator() {
         if (healthStateAggregator == null) {
             final String message = "Cannot access the HealthStateAggregator before HealthFactory setup has occurred";
@@ -49,7 +49,7 @@ public class HealthEnvironment {
         return healthStateAggregator;
     }
 
-    void setHealthStateAggregator(@Nonnull final HealthStateAggregator healthStateAggregator) {
+    void setHealthStateAggregator(@NonNull final HealthStateAggregator healthStateAggregator) {
         this.healthStateAggregator = Objects.requireNonNull(healthStateAggregator);
     }
 }

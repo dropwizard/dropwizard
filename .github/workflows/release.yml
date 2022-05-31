@@ -15,6 +15,7 @@ jobs:
       with:
         distribution: 'temurin'
         java-version: '11'
+        cache: 'maven'
         server-id: ossrh
         server-username: CI_DEPLOY_USERNAME
         server-password: CI_DEPLOY_PASSWORD

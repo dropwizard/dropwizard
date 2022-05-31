@@ -2,14 +2,14 @@ package io.dropwizard.views.common;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
-import org.glassfish.jersey.message.internal.HeaderValueException;
-import org.glassfish.jersey.server.ContainerRequest;
-import org.junit.jupiter.api.Test;
-
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.MultivaluedHashMap;
+import org.glassfish.jersey.message.internal.HeaderValueException;
+import org.glassfish.jersey.server.ContainerRequest;
+import org.junit.jupiter.api.Test;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.annotation.Annotation;

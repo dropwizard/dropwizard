@@ -1,11 +1,11 @@
 package io.dropwizard.health.check.http;
 
 import com.sun.net.httpserver.HttpServer;
+import jakarta.ws.rs.ProcessingException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import jakarta.ws.rs.ProcessingException;
 import java.net.InetSocketAddress;
 
 import static org.assertj.core.api.Assertions.assertThat;

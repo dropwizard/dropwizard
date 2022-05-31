@@ -25,7 +25,7 @@ Apache HttpClient
 The underlying library for ``dropwizard-client`` is  Apache's HttpClient_, a full-featured,
 well-tested HTTP client library.
 
-.. _HttpClient: http://hc.apache.org/httpcomponents-core-4.3.x/index.html
+.. _HttpClient: https://hc.apache.org/httpcomponents-client-4.5.x/index.html
 
 To create a :ref:`managed <man-core-managed>`, instrumented ``HttpClient`` instance, your
 :ref:`configuration class <man-core-configuration>` needs an :ref:`http client configuration <man-configuration-clients-http>` instance:

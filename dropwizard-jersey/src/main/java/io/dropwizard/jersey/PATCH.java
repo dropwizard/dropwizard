@@ -1,6 +1,7 @@
 package io.dropwizard.jersey;
 
 import jakarta.ws.rs.HttpMethod;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

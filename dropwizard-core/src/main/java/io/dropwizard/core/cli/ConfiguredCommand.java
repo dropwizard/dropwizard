@@ -8,12 +8,12 @@ import io.dropwizard.configuration.ConfigurationSourceProvider;
 import io.dropwizard.core.Configuration;
 import io.dropwizard.core.setup.Bootstrap;
 import io.dropwizard.util.Generics;
+import jakarta.validation.Validator;
 import net.sourceforge.argparse4j.inf.Argument;
 import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
-import javax.annotation.Nullable;
-import jakarta.validation.Validator;
 import java.io.IOException;
 
 /**

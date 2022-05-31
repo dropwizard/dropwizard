@@ -1,7 +1,6 @@
 package com.example.validation;
 
 import io.dropwizard.validation.OneOf;
-
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.GET;

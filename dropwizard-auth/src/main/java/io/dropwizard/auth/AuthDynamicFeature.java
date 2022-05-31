@@ -8,12 +8,12 @@ import jakarta.ws.rs.container.DynamicFeature;
 import jakarta.ws.rs.container.ResourceInfo;
 import jakarta.ws.rs.core.Feature;
 import jakarta.ws.rs.core.FeatureContext;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.glassfish.jersey.InjectionManagerProvider;
 import org.glassfish.jersey.internal.inject.InjectionManager;
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 import org.glassfish.jersey.server.model.AnnotatedMethod;
 
-import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
 import java.util.Optional;
 
@@ -32,9 +32,6 @@ public class AuthDynamicFeature implements Feature, DynamicFeature {
     private final ContainerRequestFilter authFilter;
 
     private final Class<? extends ContainerRequestFilter> authFilterClass;
-
-    @Nullable
-    private InjectionManager injectionManager;
 
     // We suppress the null away checks, as adding `@Nullable` to the auth
     // filter fields, causes Jersey to try and resolve the fields to a concrete
@@ -97,9 +94,9 @@ public class AuthDynamicFeature implements Feature, DynamicFeature {
 
     private void registerAuthFilter(FeatureContext context, @Nullable ContainerRequestFilter decoratedAuthFilter) {
         if (decoratedAuthFilter != null) {
-            context.register(new InjectingFilter(injectionManager, decoratedAuthFilter));
+            context.register(decoratedAuthFilter);
         } else if (authFilter != null) {
-            context.register(new InjectingFilter(injectionManager, authFilter));
+            context.register(authFilter);
         } else if (authFilterClass != null) {
             context.register(authFilterClass);
         }
@@ -108,7 +105,12 @@ public class AuthDynamicFeature implements Feature, DynamicFeature {
     @Override
     public boolean configure(FeatureContext context) {
         try {
-            this.injectionManager = InjectionManagerProvider.getInjectionManager(context);
+            if (authFilter != null) {
+                final InjectionManager injectionManager = InjectionManagerProvider.getInjectionManager(context);
+                if (injectionManager != null) {
+                    AuthInjectionHelper.inject(injectionManager, authFilter);
+                }
+            }
             return true;
         } catch (IllegalArgumentException illegalArgumentException) {
             return false;
