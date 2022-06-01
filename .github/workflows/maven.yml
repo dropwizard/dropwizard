@@ -27,6 +27,8 @@ jobs:
       with:
         distribution: 'temurin'
         java-version: ${{ matrix.java_version }}
+    - name: Check formatting
+      run: ./mvnw --no-transfer-progress -V -B -ff -s .github/settings.xml spotless:check
     - name: Cache SonarCloud packages
       uses: actions/cache@v3.0.3
       if: ${{ env.SONAR_TOKEN != null && env.SONAR_TOKEN != '' && matrix.java_version == '11' }}
