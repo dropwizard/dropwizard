@@ -24,6 +24,6 @@ class PrefixedExtendedThrowableProxyConverterTest {
                 .startsWith(
                         String.format(
                                 "! java.io.IOException: noo%n"
-                                        + "! at io.dropwizard.logging.common.PrefixedExtendedThrowableProxyConverterTest.<init>(PrefixedExtendedThrowableProxyConverterTest.java:14)%n"));
+                                        + "! at io.dropwizard.logging.common.PrefixedExtendedThrowableProxyConverterTest.<init>(PrefixedExtendedThrowableProxyConverterTest.java:13)%n"));
     }
 }
