@@ -1,5 +1,10 @@
 package io.dropwizard.core.server;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import io.dropwizard.core.Application;
 import io.dropwizard.core.Configuration;
 import io.dropwizard.core.setup.Environment;
@@ -11,11 +16,6 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.thread.ThreadPool;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 /**
  * Tests that the {@link JerseyEnvironment#getUrlPattern()} is set by the following priority order:
@@ -79,13 +79,14 @@ class AbstractServerFactoryTest {
             // mimics the current default + simple server factory build() methods
             ThreadPool threadPool = createThreadPool(environment.metrics());
             Server server = buildServer(environment.lifecycle(), threadPool);
-            createAppServlet(server,
-                                  environment.jersey(),
-                                  environment.getObjectMapper(),
-                                  environment.getValidator(),
-                                  environment.getApplicationContext(),
-                                  environment.getJerseyServletContainer(),
-                                  environment.metrics());
+            createAppServlet(
+                    server,
+                    environment.jersey(),
+                    environment.getObjectMapper(),
+                    environment.getValidator(),
+                    environment.getApplicationContext(),
+                    environment.getJerseyServletContainer(),
+                    environment.metrics());
             return server;
         }
 

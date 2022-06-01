@@ -1,5 +1,9 @@
 package io.dropwizard.validation.selfvalidating;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+
 import com.fasterxml.classmate.AnnotationConfiguration;
 import com.fasterxml.classmate.AnnotationInclusion;
 import com.fasterxml.classmate.MemberResolver;
@@ -7,17 +11,12 @@ import com.fasterxml.classmate.ResolvedTypeWithMembers;
 import com.fasterxml.classmate.TypeResolver;
 import com.fasterxml.classmate.members.ResolvedMethod;
 import io.dropwizard.validation.BaseValidator;
-import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-
-import javax.validation.ConstraintViolation;
-import javax.validation.Validator;
 import java.util.Arrays;
 import java.util.Set;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validator;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
 
 class SelfValidatingValidatorTest {
     private final Logger log = mock(Logger.class);
@@ -42,52 +41,57 @@ class SelfValidatingValidatorTest {
 
     @Test
     void correctMethod() {
-        assertThat(selfValidatingValidator.isMethodCorrect(
-                getMethod("validateCorrect", ViolationCollector.class)))
+        assertThat(selfValidatingValidator.isMethodCorrect(getMethod("validateCorrect", ViolationCollector.class)))
                 .isTrue();
     }
 
     @Test
     void voidIsNotAccepted() {
-        assertThat(selfValidatingValidator.isMethodCorrect(
-                getMethod("validateFailReturn", ViolationCollector.class)))
+        assertThat(selfValidatingValidator.isMethodCorrect(getMethod("validateFailReturn", ViolationCollector.class)))
                 .isFalse();
     }
 
     @Test
     @SuppressWarnings("Slf4jFormatShouldBeConst")
     void privateIsNotAccepted() throws NoSuchMethodException {
-        assertThat(selfValidatingValidator.isMethodCorrect(
-                getMethod("validateFailPrivate", ViolationCollector.class)))
+        assertThat(selfValidatingValidator.isMethodCorrect(getMethod("validateFailPrivate", ViolationCollector.class)))
                 .isFalse();
 
-        verify(log).error("The method {} is annotated with @SelfValidation but is not public",
-            InvalidExample.class.getDeclaredMethod("validateFailPrivate", ViolationCollector.class));
+        verify(log)
+                .error(
+                        "The method {} is annotated with @SelfValidation but is not public",
+                        InvalidExample.class.getDeclaredMethod("validateFailPrivate", ViolationCollector.class));
     }
 
     @Test
     @SuppressWarnings("Slf4jFormatShouldBeConst")
     void additionalParametersAreNotAccepted() throws NoSuchMethodException {
         assertThat(selfValidatingValidator.isMethodCorrect(
-                getMethod("validateFailAdditionalParameters", ViolationCollector.class, int.class)))
+                        getMethod("validateFailAdditionalParameters", ViolationCollector.class, int.class)))
                 .isFalse();
 
-        verify(log).error("The method {} is annotated with @SelfValidation but does not have a single parameter of type {}",
-            InvalidExample.class.getMethod("validateFailAdditionalParameters", ViolationCollector.class, int.class),
-            ViolationCollector.class);
+        verify(log)
+                .error(
+                        "The method {} is annotated with @SelfValidation but does not have a single parameter of type {}",
+                        InvalidExample.class.getMethod(
+                                "validateFailAdditionalParameters", ViolationCollector.class, int.class),
+                        ViolationCollector.class);
     }
 
     private ResolvedMethod getMethod(String name, Class<?>... params) {
-        AnnotationConfiguration annotationConfiguration = new AnnotationConfiguration.StdConfiguration(AnnotationInclusion.INCLUDE_AND_INHERIT_IF_INHERITED);
+        AnnotationConfiguration annotationConfiguration =
+                new AnnotationConfiguration.StdConfiguration(AnnotationInclusion.INCLUDE_AND_INHERIT_IF_INHERITED);
         TypeResolver typeResolver = new TypeResolver();
         MemberResolver memberResolver = new MemberResolver(typeResolver);
-        ResolvedTypeWithMembers annotatedType = memberResolver.resolve(typeResolver.resolve(InvalidExample.class), annotationConfiguration, null);
+        ResolvedTypeWithMembers annotatedType =
+                memberResolver.resolve(typeResolver.resolve(InvalidExample.class), annotationConfiguration, null);
         for (ResolvedMethod m : annotatedType.getMemberMethods()) {
             if (hasSignature(m, name, params)) {
                 return m;
             }
         }
-        throw new IllegalStateException("Could not resolve method " + name + Arrays.toString(params) + " in " + InvalidExample.class);
+        throw new IllegalStateException(
+                "Could not resolve method " + name + Arrays.toString(params) + " in " + InvalidExample.class);
     }
 
     private boolean hasSignature(ResolvedMethod m, String name, Class<?>[] params) {
@@ -95,22 +99,18 @@ class SelfValidatingValidatorTest {
             return false;
         }
         for (int i = 0; i < params.length; i++) {
-            if (!m.getArgumentType(i).getErasedType().equals(params[i]))
-                return false;
+            if (!m.getArgumentType(i).getErasedType().equals(params[i])) return false;
         }
         return true;
     }
 
-
     @SelfValidating
     static class InvalidExample {
         @SelfValidation
-        public void validateCorrect(ViolationCollector col) {
-        }
+        public void validateCorrect(ViolationCollector col) {}
 
         @SelfValidation
-        public void validateFailAdditionalParameters(ViolationCollector col, int a) {
-        }
+        public void validateFailAdditionalParameters(ViolationCollector col, int a) {}
 
         @SelfValidation
         public boolean validateFailReturn(ViolationCollector col) {
@@ -118,8 +118,7 @@ class SelfValidatingValidatorTest {
         }
 
         @SelfValidation
-        private void validateFailPrivate(ViolationCollector col) {
-        }
+        private void validateFailPrivate(ViolationCollector col) {}
     }
 
     @SelfValidating

@@ -9,7 +9,6 @@ import ch.qos.logback.core.Layout;
 import ch.qos.logback.core.encoder.LayoutWrappingEncoder;
 import com.google.errorprone.annotations.concurrent.GuardedBy;
 import io.dropwizard.logging.common.layout.DiscoverableLayoutFactory;
-
 import java.util.TimeZone;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -26,10 +25,10 @@ public class BootstrapLogging {
 
     @GuardedBy("BOOTSTRAPPING_LOCK")
     private static boolean bootstrapped = false;
+
     private static final Lock BOOTSTRAPPING_LOCK = new ReentrantLock();
 
-    private BootstrapLogging() {
-    }
+    private BootstrapLogging() {}
 
     // initially configure for WARN+ console logging
     public static void bootstrap() {

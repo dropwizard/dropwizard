@@ -1,20 +1,5 @@
 package io.dropwizard.jdbi3;
 
-import com.codahale.metrics.MetricRegistry;
-import com.codahale.metrics.health.HealthCheckRegistry;
-import com.codahale.metrics.jdbi3.InstrumentedSqlLogger;
-import com.codahale.metrics.jdbi3.strategies.StatementNameStrategy;
-import io.dropwizard.core.setup.Environment;
-import io.dropwizard.db.ManagedDataSource;
-import io.dropwizard.db.PooledDataSourceFactory;
-import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
-import org.jdbi.v3.core.Jdbi;
-import org.jdbi.v3.core.statement.SqlStatements;
-import org.junit.jupiter.api.Test;
-
-import java.util.Optional;
-import java.util.UUID;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.eq;
@@ -23,6 +8,20 @@ import static org.mockito.Mockito.same;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.health.HealthCheckRegistry;
+import com.codahale.metrics.jdbi3.InstrumentedSqlLogger;
+import com.codahale.metrics.jdbi3.strategies.StatementNameStrategy;
+import io.dropwizard.core.setup.Environment;
+import io.dropwizard.db.ManagedDataSource;
+import io.dropwizard.db.PooledDataSourceFactory;
+import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
+import java.util.Optional;
+import java.util.UUID;
+import org.jdbi.v3.core.Jdbi;
+import org.jdbi.v3.core.statement.SqlStatements;
+import org.junit.jupiter.api.Test;
 
 class JdbiFactoryTest {
     @Test

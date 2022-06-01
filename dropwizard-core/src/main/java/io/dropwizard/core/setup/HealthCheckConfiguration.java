@@ -1,7 +1,6 @@
 package io.dropwizard.core.setup;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.StringJoiner;
 
 /**

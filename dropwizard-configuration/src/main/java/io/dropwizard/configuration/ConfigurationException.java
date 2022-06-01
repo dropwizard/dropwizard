@@ -50,7 +50,8 @@ public abstract class ConfigurationException extends Exception {
 
     protected static String formatMessage(String file, Collection<String> errors) {
         final StringBuilder msg = new StringBuilder(file);
-        msg.append(errors.size() == 1 ? " has an error:" : " has the following errors:").append(NEWLINE);
+        msg.append(errors.size() == 1 ? " has an error:" : " has the following errors:")
+                .append(NEWLINE);
         for (String error : errors) {
             msg.append("  * ").append(error).append(NEWLINE);
         }

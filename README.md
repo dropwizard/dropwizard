@@ -1,5 +1,6 @@
 Dropwizard
 ==========
+
 [![Build](https://github.com/dropwizard/dropwizard/workflows/Java%20CI/badge.svg)](https://github.com/dropwizard/dropwizard/actions?query=workflow%3A%22Java+CI%22)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=dropwizard_dropwizard&metric=alert_status)](https://sonarcloud.io/dashboard?id=dropwizard_dropwizard)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.dropwizard/dropwizard-core/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.dropwizard/dropwizard-core/)
@@ -26,11 +27,13 @@ historically not sucked:
 Read more at [dropwizard.io](http://www.dropwizard.io).
 
 Want to contribute to Dropwizard?
----
+---------------------------------
+
 Before working on the code, if you plan to contribute changes, please read the following [CONTRIBUTING](CONTRIBUTING.md) document.
 
 Need help or found an issue?
----
+----------------------------
+
 When reporting an issue through the [issue tracker](https://github.com/dropwizard/dropwizard/issues?state=open)
 on GitHub or sending an email to the
 [Dropwizard User Google Group](https://groups.google.com/forum/#!forum/dropwizard-user)
@@ -41,7 +44,7 @@ mailing list, please use the following guidelines:
 * A short description of the issue you are experiencing and the expected outcome
 * Description of how someone else can reproduce the problem
 * Paste error output or logs in your issue or in a Gist. If pasting them in the GitHub
-issue, wrap it in three backticks: ```  so that it renders nicely
+  issue, wrap it in three backticks: ```  so that it renders nicely
 * Write a unit test to show the issue!
 
 Sponsors

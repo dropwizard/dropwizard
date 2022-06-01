@@ -3,11 +3,10 @@ package io.dropwizard.jersey.jackson;
 import com.fasterxml.jackson.annotation.JsonIgnoreType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
-import org.checkerframework.checker.nullness.qual.Nullable;
-
-import javax.ws.rs.core.MediaType;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
+import javax.ws.rs.core.MediaType;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * A Jersey provider which enables using Jackson to parse request entities into objects and generate
@@ -24,18 +23,20 @@ public class JacksonMessageBodyProvider extends JacksonJaxbJsonProvider {
     }
 
     @Override
-    public boolean isReadable(Class<?> type,
-                              @Nullable Type genericType,
-                              @Nullable Annotation[] annotations,
-                              @Nullable MediaType mediaType) {
+    public boolean isReadable(
+            Class<?> type,
+            @Nullable Type genericType,
+            @Nullable Annotation[] annotations,
+            @Nullable MediaType mediaType) {
         return isProvidable(type) && super.isReadable(type, genericType, annotations, mediaType);
     }
 
     @Override
-    public boolean isWriteable(Class<?> type,
-                               @Nullable Type genericType,
-                               @Nullable Annotation[] annotations,
-                               @Nullable MediaType mediaType) {
+    public boolean isWriteable(
+            Class<?> type,
+            @Nullable Type genericType,
+            @Nullable Annotation[] annotations,
+            @Nullable MediaType mediaType) {
         return isProvidable(type) && super.isWriteable(type, genericType, annotations, mediaType);
     }
 

@@ -6,10 +6,9 @@ import ch.qos.logback.core.spi.FilterReply;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.dropwizard.logging.common.filter.FilterFactory;
-
-import javax.validation.constraints.NotNull;
 import java.util.Collections;
 import java.util.Set;
+import javax.validation.constraints.NotNull;
 
 /**
  * @since 2.0

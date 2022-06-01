@@ -48,10 +48,10 @@ public final class PortDescriptor {
     @Override
     public String toString() {
         return new StringJoiner(", ", PortDescriptor.class.getSimpleName() + "[", "]")
-            .add("host='" + host + "'")
-            .add("protocol='" + protocol + "'")
-            .add("port=" + port)
-            .add("connectorType='" + connectorType + "'")
-            .toString();
+                .add("host='" + host + "'")
+                .add("protocol='" + protocol + "'")
+                .add("port=" + port)
+                .add("connectorType='" + connectorType + "'")
+                .toString();
     }
 }

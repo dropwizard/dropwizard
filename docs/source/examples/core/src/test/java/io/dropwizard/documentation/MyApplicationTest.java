@@ -1,5 +1,9 @@
 package io.dropwizard.documentation;
 
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import io.dropwizard.core.setup.Environment;
 import io.dropwizard.documentation.config.MyConfiguration;
 import io.dropwizard.documentation.resources.MyResource;
@@ -10,17 +14,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 // core: MyApplicationTest
 @ExtendWith(MockitoExtension.class)
 class MyApplicationTest {
     @Mock
     private Environment environment;
+
     @Mock
     private JerseyEnvironment jersey;
+
     private MyApplication application;
     private MyConfiguration config;
 

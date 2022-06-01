@@ -1,17 +1,10 @@
 package io.dropwizard.auth;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
-import org.glassfish.jersey.servlet.ServletProperties;
-import org.glassfish.jersey.test.DeploymentContext;
-import org.glassfish.jersey.test.JerseyTest;
-import org.glassfish.jersey.test.ServletDeploymentContext;
-import org.glassfish.jersey.test.TestProperties;
-import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
 import java.security.Principal;
 import java.util.Optional;
-
 import javax.annotation.Priority;
 import javax.ws.rs.Priorities;
 import javax.ws.rs.WebApplicationException;
@@ -22,8 +15,13 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.glassfish.jersey.servlet.ServletProperties;
+import org.glassfish.jersey.test.DeploymentContext;
+import org.glassfish.jersey.test.JerseyTest;
+import org.glassfish.jersey.test.ServletDeploymentContext;
+import org.glassfish.jersey.test.TestProperties;
+import org.junit.jupiter.api.Test;
 
 class AuthDynamicFeatureAuthFilterInjectionTest extends JerseyTest {
 
@@ -73,7 +71,8 @@ class AuthDynamicFeatureAuthFilterInjectionTest extends JerseyTest {
         @Override
         public void filter(ContainerRequestContext requestContext) throws IOException {
             if (!authenticate(requestContext, "ignored", SecurityContext.BASIC_AUTH)) {
-                throw new WebApplicationException(Response.status(Response.Status.UNAUTHORIZED).build());
+                throw new WebApplicationException(
+                        Response.status(Response.Status.UNAUTHORIZED).build());
             }
         }
     }
@@ -93,8 +92,8 @@ class AuthDynamicFeatureAuthFilterInjectionTest extends JerseyTest {
     protected DeploymentContext configureDeployment() {
         forceSet(TestProperties.CONTAINER_PORT, "0");
         return ServletDeploymentContext.builder(new InjectionResourceConfig())
-            .initParam(ServletProperties.JAXRS_APPLICATION_CLASS, InjectionResourceConfig.class.getName())
-            .build();
+                .initParam(ServletProperties.JAXRS_APPLICATION_CLASS, InjectionResourceConfig.class.getName())
+                .build();
     }
 
     @Test
@@ -104,21 +103,21 @@ class AuthDynamicFeatureAuthFilterInjectionTest extends JerseyTest {
         WebTarget target = target("/test/admin");
 
         String response1 = target.request()
-            .header("username", req1User)
-            .header("role", "ADMIN")
-            .get(String.class);
+                .header("username", req1User)
+                .header("role", "ADMIN")
+                .get(String.class);
         String response2 = target.request()
-            .header("username", req2User)
-            .header("role", "ADMIN")
-            .get(String.class);
+                .header("username", req2User)
+                .header("role", "ADMIN")
+                .get(String.class);
         Response response3 = target.request()
-            .header("username", req1User)
-            .header("role", "not-admin")
-            .get();
+                .header("username", req1User)
+                .header("role", "not-admin")
+                .get();
         Response response4 = target.request()
-            .header("username", req2User)
-            .header("role", "not-admin")
-            .get();
+                .header("username", req2User)
+                .header("role", "not-admin")
+                .get();
 
         assertThat(response1).isEqualTo("'%s' has admin privileges", req1User);
         assertThat(response2).isEqualTo("'%s' has admin privileges", req2User);

@@ -3,10 +3,6 @@ package io.dropwizard.lifecycle.setup;
 import com.codahale.metrics.InstrumentedThreadFactory;
 import io.dropwizard.lifecycle.ExecutorServiceManager;
 import io.dropwizard.util.Duration;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.Formatter;
 import java.util.Locale;
 import java.util.concurrent.BlockingQueue;
@@ -17,14 +13,19 @@ import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.atomic.AtomicLong;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ExecutorServiceBuilder {
     private static Logger log = LoggerFactory.getLogger(ExecutorServiceBuilder.class);
 
     private static final AtomicLong COUNT = new AtomicLong(0);
     private final LifecycleEnvironment environment;
+
     @NonNull
     private final String nameFormat;
+
     private int corePoolSize;
     private int maximumPoolSize;
     private boolean allowCoreThreadTimeOut;
@@ -112,14 +113,16 @@ public class ExecutorServiceBuilder {
         }
 
         final String nameWithoutFormat = getNameWithoutFormat(nameFormat);
-        final ThreadFactory instrumentedThreadFactory = new InstrumentedThreadFactory(threadFactory, environment.getMetricRegistry(), nameWithoutFormat);
-        final ThreadPoolExecutor executor = new ThreadPoolExecutor(corePoolSize,
-                                                                   maximumPoolSize,
-                                                                   keepAliveTime.getQuantity(),
-                                                                   keepAliveTime.getUnit(),
-                                                                   workQueue,
-                                                                   instrumentedThreadFactory,
-                                                                   handler);
+        final ThreadFactory instrumentedThreadFactory =
+                new InstrumentedThreadFactory(threadFactory, environment.getMetricRegistry(), nameWithoutFormat);
+        final ThreadPoolExecutor executor = new ThreadPoolExecutor(
+                corePoolSize,
+                maximumPoolSize,
+                keepAliveTime.getQuantity(),
+                keepAliveTime.getUnit(),
+                workQueue,
+                instrumentedThreadFactory,
+                handler);
         executor.allowCoreThreadTimeOut(allowCoreThreadTimeOut);
         environment.manage(new ExecutorServiceManager(executor, shutdownTime, nameFormat));
         return executor;

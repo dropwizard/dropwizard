@@ -1,45 +1,40 @@
 package com.example.sslreload;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.Objects.requireNonNull;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.core.Configuration;
 import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.io.TempDir;
-
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.cert.X509Certificate;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.util.Objects.requireNonNull;
-import static org.assertj.core.api.Assertions.assertThat;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
 
 @ExtendWith(DropwizardExtensionsSupport.class)
 public class SslReloadAppTest {
 
     private static final X509TrustManager TRUST_ALL = new X509TrustManager() {
         @Override
-        public void checkClientTrusted(X509Certificate[] x509Certificates, String s) {
-
-        }
+        public void checkClientTrusted(X509Certificate[] x509Certificates, String s) {}
 
         @Override
-        public void checkServerTrusted(X509Certificate[] x509Certificates, String s) {
-
-        }
+        public void checkServerTrusted(X509Certificate[] x509Certificates, String s) {}
 
         @Override
         public X509Certificate[] getAcceptedIssuers() {
@@ -49,8 +44,9 @@ public class SslReloadAppTest {
 
     private static Path keystore;
 
-    public final DropwizardAppExtension<Configuration> rule =
-        new DropwizardAppExtension<>(SslReloadApp.class, "sslreload/config.yml",
+    public final DropwizardAppExtension<Configuration> rule = new DropwizardAppExtension<>(
+            SslReloadApp.class,
+            "sslreload/config.yml",
             new ResourceConfigurationSourceProvider(),
             ConfigOverride.config("server.applicationConnectors[0].keyStorePath", keystore.toString()),
             ConfigOverride.config("server.adminConnectors[0].keyStorePath", keystore.toString()));
@@ -58,7 +54,8 @@ public class SslReloadAppTest {
     @BeforeAll
     public static void setupClass(@TempDir Path tempDir) throws IOException {
         keystore = tempDir.resolve("keystore.jks");
-        try (InputStream inputStream = requireNonNull(SslReloadAppTest.class.getResourceAsStream("/sslreload/keystore.jks"))) {
+        try (InputStream inputStream =
+                requireNonNull(SslReloadAppTest.class.getResourceAsStream("/sslreload/keystore.jks"))) {
             Files.write(keystore, inputStream.readAllBytes());
         }
     }
@@ -105,9 +102,7 @@ public class SslReloadAppTest {
         // the same original certificate
         byte[] thirdCertBytes = certBytes(500, "Keystore was tampered with, or password was incorrect");
 
-        assertThat(firstCertBytes)
-            .isEqualTo(secondCertBytes)
-            .isEqualTo(thirdCertBytes);
+        assertThat(firstCertBytes).isEqualTo(secondCertBytes).isEqualTo(thirdCertBytes);
     }
 
     /** Issues a POST against the reload ssl admin task, asserts that the code and content
@@ -136,14 +131,14 @@ public class SslReloadAppTest {
     /** Configure SSL and POST request parameters */
     private void postIt(HttpsURLConnection conn) throws Exception {
         final SSLContext sslCtx = SSLContext.getInstance("TLS");
-        sslCtx.init(null, new TrustManager[]{TRUST_ALL}, null);
+        sslCtx.init(null, new TrustManager[] {TRUST_ALL}, null);
 
         conn.setHostnameVerifier((String s, SSLSession sslSession) -> true);
         conn.setSSLSocketFactory(sslCtx.getSocketFactory());
 
         // Make it a POST
         conn.setDoOutput(true);
-        conn.getOutputStream().write(new byte[]{});
+        conn.getOutputStream().write(new byte[] {});
     }
 
     private void writeKeystore(String source) throws IOException {

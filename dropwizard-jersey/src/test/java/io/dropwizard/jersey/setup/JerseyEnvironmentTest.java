@@ -1,10 +1,10 @@
 package io.dropwizard.jersey.setup;
 
-import io.dropwizard.jersey.DropwizardResourceConfig;
-import org.junit.jupiter.api.Test;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
+
+import io.dropwizard.jersey.DropwizardResourceConfig;
+import org.junit.jupiter.api.Test;
 
 class JerseyEnvironmentTest {
 

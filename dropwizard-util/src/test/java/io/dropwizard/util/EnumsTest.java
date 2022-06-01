@@ -1,12 +1,11 @@
 package io.dropwizard.util;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.stream.Stream;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-
-import java.util.stream.Stream;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 class EnumsTest {
 
@@ -38,10 +37,8 @@ class EnumsTest {
                 Arguments.of("h.264", VideoFormat.H_264),
                 Arguments.of("QuickTime", VideoFormat.HDMOV),
                 Arguments.of("[OGG]", null),
-                Arguments.of("FLV", null)
-        );
+                Arguments.of("FLV", null));
     }
-
 
     @ParameterizedTest
     @MethodSource("data")

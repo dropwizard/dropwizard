@@ -1,9 +1,8 @@
 package io.dropwizard.jersey.jsr310;
 
 import io.dropwizard.jersey.params.AbstractParam;
-import org.checkerframework.checker.nullness.qual.Nullable;
-
 import java.time.Instant;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * A parameter encapsulating instant values in seconds. All non-parsable values

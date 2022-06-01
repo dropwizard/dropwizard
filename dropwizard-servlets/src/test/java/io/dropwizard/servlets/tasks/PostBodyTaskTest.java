@@ -1,28 +1,26 @@
 package io.dropwizard.servlets.tasks;
 
-import org.junit.jupiter.api.Test;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import org.junit.jupiter.api.Test;
 
 class PostBodyTaskTest {
     private final PostBodyTask task = new PostBodyTask("test") {
         @Override
-        public void execute(Map<String, List<String>> parameters, String body, PrintWriter output) throws Exception {
-
-        }
+        public void execute(Map<String, List<String>> parameters, String body, PrintWriter output) throws Exception {}
     };
 
     @SuppressWarnings("deprecation")
     @Test
     void throwsExceptionWhenCallingExecuteWithoutThePostBody() throws Exception {
-        assertThatExceptionOfType(UnsupportedOperationException.class).isThrownBy(() ->
-                task.execute(Collections.emptyMap(), new PrintWriter(new OutputStreamWriter(System.out, UTF_8))));
+        assertThatExceptionOfType(UnsupportedOperationException.class)
+                .isThrownBy(() -> task.execute(
+                        Collections.emptyMap(), new PrintWriter(new OutputStreamWriter(System.out, UTF_8))));
     }
 }

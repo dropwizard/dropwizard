@@ -1,15 +1,14 @@
 package io.dropwizard.testing.junit5;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.ExtensionContext;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 // Utility interface for tests in this file.
 @FunctionalInterface
@@ -54,8 +53,8 @@ interface DelayedAssertionsTest {
 class CallbackVerifyingExtension implements AfterEachCallback {
     @Override
     public void afterEach(ExtensionContext context) throws Exception {
-        DelayedAssertionsTest testInstance = (DelayedAssertionsTest) context.getTestInstance()
-            .orElseThrow(() -> new AssertionError("Null context.testInstance"));
+        DelayedAssertionsTest testInstance = (DelayedAssertionsTest)
+                context.getTestInstance().orElseThrow(() -> new AssertionError("Null context.testInstance"));
         testInstance.getDelayedAssertions().forEach(Invokable::invoke);
     }
 }

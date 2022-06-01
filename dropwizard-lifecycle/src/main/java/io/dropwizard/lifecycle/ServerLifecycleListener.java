@@ -1,13 +1,12 @@
 package io.dropwizard.lifecycle;
 
-import org.eclipse.jetty.server.Connector;
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.ServerConnector;
-
 import java.util.Arrays;
 import java.util.EventListener;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
 
 public interface ServerLifecycleListener extends EventListener {
 
@@ -48,11 +47,14 @@ public interface ServerLifecycleListener extends EventListener {
     default List<PortDescriptor> getPortDescriptorList(Server server) {
         final Connector[] connectors = server.getConnectors();
         return Arrays.stream(connectors)
-            .map(conn -> conn.getProtocols()
-                .stream()
-                .map(protocol -> new PortDescriptor(protocol, ((ServerConnector) conn).getLocalPort(), conn.getName(), ((ServerConnector) conn).getHost()))
-                .collect(Collectors.toList()))
-            .flatMap(List::stream)
-            .collect(Collectors.toList());
+                .map(conn -> conn.getProtocols().stream()
+                        .map(protocol -> new PortDescriptor(
+                                protocol,
+                                ((ServerConnector) conn).getLocalPort(),
+                                conn.getName(),
+                                ((ServerConnector) conn).getHost()))
+                        .collect(Collectors.toList()))
+                .flatMap(List::stream)
+                .collect(Collectors.toList());
     }
 }

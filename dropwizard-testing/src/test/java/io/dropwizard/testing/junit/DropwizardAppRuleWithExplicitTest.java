@@ -1,24 +1,23 @@
 package io.dropwizard.testing.junit;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.entry;
+
 import io.dropwizard.core.Application;
 import io.dropwizard.core.server.DefaultServerFactory;
 import io.dropwizard.core.setup.Environment;
 import io.dropwizard.jetty.HttpConnectorFactory;
 import io.dropwizard.testing.app.TestConfiguration;
-import org.junit.ClassRule;
-import org.junit.Test;
-
+import java.util.Collections;
+import java.util.Map;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.Collections;
-import java.util.Map;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.entry;
+import org.junit.ClassRule;
+import org.junit.Test;
 
 public class DropwizardAppRuleWithExplicitTest {
 
@@ -37,13 +36,12 @@ public class DropwizardAppRuleWithExplicitTest {
         RULE = new DropwizardAppRule<>(TestApplication.class, config);
     }
 
-
     @Test
     public void runWithExplicitConfig() {
-        Map<String, String> response = RULE.client().target("http://localhost:" + RULE.getLocalPort() + "/test")
-            .request()
-            .get(new GenericType<Map<String, String>>() {
-            });
+        Map<String, String> response = RULE.client()
+                .target("http://localhost:" + RULE.getLocalPort() + "/test")
+                .request()
+                .get(new GenericType<Map<String, String>>() {});
         assertThat(response).containsOnly(entry("message", "stuff!"));
     }
 

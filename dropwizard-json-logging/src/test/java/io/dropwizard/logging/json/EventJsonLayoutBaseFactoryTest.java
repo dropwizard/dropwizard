@@ -1,21 +1,20 @@
 package io.dropwizard.logging.json;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
+
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.pattern.ThrowableHandlingConverter;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.ThrowableProxy;
 import io.dropwizard.logging.json.layout.ExceptionFormat;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Collections;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 class EventJsonLayoutBaseFactoryTest {
     // Use unique spelling to guard against false positive matches
@@ -48,10 +47,10 @@ class EventJsonLayoutBaseFactoryTest {
 
         // Verify the conversion depth
         assertThat(converter.convert(event))
-            .hasLineCount(18) // 2 messages and 8 lines of stack per throwable
-            .containsSubsequence("wrapp3d", "r00t") // the root is not first
-            .doesNotContain(packageFilter) // does not includes the excluded packages
-            .containsPattern("\\[\\d+ skipped\\]"); // and contains no skipped lines
+                .hasLineCount(18) // 2 messages and 8 lines of stack per throwable
+                .containsSubsequence("wrapp3d", "r00t") // the root is not first
+                .doesNotContain(packageFilter) // does not includes the excluded packages
+                .containsPattern("\\[\\d+ skipped\\]"); // and contains no skipped lines
     }
 
     @Test
@@ -63,16 +62,17 @@ class EventJsonLayoutBaseFactoryTest {
 
         assertThat(converter.isStarted()).isTrue();
 
-        int originalSize = (int)getStackTraceAsString(proxy.getThrowable()).lines().count();
+        int originalSize =
+                (int) getStackTraceAsString(proxy.getThrowable()).lines().count();
 
         assertThat(converter.convert(event))
-            .hasLineCount(originalSize) // Verify that the full stack is included
-            .containsSubsequence("r00t", "wrapp3d"); // Verify that the root is first
+                .hasLineCount(originalSize) // Verify that the full stack is included
+                .containsSubsequence("r00t", "wrapp3d"); // Verify that the root is first
     }
 
     private static String getStackTraceAsString(Throwable throwable) throws IOException {
         try (StringWriter stringWriter = new StringWriter();
-             PrintWriter printWriter = new PrintWriter(stringWriter)) {
+                PrintWriter printWriter = new PrintWriter(stringWriter)) {
             throwable.printStackTrace(printWriter);
             return stringWriter.toString();
         }

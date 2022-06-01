@@ -1,14 +1,13 @@
 package io.dropwizard.testing.junit;
 
+import static java.util.Objects.requireNonNull;
+
+import java.lang.reflect.Method;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 import org.mockito.junit.MockitoRule;
-
-import java.lang.reflect.Method;
-
-import static java.util.Objects.requireNonNull;
 
 /**
  * A crude hack to allow using {@link MockitoRule} with {@link org.junit.rules.RuleChain}

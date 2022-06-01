@@ -1,17 +1,16 @@
 package io.dropwizard.testing;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.core.setup.Bootstrap;
 import io.dropwizard.core.setup.Environment;
 import io.dropwizard.testing.app.TestConfiguration;
+import java.io.IOException;
+import java.io.InputStream;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
-import java.io.IOException;
-import java.io.InputStream;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 class DropwizardTestSupportWithResourceConfigProviderTest {
     private static final TestResourceConfigurationSourceProvider TEST_CONFIG_SOURCE_PROVIDER =
@@ -49,8 +48,8 @@ class DropwizardTestSupportWithResourceConfigProviderTest {
 
     @Test
     void doesNotOverwriteConfigSourceProviderIfNotProvidedInConstructor() throws Exception {
-        DropwizardTestSupport<TestConfiguration> support = new DropwizardTestSupport<>(
-                TestApplication.class, "test-config.yaml");
+        DropwizardTestSupport<TestConfiguration> support =
+                new DropwizardTestSupport<>(TestApplication.class, "test-config.yaml");
         try {
             support.before();
             assertThat(TEST_CONFIG_SOURCE_PROVIDER.openCalled).isTrue();

@@ -3,16 +3,15 @@ package io.dropwizard.jetty;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.util.Duration;
 import io.dropwizard.validation.MinDuration;
-import org.checkerframework.checker.nullness.qual.Nullable;
-import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.eclipse.jetty.servlets.PushCacheFilter;
-
-import javax.servlet.DispatcherType;
-import javax.validation.constraints.Min;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import javax.servlet.DispatcherType;
+import javax.validation.constraints.Min;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.servlets.PushCacheFilter;
 
 /**
  * A factory for building HTTP/2 {@link PushCacheFilter},
@@ -146,9 +145,7 @@ public class ServerPushFilterFactory {
             handler.setInitParameter("hosts", String.join(",", refererHosts));
         }
         if (refererPorts != null) {
-            final String ports = refererPorts.stream()
-                    .map(Object::toString)
-                    .collect(Collectors.joining(","));
+            final String ports = refererPorts.stream().map(Object::toString).collect(Collectors.joining(","));
             handler.setInitParameter("ports", ports);
         }
         handler.addFilter(PushCacheFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST));

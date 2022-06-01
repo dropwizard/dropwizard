@@ -1,5 +1,8 @@
 package io.dropwizard.health;
 
+import static java.util.Collections.singletonList;
+import static java.util.concurrent.Executors.defaultThreadFactory;
+
 import com.codahale.metrics.InstrumentedScheduledExecutorService;
 import com.codahale.metrics.InstrumentedThreadFactory;
 import com.codahale.metrics.MetricRegistry;
@@ -16,20 +19,16 @@ import io.dropwizard.jersey.setup.JerseyEnvironment;
 import io.dropwizard.jetty.setup.ServletEnvironment;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import io.dropwizard.util.Duration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicLong;
-
-import static java.util.Collections.singletonList;
-import static java.util.concurrent.Executors.defaultThreadFactory;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @JsonTypeName("default")
 public class DefaultHealthFactory implements HealthFactory {
@@ -63,8 +62,7 @@ public class DefaultHealthFactory implements HealthFactory {
 
     @Valid
     @JsonProperty("responseProvider")
-    private HealthResponseProviderFactory healthResponseProviderFactory =
-            new JsonHealthResponseProviderFactory();
+    private HealthResponseProviderFactory healthResponseProviderFactory = new JsonHealthResponseProviderFactory();
 
     @Valid
     @JsonProperty("responder")
@@ -137,9 +135,13 @@ public class DefaultHealthFactory implements HealthFactory {
     }
 
     @Override
-    public void configure(final LifecycleEnvironment lifecycle, final ServletEnvironment servlets,
-                          final JerseyEnvironment jersey, final HealthEnvironment health, final ObjectMapper mapper,
-                          final String name) {
+    public void configure(
+            final LifecycleEnvironment lifecycle,
+            final ServletEnvironment servlets,
+            final JerseyEnvironment jersey,
+            final HealthEnvironment health,
+            final ObjectMapper mapper,
+            final String name) {
         if (!isEnabled()) {
             LOGGER.info("Health check configuration is disabled.");
             return;
@@ -152,19 +154,24 @@ public class DefaultHealthFactory implements HealthFactory {
         final List<HealthCheckConfiguration> healthCheckConfigs = getHealthCheckConfigurations();
 
         // setup schedules for configured health checks
-        final ScheduledExecutorService scheduledHealthCheckExecutor = createScheduledExecutorForHealthChecks(
-                healthCheckConfigs.size(), metrics, lifecycle, fullName);
+        final ScheduledExecutorService scheduledHealthCheckExecutor =
+                createScheduledExecutorForHealthChecks(healthCheckConfigs.size(), metrics, lifecycle, fullName);
         final HealthCheckScheduler scheduler = new HealthCheckScheduler(scheduledHealthCheckExecutor);
         // configure health manager to receive registered health state listeners from HealthEnvironment (via reference)
-        final HealthCheckManager healthCheckManager = new HealthCheckManager(healthCheckConfigs, scheduler, metrics,
-                shutdownWaitPeriod, initialOverallState, health.healthStateListeners());
+        final HealthCheckManager healthCheckManager = new HealthCheckManager(
+                healthCheckConfigs,
+                scheduler,
+                metrics,
+                shutdownWaitPeriod,
+                initialOverallState,
+                health.healthStateListeners());
         healthCheckManager.initializeAppHealth();
 
         // setup response provider and responder to respond to health check requests
-        final HealthResponseProvider responseProvider = healthResponseProviderFactory.build(healthCheckManager,
-                healthCheckManager, mapper);
-        healthResponderFactory.configure(fullName, healthCheckUrlPaths, responseProvider, health, jersey, servlets,
-                mapper);
+        final HealthResponseProvider responseProvider =
+                healthResponseProviderFactory.build(healthCheckManager, healthCheckManager, mapper);
+        healthResponderFactory.configure(
+                fullName, healthCheckUrlPaths, responseProvider, health, jersey, servlets, mapper);
 
         // register listener for HealthCheckRegistry and setup validator to ensure correct config
         envHealthChecks.addListener(healthCheckManager);
@@ -196,17 +203,18 @@ public class DefaultHealthFactory implements HealthFactory {
             Thread thread = defaultThreadFactory.newThread(runnable);
             thread.setName(String.format("%s-%d", fullName, threadNum.incrementAndGet()));
             thread.setDaemon(true);
-            thread.setUncaughtExceptionHandler((t, e) -> LOGGER.error("Thread={} died due to uncaught exception", t, e));
+            thread.setUncaughtExceptionHandler(
+                    (t, e) -> LOGGER.error("Thread={} died due to uncaught exception", t, e));
             return thread;
         };
 
         final InstrumentedThreadFactory instrumentedThreadFactory =
                 new InstrumentedThreadFactory(threadFactory, metrics);
 
-        final ScheduledExecutorService scheduledExecutorService =
-                lifecycle.scheduledExecutorService(fullName + "-scheduled-executor", instrumentedThreadFactory)
-                        .threads(numberOfScheduledHealthChecks)
-                        .build();
+        final ScheduledExecutorService scheduledExecutorService = lifecycle
+                .scheduledExecutorService(fullName + "-scheduled-executor", instrumentedThreadFactory)
+                .threads(numberOfScheduledHealthChecks)
+                .build();
 
         return new InstrumentedScheduledExecutorService(scheduledExecutorService, metrics);
     }

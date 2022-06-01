@@ -1,5 +1,8 @@
 package io.dropwizard.core.setup;
 
+import static io.dropwizard.core.server.SimpleServerFactoryTest.httpRequest;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
@@ -10,11 +13,6 @@ import io.dropwizard.jetty.HttpConnectorFactory;
 import io.dropwizard.logging.common.ConsoleAppenderFactory;
 import io.dropwizard.logging.common.FileAppenderFactory;
 import io.dropwizard.logging.common.SyslogAppenderFactory;
-import org.eclipse.jetty.server.AbstractNetworkConnector;
-import org.eclipse.jetty.server.Server;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import javax.validation.Validator;
 import javax.validation.constraints.NotEmpty;
 import javax.ws.rs.GET;
@@ -23,9 +21,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
-
-import static io.dropwizard.core.server.SimpleServerFactoryTest.httpRequest;
-import static org.assertj.core.api.Assertions.assertThat;
+import org.eclipse.jetty.server.AbstractNetworkConnector;
+import org.eclipse.jetty.server.Server;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 class ExceptionMapperBinderTest {
     private SimpleServerFactory http;
@@ -35,10 +34,15 @@ class ExceptionMapperBinderTest {
     void setUp() throws Exception {
         final ObjectMapper objectMapper = environment.getObjectMapper();
         final Validator validator = environment.getValidator();
-        objectMapper.getSubtypeResolver().registerSubtypes(ConsoleAppenderFactory.class,
-            FileAppenderFactory.class, SyslogAppenderFactory.class, HttpConnectorFactory.class);
+        objectMapper
+                .getSubtypeResolver()
+                .registerSubtypes(
+                        ConsoleAppenderFactory.class,
+                        FileAppenderFactory.class,
+                        SyslogAppenderFactory.class,
+                        HttpConnectorFactory.class);
         http = (SimpleServerFactory) new YamlConfigurationFactory<>(ServerFactory.class, validator, objectMapper, "dw")
-            .build(new ResourceConfigurationSourceProvider(), "yaml/simple_server.yml");
+                .build(new ResourceConfigurationSourceProvider(), "yaml/simple_server.yml");
     }
 
     @Test
@@ -49,7 +53,8 @@ class ExceptionMapperBinderTest {
         server.start();
 
         final int port = ((AbstractNetworkConnector) server.getConnectors()[0]).getLocalPort();
-        assertThat(httpRequest("GET", "http://localhost:" + port + "/service/test")).isEqualTo("alright!");
+        assertThat(httpRequest("GET", "http://localhost:" + port + "/service/test"))
+                .isEqualTo("alright!");
         server.stop();
     }
 

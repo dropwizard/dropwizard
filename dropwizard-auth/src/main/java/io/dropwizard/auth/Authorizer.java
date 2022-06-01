@@ -1,9 +1,8 @@
 package io.dropwizard.auth;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
-
-import javax.ws.rs.container.ContainerRequestContext;
 import java.security.Principal;
+import javax.ws.rs.container.ContainerRequestContext;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * An interface for classes which authorize principal objects.
@@ -30,7 +29,8 @@ public interface Authorizer<P extends Principal> {
      * @return {@link AuthorizationContext} object, to be used in {@link CachingAuthorizer}.
      * @since 2.1
      */
-    default AuthorizationContext<P> getAuthorizationContext(P principal, String role, @Nullable ContainerRequestContext requestContext) {
+    default AuthorizationContext<P> getAuthorizationContext(
+            P principal, String role, @Nullable ContainerRequestContext requestContext) {
         return new DefaultAuthorizationContext<>(principal, role, requestContext);
     }
 }

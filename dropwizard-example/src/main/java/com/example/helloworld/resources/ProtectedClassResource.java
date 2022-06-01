@@ -2,7 +2,6 @@ package com.example.helloworld.resources;
 
 import com.example.helloworld.core.User;
 import io.dropwizard.auth.Auth;
-
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.GET;
@@ -14,7 +13,6 @@ import javax.ws.rs.core.SecurityContext;
  * {@link RolesAllowed}, {@link PermitAll} are supported on the class level.<p>
  * Method level annotations take precedence over the class level ones
  */
-
 @Path("/protected")
 @RolesAllowed("BASIC_GUY")
 public final class ProtectedClassResource {
@@ -39,5 +37,4 @@ public final class ProtectedClassResource {
     public String showAdminSecret(@Auth User user) {
         return String.format("Hey there, %s. It looks like you are an admin. %d", user.getName(), user.getId());
     }
-
 }

@@ -1,5 +1,9 @@
 package io.dropwizard.core.cli;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import io.dropwizard.configuration.ConfigurationFactory;
 import io.dropwizard.configuration.ConfigurationSourceProvider;
 import io.dropwizard.core.Application;
@@ -9,6 +13,7 @@ import io.dropwizard.core.setup.Bootstrap;
 import io.dropwizard.core.setup.Environment;
 import io.dropwizard.logging.common.LoggingFactory;
 import io.dropwizard.util.JarLocation;
+import java.util.Optional;
 import net.sourceforge.argparse4j.inf.Argument;
 import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
@@ -16,12 +21,6 @@ import org.eclipse.jetty.server.Server;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 class InheritedServerCommandTest {
     private static class ApiCommand extends ServerCommand<Configuration> {
@@ -39,8 +38,7 @@ class InheritedServerCommandTest {
         }
 
         @Override
-        public void run(Configuration configuration, Environment environment) throws Exception {
-        }
+        public void run(Configuration configuration, Environment environment) throws Exception {}
     }
 
     private final MyApplication application = new MyApplication();
@@ -65,22 +63,19 @@ class InheritedServerCommandTest {
 
     @Test
     void hasAName() throws Exception {
-        assertThat(command.getName())
-                .isEqualTo("api");
+        assertThat(command.getName()).isEqualTo("api");
     }
 
     @Test
     void hasADescription() throws Exception {
-        assertThat(command.getDescription())
-                .isEqualTo("Runs the Dropwizard application as an API HTTP server");
+        assertThat(command.getDescription()).isEqualTo("Runs the Dropwizard application as an API HTTP server");
     }
 
     @Test
     void buildsAndRunsAConfiguredServer() throws Exception {
         command.run(environment, namespace, configuration);
 
-        assertThat(server.isStarted())
-                .isTrue();
+        assertThat(server.isStarted()).isTrue();
     }
 
     @Test
@@ -102,21 +97,22 @@ class InheritedServerCommandTest {
 
         final Bootstrap<Configuration> bootstrap = new Bootstrap<>(application);
 
-        bootstrap.setConfigurationFactoryFactory((klass, validator, objectMapper, propertyPrefix) -> new SingletonConfigurationFactory());
+        bootstrap.setConfigurationFactoryFactory(
+                (klass, validator, objectMapper, propertyPrefix) -> new SingletonConfigurationFactory());
 
         bootstrap.addCommand(new ConfiguredCommand<Configuration>("test", "a test command") {
 
             @Override
-            protected void run(final Bootstrap<Configuration> bootstrap, final Namespace namespace, final Configuration configuration) {
-                assertThat(namespace.getString("file"))
-                        .isNotEmpty()
-                        .isEqualTo("yaml/server.yml");
+            protected void run(
+                    final Bootstrap<Configuration> bootstrap,
+                    final Namespace namespace,
+                    final Configuration configuration) {
+                assertThat(namespace.getString("file")).isNotEmpty().isEqualTo("yaml/server.yml");
             }
 
             @Override
             protected Argument addFileArgument(final Subparser subparser) {
-                return super.addFileArgument(subparser)
-                            .setDefault("yaml/server.yml");
+                return super.addFileArgument(subparser).setDefault("yaml/server.yml");
             }
         });
 

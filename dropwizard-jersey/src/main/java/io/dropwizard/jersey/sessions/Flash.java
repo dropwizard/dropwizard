@@ -1,7 +1,7 @@
 package io.dropwizard.jersey.sessions;
 
-import javax.servlet.http.HttpSession;
 import java.util.Optional;
+import javax.servlet.http.HttpSession;
 
 public class Flash<T> {
     private static final String ATTRIBUTE = "flash";

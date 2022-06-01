@@ -3,7 +3,6 @@ package io.dropwizard.lifecycle.setup;
 import com.codahale.metrics.InstrumentedThreadFactory;
 import io.dropwizard.lifecycle.ExecutorServiceManager;
 import io.dropwizard.util.Duration;
-
 import java.util.Locale;
 import java.util.concurrent.Executors;
 import java.util.concurrent.RejectedExecutionHandler;
@@ -34,7 +33,8 @@ public class ScheduledExecutorServiceBuilder {
         this.removeOnCancel = false;
     }
 
-    public ScheduledExecutorServiceBuilder(LifecycleEnvironment environment, String nameFormat, boolean useDaemonThreads) {
+    public ScheduledExecutorServiceBuilder(
+            LifecycleEnvironment environment, String nameFormat, boolean useDaemonThreads) {
         this(environment, nameFormat, buildThreadFactory(nameFormat, useDaemonThreads));
     }
 
@@ -76,10 +76,11 @@ public class ScheduledExecutorServiceBuilder {
     }
 
     public ScheduledExecutorService build() {
-        final InstrumentedThreadFactory instrumentedThreadFactory = new InstrumentedThreadFactory(threadFactory,
-            environment.getMetricRegistry(), nameFormat);
+        final InstrumentedThreadFactory instrumentedThreadFactory =
+                new InstrumentedThreadFactory(threadFactory, environment.getMetricRegistry(), nameFormat);
 
-        final ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(poolSize, instrumentedThreadFactory, handler);
+        final ScheduledThreadPoolExecutor executor =
+                new ScheduledThreadPoolExecutor(poolSize, instrumentedThreadFactory, handler);
         executor.setRemoveOnCancelPolicy(removeOnCancel);
 
         environment.manage(new ExecutorServiceManager(executor, shutdownTime, nameFormat));

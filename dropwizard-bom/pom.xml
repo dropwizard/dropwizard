@@ -11,9 +11,7 @@
     <artifactId>dropwizard-bom</artifactId>
     <packaging>pom</packaging>
     <name>Dropwizard BOM</name>
-    <description>
-        Bill of materials to make sure a consistent set of versions is used for Dropwizard modules.
-    </description>
+    <description>Bill of materials to make sure a consistent set of versions is used for Dropwizard modules.</description>
 
     <dependencyManagement>
         <dependencies>

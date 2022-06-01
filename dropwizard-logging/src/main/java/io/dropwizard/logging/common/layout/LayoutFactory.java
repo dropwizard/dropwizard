@@ -3,7 +3,6 @@ package io.dropwizard.logging.common.layout;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.core.pattern.PatternLayoutBase;
 import ch.qos.logback.core.spi.DeferredProcessingAware;
-
 import java.util.TimeZone;
 
 /**

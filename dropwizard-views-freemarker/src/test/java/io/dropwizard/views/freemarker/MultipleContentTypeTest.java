@@ -1,5 +1,7 @@
 package io.dropwizard.views.freemarker;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.jackson.Jackson;
@@ -8,11 +10,13 @@ import io.dropwizard.logging.common.BootstrapLogging;
 import io.dropwizard.views.common.View;
 import io.dropwizard.views.common.ViewMessageBodyWriter;
 import io.dropwizard.views.common.ViewRenderer;
-import org.glassfish.jersey.test.JerseyTest;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
+import java.io.IOException;
+import java.io.OutputStream;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
+import java.util.Collections;
+import java.util.Objects;
+import java.util.StringJoiner;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -23,15 +27,10 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.MessageBodyWriter;
 import javax.ws.rs.ext.Provider;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Type;
-import java.util.Collections;
-import java.util.Objects;
-import java.util.StringJoiner;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import org.glassfish.jersey.test.JerseyTest;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 class MultipleContentTypeTest extends JerseyTest {
     static {
@@ -61,7 +60,8 @@ class MultipleContentTypeTest extends JerseyTest {
 
     @Test
     void testJsonContentType() {
-        final Response response = target("/").request().accept(MediaType.APPLICATION_JSON_TYPE).get();
+        final Response response =
+                target("/").request().accept(MediaType.APPLICATION_JSON_TYPE).get();
 
         assertThat(response.getStatus()).isEqualTo(200);
         assertThat(response.readEntity(Info.class)).isEqualTo(new Info("Title#TEST", "Content#TEST"));
@@ -69,7 +69,8 @@ class MultipleContentTypeTest extends JerseyTest {
 
     @Test
     void testHtmlContentType() {
-        final Response response = target("/").request().accept(MediaType.TEXT_HTML_TYPE).get();
+        final Response response =
+                target("/").request().accept(MediaType.TEXT_HTML_TYPE).get();
 
         assertThat(response.getStatus()).isEqualTo(200);
         assertThat(response.readEntity(String.class))
@@ -80,7 +81,10 @@ class MultipleContentTypeTest extends JerseyTest {
 
     @Test
     void testOnlyJsonContentType() {
-        final Response response = target("/json").request().accept(MediaType.APPLICATION_JSON_TYPE).get();
+        final Response response = target("/json")
+                .request()
+                .accept(MediaType.APPLICATION_JSON_TYPE)
+                .get();
 
         assertThat(response.getStatus()).isEqualTo(200);
         assertThat(response.readEntity(Info.class)).isEqualTo(new Info("Title#TEST", "Content#TEST"));
@@ -88,7 +92,8 @@ class MultipleContentTypeTest extends JerseyTest {
 
     @Test
     void testOnlyHtmlContentType() {
-        final Response response = target("/html").request().accept(MediaType.TEXT_HTML_TYPE).get();
+        final Response response =
+                target("/html").request().accept(MediaType.TEXT_HTML_TYPE).get();
 
         assertThat(response.getStatus()).isEqualTo(200);
         assertThat(response.readEntity(String.class))
@@ -179,8 +184,14 @@ class MultipleContentTypeTest extends JerseyTest {
         }
 
         @Override
-        public void writeTo(Info info, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType,
-                            MultivaluedMap<String, Object> httpHeaders, OutputStream entityStream)
+        public void writeTo(
+                Info info,
+                Class<?> type,
+                Type genericType,
+                Annotation[] annotations,
+                MediaType mediaType,
+                MultivaluedMap<String, Object> httpHeaders,
+                OutputStream entityStream)
                 throws IOException, WebApplicationException {
             Jackson.newObjectMapper().writeValue(entityStream, info);
         }

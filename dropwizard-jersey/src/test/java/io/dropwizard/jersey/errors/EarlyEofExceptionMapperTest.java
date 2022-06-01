@@ -1,10 +1,9 @@
 package io.dropwizard.jersey.errors;
 
+import javax.ws.rs.core.Response;
 import org.eclipse.jetty.io.EofException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import javax.ws.rs.core.Response;
 
 class EarlyEofExceptionMapperTest {
 

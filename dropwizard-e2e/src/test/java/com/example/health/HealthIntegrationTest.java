@@ -1,23 +1,22 @@
 package com.example.health;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.core.Configuration;
 import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
+import java.time.Duration;
+import java.util.Optional;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.core.Response;
 import org.awaitility.Awaitility;
 import org.glassfish.jersey.client.JerseyClientBuilder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-
-import javax.ws.rs.client.Client;
-import javax.ws.rs.core.Response;
-import java.time.Duration;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(DropwizardExtensionsSupport.class)
 class HealthIntegrationTest {
@@ -157,16 +156,11 @@ class HealthIntegrationTest {
     }
 
     private boolean isAppHealthy() {
-        return client.target(hostUrl + ENDPOINT)
-                .request()
-                .get()
-                .getStatus() == 200;
+        return client.target(hostUrl + ENDPOINT).request().get().getStatus() == 200;
     }
 
     private boolean isHealthCheckResponding() {
-        final Response response = client.target(hostUrl + ENDPOINT)
-                .request()
-                .get();
+        final Response response = client.target(hostUrl + ENDPOINT).request().get();
         return response.getStatus() == 200 || response.getStatus() == 503;
     }
 }

@@ -1,5 +1,7 @@
 package io.dropwizard.jackson;
 
+import static com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES;
+
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.guava.GuavaModule;
@@ -9,17 +11,17 @@ import com.fasterxml.jackson.module.blackbird.BlackbirdModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-import static com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES;
-
 /**
  * A utility class for Jackson.
  */
 public class Jackson {
-    private Jackson() { /* singleton */ }
+    private Jackson() {
+        /* singleton */
+    }
 
     /**
      * Creates a new {@link ObjectMapper} with Guava and Logback support, as well as support for
-	  * {@link JsonSnakeCase}. Also includes all {@link Discoverable} interface implementations.
+     * {@link JsonSnakeCase}. Also includes all {@link Discoverable} interface implementations.
      */
     public static ObjectMapper newObjectMapper() {
         final ObjectMapper mapper = new ObjectMapper();

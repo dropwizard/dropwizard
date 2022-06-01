@@ -5,7 +5,6 @@ import ch.qos.logback.core.LayoutBase;
 import ch.qos.logback.core.spi.DeferredProcessingAware;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import io.dropwizard.jackson.Discoverable;
-
 import java.util.TimeZone;
 
 /**

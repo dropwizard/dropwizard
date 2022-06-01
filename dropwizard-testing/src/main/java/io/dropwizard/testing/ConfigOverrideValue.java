@@ -1,14 +1,14 @@
 package io.dropwizard.testing;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
-
 import java.util.function.Supplier;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 public class ConfigOverrideValue extends ConfigOverride {
 
     private final String key;
     private final Supplier<String> value;
     private final String propertyPrefix;
+
     @Nullable
     private String originalValue = null;
 

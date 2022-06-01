@@ -1,7 +1,6 @@
 package io.dropwizard.other;
 
 import io.dropwizard.jersey.validation.ValidRepresentation;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
@@ -26,6 +25,6 @@ public interface RestInterface {
     @POST
     @Path("repr")
     @Valid
-    ValidRepresentation repr(@NotNull @Valid ValidRepresentation representation,
-                             @NotNull @QueryParam("interfaceVariable") String xer);
+    ValidRepresentation repr(
+            @NotNull @Valid ValidRepresentation representation, @NotNull @QueryParam("interfaceVariable") String xer);
 }

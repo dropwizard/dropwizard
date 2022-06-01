@@ -1,37 +1,38 @@
 package io.dropwizard.testing.junit;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.entry;
+
 import io.dropwizard.core.Application;
 import io.dropwizard.core.Configuration;
 import io.dropwizard.core.setup.Environment;
 import io.dropwizard.testing.ConfigOverride;
-import org.junit.ClassRule;
-import org.junit.Test;
-
+import java.util.Collections;
+import java.util.Map;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.Collections;
-import java.util.Map;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.entry;
+import org.junit.ClassRule;
+import org.junit.Test;
 
 public class DropwizardAppRuleWithoutConfigTest {
     @SuppressWarnings("deprecation")
     @ClassRule
-    public static final DropwizardAppRule<Configuration> RULE = new DropwizardAppRule<>(TestApplication.class, null,
-        ConfigOverride.config("server.applicationConnectors[0].port", "0"),
-        ConfigOverride.config("server.adminConnectors[0].port", "0"));
+    public static final DropwizardAppRule<Configuration> RULE = new DropwizardAppRule<>(
+            TestApplication.class,
+            null,
+            ConfigOverride.config("server.applicationConnectors[0].port", "0"),
+            ConfigOverride.config("server.adminConnectors[0].port", "0"));
 
     @Test
     public void runWithoutConfigFile() {
-        Map<String, String> response = RULE.client().target("http://localhost:" + RULE.getLocalPort() + "/test")
-            .request()
-            .get(new GenericType<Map<String, String>>() {
-            });
+        Map<String, String> response = RULE.client()
+                .target("http://localhost:" + RULE.getLocalPort() + "/test")
+                .request()
+                .get(new GenericType<Map<String, String>>() {});
         assertThat(response).containsOnly(entry("color", "orange"));
     }
 

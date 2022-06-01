@@ -5,12 +5,11 @@ import com.codahale.metrics.ScheduledReporter;
 import com.codahale.metrics.Slf4jReporter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import javax.validation.constraints.NotEmpty;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MarkerFactory;
-
-import javax.validation.constraints.NotEmpty;
 
 /**
  * A {@link ReporterFactory} for {@link Slf4jReporter} instances.
@@ -73,10 +72,10 @@ public class Slf4jReporterFactory extends BaseReporterFactory {
     @Override
     public ScheduledReporter build(MetricRegistry registry) {
         final Slf4jReporter.Builder builder = Slf4jReporter.forRegistry(registry)
-                                                           .convertDurationsTo(getDurationUnit())
-                                                           .convertRatesTo(getRateUnit())
-                                                           .filter(getFilter())
-                                                           .outputTo(getLogger());
+                .convertDurationsTo(getDurationUnit())
+                .convertRatesTo(getRateUnit())
+                .filter(getFilter())
+                .outputTo(getLogger());
         if (markerName != null) {
             builder.markWith(MarkerFactory.getMarker(markerName));
         }

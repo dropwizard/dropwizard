@@ -17,7 +17,7 @@ mailing list beforehand.
   * Observe that all tests passed, there is no build errors and the corresponding git tag was created;
 * Create the release notes in GitHub: [Creating releases](https://help.github.com/en/articles/creating-releases);
 * The release will typically be available in the Maven Central repository 3-4 hours after the artifacts were pushed to Sonatype OSSRH (this may vary depending on the
-indexing process).
+  indexing process).
 
 ## Making an announcement
 

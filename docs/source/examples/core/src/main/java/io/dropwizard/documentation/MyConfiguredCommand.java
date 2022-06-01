@@ -17,7 +17,8 @@ public class MyConfiguredCommand extends ConfiguredCommand<Configuration> {
     @Override
     public void configure(Subparser subparser) {
         // Add a command line option
-        subparser.addArgument("-u", "--user")
+        subparser
+                .addArgument("-u", "--user")
                 .dest("user")
                 .type(String.class)
                 .required(true)
@@ -25,9 +26,8 @@ public class MyConfiguredCommand extends ConfiguredCommand<Configuration> {
     }
 
     @Override
-    protected void run(Bootstrap<Configuration> bootstrap,
-                       Namespace namespace,
-                       Configuration configuration) throws Exception {
+    protected void run(Bootstrap<Configuration> bootstrap, Namespace namespace, Configuration configuration)
+            throws Exception {
         System.out.println("Hello " + namespace.getString("user"));
     }
 }

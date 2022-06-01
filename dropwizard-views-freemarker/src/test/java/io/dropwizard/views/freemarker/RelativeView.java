@@ -7,4 +7,3 @@ public class RelativeView extends View {
         super("relative.ftl");
     }
 }
-

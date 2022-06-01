@@ -1,8 +1,9 @@
 package io.dropwizard.jersey.filter;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import java.io.IOException;
+import java.util.Collections;
+import java.util.Optional;
+import java.util.Set;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -11,17 +12,14 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.Optional;
-import java.util.Set;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AllowedMethodsFilter implements Filter {
 
     public static final String ALLOWED_METHODS_PARAM = "allowedMethods";
-    public static final Set<String> DEFAULT_ALLOWED_METHODS = Set.of(
-            "GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS", "PATCH"
-    );
+    public static final Set<String> DEFAULT_ALLOWED_METHODS =
+            Set.of("GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS", "PATCH");
 
     private static final Logger LOG = LoggerFactory.getLogger(AllowedMethodsFilter.class);
 
@@ -30,8 +28,8 @@ public class AllowedMethodsFilter implements Filter {
     @Override
     public void init(FilterConfig config) {
         allowedMethods = Optional.ofNullable(config.getInitParameter(ALLOWED_METHODS_PARAM))
-            .map(p -> Set.of(p.split(",")))
-            .orElse(DEFAULT_ALLOWED_METHODS);
+                .map(p -> Set.of(p.split(",")))
+                .orElse(DEFAULT_ALLOWED_METHODS);
     }
 
     @Override

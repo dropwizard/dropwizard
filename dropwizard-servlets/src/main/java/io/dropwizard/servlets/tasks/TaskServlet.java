@@ -1,18 +1,14 @@
 package io.dropwizard.servlets.tasks;
 
+import static com.codahale.metrics.MetricRegistry.name;
+import static java.util.Objects.requireNonNull;
+
 import com.codahale.metrics.Meter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
 import com.codahale.metrics.annotation.ExceptionMetered;
 import com.codahale.metrics.annotation.Metered;
 import com.codahale.metrics.annotation.Timed;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
@@ -27,9 +23,12 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-
-import static com.codahale.metrics.MetricRegistry.name;
-import static java.util.Objects.requireNonNull;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A servlet which provides access to administrative {@link Task}s. It only responds to {@code POST}
@@ -72,31 +71,24 @@ public class TaskServlet extends HttpServlet {
 
         TaskExecutor taskExecutor = new TaskExecutor(task);
         try {
-            final Method executeMethod = task.getClass().getMethod("execute",
-                    Map.class, PrintWriter.class);
+            final Method executeMethod = task.getClass().getMethod("execute", Map.class, PrintWriter.class);
 
             if (executeMethod.isAnnotationPresent(Timed.class)) {
                 final Timed annotation = executeMethod.getAnnotation(Timed.class);
-                final String name = chooseName(annotation.name(),
-                        annotation.absolute(),
-                        task);
+                final String name = chooseName(annotation.name(), annotation.absolute(), task);
                 taskExecutor = new TimedTask(taskExecutor, metricRegistry.timer(name));
             }
 
             if (executeMethod.isAnnotationPresent(Metered.class)) {
                 final Metered annotation = executeMethod.getAnnotation(Metered.class);
-                final String name = chooseName(annotation.name(),
-                                        annotation.absolute(),
-                                        task);
+                final String name = chooseName(annotation.name(), annotation.absolute(), task);
                 taskExecutor = new MeteredTask(taskExecutor, metricRegistry.meter(name));
             }
 
             if (executeMethod.isAnnotationPresent(ExceptionMetered.class)) {
                 final ExceptionMetered annotation = executeMethod.getAnnotation(ExceptionMetered.class);
-                final String name = chooseName(annotation.name(),
-                                        annotation.absolute(),
-                                        task,
-                                        ExceptionMetered.DEFAULT_NAME_SUFFIX);
+                final String name = chooseName(
+                        annotation.name(), annotation.absolute(), task, ExceptionMetered.DEFAULT_NAME_SUFFIX);
                 taskExecutor = new ExceptionMeteredTask(taskExecutor, metricRegistry.meter(name), annotation.cause());
             }
         } catch (NoSuchMethodException ignored) {
@@ -106,15 +98,11 @@ public class TaskServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest req,
-                         HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         if (Optional.ofNullable(req.getPathInfo()).filter(s -> !s.isEmpty()).isEmpty()) {
             try (final PrintWriter output = resp.getWriter()) {
                 resp.setContentType(DEFAULT_CONTENT_TYPE);
-                getTasks().stream()
-                    .map(Task::getName)
-                    .sorted()
-                    .forEach(output::println);
+                getTasks().stream().map(Task::getName).sorted().forEach(output::println);
             } catch (IOException ioException) {
                 LOGGER.error("Failed to write response", ioException);
                 if (!resp.isCommitted()) {
@@ -136,8 +124,7 @@ public class TaskServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest req,
-                          HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         final String pathInfo = req.getPathInfo();
         final Task task = pathInfo != null ? tasks.get(pathInfo) : null;
         if (task != null) {
@@ -268,8 +255,8 @@ public class TaskServlet extends HttpServlet {
         private final Meter exceptionMeter;
         private final Class<?> exceptionClass;
 
-        private ExceptionMeteredTask(TaskExecutor underlying,
-                                     Meter exceptionMeter, Class<? extends Throwable> exceptionClass) {
+        private ExceptionMeteredTask(
+                TaskExecutor underlying, Meter exceptionMeter, Class<? extends Throwable> exceptionClass) {
             super(underlying.task);
             this.underlying = underlying;
             this.exceptionMeter = exceptionMeter;
@@ -277,8 +264,9 @@ public class TaskServlet extends HttpServlet {
         }
 
         private boolean isReallyAssignableFrom(Exception e) {
-            return exceptionClass.isAssignableFrom(e.getClass()) ||
-                (e.getCause() != null && exceptionClass.isAssignableFrom(e.getCause().getClass()));
+            return exceptionClass.isAssignableFrom(e.getClass())
+                    || (e.getCause() != null
+                            && exceptionClass.isAssignableFrom(e.getCause().getClass()));
         }
 
         @Override
@@ -294,5 +282,4 @@ public class TaskServlet extends HttpServlet {
             }
         }
     }
-
 }

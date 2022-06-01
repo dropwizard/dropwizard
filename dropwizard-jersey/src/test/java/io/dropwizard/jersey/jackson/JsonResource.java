@@ -1,14 +1,14 @@
 package io.dropwizard.jersey.jackson;
 
+import java.net.URL;
+import java.util.Collections;
+import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import java.net.URL;
-import java.util.Collections;
-import java.util.List;
 
 @Path("/json/")
 @Produces(MediaType.APPLICATION_JSON)
@@ -40,29 +40,23 @@ public class JsonResource {
 
     @POST
     @Path("/custom")
-    public void custom(CustomRepresentation rep) {
-    }
+    public void custom(CustomRepresentation rep) {}
 
     @POST
     @Path("/url")
-    public void url(URL url) {
-    }
+    public void url(URL url) {}
 
     @POST
     @Path("/urlList")
-    public void urlList(List<URL> url) {
-    }
+    public void urlList(List<URL> url) {}
 
     @POST
     @Path("/interface")
-    public void face(IInterface inter) {
-    }
+    public void face(IInterface inter) {}
 
     @POST
     @Path("/interfaceList")
-    public void face(List<IInterface> inter) {
-    }
+    public void face(List<IInterface> inter) {}
 
-    private interface IInterface {
-    }
+    private interface IInterface {}
 }

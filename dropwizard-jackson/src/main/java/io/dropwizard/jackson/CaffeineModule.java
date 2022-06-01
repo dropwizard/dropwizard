@@ -16,7 +16,6 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.deser.Deserializers;
 import com.fasterxml.jackson.databind.ser.Serializers;
 import com.github.benmanes.caffeine.cache.CaffeineSpec;
-
 import java.io.IOException;
 
 /**
@@ -25,8 +24,7 @@ import java.io.IOException;
 public class CaffeineModule extends Module {
     private static class CaffeineSpecDeserializer extends JsonDeserializer<CaffeineSpec> {
         @Override
-        public CaffeineSpec deserialize(JsonParser jp,
-                                        DeserializationContext ctxt) throws IOException {
+        public CaffeineSpec deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
             final String text = jp.getText();
             final boolean disabled = "off".equalsIgnoreCase(text) || "disabled".equalsIgnoreCase(text);
             return CaffeineSpec.parse(disabled ? "initialCapacity=0,maximumSize=0" : text);
@@ -35,16 +33,16 @@ public class CaffeineModule extends Module {
 
     private static class CaffeineSpecSerializer extends JsonSerializer<CaffeineSpec> {
         @Override
-        public void serialize(CaffeineSpec value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+        public void serialize(CaffeineSpec value, JsonGenerator gen, SerializerProvider serializers)
+                throws IOException {
             gen.writeString(value.toParsableString());
         }
     }
 
     private static class CaffeineDeserializers extends Deserializers.Base {
         @Override
-        public JsonDeserializer<?> findBeanDeserializer(JavaType type,
-                                                        DeserializationConfig config,
-                                                        BeanDescription beanDesc) throws JsonMappingException {
+        public JsonDeserializer<?> findBeanDeserializer(
+                JavaType type, DeserializationConfig config, BeanDescription beanDesc) throws JsonMappingException {
             if (CaffeineSpec.class.isAssignableFrom(type.getRawClass())) {
                 return new CaffeineSpecDeserializer();
             }

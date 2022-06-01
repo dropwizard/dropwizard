@@ -1,33 +1,29 @@
 package io.dropwizard.jetty;
 
-import org.junit.jupiter.api.Test;
-
 import static org.assertj.core.api.Assertions.assertThat;
+
+import org.junit.jupiter.api.Test;
 
 class MutableServletContextHandlerTest {
     private final MutableServletContextHandler handler = new MutableServletContextHandler();
 
     @Test
     void defaultsToSessionsBeingDisabled() throws Exception {
-        assertThat(handler.isSessionsEnabled())
-                .isFalse();
+        assertThat(handler.isSessionsEnabled()).isFalse();
     }
 
     @Test
     void defaultsToSecurityBeingDisabled() throws Exception {
-        assertThat(handler.isSecurityEnabled())
-                .isFalse();
+        assertThat(handler.isSecurityEnabled()).isFalse();
     }
 
     @Test
     void canEnableSessionManagement() throws Exception {
         handler.setSessionsEnabled(true);
 
-        assertThat(handler.isSessionsEnabled())
-                .isTrue();
+        assertThat(handler.isSessionsEnabled()).isTrue();
 
-        assertThat(handler.isSecurityEnabled())
-                .isFalse();
+        assertThat(handler.isSecurityEnabled()).isFalse();
     }
 
     @Test
@@ -35,22 +31,18 @@ class MutableServletContextHandlerTest {
         handler.setSessionsEnabled(true);
         handler.setSessionsEnabled(false);
 
-        assertThat(handler.isSessionsEnabled())
-                .isFalse();
+        assertThat(handler.isSessionsEnabled()).isFalse();
 
-        assertThat(handler.isSecurityEnabled())
-                .isFalse();
+        assertThat(handler.isSecurityEnabled()).isFalse();
     }
 
     @Test
     void canEnableSecurity() throws Exception {
         handler.setSecurityEnabled(true);
 
-        assertThat(handler.isSessionsEnabled())
-                .isFalse();
+        assertThat(handler.isSessionsEnabled()).isFalse();
 
-        assertThat(handler.isSecurityEnabled())
-                .isTrue();
+        assertThat(handler.isSecurityEnabled()).isTrue();
     }
 
     @Test
@@ -58,10 +50,8 @@ class MutableServletContextHandlerTest {
         handler.setSecurityEnabled(true);
         handler.setSecurityEnabled(false);
 
-        assertThat(handler.isSessionsEnabled())
-                .isFalse();
+        assertThat(handler.isSessionsEnabled()).isFalse();
 
-        assertThat(handler.isSecurityEnabled())
-                .isFalse();
+        assertThat(handler.isSecurityEnabled()).isFalse();
     }
 }

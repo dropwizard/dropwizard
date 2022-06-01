@@ -1,8 +1,8 @@
 package io.dropwizard.configuration;
 
-import org.junit.jupiter.api.BeforeEach;
-
 import static io.dropwizard.jackson.Jackson.newObjectMapper;
+
+import org.junit.jupiter.api.BeforeEach;
 
 public class YamlConfigurationFactoryTest extends BaseConfigurationFactoryTest {
 
@@ -10,7 +10,8 @@ public class YamlConfigurationFactoryTest extends BaseConfigurationFactoryTest {
     public void setUp() throws Exception {
         this.factory = new YamlConfigurationFactory<>(Example.class, validator, newObjectMapper(), "dw");
         this.malformedFile = "factory-test-malformed.yml";
-        this.malformedFileError = " * Failed to parse configuration; Cannot construct instance of `io.dropwizard.configuration.BaseConfigurationFactoryTest$Example`";
+        this.malformedFileError =
+                " * Failed to parse configuration; Cannot construct instance of `io.dropwizard.configuration.BaseConfigurationFactoryTest$Example`";
         this.emptyFile = "factory-test-empty.yml";
         this.invalidFile = "factory-test-invalid.yml";
         this.validFile = "factory-test-valid.yml";
@@ -18,8 +19,9 @@ public class YamlConfigurationFactoryTest extends BaseConfigurationFactoryTest {
         this.typoFile = "factory-test-typo.yml";
         this.wrongTypeFile = "factory-test-wrong-type.yml";
         this.malformedAdvancedFile = "factory-test-malformed-advanced.yml";
-        this.malformedAdvancedFileError = String.format("%s has an error:%n" +
-            "  * Malformed YAML at line: 3, column: 22; while parsing a flow sequence\n" +
-            " in 'reader'", malformedAdvancedFile);
+        this.malformedAdvancedFileError = String.format(
+                "%s has an error:%n" + "  * Malformed YAML at line: 3, column: 22; while parsing a flow sequence\n"
+                        + " in 'reader'",
+                malformedAdvancedFile);
     }
 }

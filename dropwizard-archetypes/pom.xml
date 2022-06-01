@@ -8,33 +8,33 @@
         <version>3.0.0-SNAPSHOT</version>
     </parent>
 
+    <groupId>io.dropwizard.archetypes</groupId>
+    <artifactId>dropwizard-archetypes</artifactId>
+    <packaging>pom</packaging>
+
+    <name>Dropwizard Archetypes</name>
+    <description>A collection of Maven Archetypes for bootstrapping development of a new Dropwizard Service.</description>
+
+    <modules>
+        <module>java-simple</module>
+    </modules>
+
     <properties>
         <project.build.itSourceDirectory>${project.basedir}/src/test/resources/projects</project.build.itSourceDirectory>
         <project.build.itDirectory>${project.build.directory}/it</project.build.itDirectory>
         <project.build.itOutputDirectory>${project.build.itDirectory}/projects</project.build.itOutputDirectory>
     </properties>
 
-    <groupId>io.dropwizard.archetypes</groupId>
-    <artifactId>dropwizard-archetypes</artifactId>
-    <packaging>pom</packaging>
-
-    <name>Dropwizard Archetypes</name>
-    <description>
-        A collection of Maven Archetypes for bootstrapping development of a new Dropwizard Service.
-    </description>
-
-    <modules>
-        <module>java-simple</module>
-    </modules>
-
     <build>
-        <extensions>
-            <extension>
-                <groupId>org.apache.maven.archetype</groupId>
-                <artifactId>archetype-packaging</artifactId>
-                <version>${maven-archetype-plugin.version}</version>
-            </extension>
-        </extensions>
+        <resources>
+            <resource>
+                <filtering>true</filtering>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>dropwizard-create</include>
+                </includes>
+            </resource>
+        </resources>
         <pluginManagement>
             <plugins>
                 <plugin>
@@ -153,15 +153,13 @@
                 </executions>
             </plugin>
         </plugins>
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-                <includes>
-                    <include>dropwizard-create</include>
-                </includes>
-            </resource>
-        </resources>
+        <extensions>
+            <extension>
+                <groupId>org.apache.maven.archetype</groupId>
+                <artifactId>archetype-packaging</artifactId>
+                <version>${maven-archetype-plugin.version}</version>
+            </extension>
+        </extensions>
     </build>
 
     <profiles>

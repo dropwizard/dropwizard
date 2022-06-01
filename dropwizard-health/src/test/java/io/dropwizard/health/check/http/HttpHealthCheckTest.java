@@ -1,15 +1,14 @@
 package io.dropwizard.health.check.http;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import com.sun.net.httpserver.HttpServer;
+import java.net.InetSocketAddress;
+import javax.ws.rs.ProcessingException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import javax.ws.rs.ProcessingException;
-import java.net.InetSocketAddress;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class HttpHealthCheckTest {
     private static final String SUCCESS_PATH = "/ping";
@@ -39,8 +38,8 @@ class HttpHealthCheckTest {
             }
         });
         httpServer.start();
-        final HttpHealthCheck httpHealthCheck = new HttpHealthCheck(BASE_URI +
-            httpServer.getAddress().getPort() + SUCCESS_PATH);
+        final HttpHealthCheck httpHealthCheck =
+                new HttpHealthCheck(BASE_URI + httpServer.getAddress().getPort() + SUCCESS_PATH);
         assertThat(httpHealthCheck.check().isHealthy()).isTrue();
     }
 
@@ -54,8 +53,8 @@ class HttpHealthCheckTest {
             }
         });
         httpServer.start();
-        final HttpHealthCheck httpHealthCheck = new HttpHealthCheck(BASE_URI +
-            httpServer.getAddress().getPort() + FAIL_PATH);
+        final HttpHealthCheck httpHealthCheck =
+                new HttpHealthCheck(BASE_URI + httpServer.getAddress().getPort() + FAIL_PATH);
         assertThat(httpHealthCheck.check().isHealthy()).isFalse();
     }
 
@@ -72,8 +71,8 @@ class HttpHealthCheckTest {
             }
         });
         httpServer.start();
-        final HttpHealthCheck httpHealthCheck = new HttpHealthCheck(BASE_URI +
-            httpServer.getAddress().getPort() + TIMEOUT_PATH);
+        final HttpHealthCheck httpHealthCheck =
+                new HttpHealthCheck(BASE_URI + httpServer.getAddress().getPort() + TIMEOUT_PATH);
 
         assertThrows(ProcessingException.class, httpHealthCheck::check);
     }

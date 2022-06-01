@@ -1,10 +1,9 @@
 package io.dropwizard.client.proxy;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.checkerframework.checker.nullness.qual.Nullable;
-
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * Represents a configuration of credentials for either Username Password or NT credentials
@@ -87,19 +86,27 @@ public class AuthConfiguration {
     @Nullable
     private String domain;
 
-    @Pattern(regexp = USERNAME_PASSWORD_CREDS + "|" + NT_CREDS, flags = {Pattern.Flag.CASE_INSENSITIVE})
+    @Pattern(
+            regexp = USERNAME_PASSWORD_CREDS + "|" + NT_CREDS,
+            flags = {Pattern.Flag.CASE_INSENSITIVE})
     @Nullable
     private String credentialType;
 
-    public AuthConfiguration() {
-    }
+    public AuthConfiguration() {}
 
     public AuthConfiguration(String username, String password) {
         this.username = username;
         this.password = password;
     }
 
-    public AuthConfiguration(String username, String password, String authScheme, String realm, String hostname, String domain, String credentialType) {
+    public AuthConfiguration(
+            String username,
+            String password,
+            String authScheme,
+            String realm,
+            String hostname,
+            String domain,
+            String credentialType) {
         this.username = username;
         this.password = password;
         this.authScheme = authScheme;

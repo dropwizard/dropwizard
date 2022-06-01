@@ -1,12 +1,11 @@
 package io.dropwizard.testing.junit;
 
 import io.dropwizard.testing.common.DAOTest;
+import java.util.concurrent.Callable;
 import org.hibernate.SessionFactory;
 import org.junit.rules.ExternalResource;
 
-import java.util.concurrent.Callable;
-
-//@formatter:off
+// @formatter:off
 /**
  * A JUnit rule for testing DAOs and Hibernate entities. It allows to quickly
  * test the database access code without starting the Dropwizard infrastructure.
@@ -14,30 +13,30 @@ import java.util.concurrent.Callable;
  * Example:
  * <pre><code>
  * {@literal @}Rule
-    public DAOTestRule daoTestRule = DAOTestRule.newBuilder()
-          .addEntityClass(Person.class)
-          .build();
-
-    private PersonDAO personDAO;
-
-   {@literal @}Before
-    public void setUp() throws Exception {
-        personDAO = new PersonDAO(daoTestRule.getSessionFactory());
-    }
-
-   {@literal @}Test
-    public void createPerson() {
-        Person wizard = daoTestRule.inTransaction(() -> personDAO.create(new Person("Merlin", "The chief wizard")));
-        assertThat(wizard.getId()).isGreaterThan(0);
-        assertThat(wizard.getFullName()).isEqualTo("Merlin");
-        assertThat(wizard.getJobTitle()).isEqualTo("The chief wizard");
-    }
+ * public DAOTestRule daoTestRule = DAOTestRule.newBuilder()
+ * .addEntityClass(Person.class)
+ * .build();
+ *
+ * private PersonDAO personDAO;
+ *
+ * {@literal @}Before
+ * public void setUp() throws Exception {
+ * personDAO = new PersonDAO(daoTestRule.getSessionFactory());
+ * }
+ *
+ * {@literal @}Test
+ * public void createPerson() {
+ * Person wizard = daoTestRule.inTransaction(() -> personDAO.create(new Person("Merlin", "The chief wizard")));
+ * assertThat(wizard.getId()).isGreaterThan(0);
+ * assertThat(wizard.getFullName()).isEqualTo("Merlin");
+ * assertThat(wizard.getJobTitle()).isEqualTo("The chief wizard");
+ * }
  * </code></pre>
  * </p>
  *
  * @deprecated Deprecated since Dropwizard 2.0.0. Please migrate to JUnit 5 and {@link io.dropwizard.testing.junit5.DAOTestExtension}.
  */
-//@formatter:on
+// @formatter:on
 @Deprecated
 public class DAOTestRule extends ExternalResource {
     private final DAOTest daoTest;

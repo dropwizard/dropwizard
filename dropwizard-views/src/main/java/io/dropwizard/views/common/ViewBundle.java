@@ -2,13 +2,11 @@ package io.dropwizard.views.common;
 
 import io.dropwizard.core.ConfiguredBundle;
 import io.dropwizard.core.setup.Environment;
-
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.Set;
-
 
 /**
  * A {@link ConfiguredBundle}, which by default, enables the rendering of FreeMarker & Mustache views by your application.

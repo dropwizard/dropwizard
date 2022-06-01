@@ -1,17 +1,16 @@
 package io.dropwizard.jersey.validation;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
-import org.glassfish.jersey.internal.util.ReflectionHelper;
+import static io.dropwizard.jersey.validation.JerseyParameterNameProvider.getParameterNameFromAnnotations;
 
-import javax.ws.rs.ext.ParamConverter;
-import javax.ws.rs.ext.ParamConverterProvider;
-import javax.ws.rs.ext.Provider;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.security.AccessController;
-
-import static io.dropwizard.jersey.validation.JerseyParameterNameProvider.getParameterNameFromAnnotations;
+import javax.ws.rs.ext.ParamConverter;
+import javax.ws.rs.ext.ParamConverterProvider;
+import javax.ws.rs.ext.Provider;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.glassfish.jersey.internal.util.ReflectionHelper;
 
 /**
  * Provides converters to Jersey for enums used as resource parameters.
@@ -30,12 +29,14 @@ public class FuzzyEnumParamConverterProvider implements ParamConverterProvider {
             return null;
         }
 
-        @SuppressWarnings("unchecked") final Class<Enum<?>> type = (Class<Enum<?>>) rawType;
+        @SuppressWarnings("unchecked")
+        final Class<Enum<?>> type = (Class<Enum<?>>) rawType;
         final Enum<?>[] constants = type.getEnumConstants();
-        final String parameterName = getParameterNameFromAnnotations(annotations).orElse("Parameter");
-        final Method fromStringMethod = AccessController.doPrivileged(ReflectionHelper.getFromStringStringMethodPA(rawType));
+        final String parameterName =
+                getParameterNameFromAnnotations(annotations).orElse("Parameter");
+        final Method fromStringMethod =
+                AccessController.doPrivileged(ReflectionHelper.getFromStringStringMethodPA(rawType));
 
         return new FuzzyEnumParamConverter<>(rawType, fromStringMethod, constants, parameterName);
     }
-
 }

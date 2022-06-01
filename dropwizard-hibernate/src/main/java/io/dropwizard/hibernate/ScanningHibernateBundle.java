@@ -1,13 +1,12 @@
 package io.dropwizard.hibernate;
 
-import org.glassfish.jersey.server.internal.scanning.AnnotationAcceptingListener;
-import org.glassfish.jersey.server.internal.scanning.PackageNamesScanner;
-
-import javax.persistence.Entity;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.Entity;
+import org.glassfish.jersey.server.internal.scanning.AnnotationAcceptingListener;
+import org.glassfish.jersey.server.internal.scanning.PackageNamesScanner;
 
 /**
  * Extension of HibernateBundle that scans given package for entities instead of giving them by hand.
@@ -22,7 +21,7 @@ public abstract class ScanningHibernateBundle<T> extends HibernateBundle<T> {
     }
 
     protected ScanningHibernateBundle(String pckg, SessionFactoryFactory sessionFactoryFactory) {
-        this(new String[]{pckg}, sessionFactoryFactory);
+        this(new String[] {pckg}, sessionFactoryFactory);
     }
 
     protected ScanningHibernateBundle(String[] pckgs, SessionFactoryFactory sessionFactoryFactory) {
@@ -46,7 +45,8 @@ public abstract class ScanningHibernateBundle<T> extends HibernateBundle<T> {
                     try (final InputStream in = scanner.open()) {
                         asl.process(next, in);
                     } catch (IOException e) {
-                        throw new RuntimeException("AnnotationAcceptingListener failed to process scanned resource: " + next);
+                        throw new RuntimeException(
+                                "AnnotationAcceptingListener failed to process scanned resource: " + next);
                     }
                 }
             }

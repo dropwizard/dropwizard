@@ -4,13 +4,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.client.proxy.ProxyConfiguration;
 import io.dropwizard.client.ssl.TlsConfiguration;
 import io.dropwizard.util.Duration;
-import org.checkerframework.checker.nullness.qual.Nullable;
-
+import java.util.Optional;
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import java.util.Optional;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * The configuration class used by {@link HttpClientBuilder}.

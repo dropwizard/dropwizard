@@ -37,9 +37,10 @@ public interface AppenderFactory<E extends DeferredProcessingAware> extends Disc
      * @param asyncAppenderFactory   the factory for the async appender
      * @return a new, started {@link Appender}
      */
-    Appender<E> build(LoggerContext context,
-                                  String applicationName,
-                                  LayoutFactory<E> layoutFactory,
-                                  LevelFilterFactory<E> levelFilterFactory,
-                                  AsyncAppenderFactory<E> asyncAppenderFactory);
+    Appender<E> build(
+            LoggerContext context,
+            String applicationName,
+            LayoutFactory<E> layoutFactory,
+            LevelFilterFactory<E> levelFilterFactory,
+            AsyncAppenderFactory<E> asyncAppenderFactory);
 }

@@ -1,43 +1,42 @@
 package io.dropwizard.testing.junit5;
 
 import io.dropwizard.testing.common.DAOTest;
+import java.util.concurrent.Callable;
 import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
-import java.util.concurrent.Callable;
-
-//@formatter:off
+// @formatter:off
 /**
  * An extension for testing DAOs and Hibernate entities. It allows to quickly
  * test the database access code without starting the Dropwizard infrastructure.
  * <p>
  * Example:
  * <pre><code>
-    public DAOTestExtension daoTestExtension = DAOTestExtension.newBuilder()
-          .addEntityClass(Person.class)
-          .build();
-
-    private PersonDAO personDAO;
-
-   {@literal @}BeforeEach
-    public void setUp() throws Exception {
-        personDAO = new PersonDAO(daoTestRule.getSessionFactory());
-    }
-
-   {@literal @}Test
-    public void createPerson() {
-        Person wizard = daoTestExtension.inTransaction(() -> personDAO.create(new Person("Merlin", "The chief wizard")));
-        assertThat(wizard.getId()).isGreaterThan(0);
-        assertThat(wizard.getFullName()).isEqualTo("Merlin");
-        assertThat(wizard.getJobTitle()).isEqualTo("The chief wizard");
-    }
+ * public DAOTestExtension daoTestExtension = DAOTestExtension.newBuilder()
+ * .addEntityClass(Person.class)
+ * .build();
+ *
+ * private PersonDAO personDAO;
+ *
+ * {@literal @}BeforeEach
+ * public void setUp() throws Exception {
+ * personDAO = new PersonDAO(daoTestRule.getSessionFactory());
+ * }
+ *
+ * {@literal @}Test
+ * public void createPerson() {
+ * Person wizard = daoTestExtension.inTransaction(() -> personDAO.create(new Person("Merlin", "The chief wizard")));
+ * assertThat(wizard.getId()).isGreaterThan(0);
+ * assertThat(wizard.getFullName()).isEqualTo("Merlin");
+ * assertThat(wizard.getJobTitle()).isEqualTo("The chief wizard");
+ * }
  * </code></pre>
  * </p>
  */
-//@formatter:on
+// @formatter:on
 public class DAOTestExtension implements DropwizardExtension, BeforeAllCallback, AfterAllCallback {
     private final DAOTest daoTest;
 

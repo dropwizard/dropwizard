@@ -1,13 +1,12 @@
 package io.dropwizard.servlets;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import javax.servlet.http.HttpServletRequest;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import javax.servlet.http.HttpServletRequest;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 class ServletsTest {
     private final HttpServletRequest request = mock(HttpServletRequest.class);
@@ -22,13 +21,11 @@ class ServletsTest {
 
     @Test
     void formatsBasicURIs() throws Exception {
-        assertThat(Servlets.getFullUrl(request))
-                .isEqualTo("/one/two");
+        assertThat(Servlets.getFullUrl(request)).isEqualTo("/one/two");
     }
 
     @Test
     void formatsFullURIs() throws Exception {
-        assertThat(Servlets.getFullUrl(fullRequest))
-                .isEqualTo("/one/two?one=two&three=four");
+        assertThat(Servlets.getFullUrl(fullRequest)).isEqualTo("/one/two?one=two&three=four");
     }
 }

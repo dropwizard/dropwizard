@@ -1,9 +1,8 @@
 package io.dropwizard.jersey.jackson;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.checkerframework.checker.nullness.qual.Nullable;
-
 import java.time.LocalDate;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 public class OkRepresentation {
 

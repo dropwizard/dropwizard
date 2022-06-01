@@ -16,7 +16,9 @@ import java.util.zip.ZipEntry;
  * Helper methods for dealing with {@link URL} objects for local resources.
  */
 public class ResourceURL {
-    private ResourceURL() { /* singleton */ }
+    private ResourceURL() {
+        /* singleton */
+    }
 
     /**
      * Returns true if the URL passed to it corresponds to a directory.  This is slightly tricky due to some quirks
@@ -55,8 +57,8 @@ public class ResourceURL {
             case "file":
                 return new File(resourceURL.toURI()).isDirectory();
             default:
-                throw new IllegalArgumentException("Unsupported protocol " + resourceURL.getProtocol() +
-                        " for resource " + resourceURL);
+                throw new IllegalArgumentException(
+                        "Unsupported protocol " + resourceURL.getProtocol() + " for resource " + resourceURL);
         }
     }
 
@@ -68,8 +70,10 @@ public class ResourceURL {
      */
     public static URL appendTrailingSlash(URL originalURL) {
         try {
-            return originalURL.getPath().endsWith("/") ? originalURL :
-                    new URL(originalURL.getProtocol(),
+            return originalURL.getPath().endsWith("/")
+                    ? originalURL
+                    : new URL(
+                            originalURL.getProtocol(),
                             originalURL.getHost(),
                             originalURL.getPort(),
                             originalURL.getFile() + '/');

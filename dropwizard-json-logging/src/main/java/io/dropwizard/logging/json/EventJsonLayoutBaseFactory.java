@@ -10,14 +10,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.dropwizard.logging.json.layout.EventJsonLayout;
 import io.dropwizard.logging.json.layout.ExceptionFormat;
-import org.checkerframework.checker.nullness.qual.Nullable;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TimeZone;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * <table>
@@ -46,9 +45,15 @@ import java.util.TimeZone;
 @JsonTypeName("json")
 public class EventJsonLayoutBaseFactory extends AbstractJsonLayoutBaseFactory<ILoggingEvent> {
 
-    private EnumSet<EventAttribute> includes = EnumSet.of(EventAttribute.LEVEL,
-        EventAttribute.THREAD_NAME, EventAttribute.MDC, EventAttribute.MARKER, EventAttribute.LOGGER_NAME,
-        EventAttribute.MESSAGE, EventAttribute.EXCEPTION, EventAttribute.TIMESTAMP);
+    private EnumSet<EventAttribute> includes = EnumSet.of(
+            EventAttribute.LEVEL,
+            EventAttribute.THREAD_NAME,
+            EventAttribute.MDC,
+            EventAttribute.MARKER,
+            EventAttribute.LOGGER_NAME,
+            EventAttribute.MESSAGE,
+            EventAttribute.EXCEPTION,
+            EventAttribute.TIMESTAMP);
 
     private Set<String> includesMdcKeys = Collections.emptySet();
     private boolean flattenMdc = false;
@@ -105,9 +110,15 @@ public class EventJsonLayoutBaseFactory extends AbstractJsonLayoutBaseFactory<IL
 
     @Override
     public LayoutBase<ILoggingEvent> build(LoggerContext context, TimeZone timeZone) {
-        final EventJsonLayout jsonLayout = new EventJsonLayout(createDropwizardJsonFormatter(),
-            createTimestampFormatter(timeZone), createThrowableProxyConverter(context), includes, getCustomFieldNames(),
-            getAdditionalFields(), includesMdcKeys, flattenMdc);
+        final EventJsonLayout jsonLayout = new EventJsonLayout(
+                createDropwizardJsonFormatter(),
+                createTimestampFormatter(timeZone),
+                createThrowableProxyConverter(context),
+                includes,
+                getCustomFieldNames(),
+                getAdditionalFields(),
+                includesMdcKeys,
+                flattenMdc);
         jsonLayout.setContext(context);
         return jsonLayout;
     }
@@ -134,5 +145,4 @@ public class EventJsonLayoutBaseFactory extends AbstractJsonLayoutBaseFactory<IL
 
         return throwableHandlingConverter;
     }
-
 }

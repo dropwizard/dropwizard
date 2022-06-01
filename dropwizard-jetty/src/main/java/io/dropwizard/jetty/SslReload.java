@@ -1,8 +1,7 @@
 package io.dropwizard.jetty;
 
-import org.eclipse.jetty.util.ssl.SslContextFactory;
-
 import java.util.function.Consumer;
+import org.eclipse.jetty.util.ssl.SslContextFactory;
 
 /** Provides the ability to modify an existing SSL factory with new configuration options. */
 public class SslReload {

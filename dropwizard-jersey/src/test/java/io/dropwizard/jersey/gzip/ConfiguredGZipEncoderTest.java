@@ -1,8 +1,15 @@
 package io.dropwizard.jersey.gzip;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
-import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
+import java.util.Collection;
+import java.util.zip.GZIPOutputStream;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.ClientRequestContext;
 import javax.ws.rs.core.HttpHeaders;
@@ -10,16 +17,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.ext.WriterInterceptorContext;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Type;
-import java.util.Collection;
-import java.util.zip.GZIPOutputStream;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.junit.jupiter.api.Test;
 
 class ConfiguredGZipEncoderTest {
     @Test
@@ -44,6 +43,7 @@ class ConfiguredGZipEncoderTest {
         assertThat(context.getOutputStream()).isInstanceOf(GZIPOutputStream.class);
         assertThat(context.isProceedCalled()).isTrue();
     }
+
     @Test
     void aroundWriteToSpecX_GZip() throws IOException, WebApplicationException {
         MultivaluedMap<String, Object> headers = new MultivaluedHashMap<>();
@@ -53,6 +53,7 @@ class ConfiguredGZipEncoderTest {
         assertThat(context.getOutputStream()).isInstanceOf(GZIPOutputStream.class);
         assertThat(context.isProceedCalled()).isTrue();
     }
+
     @Test
     void otherEncodingWillNotAroundWrite() throws IOException, WebApplicationException {
         MultivaluedMap<String, Object> headers = new MultivaluedHashMap<>();
@@ -62,6 +63,7 @@ class ConfiguredGZipEncoderTest {
         assertThat(context.getOutputStream()).isNotInstanceOf(GZIPOutputStream.class);
         assertThat(context.isProceedCalled()).isTrue();
     }
+
     @Test
     void noEncodingwillNotAroundWrite() throws IOException, WebApplicationException {
         MultivaluedMap<String, Object> headers = new MultivaluedHashMap<>();
@@ -77,7 +79,7 @@ class ConfiguredGZipEncoderTest {
         private OutputStream os = new OutputStream() {
             @Override
             public void write(int i) {
-                //void
+                // void
             }
         };
         private boolean proceedCalled = false;
@@ -98,9 +100,7 @@ class ConfiguredGZipEncoderTest {
         }
 
         @Override
-        public void setEntity(Object entity) {
-
-        }
+        public void setEntity(Object entity) {}
 
         @Override
         public OutputStream getOutputStream() {
@@ -130,14 +130,10 @@ class ConfiguredGZipEncoderTest {
         }
 
         @Override
-        public void setProperty(String name, Object object) {
-
-        }
+        public void setProperty(String name, Object object) {}
 
         @Override
-        public void removeProperty(String name) {
-
-        }
+        public void removeProperty(String name) {}
 
         @Override
         public Annotation[] getAnnotations() {
@@ -145,9 +141,7 @@ class ConfiguredGZipEncoderTest {
         }
 
         @Override
-        public void setAnnotations(Annotation[] annotations) {
-
-        }
+        public void setAnnotations(Annotation[] annotations) {}
 
         @Override
         @Nullable
@@ -156,9 +150,7 @@ class ConfiguredGZipEncoderTest {
         }
 
         @Override
-        public void setType(Class<?> type) {
-
-        }
+        public void setType(Class<?> type) {}
 
         @Override
         @Nullable
@@ -167,9 +159,7 @@ class ConfiguredGZipEncoderTest {
         }
 
         @Override
-        public void setGenericType(Type genericType) {
-
-        }
+        public void setGenericType(Type genericType) {}
 
         @Override
         @Nullable
@@ -178,9 +168,7 @@ class ConfiguredGZipEncoderTest {
         }
 
         @Override
-        public void setMediaType(MediaType mediaType) {
-
-        }
+        public void setMediaType(MediaType mediaType) {}
 
         public boolean isProceedCalled() {
             return proceedCalled;

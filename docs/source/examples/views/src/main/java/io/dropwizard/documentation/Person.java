@@ -2,7 +2,6 @@ package io.dropwizard.documentation;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import javax.validation.constraints.NotBlank;
 
 public class Person {

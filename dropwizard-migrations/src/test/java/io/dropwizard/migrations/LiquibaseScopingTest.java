@@ -1,5 +1,11 @@
 package io.dropwizard.migrations;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
+import java.sql.PreparedStatement;
+import java.util.Collections;
+import java.util.Map;
 import liquibase.Scope;
 import liquibase.change.custom.CustomTaskChange;
 import liquibase.database.Database;
@@ -16,27 +22,18 @@ import org.jdbi.v3.core.result.ResultIterable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.sql.PreparedStatement;
-import java.util.Collections;
-import java.util.Map;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
 public class LiquibaseScopingTest implements CustomTaskChange {
     private final DbCommand<TestMigrationConfiguration> dbCommand = new DbCommand<>(
-        "db",
-        TestMigrationConfiguration::getDataSource,
-        TestMigrationConfiguration.class,
-        "migrations-custom-change.xml",
-        Collections.singletonMap("person", new Person("Bill Smith"))
-    );
+            "db",
+            TestMigrationConfiguration::getDataSource,
+            TestMigrationConfiguration.class,
+            "migrations-custom-change.xml",
+            Collections.singletonMap("person", new Person("Bill Smith")));
     private final DbCommand<TestMigrationConfiguration> dbCommandWithoutScopedObjects = new DbCommand<>(
-        "db",
-        TestMigrationConfiguration::getDataSource,
-        TestMigrationConfiguration.class,
-        "migrations-custom-change.xml"
-    );
+            "db",
+            TestMigrationConfiguration::getDataSource,
+            TestMigrationConfiguration.class,
+            "migrations-custom-change.xml");
     private TestMigrationConfiguration conf;
     private String databaseUrl;
 
@@ -62,26 +59,26 @@ public class LiquibaseScopingTest implements CustomTaskChange {
         }
     }
 
-
     @Test
     void testCustomChange() throws Exception {
         dbCommand.run(null, new Namespace(Collections.singletonMap("subcommand", "migrate")), conf);
         try (Handle handle = Jdbi.create(databaseUrl, "sa", "").open()) {
-            final ResultIterable<Map<String, Object>> rows = handle.select("select * from persons").mapToMap();
+            final ResultIterable<Map<String, Object>> rows =
+                    handle.select("select * from persons").mapToMap();
             assertThat(rows).hasSize(1);
             Map<String, Object> dbPerson = rows.first();
             assertThat(dbPerson.getOrDefault("name", null))
-                .isInstanceOfSatisfying(String.class, name -> assertThat(name).isEqualTo("Bill Smith"));
+                    .isInstanceOfSatisfying(
+                            String.class, name -> assertThat(name).isEqualTo("Bill Smith"));
         }
     }
 
     @Test
     void testFailingCustomChange() {
-        assertThatThrownBy(() ->
-            dbCommandWithoutScopedObjects.run(null, new Namespace(Collections.singletonMap("subcommand", "migrate")), conf))
-            .isInstanceOf(LiquibaseException.class);
+        assertThatThrownBy(() -> dbCommandWithoutScopedObjects.run(
+                        null, new Namespace(Collections.singletonMap("subcommand", "migrate")), conf))
+                .isInstanceOf(LiquibaseException.class);
     }
-
 
     @Override
     public void execute(Database database) throws CustomChangeException {
@@ -105,12 +102,10 @@ public class LiquibaseScopingTest implements CustomTaskChange {
     }
 
     @Override
-    public void setUp() {
-    }
+    public void setUp() {}
 
     @Override
-    public void setFileOpener(ResourceAccessor resourceAccessor) {
-    }
+    public void setFileOpener(ResourceAccessor resourceAccessor) {}
 
     @Override
     @Nullable

@@ -1,5 +1,7 @@
 package com.example.validation;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
@@ -7,18 +9,6 @@ import io.dropwizard.core.Configuration;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
-import org.assertj.core.api.AbstractListAssert;
-import org.assertj.core.api.ObjectAssert;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -26,13 +16,22 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import javax.validation.constraints.NotNull;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
+import org.assertj.core.api.AbstractListAssert;
+import org.assertj.core.api.ObjectAssert;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 @ExtendWith(DropwizardExtensionsSupport.class)
 public class BeanValidatorTest {
     public static final DropwizardAppExtension<Configuration> APP = new DropwizardAppExtension<>(
-        DefaultValidatorApp.class, "app1/config.yml", new ResourceConfigurationSourceProvider());
+            DefaultValidatorApp.class, "app1/config.yml", new ResourceConfigurationSourceProvider());
 
     private final ObjectMapper mapper = Jackson.newMinimalObjectMapper();
     private WebTarget target;
@@ -40,9 +39,9 @@ public class BeanValidatorTest {
     @BeforeEach
     void setUp() {
         UriBuilder uriBuilder = UriBuilder.fromPath("/bean-validation")
-            .scheme("http")
-            .host("localhost")
-            .port(APP.getLocalPort());
+                .scheme("http")
+                .host("localhost")
+                .port(APP.getLocalPort());
         target = APP.client().target(uriBuilder);
     }
 
@@ -127,11 +126,12 @@ public class BeanValidatorTest {
 
         assertThat(response.getStatus()).isEqualTo(422);
         assertThat(response.hasEntity()).isTrue();
-        assertThatResponseBody(response).containsOnly(
-            "string must not be blank",
-            "number must be greater than or equal to 0",
-            "list size must be between 1 and 3",
-            "list[].<iterable element> must not be blank");
+        assertThatResponseBody(response)
+                .containsOnly(
+                        "string must not be blank",
+                        "number must be greater than or equal to 0",
+                        "list size must be between 1 and 3",
+                        "list[].<iterable element> must not be blank");
     }
 
     @NotNull
@@ -143,15 +143,13 @@ public class BeanValidatorTest {
         return Entity.json(requestBody);
     }
 
-    private AbstractListAssert<?, List<? extends String>, String, ObjectAssert<String>> assertThatResponseBody(Response response) throws IOException {
-        return assertThat(responseBody(response).elements())
-            .toIterable()
-            .extracting(JsonNode::asText);
+    private AbstractListAssert<?, List<? extends String>, String, ObjectAssert<String>> assertThatResponseBody(
+            Response response) throws IOException {
+        return assertThat(responseBody(response).elements()).toIterable().extracting(JsonNode::asText);
     }
 
     private JsonNode responseBody(Response response) throws IOException {
         InputStream responseBodyStream = (InputStream) response.getEntity();
         return mapper.readTree(responseBodyStream).withArray("errors");
     }
-
 }

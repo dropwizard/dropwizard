@@ -1,9 +1,8 @@
 package io.dropwizard.auth;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
-
-import javax.ws.rs.container.ContainerRequestContext;
 import java.security.Principal;
+import javax.ws.rs.container.ContainerRequestContext;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * An {@link Authorizer} that grants access for any principal in any role.

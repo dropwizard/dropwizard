@@ -1,15 +1,14 @@
 package io.dropwizard.views.common;
 
-import org.glassfish.jersey.spi.ExtendedExceptionMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static io.dropwizard.util.Throwables.findThrowableInChain;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
-
-import static io.dropwizard.util.Throwables.findThrowableInChain;
+import org.glassfish.jersey.spi.ExtendedExceptionMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An {@link ExtendedExceptionMapper} that returns a 500 error response with a generic
@@ -25,11 +24,9 @@ public class ViewRenderExceptionMapper implements ExtendedExceptionMapper<WebApp
     /**
      * The generic HTML error page template.
      */
-    public static final String TEMPLATE_ERROR_MSG =
-            "<html>" +
-                "<head><title>Template Error</title></head>" +
-                "<body><h1>Template Error</h1><p>Something went wrong rendering the page</p></body>" +
-            "</html>";
+    public static final String TEMPLATE_ERROR_MSG = "<html>" + "<head><title>Template Error</title></head>"
+            + "<body><h1>Template Error</h1><p>Something went wrong rendering the page</p></body>"
+            + "</html>";
 
     @Override
     public Response toResponse(WebApplicationException exception) {
@@ -42,6 +39,7 @@ public class ViewRenderExceptionMapper implements ExtendedExceptionMapper<WebApp
 
     @Override
     public boolean isMappable(WebApplicationException e) {
-        return findThrowableInChain(t -> t.getClass() == ViewRenderException.class, e).isPresent();
+        return findThrowableInChain(t -> t.getClass() == ViewRenderException.class, e)
+                .isPresent();
     }
 }

@@ -1,19 +1,18 @@
 package io.dropwizard.testing.junit;
 
+import static java.util.Objects.requireNonNull;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.testing.common.Resource;
+import java.util.function.Consumer;
+import javax.validation.Validator;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.WebTarget;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
-
-import javax.validation.Validator;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.WebTarget;
-import java.util.function.Consumer;
-
-import static java.util.Objects.requireNonNull;
 
 /**
  * A JUnit {@link TestRule} for testing Jersey resources.

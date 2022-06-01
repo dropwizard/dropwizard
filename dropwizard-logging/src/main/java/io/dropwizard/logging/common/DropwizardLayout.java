@@ -2,7 +2,6 @@ package io.dropwizard.logging.common;
 
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.PatternLayout;
-
 import java.util.TimeZone;
 
 /**

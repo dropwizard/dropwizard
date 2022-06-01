@@ -1,10 +1,10 @@
 package io.dropwizard.jackson;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.benmanes.caffeine.cache.CaffeineSpec;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 class CaffeineModuleTest {
     private final ObjectMapper mapper = new ObjectMapper().registerModule(new CaffeineModule());
@@ -17,6 +17,7 @@ class CaffeineModuleTest {
 
     @Test
     void canSerializeCacheBuilderSpecs() throws Exception {
-        assertThat(mapper.writeValueAsString(CaffeineSpec.parse("maximumSize=0"))).isEqualTo("\"maximumSize=0\"");
+        assertThat(mapper.writeValueAsString(CaffeineSpec.parse("maximumSize=0")))
+                .isEqualTo("\"maximumSize=0\"");
     }
 }

@@ -1,11 +1,10 @@
 package io.dropwizard.health;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 class State {
     private static final Logger LOGGER = LoggerFactory.getLogger(State.class);
@@ -30,8 +29,12 @@ class State {
      * @param healthStateListener    {@link HealthStateListener} that is called when state changes
      *                                (e.g. healthy to unhealthy or unhealthy to healthy)
      */
-    State(final String name, final int failureAttempts, final int successAttempts, final boolean initialState,
-          final HealthStateListener healthStateListener) {
+    State(
+            final String name,
+            final int failureAttempts,
+            final int successAttempts,
+            final boolean initialState,
+            final HealthStateListener healthStateListener) {
         this.name = name;
         this.failureAttempts = failureAttempts;
         this.successAttempts = successAttempts;
@@ -83,12 +86,12 @@ class State {
         if (this == o) return true;
         if (!(o instanceof State)) return false;
         final State state = (State) o;
-        return successAttempts == state.successAttempts &&
-                failureAttempts == state.failureAttempts &&
-                Objects.equals(name, state.name) &&
-                Objects.equals(healthStateListener, state.healthStateListener) &&
-                Objects.equals(counter, state.counter) &&
-                Objects.equals(healthy, state.healthy);
+        return successAttempts == state.successAttempts
+                && failureAttempts == state.failureAttempts
+                && Objects.equals(name, state.name)
+                && Objects.equals(healthStateListener, state.healthStateListener)
+                && Objects.equals(counter, state.counter)
+                && Objects.equals(healthy, state.healthy);
     }
 
     @Override
@@ -98,13 +101,12 @@ class State {
 
     @Override
     public String toString() {
-        return "State{" +
-                "name='" + name + '\'' +
-                ", successAttempts=" + successAttempts +
-                ", failureAttempts=" + failureAttempts +
-                ", healthStateListener=" + healthStateListener +
-                ", counter=" + counter +
-                ", healthy=" + healthy +
-                '}';
+        return "State{" + "name='"
+                + name + '\'' + ", successAttempts="
+                + successAttempts + ", failureAttempts="
+                + failureAttempts + ", healthStateListener="
+                + healthStateListener + ", counter="
+                + counter + ", healthy="
+                + healthy + '}';
     }
 }

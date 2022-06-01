@@ -2,11 +2,10 @@ package io.dropwizard.health;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.util.Duration;
-import org.checkerframework.checker.nullness.qual.Nullable;
-
+import java.util.Objects;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import java.util.Objects;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 public class Schedule {
 
@@ -76,11 +75,11 @@ public class Schedule {
         if (this == o) return true;
         if (!(o instanceof Schedule)) return false;
         final Schedule schedule = (Schedule) o;
-        return failureAttempts == schedule.failureAttempts &&
-            successAttempts == schedule.successAttempts &&
-            Objects.equals(initialDelay, schedule.initialDelay) &&
-            Objects.equals(checkInterval, schedule.checkInterval) &&
-            Objects.equals(downtimeInterval, schedule.downtimeInterval);
+        return failureAttempts == schedule.failureAttempts
+                && successAttempts == schedule.successAttempts
+                && Objects.equals(initialDelay, schedule.initialDelay)
+                && Objects.equals(checkInterval, schedule.checkInterval)
+                && Objects.equals(downtimeInterval, schedule.downtimeInterval);
     }
 
     @Override

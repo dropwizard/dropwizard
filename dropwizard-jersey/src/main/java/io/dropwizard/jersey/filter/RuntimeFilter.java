@@ -1,16 +1,15 @@
 package io.dropwizard.jersey.filter;
 
 import io.dropwizard.util.Duration;
-
+import java.io.IOException;
+import java.util.Locale;
+import java.util.function.Supplier;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.ContainerResponseContext;
 import javax.ws.rs.container.ContainerResponseFilter;
 import javax.ws.rs.container.PreMatching;
 import javax.ws.rs.ext.Provider;
-import java.io.IOException;
-import java.util.Locale;
-import java.util.function.Supplier;
 
 /**
  * This class adds an "X-Runtime" HTTP response header that includes the time
@@ -39,8 +38,8 @@ public class RuntimeFilter implements ContainerRequestFilter, ContainerResponseF
     }
 
     @Override
-    public void filter(final ContainerRequestContext request,
-            final ContainerResponseContext response) throws IOException {
+    public void filter(final ContainerRequestContext request, final ContainerResponseContext response)
+            throws IOException {
 
         final Long startTime = (Long) request.getProperty(RUNTIME_PROPERTY);
         if (startTime != null) {

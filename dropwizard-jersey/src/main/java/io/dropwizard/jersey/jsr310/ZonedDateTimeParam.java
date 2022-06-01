@@ -1,9 +1,8 @@
 package io.dropwizard.jersey.jsr310;
 
 import io.dropwizard.jersey.params.AbstractParam;
-import org.checkerframework.checker.nullness.qual.Nullable;
-
 import java.time.ZonedDateTime;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * A parameter encapsulating date/time values containing timezone information.

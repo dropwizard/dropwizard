@@ -1,17 +1,5 @@
 package io.dropwizard.auth;
 
-import com.codahale.metrics.MetricRegistry;
-import com.github.benmanes.caffeine.cache.Caffeine;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.security.Principal;
-import java.util.Collections;
-import java.util.Optional;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.anyString;
@@ -19,14 +7,25 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.codahale.metrics.MetricRegistry;
+import com.github.benmanes.caffeine.cache.Caffeine;
+import java.security.Principal;
+import java.util.Collections;
+import java.util.Optional;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
 @ExtendWith(MockitoExtension.class)
 class CachingAuthenticatorTest {
-    private final Caffeine<Object, Object> caff = Caffeine.newBuilder()
-            .maximumSize(1L)
-            .executor(Runnable::run);
+    private final Caffeine<Object, Object> caff =
+            Caffeine.newBuilder().maximumSize(1L).executor(Runnable::run);
 
     @Mock(lenient = true)
     private Authenticator<String, Principal> underlying;
+
     private CachingAuthenticator<String, Principal> cached;
 
     @BeforeEach
@@ -37,8 +36,10 @@ class CachingAuthenticatorTest {
 
     @Test
     void cachesTheFirstReturnedPrincipal() throws Exception {
-        assertThat(cached.authenticate("credentials")).isEqualTo(Optional.<Principal>of(new PrincipalImpl("principal")));
-        assertThat(cached.authenticate("credentials")).isEqualTo(Optional.<Principal>of(new PrincipalImpl("principal")));
+        assertThat(cached.authenticate("credentials"))
+                .isEqualTo(Optional.<Principal>of(new PrincipalImpl("principal")));
+        assertThat(cached.authenticate("credentials"))
+                .isEqualTo(Optional.<Principal>of(new PrincipalImpl("principal")));
 
         verify(underlying, times(1)).authenticate("credentials");
     }
@@ -123,7 +124,8 @@ class CachingAuthenticatorTest {
     @Test
     void cachesTheNegativeResultIfSpecified() throws Exception {
         when(underlying.authenticate(anyString())).thenReturn(Optional.empty());
-        Caffeine<Object, Object> caffeine = Caffeine.newBuilder().maximumSize(1L).executor(Runnable::run);
+        Caffeine<Object, Object> caffeine =
+                Caffeine.newBuilder().maximumSize(1L).executor(Runnable::run);
         cached = new CachingAuthenticator<>(new MetricRegistry(), underlying, caffeine, true);
         assertThat(cached.authenticate("credentials")).isEmpty();
         verify(underlying).authenticate("credentials");

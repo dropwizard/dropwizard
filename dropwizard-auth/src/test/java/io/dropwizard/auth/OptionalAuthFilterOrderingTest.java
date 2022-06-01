@@ -1,6 +1,16 @@
 package io.dropwizard.auth;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import io.dropwizard.auth.principal.NullPrincipal;
+import java.security.Principal;
+import javax.annotation.Priority;
+import javax.ws.rs.Priorities;
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.container.ContainerRequestFilter;
+import javax.ws.rs.container.DynamicFeature;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
 import org.glassfish.jersey.internal.inject.AbstractBinder;
 import org.glassfish.jersey.servlet.ServletProperties;
 import org.glassfish.jersey.test.DeploymentContext;
@@ -10,17 +20,6 @@ import org.glassfish.jersey.test.TestProperties;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import javax.annotation.Priority;
-import javax.ws.rs.Priorities;
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.container.ContainerRequestFilter;
-import javax.ws.rs.container.DynamicFeature;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
-import java.security.Principal;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 class OptionalAuthFilterOrderingTest extends JerseyTest {
 
@@ -39,15 +38,14 @@ class OptionalAuthFilterOrderingTest extends JerseyTest {
     @Override
     protected DeploymentContext configureDeployment() {
         forceSet(TestProperties.CONTAINER_PORT, "0");
-        return ServletDeploymentContext
-            .builder(new BasicAuthResourceConfigWithAuthorizationFilter())
-            .initParam(ServletProperties.JAXRS_APPLICATION_CLASS,
-                       BasicAuthResourceConfigWithAuthorizationFilter.class.getName())
-            .build();
+        return ServletDeploymentContext.builder(new BasicAuthResourceConfigWithAuthorizationFilter())
+                .initParam(
+                        ServletProperties.JAXRS_APPLICATION_CLASS,
+                        BasicAuthResourceConfigWithAuthorizationFilter.class.getName())
+                .build();
     }
 
-    public static class BasicAuthResourceConfigWithAuthorizationFilter
-        extends AbstractAuthResourceConfig {
+    public static class BasicAuthResourceConfigWithAuthorizationFilter extends AbstractAuthResourceConfig {
 
         public BasicAuthResourceConfigWithAuthorizationFilter() {
             register(AuthResource.class);
@@ -73,19 +71,17 @@ class OptionalAuthFilterOrderingTest extends JerseyTest {
         protected DynamicFeature getAuthDynamicFeature(ContainerRequestFilter authFilter) {
             return new AuthDynamicFeature(authFilter);
         }
-
     }
 
     @Test
     void authenticationFilterShouldExecuteInAuthenticationPhaseForImplicitPermitall() {
         assertThat(target("/test/implicit-permitall").request().get(String.class))
-            .isEqualTo("authorization ok");
+                .isEqualTo("authorization ok");
     }
 
     @Test
     void authenticationFilterShouldExecuteInAuthenticationPhaseForOptionalPrincipal() {
-        assertThat(target("/test/optional").request().get(String.class))
-            .isEqualTo("authorization ok");
+        assertThat(target("/test/optional").request().get(String.class)).isEqualTo("authorization ok");
     }
 
     @Priority(Priorities.AUTHENTICATION)

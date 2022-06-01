@@ -1,28 +1,27 @@
 package com.example.helloworld.resources;
 
-import com.example.helloworld.core.Person;
-import com.example.helloworld.db.PersonDAO;
-import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
-import io.dropwizard.testing.junit5.ResourceExtension;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.GenericType;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.util.Collections;
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import com.example.helloworld.core.Person;
+import com.example.helloworld.db.PersonDAO;
+import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
+import io.dropwizard.testing.junit5.ResourceExtension;
+import java.util.Collections;
+import java.util.List;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.GenericType;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 
 /**
  * Unit tests for {@link PeopleResource}.
@@ -52,7 +51,8 @@ class PeopleResourceTest {
     @Test
     void createPerson() {
         when(PERSON_DAO.create(any(Person.class))).thenReturn(person);
-        final Response response = RESOURCES.target("/people")
+        final Response response = RESOURCES
+                .target("/people")
                 .request(MediaType.APPLICATION_JSON_TYPE)
                 .post(Entity.entity(person, MediaType.APPLICATION_JSON_TYPE));
 
@@ -65,7 +65,8 @@ class PeopleResourceTest {
     void createPersonFailureMinYearBorn() {
         person.setYearBorn(-1);
 
-        final Response response = RESOURCES.target("/people")
+        final Response response = RESOURCES
+                .target("/people")
                 .request(MediaType.APPLICATION_JSON_TYPE)
                 .post(Entity.entity(person, MediaType.APPLICATION_JSON_TYPE));
 
@@ -77,7 +78,8 @@ class PeopleResourceTest {
     void createPersonFailureMaxYearBorn() {
         person.setYearBorn(10000);
 
-        final Response response = RESOURCES.target("/people")
+        final Response response = RESOURCES
+                .target("/people")
                 .request(MediaType.APPLICATION_JSON_TYPE)
                 .post(Entity.entity(person, MediaType.APPLICATION_JSON_TYPE));
 
@@ -90,9 +92,7 @@ class PeopleResourceTest {
         final List<Person> people = Collections.singletonList(person);
         when(PERSON_DAO.findAll()).thenReturn(people);
 
-        final List<Person> response = RESOURCES.target("/people")
-            .request().get(new GenericType<List<Person>>() {
-            });
+        final List<Person> response = RESOURCES.target("/people").request().get(new GenericType<List<Person>>() {});
 
         verify(PERSON_DAO).findAll();
         assertThat(response).containsAll(people);

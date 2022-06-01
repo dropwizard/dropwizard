@@ -7,6 +7,7 @@ import io.dropwizard.core.setup.Bootstrap;
 import io.dropwizard.db.DatabaseConfiguration;
 import io.dropwizard.db.ManagedDataSource;
 import io.dropwizard.db.PooledDataSourceFactory;
+import java.sql.SQLException;
 import liquibase.Liquibase;
 import liquibase.database.Database;
 import liquibase.database.DatabaseConnection;
@@ -18,18 +19,17 @@ import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-import java.sql.SQLException;
-
 public abstract class AbstractLiquibaseCommand<T extends Configuration> extends ConfiguredCommand<T> {
     private final DatabaseConfiguration<T> strategy;
     private final Class<T> configurationClass;
     private final String migrationsFileName;
 
-    protected AbstractLiquibaseCommand(String name,
-                                       String description,
-                                       DatabaseConfiguration<T> strategy,
-                                       Class<T> configurationClass,
-                                       String migrationsFileName) {
+    protected AbstractLiquibaseCommand(
+            String name,
+            String description,
+            DatabaseConfiguration<T> strategy,
+            Class<T> configurationClass,
+            String migrationsFileName) {
         super(name, description);
         this.strategy = strategy;
         this.configurationClass = configurationClass;
@@ -45,15 +45,18 @@ public abstract class AbstractLiquibaseCommand<T extends Configuration> extends 
     public void configure(Subparser subparser) {
         super.configure(subparser);
 
-        subparser.addArgument("--migrations")
+        subparser
+                .addArgument("--migrations")
                 .dest("migrations-file")
                 .help("the file containing the Liquibase migrations for the application");
 
-        subparser.addArgument("--catalog")
+        subparser
+                .addArgument("--catalog")
                 .dest("catalog")
                 .help("Specify the database catalog (use database default if omitted)");
 
-        subparser.addArgument("--schema")
+        subparser
+                .addArgument("--schema")
                 .dest("schema")
                 .help("Specify the database schema (use database default if omitted)");
     }
@@ -87,10 +90,8 @@ public abstract class AbstractLiquibaseCommand<T extends Configuration> extends 
         return liquibase;
     }
 
-    private Database createDatabase(
-        ManagedDataSource dataSource,
-        Namespace namespace
-    ) throws SQLException, LiquibaseException {
+    private Database createDatabase(ManagedDataSource dataSource, Namespace namespace)
+            throws SQLException, LiquibaseException {
         final DatabaseConnection conn = new JdbcConnection(dataSource.getConnection());
         final Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(conn);
 

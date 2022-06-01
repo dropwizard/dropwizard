@@ -1,5 +1,12 @@
 package io.dropwizard.jersey.sessions;
 
+import static org.glassfish.jersey.model.Parameter.Source.UNKNOWN;
+
+import java.util.function.Function;
+import javax.inject.Inject;
+import javax.inject.Provider;
+import javax.inject.Singleton;
+import javax.servlet.http.HttpSession;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.glassfish.jersey.internal.inject.AbstractBinder;
 import org.glassfish.jersey.internal.inject.InjectionManager;
@@ -9,21 +16,14 @@ import org.glassfish.jersey.server.internal.inject.MultivaluedParameterExtractor
 import org.glassfish.jersey.server.model.Parameter;
 import org.glassfish.jersey.server.spi.internal.ValueParamProvider;
 
-import javax.inject.Inject;
-import javax.inject.Provider;
-import javax.inject.Singleton;
-import javax.servlet.http.HttpSession;
-import java.util.function.Function;
-
-import static org.glassfish.jersey.model.Parameter.Source.UNKNOWN;
-
 @Singleton
 public class SessionFactoryProvider extends AbstractValueParamProvider {
 
     private final InjectionManager im;
 
     @Inject
-    public SessionFactoryProvider(final Provider<MultivaluedParameterExtractorProvider> extractorProvider, InjectionManager im) {
+    public SessionFactoryProvider(
+            final Provider<MultivaluedParameterExtractorProvider> extractorProvider, InjectionManager im) {
         super(extractorProvider, UNKNOWN);
         this.im = im;
     }

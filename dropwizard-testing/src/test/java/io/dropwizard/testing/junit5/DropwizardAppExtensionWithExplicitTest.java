@@ -5,17 +5,16 @@ import io.dropwizard.core.server.DefaultServerFactory;
 import io.dropwizard.core.setup.Environment;
 import io.dropwizard.jetty.HttpConnectorFactory;
 import io.dropwizard.testing.app.TestConfiguration;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-
+import java.util.Collections;
+import java.util.Map;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.Collections;
-import java.util.Map;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 @ExtendWith(DropwizardExtensionsSupport.class)
 class DropwizardAppExtensionWithExplicitTest {
@@ -33,10 +32,11 @@ class DropwizardAppExtensionWithExplicitTest {
         EXTENSION = new DropwizardAppExtension<>(TestApplication.class, config);
     }
 
-
     @Test
     void runWithExplicitConfig() {
-        Map<?, ?> response = EXTENSION.client().target("http://localhost:" + EXTENSION.getLocalPort() + "/test")
+        Map<?, ?> response = EXTENSION
+                .client()
+                .target("http://localhost:" + EXTENSION.getLocalPort() + "/test")
                 .request()
                 .get(Map.class);
         Assertions.assertEquals(Collections.singletonMap("message", "stuff!"), response);

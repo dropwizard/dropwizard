@@ -1,14 +1,14 @@
 package io.dropwizard.configuration;
 
-import org.junit.jupiter.api.Test;
-
-import java.util.Arrays;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
 
+import java.util.Arrays;
+import org.junit.jupiter.api.Test;
+
 class LevenshteinComparatorTest {
-    private final ConfigurationParsingException.Builder.LevenshteinComparator c = new ConfigurationParsingException.Builder.LevenshteinComparator("base");
+    private final ConfigurationParsingException.Builder.LevenshteinComparator c =
+            new ConfigurationParsingException.Builder.LevenshteinComparator("base");
 
     /**
      * An "java.lang.IllegalArgumentException: Comparison method violates its general contract!"
@@ -21,15 +21,18 @@ class LevenshteinComparatorTest {
     @Test
     void testLevenshteinComparatorSort() {
         assertThatNoException()
-            .isThrownBy(() -> Arrays.sort(new String[]{
-                "y", "w", "y", "e",
-                "s", "u", "h", "o",
-                "d", "t", "d", "f",
-                "z", "j", "c", "k",
-                "f", "z", "o", "e",
-                "r", "t", "v", "d",
-                "l", "r", "w", "u",
-                "v", "a", "m", "o"}, c));
+                .isThrownBy(() -> Arrays.sort(
+                        new String[] {
+                            "y", "w", "y", "e",
+                            "s", "u", "h", "o",
+                            "d", "t", "d", "f",
+                            "z", "j", "c", "k",
+                            "f", "z", "o", "e",
+                            "r", "t", "v", "d",
+                            "l", "r", "w", "u",
+                            "v", "a", "m", "o"
+                        },
+                        c));
     }
 
     @Test
@@ -38,5 +41,4 @@ class LevenshteinComparatorTest {
         assertThat(c.compare("b", "v")).isEqualTo(-1);
         assertThat(c.compare("v", "b")).isEqualTo(1);
     }
-
 }

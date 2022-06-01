@@ -1,8 +1,10 @@
 package io.dropwizard.util;
 
+import static java.util.Map.entry;
+import static java.util.Objects.requireNonNull;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-
 import java.io.Serializable;
 import java.util.Locale;
 import java.util.Map;
@@ -10,37 +12,34 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static java.util.Map.entry;
-import static java.util.Objects.requireNonNull;
-
 public class Duration implements Comparable<Duration>, Serializable {
     private static final long serialVersionUID = 1445611723318059801L;
 
     private static final Pattern DURATION_PATTERN = Pattern.compile("(\\d+)\\s*(\\S+)");
     private static final Map<String, TimeUnit> SUFFIXES = Map.ofEntries(
-        entry("ns", TimeUnit.NANOSECONDS),
-        entry("nanosecond", TimeUnit.NANOSECONDS),
-        entry("nanoseconds", TimeUnit.NANOSECONDS),
-        entry("us", TimeUnit.MICROSECONDS),
-        entry("microsecond", TimeUnit.MICROSECONDS),
-        entry("microseconds", TimeUnit.MICROSECONDS),
-        entry("ms", TimeUnit.MILLISECONDS),
-        entry("millisecond", TimeUnit.MILLISECONDS),
-        entry("milliseconds", TimeUnit.MILLISECONDS),
-        entry("s", TimeUnit.SECONDS),
-        entry("second", TimeUnit.SECONDS),
-        entry("seconds", TimeUnit.SECONDS),
-        entry("m", TimeUnit.MINUTES),
-        entry("min", TimeUnit.MINUTES),
-        entry("mins", TimeUnit.MINUTES),
-        entry("minute", TimeUnit.MINUTES),
-        entry("minutes", TimeUnit.MINUTES),
-        entry("h", TimeUnit.HOURS),
-        entry("hour", TimeUnit.HOURS),
-        entry("hours", TimeUnit.HOURS),
-        entry("d", TimeUnit.DAYS),
-        entry("day", TimeUnit.DAYS),
-        entry("days", TimeUnit.DAYS));
+            entry("ns", TimeUnit.NANOSECONDS),
+            entry("nanosecond", TimeUnit.NANOSECONDS),
+            entry("nanoseconds", TimeUnit.NANOSECONDS),
+            entry("us", TimeUnit.MICROSECONDS),
+            entry("microsecond", TimeUnit.MICROSECONDS),
+            entry("microseconds", TimeUnit.MICROSECONDS),
+            entry("ms", TimeUnit.MILLISECONDS),
+            entry("millisecond", TimeUnit.MILLISECONDS),
+            entry("milliseconds", TimeUnit.MILLISECONDS),
+            entry("s", TimeUnit.SECONDS),
+            entry("second", TimeUnit.SECONDS),
+            entry("seconds", TimeUnit.SECONDS),
+            entry("m", TimeUnit.MINUTES),
+            entry("min", TimeUnit.MINUTES),
+            entry("mins", TimeUnit.MINUTES),
+            entry("minute", TimeUnit.MINUTES),
+            entry("minutes", TimeUnit.MINUTES),
+            entry("h", TimeUnit.HOURS),
+            entry("hour", TimeUnit.HOURS),
+            entry("hours", TimeUnit.HOURS),
+            entry("d", TimeUnit.DAYS),
+            entry("day", TimeUnit.DAYS),
+            entry("days", TimeUnit.DAYS));
 
     public static Duration nanoseconds(long count) {
         return new Duration(count, TimeUnit.NANOSECONDS);
@@ -140,7 +139,6 @@ public class Duration implements Comparable<Duration>, Serializable {
         }
         final Duration duration = (Duration) obj;
         return (count == duration.count) && (unit == duration.unit);
-
     }
 
     @Override

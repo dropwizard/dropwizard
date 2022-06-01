@@ -1,14 +1,13 @@
 package io.dropwizard.logging.common;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
-
-import javax.net.SocketFactory;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import javax.net.SocketFactory;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * Represents a resilient persistent connection via TCP as an {@link OutputStream}.
@@ -22,6 +21,7 @@ public class ResilientSocketOutputStream extends ResilientOutputStreamBase {
     private final int connectionTimeoutMs;
     private final int sendBufferSize;
     private final SocketFactory socketFactory;
+
     @Nullable
     private Socket socket;
 
@@ -34,8 +34,8 @@ public class ResilientSocketOutputStream extends ResilientOutputStreamBase {
      * @param sendBufferSize      The size of the send buffer of the socket stream in bytes.
      * @param socketFactory       The factory for customizing the client socket.
      */
-    public ResilientSocketOutputStream(String host, int port, int connectionTimeoutMs, int sendBufferSize,
-                                       SocketFactory socketFactory) {
+    public ResilientSocketOutputStream(
+            String host, int port, int connectionTimeoutMs, int sendBufferSize, SocketFactory socketFactory) {
         this.host = host;
         this.port = port;
         this.connectionTimeoutMs = connectionTimeoutMs;

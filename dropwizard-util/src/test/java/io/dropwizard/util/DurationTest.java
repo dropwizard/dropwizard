@@ -1,157 +1,124 @@
 package io.dropwizard.util;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.concurrent.TimeUnit;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import org.junit.jupiter.api.Test;
 
 class DurationTest {
     @Test
     void convertsDays() throws Exception {
-        assertThat(Duration.days(2).toDays())
-            .isEqualTo(2);
-        assertThat(Duration.days(2).toHours())
-            .isEqualTo(48);
+        assertThat(Duration.days(2).toDays()).isEqualTo(2);
+        assertThat(Duration.days(2).toHours()).isEqualTo(48);
     }
 
     @Test
     void convertsHours() throws Exception {
-        assertThat(Duration.hours(2).toMinutes())
-            .isEqualTo(120);
+        assertThat(Duration.hours(2).toMinutes()).isEqualTo(120);
     }
 
     @Test
     void convertsMinutes() throws Exception {
-        assertThat(Duration.minutes(3).toSeconds())
-            .isEqualTo(180);
+        assertThat(Duration.minutes(3).toSeconds()).isEqualTo(180);
     }
 
     @Test
     void convertsSeconds() throws Exception {
-        assertThat(Duration.seconds(2).toMilliseconds())
-            .isEqualTo(2000);
+        assertThat(Duration.seconds(2).toMilliseconds()).isEqualTo(2000);
     }
 
     @Test
     void convertsMilliseconds() throws Exception {
-        assertThat(Duration.milliseconds(2).toMicroseconds())
-            .isEqualTo(2000);
+        assertThat(Duration.milliseconds(2).toMicroseconds()).isEqualTo(2000);
     }
 
     @Test
     void convertsMicroseconds() throws Exception {
-        assertThat(Duration.microseconds(2).toNanoseconds())
-            .isEqualTo(2000);
+        assertThat(Duration.microseconds(2).toNanoseconds()).isEqualTo(2000);
     }
 
     @Test
     void convertsNanoseconds() throws Exception {
-        assertThat(Duration.nanoseconds(2).toNanoseconds())
-            .isEqualTo(2);
+        assertThat(Duration.nanoseconds(2).toNanoseconds()).isEqualTo(2);
     }
 
     @Test
     void parsesDays() throws Exception {
-        assertThat(Duration.parse("1d"))
-            .isEqualTo(Duration.days(1));
+        assertThat(Duration.parse("1d")).isEqualTo(Duration.days(1));
 
-        assertThat(Duration.parse("1 day"))
-            .isEqualTo(Duration.days(1));
+        assertThat(Duration.parse("1 day")).isEqualTo(Duration.days(1));
 
-        assertThat(Duration.parse("2 days"))
-            .isEqualTo(Duration.days(2));
+        assertThat(Duration.parse("2 days")).isEqualTo(Duration.days(2));
     }
 
     @Test
     void parsesHours() throws Exception {
-        assertThat(Duration.parse("1h"))
-            .isEqualTo(Duration.hours(1));
+        assertThat(Duration.parse("1h")).isEqualTo(Duration.hours(1));
 
-        assertThat(Duration.parse("1 hour"))
-            .isEqualTo(Duration.hours(1));
+        assertThat(Duration.parse("1 hour")).isEqualTo(Duration.hours(1));
 
-        assertThat(Duration.parse("2 hours"))
-            .isEqualTo(Duration.hours(2));
+        assertThat(Duration.parse("2 hours")).isEqualTo(Duration.hours(2));
     }
 
     @Test
     void parsesMinutes() throws Exception {
-        assertThat(Duration.parse("1m"))
-            .isEqualTo(Duration.minutes(1));
+        assertThat(Duration.parse("1m")).isEqualTo(Duration.minutes(1));
 
-        assertThat(Duration.parse("1min"))
-            .isEqualTo(Duration.minutes(1));
+        assertThat(Duration.parse("1min")).isEqualTo(Duration.minutes(1));
 
-        assertThat(Duration.parse("2mins"))
-            .isEqualTo(Duration.minutes(2));
+        assertThat(Duration.parse("2mins")).isEqualTo(Duration.minutes(2));
 
-        assertThat(Duration.parse("1 minute"))
-            .isEqualTo(Duration.minutes(1));
+        assertThat(Duration.parse("1 minute")).isEqualTo(Duration.minutes(1));
 
-        assertThat(Duration.parse("2 minutes"))
-            .isEqualTo(Duration.minutes(2));
+        assertThat(Duration.parse("2 minutes")).isEqualTo(Duration.minutes(2));
     }
 
     @Test
     void parsesSeconds() throws Exception {
-        assertThat(Duration.parse("1s"))
-            .isEqualTo(Duration.seconds(1));
+        assertThat(Duration.parse("1s")).isEqualTo(Duration.seconds(1));
 
-        assertThat(Duration.parse("1 second"))
-            .isEqualTo(Duration.seconds(1));
+        assertThat(Duration.parse("1 second")).isEqualTo(Duration.seconds(1));
 
-        assertThat(Duration.parse("2 seconds"))
-            .isEqualTo(Duration.seconds(2));
+        assertThat(Duration.parse("2 seconds")).isEqualTo(Duration.seconds(2));
     }
 
     @Test
     void parsesMilliseconds() throws Exception {
-        assertThat(Duration.parse("1ms"))
-            .isEqualTo(Duration.milliseconds(1));
+        assertThat(Duration.parse("1ms")).isEqualTo(Duration.milliseconds(1));
 
-        assertThat(Duration.parse("1 millisecond"))
-            .isEqualTo(Duration.milliseconds(1));
+        assertThat(Duration.parse("1 millisecond")).isEqualTo(Duration.milliseconds(1));
 
-        assertThat(Duration.parse("2 milliseconds"))
-            .isEqualTo(Duration.milliseconds(2));
+        assertThat(Duration.parse("2 milliseconds")).isEqualTo(Duration.milliseconds(2));
     }
 
     @Test
     void parsesMicroseconds() throws Exception {
-        assertThat(Duration.parse("1us"))
-            .isEqualTo(Duration.microseconds(1));
+        assertThat(Duration.parse("1us")).isEqualTo(Duration.microseconds(1));
 
-        assertThat(Duration.parse("1 microsecond"))
-            .isEqualTo(Duration.microseconds(1));
+        assertThat(Duration.parse("1 microsecond")).isEqualTo(Duration.microseconds(1));
 
-        assertThat(Duration.parse("2 microseconds"))
-            .isEqualTo(Duration.microseconds(2));
+        assertThat(Duration.parse("2 microseconds")).isEqualTo(Duration.microseconds(2));
     }
 
     @Test
     void parsesNanoseconds() throws Exception {
-        assertThat(Duration.parse("1ns"))
-            .isEqualTo(Duration.nanoseconds(1));
+        assertThat(Duration.parse("1ns")).isEqualTo(Duration.nanoseconds(1));
 
-        assertThat(Duration.parse("1 nanosecond"))
-            .isEqualTo(Duration.nanoseconds(1));
+        assertThat(Duration.parse("1 nanosecond")).isEqualTo(Duration.nanoseconds(1));
 
-        assertThat(Duration.parse("2 nanoseconds"))
-            .isEqualTo(Duration.nanoseconds(2));
+        assertThat(Duration.parse("2 nanoseconds")).isEqualTo(Duration.nanoseconds(2));
     }
 
     @Test
     void parseDurationWithWhiteSpaces() {
-        assertThat(Duration.parse("5   seconds"))
-            .isEqualTo(Duration.seconds(5));
+        assertThat(Duration.parse("5   seconds")).isEqualTo(Duration.seconds(5));
     }
 
     @Test
@@ -171,23 +138,19 @@ class DurationTest {
 
     @Test
     void isHumanReadable() throws Exception {
-        assertThat(Duration.microseconds(1))
-            .hasToString("1 microsecond");
+        assertThat(Duration.microseconds(1)).hasToString("1 microsecond");
 
-        assertThat(Duration.microseconds(3))
-            .hasToString("3 microseconds");
+        assertThat(Duration.microseconds(3)).hasToString("3 microseconds");
     }
 
     @Test
     void hasAQuantity() throws Exception {
-        assertThat(Duration.microseconds(12).getQuantity())
-            .isEqualTo(12);
+        assertThat(Duration.microseconds(12).getQuantity()).isEqualTo(12);
     }
 
     @Test
     void hasAUnit() throws Exception {
-        assertThat(Duration.microseconds(1).getUnit())
-            .isEqualTo(TimeUnit.MICROSECONDS);
+        assertThat(Duration.microseconds(1).getUnit()).isEqualTo(TimeUnit.MICROSECONDS);
     }
 
     @Test
@@ -874,18 +837,16 @@ class DurationTest {
         final Duration duration = Duration.minutes(42L);
         final byte[] bytes;
         try (final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-             final ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream)) {
+                final ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream)) {
             objectOutputStream.writeObject(duration);
             bytes = outputStream.toByteArray();
         }
 
         try (final ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
-             final ObjectInputStream objectInputStream = new ObjectInputStream(inputStream)) {
+                final ObjectInputStream objectInputStream = new ObjectInputStream(inputStream)) {
             @SuppressWarnings("BanSerializableRead")
             final Object o = objectInputStream.readObject();
-            assertThat(o)
-                    .isInstanceOf(Duration.class)
-                    .isEqualTo(duration);
+            assertThat(o).isInstanceOf(Duration.class).isEqualTo(duration);
         }
     }
 }

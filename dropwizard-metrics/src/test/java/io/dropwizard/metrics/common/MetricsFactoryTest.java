@@ -1,5 +1,7 @@
 package io.dropwizard.metrics.common;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.codahale.metrics.MetricAttribute;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
@@ -8,13 +10,10 @@ import io.dropwizard.jackson.Jackson;
 import io.dropwizard.logging.common.BootstrapLogging;
 import io.dropwizard.util.Duration;
 import io.dropwizard.validation.BaseValidator;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import java.io.File;
 import java.util.EnumSet;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 class MetricsFactoryTest {
     static {
@@ -22,14 +21,15 @@ class MetricsFactoryTest {
     }
 
     private final ObjectMapper objectMapper = Jackson.newObjectMapper();
-    private final YamlConfigurationFactory<MetricsFactory> factory = new YamlConfigurationFactory<>(
-        MetricsFactory.class, BaseValidator.newValidator(), objectMapper, "dw");
+    private final YamlConfigurationFactory<MetricsFactory> factory =
+            new YamlConfigurationFactory<>(MetricsFactory.class, BaseValidator.newValidator(), objectMapper, "dw");
     private MetricsFactory config;
 
     @BeforeEach
     void setUp() throws Exception {
-        objectMapper.getSubtypeResolver().registerSubtypes(ConsoleReporterFactory.class, CsvReporterFactory.class,
-            Slf4jReporterFactory.class);
+        objectMapper
+                .getSubtypeResolver()
+                .registerSubtypes(ConsoleReporterFactory.class, CsvReporterFactory.class, Slf4jReporterFactory.class);
 
         this.config = factory.build(new ResourceConfigurationSourceProvider(), "yaml/metrics.yml");
     }
@@ -49,22 +49,30 @@ class MetricsFactoryTest {
     @Test
     void canReadExcludedAndIncludedAttributes() {
         assertThat(config.getReporters())
-            .hasSize(3)
-            .element(0)
-            .isInstanceOfSatisfying(ConsoleReporterFactory.class, consoleReporterFactory -> assertThat(consoleReporterFactory)
-                .satisfies(factory -> assertThat(factory.getIncludesAttributes())
-                    .isEqualTo(EnumSet.of(MetricAttribute.P50, MetricAttribute.P95, MetricAttribute.P98, MetricAttribute.P99)))
-                    .satisfies(factory -> assertThat(factory.getExcludesAttributes()).isEqualTo(EnumSet.of(MetricAttribute.P98))));
+                .hasSize(3)
+                .element(0)
+                .isInstanceOfSatisfying(
+                        ConsoleReporterFactory.class, consoleReporterFactory -> assertThat(consoleReporterFactory)
+                                .satisfies(factory -> assertThat(factory.getIncludesAttributes())
+                                        .isEqualTo(EnumSet.of(
+                                                MetricAttribute.P50,
+                                                MetricAttribute.P95,
+                                                MetricAttribute.P98,
+                                                MetricAttribute.P99)))
+                                .satisfies(factory -> assertThat(factory.getExcludesAttributes())
+                                        .isEqualTo(EnumSet.of(MetricAttribute.P98))));
     }
 
     @Test
     void canReadDefaultExcludedAndIncludedAttributes() {
         assertThat(config.getReporters())
-            .hasSize(3)
-            .element(1)
-            .isInstanceOfSatisfying(CsvReporterFactory.class, csvReporterFactory -> assertThat(csvReporterFactory)
-                .satisfies(factory -> assertThat(factory.getIncludesAttributes()).isEqualTo(EnumSet.allOf(MetricAttribute.class)))
-                .satisfies(factory -> assertThat(factory.getExcludesAttributes()).isEmpty()));
+                .hasSize(3)
+                .element(1)
+                .isInstanceOfSatisfying(CsvReporterFactory.class, csvReporterFactory -> assertThat(csvReporterFactory)
+                        .satisfies(factory -> assertThat(factory.getIncludesAttributes())
+                                .isEqualTo(EnumSet.allOf(MetricAttribute.class)))
+                        .satisfies(factory ->
+                                assertThat(factory.getExcludesAttributes()).isEmpty()));
     }
 
     @Test
@@ -77,5 +85,4 @@ class MetricsFactoryTest {
         config = factory.build(new ResourceConfigurationSourceProvider(), "yaml/metrics-report-on-stop.yml");
         assertThat(config.isReportOnStop()).isTrue();
     }
-
 }

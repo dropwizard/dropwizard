@@ -1,26 +1,25 @@
 package io.dropwizard.logging.common;
 
-import ch.qos.logback.classic.spi.ThrowableProxy;
-import org.checkerframework.checker.nullness.qual.Nullable;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import static java.util.Objects.requireNonNull;
+import static org.assertj.core.api.Assertions.assertThat;
 
+import ch.qos.logback.classic.spi.ThrowableProxy;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.util.Collections;
 import java.util.Objects;
 import java.util.regex.Pattern;
-
-import static java.util.Objects.requireNonNull;
-import static org.assertj.core.api.Assertions.assertThat;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests {@link PrefixedRootCauseFirstThrowableProxyConverter}.
  */
 class PrefixedRootCauseFirstThrowableProxyConverterTest {
 
-    private final PrefixedRootCauseFirstThrowableProxyConverter converter
-            = new PrefixedRootCauseFirstThrowableProxyConverter();
+    private final PrefixedRootCauseFirstThrowableProxyConverter converter =
+            new PrefixedRootCauseFirstThrowableProxyConverter();
 
     private final ThrowableProxy proxy = new ThrowableProxy(requireNonNull(getException()));
 
@@ -62,7 +61,7 @@ class PrefixedRootCauseFirstThrowableProxyConverterTest {
     }
 
     @Test
-    void prefixesExceptionsWithExclamationMarks()  {
+    void prefixesExceptionsWithExclamationMarks() {
         assertThat(converter.throwableProxyToString(proxy).split("\\R"))
                 .filteredOn(Objects::nonNull)
                 .filteredOn(s -> !s.isEmpty())
@@ -72,10 +71,12 @@ class PrefixedRootCauseFirstThrowableProxyConverterTest {
 
     @Test
     void placesRootCauseIsFirst() {
-        assertThat(converter.throwableProxyToString(proxy)).matches(Pattern.compile(".+" +
-                "java\\.net\\.SocketTimeoutException: Timed-out reading from socket.+" +
-                "java\\.io\\.IOException: Fairly general error doing some IO.+" +
-                "java\\.lang\\.RuntimeException: Very general error doing something" +
-                ".+", Pattern.DOTALL));
+        assertThat(converter.throwableProxyToString(proxy))
+                .matches(Pattern.compile(
+                        ".+" + "java\\.net\\.SocketTimeoutException: Timed-out reading from socket.+"
+                                + "java\\.io\\.IOException: Fairly general error doing some IO.+"
+                                + "java\\.lang\\.RuntimeException: Very general error doing something"
+                                + ".+",
+                        Pattern.DOTALL));
     }
 }

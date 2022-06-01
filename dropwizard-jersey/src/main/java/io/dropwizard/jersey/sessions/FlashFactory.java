@@ -1,10 +1,9 @@
 package io.dropwizard.jersey.sessions;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
-
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 public final class FlashFactory {
     private final HttpServletRequest request;

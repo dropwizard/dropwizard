@@ -2,12 +2,11 @@ package io.dropwizard.client.ssl;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.validation.ValidationMethod;
-import org.checkerframework.checker.nullness.qual.Nullable;
-
-import javax.validation.constraints.NotEmpty;
 import java.io.File;
 import java.util.List;
 import java.util.Optional;
+import javax.validation.constraints.NotEmpty;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 public class TlsConfiguration {
 
@@ -195,15 +194,19 @@ public class TlsConfiguration {
     @ValidationMethod(message = "keyStorePassword should not be null or empty if keyStorePath not null")
     public boolean isValidKeyStorePassword() {
         return keyStorePath == null
-            || keyStoreType.startsWith("Windows-")
-            || Optional.ofNullable(keyStorePassword).filter(s -> !s.isEmpty()).isPresent();
+                || keyStoreType.startsWith("Windows-")
+                || Optional.ofNullable(keyStorePassword)
+                        .filter(s -> !s.isEmpty())
+                        .isPresent();
     }
 
     @ValidationMethod(message = "trustStorePassword should not be null or empty if trustStorePath not null")
     public boolean isValidTrustStorePassword() {
         return trustStorePath == null
-            || trustStoreType.startsWith("Windows-")
-            || Optional.ofNullable(trustStorePassword).filter(s -> !s.isEmpty()).isPresent();
+                || trustStoreType.startsWith("Windows-")
+                || Optional.ofNullable(trustStorePassword)
+                        .filter(s -> !s.isEmpty())
+                        .isPresent();
     }
 
     /**

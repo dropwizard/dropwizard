@@ -1,13 +1,6 @@
 package io.dropwizard.servlets.assets;
 
 import io.dropwizard.util.Resources;
-import org.checkerframework.checker.nullness.qual.Nullable;
-
-import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
@@ -21,6 +14,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.zip.CRC32;
+import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 public class AssetServlet extends HttpServlet {
     private static final long serialVersionUID = 6393345594784987908L;
@@ -94,10 +93,8 @@ public class AssetServlet extends HttpServlet {
      *                       indexes
      * @param defaultCharset the default character set
      */
-    public AssetServlet(String resourcePath,
-                        String uriPath,
-                        @Nullable String indexFile,
-                        @Nullable Charset defaultCharset) {
+    public AssetServlet(
+            String resourcePath, String uriPath, @Nullable String indexFile, @Nullable Charset defaultCharset) {
         this(resourcePath, uriPath, indexFile, DEFAULT_MEDIA_TYPE, defaultCharset);
     }
 
@@ -119,11 +116,12 @@ public class AssetServlet extends HttpServlet {
      * @param defaultCharset   the default character set
      * @since 2.0
      */
-    public AssetServlet(String resourcePath,
-                        String uriPath,
-                        @Nullable String indexFile,
-                        @Nullable String defaultMediaType,
-                        @Nullable Charset defaultCharset) {
+    public AssetServlet(
+            String resourcePath,
+            String uriPath,
+            @Nullable String indexFile,
+            @Nullable String defaultMediaType,
+            @Nullable Charset defaultCharset) {
         final String trimmedPath = trimSlashes(resourcePath);
         this.resourcePath = trimmedPath.isEmpty() ? trimmedPath : trimmedPath + '/';
         final String trimmedUri = trimTrailingSlashes(uriPath);
@@ -171,7 +169,6 @@ public class AssetServlet extends HttpServlet {
         return defaultMediaType;
     }
 
-
     /**
      * @since 2.0
      */
@@ -181,8 +178,7 @@ public class AssetServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest req,
-                         HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
             final StringBuilder builder = new StringBuilder(req.getServletPath());
             if (req.getPathInfo() != null) {
@@ -222,9 +218,8 @@ public class AssetServlet extends HttpServlet {
                     resp.setStatus(HttpServletResponse.SC_PARTIAL_CONTENT);
                     usingRanges = true;
 
-                    final String byteRanges = ranges.stream()
-                            .map(ByteRange::toString)
-                            .collect(Collectors.joining(","));
+                    final String byteRanges =
+                            ranges.stream().map(ByteRange::toString).collect(Collectors.joining(","));
                     resp.addHeader(CONTENT_RANGE, "bytes " + byteRanges + "/" + resourceLength);
                 }
             }
@@ -233,8 +228,11 @@ public class AssetServlet extends HttpServlet {
             resp.setHeader(ETAG, cachedAsset.getETag());
 
             final String requestUri = req.getRequestURI();
-            final String mediaType = Optional.ofNullable(req.getServletContext().getMimeType(
-                    indexFile != null && requestUri.endsWith("/") ? requestUri + indexFile : requestUri))
+            final String mediaType = Optional.ofNullable(req.getServletContext()
+                            .getMimeType(
+                                    indexFile != null && requestUri.endsWith("/")
+                                            ? requestUri + indexFile
+                                            : requestUri))
                     .orElse(defaultMediaType);
             if (mediaType.startsWith("video") || mediaType.startsWith("audio") || usingRanges) {
                 resp.addHeader(ACCEPT_RANGES, "bytes");
@@ -248,8 +246,8 @@ public class AssetServlet extends HttpServlet {
             try (ServletOutputStream output = resp.getOutputStream()) {
                 if (usingRanges) {
                     for (ByteRange range : ranges) {
-                        output.write(cachedAsset.getResource(), range.getStart(),
-                                range.getEnd() - range.getStart() + 1);
+                        output.write(
+                                cachedAsset.getResource(), range.getStart(), range.getEnd() - range.getStart() + 1);
                     }
                 } else {
                     output.write(cachedAsset.getResource());
@@ -323,21 +321,21 @@ public class AssetServlet extends HttpServlet {
      */
     private List<ByteRange> parseRangeHeader(final String rangeHeader, final int resourceLength) {
         try {
-			final List<ByteRange> byteRanges;
-			if (rangeHeader.contains("=")) {
-				final String[] parts = rangeHeader.split("=", -1);
-				if (parts.length > 1) {
-					byteRanges = Arrays.stream(parts[1].split(",", -1))
-							.map(String::trim)
-							.map(s -> ByteRange.parse(s, resourceLength))
-							.collect(Collectors.toList());
-				} else {
-					byteRanges = Collections.emptyList();
-				}
-			} else {
-				byteRanges = Collections.emptyList();
-			}
-			return byteRanges;
+            final List<ByteRange> byteRanges;
+            if (rangeHeader.contains("=")) {
+                final String[] parts = rangeHeader.split("=", -1);
+                if (parts.length > 1) {
+                    byteRanges = Arrays.stream(parts[1].split(",", -1))
+                            .map(String::trim)
+                            .map(s -> ByteRange.parse(s, resourceLength))
+                            .collect(Collectors.toList());
+                } else {
+                    byteRanges = Collections.emptyList();
+                }
+            } else {
+                byteRanges = Collections.emptyList();
+            }
+            return byteRanges;
         } catch (NumberFormatException e) {
             return Collections.emptyList();
         }

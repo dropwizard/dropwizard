@@ -3,11 +3,6 @@ package io.dropwizard.servlets.tasks;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
-import org.slf4j.ILoggerFactory;
-import org.slf4j.LoggerFactory;
-
 import java.io.PrintWriter;
 import java.time.Duration;
 import java.util.Collections;
@@ -17,6 +12,10 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.slf4j.ILoggerFactory;
+import org.slf4j.LoggerFactory;
 
 /**
  * Sets the logging level for a number of loggers
@@ -94,12 +93,15 @@ public class LogConfigurationTask extends Task {
 
             if (loggerLevel != null && duration != null) {
                 final long millis = duration.toMillis();
-                getTimer().schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        logger.setLevel(null);
-                    }
-                }, millis);
+                getTimer()
+                        .schedule(
+                                new TimerTask() {
+                                    @Override
+                                    public void run() {
+                                        logger.setLevel(null);
+                                    }
+                                },
+                                millis);
 
                 message += String.format(" for %s milliseconds", millis);
             }

@@ -19,7 +19,6 @@ import ch.qos.logback.core.status.ErrorStatus;
 import ch.qos.logback.core.status.InfoStatus;
 import ch.qos.logback.core.status.Status;
 import ch.qos.logback.core.status.StatusManager;
-
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -128,7 +127,8 @@ abstract class ResilientOutputStreamBase extends OutputStream {
             // Ignored
         }
 
-        addStatusIfCountNotOverLimit(new InfoStatus("Attempting to recover from IO failure on " + getDescription(), this));
+        addStatusIfCountNotOverLimit(
+                new InfoStatus("Attempting to recover from IO failure on " + getDescription(), this));
 
         // subsequent writes must always be in append mode
         try {

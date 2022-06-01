@@ -1,16 +1,15 @@
 package io.dropwizard.jersey.validation;
 
-import org.glassfish.jersey.server.model.Invocable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import javax.validation.ConstraintViolation;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+import org.glassfish.jersey.server.model.Invocable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Provider
 public class JerseyViolationExceptionMapper implements ExceptionMapper<JerseyViolationException> {

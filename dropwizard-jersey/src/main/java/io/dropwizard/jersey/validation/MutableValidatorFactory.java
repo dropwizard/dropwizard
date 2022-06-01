@@ -1,9 +1,8 @@
 package io.dropwizard.jersey.validation;
 
-import org.hibernate.validator.internal.engine.constraintvalidation.ConstraintValidatorFactoryImpl;
-
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorFactory;
+import org.hibernate.validator.internal.engine.constraintvalidation.ConstraintValidatorFactoryImpl;
 
 /**
  * @since 2.0

@@ -1,15 +1,14 @@
 package io.dropwizard.lifecycle.setup;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+
 import com.codahale.metrics.InstrumentedThreadFactory;
 import com.codahale.metrics.MetricRegistry;
 import io.dropwizard.util.Duration;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
-import org.mockito.exceptions.verification.WantedButNotInvoked;
-import org.slf4j.Logger;
-
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executor;
@@ -18,12 +17,12 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.mockito.exceptions.verification.WantedButNotInvoked;
+import org.slf4j.Logger;
 
 class ExecutorServiceBuilderTest {
 
@@ -42,24 +41,20 @@ class ExecutorServiceBuilderTest {
 
     @Test
     void testGiveAWarningAboutMaximumPoolSizeAndUnboundedQueue() {
-        executorServiceBuilder
-            .minThreads(4)
-            .maxThreads(8)
-            .build();
+        executorServiceBuilder.minThreads(4).maxThreads(8).build();
 
         verify(log).warn(WARNING);
-        assertThat(metricRegistry.getMetrics())
-            .containsOnlyKeys("test.created", "test.terminated", "test.running");
+        assertThat(metricRegistry.getMetrics()).containsOnlyKeys("test.created", "test.terminated", "test.running");
     }
 
     @Test
     @SuppressWarnings("Slf4jFormatShouldBeConst")
     void testGiveNoWarningAboutMaximumPoolSizeAndBoundedQueue() {
         ExecutorService exe = executorServiceBuilder
-            .minThreads(4)
-            .maxThreads(8)
-            .workQueue(new ArrayBlockingQueue<>(16))
-            .build();
+                .minThreads(4)
+                .maxThreads(8)
+                .workQueue(new ArrayBlockingQueue<>(16))
+                .build();
 
         verify(log, never()).warn(WARNING);
         assertCanExecuteAtLeast2ConcurrentTasks(exe);
@@ -73,11 +68,11 @@ class ExecutorServiceBuilderTest {
     @SuppressWarnings("Slf4jFormatShouldBeConst")
     void shouldNotWarnWhenSettingUpSingleThreadedPool() {
         executorServiceBuilder
-            .minThreads(1)
-            .maxThreads(1)
-            .keepAliveTime(Duration.milliseconds(0))
-            .workQueue(new LinkedBlockingQueue<>())
-            .build();
+                .minThreads(1)
+                .maxThreads(1)
+                .keepAliveTime(Duration.milliseconds(0))
+                .workQueue(new LinkedBlockingQueue<>())
+                .build();
 
         verify(log, never()).warn(anyString());
     }
@@ -90,11 +85,11 @@ class ExecutorServiceBuilderTest {
     @SuppressWarnings("Slf4jFormatShouldBeConst")
     void shouldNotWarnWhenSettingUpCachedThreadPool() {
         ExecutorService exe = executorServiceBuilder
-            .minThreads(0)
-            .maxThreads(Integer.MAX_VALUE)
-            .keepAliveTime(Duration.seconds(60))
-            .workQueue(new SynchronousQueue<>())
-            .build();
+                .minThreads(0)
+                .maxThreads(Integer.MAX_VALUE)
+                .keepAliveTime(Duration.seconds(60))
+                .workQueue(new SynchronousQueue<>())
+                .build();
 
         verify(log, never()).warn(anyString());
         assertCanExecuteAtLeast2ConcurrentTasks(exe); // cached thread pools work right?
@@ -114,9 +109,8 @@ class ExecutorServiceBuilderTest {
     @Test
     @SuppressWarnings("Slf4jFormatShouldBeConst")
     void shouldBeAbleToExecute2TasksAtOnceWithLargeMaxThreadsOrBeWarnedOtherwise() {
-        ExecutorService exe = executorServiceBuilder
-            .maxThreads(Integer.MAX_VALUE)
-            .build();
+        ExecutorService exe =
+                executorServiceBuilder.maxThreads(Integer.MAX_VALUE).build();
 
         try {
             verify(log).warn(anyString());
@@ -129,41 +123,43 @@ class ExecutorServiceBuilderTest {
     @Test
     void shouldUseInstrumentedThreadFactory() {
         assertThat(executorServiceBuilder.build())
-            .isInstanceOfSatisfying(ThreadPoolExecutor.class, castedExec ->
-                assertThat(castedExec.getThreadFactory()).isInstanceOf(InstrumentedThreadFactory.class));
+                .isInstanceOfSatisfying(
+                        ThreadPoolExecutor.class, castedExec -> assertThat(castedExec.getThreadFactory())
+                                .isInstanceOf(InstrumentedThreadFactory.class));
     }
 
-    @CsvSource(value = {
-        "my-client-%d,my-client",
-        "my-client--%d,my-client-",
-        "my-client-%d-abc,my-client-abc",
-        "my-client%d,my-client",
-        "my-client%d-abc,my-client-abc",
-        "my-client%s,my-client",
-        "my-client%sabc,my-clientabc",
-        "my-client%10d,my-client",
-        "my-client%10d0,my-client0",
-        "my-client%-10d,my-client",
-        "my-client%-10d0,my-client0",
-        "my-client-%10d,my-client",
-        "my-client-%10dabc,my-clientabc",
-        "my-client-%1$d,my-client",
-        "my-client-%1$d-abc,my-client-abc",
-        "-%d,''",
-        "%d,''",
-        "%d-abc,-abc",
-        "%10d,''",
-        "%10dabc,abc",
-        "%-10d,''",
-        "%-10dabc,abc",
-        "%10s,''" ,
-        "%10sabc,abc",
-    })
+    @CsvSource(
+            value = {
+                "my-client-%d,my-client",
+                "my-client--%d,my-client-",
+                "my-client-%d-abc,my-client-abc",
+                "my-client%d,my-client",
+                "my-client%d-abc,my-client-abc",
+                "my-client%s,my-client",
+                "my-client%sabc,my-clientabc",
+                "my-client%10d,my-client",
+                "my-client%10d0,my-client0",
+                "my-client%-10d,my-client",
+                "my-client%-10d0,my-client0",
+                "my-client-%10d,my-client",
+                "my-client-%10dabc,my-clientabc",
+                "my-client-%1$d,my-client",
+                "my-client-%1$d-abc,my-client-abc",
+                "-%d,''",
+                "%d,''",
+                "%d-abc,-abc",
+                "%10d,''",
+                "%10dabc,abc",
+                "%-10d,''",
+                "%-10dabc,abc",
+                "%10s,''",
+                "%10sabc,abc",
+            })
     @ParameterizedTest
     void nameWithoutFormat(String format, String name) {
         assertThat(ExecutorServiceBuilder.getNameWithoutFormat(format))
-            .describedAs("%s -> %s", format, name)
-            .isEqualTo(name);
+                .describedAs("%s -> %s", format, name)
+                .isEqualTo(name);
     }
 
     /**
@@ -188,8 +184,8 @@ class ExecutorServiceBuilderTest {
         try {
             // 1 second is ages even on a slow VM
             assertThat(latch.await(1, TimeUnit.SECONDS))
-                .as("2 tasks executed concurrently on " + exe)
-                .isTrue();
+                    .as("2 tasks executed concurrently on " + exe)
+                    .isTrue();
         } catch (InterruptedException ex) {
             throw new RuntimeException(ex);
         }

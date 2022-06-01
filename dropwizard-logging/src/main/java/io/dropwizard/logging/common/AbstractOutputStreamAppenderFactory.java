@@ -13,13 +13,17 @@ import io.dropwizard.logging.common.layout.LayoutFactory;
  * A base implementation of {@link AppenderFactory} producing an appender based on {@link OutputStreamAppender}.
  */
 public abstract class AbstractOutputStreamAppenderFactory<E extends DeferredProcessingAware>
-    extends AbstractAppenderFactory<E> {
+        extends AbstractAppenderFactory<E> {
 
     protected abstract OutputStreamAppender<E> appender(LoggerContext context);
 
     @Override
-    public Appender<E> build(LoggerContext context, String applicationName, LayoutFactory<E> layoutFactory,
-                             LevelFilterFactory<E> levelFilterFactory, AsyncAppenderFactory<E> asyncAppenderFactory) {
+    public Appender<E> build(
+            LoggerContext context,
+            String applicationName,
+            LayoutFactory<E> layoutFactory,
+            LevelFilterFactory<E> levelFilterFactory,
+            AsyncAppenderFactory<E> asyncAppenderFactory) {
         final OutputStreamAppender<E> appender = appender(context);
         final LayoutWrappingEncoder<E> layoutEncoder = new LayoutWrappingEncoder<>();
         layoutEncoder.setLayout(buildLayout(context, layoutFactory));

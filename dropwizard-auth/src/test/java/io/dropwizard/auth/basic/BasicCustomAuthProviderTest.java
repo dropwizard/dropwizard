@@ -5,10 +5,9 @@ import io.dropwizard.auth.AuthBaseTest;
 import io.dropwizard.auth.AuthResource;
 import io.dropwizard.auth.util.AuthUtil;
 import io.dropwizard.jersey.DropwizardResourceConfig;
-
-import javax.ws.rs.container.ContainerRequestFilter;
 import java.security.Principal;
 import java.util.Arrays;
+import javax.ws.rs.container.ContainerRequestFilter;
 
 public class BasicCustomAuthProviderTest extends AuthBaseTest<BasicCustomAuthProviderTest.BasicAuthTestResourceConfig> {
 
@@ -17,8 +16,9 @@ public class BasicCustomAuthProviderTest extends AuthBaseTest<BasicCustomAuthPro
             register(AuthResource.class);
         }
 
-        @Override protected ContainerRequestFilter getAuthFilter() {
-            BasicCredentialAuthFilter.Builder<Principal> builder  = new BasicCredentialAuthFilter.Builder<>();
+        @Override
+        protected ContainerRequestFilter getAuthFilter() {
+            BasicCredentialAuthFilter.Builder<Principal> builder = new BasicCredentialAuthFilter.Builder<>();
             builder.setAuthorizer(AuthUtil.getTestAuthorizer(ADMIN_USER, ADMIN_ROLE));
             builder.setAuthenticator(AuthUtil.getBasicAuthenticator(Arrays.asList(ADMIN_USER, ORDINARY_USER)));
             builder.setPrefix(CUSTOM_PREFIX);

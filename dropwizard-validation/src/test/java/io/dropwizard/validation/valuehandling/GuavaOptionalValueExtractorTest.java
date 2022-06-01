@@ -1,18 +1,17 @@
 package io.dropwizard.validation.valuehandling;
 
-import com.google.common.base.Optional;
-import org.hibernate.validator.HibernateValidator;
-import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.assertThat;
 
+import com.google.common.base.Optional;
+import java.util.Set;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.valueextraction.Unwrapping;
-import java.util.Set;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import org.hibernate.validator.HibernateValidator;
+import org.junit.jupiter.api.Test;
 
 class GuavaOptionalValueExtractorTest {
 
@@ -25,8 +24,7 @@ class GuavaOptionalValueExtractorTest {
         Optional<Integer> notNull = Optional.of(123);
     }
 
-    private final Validator validator = Validation
-            .byProvider(HibernateValidator.class)
+    private final Validator validator = Validation.byProvider(HibernateValidator.class)
             .configure()
             .addValueExtractor(GuavaOptionalValueExtractor.DESCRIPTOR.getValueExtractor())
             .buildValidatorFactory()

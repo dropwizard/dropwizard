@@ -1,5 +1,11 @@
 package io.dropwizard.hibernate.dual;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.util.stream.Stream;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.BeforeAll;
@@ -7,19 +13,11 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.util.stream.Stream;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.params.provider.Arguments.arguments;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 /** Unit test class that verifies the DualSessionFactory wrapper.
- * 
+ *
  * @since 2.1
  *
  */
-
 public class DualSessionFactoryTest {
 
     private static final Session primary = mock(Session.class);
@@ -34,9 +32,7 @@ public class DualSessionFactoryTest {
     }
 
     public static Stream<Arguments> current() {
-        return Stream.of(
-            arguments(false, primaryFactory),
-            arguments(true, readerFactory));
+        return Stream.of(arguments(false, primaryFactory), arguments(true, readerFactory));
     }
 
     @ParameterizedTest
@@ -49,9 +45,7 @@ public class DualSessionFactoryTest {
     }
 
     public static Stream<Arguments> getCurrentSession() {
-        return Stream.of(
-            arguments(false, primary),
-            arguments(true, reader));
+        return Stream.of(arguments(false, primary), arguments(true, reader));
     }
 
     @ParameterizedTest
@@ -64,9 +58,7 @@ public class DualSessionFactoryTest {
     }
 
     public static Stream<Arguments> prepare() {
-        return Stream.of(
-            arguments(false, primaryFactory),
-            arguments(true, readerFactory));
+        return Stream.of(arguments(false, primaryFactory), arguments(true, readerFactory));
     }
 
     @ParameterizedTest

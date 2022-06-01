@@ -1,10 +1,10 @@
 package io.dropwizard.configuration;
 
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 
 class EnvironmentVariableSubstitutorTest {
     @Test
@@ -12,12 +12,14 @@ class EnvironmentVariableSubstitutorTest {
         EnvironmentVariableSubstitutor substitutor = new EnvironmentVariableSubstitutor();
         assertThat(substitutor.isEnableSubstitutionInVariables()).isFalse();
     }
+
     @Test
     @DisabledIfEnvironmentVariable(named = "DOES_NOT_EXIST", matches = ".*")
     void defaultConstructorEnablesStrict() {
-        assertThatExceptionOfType(UndefinedEnvironmentVariableException.class).isThrownBy(() ->
-            new EnvironmentVariableSubstitutor().replace("${DOES_NOT_EXIST}"));
+        assertThatExceptionOfType(UndefinedEnvironmentVariableException.class)
+                .isThrownBy(() -> new EnvironmentVariableSubstitutor().replace("${DOES_NOT_EXIST}"));
     }
+
     @Test
     void constructorEnablesSubstitutionInVariables() {
         EnvironmentVariableSubstitutor substitutor = new EnvironmentVariableSubstitutor(true, true);
@@ -40,8 +42,8 @@ class EnvironmentVariableSubstitutorTest {
         EnvironmentVariableSubstitutor substitutor = new EnvironmentVariableSubstitutor(true);
         assertThat(substitutor.replace("${TEST} ${DOES_NOT_EXIST:-default}")).isEqualTo("test_value default");
 
-        assertThatExceptionOfType(UndefinedEnvironmentVariableException.class).isThrownBy(() ->
-            new EnvironmentVariableSubstitutor().replace("${TEST} ${DOES_NOT_EXIST}"));
+        assertThatExceptionOfType(UndefinedEnvironmentVariableException.class)
+                .isThrownBy(() -> new EnvironmentVariableSubstitutor().replace("${TEST} ${DOES_NOT_EXIST}"));
     }
 
     @Test
@@ -54,8 +56,8 @@ class EnvironmentVariableSubstitutorTest {
     @Test
     @DisabledIfEnvironmentVariable(named = "DOES_NOT_EXIST", matches = ".*")
     void substitutorThrowsExceptionInStrictMode() {
-        assertThatExceptionOfType(UndefinedEnvironmentVariableException.class).isThrownBy(() ->
-            new EnvironmentVariableSubstitutor(true).replace("${DOES_NOT_EXIST}"));
+        assertThatExceptionOfType(UndefinedEnvironmentVariableException.class)
+                .isThrownBy(() -> new EnvironmentVariableSubstitutor(true).replace("${DOES_NOT_EXIST}"));
     }
 
     @Test

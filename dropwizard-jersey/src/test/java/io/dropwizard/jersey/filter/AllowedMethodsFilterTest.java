@@ -1,7 +1,24 @@
 package io.dropwizard.jersey.filter;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import io.dropwizard.jersey.AbstractJerseyTest;
 import io.dropwizard.jersey.DropwizardResourceConfig;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.Map;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.ServerProperties;
 import org.glassfish.jersey.servlet.ServletProperties;
@@ -12,24 +29,6 @@ import org.glassfish.jersey.test.spi.TestContainerException;
 import org.glassfish.jersey.test.spi.TestContainerFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.Map;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 class AllowedMethodsFilterTest extends AbstractJerseyTest {
 
@@ -47,10 +46,8 @@ class AllowedMethodsFilterTest extends AbstractJerseyTest {
         filter.init(config);
     }
 
-
     @Override
-    protected TestContainerFactory getTestContainerFactory()
-            throws TestContainerException {
+    protected TestContainerFactory getTestContainerFactory() throws TestContainerException {
         return new GrizzlyWebTestContainerFactory();
     }
 
@@ -58,7 +55,8 @@ class AllowedMethodsFilterTest extends AbstractJerseyTest {
     protected DeploymentContext configureDeployment() {
         final ResourceConfig rc = DropwizardResourceConfig.forTesting();
 
-        final Map<String, String> filterParams = Collections.singletonMap(AllowedMethodsFilter.ALLOWED_METHODS_PARAM, "GET,POST");
+        final Map<String, String> filterParams =
+                Collections.singletonMap(AllowedMethodsFilter.ALLOWED_METHODS_PARAM, "GET,POST");
 
         return ServletDeploymentContext.builder(rc)
                 .addFilter(AllowedMethodsFilter.class, "allowedMethodsFilter", filterParams)
@@ -69,8 +67,8 @@ class AllowedMethodsFilterTest extends AbstractJerseyTest {
 
     private int getResponseStatusForRequestMethod(String method, boolean includeEntity) {
         try (Response resourceResponse = includeEntity
-            ? target("/ping").request().method(method, Entity.entity("", MediaType.TEXT_PLAIN))
-            : target("/ping").request().method(method)) {
+                ? target("/ping").request().method(method, Entity.entity("", MediaType.TEXT_PLAIN))
+                : target("/ping").request().method(method)) {
             return resourceResponse.getStatus();
         }
     }

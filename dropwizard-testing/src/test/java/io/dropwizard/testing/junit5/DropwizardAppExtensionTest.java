@@ -8,9 +8,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 @ExtendWith(DropwizardExtensionsSupport.class)
 class DropwizardAppExtensionTest extends AbstractDropwizardAppExtensionTest {
 
-    private static final DropwizardAppExtension<TestConfiguration> EXTENSION =
-            new DropwizardAppExtension<>(DropwizardTestApplication.class,
-                "test-config.yaml", new ResourceConfigurationSourceProvider());
+    private static final DropwizardAppExtension<TestConfiguration> EXTENSION = new DropwizardAppExtension<>(
+            DropwizardTestApplication.class, "test-config.yaml", new ResourceConfigurationSourceProvider());
 
     @Override
     DropwizardAppExtension<TestConfiguration> getExtension() {

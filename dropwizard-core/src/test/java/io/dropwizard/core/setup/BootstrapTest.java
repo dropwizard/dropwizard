@@ -1,5 +1,7 @@
 package io.dropwizard.core.setup;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.codahale.metrics.Histogram;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.UniformReservoir;
@@ -10,20 +12,16 @@ import io.dropwizard.configuration.FileConfigurationSourceProvider;
 import io.dropwizard.core.Application;
 import io.dropwizard.core.Configuration;
 import io.dropwizard.jackson.Jackson;
+import javax.validation.Validation;
+import javax.validation.ValidatorFactory;
 import org.hibernate.validator.HibernateValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import javax.validation.Validation;
-import javax.validation.ValidatorFactory;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
 class BootstrapTest {
     private final Application<Configuration> application = new Application<Configuration>() {
         @Override
-        public void run(Configuration configuration, Environment environment) throws Exception {
-        }
+        public void run(Configuration configuration, Environment environment) throws Exception {}
     };
     private Bootstrap<Configuration> bootstrap;
 
@@ -34,46 +32,45 @@ class BootstrapTest {
 
     @Test
     void hasAnApplication() throws Exception {
-        assertThat(bootstrap.getApplication())
-                .isEqualTo(application);
+        assertThat(bootstrap.getApplication()).isEqualTo(application);
     }
 
     @Test
     void hasAnObjectMapper() throws Exception {
-        assertThat(bootstrap.getObjectMapper())
-                .isNotNull();
+        assertThat(bootstrap.getObjectMapper()).isNotNull();
     }
 
     @Test
     void hasHealthCheckRegistry() {
-        assertThat(bootstrap.getHealthCheckRegistry())
-            .isNotNull();
+        assertThat(bootstrap.getHealthCheckRegistry()).isNotNull();
     }
 
     @Test
     void defaultsToUsingFilesForConfiguration() throws Exception {
-        assertThat(bootstrap.getConfigurationSourceProvider())
-                .isInstanceOfAny(FileConfigurationSourceProvider.class);
+        assertThat(bootstrap.getConfigurationSourceProvider()).isInstanceOfAny(FileConfigurationSourceProvider.class);
     }
 
     @Test
     void defaultsToUsingTheDefaultClassLoader() throws Exception {
-        assertThat(bootstrap.getClassLoader())
-                .isEqualTo(Thread.currentThread().getContextClassLoader());
+        assertThat(bootstrap.getClassLoader()).isEqualTo(Thread.currentThread().getContextClassLoader());
     }
 
     @Test
     void comesWithJvmInstrumentation() throws Exception {
         bootstrap.registerMetrics();
         assertThat(bootstrap.getMetricRegistry().getNames())
-                .contains("jvm.buffers.mapped.capacity", "jvm.threads.count", "jvm.memory.heap.usage",
-                        "jvm.attribute.vendor", "jvm.classloader.loaded", "jvm.filedescriptor");
+                .contains(
+                        "jvm.buffers.mapped.capacity",
+                        "jvm.threads.count",
+                        "jvm.memory.heap.usage",
+                        "jvm.attribute.vendor",
+                        "jvm.classloader.loaded",
+                        "jvm.filedescriptor");
     }
 
     @Test
     void defaultsToDefaultConfigurationFactoryFactory() throws Exception {
-        assertThat(bootstrap.getConfigurationFactoryFactory())
-                .isInstanceOf(DefaultConfigurationFactoryFactory.class);
+        assertThat(bootstrap.getConfigurationFactoryFactory()).isInstanceOf(DefaultConfigurationFactoryFactory.class);
     }
 
     @Test
@@ -89,8 +86,13 @@ class BootstrapTest {
         bootstrap.registerMetrics();
 
         assertThat(newRegistry.getNames())
-                .contains("jvm.buffers.mapped.capacity", "jvm.threads.count", "jvm.memory.heap.usage",
-                        "jvm.attribute.vendor", "jvm.classloader.loaded", "jvm.filedescriptor");
+                .contains(
+                        "jvm.buffers.mapped.capacity",
+                        "jvm.threads.count",
+                        "jvm.memory.heap.usage",
+                        "jvm.attribute.vendor",
+                        "jvm.classloader.loaded",
+                        "jvm.filedescriptor");
     }
 
     @Test
@@ -104,10 +106,8 @@ class BootstrapTest {
 
     @Test
     void canUseCustomValidatorFactory() throws Exception {
-        ValidatorFactory factory = Validation
-                .byProvider(HibernateValidator.class)
-                .configure()
-                .buildValidatorFactory();
+        ValidatorFactory factory =
+                Validation.byProvider(HibernateValidator.class).configure().buildValidatorFactory();
         bootstrap.setValidatorFactory(factory);
 
         assertThat(bootstrap.getValidatorFactory()).isSameAs(factory);
@@ -126,5 +126,4 @@ class BootstrapTest {
         bootstrap.setHealthCheckRegistry(healthCheckRegistry);
         assertThat(bootstrap.getHealthCheckRegistry()).isSameAs(healthCheckRegistry);
     }
-
 }

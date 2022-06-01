@@ -1,10 +1,9 @@
 package io.dropwizard.lifecycle;
 
 import io.dropwizard.util.Duration;
+import java.util.concurrent.ExecutorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.concurrent.ExecutorService;
 
 public class ExecutorServiceManager implements Managed {
 

@@ -8,7 +8,6 @@ import io.dropwizard.core.server.SimpleServerFactory;
 import io.dropwizard.core.setup.Environment;
 import io.dropwizard.jetty.HttpConnectorFactory;
 import io.dropwizard.testing.DropwizardTestSupport;
-
 import java.net.URI;
 
 public class DropwizardClient {

@@ -12,5 +12,5 @@ public class EmptyOptionalException extends RuntimeException {
 
     public static final EmptyOptionalException INSTANCE = new EmptyOptionalException();
 
-    private EmptyOptionalException() { }
+    private EmptyOptionalException() {}
 }

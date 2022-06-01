@@ -1,5 +1,9 @@
 package io.dropwizard.metrics.graphite;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.graphite.Graphite;
 import com.codahale.metrics.graphite.GraphiteReporter;
@@ -10,10 +14,6 @@ import io.dropwizard.jackson.Jackson;
 import io.dropwizard.validation.BaseValidator;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 
 class GraphiteReporterFactoryTest {
 
@@ -28,15 +28,14 @@ class GraphiteReporterFactoryTest {
 
     @Test
     void isDiscoverable() {
-        assertThat(new DiscoverableSubtypeResolver().getDiscoveredSubtypes())
-            .contains(GraphiteReporterFactory.class);
+        assertThat(new DiscoverableSubtypeResolver().getDiscoveredSubtypes()).contains(GraphiteReporterFactory.class);
     }
 
     @Test
     void createDefaultFactory() throws Exception {
-        final GraphiteReporterFactory factory = new YamlConfigurationFactory<>(GraphiteReporterFactory.class,
-             BaseValidator.newValidator(), Jackson.newObjectMapper(), "dw")
-            .build();
+        final GraphiteReporterFactory factory = new YamlConfigurationFactory<>(
+                        GraphiteReporterFactory.class, BaseValidator.newValidator(), Jackson.newObjectMapper(), "dw")
+                .build();
         assertThat(factory.getFrequency()).isNotPresent();
     }
 
@@ -49,9 +48,9 @@ class GraphiteReporterFactoryTest {
 
         final Graphite graphite = argument.getValue();
         assertThat(graphite)
-            .satisfies(g -> assertThat(g).extracting("hostname").isEqualTo("localhost"))
-            .satisfies(g -> assertThat(g).extracting("port").isEqualTo(2003))
-            .satisfies(g -> assertThat(g).extracting("address").isNull());
+                .satisfies(g -> assertThat(g).extracting("hostname").isEqualTo("localhost"))
+                .satisfies(g -> assertThat(g).extracting("port").isEqualTo(2003))
+                .satisfies(g -> assertThat(g).extracting("address").isNull());
     }
 
     @Test
@@ -64,8 +63,8 @@ class GraphiteReporterFactoryTest {
 
         final GraphiteUDP graphite = argument.getValue();
         assertThat(graphite)
-            .satisfies(g -> assertThat(g).extracting("hostname").isEqualTo("localhost"))
-            .satisfies(g -> assertThat(g).extracting("port").isEqualTo(2003))
-            .satisfies(g -> assertThat(g).extracting("address").isNull());
+                .satisfies(g -> assertThat(g).extracting("hostname").isEqualTo("localhost"))
+                .satisfies(g -> assertThat(g).extracting("port").isEqualTo(2003))
+                .satisfies(g -> assertThat(g).extracting("address").isNull());
     }
 }

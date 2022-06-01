@@ -1,10 +1,9 @@
 package io.dropwizard.jersey.params;
 
-import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.Test;
 
 class NonEmptyStringParamTest {
     @Test

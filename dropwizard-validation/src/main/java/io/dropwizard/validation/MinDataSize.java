@@ -1,13 +1,5 @@
 package io.dropwizard.validation;
 
-import io.dropwizard.util.DataSizeUnit;
-
-import javax.validation.Constraint;
-import javax.validation.Payload;
-import java.lang.annotation.Documented;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
-
 import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
 import static java.lang.annotation.ElementType.CONSTRUCTOR;
 import static java.lang.annotation.ElementType.FIELD;
@@ -15,6 +7,13 @@ import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.ElementType.TYPE_USE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
+import io.dropwizard.util.DataSizeUnit;
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+import javax.validation.Constraint;
+import javax.validation.Payload;
 
 /**
  * The annotated element must be a {@link io.dropwizard.util.DataSize}
@@ -33,7 +32,8 @@ public @interface MinDataSize {
 
     Class<?>[] groups() default {};
 
-    @SuppressWarnings("UnusedDeclaration") Class<? extends Payload>[] payload() default {};
+    @SuppressWarnings("UnusedDeclaration")
+    Class<? extends Payload>[] payload() default {};
 
     /**
      * @return value the element must be higher or equal to

@@ -1,6 +1,11 @@
 package io.dropwizard.hibernate;
 
+import static java.util.Objects.requireNonNull;
+
 import io.dropwizard.util.Generics;
+import java.io.Serializable;
+import java.util.List;
+import javax.persistence.criteria.CriteriaQuery;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
@@ -8,12 +13,6 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 import org.hibernate.query.internal.AbstractProducedQuery;
-
-import javax.persistence.criteria.CriteriaQuery;
-import java.io.Serializable;
-import java.util.List;
-
-import static java.util.Objects.requireNonNull;
 
 /**
  * An abstract base class for Hibernate DAO classes.
@@ -117,10 +116,7 @@ public class AbstractDAO<E> {
      */
     protected E uniqueResult(CriteriaQuery<E> criteriaQuery) throws HibernateException {
         return AbstractProducedQuery.uniqueElement(
-            currentSession()
-                .createQuery(requireNonNull(criteriaQuery))
-                .getResultList()
-        );
+                currentSession().createQuery(requireNonNull(criteriaQuery)).getResultList());
     }
 
     /**

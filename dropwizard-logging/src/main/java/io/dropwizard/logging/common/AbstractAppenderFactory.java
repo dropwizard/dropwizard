@@ -18,18 +18,17 @@ import io.dropwizard.logging.common.layout.LayoutFactory;
 import io.dropwizard.util.Duration;
 import io.dropwizard.validation.MaxDuration;
 import io.dropwizard.validation.MinDuration;
-import org.checkerframework.checker.nullness.qual.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A base implementation of {@link AppenderFactory}.
@@ -199,8 +198,7 @@ public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware>
 
     @JsonProperty
     public void setTimeZone(String zoneId) {
-        this.timeZone = "system".equalsIgnoreCase(zoneId) ? TimeZone.getDefault() :
-            TimeZone.getTimeZone(zoneId);
+        this.timeZone = "system".equalsIgnoreCase(zoneId) ? TimeZone.getDefault() : TimeZone.getTimeZone(zoneId);
     }
 
     @JsonProperty
@@ -248,7 +246,8 @@ public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware>
         return wrapAsync(appender, asyncAppenderFactory, appender.getContext());
     }
 
-    protected Appender<E> wrapAsync(Appender<E> appender, AsyncAppenderFactory<E> asyncAppenderFactory, Context context) {
+    protected Appender<E> wrapAsync(
+            Appender<E> appender, AsyncAppenderFactory<E> asyncAppenderFactory, Context context) {
         final AsyncAppenderBase<E> asyncAppender = asyncAppenderFactory.build();
         if (asyncAppender instanceof AsyncAppender) {
             ((AsyncAppender) asyncAppender).setIncludeCallerData(includeCallerData);
@@ -278,7 +277,7 @@ public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware>
             if (layoutBase instanceof PatternLayoutBase) {
                 @SuppressWarnings("NullAway")
                 String logFormatWithTimeZone = logFormat.replace("%dwTimeZone", timeZone.getID());
-                ((PatternLayoutBase<E>)layoutBase).setPattern(logFormatWithTimeZone);
+                ((PatternLayoutBase<E>) layoutBase).setPattern(logFormatWithTimeZone);
             } else {
                 LOGGER.warn("Ignoring 'logFormat', because 'layout' does not extend PatternLayoutBase");
             }

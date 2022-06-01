@@ -1,15 +1,14 @@
 package io.dropwizard.hibernate;
 
+import static java.util.Objects.requireNonNull;
+
 import io.dropwizard.hibernate.dual.DualSessionFactory;
+import java.util.Map;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.context.internal.ManagedSessionContext;
-
-import java.util.Map;
-
-import static java.util.Objects.requireNonNull;
 
 /**
  * An aspect providing operations around a method with the {@link UnitOfWork} annotation.
@@ -80,11 +79,11 @@ public class UnitOfWorkAspect {
         }
 
         Session existingSession = null;
-        if(ManagedSessionContext.hasBind(sessionFactory)) {
+        if (ManagedSessionContext.hasBind(sessionFactory)) {
             existingSession = sessionFactory.getCurrentSession();
         }
 
-        if(existingSession != null) {
+        if (existingSession != null) {
             sessionCreated = false;
             session = existingSession;
             validateSession();
@@ -138,7 +137,7 @@ public class UnitOfWorkAspect {
             }
         } finally {
             session = null;
-            if(sessionCreated) {
+            if (sessionCreated) {
                 ManagedSessionContext.unbind(sessionFactory);
             }
         }
@@ -157,26 +156,20 @@ public class UnitOfWorkAspect {
         if (unitOfWork == null || session == null) {
             throw new NullPointerException("unitOfWork or session is null. This is a bug!");
         }
-        if(unitOfWork.readOnly() != session.isDefaultReadOnly()) {
+        if (unitOfWork.readOnly() != session.isDefaultReadOnly()) {
             throw new IllegalStateException(String.format(
-                "Existing session readOnly state (%b) does not match requested state (%b)",
-                session.isDefaultReadOnly(),
-                unitOfWork.readOnly()
-            ));
+                    "Existing session readOnly state (%b) does not match requested state (%b)",
+                    session.isDefaultReadOnly(), unitOfWork.readOnly()));
         }
-        if(unitOfWork.cacheMode() != session.getCacheMode()) {
+        if (unitOfWork.cacheMode() != session.getCacheMode()) {
             throw new IllegalStateException(String.format(
-                "Existing session cache mode (%s) does not match requested mode (%s)",
-                session.getCacheMode(),
-                unitOfWork.cacheMode()
-            ));
+                    "Existing session cache mode (%s) does not match requested mode (%s)",
+                    session.getCacheMode(), unitOfWork.cacheMode()));
         }
-        if(unitOfWork.flushMode() != session.getHibernateFlushMode()) {
+        if (unitOfWork.flushMode() != session.getHibernateFlushMode()) {
             throw new IllegalStateException(String.format(
-                "Existing session flush mode (%s) does not match requested mode (%s)",
-                session.getHibernateFlushMode(),
-                unitOfWork.flushMode()
-            ));
+                    "Existing session flush mode (%s) does not match requested mode (%s)",
+                    session.getHibernateFlushMode(), unitOfWork.flushMode()));
         }
     }
 
@@ -185,7 +178,7 @@ public class UnitOfWorkAspect {
             return;
         }
         final Transaction txn = session.getTransaction();
-        if(txn != null && txn.isActive()) {
+        if (txn != null && txn.isActive()) {
             transactionStarted = false;
         } else {
             session.beginTransaction();
@@ -220,5 +213,4 @@ public class UnitOfWorkAspect {
     protected SessionFactory getSessionFactory() {
         return requireNonNull(sessionFactory);
     }
-
 }

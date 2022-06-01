@@ -1,25 +1,23 @@
 package com.example.helloworld.db;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+
 import com.example.helloworld.core.Person;
 import io.dropwizard.testing.junit5.DAOTestExtension;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
+import java.util.List;
+import java.util.Optional;
 import org.hibernate.exception.ConstraintViolationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import java.util.List;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-
 @ExtendWith(DropwizardExtensionsSupport.class)
 class PersonDAOTest {
 
-    public DAOTestExtension daoTestRule = DAOTestExtension.newBuilder()
-        .addEntityClass(Person.class)
-        .build();
+    public DAOTestExtension daoTestRule =
+            DAOTestExtension.newBuilder().addEntityClass(Person.class).build();
 
     private PersonDAO personDAO;
 
@@ -54,7 +52,7 @@ class PersonDAOTest {
 
     @Test
     void handlesNullFullName() {
-        assertThatExceptionOfType(ConstraintViolationException.class).isThrownBy(()->
-            daoTestRule.inTransaction(() -> personDAO.create(new Person(null, "The null", 0))));
+        assertThatExceptionOfType(ConstraintViolationException.class)
+                .isThrownBy(() -> daoTestRule.inTransaction(() -> personDAO.create(new Person(null, "The null", 0))));
     }
 }

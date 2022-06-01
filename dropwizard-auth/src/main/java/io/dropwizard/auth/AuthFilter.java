@@ -1,26 +1,25 @@
 package io.dropwizard.auth;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static java.util.Objects.requireNonNull;
 
+import java.security.Principal;
+import java.util.Optional;
 import javax.annotation.Priority;
 import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.Priorities;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.core.SecurityContext;
-import java.security.Principal;
-import java.util.Optional;
-
-import static java.util.Objects.requireNonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Priority(Priorities.AUTHENTICATION)
 public abstract class AuthFilter<C, P extends Principal> implements ContainerRequestFilter {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-    protected String prefix =  "Basic";
+    protected String prefix = "Basic";
     protected String realm = "realm";
     protected Authenticator<C, P> authenticator = credentials -> Optional.empty();
     protected Authorizer<P> authorizer = new PermitAllAuthorizer<>();

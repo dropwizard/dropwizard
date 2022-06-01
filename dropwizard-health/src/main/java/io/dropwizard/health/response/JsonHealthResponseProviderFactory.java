@@ -8,9 +8,10 @@ import io.dropwizard.health.HealthStatusChecker;
 @JsonTypeName("json")
 public class JsonHealthResponseProviderFactory implements HealthResponseProviderFactory {
     @Override
-    public HealthResponseProvider build(final HealthStatusChecker healthStatusChecker,
-                                        final HealthStateAggregator healthStateAggregator,
-                                        final ObjectMapper mapper) {
+    public HealthResponseProvider build(
+            final HealthStatusChecker healthStatusChecker,
+            final HealthStateAggregator healthStateAggregator,
+            final ObjectMapper mapper) {
         return new JsonHealthResponseProvider(healthStatusChecker, healthStateAggregator, mapper);
     }
 }

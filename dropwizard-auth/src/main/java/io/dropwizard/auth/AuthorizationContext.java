@@ -1,16 +1,14 @@
 package io.dropwizard.auth;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
-
-import javax.ws.rs.container.ContainerRequestContext;
 import java.security.Principal;
 import java.util.Objects;
+import javax.ws.rs.container.ContainerRequestContext;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 public abstract class AuthorizationContext<P extends Principal> {
     private final P principal;
     private final String role;
-    private final @Nullable
-    ContainerRequestContext requestContext;
+    private final @Nullable ContainerRequestContext requestContext;
 
     public AuthorizationContext(P principal, String role, @Nullable ContainerRequestContext requestContext) {
         this.principal = principal;
@@ -26,7 +24,8 @@ public abstract class AuthorizationContext<P extends Principal> {
         return role;
     }
 
-    @Nullable public ContainerRequestContext getRequestContext() {
+    @Nullable
+    public ContainerRequestContext getRequestContext() {
         return requestContext;
     }
 
@@ -35,9 +34,9 @@ public abstract class AuthorizationContext<P extends Principal> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AuthorizationContext<?> that = (AuthorizationContext<?>) o;
-        return Objects.equals(principal, that.principal) &&
-            Objects.equals(role, that.role) &&
-            Objects.equals(requestContext, that.requestContext);
+        return Objects.equals(principal, that.principal)
+                && Objects.equals(role, that.role)
+                && Objects.equals(requestContext, that.requestContext);
     }
 
     @Override

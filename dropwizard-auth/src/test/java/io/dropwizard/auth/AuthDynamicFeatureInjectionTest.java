@@ -1,16 +1,9 @@
 package io.dropwizard.auth;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
-import org.glassfish.jersey.servlet.ServletProperties;
-import org.glassfish.jersey.test.DeploymentContext;
-import org.glassfish.jersey.test.JerseyTest;
-import org.glassfish.jersey.test.ServletDeploymentContext;
-import org.glassfish.jersey.test.TestProperties;
-import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
 import java.security.Principal;
-
 import javax.annotation.Priority;
 import javax.ws.rs.Priorities;
 import javax.ws.rs.client.WebTarget;
@@ -20,8 +13,13 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.glassfish.jersey.servlet.ServletProperties;
+import org.glassfish.jersey.test.DeploymentContext;
+import org.glassfish.jersey.test.JerseyTest;
+import org.glassfish.jersey.test.ServletDeploymentContext;
+import org.glassfish.jersey.test.TestProperties;
+import org.junit.jupiter.api.Test;
 
 class AuthDynamicFeatureInjectionTest extends JerseyTest {
 
@@ -59,7 +57,9 @@ class AuthDynamicFeatureInjectionTest extends JerseyTest {
                     }
                 });
             } else {
-                requestContext.abortWith(Response.serverError().entity("HttpHeaders not injected").build());
+                requestContext.abortWith(Response.serverError()
+                        .entity("HttpHeaders not injected")
+                        .build());
             }
         }
     }
@@ -79,8 +79,8 @@ class AuthDynamicFeatureInjectionTest extends JerseyTest {
     protected DeploymentContext configureDeployment() {
         forceSet(TestProperties.CONTAINER_PORT, "0");
         return ServletDeploymentContext.builder(new InjectionResourceConfig())
-            .initParam(ServletProperties.JAXRS_APPLICATION_CLASS, InjectionResourceConfig.class.getName())
-            .build();
+                .initParam(ServletProperties.JAXRS_APPLICATION_CLASS, InjectionResourceConfig.class.getName())
+                .build();
     }
 
     @Test
@@ -89,12 +89,8 @@ class AuthDynamicFeatureInjectionTest extends JerseyTest {
         String req2User = "user2";
         WebTarget target = target("/test/implicit-permitall");
 
-        String response1 = target.request()
-            .header("username", req1User)
-            .get(String.class);
-        String response2 = target.request()
-            .header("username", req2User)
-            .get(String.class);
+        String response1 = target.request().header("username", req1User).get(String.class);
+        String response2 = target.request().header("username", req2User).get(String.class);
 
         assertThat(response1).isEqualTo("'%s' has user privileges", req1User);
         assertThat(response2).isEqualTo("'%s' has user privileges", req2User);

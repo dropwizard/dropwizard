@@ -1,10 +1,10 @@
 package io.dropwizard.views.common;
 
-import javax.ws.rs.WebApplicationException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Locale;
 import java.util.Map;
+import javax.ws.rs.WebApplicationException;
 
 /**
  * The rendering engine for a type of view.
@@ -28,13 +28,11 @@ public interface ViewRenderer {
      * @throws IOException             if there is an error writing to {@code output}
      * @throws WebApplicationException if there is an error rendering the template
      */
-    void render(View view,
-                Locale locale,
-                OutputStream output) throws IOException;
+    void render(View view, Locale locale, OutputStream output) throws IOException;
 
     /**
-      * options for configuring the view renderer
-      * @param options
+     * options for configuring the view renderer
+     * @param options
      */
     void configure(Map<String, String> options);
 

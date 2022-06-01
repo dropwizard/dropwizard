@@ -1,11 +1,8 @@
 package io.dropwizard.migrations;
 
-import net.sourceforge.argparse4j.inf.Namespace;
-import org.jdbi.v3.core.Handle;
-import org.jdbi.v3.core.Jdbi;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.parallel.Execution;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.parallel.ExecutionMode.SAME_THREAD;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
@@ -14,19 +11,21 @@ import java.io.PrintWriter;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.parallel.ExecutionMode.SAME_THREAD;
+import net.sourceforge.argparse4j.inf.Namespace;
+import org.jdbi.v3.core.Handle;
+import org.jdbi.v3.core.Jdbi;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
 
 @Execution(SAME_THREAD)
 class DbRollbackCommandTest {
 
     private final String migrationsFileName = "migrations-ddl.xml";
     private final DbRollbackCommand<TestMigrationConfiguration> rollbackCommand = new DbRollbackCommand<>(
-        new TestMigrationDatabaseConfiguration(), TestMigrationConfiguration.class, migrationsFileName);
+            new TestMigrationDatabaseConfiguration(), TestMigrationConfiguration.class, migrationsFileName);
     private final DbMigrateCommand<TestMigrationConfiguration> migrateCommand = new DbMigrateCommand<>(
-        new TestMigrationDatabaseConfiguration(), TestMigrationConfiguration.class, migrationsFileName);
+            new TestMigrationDatabaseConfiguration(), TestMigrationConfiguration.class, migrationsFileName);
     private final ByteArrayOutputStream baos = new ByteArrayOutputStream();
     private TestMigrationConfiguration conf;
     private Jdbi dbi;
@@ -45,7 +44,7 @@ class DbRollbackCommandTest {
 
         try (Handle handle = dbi.open()) {
             assertThat(MigrationTestSupport.columnExists(handle, "PERSONS", "EMAIL"))
-                .isTrue();
+                    .isTrue();
         }
 
         // Rollback the last one (the email field)
@@ -53,7 +52,7 @@ class DbRollbackCommandTest {
 
         try (Handle handle = dbi.open()) {
             assertThat(MigrationTestSupport.columnExists(handle, "PERSONS", "EMAIL"))
-                .isFalse();
+                    .isFalse();
         }
     }
 
@@ -65,8 +64,7 @@ class DbRollbackCommandTest {
         // Print out the change that rollbacks the second change
         rollbackCommand.setOutputStream(new PrintStream(baos, true));
         rollbackCommand.run(null, new Namespace(Map.of("count", 1, "dry-run", true)), conf);
-        assertThat(baos.toString(UTF_8.name()))
-            .containsIgnoringCase("ALTER TABLE PUBLIC.persons DROP COLUMN email;");
+        assertThat(baos.toString(UTF_8.name())).containsIgnoringCase("ALTER TABLE PUBLIC.persons DROP COLUMN email;");
     }
 
     @Test
@@ -76,17 +74,14 @@ class DbRollbackCommandTest {
         migrateCommand.run(null, new Namespace(Map.of()), conf);
 
         try (Handle handle = dbi.open()) {
-            assertThat(MigrationTestSupport.tableExists(handle, "PERSONS"))
-                .isTrue();
+            assertThat(MigrationTestSupport.tableExists(handle, "PERSONS")).isTrue();
         }
 
         // Rollback both changes (they're tearDown the migration date)
-        rollbackCommand.run(null, new Namespace(Map.of("date", new Date(migrationDate - 1000))),
-            conf);
+        rollbackCommand.run(null, new Namespace(Map.of("date", new Date(migrationDate - 1000))), conf);
 
         try (Handle handle = dbi.open()) {
-            assertThat(MigrationTestSupport.tableExists(handle, "PERSONS"))
-                .isFalse();
+            assertThat(MigrationTestSupport.tableExists(handle, "PERSONS")).isFalse();
         }
     }
 
@@ -98,13 +93,10 @@ class DbRollbackCommandTest {
 
         // Print out a rollback script for both changes tearDown the migration date
         rollbackCommand.setOutputStream(new PrintStream(baos, true));
-        rollbackCommand.run(null, new Namespace(Map.of(
-                "date", new Date(migrationDate - 1000),
-                "dry-run", true)),
-                conf);
+        rollbackCommand.run(null, new Namespace(Map.of("date", new Date(migrationDate - 1000), "dry-run", true)), conf);
         assertThat(baos.toString(UTF_8.name()))
-            .containsIgnoringCase("ALTER TABLE PUBLIC.persons DROP COLUMN email;")
-            .containsIgnoringCase("DROP TABLE PUBLIC.persons;");
+                .containsIgnoringCase("ALTER TABLE PUBLIC.persons DROP COLUMN email;")
+                .containsIgnoringCase("DROP TABLE PUBLIC.persons;");
     }
 
     @Test
@@ -114,12 +106,12 @@ class DbRollbackCommandTest {
 
         // Tag it
         final DbTagCommand<TestMigrationConfiguration> tagCommand = new DbTagCommand<>(
-            new TestMigrationDatabaseConfiguration(), TestMigrationConfiguration.class, migrationsFileName);
+                new TestMigrationDatabaseConfiguration(), TestMigrationConfiguration.class, migrationsFileName);
         tagCommand.run(null, new Namespace(Map.of("tag-name", List.of("v1"))), conf);
 
         try (Handle handle = dbi.open()) {
             assertThat(MigrationTestSupport.columnExists(handle, "PERSONS", "EMAIL"))
-                .isFalse();
+                    .isFalse();
         }
 
         // Migrate the second change
@@ -127,7 +119,7 @@ class DbRollbackCommandTest {
 
         try (Handle handle = dbi.open()) {
             assertThat(MigrationTestSupport.columnExists(handle, "PERSONS", "EMAIL"))
-                .isTrue();
+                    .isTrue();
         }
 
         // Rollback to the first change
@@ -135,7 +127,7 @@ class DbRollbackCommandTest {
 
         try (Handle handle = dbi.open()) {
             assertThat(MigrationTestSupport.columnExists(handle, "PERSONS", "EMAIL"))
-                .isFalse();
+                    .isFalse();
         }
     }
 
@@ -146,7 +138,7 @@ class DbRollbackCommandTest {
 
         // Tag it
         final DbTagCommand<TestMigrationConfiguration> tagCommand = new DbTagCommand<>(
-            new TestMigrationDatabaseConfiguration(), TestMigrationConfiguration.class, migrationsFileName);
+                new TestMigrationDatabaseConfiguration(), TestMigrationConfiguration.class, migrationsFileName);
         tagCommand.run(null, new Namespace(Map.of("tag-name", List.of("v1"))), conf);
 
         // Migrate the second change
@@ -155,38 +147,39 @@ class DbRollbackCommandTest {
         // Print out the rollback script for the second change
         rollbackCommand.setOutputStream(new PrintStream(baos, true));
         rollbackCommand.run(null, new Namespace(Map.of("tag", "v1", "dry-run", true)), conf);
-        assertThat(baos.toString(UTF_8.name()))
-            .containsIgnoringCase("ALTER TABLE PUBLIC.persons DROP COLUMN email;");
+        assertThat(baos.toString(UTF_8.name())).containsIgnoringCase("ALTER TABLE PUBLIC.persons DROP COLUMN email;");
     }
 
     @Test
     void testPrintHelp() throws Exception {
-        MigrationTestSupport.createSubparser(rollbackCommand).printHelp(new PrintWriter(new OutputStreamWriter(baos, UTF_8), true));
-        assertThat(baos.toString(UTF_8.name())).isEqualToNormalizingNewlines(
-            "usage: db rollback [-h] [--migrations MIGRATIONS-FILE] [--catalog CATALOG]\n" +
-            "          [--schema SCHEMA] [-n] [-t TAG] [-d DATE] [-c COUNT]\n" +
-            "          [-i CONTEXTS] [file]\n" +
-            "\n" +
-            "Rollback the database schema to a previous version.\n" +
-            "\n" +
-            "positional arguments:\n" +
-            "  file                   application configuration file\n" +
-            "\n" +
-            "named arguments:\n" +
-            "  -h, --help             show this help message and exit\n" +
-            "  --migrations MIGRATIONS-FILE\n" +
-            "                         the file containing  the  Liquibase migrations for\n" +
-            "                         the application\n" +
-            "  --catalog CATALOG      Specify  the   database   catalog   (use  database\n" +
-            "                         default if omitted)\n" +
-            "  --schema SCHEMA        Specify the database schema  (use database default\n" +
-            "                         if omitted)\n" +
-            "  -n, --dry-run          Output the DDL to stdout, don't run it\n" +
-            "  -t TAG, --tag TAG      Rollback to the given tag\n" +
-            "  -d DATE, --date DATE   Rollback to the given date\n" +
-            "  -c COUNT, --count COUNT\n" +
-            "                         Rollback the specified number of change sets\n" +
-            "  -i CONTEXTS, --include CONTEXTS\n" +
-            "                         include change sets from the given context\n");
+        MigrationTestSupport.createSubparser(rollbackCommand)
+                .printHelp(new PrintWriter(new OutputStreamWriter(baos, UTF_8), true));
+        assertThat(baos.toString(UTF_8.name()))
+                .isEqualToNormalizingNewlines(
+                        "usage: db rollback [-h] [--migrations MIGRATIONS-FILE] [--catalog CATALOG]\n"
+                                + "          [--schema SCHEMA] [-n] [-t TAG] [-d DATE] [-c COUNT]\n"
+                                + "          [-i CONTEXTS] [file]\n"
+                                + "\n"
+                                + "Rollback the database schema to a previous version.\n"
+                                + "\n"
+                                + "positional arguments:\n"
+                                + "  file                   application configuration file\n"
+                                + "\n"
+                                + "named arguments:\n"
+                                + "  -h, --help             show this help message and exit\n"
+                                + "  --migrations MIGRATIONS-FILE\n"
+                                + "                         the file containing  the  Liquibase migrations for\n"
+                                + "                         the application\n"
+                                + "  --catalog CATALOG      Specify  the   database   catalog   (use  database\n"
+                                + "                         default if omitted)\n"
+                                + "  --schema SCHEMA        Specify the database schema  (use database default\n"
+                                + "                         if omitted)\n"
+                                + "  -n, --dry-run          Output the DDL to stdout, don't run it\n"
+                                + "  -t TAG, --tag TAG      Rollback to the given tag\n"
+                                + "  -d DATE, --date DATE   Rollback to the given date\n"
+                                + "  -c COUNT, --count COUNT\n"
+                                + "                         Rollback the specified number of change sets\n"
+                                + "  -i CONTEXTS, --include CONTEXTS\n"
+                                + "                         include change sets from the given context\n");
     }
 }

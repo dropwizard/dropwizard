@@ -1,17 +1,16 @@
 package io.dropwizard.jackson;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.checkerframework.checker.nullness.qual.Nullable;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 class JacksonTest {
     @Test
@@ -32,8 +31,8 @@ class JacksonTest {
 
     @Test
     void objectMapperCanDeserializeJdk7Types() throws IOException {
-        final LogMetadata metadata = Jackson.newObjectMapper()
-            .readValue("{\"path\": \"/var/log/app/server.log\"}", LogMetadata.class);
+        final LogMetadata metadata =
+                Jackson.newObjectMapper().readValue("{\"path\": \"/var/log/app/server.log\"}", LogMetadata.class);
         assertThat(metadata).isNotNull();
         assertThat(metadata.path).isEqualTo(Paths.get("/var/log/app/server.log"));
     }
@@ -50,9 +49,11 @@ class JacksonTest {
     @Test
     void objectMapperIgnoresUnknownProperties() throws JsonProcessingException {
         assertThat(Jackson.newObjectMapper()
-                .readValue("{\"unknown\": 4711, \"path\": \"/var/log/app/objectMapperIgnoresUnknownProperties.log\"}", LogMetadata.class)
-                .path)
-            .hasFileName("objectMapperIgnoresUnknownProperties.log");
+                        .readValue(
+                                "{\"unknown\": 4711, \"path\": \"/var/log/app/objectMapperIgnoresUnknownProperties.log\"}",
+                                LogMetadata.class)
+                        .path)
+                .hasFileName("objectMapperIgnoresUnknownProperties.log");
     }
 
     static class LogMetadata {
@@ -60,5 +61,4 @@ class JacksonTest {
         @Nullable
         public Path path;
     }
-
 }

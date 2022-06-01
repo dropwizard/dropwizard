@@ -32,9 +32,7 @@ public class CheckCommand<T extends Configuration> extends ConfiguredCommand<T> 
     }
 
     @Override
-    protected void run(Bootstrap<T> bootstrap,
-                       Namespace namespace,
-                       T configuration) throws Exception {
+    protected void run(Bootstrap<T> bootstrap, Namespace namespace, T configuration) throws Exception {
         LOGGER.info("Configuration is OK");
     }
 

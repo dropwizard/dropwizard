@@ -1,15 +1,14 @@
 package io.dropwizard.metrics.common;
 
+import static java.util.Objects.requireNonNull;
+
 import com.codahale.metrics.CsvReporter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.ScheduledReporter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import org.checkerframework.checker.nullness.qual.Nullable;
-
 import java.io.File;
-
-import static java.util.Objects.requireNonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * A factory for configuring and building {@link CsvReporter} instances.
@@ -64,10 +63,10 @@ public class CsvReporterFactory extends BaseFormattedReporterFactory {
         }
 
         return CsvReporter.forRegistry(registry)
-                          .convertDurationsTo(getDurationUnit())
-                          .convertRatesTo(getRateUnit())
-                          .filter(getFilter())
-                          .formatFor(getLocale())
-                          .build(directory);
+                .convertDurationsTo(getDurationUnit())
+                .convertRatesTo(getRateUnit())
+                .filter(getFilter())
+                .formatFor(getLocale())
+                .build(directory);
     }
 }

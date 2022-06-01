@@ -35,9 +35,9 @@ public class ServerCommand<T extends Configuration> extends EnvironmentCommand<T
     }
 
     /*
-         * Since we don't subclass ServerCommand, we need a concrete reference to the configuration
-         * class.
-         */
+     * Since we don't subclass ServerCommand, we need a concrete reference to the configuration
+     * class.
+     */
     @Override
     protected Class<T> getConfigurationClass() {
         return configurationClass;

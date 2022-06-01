@@ -1,10 +1,10 @@
 package io.dropwizard.lifecycle;
 
-import org.junit.jupiter.api.Test;
-import org.mockito.InOrder;
-
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
+
+import org.junit.jupiter.api.Test;
+import org.mockito.InOrder;
 
 class JettyManagedTest {
     private final Managed managed = mock(Managed.class);

@@ -1,16 +1,15 @@
 package io.dropwizard.jetty;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandlerContainer;
 import org.eclipse.jetty.util.Index;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 
 /**
  * A Jetty router which routes requests based on context path.
@@ -28,10 +27,8 @@ public class ContextRoutingHandler extends AbstractHandlerContainer {
     }
 
     @Override
-    public void handle(String target,
-                       Request baseRequest,
-                       HttpServletRequest request,
-                       HttpServletResponse response) throws IOException, ServletException {
+    public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
         final Handler handler = handlers.getBest(baseRequest.getRequestURI());
         if (handler != null) {
             handler.handle(target, baseRequest, request, response);
@@ -60,8 +57,7 @@ public class ContextRoutingHandler extends AbstractHandlerContainer {
     }
 
     @Override
-    protected void expandChildren(List<Handler> list, Class<?> byClass)
-    {
+    protected void expandChildren(List<Handler> list, Class<?> byClass) {
         Handler[] handlerArray = getHandlers();
         if (handlerArray != null) {
             for (Handler h : handlerArray) {

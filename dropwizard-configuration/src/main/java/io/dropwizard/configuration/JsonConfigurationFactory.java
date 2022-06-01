@@ -2,7 +2,6 @@ package io.dropwizard.configuration;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import javax.validation.Validator;
 
 /**
@@ -21,10 +20,8 @@ public class JsonConfigurationFactory<T> extends BaseConfigurationFactory<T> {
      * @param objectMapper   the Jackson {@link ObjectMapper} to use
      * @param propertyPrefix the system property name prefix used by overrides
      */
-    public JsonConfigurationFactory(Class<T> klass,
-                                    Validator validator,
-                                    ObjectMapper objectMapper,
-                                    String propertyPrefix) {
+    public JsonConfigurationFactory(
+            Class<T> klass, Validator validator, ObjectMapper objectMapper, String propertyPrefix) {
         super(objectMapper.getFactory(), JsonFactory.FORMAT_NAME_JSON, klass, validator, objectMapper, propertyPrefix);
     }
 }

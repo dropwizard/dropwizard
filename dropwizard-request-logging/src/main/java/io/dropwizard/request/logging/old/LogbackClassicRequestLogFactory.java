@@ -18,16 +18,15 @@ import io.dropwizard.logging.common.filter.LevelFilterFactory;
 import io.dropwizard.logging.common.filter.NullLevelFilterFactory;
 import io.dropwizard.logging.common.layout.LayoutFactory;
 import io.dropwizard.request.logging.RequestLogFactory;
-import org.eclipse.jetty.server.CustomRequestLog;
-import org.eclipse.jetty.server.RequestLog;
-import org.slf4j.LoggerFactory;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import org.eclipse.jetty.server.CustomRequestLog;
+import org.eclipse.jetty.server.RequestLog;
+import org.slf4j.LoggerFactory;
 
 /**
  * A factory for creating {@link RequestLog} instances using logback-classic.
@@ -78,9 +77,8 @@ public class LogbackClassicRequestLogFactory implements RequestLogFactory<Reques
 
     @Valid
     @NotNull
-    private List<AppenderFactory<ILoggingEvent>> appenders = Collections.singletonList(
-            new ConsoleAppenderFactory<ILoggingEvent>()
-    );
+    private List<AppenderFactory<ILoggingEvent>> appenders =
+            Collections.singletonList(new ConsoleAppenderFactory<ILoggingEvent>());
 
     @JsonProperty
     public List<AppenderFactory<ILoggingEvent>> getAppenders() {
@@ -119,9 +117,11 @@ public class LogbackClassicRequestLogFactory implements RequestLogFactory<Reques
         final LayoutFactory<ILoggingEvent> layoutFactory = (c, tz) -> new RequestLogLayout(c);
         final AppenderAttachableImpl<ILoggingEvent> attachable = new AppenderAttachableImpl<>();
         for (AppenderFactory<ILoggingEvent> appender : appenders) {
-            attachable.addAppender(appender.build(context, name, layoutFactory, levelFilterFactory, asyncAppenderFactory));
+            attachable.addAppender(
+                    appender.build(context, name, layoutFactory, levelFilterFactory, asyncAppenderFactory));
         }
 
-        return new CustomRequestLog(new DropwizardSlf4jRequestLogWriter(attachable), ClassicLogFormat.pattern(timeZone));
+        return new CustomRequestLog(
+                new DropwizardSlf4jRequestLogWriter(attachable), ClassicLogFormat.pattern(timeZone));
     }
 }

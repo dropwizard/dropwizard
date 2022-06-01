@@ -1,18 +1,17 @@
 package io.dropwizard.testing.common;
 
+import static java.util.Objects.requireNonNull;
+
 import io.dropwizard.core.setup.ExceptionMapperBinder;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.jersey.jackson.JacksonFeature;
 import io.dropwizard.jersey.validation.HibernateValidationBinder;
-import org.glassfish.jersey.server.ServerProperties;
-
-import javax.servlet.ServletConfig;
-import javax.ws.rs.core.Context;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
-
-import static java.util.Objects.requireNonNull;
+import javax.servlet.ServletConfig;
+import javax.ws.rs.core.Context;
+import org.glassfish.jersey.server.ServerProperties;
 
 /**
  * A configuration of a Jersey web application by {@link ResourceTestJerseyConfiguration} with
@@ -26,6 +25,7 @@ class DropwizardTestResourceConfig extends DropwizardResourceConfig {
      * via a servlet context.
      */
     static final Map<String, ResourceTestJerseyConfiguration> CONFIGURATION_REGISTRY = new ConcurrentHashMap<>();
+
     static final String CONFIGURATION_ID = "io.dropwizard.testing.junit.resourceTestJerseyConfigurationId";
 
     DropwizardTestResourceConfig(ResourceTestJerseyConfiguration configuration) {

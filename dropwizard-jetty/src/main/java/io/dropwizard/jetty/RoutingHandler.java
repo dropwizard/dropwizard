@@ -1,15 +1,14 @@
 package io.dropwizard.jetty;
 
+import java.io.IOException;
+import java.util.Map;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.HandlerCollection;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.Map;
 
 public class RoutingHandler extends HandlerCollection {
     /**
@@ -41,10 +40,8 @@ public class RoutingHandler extends HandlerCollection {
     }
 
     @Override
-    public void handle(String target,
-                       Request baseRequest,
-                       HttpServletRequest request,
-                       HttpServletResponse response) throws IOException, ServletException {
+    public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
         final Connector connector = baseRequest.getHttpChannel().getConnector();
         for (Entry entry : entries) {
             // reference equality works fine — none of the connectors implement #equals(Object)
@@ -55,4 +52,3 @@ public class RoutingHandler extends HandlerCollection {
         }
     }
 }
-

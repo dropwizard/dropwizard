@@ -1,11 +1,12 @@
 package io.dropwizard.jersey.guava;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+
 import com.google.common.base.Optional;
 import io.dropwizard.jersey.AbstractJerseyTest;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.jersey.optional.EmptyOptionalExceptionMapper;
-import org.junit.jupiter.api.Test;
-
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -16,9 +17,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import org.junit.jupiter.api.Test;
 
 class OptionalMessageBodyWriterTest extends AbstractJerseyTest {
 
@@ -31,9 +30,7 @@ class OptionalMessageBodyWriterTest extends AbstractJerseyTest {
 
     @Test
     void presentOptionalsReturnTheirValue() {
-        assertThat(target("/optional-return/")
-                .queryParam("id", "woo").request()
-                .get(String.class))
+        assertThat(target("/optional-return/").queryParam("id", "woo").request().get(String.class))
                 .isEqualTo("woo");
     }
 
@@ -41,8 +38,8 @@ class OptionalMessageBodyWriterTest extends AbstractJerseyTest {
     void absentOptionalsThrowANotFound() {
         Invocation.Builder request = target("/optional-return/").request();
         assertThatExceptionOfType(WebApplicationException.class)
-            .isThrownBy(() -> request.get(String.class))
-            .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(404));
+                .isThrownBy(() -> request.get(String.class))
+                .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(404));
     }
 
     @Path("/optional-return/")

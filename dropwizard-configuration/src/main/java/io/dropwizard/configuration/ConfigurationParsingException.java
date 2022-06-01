@@ -1,10 +1,9 @@
 package io.dropwizard.configuration;
 
+import static java.util.Objects.requireNonNull;
+
 import com.fasterxml.jackson.core.JsonLocation;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import org.apache.commons.text.similarity.LevenshteinDistance;
-import org.checkerframework.checker.nullness.qual.Nullable;
-
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -15,8 +14,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-
-import static java.util.Objects.requireNonNull;
+import org.apache.commons.text.similarity.LevenshteinDistance;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * A {@link ConfigurationException} for errors parsing a configuration file.
@@ -35,10 +34,12 @@ public class ConfigurationParsingException extends ConfigurationException {
 
         @Nullable
         private Exception cause;
+
         private List<String> suggestions = new ArrayList<>();
 
         @Nullable
         private String suggestionBase;
+
         private boolean suggestionsSorted = false;
 
         Builder(String summary) {
@@ -212,9 +213,7 @@ public class ConfigurationParsingException extends ConfigurationException {
         }
 
         Builder setLocation(JsonLocation location) {
-            return location == null
-                    ? this
-                    : setLocation(location.getLineNr(), location.getColumnNr());
+            return location == null ? this : setLocation(location.getLineNr(), location.getColumnNr());
         }
 
         Builder setLocation(int line, int column) {
@@ -246,8 +245,10 @@ public class ConfigurationParsingException extends ConfigurationException {
             if (hasFieldPath()) {
                 sb.append(" at: ").append(buildPath(getFieldPath()));
             } else if (hasLocation()) {
-                sb.append(" at line: ").append(getLine() + 1)
-                        .append(", column: ").append(getColumn() + 1);
+                sb.append(" at line: ")
+                        .append(getLine() + 1)
+                        .append(", column: ")
+                        .append(getColumn() + 1);
             }
 
             if (hasDetail()) {
@@ -336,8 +337,7 @@ public class ConfigurationParsingException extends ConfigurationException {
                 }
 
                 // determine which of the two is closer to the base and order it first
-                return Integer.compare(LEVENSHTEIN_DISTANCE.apply(a, base),
-                    LEVENSHTEIN_DISTANCE.apply(b, base));
+                return Integer.compare(LEVENSHTEIN_DISTANCE.apply(a, base), LEVENSHTEIN_DISTANCE.apply(b, base));
             }
 
             private void writeObject(ObjectOutputStream stream) throws IOException {
@@ -381,5 +381,4 @@ public class ConfigurationParsingException extends ConfigurationException {
     private ConfigurationParsingException(String path, String msg, Throwable cause) {
         super(path, Collections.singleton(msg), cause);
     }
-
 }

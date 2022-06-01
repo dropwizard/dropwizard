@@ -10,7 +10,6 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.dropwizard.metrics.common.BaseReporterFactory;
 import io.dropwizard.validation.OneOf;
 import io.dropwizard.validation.PortRange;
-
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
@@ -59,7 +58,9 @@ public class GraphiteReporterFactory extends BaseReporterFactory {
     private String prefix = "";
 
     @NotNull
-    @OneOf(value = {"tcp", "udp"}, ignoreCase = true)
+    @OneOf(
+            value = {"tcp", "udp"},
+            ignoreCase = true)
     private String transport = "tcp";
 
     @JsonProperty

@@ -6,7 +6,9 @@ import javax.servlet.http.HttpServletRequest;
  * Utility functions for dealing with servlets.
  */
 public class Servlets {
-    private Servlets() { /* singleton */ }
+    private Servlets() {
+        /* singleton */
+    }
 
     /**
      * Returns the full URL of the given request.

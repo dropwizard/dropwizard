@@ -1,8 +1,7 @@
 package io.dropwizard.jersey.params;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
-
 import java.util.UUID;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * A parameter encapsulating UUID values. All non-parsable values will return a {@code 400 Bad
@@ -41,5 +40,4 @@ public class UUIDParam extends AbstractParam<UUID> {
 
         return UUID.fromString(input);
     }
-
 }

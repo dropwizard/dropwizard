@@ -1,22 +1,21 @@
 package io.dropwizard.migrations;
 
 import io.dropwizard.db.DataSourceFactory;
+import java.sql.SQLException;
+import java.util.UUID;
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.inf.Subparser;
 import org.jdbi.v3.core.Handle;
-
-import java.sql.SQLException;
-import java.util.UUID;
 
 final class MigrationTestSupport {
 
     static Subparser createSubparser(AbstractLiquibaseCommand<?> command) {
         final Subparser subparser = ArgumentParsers.newFor("db")
-            .terminalWidthDetection(false)
-            .build()
-            .addSubparsers()
-            .addParser(command.getName())
-            .description(command.getDescription());
+                .terminalWidthDetection(false)
+                .build()
+                .addSubparsers()
+                .addParser(command.getName())
+                .description(command.getDescription());
         command.configure(subparser);
         return subparser;
     }
@@ -38,10 +37,17 @@ final class MigrationTestSupport {
     }
 
     static boolean tableExists(final Handle handle, final String tableName) throws SQLException {
-        return handle.getConnection().getMetaData().getTables(null, null, tableName, null).next();
+        return handle.getConnection()
+                .getMetaData()
+                .getTables(null, null, tableName, null)
+                .next();
     }
 
-    static boolean columnExists(final Handle handle, final String tableName, final String columnName) throws SQLException {
-        return handle.getConnection().getMetaData().getColumns(null, null, tableName, columnName).next();
+    static boolean columnExists(final Handle handle, final String tableName, final String columnName)
+            throws SQLException {
+        return handle.getConnection()
+                .getMetaData()
+                .getColumns(null, null, tableName, columnName)
+                .next();
     }
 }

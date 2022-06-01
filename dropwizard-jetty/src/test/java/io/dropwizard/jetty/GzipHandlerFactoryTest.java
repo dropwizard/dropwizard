@@ -1,69 +1,64 @@
 package io.dropwizard.jetty;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+
 import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.util.DataSize;
 import io.dropwizard.validation.BaseValidator;
+import java.util.Collections;
+import java.util.Set;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.handler.gzip.GzipHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.Collections;
-import java.util.Set;
-import java.util.zip.Deflater;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
 
 class GzipHandlerFactoryTest {
     private GzipHandlerFactory gzip;
 
     @BeforeEach
     void setUp() throws Exception {
-        this.gzip = new YamlConfigurationFactory<>(GzipHandlerFactory.class,
-                BaseValidator.newValidator(), Jackson.newObjectMapper(), "dw")
-                .build(new ResourceConfigurationSourceProvider(),"yaml/gzip.yml");
+        this.gzip = new YamlConfigurationFactory<>(
+                        GzipHandlerFactory.class, BaseValidator.newValidator(), Jackson.newObjectMapper(), "dw")
+                .build(new ResourceConfigurationSourceProvider(), "yaml/gzip.yml");
     }
 
     @Test
     void canBeEnabled() {
-        assertThat(gzip.isEnabled())
-                .isFalse();
+        assertThat(gzip.isEnabled()).isFalse();
     }
 
     @Test
     void hasAMinimumEntitySize() {
-        assertThat(gzip.getMinimumEntitySize())
-                .isEqualTo(DataSize.kibibytes(12));
+        assertThat(gzip.getMinimumEntitySize()).isEqualTo(DataSize.kibibytes(12));
     }
 
     @Test
     void hasABufferSize() {
-        assertThat(gzip.getBufferSize())
-                .isEqualTo(DataSize.kibibytes(32));
+        assertThat(gzip.getBufferSize()).isEqualTo(DataSize.kibibytes(32));
     }
 
     @Test
     void hasCompressedMimeTypes() {
-        assertThat(gzip.getCompressedMimeTypes())
-                .isEqualTo(Collections.singleton("text/plain"));
+        assertThat(gzip.getCompressedMimeTypes()).isEqualTo(Collections.singleton("text/plain"));
     }
 
     @Test
     void testBuild() {
         final GzipHandler handler = gzip.build(null);
 
-        assertThat(handler.getMinGzipSize()).isEqualTo((int) gzip.getMinimumEntitySize().toBytes());
+        assertThat(handler.getMinGzipSize())
+                .isEqualTo((int) gzip.getMinimumEntitySize().toBytes());
         assertThat(handler.getIncludedMimeTypes()).containsOnly("text/plain");
         assertThat(handler.getIncludedMethods()).containsOnly("GET", "POST");
     }
 
     @Test
     void testBuildDefault() throws Exception {
-        final GzipHandler handler = new YamlConfigurationFactory<>(GzipHandlerFactory.class,
-                BaseValidator.newValidator(), Jackson.newObjectMapper(), "dw")
+        final GzipHandler handler = new YamlConfigurationFactory<>(
+                        GzipHandlerFactory.class, BaseValidator.newValidator(), Jackson.newObjectMapper(), "dw")
                 .build(new ResourceConfigurationSourceProvider(), "yaml/default_gzip.yml")
                 .build(null);
 

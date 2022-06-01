@@ -1,5 +1,9 @@
 package io.dropwizard.db;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.assertThatNoException;
+
 import com.codahale.metrics.MetricFilter;
 import com.codahale.metrics.MetricRegistry;
 import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
@@ -7,22 +11,17 @@ import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.util.Duration;
 import io.dropwizard.validation.BaseValidator;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Optional;
 import org.apache.tomcat.jdbc.pool.interceptor.ConnectionState;
 import org.apache.tomcat.jdbc.pool.interceptor.StatementFinalizer;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.assertj.core.api.Assertions.assertThatNoException;
 
 class DataSourceFactoryTest {
     private final MetricRegistry metricRegistry = new MetricRegistry();
@@ -106,8 +105,8 @@ class DataSourceFactoryTest {
         final DataSourceFactory factory = new DataSourceFactory();
         factory.setDriverClass("org.example.no.driver.here");
 
-        assertThatExceptionOfType(SQLException.class).isThrownBy(() ->
-            factory.build(metricRegistry, "test").getConnection());
+        assertThatExceptionOfType(SQLException.class)
+                .isThrownBy(() -> factory.build(metricRegistry, "test").getConnection());
     }
 
     @Test
@@ -128,18 +127,17 @@ class DataSourceFactoryTest {
     void testJdbcInterceptors() throws Exception {
         factory.setJdbcInterceptors(Optional.of("StatementFinalizer;ConnectionState"));
 
-        assertThat(dataSource())
-            .isInstanceOfSatisfying(ManagedPooledDataSource.class, source ->
-                assertThat(source.getPoolProperties().getJdbcInterceptorsAsArray())
+        assertThat(dataSource()).isInstanceOfSatisfying(ManagedPooledDataSource.class, source -> assertThat(
+                        source.getPoolProperties().getJdbcInterceptorsAsArray())
                 .extracting("interceptorClass")
                 .contains(StatementFinalizer.class, ConnectionState.class));
     }
 
     @Test
     void createDefaultFactory() throws Exception {
-        final DataSourceFactory factory = new YamlConfigurationFactory<>(DataSourceFactory.class,
-            BaseValidator.newValidator(), Jackson.newObjectMapper(), "dw")
-            .build(new ResourceConfigurationSourceProvider(), "yaml/minimal_db_pool.yml");
+        final DataSourceFactory factory = new YamlConfigurationFactory<>(
+                        DataSourceFactory.class, BaseValidator.newValidator(), Jackson.newObjectMapper(), "dw")
+                .build(new ResourceConfigurationSourceProvider(), "yaml/minimal_db_pool.yml");
 
         assertThat(factory.getDriverClass()).isEqualTo("org.postgresql.Driver");
         assertThat(factory.getUser()).isEqualTo("pg-user");
@@ -153,18 +151,17 @@ class DataSourceFactoryTest {
     void metricsRecorded() throws Exception {
         dataSource();
         assertThat(metricRegistry.getGauges(MetricFilter.startsWith("io.dropwizard.db.ManagedPooledDataSource.test.")))
-            .containsOnlyKeys(
-                "io.dropwizard.db.ManagedPooledDataSource.test.active",
-                "io.dropwizard.db.ManagedPooledDataSource.test.idle",
-                "io.dropwizard.db.ManagedPooledDataSource.test.waiting",
-                "io.dropwizard.db.ManagedPooledDataSource.test.size",
-                "io.dropwizard.db.ManagedPooledDataSource.test.created",
-                "io.dropwizard.db.ManagedPooledDataSource.test.borrowed",
-                "io.dropwizard.db.ManagedPooledDataSource.test.reconnected",
-                "io.dropwizard.db.ManagedPooledDataSource.test.released",
-                "io.dropwizard.db.ManagedPooledDataSource.test.releasedIdle",
-                "io.dropwizard.db.ManagedPooledDataSource.test.returned",
-                "io.dropwizard.db.ManagedPooledDataSource.test.removeAbandoned");
+                .containsOnlyKeys(
+                        "io.dropwizard.db.ManagedPooledDataSource.test.active",
+                        "io.dropwizard.db.ManagedPooledDataSource.test.idle",
+                        "io.dropwizard.db.ManagedPooledDataSource.test.waiting",
+                        "io.dropwizard.db.ManagedPooledDataSource.test.size",
+                        "io.dropwizard.db.ManagedPooledDataSource.test.created",
+                        "io.dropwizard.db.ManagedPooledDataSource.test.borrowed",
+                        "io.dropwizard.db.ManagedPooledDataSource.test.reconnected",
+                        "io.dropwizard.db.ManagedPooledDataSource.test.released",
+                        "io.dropwizard.db.ManagedPooledDataSource.test.releasedIdle",
+                        "io.dropwizard.db.ManagedPooledDataSource.test.returned",
+                        "io.dropwizard.db.ManagedPooledDataSource.test.removeAbandoned");
     }
-
 }

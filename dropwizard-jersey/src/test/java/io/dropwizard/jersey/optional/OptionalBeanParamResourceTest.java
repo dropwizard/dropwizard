@@ -1,10 +1,17 @@
 package io.dropwizard.jersey.optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import io.dropwizard.jersey.AbstractJerseyTest;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.jersey.MyMessageParamConverterProvider;
-import org.junit.jupiter.api.Test;
-
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.OptionalDouble;
+import java.util.OptionalInt;
+import java.util.OptionalLong;
+import java.util.UUID;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.CookieParam;
 import javax.ws.rs.GET;
@@ -19,15 +26,7 @@ import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.OptionalDouble;
-import java.util.OptionalInt;
-import java.util.OptionalLong;
-import java.util.UUID;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.Test;
 
 class OptionalBeanParamResourceTest extends AbstractJerseyTest {
     @Override
@@ -47,8 +46,7 @@ class OptionalBeanParamResourceTest extends AbstractJerseyTest {
                 .request(MediaType.APPLICATION_JSON_TYPE)
                 .header("X-String", "Custom string")
                 .cookie("uuid", "fd94b00d-bd50-46b3-b42f-905a9c9e7d78")
-                .get(new GenericType<Map<String, Object>>() {
-                });
+                .get(new GenericType<Map<String, Object>>() {});
         assertThat(response)
                 .containsEntry("path", "optional/param")
                 .containsEntry("pathParam", "param")
@@ -78,8 +76,7 @@ class OptionalBeanParamResourceTest extends AbstractJerseyTest {
         Map<String, Object> response = target("/optional")
                 .path("param")
                 .request(MediaType.APPLICATION_JSON_TYPE)
-                .get(new GenericType<Map<String, Object>>() {
-                });
+                .get(new GenericType<Map<String, Object>>() {});
         assertThat(response)
                 .containsEntry("path", "optional/param")
                 .containsEntry("pathParam", "param")

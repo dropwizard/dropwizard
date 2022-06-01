@@ -1,13 +1,12 @@
 package io.dropwizard.auth;
 
 import io.dropwizard.jersey.DropwizardResourceConfig;
+import java.security.Principal;
+import javax.ws.rs.container.ContainerRequestFilter;
+import javax.ws.rs.container.DynamicFeature;
 import org.glassfish.jersey.internal.inject.AbstractBinder;
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 import org.glassfish.jersey.test.TestProperties;
-
-import javax.ws.rs.container.ContainerRequestFilter;
-import javax.ws.rs.container.DynamicFeature;
-import java.security.Principal;
 
 public abstract class AbstractAuthResourceConfig extends DropwizardResourceConfig {
 

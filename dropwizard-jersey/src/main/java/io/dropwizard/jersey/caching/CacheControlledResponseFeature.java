@@ -1,7 +1,7 @@
 package io.dropwizard.jersey.caching;
 
-import org.glassfish.jersey.server.model.AnnotatedMethod;
-
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerResponseContext;
 import javax.ws.rs.container.ContainerResponseFilter;
@@ -10,8 +10,7 @@ import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.ext.Provider;
-import java.io.IOException;
-import java.util.concurrent.TimeUnit;
+import org.glassfish.jersey.server.model.AnnotatedMethod;
 
 @Provider
 public class CacheControlledResponseFeature implements DynamicFeature {
@@ -40,8 +39,7 @@ public class CacheControlledResponseFeature implements DynamicFeature {
             cacheControl.setMustRevalidate(control.mustRevalidate());
             cacheControl.setProxyRevalidate(control.proxyRevalidate());
             cacheControl.setMaxAge((int) control.maxAgeUnit().toSeconds(control.maxAge()));
-            cacheControl.setSMaxAge((int) control.sharedMaxAgeUnit()
-                                                 .toSeconds(control.sharedMaxAge()));
+            cacheControl.setSMaxAge((int) control.sharedMaxAgeUnit().toSeconds(control.sharedMaxAge()));
             if (control.immutable()) {
                 cacheControl.setMaxAge(ONE_YEAR_IN_SECONDS);
             }
@@ -50,13 +48,11 @@ public class CacheControlledResponseFeature implements DynamicFeature {
         }
 
         @Override
-        public void filter(ContainerRequestContext requestContext,
-                           ContainerResponseContext responseContext) throws IOException {
+        public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext)
+                throws IOException {
             if (!cacheResponseHeader.isEmpty()) {
                 responseContext.getHeaders().add(HttpHeaders.CACHE_CONTROL, cacheResponseHeader);
             }
-
         }
-
     }
 }

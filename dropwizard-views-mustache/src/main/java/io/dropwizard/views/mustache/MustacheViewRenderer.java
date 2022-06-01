@@ -10,7 +10,6 @@ import com.github.mustachejava.resolver.FileSystemResolver;
 import io.dropwizard.views.common.View;
 import io.dropwizard.views.common.ViewRenderException;
 import io.dropwizard.views.common.ViewRenderer;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -48,8 +47,8 @@ public class MustacheViewRenderer implements ViewRenderer {
     @Override
     public void render(View view, Locale locale, OutputStream output) throws IOException {
         try {
-            final MustacheFactory mustacheFactory = useCache ? factories.get(view.getClass())
-                    : createNewMustacheFactory(view.getClass());
+            final MustacheFactory mustacheFactory =
+                    useCache ? factories.get(view.getClass()) : createNewMustacheFactory(view.getClass());
             final Mustache template = mustacheFactory.compile(view.getTemplateName());
             final Charset charset = view.getCharset().orElse(StandardCharsets.UTF_8);
             try (OutputStreamWriter writer = new OutputStreamWriter(output, charset)) {
@@ -62,7 +61,9 @@ public class MustacheViewRenderer implements ViewRenderer {
 
     @Override
     public void configure(Map<String, String> options) {
-        useCache = Optional.ofNullable(options.get("cache")).map(Boolean::parseBoolean).orElse(true);
+        useCache = Optional.ofNullable(options.get("cache"))
+                .map(Boolean::parseBoolean)
+                .orElse(true);
         fileRoot = Optional.ofNullable(options.get("fileRoot")).map(File::new);
     }
 
@@ -79,5 +80,4 @@ public class MustacheViewRenderer implements ViewRenderer {
         return new DefaultMustacheFactory(
                 fileRoot.isPresent() ? new FileSystemResolver(fileRoot.get()) : new PerClassMustacheResolver(key));
     }
-
 }

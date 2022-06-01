@@ -1,10 +1,18 @@
 package io.dropwizard.hibernate;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import com.codahale.metrics.MetricRegistry;
 import io.dropwizard.core.setup.Environment;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import io.dropwizard.logging.common.BootstrapLogging;
+import java.util.Collections;
+import java.util.Map;
+import java.util.UUID;
 import org.hibernate.CacheMode;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -12,15 +20,6 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.Collections;
-import java.util.Map;
-import java.util.UUID;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 class UnitOfWorkAwareProxyFactoryTest {
 
@@ -42,18 +41,20 @@ class UnitOfWorkAwareProxyFactoryTest {
         dataSourceFactory.setUser("sa");
         dataSourceFactory.setDriverClass("org.h2.Driver");
         dataSourceFactory.setValidationQuery("SELECT 1");
-        dataSourceFactory.setProperties(Collections.singletonMap("hibernate.dialect", "org.hibernate.dialect.H2Dialect"));
+        dataSourceFactory.setProperties(
+                Collections.singletonMap("hibernate.dialect", "org.hibernate.dialect.H2Dialect"));
         dataSourceFactory.setInitialSize(1);
         dataSourceFactory.setMinSize(1);
 
-        sessionFactory = new SessionFactoryFactory()
-                .build(bundle, environment, dataSourceFactory, Collections.emptyList());
+        sessionFactory =
+                new SessionFactoryFactory().build(bundle, environment, dataSourceFactory, Collections.emptyList());
         try (Session session = sessionFactory.openSession()) {
             Transaction transaction = session.beginTransaction();
-            session.createNativeQuery("create table user_sessions (token varchar(64) primary key, username varchar(16))")
-                .executeUpdate();
+            session.createNativeQuery(
+                            "create table user_sessions (token varchar(64) primary key, username varchar(16))")
+                    .executeUpdate();
             session.createNativeQuery("insert into user_sessions values ('67ab89d', 'jeff_28')")
-                .executeUpdate();
+                    .executeUpdate();
             transaction.commit();
         }
     }
@@ -64,8 +65,8 @@ class UnitOfWorkAwareProxyFactoryTest {
         final UnitOfWorkAwareProxyFactory unitOfWorkAwareProxyFactory =
                 new UnitOfWorkAwareProxyFactory("default", sessionFactory);
 
-        final OAuthAuthenticator oAuthAuthenticator = unitOfWorkAwareProxyFactory
-                .create(OAuthAuthenticator.class, SessionDao.class, sessionDao);
+        final OAuthAuthenticator oAuthAuthenticator =
+                unitOfWorkAwareProxyFactory.create(OAuthAuthenticator.class, SessionDao.class, sessionDao);
         assertThat(oAuthAuthenticator.authenticate("67ab89d")).isTrue();
         assertThat(oAuthAuthenticator.authenticate("bd1e23a")).isFalse();
     }
@@ -73,18 +74,18 @@ class UnitOfWorkAwareProxyFactoryTest {
     @Test
     void testProxyWorksWithoutUnitOfWork() {
         assertThat(new UnitOfWorkAwareProxyFactory("default", sessionFactory)
-                .create(PlainAuthenticator.class)
-                .authenticate("c82d11e"))
+                        .create(PlainAuthenticator.class)
+                        .authenticate("c82d11e"))
                 .isTrue();
     }
 
     @Test
     void testProxyHandlesErrors() {
-        assertThatIllegalStateException().isThrownBy(()->
-            new UnitOfWorkAwareProxyFactory("default", sessionFactory)
-                .create(BrokenAuthenticator.class)
-                .authenticate("b812ae4"))
-            .withMessage("Session cluster is down");
+        assertThatIllegalStateException()
+                .isThrownBy(() -> new UnitOfWorkAwareProxyFactory("default", sessionFactory)
+                        .create(BrokenAuthenticator.class)
+                        .authenticate("b812ae4"))
+                .withMessage("Session cluster is down");
     }
 
     @Test
@@ -102,15 +103,15 @@ class UnitOfWorkAwareProxyFactoryTest {
     void testCanBeConfiguredWithACustomAspect() {
         final SessionDao sessionDao = new SessionDao(sessionFactory);
         final UnitOfWorkAwareProxyFactory unitOfWorkAwareProxyFactory =
-            new UnitOfWorkAwareProxyFactory("default", sessionFactory) {
-                @Override
-                public UnitOfWorkAspect newAspect(Map<String, SessionFactory> sessionFactories) {
-                    return new CustomAspect(sessionFactories);
-                }
-            };
+                new UnitOfWorkAwareProxyFactory("default", sessionFactory) {
+                    @Override
+                    public UnitOfWorkAspect newAspect(Map<String, SessionFactory> sessionFactories) {
+                        return new CustomAspect(sessionFactories);
+                    }
+                };
 
-        final OAuthAuthenticator oAuthAuthenticator = unitOfWorkAwareProxyFactory
-            .create(OAuthAuthenticator.class, SessionDao.class, sessionDao);
+        final OAuthAuthenticator oAuthAuthenticator =
+                unitOfWorkAwareProxyFactory.create(OAuthAuthenticator.class, SessionDao.class, sessionDao);
         assertThat(oAuthAuthenticator.authenticate("gr6f9y0")).isTrue();
     }
 
@@ -119,8 +120,8 @@ class UnitOfWorkAwareProxyFactoryTest {
         final UnitOfWorkAwareProxyFactory unitOfWorkAwareProxyFactory =
                 new UnitOfWorkAwareProxyFactory("default", sessionFactory);
 
-        final NestedCall nestedCall = unitOfWorkAwareProxyFactory
-                .create(NestedCall.class, SessionFactory.class, sessionFactory);
+        final NestedCall nestedCall =
+                unitOfWorkAwareProxyFactory.create(NestedCall.class, SessionFactory.class, sessionFactory);
 
         // Both method calls are expected to succeed (asserts are in NestedCall)
         // Run a non-nested call as reference
@@ -134,8 +135,8 @@ class UnitOfWorkAwareProxyFactoryTest {
         final UnitOfWorkAwareProxyFactory unitOfWorkAwareProxyFactory =
                 new UnitOfWorkAwareProxyFactory("default", sessionFactory);
 
-        final NestedCall nestedCall = unitOfWorkAwareProxyFactory
-                .create(NestedCall.class, SessionFactory.class, sessionFactory);
+        final NestedCall nestedCall =
+                unitOfWorkAwareProxyFactory.create(NestedCall.class, SessionFactory.class, sessionFactory);
 
         assertThatIllegalStateException().isThrownBy(nestedCall::invalidNestedCall);
     }
@@ -149,13 +150,14 @@ class UnitOfWorkAwareProxyFactoryTest {
         }
 
         public boolean isExist(String token) {
-            return sessionFactory.getCurrentSession()
-                    .createNativeQuery("select username from user_sessions where token=:token")
-                    .setParameter("token", token)
-                    .list()
-                    .size() > 0;
+            return sessionFactory
+                            .getCurrentSession()
+                            .createNativeQuery("select username from user_sessions where token=:token")
+                            .setParameter("token", token)
+                            .list()
+                            .size()
+                    > 0;
         }
-
     }
 
     static class OAuthAuthenticator {
@@ -196,8 +198,9 @@ class UnitOfWorkAwareProxyFactoryTest {
         protected void configureSession() {
             super.configureSession();
             Transaction transaction = getSession().beginTransaction();
-            getSession().createNativeQuery("insert into user_sessions values ('gr6f9y0', 'jeff_29')")
-                .executeUpdate();
+            getSession()
+                    .createNativeQuery("insert into user_sessions values ('gr6f9y0', 'jeff_29')")
+                    .executeUpdate();
             transaction.commit();
         }
     }
@@ -213,19 +216,19 @@ class UnitOfWorkAwareProxyFactoryTest {
         @UnitOfWork
         public void normalCall() {
             assertThat(transactionActive())
-                .withFailMessage("Expected transaction to be active in normal call")
-                .isTrue();
+                    .withFailMessage("Expected transaction to be active in normal call")
+                    .isTrue();
         }
 
         @UnitOfWork
         public void nestedCall() {
             assertThat(transactionActive())
-                .withFailMessage("Expected transaction to be active before nested call")
-                .isTrue();
+                    .withFailMessage("Expected transaction to be active before nested call")
+                    .isTrue();
             normalCall();
             assertThat(transactionActive())
-                .withFailMessage("Expected transaction to be active after nested call")
-                .isTrue();
+                    .withFailMessage("Expected transaction to be active after nested call")
+                    .isTrue();
         }
 
         @UnitOfWork(cacheMode = CacheMode.IGNORE)

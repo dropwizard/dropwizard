@@ -2,7 +2,6 @@ package io.dropwizard.testing.app;
 
 import com.codahale.metrics.annotation.Timed;
 import io.dropwizard.jersey.PATCH;
-
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -29,5 +28,4 @@ public class ContextInjectionResource {
     public String echoPatch(String patchMessage) {
         return patchMessage;
     }
-
 }

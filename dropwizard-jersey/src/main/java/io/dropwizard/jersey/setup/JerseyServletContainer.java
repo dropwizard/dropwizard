@@ -14,8 +14,7 @@ public class JerseyServletContainer extends ServletContainer {
     /**
      * Create Jersey Servlet container.
      */
-    public JerseyServletContainer() {
-    }
+    public JerseyServletContainer() {}
 
     /**
      * Create Jersey Servlet container.

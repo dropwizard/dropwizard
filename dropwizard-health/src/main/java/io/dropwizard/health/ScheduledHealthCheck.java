@@ -2,10 +2,9 @@ package io.dropwizard.health;
 
 import com.codahale.metrics.Counter;
 import com.codahale.metrics.health.HealthCheck;
+import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Objects;
 
 class ScheduledHealthCheck implements Runnable {
     private static final Logger LOGGER = LoggerFactory.getLogger(ScheduledHealthCheck.class);
@@ -20,14 +19,15 @@ class ScheduledHealthCheck implements Runnable {
     private final Counter unhealthyCheckCounter;
     private boolean previouslyRecovered = false;
 
-    ScheduledHealthCheck(final String name,
-                         final HealthCheckType type,
-                         final boolean critical,
-                         final HealthCheck healthCheck,
-                         final Schedule schedule,
-                         final State state,
-                         final Counter healthyCheckCounter,
-                         final Counter unhealthyCheckCounter) {
+    ScheduledHealthCheck(
+            final String name,
+            final HealthCheckType type,
+            final boolean critical,
+            final HealthCheck healthCheck,
+            final Schedule schedule,
+            final State state,
+            final Counter healthyCheckCounter,
+            final Counter unhealthyCheckCounter) {
         this.name = Objects.requireNonNull(name);
         this.type = type;
         this.critical = critical;
@@ -99,13 +99,13 @@ class ScheduledHealthCheck implements Runnable {
         if (this == o) return true;
         if (!(o instanceof ScheduledHealthCheck)) return false;
         final ScheduledHealthCheck that = (ScheduledHealthCheck) o;
-        return critical == that.critical &&
-            Objects.equals(name, that.name) &&
-            Objects.equals(healthCheck, that.healthCheck) &&
-            Objects.equals(schedule, that.schedule) &&
-            Objects.equals(state, that.state) &&
-            Objects.equals(healthyCheckCounter, that.healthyCheckCounter) &&
-            Objects.equals(unhealthyCheckCounter, that.unhealthyCheckCounter);
+        return critical == that.critical
+                && Objects.equals(name, that.name)
+                && Objects.equals(healthCheck, that.healthCheck)
+                && Objects.equals(schedule, that.schedule)
+                && Objects.equals(state, that.state)
+                && Objects.equals(healthyCheckCounter, that.healthyCheckCounter)
+                && Objects.equals(unhealthyCheckCounter, that.unhealthyCheckCounter);
     }
 
     @Override

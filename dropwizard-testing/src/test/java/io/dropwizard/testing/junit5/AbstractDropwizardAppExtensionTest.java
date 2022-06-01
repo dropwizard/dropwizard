@@ -1,24 +1,25 @@
 package io.dropwizard.testing.junit5;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import io.dropwizard.core.setup.Environment;
 import io.dropwizard.testing.app.DropwizardTestApplication;
 import io.dropwizard.testing.app.TestConfiguration;
+import java.util.Optional;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.MediaType;
 import org.glassfish.jersey.client.JerseyClientBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.MediaType;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 abstract class AbstractDropwizardAppExtensionTest {
 
     @Test
     void canGetExpectedResourceOverHttp() {
-        final String content = JerseyClientBuilder.createClient().target(
-                "http://localhost:" + getExtension().getLocalPort() + "/test").request().get(String.class);
+        final String content = JerseyClientBuilder.createClient()
+                .target("http://localhost:" + getExtension().getLocalPort() + "/test")
+                .request()
+                .get(String.class);
 
         assertThat(content).isEqualTo("Yes, it's here");
     }
@@ -43,9 +44,9 @@ abstract class AbstractDropwizardAppExtensionTest {
 
     @Test
     void canPerformAdminTask() {
-        final String response
-                = getExtension().client().target("http://localhost:"
-                + getExtension().getAdminPort() + "/tasks/hello?name=test_user")
+        final String response = getExtension()
+                .client()
+                .target("http://localhost:" + getExtension().getAdminPort() + "/tasks/hello?name=test_user")
                 .request()
                 .post(Entity.entity("", MediaType.TEXT_PLAIN), String.class);
 
@@ -54,7 +55,8 @@ abstract class AbstractDropwizardAppExtensionTest {
 
     @Test
     void canPerformAdminTaskWithPostBody() {
-        final String response = getExtension().client()
+        final String response = getExtension()
+                .client()
                 .target("http://localhost:" + getExtension().getAdminPort() + "/tasks/echo")
                 .request()
                 .post(Entity.entity("Custom message", MediaType.TEXT_PLAIN), String.class);
@@ -64,18 +66,19 @@ abstract class AbstractDropwizardAppExtensionTest {
 
     @Test
     void clientUsesJacksonMapperFromEnvironment() {
-        final Optional<String> message = getExtension().client()
+        final Optional<String> message = getExtension()
+                .client()
                 .target("http://localhost:" + getExtension().getLocalPort() + "/message")
                 .request()
                 .get(DropwizardTestApplication.MessageView.class)
                 .getMessage();
-        assertThat(message)
-                .hasValue("Yes, it's here");
+        assertThat(message).hasValue("Yes, it's here");
     }
 
     @Test
     void clientSupportsPatchMethod() {
-        final String method = getExtension().client()
+        final String method = getExtension()
+                .client()
                 .target("http://localhost:" + getExtension().getLocalPort() + "/echoPatch")
                 .request()
                 .method("PATCH", Entity.text("Patch is working"), String.class);

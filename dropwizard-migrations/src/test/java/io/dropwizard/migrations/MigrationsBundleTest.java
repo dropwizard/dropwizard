@@ -1,40 +1,40 @@
 package io.dropwizard.migrations;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import io.dropwizard.core.Application;
 import io.dropwizard.core.setup.Bootstrap;
 import io.dropwizard.core.setup.Environment;
 import io.dropwizard.db.PooledDataSourceFactory;
-import org.junit.jupiter.api.Test;
-
 import java.util.HashMap;
 import java.util.Map;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.Test;
 
 class MigrationsBundleTest {
-    private final MigrationsBundle<TestMigrationConfiguration> migrationsBundle = new MigrationsBundle<TestMigrationConfiguration>() {
-        @Override
-        public PooledDataSourceFactory getDataSourceFactory(TestMigrationConfiguration configuration) {
-            return configuration.getDataSource();
-        }
-    };
+    private final MigrationsBundle<TestMigrationConfiguration> migrationsBundle =
+            new MigrationsBundle<TestMigrationConfiguration>() {
+                @Override
+                public PooledDataSourceFactory getDataSourceFactory(TestMigrationConfiguration configuration) {
+                    return configuration.getDataSource();
+                }
+            };
 
-    private final MigrationsBundle<TestMigrationConfiguration> migrationsBundleWithScopedObjects = new MigrationsBundle<TestMigrationConfiguration>() {
-        @Override
-        public PooledDataSourceFactory getDataSourceFactory(TestMigrationConfiguration configuration) {
-            return configuration.getDataSource();
-        }
+    private final MigrationsBundle<TestMigrationConfiguration> migrationsBundleWithScopedObjects =
+            new MigrationsBundle<TestMigrationConfiguration>() {
+                @Override
+                public PooledDataSourceFactory getDataSourceFactory(TestMigrationConfiguration configuration) {
+                    return configuration.getDataSource();
+                }
 
-        @Override
-        public Map<String, Object> getScopedObjects() {
-            return new HashMap<>();
-        }
-    };
+                @Override
+                public Map<String, Object> getScopedObjects() {
+                    return new HashMap<>();
+                }
+            };
 
     private final Application<TestMigrationConfiguration> application = new Application<TestMigrationConfiguration>() {
         @Override
-        public void run(TestMigrationConfiguration configuration, Environment environment) throws Exception {
-        }
+        public void run(TestMigrationConfiguration configuration, Environment environment) throws Exception {}
     };
 
     @Test
@@ -46,13 +46,13 @@ class MigrationsBundleTest {
 
         migrationsBundle.initialize(bootstrap);
 
-        assertThat(bootstrap.getCommands())
-            .singleElement()
-            .isInstanceOf(DbCommand.class);
+        assertThat(bootstrap.getCommands()).singleElement().isInstanceOf(DbCommand.class);
     }
 
     @Test
     void testScopedObjects() {
-        assertThat(migrationsBundleWithScopedObjects.getScopedObjects()).isNotNull().isEmpty();
+        assertThat(migrationsBundleWithScopedObjects.getScopedObjects())
+                .isNotNull()
+                .isEmpty();
     }
 }

@@ -3,11 +3,10 @@ package io.dropwizard.logging.json.layout;
 import ch.qos.logback.core.CoreConstants;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import org.checkerframework.checker.nullness.qual.Nullable;
-
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Map;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * Formats objects to JSON strings according to the configured {@link ObjectMapper} and output parameters.
@@ -20,8 +19,8 @@ public class JsonFormatter {
     private final boolean doesAppendLineSeparator;
     private final int bufferSize;
 
-    public JsonFormatter(ObjectMapper objectMapper, boolean prettyPrint, boolean doesAppendLineSeparator,
-                         int bufferSize) {
+    public JsonFormatter(
+            ObjectMapper objectMapper, boolean prettyPrint, boolean doesAppendLineSeparator, int bufferSize) {
         this.objectMapper = prettyPrint ? objectMapper.enable(SerializationFeature.INDENT_OUTPUT) : objectMapper;
         this.doesAppendLineSeparator = doesAppendLineSeparator;
         this.bufferSize = bufferSize;

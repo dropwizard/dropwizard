@@ -1,13 +1,12 @@
 package io.dropwizard.jersey.errors;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import io.dropwizard.jersey.AbstractJerseyTest;
 import io.dropwizard.jersey.DropwizardResourceConfig;
-import org.eclipse.jetty.io.EofException;
-import org.glassfish.jersey.test.jetty.JettyTestContainerFactory;
-import org.glassfish.jersey.test.spi.TestContainerException;
-import org.glassfish.jersey.test.spi.TestContainerFactory;
-import org.junit.jupiter.api.Test;
-
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.concurrent.atomic.LongAdder;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.WebApplicationException;
@@ -17,11 +16,11 @@ import javax.ws.rs.core.StreamingOutput;
 import javax.ws.rs.ext.Provider;
 import javax.ws.rs.ext.WriterInterceptor;
 import javax.ws.rs.ext.WriterInterceptorContext;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.concurrent.atomic.LongAdder;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import org.eclipse.jetty.io.EofException;
+import org.glassfish.jersey.test.jetty.JettyTestContainerFactory;
+import org.glassfish.jersey.test.spi.TestContainerException;
+import org.glassfish.jersey.test.spi.TestContainerFactory;
+import org.junit.jupiter.api.Test;
 
 class EofExceptionWriterInterceptorJerseyTest extends AbstractJerseyTest {
     @Override
@@ -32,9 +31,9 @@ class EofExceptionWriterInterceptorJerseyTest extends AbstractJerseyTest {
     @Override
     protected Application configure() {
         return DropwizardResourceConfig.forTesting()
-            .register(EofExceptionWriterInterceptor.class)
-            .register(EofExceptionCountingInterceptor.class)
-            .register(TestResource.class);
+                .register(EofExceptionWriterInterceptor.class)
+                .register(EofExceptionCountingInterceptor.class)
+                .register(TestResource.class);
     }
 
     @Test

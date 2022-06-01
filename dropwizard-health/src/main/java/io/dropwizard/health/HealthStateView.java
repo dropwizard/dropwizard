@@ -1,9 +1,8 @@
 package io.dropwizard.health;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import javax.validation.constraints.NotNull;
 import java.util.Objects;
+import javax.validation.constraints.NotNull;
 
 public final class HealthStateView implements Comparable<HealthStateView> {
     @NotNull
@@ -20,8 +19,8 @@ public final class HealthStateView implements Comparable<HealthStateView> {
     @JsonProperty
     private boolean critical;
 
-    public HealthStateView(@NotNull final String name, boolean healthy, @NotNull final HealthCheckType type,
-                           boolean critical) {
+    public HealthStateView(
+            @NotNull final String name, boolean healthy, @NotNull final HealthCheckType type, boolean critical) {
         this.name = Objects.requireNonNull(name);
         this.healthy = healthy;
         this.type = Objects.requireNonNull(type);
@@ -65,7 +64,10 @@ public final class HealthStateView implements Comparable<HealthStateView> {
         if (this == o) return true;
         if (!(o instanceof HealthStateView)) return false;
         HealthStateView that = (HealthStateView) o;
-        return healthy == that.healthy && critical == that.critical && Objects.equals(name, that.name) && type == that.type;
+        return healthy == that.healthy
+                && critical == that.critical
+                && Objects.equals(name, that.name)
+                && type == that.type;
     }
 
     @Override
@@ -75,12 +77,11 @@ public final class HealthStateView implements Comparable<HealthStateView> {
 
     @Override
     public String toString() {
-        return "HealthStateView{" +
-                "name='" + name + '\'' +
-                ", healthy=" + healthy +
-                ", type=" + type +
-                ", critical=" + critical +
-                '}';
+        return "HealthStateView{" + "name='"
+                + name + '\'' + ", healthy="
+                + healthy + ", type="
+                + type + ", critical="
+                + critical + '}';
     }
 
     @Override

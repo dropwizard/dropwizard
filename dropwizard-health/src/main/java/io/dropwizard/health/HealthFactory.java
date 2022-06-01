@@ -9,6 +9,11 @@ import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", defaultImpl = DefaultHealthFactory.class)
 public interface HealthFactory extends Discoverable {
-    void configure(LifecycleEnvironment lifecycle, ServletEnvironment servlets, JerseyEnvironment jersey,
-                   HealthEnvironment health, ObjectMapper mapper, String name);
+    void configure(
+            LifecycleEnvironment lifecycle,
+            ServletEnvironment servlets,
+            JerseyEnvironment jersey,
+            HealthEnvironment health,
+            ObjectMapper mapper,
+            String name);
 }

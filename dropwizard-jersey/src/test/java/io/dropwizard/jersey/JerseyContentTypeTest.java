@@ -1,20 +1,18 @@
 package io.dropwizard.jersey;
 
-import io.dropwizard.jersey.dummy.DummyResource;
-import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.assertThat;
 
+import io.dropwizard.jersey.dummy.DummyResource;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.Test;
 
 class JerseyContentTypeTest extends AbstractJerseyTest {
 
     @Override
     protected Application configure() {
-        return DropwizardResourceConfig.forTesting()
-                .register(DummyResource.class);
+        return DropwizardResourceConfig.forTesting().register(DummyResource.class);
     }
 
     @Test

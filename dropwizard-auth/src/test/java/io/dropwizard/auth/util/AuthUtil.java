@@ -5,7 +5,6 @@ import io.dropwizard.auth.Authenticator;
 import io.dropwizard.auth.Authorizer;
 import io.dropwizard.auth.PrincipalImpl;
 import io.dropwizard.auth.basic.BasicCredentials;
-
 import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
@@ -24,8 +23,8 @@ public class AuthUtil {
         };
     }
 
-    public static Authenticator<String, Principal> getSingleUserOAuthAuthenticator(final String presented,
-                                                                                   final String returned) {
+    public static Authenticator<String, Principal> getSingleUserOAuthAuthenticator(
+            final String presented, final String returned) {
         return user -> {
             if (presented.equals(user)) {
                 return Optional.of(new PrincipalImpl(returned));
@@ -49,10 +48,8 @@ public class AuthUtil {
         };
     }
 
-    public static Authorizer<Principal> getTestAuthorizer(final String validUser,
-                                                          final String validRole) {
-        return (principal, role, context) -> principal != null
-            && validUser.equals(principal.getName())
-            && validRole.equals(role);
+    public static Authorizer<Principal> getTestAuthorizer(final String validUser, final String validRole) {
+        return (principal, role, context) ->
+                principal != null && validUser.equals(principal.getName()) && validRole.equals(role);
     }
 }

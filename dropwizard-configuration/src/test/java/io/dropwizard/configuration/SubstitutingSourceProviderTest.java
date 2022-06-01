@@ -1,47 +1,52 @@
 package io.dropwizard.configuration;
 
-import org.apache.commons.text.StringSubstitutor;
-import org.apache.commons.text.lookup.StringLookup;
-import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIOException;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatIOException;
+import org.apache.commons.text.StringSubstitutor;
+import org.apache.commons.text.lookup.StringLookup;
+import org.junit.jupiter.api.Test;
 
 class SubstitutingSourceProviderTest {
     @Test
     void shouldSubstituteCorrectly() throws IOException {
         StringLookup dummyLookup = (x) -> "baz";
         DummySourceProvider dummyProvider = new DummySourceProvider();
-        SubstitutingSourceProvider provider = new SubstitutingSourceProvider(dummyProvider, new StringSubstitutor(dummyLookup));
+        SubstitutingSourceProvider provider =
+                new SubstitutingSourceProvider(dummyProvider, new StringSubstitutor(dummyLookup));
 
-        assertThat(provider.open("foo: ${bar}")).hasSameContentAs(new ByteArrayInputStream("foo: baz".getBytes(StandardCharsets.UTF_8)));
+        assertThat(provider.open("foo: ${bar}"))
+                .hasSameContentAs(new ByteArrayInputStream("foo: baz".getBytes(StandardCharsets.UTF_8)));
 
         // ensure that opened streams are closed
         assertThatIOException()
-            .isThrownBy(() -> dummyProvider.lastStream.read())
-            .withMessage("Stream closed");
+                .isThrownBy(() -> dummyProvider.lastStream.read())
+                .withMessage("Stream closed");
     }
 
     @Test
     void shouldSubstituteOnlyExistingVariables() throws IOException {
         StringLookup dummyLookup = (x) -> null;
-        SubstitutingSourceProvider provider = new SubstitutingSourceProvider(new DummySourceProvider(), new StringSubstitutor(dummyLookup));
+        SubstitutingSourceProvider provider =
+                new SubstitutingSourceProvider(new DummySourceProvider(), new StringSubstitutor(dummyLookup));
 
-        assertThat(provider.open("foo: ${bar}")).hasSameContentAs(new ByteArrayInputStream("foo: ${bar}".getBytes(StandardCharsets.UTF_8)));
+        assertThat(provider.open("foo: ${bar}"))
+                .hasSameContentAs(new ByteArrayInputStream("foo: ${bar}".getBytes(StandardCharsets.UTF_8)));
     }
 
     @Test
     void shouldSubstituteWithDefaultValue() throws IOException {
         StringLookup dummyLookup = (x) -> null;
-        SubstitutingSourceProvider provider = new SubstitutingSourceProvider(new DummySourceProvider(), new StringSubstitutor(dummyLookup));
+        SubstitutingSourceProvider provider =
+                new SubstitutingSourceProvider(new DummySourceProvider(), new StringSubstitutor(dummyLookup));
 
-        assertThat(provider.open("foo: ${bar:-default}")).hasSameContentAs(new ByteArrayInputStream("foo: default".getBytes(StandardCharsets.UTF_8)));
+        assertThat(provider.open("foo: ${bar:-default}"))
+                .hasSameContentAs(new ByteArrayInputStream("foo: default".getBytes(StandardCharsets.UTF_8)));
     }
 
     private static class DummySourceProvider implements ConfigurationSourceProvider {

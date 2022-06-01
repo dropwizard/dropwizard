@@ -1,21 +1,22 @@
 package io.dropwizard.migrations;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.parallel.ExecutionMode.SAME_THREAD;
+
+import java.util.Map;
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.jdbi.v3.core.Jdbi;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 
-import java.util.Map;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.parallel.ExecutionMode.SAME_THREAD;
-
 @Execution(SAME_THREAD)
 class DbMigrateCustomSchemaTest {
 
     private final DbMigrateCommand<TestMigrationConfiguration> migrateCommand = new DbMigrateCommand<>(
-        TestMigrationConfiguration::getDataSource, TestMigrationConfiguration.class, "migrations-custom-schema.xml");
+            TestMigrationConfiguration::getDataSource,
+            TestMigrationConfiguration.class,
+            "migrations-custom-schema.xml");
     private TestMigrationConfiguration conf;
     private String databaseUrl;
 
@@ -32,13 +33,9 @@ class DbMigrateCustomSchemaTest {
         dbi.useHandle(h -> h.execute("create schema " + schemaName));
         Namespace namespace = new Namespace(Map.of("schema", schemaName, "catalog", "public"));
         migrateCommand.run(null, namespace, conf);
-        dbi.useHandle(handle ->
-            assertThat(handle
-                .select("select * from " + schemaName + ".persons")
-                .mapToMap())
+        dbi.useHandle(handle -> assertThat(handle.select("select * from " + schemaName + ".persons")
+                        .mapToMap())
                 .hasSize(1)
-                .containsExactly(Map.of("id", 1, "name", "Bill Smith", "email", "bill@smith.me"))
-        );
+                .containsExactly(Map.of("id", 1, "name", "Bill Smith", "email", "bill@smith.me")));
     }
-
 }

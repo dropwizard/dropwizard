@@ -1,21 +1,20 @@
 package io.dropwizard.jersey.optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+
 import io.dropwizard.jersey.AbstractJerseyTest;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.jersey.MyMessage;
 import io.dropwizard.jersey.MyMessageParamConverterProvider;
 import io.dropwizard.jersey.params.UUIDParam;
-import org.junit.jupiter.api.Test;
-
+import java.util.Optional;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.CookieParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Application;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import org.junit.jupiter.api.Test;
 
 class OptionalCookieParamResourceTest extends AbstractJerseyTest {
 
@@ -35,14 +34,18 @@ class OptionalCookieParamResourceTest extends AbstractJerseyTest {
 
     @Test
     void shouldReturnMessageWhenMessageIsBlank() {
-        String response = target("/optional/message").request().cookie("message", "").get(String.class);
+        String response =
+                target("/optional/message").request().cookie("message", "").get(String.class);
         assertThat(response).isEmpty();
     }
 
     @Test
     void shouldReturnMessageWhenMessageIsPresent() {
         String customMessage = "Custom Message";
-        String response = target("/optional/message").request().cookie("message", customMessage).get(String.class);
+        String response = target("/optional/message")
+                .request()
+                .cookie("message", customMessage)
+                .get(String.class);
         assertThat(response).isEqualTo(customMessage);
     }
 
@@ -56,15 +59,20 @@ class OptionalCookieParamResourceTest extends AbstractJerseyTest {
     @Test
     void shouldReturnMyMessageWhenMyMessageIsPresent() {
         String myMessage = "My Message";
-        String response = target("/optional/my-message").request().cookie("mymessage", myMessage).get(String.class);
+        String response = target("/optional/my-message")
+                .request()
+                .cookie("mymessage", myMessage)
+                .get(String.class);
         assertThat(response).isEqualTo(myMessage);
     }
 
     @Test
     void shouldThrowBadRequestExceptionWhenInvalidUUIDIsPresent() {
         String invalidUUID = "invalid-uuid";
-        assertThatExceptionOfType(BadRequestException.class).isThrownBy(() ->
-            target("/optional/uuid").request().cookie("uuid", invalidUUID).get(String.class));
+        assertThatExceptionOfType(BadRequestException.class).isThrownBy(() -> target("/optional/uuid")
+                .request()
+                .cookie("uuid", invalidUUID)
+                .get(String.class));
     }
 
     @Test
@@ -77,7 +85,8 @@ class OptionalCookieParamResourceTest extends AbstractJerseyTest {
     @Test
     void shouldReturnUUIDWhenValidUUIDIsPresent() {
         String uuid = "fd94b00d-bd50-46b3-b42f-905a9c9e7d78";
-        String response = target("/optional/uuid").request().cookie("uuid", uuid).get(String.class);
+        String response =
+                target("/optional/uuid").request().cookie("uuid", uuid).get(String.class);
         assertThat(response).isEqualTo(uuid);
     }
 
@@ -98,7 +107,9 @@ class OptionalCookieParamResourceTest extends AbstractJerseyTest {
         @GET
         @Path("/uuid")
         public String getUUID(@CookieParam("uuid") Optional<UUIDParam> uuid) {
-            return uuid.orElse(new UUIDParam("d5672fa8-326b-40f6-bf71-d9dacf44bcdc")).get().toString();
+            return uuid.orElse(new UUIDParam("d5672fa8-326b-40f6-bf71-d9dacf44bcdc"))
+                    .get()
+                    .toString();
         }
     }
 }

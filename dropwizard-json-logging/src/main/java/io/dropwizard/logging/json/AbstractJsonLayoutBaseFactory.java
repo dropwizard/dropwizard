@@ -6,12 +6,11 @@ import io.dropwizard.jackson.Jackson;
 import io.dropwizard.logging.common.layout.DiscoverableLayoutFactory;
 import io.dropwizard.logging.json.layout.JsonFormatter;
 import io.dropwizard.logging.json.layout.TimestampFormatter;
-import org.checkerframework.checker.nullness.qual.Nullable;
-
-import javax.validation.constraints.NotNull;
 import java.util.Collections;
 import java.util.Map;
 import java.util.TimeZone;
+import javax.validation.constraints.NotNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * <table>
@@ -50,7 +49,7 @@ import java.util.TimeZone;
  * </table>
  */
 public abstract class AbstractJsonLayoutBaseFactory<E extends DeferredProcessingAware>
-    implements DiscoverableLayoutFactory<E> {
+        implements DiscoverableLayoutFactory<E> {
 
     @Nullable
     private String timestampFormat;

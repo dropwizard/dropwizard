@@ -3,6 +3,11 @@ package io.dropwizard.hibernate;
 import io.dropwizard.core.setup.Environment;
 import io.dropwizard.db.ManagedDataSource;
 import io.dropwizard.db.PooledDataSourceFactory;
+import java.util.List;
+import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
+import javax.sql.DataSource;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.BootstrapServiceRegistry;
 import org.hibernate.boot.registry.BootstrapServiceRegistryBuilder;
@@ -15,69 +20,64 @@ import org.hibernate.service.ServiceRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.sql.DataSource;
-import java.util.List;
-import java.util.Map;
-import java.util.SortedSet;
-import java.util.TreeSet;
-
 public class SessionFactoryFactory {
     private static final Logger LOGGER = LoggerFactory.getLogger(SessionFactoryFactory.class);
     private static final String DEFAULT_NAME = "hibernate";
 
-    public SessionFactory build(HibernateBundle<?> bundle,
-                                Environment environment,
-                                PooledDataSourceFactory dbConfig,
-                                List<Class<?>> entities) {
+    public SessionFactory build(
+            HibernateBundle<?> bundle,
+            Environment environment,
+            PooledDataSourceFactory dbConfig,
+            List<Class<?>> entities) {
         return build(bundle, environment, dbConfig, entities, DEFAULT_NAME);
     }
 
-    public SessionFactory build(HibernateBundle<?> bundle,
-                                Environment environment,
-                                PooledDataSourceFactory dbConfig,
-                                List<Class<?>> entities,
-                                String name) {
+    public SessionFactory build(
+            HibernateBundle<?> bundle,
+            Environment environment,
+            PooledDataSourceFactory dbConfig,
+            List<Class<?>> entities,
+            String name) {
         final ManagedDataSource dataSource = dbConfig.build(environment.metrics(), name);
         return build(bundle, environment, dbConfig, dataSource, entities);
     }
 
-    public SessionFactory build(HibernateBundle<?> bundle,
-                                Environment environment,
-                                PooledDataSourceFactory dbConfig,
-                                ManagedDataSource dataSource,
-                                List<Class<?>> entities) {
-        final ConnectionProvider provider = buildConnectionProvider(dataSource,
-            dbConfig.getProperties());
-        final SessionFactory factory = buildSessionFactory(bundle,
-            dbConfig,
-            provider,
-            dbConfig.getProperties(),
-            entities);
+    public SessionFactory build(
+            HibernateBundle<?> bundle,
+            Environment environment,
+            PooledDataSourceFactory dbConfig,
+            ManagedDataSource dataSource,
+            List<Class<?>> entities) {
+        final ConnectionProvider provider = buildConnectionProvider(dataSource, dbConfig.getProperties());
+        final SessionFactory factory =
+                buildSessionFactory(bundle, dbConfig, provider, dbConfig.getProperties(), entities);
         final SessionFactoryManager managedFactory = new SessionFactoryManager(factory, dataSource);
         environment.lifecycle().manage(managedFactory);
         return factory;
     }
 
-    private ConnectionProvider buildConnectionProvider(DataSource dataSource,
-                                                       Map<String, String> properties) {
+    private ConnectionProvider buildConnectionProvider(DataSource dataSource, Map<String, String> properties) {
         final DatasourceConnectionProviderImpl connectionProvider = new DatasourceConnectionProviderImpl();
         connectionProvider.setDataSource(dataSource);
         connectionProvider.configure(properties);
         return connectionProvider;
     }
 
-    private SessionFactory buildSessionFactory(HibernateBundle<?> bundle,
-                                               PooledDataSourceFactory dbConfig,
-                                               ConnectionProvider connectionProvider,
-                                               Map<String, String> properties,
-                                               List<Class<?>> entities) {
+    private SessionFactory buildSessionFactory(
+            HibernateBundle<?> bundle,
+            PooledDataSourceFactory dbConfig,
+            ConnectionProvider connectionProvider,
+            Map<String, String> properties,
+            List<Class<?>> entities) {
 
-        final BootstrapServiceRegistry bootstrapServiceRegistry =
-            configureBootstrapServiceRegistryBuilder(new BootstrapServiceRegistryBuilder()).build();
+        final BootstrapServiceRegistry bootstrapServiceRegistry = configureBootstrapServiceRegistryBuilder(
+                        new BootstrapServiceRegistryBuilder())
+                .build();
 
         final Configuration configuration = new Configuration(bootstrapServiceRegistry);
         configuration.setProperty(AvailableSettings.CURRENT_SESSION_CONTEXT_CLASS, "managed");
-        configuration.setProperty(AvailableSettings.USE_SQL_COMMENTS, Boolean.toString(dbConfig.isAutoCommentsEnabled()));
+        configuration.setProperty(
+                AvailableSettings.USE_SQL_COMMENTS, Boolean.toString(dbConfig.isAutoCommentsEnabled()));
         configuration.setProperty(AvailableSettings.USE_GET_GENERATED_KEYS, "true");
         configuration.setProperty(AvailableSettings.GENERATE_STATISTICS, "true");
         configuration.setProperty(AvailableSettings.USE_REFLECTION_OPTIMIZER, "true");
@@ -93,9 +93,9 @@ public class SessionFactoryFactory {
         bundle.configure(configuration);
 
         final ServiceRegistry registry = new StandardServiceRegistryBuilder(bootstrapServiceRegistry)
-            .addService(ConnectionProvider.class, connectionProvider)
-            .applySettings(configuration.getProperties())
-            .build();
+                .addService(ConnectionProvider.class, connectionProvider)
+                .applySettings(configuration.getProperties())
+                .build();
 
         configure(configuration, registry);
 
@@ -106,12 +106,12 @@ public class SessionFactoryFactory {
         // Default implementation is a no-op
     }
 
-    protected BootstrapServiceRegistryBuilder configureBootstrapServiceRegistryBuilder(BootstrapServiceRegistryBuilder builder) {
+    protected BootstrapServiceRegistryBuilder configureBootstrapServiceRegistryBuilder(
+            BootstrapServiceRegistryBuilder builder) {
         return builder;
     }
 
-    private void addAnnotatedClasses(Configuration configuration,
-                                     Iterable<Class<?>> entities) {
+    private void addAnnotatedClasses(Configuration configuration, Iterable<Class<?>> entities) {
         final SortedSet<String> entityClasses = new TreeSet<>();
         for (Class<?> klass : entities) {
             configuration.addAnnotatedClass(klass);

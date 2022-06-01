@@ -1,10 +1,18 @@
 package io.dropwizard.request.logging.old;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.timeout;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.spi.AppenderAttachableImpl;
 import io.dropwizard.logging.common.BootstrapLogging;
+import java.util.concurrent.TimeUnit;
 import org.eclipse.jetty.http.HttpURI;
 import org.eclipse.jetty.server.HttpChannelState;
 import org.eclipse.jetty.server.Request;
@@ -14,15 +22,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
-import java.util.concurrent.TimeUnit;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.timeout;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 class DropwizardSlf4jRequestLogWriterTest {
     static {
         BootstrapLogging.bootstrap();
@@ -30,6 +29,7 @@ class DropwizardSlf4jRequestLogWriterTest {
 
     @SuppressWarnings("unchecked")
     private final Appender<ILoggingEvent> appender = mock(Appender.class);
+
     private final AppenderAttachableImpl<ILoggingEvent> appenders = new AppenderAttachableImpl<>();
     private final DropwizardSlf4jRequestLogWriter slf4jRequestLog = new DropwizardSlf4jRequestLogWriter(appenders);
 

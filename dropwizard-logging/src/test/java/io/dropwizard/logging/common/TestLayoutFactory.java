@@ -6,7 +6,6 @@ import ch.qos.logback.core.LayoutBase;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.dropwizard.logging.common.layout.DiscoverableLayoutFactory;
-
 import java.util.TimeZone;
 
 @JsonTypeName("test")

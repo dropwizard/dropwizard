@@ -1,20 +1,19 @@
 package io.dropwizard.jetty;
 
+import static java.util.Objects.requireNonNull;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.util.DataSize;
+import java.util.Set;
+import java.util.zip.Deflater;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.handler.gzip.GzipHandler;
 import org.eclipse.jetty.util.compression.CompressionPool;
 import org.eclipse.jetty.util.compression.DeflaterPool;
-
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-import java.util.Set;
-import java.util.zip.Deflater;
-
-import static java.util.Objects.requireNonNull;
 
 /**
  * Builds GZIP filters.

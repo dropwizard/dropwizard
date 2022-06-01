@@ -8,11 +8,10 @@ import io.dropwizard.health.HealthFactory;
 import io.dropwizard.logging.common.DefaultLoggingFactory;
 import io.dropwizard.logging.common.LoggingFactory;
 import io.dropwizard.metrics.common.MetricsFactory;
-import org.checkerframework.checker.nullness.qual.Nullable;
-
+import java.util.Optional;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.util.Optional;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * An object representation of the YAML configuration file. Extend this with your own configuration
@@ -177,6 +176,7 @@ public class Configuration {
 
     @Override
     public String toString() {
-        return "Configuration{server=" + server + ", logging=" + logging + ", metrics=" + metrics + ", admin=" + admin + ", health=" + health + "}";
+        return "Configuration{server=" + server + ", logging=" + logging + ", metrics=" + metrics + ", admin=" + admin
+                + ", health=" + health + "}";
     }
 }

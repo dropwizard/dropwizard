@@ -1,5 +1,13 @@
 package io.dropwizard.hibernate;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyList;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import com.codahale.metrics.health.HealthCheckRegistry;
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -10,22 +18,13 @@ import io.dropwizard.core.setup.Environment;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.anyList;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 class HibernateBundleTest {
     private final DataSourceFactory dbConfig = new DataSourceFactory();
@@ -49,12 +48,9 @@ class HibernateBundleTest {
         when(environment.jersey()).thenReturn(jerseyEnvironment);
         when(jerseyEnvironment.getResourceConfig()).thenReturn(new DropwizardResourceConfig());
 
-
-        when(factory.build(eq(bundle),
-                           any(Environment.class),
-                           any(DataSourceFactory.class),
-                           anyList(),
-                           eq("hibernate"))).thenReturn(sessionFactory);
+        when(factory.build(
+                        eq(bundle), any(Environment.class), any(DataSourceFactory.class), anyList(), eq("hibernate")))
+                .thenReturn(sessionFactory);
     }
 
     @Test
@@ -116,11 +112,13 @@ class HibernateBundleTest {
                 return "custom-hibernate";
             }
         };
-        when(factory.build(eq(customBundle),
-                any(Environment.class),
-                any(DataSourceFactory.class),
-                anyList(),
-                eq("custom-hibernate"))).thenReturn(sessionFactory);
+        when(factory.build(
+                        eq(customBundle),
+                        any(Environment.class),
+                        any(DataSourceFactory.class),
+                        anyList(),
+                        eq("custom-hibernate")))
+                .thenReturn(sessionFactory);
 
         customBundle.run(configuration, environment);
 

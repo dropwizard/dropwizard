@@ -6,7 +6,9 @@ public class Person {
     private String name = "";
     private String email = "";
 
-    public Person() { /* Jackson deserialization */ }
+    public Person() {
+        /* Jackson deserialization */
+    }
 
     public Person(String name, String email) {
         this.name = name;

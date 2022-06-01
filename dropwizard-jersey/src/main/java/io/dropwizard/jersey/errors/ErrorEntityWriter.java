@@ -1,20 +1,19 @@
 package io.dropwizard.jersey.errors;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
-import org.glassfish.jersey.message.MessageBodyWorkers;
+import static java.util.Objects.requireNonNull;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.ext.MessageBodyWriter;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Type;
-
-import static java.util.Objects.requireNonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.glassfish.jersey.message.MessageBodyWorkers;
 
 /**
  * This class allows producing non-JSON responses for particular entities. For example, register a instance with the
@@ -45,23 +44,31 @@ public abstract class ErrorEntityWriter<T, U> implements MessageBodyWriter<T> {
     }
 
     @Override
-    public void writeTo(T entity,
-                        Class<?> type,
-                        Type genericType,
-                        Annotation[] annotations,
-                        MediaType mediaType,
-                        MultivaluedMap<String, Object> responseHeaders,
-                        OutputStream entityStream)
-        throws IOException, WebApplicationException {
+    public void writeTo(
+            T entity,
+            Class<?> type,
+            Type genericType,
+            Annotation[] annotations,
+            MediaType mediaType,
+            MultivaluedMap<String, Object> responseHeaders,
+            OutputStream entityStream)
+            throws IOException, WebApplicationException {
 
-        final MessageBodyWriter<U> writer = requireNonNull(mbw).get().getMessageBodyWriter(representation,
-            representation, annotations, contentType);
+        final MessageBodyWriter<U> writer = requireNonNull(mbw)
+                .get()
+                .getMessageBodyWriter(representation, representation, annotations, contentType);
 
         // Fix the headers, because Dropwizard error mappers always set the content type to APPLICATION_JSON
         responseHeaders.putSingle(HttpHeaders.CONTENT_TYPE, contentType);
 
-        writer.writeTo(getRepresentation(entity), representation, representation, annotations,
-            contentType, responseHeaders, entityStream);
+        writer.writeTo(
+                getRepresentation(entity),
+                representation,
+                representation,
+                annotations,
+                contentType,
+                responseHeaders,
+                entityStream);
     }
 
     protected abstract U getRepresentation(T entity);

@@ -2,13 +2,12 @@ package io.dropwizard.testing.junit5;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.testing.common.Resource;
-import org.glassfish.jersey.client.ClientConfig;
-import org.glassfish.jersey.test.JerseyTest;
-
+import java.util.function.Consumer;
 import javax.validation.Validator;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
-import java.util.function.Consumer;
+import org.glassfish.jersey.client.ClientConfig;
+import org.glassfish.jersey.test.JerseyTest;
 
 /**
  * An extension for testing Jersey resources.

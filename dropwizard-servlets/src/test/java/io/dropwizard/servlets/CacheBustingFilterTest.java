@@ -1,18 +1,17 @@
 package io.dropwizard.servlets;
 
-import org.junit.jupiter.api.Test;
-import org.mockito.InOrder;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import static org.mockito.Mockito.inOrder;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
+import org.junit.jupiter.api.Test;
+import org.mockito.InOrder;
 
 class CacheBustingFilterTest {
     private final HttpServletRequest request = mock(HttpServletRequest.class);

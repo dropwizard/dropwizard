@@ -8,6 +8,15 @@ import io.dropwizard.jetty.ConnectorFactory;
 import io.dropwizard.jetty.HttpConnectorFactory;
 import io.dropwizard.jetty.RoutingHandler;
 import io.dropwizard.metrics.jetty10.InstrumentedQueuedThreadPool;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
@@ -16,16 +25,6 @@ import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.util.thread.ThreadPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.validation.Valid;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * The default implementation of {@link ServerFactory}, which allows for multiple sets of
@@ -72,7 +71,8 @@ public class DefaultServerFactory extends AbstractServerFactory {
 
     @Valid
     @NotNull
-    private List<ConnectorFactory> applicationConnectors = Collections.singletonList(HttpConnectorFactory.application());
+    private List<ConnectorFactory> applicationConnectors =
+            Collections.singletonList(HttpConnectorFactory.application());
 
     @Valid
     @NotNull
@@ -155,24 +155,23 @@ public class DefaultServerFactory extends AbstractServerFactory {
         printBanner(environment.getName());
         final ThreadPool threadPool = createThreadPool(environment.metrics());
         final Server server = buildServer(environment.lifecycle(), threadPool);
-        final Handler applicationHandler = createAppServlet(server,
-                                                            environment.jersey(),
-                                                            environment.getObjectMapper(),
-                                                            environment.getValidator(),
-                                                            environment.getApplicationContext(),
-                                                            environment.getJerseyServletContainer(),
-                                                            environment.metrics());
+        final Handler applicationHandler = createAppServlet(
+                server,
+                environment.jersey(),
+                environment.getObjectMapper(),
+                environment.getValidator(),
+                environment.getApplicationContext(),
+                environment.getJerseyServletContainer(),
+                environment.metrics());
 
-
-        final Handler adminHandler = createAdminServlet(server,
-                                                        environment.getAdminContext(),
-                                                        environment.metrics(),
-                                                        environment.healthChecks(),
-                                                        environment.admin());
-        final RoutingHandler routingHandler = buildRoutingHandler(environment.metrics(),
-                                                                  server,
-                                                                  applicationHandler,
-                                                                  adminHandler);
+        final Handler adminHandler = createAdminServlet(
+                server,
+                environment.getAdminContext(),
+                environment.metrics(),
+                environment.healthChecks(),
+                environment.admin());
+        final RoutingHandler routingHandler =
+                buildRoutingHandler(environment.metrics(), server, applicationHandler, adminHandler);
         final Handler gzipHandler = buildGzipHandler(routingHandler);
         server.setHandler(addStatsHandler(addRequestLog(server, gzipHandler, environment.getName())));
         return server;
@@ -187,10 +186,8 @@ public class DefaultServerFactory extends AbstractServerFactory {
         environment.getAdminContext().setContextPath(adminContextPath);
     }
 
-    private RoutingHandler buildRoutingHandler(MetricRegistry metricRegistry,
-                                               Server server,
-                                               Handler applicationHandler,
-                                               Handler adminHandler) {
+    private RoutingHandler buildRoutingHandler(
+            MetricRegistry metricRegistry, Server server, Handler applicationHandler, Handler adminHandler) {
         final List<Connector> appConnectors = buildAppConnectors(metricRegistry, server);
 
         final List<Connector> adConnectors = buildAdminConnectors(metricRegistry, server);
@@ -213,7 +210,8 @@ public class DefaultServerFactory extends AbstractServerFactory {
     private List<Connector> buildAdminConnectors(MetricRegistry metricRegistry, Server server) {
         // threadpool is shared between all the connectors, so it should be managed by the server instead of the
         // individual connectors
-        final QueuedThreadPool threadPool = new InstrumentedQueuedThreadPool(metricRegistry, adminMaxThreads, adminMinThreads);
+        final QueuedThreadPool threadPool =
+                new InstrumentedQueuedThreadPool(metricRegistry, adminMaxThreads, adminMinThreads);
         threadPool.setName("dw-admin");
         server.addBean(threadPool);
 
@@ -238,13 +236,12 @@ public class DefaultServerFactory extends AbstractServerFactory {
 
     @Override
     public String toString() {
-        return "DefaultServerFactory{" +
-                "applicationConnectors=" + applicationConnectors +
-                ", adminConnectors=" + adminConnectors +
-                ", adminMaxThreads=" + adminMaxThreads +
-                ", adminMinThreads=" + adminMinThreads +
-                ", applicationContextPath='" + applicationContextPath + '\'' +
-                ", adminContextPath='" + adminContextPath + '\'' +
-                '}';
+        return "DefaultServerFactory{" + "applicationConnectors="
+                + applicationConnectors + ", adminConnectors="
+                + adminConnectors + ", adminMaxThreads="
+                + adminMaxThreads + ", adminMinThreads="
+                + adminMinThreads + ", applicationContextPath='"
+                + applicationContextPath + '\'' + ", adminContextPath='"
+                + adminContextPath + '\'' + '}';
     }
 }

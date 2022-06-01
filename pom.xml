@@ -8,11 +8,141 @@
     <packaging>pom</packaging>
 
     <name>Dropwizard Project</name>
+    <description>Dropwizard is a Java framework for developing ops-friendly, high-performance, RESTful web
+        applications.</description>
     <url>${dropwizard.url}</url>
-    <description>
-        Dropwizard is a Java framework for developing ops-friendly, high-performance, RESTful web
-        applications.
-    </description>
+
+    <licenses>
+        <license>
+            <name>Apache License 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Coda Hale</name>
+            <email>coda.hale@gmail.com</email>
+            <roles>
+                <role>architect</role>
+            </roles>
+            <timezone>America/Los_Angeles</timezone>
+        </developer>
+        <developer>
+            <name>Nick Telford</name>
+            <email>nick.telford@gmail.com</email>
+            <roles>
+                <role>committer</role>
+            </roles>
+            <timezone>Europe/London</timezone>
+        </developer>
+        <developer>
+            <name>Graham O'Regan</name>
+            <email>graham.oregan@ellisonbrookes.com</email>
+            <roles>
+                <role>committer</role>
+            </roles>
+            <timezone>Europe/London</timezone>
+        </developer>
+        <developer>
+            <name>Ryan Kennedy</name>
+            <email>rckenned@gmail.com</email>
+            <roles>
+                <role>committer</role>
+            </roles>
+            <timezone>America/Los_Angeles</timezone>
+        </developer>
+        <developer>
+            <name>Camille Fournier</name>
+            <email>camille@apache.org</email>
+            <roles>
+                <role>committer</role>
+            </roles>
+            <timezone>America/New_York</timezone>
+        </developer>
+        <developer>
+            <name>Carlo Barbara</name>
+            <email>carlo.barbara@gmail.com</email>
+            <roles>
+                <role>committer</role>
+            </roles>
+            <timezone>America/New_York</timezone>
+        </developer>
+        <developer>
+            <name>Matt Veitas</name>
+            <email>mveitas@gmail.com</email>
+            <roles>
+                <role>committer</role>
+            </roles>
+            <timezone>America/New_York</timezone>
+        </developer>
+        <developer>
+            <name>Ryan Tenney</name>
+            <email>ryan@10e.us</email>
+            <roles>
+                <role>committer</role>
+            </roles>
+            <timezone>America/New_York</timezone>
+        </developer>
+        <developer>
+            <name>Jochen Schalanda</name>
+            <email>jochen@schalanda.name</email>
+            <roles>
+                <role>committer</role>
+            </roles>
+            <timezone>Europe/Berlin</timezone>
+        </developer>
+        <developer>
+            <name>Glenn McAllister</name>
+            <email>glenn.mcallister@gmail.com</email>
+            <roles>
+                <role>committer</role>
+            </roles>
+            <timezone>America/Toronto</timezone>
+        </developer>
+        <developer>
+            <name>Nick Babcock</name>
+            <email>nbabcock19@hotmail.com</email>
+            <roles>
+                <role>committer</role>
+            </roles>
+            <timezone>America/New_York</timezone>
+        </developer>
+        <developer>
+            <name>Justin Plock</name>
+            <email>jplock@gmail.com</email>
+            <roles>
+                <role>committer</role>
+            </roles>
+            <timezone>America/New_York</timezone>
+        </developer>
+        <developer>
+            <name>Artem Prigoda</name>
+            <email>prigoda.artem@ya.ru</email>
+            <roles>
+                <role>committer</role>
+            </roles>
+            <timezone>Europe/Berlin</timezone>
+        </developer>
+    </developers>
+
+    <mailingLists>
+        <mailingList>
+            <name>dropwizard-user</name>
+            <subscribe>dropwizard-user+subscribe@googlegroups.com</subscribe>
+            <unsubscribe>dropwizard-user+unsubscribe@googlegroups.com</unsubscribe>
+            <post>dropwizard-user@googlegroups.com</post>
+            <archive>https://groups.google.com/forum/#!forum/dropwizard-user</archive>
+        </mailingList>
+        <mailingList>
+            <name>dropwizard-dev</name>
+            <subscribe>dropwizard-dev+subscribe@googlegroups.com</subscribe>
+            <unsubscribe>dropwizard-dev+unsubscribe@googlegroups.com</unsubscribe>
+            <post>dropwizard-dev@googlegroups.com</post>
+            <archive>https://groups.google.com/forum/#!forum/dropwizard-dev</archive>
+        </mailingList>
+    </mailingLists>
 
     <modules>
         <module>dropwizard-bom</module>
@@ -53,6 +183,41 @@
         <module>docs/source/examples</module>
     </modules>
 
+    <scm>
+        <connection>scm:git:https://github.com/dropwizard/dropwizard</connection>
+        <developerConnection>scm:git:git@github.com:dropwizard/dropwizard.git</developerConnection>
+        <tag>HEAD</tag>
+        <url>https://github.com/dropwizard/dropwizard</url>
+    </scm>
+
+    <issueManagement>
+        <system>GitHub</system>
+        <url>https://github.com/dropwizard/dropwizard/issues</url>
+    </issueManagement>
+
+    <ciManagement>
+        <system>Travis CI</system>
+        <url>https://travis-ci.org/dropwizard/dropwizard</url>
+    </ciManagement>
+
+    <distributionManagement>
+        <repository>
+            <id>ossrh</id>
+            <name>Nexus Release Repository</name>
+            <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <name>Sonatype Nexus Snapshots</name>
+            <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <site>
+            <id>dropwizard-site</id>
+            <name>Dropwizard</name>
+            <url>https://dropwizard.io/</url>
+        </site>
+    </distributionManagement>
+
     <properties>
         <dropwizard.url>http://www.dropwizard.io/${project.version}</dropwizard.url>
 
@@ -89,274 +254,19 @@
         <sonar.moduleKey>${project.groupId}:${project.artifactId}</sonar.moduleKey>
     </properties>
 
-    <developers>
-        <developer>
-            <name>Coda Hale</name>
-            <email>coda.hale@gmail.com</email>
-            <timezone>America/Los_Angeles</timezone>
-            <roles>
-                <role>architect</role>
-            </roles>
-        </developer>
-        <developer>
-            <name>Nick Telford</name>
-            <email>nick.telford@gmail.com</email>
-            <timezone>Europe/London</timezone>
-            <roles>
-                <role>committer</role>
-            </roles>
-        </developer>
-        <developer>
-            <name>Graham O'Regan</name>
-            <email>graham.oregan@ellisonbrookes.com</email>
-            <timezone>Europe/London</timezone>
-            <roles>
-                <role>committer</role>
-            </roles>
-        </developer>
-        <developer>
-            <name>Ryan Kennedy</name>
-            <email>rckenned@gmail.com</email>
-            <timezone>America/Los_Angeles</timezone>
-            <roles>
-                <role>committer</role>
-            </roles>
-        </developer>
-        <developer>
-            <name>Camille Fournier</name>
-            <email>camille@apache.org</email>
-            <timezone>America/New_York</timezone>
-            <roles>
-                <role>committer</role>
-            </roles>
-        </developer>
-        <developer>
-            <name>Carlo Barbara</name>
-            <email>carlo.barbara@gmail.com</email>
-            <timezone>America/New_York</timezone>
-            <roles>
-                <role>committer</role>
-            </roles>
-        </developer>
-        <developer>
-            <name>Matt Veitas</name>
-            <email>mveitas@gmail.com</email>
-            <timezone>America/New_York</timezone>
-            <roles>
-                <role>committer</role>
-            </roles>
-        </developer>
-        <developer>
-            <name>Ryan Tenney</name>
-            <email>ryan@10e.us</email>
-            <timezone>America/New_York</timezone>
-            <roles>
-                <role>committer</role>
-            </roles>
-        </developer>
-        <developer>
-            <name>Jochen Schalanda</name>
-            <email>jochen@schalanda.name</email>
-            <timezone>Europe/Berlin</timezone>
-            <roles>
-                <role>committer</role>
-            </roles>
-        </developer>
-        <developer>
-            <name>Glenn McAllister</name>
-            <email>glenn.mcallister@gmail.com</email>
-            <timezone>America/Toronto</timezone>
-            <roles>
-                <role>committer</role>
-            </roles>
-        </developer>
-        <developer>
-            <name>Nick Babcock</name>
-            <email>nbabcock19@hotmail.com</email>
-            <timezone>America/New_York</timezone>
-            <roles>
-                <role>committer</role>
-            </roles>
-        </developer>
-        <developer>
-            <name>Justin Plock</name>
-            <email>jplock@gmail.com</email>
-            <timezone>America/New_York</timezone>
-            <roles>
-                <role>committer</role>
-            </roles>
-        </developer>
-        <developer>
-            <name>Artem Prigoda</name>
-            <email>prigoda.artem@ya.ru</email>
-            <timezone>Europe/Berlin</timezone>
-            <roles>
-                <role>committer</role>
-            </roles>
-        </developer>
-    </developers>
-
-    <licenses>
-        <license>
-            <name>Apache License 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
-
-    <scm>
-        <connection>scm:git:https://github.com/dropwizard/dropwizard</connection>
-        <developerConnection>scm:git:git@github.com:dropwizard/dropwizard.git</developerConnection>
-        <url>https://github.com/dropwizard/dropwizard</url>
-        <tag>HEAD</tag>
-  </scm>
-
-    <issueManagement>
-        <system>GitHub</system>
-        <url>https://github.com/dropwizard/dropwizard/issues</url>
-    </issueManagement>
-
-    <ciManagement>
-        <system>Travis CI</system>
-        <url>https://travis-ci.org/dropwizard/dropwizard</url>
-    </ciManagement>
-
-    <mailingLists>
-        <mailingList>
-            <name>dropwizard-user</name>
-            <subscribe>dropwizard-user+subscribe@googlegroups.com</subscribe>
-            <unsubscribe>dropwizard-user+unsubscribe@googlegroups.com</unsubscribe>
-            <post>dropwizard-user@googlegroups.com</post>
-            <archive>https://groups.google.com/forum/#!forum/dropwizard-user</archive>
-        </mailingList>
-        <mailingList>
-            <name>dropwizard-dev</name>
-            <subscribe>dropwizard-dev+subscribe@googlegroups.com</subscribe>
-            <unsubscribe>dropwizard-dev+unsubscribe@googlegroups.com</unsubscribe>
-            <post>dropwizard-dev@googlegroups.com</post>
-            <archive>https://groups.google.com/forum/#!forum/dropwizard-dev</archive>
-        </mailingList>
-    </mailingLists>
-
     <repositories>
         <repository>
-            <id>ossrh</id>
-            <name>Sonatype Nexus Snapshots</name>
-            <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
             <releases>
                 <enabled>false</enabled>
             </releases>
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>
-        </repository>
-    </repositories>
-
-    <distributionManagement>
-        <snapshotRepository>
             <id>ossrh</id>
             <name>Sonatype Nexus Snapshots</name>
             <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-        <repository>
-            <id>ossrh</id>
-            <name>Nexus Release Repository</name>
-            <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
-        <site>
-            <id>dropwizard-site</id>
-            <name>Dropwizard</name>
-            <url>https://dropwizard.io/</url>
-        </site>
-    </distributionManagement>
-
-    <profiles>
-        <profile>
-            <id>all-modules</id>
-            <activation>
-                <property>
-                    <name>!performRelease</name>
-                </property>
-            </activation>
-            <modules>
-                <module>docs</module>
-                <module>dropwizard-example</module>
-                <module>dropwizard-e2e</module>
-                <module>dropwizard-benchmarks</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>release</id>
-            <activation>
-                <property>
-                    <name>performRelease</name>
-                    <value>true</value>
-                </property>
-            </activation>
-            <properties>
-                <gpg.keyname>EDA86E9FB607B5FC9223FB767D4868B53E31E7AD</gpg.keyname>
-            </properties>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-javadoc-plugin</artifactId>
-                        <configuration>
-                            <doclint>none</doclint>
-                            <quiet>true</quiet>
-                            <notimestamp>true</notimestamp>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>attach-aggregate-javadocs</id>
-                                <inherited>false</inherited>
-                                <goals>
-                                    <goal>aggregate-jar</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-gpg-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>sign-artifacts</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>sign</goal>
-                                </goals>
-                                <configuration>
-                                    <gpgArguments>
-                                        <arg>--pinentry-mode</arg>
-                                        <arg>loopback</arg>
-                                    </gpgArguments>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.sonatype.plugins</groupId>
-                        <artifactId>nexus-staging-maven-plugin</artifactId>
-                        <configuration>
-                            <serverId>ossrh</serverId>
-                            <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
-                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>nexus-deploy</id>
-                                <phase>deploy</phase>
-                                <goals>
-                                    <goal>deploy</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
+    </repositories>
 
     <build>
         <pluginManagement>
@@ -563,4 +473,92 @@
             </plugin>
         </plugins>
     </reporting>
+
+    <profiles>
+        <profile>
+            <id>all-modules</id>
+            <activation>
+                <property>
+                    <name>!performRelease</name>
+                </property>
+            </activation>
+            <modules>
+                <module>docs</module>
+                <module>dropwizard-example</module>
+                <module>dropwizard-e2e</module>
+                <module>dropwizard-benchmarks</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>release</id>
+            <activation>
+                <property>
+                    <name>performRelease</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <properties>
+                <gpg.keyname>EDA86E9FB607B5FC9223FB767D4868B53E31E7AD</gpg.keyname>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <configuration>
+                            <doclint>none</doclint>
+                            <quiet>true</quiet>
+                            <notimestamp>true</notimestamp>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>attach-aggregate-javadocs</id>
+                                <goals>
+                                    <goal>aggregate-jar</goal>
+                                </goals>
+                                <inherited>false</inherited>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                                <phase>verify</phase>
+                                <configuration>
+                                    <gpgArguments>
+                                        <arg>--pinentry-mode</arg>
+                                        <arg>loopback</arg>
+                                    </gpgArguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                        <configuration>
+                            <serverId>ossrh</serverId>
+                            <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
+                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>nexus-deploy</id>
+                                <goals>
+                                    <goal>deploy</goal>
+                                </goals>
+                                <phase>deploy</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

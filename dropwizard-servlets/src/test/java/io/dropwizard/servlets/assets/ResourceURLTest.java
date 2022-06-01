@@ -1,17 +1,16 @@
 package io.dropwizard.servlets.assets;
 
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.io.File;
 import java.net.JarURLConnection;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.jar.JarEntry;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 class ResourceURLTest {
     private final URL resourceJar = getClass().getResource("/resources.jar");
@@ -111,30 +110,24 @@ class ResourceURLTest {
     void isDirectoryThrowsResourceNotFoundExceptionForMissingDirectories() throws Exception {
         final URL url = getClass().getResource("/META-INF/");
         final URL nurl = new URL(url.toExternalForm() + "missing");
-        assertThatExceptionOfType(ResourceNotFoundException.class)
-            .isThrownBy(() -> ResourceURL.isDirectory(nurl));
+        assertThatExceptionOfType(ResourceNotFoundException.class).isThrownBy(() -> ResourceURL.isDirectory(nurl));
     }
 
     @Test
     void appendTrailingSlashAddsASlash() {
         final URL url = getClass().getResource("/META-INF");
 
-        assertThat(url.toExternalForm())
-                .doesNotMatch(".*/$");
-        assertThat(ResourceURL.appendTrailingSlash(url).toExternalForm())
-                .endsWith("/");
+        assertThat(url.toExternalForm()).doesNotMatch(".*/$");
+        assertThat(ResourceURL.appendTrailingSlash(url).toExternalForm()).endsWith("/");
     }
 
     @Test
     void appendTrailingSlashDoesntASlashWhenOneIsAlreadyPresent() {
         final URL url = getClass().getResource("/META-INF/");
 
-        assertThat(url.toExternalForm())
-                .endsWith("/");
-        assertThat(ResourceURL.appendTrailingSlash(url).toExternalForm())
-                .doesNotMatch(".*//$");
-        assertThat(url)
-                .isEqualTo(ResourceURL.appendTrailingSlash(url));
+        assertThat(url.toExternalForm()).endsWith("/");
+        assertThat(ResourceURL.appendTrailingSlash(url).toExternalForm()).doesNotMatch(".*//$");
+        assertThat(url).isEqualTo(ResourceURL.appendTrailingSlash(url));
     }
 
     @Test
@@ -142,9 +135,7 @@ class ResourceURLTest {
         final URL url = tempDir.toUri().toURL();
         final long lastModified = ResourceURL.getLastModified(url);
 
-        assertThat(lastModified)
-                .isPositive()
-                .isEqualTo(tempDir.toFile().lastModified());
+        assertThat(lastModified).isPositive().isEqualTo(tempDir.toFile().lastModified());
     }
 
     @Test
@@ -155,9 +146,7 @@ class ResourceURLTest {
         final JarURLConnection jarConnection = (JarURLConnection) url.openConnection();
         final JarEntry entry = jarConnection.getJarEntry();
 
-        assertThat(lastModified)
-                .isPositive()
-                .isEqualTo(entry.getTime());
+        assertThat(lastModified).isPositive().isEqualTo(entry.getTime());
     }
 
     @Test
@@ -165,7 +154,6 @@ class ResourceURLTest {
         final URL url = new URL("file:/some/path/that/doesnt/exist");
         final long lastModified = ResourceURL.getLastModified(url);
 
-        assertThat(lastModified)
-                .isZero();
+        assertThat(lastModified).isZero();
     }
 }

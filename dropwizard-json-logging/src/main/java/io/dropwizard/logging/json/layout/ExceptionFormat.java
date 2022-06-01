@@ -1,7 +1,6 @@
 package io.dropwizard.logging.json.layout;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.Collections;
 import java.util.List;
 

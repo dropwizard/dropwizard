@@ -1,7 +1,7 @@
 # Dropwizard Archetypes
 
 How to create project using dropwizard archetype (interactive mode)
----
+-------------------------------------------------------------------
 
 ```
 mvn archetype:generate \

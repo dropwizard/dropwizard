@@ -1,5 +1,7 @@
 package io.dropwizard.configuration;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.TreeNode;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -8,19 +10,18 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.fasterxml.jackson.databind.node.TextNode;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.validation.BaseValidator;
+import java.io.IOException;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.junit.jupiter.api.Test;
-
-import java.io.IOException;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @SuppressWarnings("NullAway")
 class Issue3796Test {
     @Test
     void configurationWithCustomDeserializerCanBeRead() throws IOException, ConfigurationException {
-        final ConfigurationFactory<CustomConfiguration> factory = new YamlConfigurationFactory<>(CustomConfiguration.class, BaseValidator.newValidator(), Jackson.newObjectMapper(), "dw");
-        final CustomConfiguration testObject = factory.build(new ResourceConfigurationSourceProvider(), "issue-3796.yml");
+        final ConfigurationFactory<CustomConfiguration> factory = new YamlConfigurationFactory<>(
+                CustomConfiguration.class, BaseValidator.newValidator(), Jackson.newObjectMapper(), "dw");
+        final CustomConfiguration testObject =
+                factory.build(new ResourceConfigurationSourceProvider(), "issue-3796.yml");
 
         assertThat(testObject).isNotNull();
         assertThat(testObject.customProperty).isNotNull();

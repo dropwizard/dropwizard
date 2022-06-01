@@ -1,16 +1,15 @@
 package io.dropwizard.jdbi3;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.util.UUID;
 import org.jdbi.v3.core.extension.ExtensionMethod;
 import org.jdbi.v3.core.statement.StatementContext;
 import org.jdbi.v3.core.statement.TemplateEngine;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.UUID;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 class NamePrependingTemplateEngineTest {
     private static final String TEMPLATE = UUID.randomUUID().toString();
@@ -50,12 +49,11 @@ class NamePrependingTemplateEngineTest {
 
         final String result = sut.render(TEMPLATE, ctx);
 
-        assertThat(result).isEqualTo(
-            "/* " +
-            extensionMethod.getType().getSimpleName() +
-            "." +
-            extensionMethod.getMethod().getName() +
-            " */ " +
-            ORIGINAL_RENDERED);
+        assertThat(result)
+                .isEqualTo("/* " + extensionMethod.getType().getSimpleName()
+                        + "."
+                        + extensionMethod.getMethod().getName()
+                        + " */ "
+                        + ORIGINAL_RENDERED);
     }
 }

@@ -1,11 +1,11 @@
 package io.dropwizard.health.check.http;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
-
 import java.util.Objects;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class HttpHealthResponse {
     private final int status;
+
     @NonNull
     private final String body;
 
@@ -32,8 +32,7 @@ public class HttpHealthResponse {
             return false;
         }
         final HttpHealthResponse that = (HttpHealthResponse) other;
-        return status == that.status
-            && Objects.equals(body, that.body);
+        return status == that.status && Objects.equals(body, that.body);
     }
 
     @Override

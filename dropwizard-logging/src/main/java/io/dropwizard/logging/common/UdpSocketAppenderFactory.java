@@ -7,7 +7,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.dropwizard.logging.common.socket.DropwizardUdpSocketAppender;
 import io.dropwizard.validation.PortRange;
-
 import javax.validation.constraints.NotEmpty;
 
 /**
@@ -33,7 +32,8 @@ import javax.validation.constraints.NotEmpty;
  * </table>
  */
 @JsonTypeName("udp")
-public class UdpSocketAppenderFactory<E extends DeferredProcessingAware> extends AbstractOutputStreamAppenderFactory<E> {
+public class UdpSocketAppenderFactory<E extends DeferredProcessingAware>
+        extends AbstractOutputStreamAppenderFactory<E> {
 
     @NotEmpty
     private String host = "localhost";

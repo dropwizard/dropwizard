@@ -1,12 +1,11 @@
 package io.dropwizard.jersey.params;
 
-import io.dropwizard.jersey.errors.ErrorMessage;
-import org.junit.jupiter.api.Test;
-
-import javax.ws.rs.WebApplicationException;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+
+import io.dropwizard.jersey.errors.ErrorMessage;
+import javax.ws.rs.WebApplicationException;
+import org.junit.jupiter.api.Test;
 
 class IntParamTest {
     @Test
@@ -17,40 +16,36 @@ class IntParamTest {
     @Test
     void nullThrowsAnException() {
         assertThatExceptionOfType(WebApplicationException.class)
-            .isThrownBy(() -> new IntParam(null))
-            .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(400))
-            .satisfies(e -> assertThat(e.getResponse().getEntity()).isEqualTo(
-                new ErrorMessage(400, "Parameter is not a number.")
-            ));
+                .isThrownBy(() -> new IntParam(null))
+                .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(400))
+                .satisfies(e -> assertThat(e.getResponse().getEntity())
+                        .isEqualTo(new ErrorMessage(400, "Parameter is not a number.")));
     }
 
     @Test
     void emptyStringThrowsAnException() {
         assertThatExceptionOfType(WebApplicationException.class)
-            .isThrownBy(() -> new IntParam(""))
-            .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(400))
-            .satisfies(e -> assertThat(e.getResponse().getEntity()).isEqualTo(
-                new ErrorMessage(400, "Parameter is not a number.")
-            ));
+                .isThrownBy(() -> new IntParam(""))
+                .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(400))
+                .satisfies(e -> assertThat(e.getResponse().getEntity())
+                        .isEqualTo(new ErrorMessage(400, "Parameter is not a number.")));
     }
 
     @Test
     void aNonIntegerThrowsAnException() {
         assertThatExceptionOfType(WebApplicationException.class)
-            .isThrownBy(() -> new IntParam("foo"))
-            .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(400))
-            .satisfies(e -> assertThat(e.getResponse().getEntity()).isEqualTo(
-                new ErrorMessage(400, "Parameter is not a number.")
-            ));
+                .isThrownBy(() -> new IntParam("foo"))
+                .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(400))
+                .satisfies(e -> assertThat(e.getResponse().getEntity())
+                        .isEqualTo(new ErrorMessage(400, "Parameter is not a number.")));
     }
 
     @Test
     void aNonIntegerThrowsAnExceptionWithCustomName() {
         assertThatExceptionOfType(WebApplicationException.class)
-            .isThrownBy(() -> new IntParam("foo", "customName"))
-            .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(400))
-            .satisfies(e -> assertThat(e.getResponse().getEntity()).isEqualTo(
-                new ErrorMessage(400, "customName is not a number.")
-            ));
+                .isThrownBy(() -> new IntParam("foo", "customName"))
+                .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(400))
+                .satisfies(e -> assertThat(e.getResponse().getEntity())
+                        .isEqualTo(new ErrorMessage(400, "customName is not a number.")));
     }
 }

@@ -1,8 +1,8 @@
 package io.dropwizard.jersey.optional;
 
+import java.util.Optional;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
-import java.util.Optional;
 
 /**
  * Returns a 204 for {@link Optional#empty()}

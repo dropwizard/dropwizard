@@ -1,10 +1,9 @@
 package io.dropwizard.views.common;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.checkerframework.checker.nullness.qual.Nullable;
-
 import java.nio.charset.Charset;
 import java.util.Optional;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * A Dropwizard view class.

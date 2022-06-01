@@ -2,7 +2,6 @@ package io.dropwizard.documentation.config;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.core.Configuration;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 

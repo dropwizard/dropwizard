@@ -2,23 +2,28 @@ package io.dropwizard.migrations;
 
 import io.dropwizard.core.Configuration;
 import io.dropwizard.db.DatabaseConfiguration;
-import liquibase.Liquibase;
-import net.sourceforge.argparse4j.impl.Arguments;
-import net.sourceforge.argparse4j.inf.Namespace;
-import net.sourceforge.argparse4j.inf.Subparser;
-
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.stream.Collectors;
+import liquibase.Liquibase;
+import net.sourceforge.argparse4j.impl.Arguments;
+import net.sourceforge.argparse4j.inf.Namespace;
+import net.sourceforge.argparse4j.inf.Subparser;
 
 public class DbPrepareRollbackCommand<T extends Configuration> extends AbstractLiquibaseCommand<T> {
 
     private PrintStream outputStream = System.out;
 
-    public DbPrepareRollbackCommand(DatabaseConfiguration<T> strategy, Class<T> configurationClass, String migrationsFileName) {
-        super("prepare-rollback", "Generate rollback DDL scripts for pending change sets.", strategy, configurationClass, migrationsFileName);
+    public DbPrepareRollbackCommand(
+            DatabaseConfiguration<T> strategy, Class<T> configurationClass, String migrationsFileName) {
+        super(
+                "prepare-rollback",
+                "Generate rollback DDL scripts for pending change sets.",
+                strategy,
+                configurationClass,
+                migrationsFileName);
     }
 
     void setOutputStream(PrintStream outputStream) {
@@ -29,15 +34,17 @@ public class DbPrepareRollbackCommand<T extends Configuration> extends AbstractL
     public void configure(Subparser subparser) {
         super.configure(subparser);
 
-        subparser.addArgument("-c", "--count")
-                 .dest("count")
-                 .type(Integer.class)
-                 .help("limit script to the specified number of pending change sets");
+        subparser
+                .addArgument("-c", "--count")
+                .dest("count")
+                .type(Integer.class)
+                .help("limit script to the specified number of pending change sets");
 
-        subparser.addArgument("-i", "--include")
-                 .action(Arguments.append())
-                 .dest("contexts")
-                 .help("include change sets from the given context");
+        subparser
+                .addArgument("-i", "--include")
+                .action(Arguments.append())
+                .dest("contexts")
+                .help("include change sets from the given context");
     }
 
     @Override
@@ -56,8 +63,6 @@ public class DbPrepareRollbackCommand<T extends Configuration> extends AbstractL
         if (contexts == null) {
             return "";
         }
-        return contexts.stream()
-                .map(Object::toString)
-                .collect(Collectors.joining(","));
+        return contexts.stream().map(Object::toString).collect(Collectors.joining(","));
     }
 }

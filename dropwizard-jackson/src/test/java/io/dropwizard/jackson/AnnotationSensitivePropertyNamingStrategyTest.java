@@ -1,5 +1,8 @@
 package io.dropwizard.jackson;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
@@ -9,16 +12,13 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-
 class AnnotationSensitivePropertyNamingStrategyTest {
     public static class RegularExample {
         @JsonProperty
         @Nullable
         String firstName;
 
-        @SuppressWarnings({ "UnusedDeclaration", "unused" }) // Jackson
+        @SuppressWarnings({"UnusedDeclaration", "unused"}) // Jackson
         private RegularExample() {}
 
         public RegularExample(String firstName) {
@@ -32,7 +32,7 @@ class AnnotationSensitivePropertyNamingStrategyTest {
         @Nullable
         String firstName;
 
-        @SuppressWarnings({ "UnusedDeclaration", "unused" }) // Jackson
+        @SuppressWarnings({"UnusedDeclaration", "unused"}) // Jackson
         private SnakeCaseExample() {}
 
         public SnakeCaseExample(String firstName) {
@@ -50,14 +50,12 @@ class AnnotationSensitivePropertyNamingStrategyTest {
 
     @Test
     void serializesRegularProperties() throws Exception {
-        assertThat(mapper.writeValueAsString(new RegularExample("woo")))
-                .isEqualTo("{\"firstName\":\"woo\"}");
+        assertThat(mapper.writeValueAsString(new RegularExample("woo"))).isEqualTo("{\"firstName\":\"woo\"}");
     }
 
     @Test
     void serializesSnakeCaseProperties() throws Exception {
-        assertThat(mapper.writeValueAsString(new SnakeCaseExample("woo")))
-                .isEqualTo("{\"first_name\":\"woo\"}");
+        assertThat(mapper.writeValueAsString(new SnakeCaseExample("woo"))).isEqualTo("{\"first_name\":\"woo\"}");
     }
 
     @Test

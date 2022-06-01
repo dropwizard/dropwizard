@@ -19,9 +19,8 @@ public class AnnotationSensitivePropertyNamingStrategy extends PropertyNamingStr
     private final PropertyNamingStrategy snakeCase = new PropertyNamingStrategies.SnakeCaseStrategy();
 
     @Override
-    public String nameForConstructorParameter(MapperConfig<?> config,
-                                              AnnotatedParameter ctorParam,
-                                              String defaultName) {
+    public String nameForConstructorParameter(
+            MapperConfig<?> config, AnnotatedParameter ctorParam, String defaultName) {
         if (ctorParam == null) {
             return defaultName;
         } else if (ctorParam.getDeclaringClass().isAnnotationPresent(JsonSnakeCase.class)) {
@@ -31,9 +30,7 @@ public class AnnotationSensitivePropertyNamingStrategy extends PropertyNamingStr
     }
 
     @Override
-    public String nameForField(MapperConfig<?> config,
-                               AnnotatedField field,
-                               String defaultName) {
+    public String nameForField(MapperConfig<?> config, AnnotatedField field, String defaultName) {
         if (field == null) {
             return defaultName;
         } else if (field.getDeclaringClass().isAnnotationPresent(JsonSnakeCase.class)) {
@@ -44,9 +41,7 @@ public class AnnotationSensitivePropertyNamingStrategy extends PropertyNamingStr
     }
 
     @Override
-    public String nameForGetterMethod(MapperConfig<?> config,
-                                      AnnotatedMethod method,
-                                      String defaultName) {
+    public String nameForGetterMethod(MapperConfig<?> config, AnnotatedMethod method, String defaultName) {
         if (method == null) {
             return defaultName;
         } else if (method.getDeclaringClass().isAnnotationPresent(JsonSnakeCase.class)) {
@@ -56,9 +51,7 @@ public class AnnotationSensitivePropertyNamingStrategy extends PropertyNamingStr
     }
 
     @Override
-    public String nameForSetterMethod(MapperConfig<?> config,
-                                      AnnotatedMethod method,
-                                      String defaultName) {
+    public String nameForSetterMethod(MapperConfig<?> config, AnnotatedMethod method, String defaultName) {
         if (method == null) {
             return defaultName;
         } else if (method.getDeclaringClass().isAnnotationPresent(JsonSnakeCase.class)) {

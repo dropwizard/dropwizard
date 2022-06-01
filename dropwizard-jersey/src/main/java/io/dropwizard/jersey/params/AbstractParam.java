@@ -1,14 +1,13 @@
 package io.dropwizard.jersey.params;
 
 import io.dropwizard.jersey.errors.ErrorMessage;
-import org.checkerframework.checker.nullness.qual.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An abstract base class from which to build Jersey parameter classes.
@@ -62,10 +61,9 @@ public abstract class AbstractParam<T> {
             errorMessage = String.format(errorMessage, parameterName);
         }
         return Response.status(getErrorStatus())
-                       .entity(new ErrorMessage(getErrorStatus().getStatusCode(),
-                               errorMessage))
-                       .type(mediaType())
-                       .build();
+                .entity(new ErrorMessage(getErrorStatus().getStatusCode(), errorMessage))
+                .type(mediaType())
+                .build();
     }
 
     /**
@@ -99,13 +97,13 @@ public abstract class AbstractParam<T> {
         return Status.BAD_REQUEST;
     }
 
-   /**
-    * Given a string representation, parse it and return an instance of the parameter type.
-    *
-    * @param input the raw input
-    * @return {@code input}, parsed as an instance of {@code T}
-    * @throws Exception if there is an error parsing the input
-    */
+    /**
+     * Given a string representation, parse it and return an instance of the parameter type.
+     *
+     * @param input the raw input
+     * @return {@code input}, parsed as an instance of {@code T}
+     * @throws Exception if there is an error parsing the input
+     */
     protected abstract T parse(@Nullable String input) throws Exception;
 
     /**

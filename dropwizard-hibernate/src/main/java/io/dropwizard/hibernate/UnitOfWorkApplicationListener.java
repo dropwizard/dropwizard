@@ -1,5 +1,12 @@
 package io.dropwizard.hibernate;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import javax.ws.rs.ext.Provider;
 import org.glassfish.jersey.server.internal.process.MappableException;
 import org.glassfish.jersey.server.model.ResourceMethod;
 import org.glassfish.jersey.server.monitoring.ApplicationEvent;
@@ -7,14 +14,6 @@ import org.glassfish.jersey.server.monitoring.ApplicationEventListener;
 import org.glassfish.jersey.server.monitoring.RequestEvent;
 import org.glassfish.jersey.server.monitoring.RequestEventListener;
 import org.hibernate.SessionFactory;
-
-import javax.ws.rs.ext.Provider;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 /**
  * An application event listener that listens for Jersey application initialization to
@@ -31,8 +30,7 @@ public class UnitOfWorkApplicationListener implements ApplicationEventListener {
     private final ConcurrentMap<ResourceMethod, Collection<UnitOfWork>> methodMap = new ConcurrentHashMap<>();
     private final Map<String, SessionFactory> sessionFactories = new HashMap<>();
 
-    public UnitOfWorkApplicationListener() {
-    }
+    public UnitOfWorkApplicationListener() {}
 
     /**
      * Construct an application event listener using the given name and session factory.
@@ -63,8 +61,9 @@ public class UnitOfWorkApplicationListener implements ApplicationEventListener {
         private final ConcurrentMap<String, UnitOfWorkAspect> unitOfWorkAspects = new ConcurrentHashMap<>();
         private final Map<String, SessionFactory> sessionFactories;
 
-        UnitOfWorkEventListener(ConcurrentMap<ResourceMethod, Collection<UnitOfWork>> methodMap,
-                                Map<String, SessionFactory> sessionFactories) {
+        UnitOfWorkEventListener(
+                ConcurrentMap<ResourceMethod, Collection<UnitOfWork>> methodMap,
+                Map<String, SessionFactory> sessionFactories) {
             this.methodMap = methodMap;
             this.sessionFactories = sessionFactories;
         }
@@ -74,37 +73,32 @@ public class UnitOfWorkApplicationListener implements ApplicationEventListener {
             final RequestEvent.Type eventType = event.getType();
             if (eventType == RequestEvent.Type.RESOURCE_METHOD_START) {
                 methodMap
-                    .computeIfAbsent(event.getUriInfo().getMatchedResourceMethod(), UnitOfWorkEventListener::registerUnitOfWorkAnnotations)
-                    .forEach(unitOfWork ->
-                        unitOfWorkAspects
-                            .computeIfAbsent(unitOfWork.value(), hibernateName -> new UnitOfWorkAspect(sessionFactories))
-                            .beforeStart(unitOfWork)
-                );
+                        .computeIfAbsent(
+                                event.getUriInfo().getMatchedResourceMethod(),
+                                UnitOfWorkEventListener::registerUnitOfWorkAnnotations)
+                        .forEach(unitOfWork -> unitOfWorkAspects
+                                .computeIfAbsent(
+                                        unitOfWork.value(), hibernateName -> new UnitOfWorkAspect(sessionFactories))
+                                .beforeStart(unitOfWork));
             } else if (eventType == RequestEvent.Type.RESP_FILTERS_START) {
                 try {
-                    unitOfWorkAspects
-                        .values()
-                        .forEach(UnitOfWorkAspect::afterEnd);
+                    unitOfWorkAspects.values().forEach(UnitOfWorkAspect::afterEnd);
                 } catch (Exception e) {
                     throw new MappableException(e);
                 }
             } else if (eventType == RequestEvent.Type.ON_EXCEPTION) {
-                unitOfWorkAspects
-                        .values()
-                        .forEach(UnitOfWorkAspect::onError);
+                unitOfWorkAspects.values().forEach(UnitOfWorkAspect::onError);
             } else if (eventType == RequestEvent.Type.FINISHED) {
-                unitOfWorkAspects
-                        .values()
-                        .forEach(UnitOfWorkAspect::onFinish);
+                unitOfWorkAspects.values().forEach(UnitOfWorkAspect::onFinish);
             }
         }
 
         private static Collection<UnitOfWork> registerUnitOfWorkAnnotations(ResourceMethod method) {
             Map<String, UnitOfWork> unitOfWorkMap = new HashMap<>();
             Arrays.stream(method.getInvocable().getHandlingMethod().getAnnotationsByType(UnitOfWork.class))
-                .forEach(unitOfWork -> unitOfWorkMap.put(unitOfWork.value(), unitOfWork));
+                    .forEach(unitOfWork -> unitOfWorkMap.put(unitOfWork.value(), unitOfWork));
             Arrays.stream(method.getInvocable().getDefinitionMethod().getAnnotationsByType(UnitOfWork.class))
-                .forEach(unitOfWork -> unitOfWorkMap.put(unitOfWork.value(), unitOfWork));
+                    .forEach(unitOfWork -> unitOfWorkMap.put(unitOfWork.value(), unitOfWork));
             return unitOfWorkMap.values();
         }
     }
@@ -118,5 +112,4 @@ public class UnitOfWorkApplicationListener implements ApplicationEventListener {
     public RequestEventListener onRequest(RequestEvent event) {
         return new UnitOfWorkEventListener(methodMap, sessionFactories);
     }
-
 }

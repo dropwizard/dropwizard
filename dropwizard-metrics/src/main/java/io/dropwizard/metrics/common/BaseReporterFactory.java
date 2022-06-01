@@ -7,16 +7,15 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.util.Duration;
 import io.dropwizard.validation.MinDuration;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.valueextraction.Unwrapping;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.validation.valueextraction.Unwrapping;
 
 /**
  * A base {@link ReporterFactory} for configuring metric reporters.
@@ -86,11 +85,9 @@ public abstract class BaseReporterFactory implements ReporterFactory {
     private static final DefaultStringMatchingStrategy DEFAULT_STRING_MATCHING_STRATEGY =
             new DefaultStringMatchingStrategy();
 
-    private static final RegexStringMatchingStrategy REGEX_STRING_MATCHING_STRATEGY =
-            new RegexStringMatchingStrategy();
+    private static final RegexStringMatchingStrategy REGEX_STRING_MATCHING_STRATEGY = new RegexStringMatchingStrategy();
 
-    private static final SubstringMatchingStrategy SUBSTRING_MATCHING_STRATEGY =
-        new SubstringMatchingStrategy();
+    private static final SubstringMatchingStrategy SUBSTRING_MATCHING_STRATEGY = new SubstringMatchingStrategy();
 
     @NotNull
     private TimeUnit durationUnit = TimeUnit.MILLISECONDS;
@@ -229,13 +226,14 @@ public abstract class BaseReporterFactory implements ReporterFactory {
      */
     @JsonIgnore
     public MetricFilter getFilter() {
-        final StringMatchingStrategy stringMatchingStrategy = getUseRegexFilters() ?
-                REGEX_STRING_MATCHING_STRATEGY : (getUseSubstringMatching() ? SUBSTRING_MATCHING_STRATEGY : DEFAULT_STRING_MATCHING_STRATEGY);
+        final StringMatchingStrategy stringMatchingStrategy = getUseRegexFilters()
+                ? REGEX_STRING_MATCHING_STRATEGY
+                : (getUseSubstringMatching() ? SUBSTRING_MATCHING_STRATEGY : DEFAULT_STRING_MATCHING_STRATEGY);
 
         // Include the metric if its name is not excluded and its name is included
         // Where, by default, with no includes setting, all names are included.
-        return (name, metric) -> !stringMatchingStrategy.containsMatch(getExcludes(), name) &&
-                (getIncludes().isEmpty() || stringMatchingStrategy.containsMatch(getIncludes(), name));
+        return (name, metric) -> !stringMatchingStrategy.containsMatch(getExcludes(), name)
+                && (getIncludes().isEmpty() || stringMatchingStrategy.containsMatch(getIncludes(), name));
     }
 
     protected Set<MetricAttribute> getDisabledAttributes() {

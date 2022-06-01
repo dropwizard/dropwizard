@@ -5,6 +5,19 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.dropwizard.metrics.jetty10.InstrumentedConnectionFactory;
 import io.dropwizard.validation.ValidationMethod;
+import java.io.File;
+import java.net.URI;
+import java.security.KeyStore;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import javax.net.ssl.SSLEngine;
+import javax.validation.constraints.NotEmpty;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.eclipse.jetty.http.HttpVersion;
 import org.eclipse.jetty.io.ByteBufferPool;
@@ -21,20 +34,6 @@ import org.eclipse.jetty.util.thread.Scheduler;
 import org.eclipse.jetty.util.thread.ThreadPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.net.ssl.SSLEngine;
-import javax.validation.constraints.NotEmpty;
-import java.io.File;
-import java.net.URI;
-import java.security.KeyStore;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /**
  * Builds HTTPS connectors (HTTP over TLS/SSL).
@@ -285,6 +284,7 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
 
     @Nullable
     private String jceProvider;
+
     private boolean validateCerts = false;
     private boolean validatePeers = false;
 
@@ -605,8 +605,10 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
 
     @ValidationMethod(message = "keyStorePassword should not be null or empty")
     public boolean isValidKeyStorePassword() {
-        return keyStoreType.startsWith("Windows-") ||
-                Optional.ofNullable(keyStorePassword).filter(s -> !s.isEmpty()).isPresent();
+        return keyStoreType.startsWith("Windows-")
+                || Optional.ofNullable(keyStorePassword)
+                        .filter(s -> !s.isEmpty())
+                        .isPresent();
     }
 
     @Override
@@ -628,11 +630,14 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
 
         final ByteBufferPool bufferPool = buildBufferPool();
 
-        return buildConnector(server, scheduler, bufferPool, name, threadPool,
-                              new InstrumentedConnectionFactory(
-                                      sslConnectionFactory,
-                                      metrics.timer(httpConnections())),
-                                      httpConnectionFactory);
+        return buildConnector(
+                server,
+                scheduler,
+                bufferPool,
+                name,
+                threadPool,
+                new InstrumentedConnectionFactory(sslConnectionFactory, metrics.timer(httpConnections())),
+                httpConnectionFactory);
     }
 
     @Override
@@ -679,23 +684,22 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
      * @return two entry map of protocols that are enabled (true) and those that have been disabled (false).
      */
     static Map<Boolean, List<String>> partitionSupport(
-        String[] supportedByJVM,
-        String[] enabledByJVM,
-        String[] excludedByConfig,
-        String[] includedByConfig
-    ) {
-        final List<Pattern> enabled = Arrays.stream(enabledByJVM).map(Pattern::compile).collect(Collectors.toList());
-        final List<Pattern> disabled = Arrays.stream(excludedByConfig).map(Pattern::compile).collect(Collectors.toList());
-        final List<Pattern> included = Arrays.stream(includedByConfig).map(Pattern::compile).collect(Collectors.toList());
+            String[] supportedByJVM, String[] enabledByJVM, String[] excludedByConfig, String[] includedByConfig) {
+        final List<Pattern> enabled =
+                Arrays.stream(enabledByJVM).map(Pattern::compile).collect(Collectors.toList());
+        final List<Pattern> disabled =
+                Arrays.stream(excludedByConfig).map(Pattern::compile).collect(Collectors.toList());
+        final List<Pattern> included =
+                Arrays.stream(includedByConfig).map(Pattern::compile).collect(Collectors.toList());
 
         return Arrays.stream(supportedByJVM)
-            .sorted(Comparator.naturalOrder())
-            .collect(Collectors.partitioningBy(x ->
-                disabled.stream().noneMatch(pat -> pat.matcher(x).matches()) &&
-                    enabled.stream().anyMatch(pat -> pat.matcher(x).matches()) &&
-                    (included.isEmpty() || included.stream().anyMatch(pat -> pat.matcher(x).matches()))
-            ));
-
+                .sorted(Comparator.naturalOrder())
+                .collect(Collectors.partitioningBy(x -> disabled.stream()
+                                .noneMatch(pat -> pat.matcher(x).matches())
+                        && enabled.stream().anyMatch(pat -> pat.matcher(x).matches())
+                        && (included.isEmpty()
+                                || included.stream()
+                                        .anyMatch(pat -> pat.matcher(x).matches()))));
     }
 
     private void logSupportedParameters(SslContextFactory contextFactory) {
@@ -710,18 +714,16 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
             final SSLEngine engine = contextFactory.getSslContext().createSSLEngine();
 
             final Map<Boolean, List<String>> protocols = partitionSupport(
-                engine.getSupportedProtocols(),
-                engine.getEnabledProtocols(),
-                contextFactory.getExcludeProtocols(),
-                contextFactory.getIncludeProtocols()
-            );
+                    engine.getSupportedProtocols(),
+                    engine.getEnabledProtocols(),
+                    contextFactory.getExcludeProtocols(),
+                    contextFactory.getIncludeProtocols());
 
             final Map<Boolean, List<String>> ciphers = partitionSupport(
-                engine.getSupportedCipherSuites(),
-                engine.getEnabledCipherSuites(),
-                contextFactory.getExcludeCipherSuites(),
-                contextFactory.getIncludeCipherSuites()
-            );
+                    engine.getSupportedCipherSuites(),
+                    engine.getEnabledCipherSuites(),
+                    contextFactory.getExcludeCipherSuites(),
+                    contextFactory.getIncludeCipherSuites());
 
             LOGGER.info("Enabled protocols: {}", protocols.get(true));
             LOGGER.info("Disabled protocols: {}", protocols.get(false));

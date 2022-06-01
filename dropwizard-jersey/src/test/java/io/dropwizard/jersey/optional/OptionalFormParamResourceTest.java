@@ -1,13 +1,13 @@
 package io.dropwizard.jersey.optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import io.dropwizard.jersey.AbstractJerseyTest;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.jersey.MyMessage;
 import io.dropwizard.jersey.MyMessageParamConverterProvider;
 import io.dropwizard.jersey.params.UUIDParam;
-import org.glassfish.jersey.internal.util.collection.MultivaluedStringMap;
-import org.junit.jupiter.api.Test;
-
+import java.util.Optional;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -15,9 +15,8 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Form;
 import javax.ws.rs.core.Response;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import org.glassfish.jersey.internal.util.collection.MultivaluedStringMap;
+import org.junit.jupiter.api.Test;
 
 class OptionalFormParamResourceTest extends AbstractJerseyTest {
 
@@ -56,7 +55,8 @@ class OptionalFormParamResourceTest extends AbstractJerseyTest {
     @Test
     void shouldReturnDefaultMessageWhenMyMessageIsNotPresent() {
         final String defaultMessage = "My Default Message";
-        final Response response = target("/optional/my-message").request().post(Entity.form(new MultivaluedStringMap()));
+        final Response response =
+                target("/optional/my-message").request().post(Entity.form(new MultivaluedStringMap()));
 
         assertThat(response.readEntity(String.class)).isEqualTo(defaultMessage);
     }
@@ -114,7 +114,9 @@ class OptionalFormParamResourceTest extends AbstractJerseyTest {
         @POST
         @Path("/uuid")
         public String getUUID(@FormParam("uuid") Optional<UUIDParam> uuid) {
-            return uuid.orElse(new UUIDParam("d5672fa8-326b-40f6-bf71-d9dacf44bcdc")).get().toString();
+            return uuid.orElse(new UUIDParam("d5672fa8-326b-40f6-bf71-d9dacf44bcdc"))
+                    .get()
+                    .toString();
         }
     }
 }

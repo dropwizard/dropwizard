@@ -1,8 +1,7 @@
 package io.dropwizard.health.check.tcp;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.io.IOException;
 import java.net.ConnectException;
@@ -11,9 +10,9 @@ import java.net.ServerSocket;
 import java.net.SocketTimeoutException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 class TcpHealthCheckTest {
     private ServerSocket serverSocket;
@@ -34,14 +33,14 @@ class TcpHealthCheckTest {
     void tcpHealthCheckShouldReturnHealthyIfCanConnect() throws IOException {
         final ExecutorService executorService = Executors.newSingleThreadExecutor();
         executorService.submit(() -> serverSocket.accept());
-        assertThat(tcpHealthCheck.check().isHealthy())
-            .isTrue();
+        assertThat(tcpHealthCheck.check().isHealthy()).isTrue();
     }
 
     @Test
     void tcpHealthCheckShouldReturnUnhealthyIfCannotConnect() throws IOException {
         serverSocket.close();
-        assertThatThrownBy(() -> tcpHealthCheck.check()).isInstanceOfAny(ConnectException.class, SocketTimeoutException.class);
+        assertThatThrownBy(() -> tcpHealthCheck.check())
+                .isInstanceOfAny(ConnectException.class, SocketTimeoutException.class);
     }
 
     @Test
@@ -58,6 +57,7 @@ class TcpHealthCheckTest {
             return true;
         });
 
-        assertThatThrownBy(() -> tcpHealthCheck.check()).isInstanceOfAny(ConnectException.class, SocketTimeoutException.class);
+        assertThatThrownBy(() -> tcpHealthCheck.check())
+                .isInstanceOfAny(ConnectException.class, SocketTimeoutException.class);
     }
 }

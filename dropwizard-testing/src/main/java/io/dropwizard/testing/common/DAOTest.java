@@ -1,13 +1,6 @@
 package io.dropwizard.testing.common;
 
 import io.dropwizard.logging.common.BootstrapLogging;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
-import org.hibernate.cfg.AvailableSettings;
-import org.hibernate.cfg.Configuration;
-import org.hibernate.context.internal.ManagedSessionContext;
-
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -15,6 +8,12 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.function.Consumer;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.hibernate.cfg.AvailableSettings;
+import org.hibernate.cfg.Configuration;
+import org.hibernate.context.internal.ManagedSessionContext;
 
 public class DAOTest {
     @SuppressWarnings("unchecked")
@@ -29,8 +28,7 @@ public class DAOTest {
         private boolean bootstrapLogging = true;
         private final Set<Class<?>> entityClasses = new LinkedHashSet<>();
         private final Map<String, String> properties = new HashMap<>();
-        private Consumer<Configuration> configurationCustomizer = c -> {
-        };
+        private Consumer<Configuration> configurationCustomizer = c -> {};
 
         public B setUrl(String url) {
             this.url = url;
@@ -75,7 +73,7 @@ public class DAOTest {
         /**
          * @since 2.0
          */
-        public B bootstrapLogging(boolean value){
+        public B bootstrapLogging(boolean value) {
             bootstrapLogging = value;
             return (B) this;
         }
@@ -184,7 +182,7 @@ public class DAOTest {
         } catch (final Exception e) {
             transaction.rollback();
             if (e instanceof RuntimeException) {
-              throw (RuntimeException) e;
+                throw (RuntimeException) e;
             }
             throw new RuntimeException(e);
         }

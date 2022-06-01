@@ -1,15 +1,14 @@
 package io.dropwizard.testing.junit;
 
-import io.dropwizard.testing.app.TestResource;
-import org.junit.ClassRule;
-import org.junit.Test;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.assertj.core.api.Assertions.assertThat;
 
+import io.dropwizard.testing.app.TestResource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.ClassRule;
+import org.junit.Test;
 
 public class DropwizardClientRuleTest {
     @SuppressWarnings("deprecation")

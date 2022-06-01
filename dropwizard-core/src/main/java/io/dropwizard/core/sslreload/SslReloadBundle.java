@@ -5,13 +5,12 @@ import io.dropwizard.core.ConfiguredBundle;
 import io.dropwizard.core.setup.Environment;
 import io.dropwizard.jetty.MutableServletContextHandler;
 import io.dropwizard.jetty.SslReload;
-import org.eclipse.jetty.util.component.LifeCycle;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import org.eclipse.jetty.util.component.LifeCycle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Bundle that gathers all the ssl connectors and registers an admin task that will
@@ -43,4 +42,3 @@ public class SslReloadBundle implements ConfiguredBundle<Configuration> {
         return handler.getServer().getBeans(SslReload.class);
     }
 }
-

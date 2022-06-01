@@ -1,13 +1,13 @@
 package io.dropwizard.jersey.gzip;
 
+import java.io.IOException;
+import java.util.zip.GZIPInputStream;
 import javax.annotation.Priority;
 import javax.ws.rs.Priorities;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.ext.Provider;
 import javax.ws.rs.ext.ReaderInterceptor;
 import javax.ws.rs.ext.ReaderInterceptorContext;
-import java.io.IOException;
-import java.util.zip.GZIPInputStream;
 
 /**
  * GZIP encoding support. Reader interceptor that decodes the input  if
@@ -30,11 +30,9 @@ public class GZipDecoder implements ReaderInterceptor {
         }
 
         final String contentEncoding = context.getHeaders().getFirst(HttpHeaders.CONTENT_ENCODING);
-        if (contentEncoding != null &&
-                (contentEncoding.equals("gzip") || contentEncoding.equals("x-gzip"))) {
+        if (contentEncoding != null && (contentEncoding.equals("gzip") || contentEncoding.equals("x-gzip"))) {
             context.setInputStream(new GZIPInputStream(context.getInputStream()));
         }
         return context.proceed();
     }
-
 }

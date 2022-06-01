@@ -1,5 +1,9 @@
 package io.dropwizard.client.proxy;
 
+import static java.util.Objects.requireNonNull;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.client.HttpClientConfiguration;
 import io.dropwizard.configuration.ConfigurationParsingException;
@@ -8,14 +12,8 @@ import io.dropwizard.configuration.DefaultConfigurationFactoryFactory;
 import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.validation.Validators;
-import org.junit.jupiter.api.Test;
-
 import java.util.List;
-
-import static java.util.Objects.requireNonNull;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-
+import org.junit.jupiter.api.Test;
 
 class HttpClientConfigurationTest {
 
@@ -24,11 +22,8 @@ class HttpClientConfigurationTest {
 
     private void load(String configLocation) throws Exception {
         configuration = new DefaultConfigurationFactoryFactory<HttpClientConfiguration>()
-            .create(
-                HttpClientConfiguration.class,
-                Validators.newValidator(),
-                objectMapper, "dw"
-            ).build(new ResourceConfigurationSourceProvider(), configLocation);
+                .create(HttpClientConfiguration.class, Validators.newValidator(), objectMapper, "dw")
+                .build(new ResourceConfigurationSourceProvider(), configLocation);
     }
 
     @Test
@@ -126,8 +121,7 @@ class HttpClientConfigurationTest {
 
     @Test
     void testBadScheme() {
-        assertThatExceptionOfType(ConfigurationParsingException.class).isThrownBy(() ->
-            load("./yaml/bad_scheme.yml"));
+        assertThatExceptionOfType(ConfigurationParsingException.class).isThrownBy(() -> load("./yaml/bad_scheme.yml"));
     }
 
     @Test
@@ -150,7 +144,7 @@ class HttpClientConfigurationTest {
         assertConfigurationValidationException("./yaml/bad_auth_credential_type.yml");
     }
 
-    private void assertConfigurationValidationException(String configLocation){
-        assertThatExceptionOfType(ConfigurationValidationException.class).isThrownBy(()->load(configLocation));
+    private void assertConfigurationValidationException(String configLocation) {
+        assertThatExceptionOfType(ConfigurationValidationException.class).isThrownBy(() -> load(configLocation));
     }
 }

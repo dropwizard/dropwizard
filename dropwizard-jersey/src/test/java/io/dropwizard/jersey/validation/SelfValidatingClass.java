@@ -4,10 +4,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.validation.selfvalidating.SelfValidating;
 import io.dropwizard.validation.selfvalidating.SelfValidation;
 import io.dropwizard.validation.selfvalidating.ViolationCollector;
-import org.checkerframework.checker.nullness.qual.Nullable;
-
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.QueryParam;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 @SelfValidating
 public class SelfValidatingClass {
@@ -16,12 +15,11 @@ public class SelfValidatingClass {
     @JsonProperty
     private Integer answer;
 
-    public SelfValidatingClass() { }
+    public SelfValidatingClass() {}
 
     public SelfValidatingClass(@NotNull @QueryParam("answer") Integer answer) {
         this.answer = answer;
     }
-
 
     @SelfValidation
     public void validate(ViolationCollector collector) {
@@ -29,5 +27,4 @@ public class SelfValidatingClass {
             collector.addViolation("The answer is 42");
         }
     }
-
 }

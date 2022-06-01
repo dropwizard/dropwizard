@@ -1,10 +1,10 @@
 package io.dropwizard.jersey.caching;
 
+import java.util.concurrent.TimeUnit;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import java.util.concurrent.TimeUnit;
 
 @Path("/caching/")
 @Produces(MediaType.TEXT_PLAIN)

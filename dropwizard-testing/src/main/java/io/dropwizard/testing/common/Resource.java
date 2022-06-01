@@ -1,5 +1,7 @@
 package io.dropwizard.testing.common;
 
+import static java.util.Objects.requireNonNull;
+
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
@@ -7,6 +9,16 @@ import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.validation.Validators;
 import io.dropwizard.logging.common.BootstrapLogging;
 import io.dropwizard.testing.junit5.ResourceExtension;
+import java.net.URI;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+import javax.validation.Validator;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.WebTarget;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.HttpUrlConnectorProvider;
@@ -17,19 +29,6 @@ import org.glassfish.jersey.test.ServletDeploymentContext;
 import org.glassfish.jersey.test.TestProperties;
 import org.glassfish.jersey.test.inmemory.InMemoryTestContainerFactory;
 import org.glassfish.jersey.test.spi.TestContainerFactory;
-
-import javax.validation.Validator;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.WebTarget;
-import java.net.URI;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
-
-import static java.util.Objects.requireNonNull;
 
 public class Resource {
 
@@ -45,8 +44,7 @@ public class Resource {
         private MetricRegistry metricRegistry = new MetricRegistry();
         private ObjectMapper mapper = Jackson.newObjectMapper();
         private Validator validator = Validators.newValidator();
-        private Consumer<ClientConfig> clientConfigurator = c -> {
-        };
+        private Consumer<ClientConfig> clientConfigurator = c -> {};
         private TestContainerFactory testContainerFactory = new InMemoryTestContainerFactory();
         private boolean registerDefaultExceptionMappers = true;
         private boolean bootstrapLogging = true;
@@ -128,8 +126,15 @@ public class Resource {
                 config.property(HttpUrlConnectorProvider.SET_METHOD_WORKAROUND, true);
             };
             return new Resource(new ResourceTestJerseyConfiguration(
-                    singletons, providers, properties, mapper, metricRegistry, validator,
-                    extendedConfigurator, testContainerFactory, registerDefaultExceptionMappers));
+                    singletons,
+                    providers,
+                    properties,
+                    mapper,
+                    metricRegistry,
+                    validator,
+                    extendedConfigurator,
+                    testContainerFactory,
+                    registerDefaultExceptionMappers));
         }
     }
 
@@ -207,8 +212,8 @@ public class Resource {
             @Override
             protected DeploymentContext configureDeployment() {
                 return ServletDeploymentContext.builder(new DropwizardTestResourceConfig(configuration))
-                        .initParam(ServletProperties.JAXRS_APPLICATION_CLASS,
-                                DropwizardTestResourceConfig.class.getName())
+                        .initParam(
+                                ServletProperties.JAXRS_APPLICATION_CLASS, DropwizardTestResourceConfig.class.getName())
                         .initParam(DropwizardTestResourceConfig.CONFIGURATION_ID, configuration.getId())
                         .build();
             }

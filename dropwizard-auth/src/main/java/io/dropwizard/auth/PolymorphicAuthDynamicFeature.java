@@ -1,21 +1,19 @@
 package io.dropwizard.auth;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
-import org.glassfish.jersey.InjectionManagerProvider;
-import org.glassfish.jersey.internal.inject.InjectionManager;
-import org.glassfish.jersey.server.model.AnnotatedMethod;
-
-import javax.ws.rs.container.ContainerRequestFilter;
-import javax.ws.rs.container.DynamicFeature;
-import javax.ws.rs.container.ResourceInfo;
-import javax.ws.rs.core.Feature;
-import javax.ws.rs.core.FeatureContext;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.security.Principal;
 import java.util.Map;
 import java.util.Optional;
+import javax.ws.rs.container.ContainerRequestFilter;
+import javax.ws.rs.container.DynamicFeature;
+import javax.ws.rs.container.ResourceInfo;
+import javax.ws.rs.core.Feature;
+import javax.ws.rs.core.FeatureContext;
+import org.glassfish.jersey.InjectionManagerProvider;
+import org.glassfish.jersey.internal.inject.InjectionManager;
+import org.glassfish.jersey.server.model.AnnotatedMethod;
 
 /**
  * A {@link DynamicFeature} that registers the provided auth filters
@@ -24,9 +22,9 @@ import java.util.Optional;
  */
 public class PolymorphicAuthDynamicFeature<T extends Principal> implements Feature, DynamicFeature {
 
-    private final Map<Class<? extends T>,  ContainerRequestFilter> authFilterMap;
+    private final Map<Class<? extends T>, ContainerRequestFilter> authFilterMap;
 
-    public PolymorphicAuthDynamicFeature(Map<Class<? extends T>,  ContainerRequestFilter> authFilterMap) {
+    public PolymorphicAuthDynamicFeature(Map<Class<? extends T>, ContainerRequestFilter> authFilterMap) {
         this.authFilterMap = authFilterMap;
     }
 
@@ -43,13 +41,14 @@ public class PolymorphicAuthDynamicFeature<T extends Principal> implements Featu
             // If the parameter type is an Optional, extract its type
             // parameter. Otherwise, use the parameter type itself.
             final Type paramType = type == Optional.class
-                ? ((ParameterizedType) parameterGenericTypes[i]).getActualTypeArguments()[0]
-                : type;
+                    ? ((ParameterizedType) parameterGenericTypes[i]).getActualTypeArguments()[0]
+                    : type;
 
             for (final Annotation annotation : parameterAnnotations[i]) {
                 if (annotation instanceof Auth && authFilterMap.containsKey(paramType)) {
                     final ContainerRequestFilter filter = authFilterMap.get(paramType);
-                    context.register(type == Optional.class ? new WebApplicationExceptionCatchingFilter(filter) : filter);
+                    context.register(
+                            type == Optional.class ? new WebApplicationExceptionCatchingFilter(filter) : filter);
                     return;
                 }
             }

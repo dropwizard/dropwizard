@@ -1,5 +1,7 @@
 package io.dropwizard.logging.common;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import ch.qos.logback.classic.AsyncAppender;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.core.Appender;
@@ -14,13 +16,10 @@ import io.dropwizard.logging.common.async.AsyncLoggingEventAppenderFactory;
 import io.dropwizard.logging.common.filter.NullLevelFilterFactory;
 import io.dropwizard.logging.common.layout.DropwizardLayoutFactory;
 import io.dropwizard.validation.BaseValidator;
+import java.util.TimeZone;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-
-import java.util.TimeZone;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 class AppenderFactoryCustomTimeZoneTest {
 
@@ -32,7 +31,7 @@ class AppenderFactoryCustomTimeZoneTest {
 
     @SuppressWarnings("rawtypes")
     private final YamlConfigurationFactory<ConsoleAppenderFactory> factory = new YamlConfigurationFactory<>(
-        ConsoleAppenderFactory.class, BaseValidator.newValidator(), Jackson.newObjectMapper(), "dw");
+            ConsoleAppenderFactory.class, BaseValidator.newValidator(), Jackson.newObjectMapper(), "dw");
 
     @ParameterizedTest
     @CsvSource({
@@ -49,22 +48,28 @@ class AppenderFactoryCustomTimeZoneTest {
 
     @Test
     void testLoadAppenderWithSystemTimeZone() throws Exception {
-        final ConsoleAppenderFactory<?> appender = factory.build(configurationSourceProvider, "yaml/appender_with_system_time_zone.yml");
+        final ConsoleAppenderFactory<?> appender =
+                factory.build(configurationSourceProvider, "yaml/appender_with_system_time_zone.yml");
         assertThat(appender.getTimeZone()).isEqualTo(TimeZone.getDefault());
     }
 
     @Test
     void testBuildAppenderWithTimeZonePlaceholderInLogFormat() throws Exception {
         Appender appender = factory.build(configurationSourceProvider, "yaml/appender_with_time_zone_placeholder.yml")
-            .build(new LoggerContext(), "test-custom-time-zone", new DropwizardLayoutFactory(),
-                new NullLevelFilterFactory<>(), new AsyncLoggingEventAppenderFactory());
+                .build(
+                        new LoggerContext(),
+                        "test-custom-time-zone",
+                        new DropwizardLayoutFactory(),
+                        new NullLevelFilterFactory<>(),
+                        new AsyncLoggingEventAppenderFactory());
 
-        assertThat(appender)
-            .isInstanceOfSatisfying(AsyncAppender.class, asyncAppender -> assertThat(asyncAppender.getAppender("console-appender"))
-                .isInstanceOfSatisfying(ConsoleAppender.class, consoleAppender -> assertThat(consoleAppender.getEncoder())
-                    .isInstanceOfSatisfying(LayoutWrappingEncoder.class, encoder -> assertThat(encoder.getLayout())
-                        .isInstanceOfSatisfying(PatternLayoutBase.class, layout -> assertThat(layout.getPattern())
-                            .isEqualTo("custom format with UTC")))));
+        assertThat(appender).isInstanceOfSatisfying(AsyncAppender.class, asyncAppender -> assertThat(
+                        asyncAppender.getAppender("console-appender"))
+                .isInstanceOfSatisfying(ConsoleAppender.class, consoleAppender -> assertThat(
+                                consoleAppender.getEncoder())
+                        .isInstanceOfSatisfying(LayoutWrappingEncoder.class, encoder -> assertThat(encoder.getLayout())
+                                .isInstanceOfSatisfying(
+                                        PatternLayoutBase.class, layout -> assertThat(layout.getPattern())
+                                                .isEqualTo("custom format with UTC")))));
     }
-
 }

@@ -1,21 +1,21 @@
 package io.dropwizard.testing.junit5;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+
 import io.dropwizard.testing.app.TestEntity;
+import java.io.Serializable;
+import javax.validation.ConstraintViolationException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import javax.validation.ConstraintViolationException;
-import java.io.Serializable;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-
 @ExtendWith(DropwizardExtensionsSupport.class)
 class DAOTestExtensionTest {
-    private final DAOTestExtension daoTestExtension = DAOTestExtension.newBuilder().addEntityClass(TestEntity.class).build();
+    private final DAOTestExtension daoTestExtension =
+            DAOTestExtension.newBuilder().addEntityClass(TestEntity.class).build();
 
     @Test
     void extensionCreatedSessionFactory() {
@@ -26,14 +26,16 @@ class DAOTestExtensionTest {
 
     @Test
     void extensionCanOpenTransaction() {
-        final Long id = daoTestExtension.inTransaction(() -> persist(new TestEntity("junit 5 description")).getId());
+        final Long id = daoTestExtension.inTransaction(
+                () -> persist(new TestEntity("junit 5 description")).getId());
 
         assertThat(id).isNotNull();
     }
 
     @Test
     void extensionCanRoundtrip() {
-        final Long id = daoTestExtension.inTransaction(() -> persist(new TestEntity("junit 5 description")).getId());
+        final Long id = daoTestExtension.inTransaction(
+                () -> persist(new TestEntity("junit 5 description")).getId());
 
         final TestEntity testEntity = get(id);
 
@@ -43,7 +45,9 @@ class DAOTestExtensionTest {
 
     @Test()
     void transactionThrowsExceptionAsExpected() {
-        Throwable throwable = Assertions.assertThrows(ConstraintViolationException.class, () -> daoTestExtension.inTransaction(() -> persist(new TestEntity(null))));
+        Throwable throwable = Assertions.assertThrows(
+                ConstraintViolationException.class,
+                () -> daoTestExtension.inTransaction(() -> persist(new TestEntity(null))));
         Assertions.assertEquals(ConstraintViolationException.class, throwable.getClass());
     }
 
@@ -57,14 +61,13 @@ class DAOTestExtensionTest {
         testEntity.setDescription("newDescription");
         // ... but cause a constraint violation during the actual update
         assertThatExceptionOfType(ConstraintViolationException.class)
-            .isThrownBy(() -> daoTestExtension.inTransaction(() -> {
-                persist(testEntity);
-                persist(new TestEntity(null));
-            }));
+                .isThrownBy(() -> daoTestExtension.inTransaction(() -> {
+                    persist(testEntity);
+                    persist(new TestEntity(null));
+                }));
         // ... the entity has the original value
         assertThat(get(testEntity.getId()).getDescription()).isEqualTo("junit 5 description");
     }
-
 
     private TestEntity persist(TestEntity testEntity) {
         final Session currentSession = daoTestExtension.getSessionFactory().getCurrentSession();

@@ -1,11 +1,11 @@
 package io.dropwizard.testing.junit;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import io.dropwizard.testing.app.TestEntity;
 import org.hibernate.SessionFactory;
 import org.junit.Rule;
 import org.junit.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class DAOTestRuleWithoutLoggingBootstrapTest {
     @SuppressWarnings("deprecation")

@@ -7,17 +7,16 @@ import io.dropwizard.core.setup.Environment;
 import io.dropwizard.jersey.PATCH;
 import io.dropwizard.servlets.tasks.PostBodyTask;
 import io.dropwizard.servlets.tasks.Task;
-import org.checkerframework.checker.nullness.qual.Nullable;
-
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
 import java.io.PrintWriter;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 public class DropwizardTestApplication extends Application<TestConfiguration> {
     @Override

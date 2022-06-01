@@ -1,5 +1,11 @@
 package io.dropwizard.auth;
 
+import java.lang.reflect.ParameterizedType;
+import java.security.Principal;
+import java.util.Optional;
+import java.util.function.Function;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.glassfish.jersey.internal.inject.AbstractBinder;
 import org.glassfish.jersey.server.ContainerRequest;
@@ -7,13 +13,6 @@ import org.glassfish.jersey.server.internal.inject.AbstractValueParamProvider;
 import org.glassfish.jersey.server.internal.inject.MultivaluedParameterExtractorProvider;
 import org.glassfish.jersey.server.model.Parameter;
 import org.glassfish.jersey.server.spi.internal.ValueParamProvider;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import java.lang.reflect.ParameterizedType;
-import java.security.Principal;
-import java.util.Optional;
-import java.util.function.Function;
 
 /**
  * Value factory provider supporting {@link Principal} injection
@@ -36,8 +35,8 @@ public class AuthValueFactoryProvider<T extends Principal> extends AbstractValue
      * @param principalClassProvider provider of the principal class
      */
     @Inject
-    public AuthValueFactoryProvider(MultivaluedParameterExtractorProvider mpep,
-                                    PrincipalClassProvider<T> principalClassProvider) {
+    public AuthValueFactoryProvider(
+            MultivaluedParameterExtractorProvider mpep, PrincipalClassProvider<T> principalClassProvider) {
         super(() -> mpep, org.glassfish.jersey.model.Parameter.Source.UNKNOWN);
         this.principalClass = principalClassProvider.clazz;
     }
@@ -51,10 +50,13 @@ public class AuthValueFactoryProvider<T extends Principal> extends AbstractValue
             return request -> new PrincipalContainerRequestValueFactory(request).provide();
         } else {
             final boolean isOptionalPrincipal = parameter.getRawType() == Optional.class
-                && ParameterizedType.class.isAssignableFrom(parameter.getType().getClass())
-                && principalClass == ((ParameterizedType) parameter.getType()).getActualTypeArguments()[0];
+                    && ParameterizedType.class.isAssignableFrom(
+                            parameter.getType().getClass())
+                    && principalClass == ((ParameterizedType) parameter.getType()).getActualTypeArguments()[0];
 
-            return isOptionalPrincipal ? request -> new OptionalPrincipalContainerRequestValueFactory(request).provide() : null;
+            return isOptionalPrincipal
+                    ? request -> new OptionalPrincipalContainerRequestValueFactory(request).provide()
+                    : null;
         }
     }
 

@@ -1,11 +1,10 @@
 package io.dropwizard.jersey.validation;
 
 import io.dropwizard.jersey.params.AbstractParam;
-import org.hibernate.validator.internal.engine.valueextraction.ValueExtractorDescriptor;
-
 import javax.validation.valueextraction.ExtractedValue;
 import javax.validation.valueextraction.UnwrapByDefault;
 import javax.validation.valueextraction.ValueExtractor;
+import org.hibernate.validator.internal.engine.valueextraction.ValueExtractorDescriptor;
 
 /**
  * Let's the validator know that when validating a class that is an {@link AbstractParam} to
@@ -17,8 +16,7 @@ import javax.validation.valueextraction.ValueExtractor;
 public class ParamValueExtractor implements ValueExtractor<AbstractParam<@ExtractedValue ?>> {
     static final ValueExtractorDescriptor DESCRIPTOR = new ValueExtractorDescriptor(new ParamValueExtractor());
 
-    private ParamValueExtractor() {
-    }
+    private ParamValueExtractor() {}
 
     @Override
     public void extractValues(AbstractParam<?> originalValue, ValueExtractor.ValueReceiver receiver) {

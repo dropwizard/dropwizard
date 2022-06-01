@@ -2,23 +2,21 @@ package io.dropwizard.auth.basic;
 
 import io.dropwizard.auth.AuthFilter;
 import io.dropwizard.auth.Authenticator;
-import org.checkerframework.checker.nullness.qual.Nullable;
-
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.security.Principal;
+import java.util.Base64;
 import javax.annotation.Priority;
 import javax.ws.rs.Priorities;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.SecurityContext;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.security.Principal;
-import java.util.Base64;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 @Priority(Priorities.AUTHENTICATION)
 public class BasicCredentialAuthFilter<P extends Principal> extends AuthFilter<BasicCredentials, P> {
 
-    private BasicCredentialAuthFilter() {
-    }
+    private BasicCredentialAuthFilter() {}
 
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
@@ -77,8 +75,8 @@ public class BasicCredentialAuthFilter<P extends Principal> extends AuthFilter<B
      *
      * @param <P> the principal
      */
-    public static class Builder<P extends Principal> extends
-            AuthFilterBuilder<BasicCredentials, P, BasicCredentialAuthFilter<P>> {
+    public static class Builder<P extends Principal>
+            extends AuthFilterBuilder<BasicCredentials, P, BasicCredentialAuthFilter<P>> {
 
         @Override
         protected BasicCredentialAuthFilter<P> newInstance() {

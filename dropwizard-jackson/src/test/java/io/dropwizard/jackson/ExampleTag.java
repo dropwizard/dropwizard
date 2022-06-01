@@ -1,4 +1,3 @@
 package io.dropwizard.jackson;
 
-public interface ExampleTag {
-}
+public interface ExampleTag {}

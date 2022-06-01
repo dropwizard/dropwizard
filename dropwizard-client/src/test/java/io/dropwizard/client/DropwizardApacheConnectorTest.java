@@ -1,5 +1,10 @@
 package io.dropwizard.client;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import com.codahale.metrics.health.HealthCheck;
 import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.core.Application;
@@ -8,6 +13,17 @@ import io.dropwizard.core.setup.Environment;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import io.dropwizard.util.Duration;
+import java.net.NoRouteToHostException;
+import java.net.SocketTimeoutException;
+import java.net.URI;
+import java.util.concurrent.TimeUnit;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.ProcessingException;
+import javax.ws.rs.client.Invocation;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MultivaluedHashMap;
+import javax.ws.rs.core.Response;
 import org.apache.hc.client5.http.ConnectTimeoutException;
 import org.apache.hc.client5.http.HttpHostConnectException;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
@@ -28,23 +44,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.ProcessingException;
-import javax.ws.rs.client.Invocation;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MultivaluedHashMap;
-import javax.ws.rs.core.Response;
-import java.net.NoRouteToHostException;
-import java.net.SocketTimeoutException;
-import java.net.URI;
-import java.util.concurrent.TimeUnit;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 @ExtendWith(DropwizardExtensionsSupport.class)
 class DropwizardApacheConnectorTest {
 
@@ -55,10 +54,7 @@ class DropwizardApacheConnectorTest {
     private static final URI NON_ROUTABLE_ADDRESS = URI.create("http://10.255.255.1");
 
     private static final DropwizardAppExtension<Configuration> APP_RULE = new DropwizardAppExtension<>(
-            TestApplication.class,
-            "yaml/dropwizardApacheConnectorTest.yml",
-            new ResourceConfigurationSourceProvider());
-
+            TestApplication.class, "yaml/dropwizardApacheConnectorTest.yml", new ResourceConfigurationSourceProvider());
 
     private final URI testUri = URI.create("http://localhost:" + APP_RULE.getLocalPort());
 
@@ -72,9 +68,8 @@ class DropwizardApacheConnectorTest {
         clientConfiguration.setTimeout(Duration.milliseconds(DEFAULT_CONNECT_TIMEOUT_IN_MILLIS));
 
         environment = new Environment("test-dropwizard-apache-connector");
-        client = (JerseyClient) new JerseyClientBuilder(environment)
-                .using(clientConfiguration)
-                .build("test");
+        client = (JerseyClient)
+                new JerseyClientBuilder(environment).using(clientConfiguration).build("test");
         for (LifeCycle lifeCycle : environment.lifecycle().getManagedObjects()) {
             lifeCycle.start();
         }
@@ -92,18 +87,18 @@ class DropwizardApacheConnectorTest {
     void when_no_read_timeout_override_then_client_request_times_out() {
         Invocation.Builder request = client.target(testUri + "/long_running").request();
         assertThatExceptionOfType(ProcessingException.class)
-            .isThrownBy(request::get)
-            .withCauseInstanceOf(SocketTimeoutException.class);
+                .isThrownBy(request::get)
+                .withCauseInstanceOf(SocketTimeoutException.class);
     }
 
     @Test
     void when_read_timeout_override_created_then_client_requests_completes_successfully() {
         assertThat(client.target(testUri + "/long_running")
-                .property(ClientProperties.READ_TIMEOUT, SLEEP_TIME_IN_MILLIS * 2)
-                .request()
-                .get()
-                .getStatus())
-            .isEqualTo(200);
+                        .property(ClientProperties.READ_TIMEOUT, SLEEP_TIME_IN_MILLIS * 2)
+                        .request()
+                        .get()
+                        .getStatus())
+                .isEqualTo(200);
     }
 
     /**
@@ -122,7 +117,7 @@ class DropwizardApacheConnectorTest {
         // setUp override
         WebTarget target = client.target(NON_ROUTABLE_ADDRESS);
 
-        //This can't be tested without a real connection
+        // This can't be tested without a real connection
         try {
             target.request().get(Response.class);
         } catch (ProcessingException e) {
@@ -141,10 +136,8 @@ class DropwizardApacheConnectorTest {
 
     @Test
     void when_no_override_then_redirected_request_successfully_redirected() {
-        assertThat(client.target(testUri + "/redirect")
-                        .request()
-                        .get(String.class)
-        ).isEqualTo("redirected");
+        assertThat(client.target(testUri + "/redirect").request().get(String.class))
+                .isEqualTo("redirected");
     }
 
     @Test
@@ -153,8 +146,8 @@ class DropwizardApacheConnectorTest {
                         .property(ClientProperties.FOLLOW_REDIRECTS, false)
                         .request()
                         .get(Response.class)
-                        .getStatus()
-        ).isEqualTo(HttpStatus.SC_TEMPORARY_REDIRECT);
+                        .getStatus())
+                .isEqualTo(HttpStatus.SC_TEMPORARY_REDIRECT);
     }
 
     @Test
@@ -174,10 +167,7 @@ class DropwizardApacheConnectorTest {
 
         final CloseableHttpClient client = mock(CloseableHttpClient.class);
         final DropwizardApacheConnector dropwizardApacheConnector = new DropwizardApacheConnector(client, null, false);
-        final Header[] apacheHeaders = {
-            new BasicHeader("Set-Cookie", "test1"),
-            new BasicHeader("Set-Cookie", "test2")
-        };
+        final Header[] apacheHeaders = {new BasicHeader("Set-Cookie", "test1"), new BasicHeader("Set-Cookie", "test2")};
 
         final CloseableHttpResponse apacheResponse = mock(CloseableHttpResponse.class);
         when(apacheResponse.getCode()).thenReturn(200);
@@ -193,7 +183,6 @@ class DropwizardApacheConnectorTest {
         final ClientResponse jerseyResponse = dropwizardApacheConnector.apply(jerseyRequest);
 
         assertThat(jerseyResponse.getStatus()).isEqualTo(apacheResponse.getCode());
-
     }
 
     @Path("/")
@@ -217,7 +206,6 @@ class DropwizardApacheConnectorTest {
         public String redirectedGet() {
             return "redirected";
         }
-
     }
 
     public static class TestApplication extends Application<Configuration> {
@@ -250,5 +238,4 @@ class DropwizardApacheConnectorTest {
         }
         throw new AssertionError("ProcessingException expected but not thrown");
     }
-
 }

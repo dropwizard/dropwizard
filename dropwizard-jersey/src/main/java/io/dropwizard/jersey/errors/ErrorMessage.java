@@ -3,9 +3,8 @@ package io.dropwizard.jersey.errors;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.checkerframework.checker.nullness.qual.Nullable;
-
 import java.util.Objects;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ErrorMessage {
@@ -24,8 +23,10 @@ public class ErrorMessage {
     }
 
     @JsonCreator
-    public ErrorMessage(@JsonProperty("code") int code, @JsonProperty("message") String message,
-                        @Nullable @JsonProperty("details") String details) {
+    public ErrorMessage(
+            @JsonProperty("code") int code,
+            @JsonProperty("message") String message,
+            @Nullable @JsonProperty("details") String details) {
         this.code = code;
         this.message = message;
         this.details = details;

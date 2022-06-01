@@ -1,20 +1,19 @@
 package io.dropwizard.lifecycle.setup;
 
+import static java.util.Objects.requireNonNull;
+
 import com.codahale.metrics.MetricRegistry;
 import io.dropwizard.lifecycle.JettyManaged;
 import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.lifecycle.ServerLifecycleListener;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ThreadFactory;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.component.ContainerLifeCycle;
 import org.eclipse.jetty.util.component.LifeCycle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ThreadFactory;
-
-import static java.util.Objects.requireNonNull;
 
 public class LifecycleEnvironment {
     private static final Logger LOGGER = LoggerFactory.getLogger(LifecycleEnvironment.class);

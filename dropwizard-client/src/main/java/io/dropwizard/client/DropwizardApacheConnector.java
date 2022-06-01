@@ -1,6 +1,18 @@
 package io.dropwizard.client;
 
 import io.dropwizard.util.DirectExecutorService;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Optional;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import javax.ws.rs.ProcessingException;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.Response;
 import org.apache.hc.client5.http.classic.methods.HttpUriRequest;
 import org.apache.hc.client5.http.classic.methods.HttpUriRequestBase;
 import org.apache.hc.client5.http.config.RequestConfig;
@@ -17,19 +29,6 @@ import org.glassfish.jersey.client.ClientResponse;
 import org.glassfish.jersey.client.spi.AsyncConnectorCallback;
 import org.glassfish.jersey.client.spi.Connector;
 import org.glassfish.jersey.message.internal.Statuses;
-
-import javax.ws.rs.ProcessingException;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.Response;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Optional;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Dropwizard Apache Connector.
@@ -52,8 +51,8 @@ public class DropwizardApacheConnector implements Connector {
 
     private static final String ERROR_BUFFERING_ENTITY = "Error buffering the entity.";
 
-    private static final String APACHE_HTTP_CLIENT_VERSION = VersionInfo
-            .loadVersionInfo("org.apache.hc.client5", DropwizardApacheConnector.class.getClassLoader())
+    private static final String APACHE_HTTP_CLIENT_VERSION = VersionInfo.loadVersionInfo(
+                    "org.apache.hc.client5", DropwizardApacheConnector.class.getClassLoader())
             .getRelease();
 
     /**
@@ -71,8 +70,8 @@ public class DropwizardApacheConnector implements Connector {
      */
     private final boolean chunkedEncodingEnabled;
 
-    public DropwizardApacheConnector(CloseableHttpClient client, @Nullable RequestConfig defaultRequestConfig,
-                                     boolean chunkedEncodingEnabled) {
+    public DropwizardApacheConnector(
+            CloseableHttpClient client, @Nullable RequestConfig defaultRequestConfig, boolean chunkedEncodingEnabled) {
         this.client = client;
         this.defaultRequestConfig = defaultRequestConfig;
         this.chunkedEncodingEnabled = chunkedEncodingEnabled;
@@ -88,17 +87,20 @@ public class DropwizardApacheConnector implements Connector {
             final CloseableHttpResponse apacheResponse = client.execute(apacheRequest);
 
             final String reasonPhrase = apacheResponse.getReasonPhrase();
-            final Response.StatusType status = Statuses.from(apacheResponse.getCode(), reasonPhrase == null ? "" : reasonPhrase);
+            final Response.StatusType status =
+                    Statuses.from(apacheResponse.getCode(), reasonPhrase == null ? "" : reasonPhrase);
 
             final ClientResponse jerseyResponse = new ClientResponse(status, jerseyRequest);
             for (Header header : apacheResponse.getHeaders()) {
-                jerseyResponse.getHeaders().computeIfAbsent(header.getName(), k -> new ArrayList<>())
-                    .add(header.getValue());
+                jerseyResponse
+                        .getHeaders()
+                        .computeIfAbsent(header.getName(), k -> new ArrayList<>())
+                        .add(header.getValue());
             }
 
             final HttpEntity httpEntity = apacheResponse.getEntity();
-            jerseyResponse.setEntityStream(httpEntity != null ? httpEntity.getContent() :
-                    new ByteArrayInputStream(new byte[0]));
+            jerseyResponse.setEntityStream(
+                    httpEntity != null ? httpEntity.getContent() : new ByteArrayInputStream(new byte[0]));
 
             return jerseyResponse;
         } catch (Exception e) {
@@ -172,8 +174,9 @@ public class DropwizardApacheConnector implements Connector {
             return null;
         }
 
-        return chunkedEncodingEnabled ? new JerseyRequestHttpEntity(jerseyRequest) :
-                new BufferedJerseyRequestHttpEntity(jerseyRequest);
+        return chunkedEncodingEnabled
+                ? new JerseyRequestHttpEntity(jerseyRequest)
+                : new BufferedJerseyRequestHttpEntity(jerseyRequest);
     }
 
     /**
@@ -218,10 +221,11 @@ public class DropwizardApacheConnector implements Connector {
 
         private JerseyRequestHttpEntity(ClientRequest clientRequest) {
             super(
-                clientRequest.getMediaType().toString(),
-                clientRequest.getRequestHeader(HttpHeaders.CONTENT_ENCODING).stream().findFirst().orElse(null),
-                true
-            );
+                    clientRequest.getMediaType().toString(),
+                    clientRequest.getRequestHeader(HttpHeaders.CONTENT_ENCODING).stream()
+                            .findFirst()
+                            .orElse(null),
+                    true);
             this.clientRequest = clientRequest;
         }
 
@@ -275,8 +279,7 @@ public class DropwizardApacheConnector implements Connector {
          * {@inheritDoc}
          */
         @Override
-        public void close() throws IOException {
-        }
+        public void close() throws IOException {}
     }
 
     /**
@@ -294,10 +297,11 @@ public class DropwizardApacheConnector implements Connector {
 
         private BufferedJerseyRequestHttpEntity(ClientRequest clientRequest) {
             super(
-                clientRequest.getMediaType().toString(),
-                clientRequest.getRequestHeader(HttpHeaders.CONTENT_ENCODING).stream().findFirst().orElse(null),
-                false
-            );
+                    clientRequest.getMediaType().toString(),
+                    clientRequest.getRequestHeader(HttpHeaders.CONTENT_ENCODING).stream()
+                            .findFirst()
+                            .orElse(null),
+                    false);
             final ByteArrayOutputStream stream = new ByteArrayOutputStream(BUFFER_INITIAL_SIZE);
             clientRequest.setStreamProvider(contentLength -> stream);
             try {
@@ -358,8 +362,6 @@ public class DropwizardApacheConnector implements Connector {
          * {@inheritDoc}
          */
         @Override
-        public void close() throws IOException {
-        }
+        public void close() throws IOException {}
     }
 }
-

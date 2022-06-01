@@ -1,12 +1,11 @@
 package io.dropwizard.validation.selfvalidating;
 
-import org.hibernate.validator.constraintvalidation.HibernateConstraintValidatorContext;
+import static io.dropwizard.validation.InterpolationHelper.escapeMessageParameter;
 
-import javax.validation.ConstraintValidatorContext;
 import java.util.Collections;
 import java.util.Map;
-
-import static io.dropwizard.validation.InterpolationHelper.escapeMessageParameter;
+import javax.validation.ConstraintValidatorContext;
+import org.hibernate.validator.constraintvalidation.HibernateConstraintValidatorContext;
 
 /**
  * This class is a simple wrapper around the ConstraintValidatorContext of hibernate validation.
@@ -99,12 +98,15 @@ public class ViolationCollector {
      * @param messageParameters a map of message parameters which can be interpolated in the violation message
      * @since 2.0.3
      */
-    public void addViolation(String propertyName, Integer index, String message, Map<String, Object> messageParameters) {
+    public void addViolation(
+            String propertyName, Integer index, String message, Map<String, Object> messageParameters) {
         violationOccurred = true;
         getContextWithMessageParameters(messageParameters)
                 .buildConstraintViolationWithTemplate(message)
                 .addPropertyNode(propertyName)
-                .addBeanNode().inIterable().atIndex(index)
+                .addBeanNode()
+                .inIterable()
+                .atIndex(index)
                 .addConstraintViolation();
     }
 
@@ -134,7 +136,9 @@ public class ViolationCollector {
         final HibernateConstraintValidatorContext context = getContextWithMessageParameters(messageParameters);
         context.buildConstraintViolationWithTemplate(message)
                 .addPropertyNode(propertyName)
-                .addBeanNode().inIterable().atKey(key)
+                .addBeanNode()
+                .inIterable()
+                .atKey(key)
                 .addConstraintViolation();
     }
 
@@ -174,5 +178,4 @@ public class ViolationCollector {
     public void setViolationOccurred(boolean violationOccurred) {
         this.violationOccurred = violationOccurred;
     }
-
 }

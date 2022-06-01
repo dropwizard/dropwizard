@@ -9,6 +9,5 @@ public final class Database {
         return "database-url";
     }
 
-    public void truncate() {
-    }
+    public void truncate() {}
 }

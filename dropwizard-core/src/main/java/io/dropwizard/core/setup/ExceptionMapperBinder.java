@@ -7,10 +7,9 @@ import io.dropwizard.jersey.errors.LoggingExceptionMapper;
 import io.dropwizard.jersey.jackson.JsonProcessingExceptionMapper;
 import io.dropwizard.jersey.optional.EmptyOptionalExceptionMapper;
 import io.dropwizard.jersey.validation.JerseyViolationExceptionMapper;
-import org.glassfish.jersey.internal.inject.AbstractBinder;
-
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.WriterInterceptor;
+import org.glassfish.jersey.internal.inject.AbstractBinder;
 
 /**
  * A binder that registers all the default exception mappers while allowing users to override
@@ -25,8 +24,7 @@ public class ExceptionMapperBinder extends AbstractBinder {
 
     @Override
     protected void configure() {
-        bind(new LoggingExceptionMapper<Throwable>() {
-        }).to(ExceptionMapper.class);
+        bind(new LoggingExceptionMapper<Throwable>() {}).to(ExceptionMapper.class);
         bind(JerseyViolationExceptionMapper.class).to(ExceptionMapper.class);
         bind(new JsonProcessingExceptionMapper(isShowDetails())).to(ExceptionMapper.class);
         bind(EarlyEofExceptionMapper.class).to(ExceptionMapper.class);

@@ -5,9 +5,8 @@ import io.dropwizard.auth.AuthBaseTest;
 import io.dropwizard.auth.AuthResource;
 import io.dropwizard.auth.util.AuthUtil;
 import io.dropwizard.jersey.DropwizardResourceConfig;
-
-import javax.ws.rs.container.ContainerRequestFilter;
 import java.util.Arrays;
+import javax.ws.rs.container.ContainerRequestFilter;
 
 public class OAuthCustomProviderTest extends AuthBaseTest<OAuthCustomProviderTest.OAuthTestResourceConfig> {
     public static class OAuthTestResourceConfig extends AbstractAuthResourceConfig {
@@ -15,12 +14,14 @@ public class OAuthCustomProviderTest extends AuthBaseTest<OAuthCustomProviderTes
             register(AuthResource.class);
         }
 
-        @Override protected ContainerRequestFilter getAuthFilter() {
+        @Override
+        protected ContainerRequestFilter getAuthFilter() {
             return new OAuthCredentialAuthFilter.Builder<>()
-                .setAuthenticator(AuthUtil.getMultiplyUsersOAuthAuthenticator(Arrays.asList(ADMIN_USER, ORDINARY_USER)))
-                .setAuthorizer(AuthUtil.getTestAuthorizer(ADMIN_USER, ADMIN_ROLE))
-              .setPrefix(CUSTOM_PREFIX)
-              .buildAuthFilter();
+                    .setAuthenticator(
+                            AuthUtil.getMultiplyUsersOAuthAuthenticator(Arrays.asList(ADMIN_USER, ORDINARY_USER)))
+                    .setAuthorizer(AuthUtil.getTestAuthorizer(ADMIN_USER, ADMIN_ROLE))
+                    .setPrefix(CUSTOM_PREFIX)
+                    .buildAuthFilter();
         }
     }
 

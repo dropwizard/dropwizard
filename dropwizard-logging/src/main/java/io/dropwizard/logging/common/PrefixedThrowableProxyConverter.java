@@ -2,7 +2,6 @@ package io.dropwizard.logging.common;
 
 import ch.qos.logback.classic.pattern.ThrowableProxyConverter;
 import ch.qos.logback.classic.spi.IThrowableProxy;
-
 import java.util.regex.Pattern;
 
 /**

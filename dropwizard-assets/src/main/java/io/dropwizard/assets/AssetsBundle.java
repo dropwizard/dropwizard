@@ -4,10 +4,9 @@ import io.dropwizard.core.Configuration;
 import io.dropwizard.core.ConfiguredBundle;
 import io.dropwizard.core.setup.Environment;
 import io.dropwizard.servlets.assets.AssetServlet;
+import java.nio.charset.StandardCharsets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.nio.charset.StandardCharsets;
 
 /**
  * A bundle for serving static asset files from the classpath.
@@ -108,8 +107,8 @@ public class AssetsBundle implements ConfiguredBundle<Configuration> {
      * @param defaultMediaType the default media type for unknown file extensions
      * @since 2.0
      */
-    public AssetsBundle(String resourcePath, String uriPath, String indexFile, String assetsName,
-                        String defaultMediaType) {
+    public AssetsBundle(
+            String resourcePath, String uriPath, String indexFile, String assetsName, String defaultMediaType) {
         if (!resourcePath.startsWith("/")) {
             throw new IllegalArgumentException(resourcePath + " is not an absolute path");
         }

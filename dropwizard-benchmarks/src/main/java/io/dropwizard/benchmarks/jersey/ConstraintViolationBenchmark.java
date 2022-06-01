@@ -3,6 +3,14 @@ package io.dropwizard.benchmarks.jersey;
 import io.dropwizard.jersey.validation.ConstraintMessage;
 import io.dropwizard.jersey.validation.Validators;
 import io.dropwizard.logging.common.BootstrapLogging;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+import javax.validation.ConstraintViolation;
+import javax.validation.Valid;
+import javax.validation.Validator;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.executable.ExecutableValidator;
+import javax.ws.rs.HeaderParam;
 import org.glassfish.jersey.server.model.Invocable;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
@@ -13,15 +21,6 @@ import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
-
-import javax.validation.ConstraintViolation;
-import javax.validation.Valid;
-import javax.validation.Validator;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.executable.ExecutableValidator;
-import javax.ws.rs.HeaderParam;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
@@ -58,19 +57,19 @@ public class ConstraintViolationBenchmark {
         final ExecutableValidator execValidator = validator.forExecutables();
 
         final Set<ConstraintViolation<ConstraintViolationBenchmark.Resource>> paramViolations =
-            execValidator.validateParameters(
-                new Resource(),
-                ConstraintViolationBenchmark.Resource.class.getMethod("paramFunc", String.class),
-                new Object[]{""} // the parameter value
-            );
+                execValidator.validateParameters(
+                        new Resource(),
+                        ConstraintViolationBenchmark.Resource.class.getMethod("paramFunc", String.class),
+                        new Object[] {""} // the parameter value
+                        );
         paramViolation = paramViolations.iterator().next();
 
         final Set<ConstraintViolation<ConstraintViolationBenchmark.Resource>> objViolations =
-            execValidator.validateParameters(
-                new Resource(),
-                ConstraintViolationBenchmark.Resource.class.getMethod("objectFunc", Foo.class),
-                new Object[]{new Foo()} // the parameter value
-            );
+                execValidator.validateParameters(
+                        new Resource(),
+                        ConstraintViolationBenchmark.Resource.class.getMethod("objectFunc", Foo.class),
+                        new Object[] {new Foo()} // the parameter value
+                        );
         objViolation = objViolations.iterator().next();
     }
 
@@ -86,11 +85,11 @@ public class ConstraintViolationBenchmark {
 
     public static void main(String[] args) throws Exception {
         new Runner(new OptionsBuilder()
-                .include(ConstraintViolationBenchmark.class.getSimpleName())
-                .forks(1)
-                .warmupIterations(5)
-                .measurementIterations(5)
-                .build())
+                        .include(ConstraintViolationBenchmark.class.getSimpleName())
+                        .forks(1)
+                        .warmupIterations(5)
+                        .measurementIterations(5)
+                        .build())
                 .run();
     }
 }

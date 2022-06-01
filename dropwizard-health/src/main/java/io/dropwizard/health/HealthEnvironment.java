@@ -1,22 +1,23 @@
 package io.dropwizard.health;
 
 import com.codahale.metrics.health.HealthCheckRegistry;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Objects;
 
 public class HealthEnvironment {
     private static final Logger LOGGER = LoggerFactory.getLogger(HealthEnvironment.class);
 
     @NonNull
     private final HealthCheckRegistry healthCheckRegistry;
+
     @NonNull
     private final Collection<HealthStateListener> healthStateListeners;
+
     @Nullable
     private HealthStateAggregator healthStateAggregator;
 

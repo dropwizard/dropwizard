@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.health.HealthEnvironment;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
 import io.dropwizard.jetty.setup.ServletEnvironment;
-
 import java.util.Collection;
 
 /**
@@ -39,14 +38,16 @@ public class ServletHealthResponderFactory implements HealthResponderFactory {
     }
 
     @Override
-    public void configure(final String name, final Collection<String> healthCheckUrlPaths,
-                          final HealthResponseProvider healthResponseProvider,
-                          final HealthEnvironment health, final JerseyEnvironment jersey,
-                          final ServletEnvironment servlets, final ObjectMapper mapper) {
-        final ServletHealthResponder servlet = new ServletHealthResponder(healthResponseProvider, cacheControlEnabled,
-            cacheControlValue);
-        servlets
-            .addServlet(name + SERVLET_SUFFIX, servlet)
-            .addMapping(healthCheckUrlPaths.toArray(new String[0]));
+    public void configure(
+            final String name,
+            final Collection<String> healthCheckUrlPaths,
+            final HealthResponseProvider healthResponseProvider,
+            final HealthEnvironment health,
+            final JerseyEnvironment jersey,
+            final ServletEnvironment servlets,
+            final ObjectMapper mapper) {
+        final ServletHealthResponder servlet =
+                new ServletHealthResponder(healthResponseProvider, cacheControlEnabled, cacheControlValue);
+        servlets.addServlet(name + SERVLET_SUFFIX, servlet).addMapping(healthCheckUrlPaths.toArray(new String[0]));
     }
 }

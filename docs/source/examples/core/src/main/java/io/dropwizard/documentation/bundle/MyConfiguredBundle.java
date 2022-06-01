@@ -12,7 +12,6 @@ public class MyConfiguredBundle implements ConfiguredBundle<MyConfiguredBundleCo
     }
 
     @Override
-    public void initialize(Bootstrap<?> bootstrap) {
-    }
+    public void initialize(Bootstrap<?> bootstrap) {}
 }
 // core: MyConfiguredBundle

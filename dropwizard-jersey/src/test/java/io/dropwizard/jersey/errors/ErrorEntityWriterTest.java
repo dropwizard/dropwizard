@@ -1,7 +1,14 @@
 package io.dropwizard.jersey.errors;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+
 import io.dropwizard.jersey.AbstractJerseyTest;
 import io.dropwizard.jersey.DropwizardResourceConfig;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.client.Invocation;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.servlet.ServletProperties;
 import org.glassfish.jersey.test.DeploymentContext;
@@ -11,14 +18,6 @@ import org.glassfish.jersey.test.grizzly.GrizzlyWebTestContainerFactory;
 import org.glassfish.jersey.test.spi.TestContainerException;
 import org.glassfish.jersey.test.spi.TestContainerFactory;
 import org.junit.jupiter.api.Test;
-
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.client.Invocation;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 class ErrorEntityWriterTest extends AbstractJerseyTest {
 
@@ -48,21 +47,22 @@ class ErrorEntityWriterTest extends AbstractJerseyTest {
     protected DeploymentContext configureDeployment() {
         final ResourceConfig rc = new ErrorEntityWriterTestResourceConfig();
         return ServletDeploymentContext.builder(rc)
-            .initParam(ServletProperties.JAXRS_APPLICATION_CLASS, ErrorEntityWriterTestResourceConfig.class.getName())
-            .build();
+                .initParam(
+                        ServletProperties.JAXRS_APPLICATION_CLASS, ErrorEntityWriterTestResourceConfig.class.getName())
+                .build();
     }
 
     @Test
     void formatsErrorsAsHtml() {
         Invocation.Builder request = target("/exception/html-exception").request(MediaType.TEXT_HTML_TYPE);
         assertThatExceptionOfType(WebApplicationException.class)
-            .isThrownBy(() -> request.get(String.class))
-            .satisfies(e -> {
-                final Response response = e.getResponse();
-                assertThat(response.getStatus()).isEqualTo(400);
-                assertThat(response.getMediaType()).isEqualTo(MediaType.TEXT_HTML_TYPE);
-                assertThat(response.readEntity(String.class)).isEqualTo("<!DOCTYPE html><html><body>BIFF</body></html>");
-            });
+                .isThrownBy(() -> request.get(String.class))
+                .satisfies(e -> {
+                    final Response response = e.getResponse();
+                    assertThat(response.getStatus()).isEqualTo(400);
+                    assertThat(response.getMediaType()).isEqualTo(MediaType.TEXT_HTML_TYPE);
+                    assertThat(response.readEntity(String.class))
+                            .isEqualTo("<!DOCTYPE html><html><body>BIFF</body></html>");
+                });
     }
-
 }

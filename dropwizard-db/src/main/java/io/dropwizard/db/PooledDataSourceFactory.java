@@ -2,10 +2,9 @@ package io.dropwizard.db;
 
 import com.codahale.metrics.MetricRegistry;
 import io.dropwizard.util.Duration;
-import org.checkerframework.checker.nullness.qual.Nullable;
-
 import java.util.Map;
 import java.util.Optional;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * Interface of a factory that produces JDBC data sources

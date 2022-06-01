@@ -1,10 +1,10 @@
 package io.dropwizard.testing.app;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import io.dropwizard.testing.junit.ResourceTestRule;
 import org.junit.Rule;
 import org.junit.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class ResourceTestRuleWithoutLoggingBootstrapTest {
     @SuppressWarnings("deprecation")
@@ -16,8 +16,6 @@ public class ResourceTestRuleWithoutLoggingBootstrapTest {
 
     @Test
     public void testResource() {
-        assertThat(resourceTestRule.target("test").request()
-                .get(String.class))
-                .isEqualTo("Default message");
+        assertThat(resourceTestRule.target("test").request().get(String.class)).isEqualTo("Default message");
     }
 }

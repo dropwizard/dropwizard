@@ -5,10 +5,9 @@ import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.ScheduledReporter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-
-import javax.validation.constraints.NotNull;
 import java.io.PrintStream;
 import java.util.TimeZone;
+import javax.validation.constraints.NotNull;
 
 /**
  * A factory for configuring and building {@link ConsoleReporter} instances.
@@ -82,13 +81,13 @@ public class ConsoleReporterFactory extends BaseFormattedReporterFactory {
     @Override
     public ScheduledReporter build(MetricRegistry registry) {
         return ConsoleReporter.forRegistry(registry)
-                              .convertDurationsTo(getDurationUnit())
-                              .convertRatesTo(getRateUnit())
-                              .filter(getFilter())
-                              .formattedFor(getLocale())
-                              .formattedFor(getTimeZone())
-                              .outputTo(getOutput().get())
-                              .disabledMetricAttributes(getDisabledAttributes())
-                              .build();
+                .convertDurationsTo(getDurationUnit())
+                .convertRatesTo(getRateUnit())
+                .filter(getFilter())
+                .formattedFor(getLocale())
+                .formattedFor(getTimeZone())
+                .outputTo(getOutput().get())
+                .disabledMetricAttributes(getDisabledAttributes())
+                .build();
     }
 }

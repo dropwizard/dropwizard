@@ -4,9 +4,8 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-import org.checkerframework.checker.nullness.qual.Nullable;
-
 import java.io.IOException;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * A custom deserializer of your nightmares. It tries to get {@link JsonProcessingExceptionMapper}
@@ -21,10 +20,8 @@ public class CustomDeserialization extends StdDeserializer<CustomRepresentation>
     }
 
     @Override
-    public CustomRepresentation deserialize(
-        JsonParser jsonParser,
-        DeserializationContext deserializationContext
-    ) throws IOException {
+    public CustomRepresentation deserialize(JsonParser jsonParser, DeserializationContext deserializationContext)
+            throws IOException {
         final Object ss = jsonParser.readValueAs(Object.class);
         if (ss.equals("SQL_INECTION")) {
             throw new RuntimeException("Database fell over due to sql injection");

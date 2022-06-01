@@ -1,6 +1,16 @@
 package io.dropwizard.jetty.setup;
 
+import static java.util.Objects.requireNonNull;
+
 import io.dropwizard.jetty.MutableServletContextHandler;
+import java.util.Arrays;
+import java.util.EventListener;
+import java.util.HashSet;
+import java.util.Set;
+import javax.servlet.Filter;
+import javax.servlet.FilterRegistration;
+import javax.servlet.Servlet;
+import javax.servlet.ServletRegistration;
 import org.eclipse.jetty.security.SecurityHandler;
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.servlet.FilterHolder;
@@ -10,17 +20,6 @@ import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.util.resource.ResourceCollection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.servlet.Filter;
-import javax.servlet.FilterRegistration;
-import javax.servlet.Servlet;
-import javax.servlet.ServletRegistration;
-import java.util.Arrays;
-import java.util.EventListener;
-import java.util.HashSet;
-import java.util.Set;
-
-import static java.util.Objects.requireNonNull;
 
 public class ServletEnvironment {
     private static final Logger LOGGER = LoggerFactory.getLogger(ServletEnvironment.class);

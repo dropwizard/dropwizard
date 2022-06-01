@@ -1,16 +1,15 @@
 package io.dropwizard.client.proxy;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.regex.Pattern;
 import org.apache.hc.client5.http.SchemePortResolver;
 import org.apache.hc.client5.http.impl.routing.DefaultProxyRoutePlanner;
 import org.apache.hc.core5.http.HttpException;
 import org.apache.hc.core5.http.HttpHost;
 import org.apache.hc.core5.http.protocol.HttpContext;
 import org.checkerframework.checker.nullness.qual.Nullable;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.regex.Pattern;
 
 /**
  * Implementation of {@link org.apache.hc.client5.http.routing.HttpRoutePlanner}
@@ -28,8 +27,8 @@ public class NonProxyListProxyRoutePlanner extends DefaultProxyRoutePlanner {
         nonProxyHostPatterns = getNonProxyHostPatterns(nonProxyHosts);
     }
 
-    public NonProxyListProxyRoutePlanner(HttpHost proxy, SchemePortResolver schemePortResolver,
-                                         @Nullable List<String> nonProxyHosts) {
+    public NonProxyListProxyRoutePlanner(
+            HttpHost proxy, SchemePortResolver schemePortResolver, @Nullable List<String> nonProxyHosts) {
         super(proxy, schemePortResolver);
         this.nonProxyHostPatterns = getNonProxyHostPatterns(nonProxyHosts);
     }

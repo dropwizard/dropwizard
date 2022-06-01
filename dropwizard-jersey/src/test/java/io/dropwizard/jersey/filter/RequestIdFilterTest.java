@@ -1,21 +1,20 @@
 package io.dropwizard.jersey.filter;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import org.slf4j.Logger;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
+import java.util.UUID;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerResponseContext;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
-import java.util.UUID;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import org.slf4j.Logger;
 
 class RequestIdFilterTest {
 
@@ -48,8 +47,14 @@ class RequestIdFilterTest {
         String requestId = (String) headers.getFirst("X-Request-Id");
         assertThat(requestId).isNotNull();
         assertThat(UUID.fromString(requestId)).isNotNull();
-        verify(logger).trace("method={} path={} request_id={} status={} length={}",
-            "GET", "/some/path", requestId, 200, 2048);
+        verify(logger)
+                .trace(
+                        "method={} path={} request_id={} status={} length={}",
+                        "GET",
+                        "/some/path",
+                        requestId,
+                        200,
+                        2048);
     }
 
     @Test
@@ -62,8 +67,13 @@ class RequestIdFilterTest {
 
         String requestId = (String) headers.getFirst("X-Request-Id");
         assertThat(requestId).isEqualTo(existedRequestId);
-        verify(logger).trace("method={} path={} request_id={} status={} length={}",
-            "GET", "/some/path", requestId, 200, 2048);
+        verify(logger)
+                .trace(
+                        "method={} path={} request_id={} status={} length={}",
+                        "GET",
+                        "/some/path",
+                        requestId,
+                        200,
+                        2048);
     }
-
 }

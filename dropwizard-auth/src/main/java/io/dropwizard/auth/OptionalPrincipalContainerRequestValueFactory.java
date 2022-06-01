@@ -1,9 +1,8 @@
 package io.dropwizard.auth;
 
-import org.glassfish.jersey.server.ContainerRequest;
-
 import java.security.Principal;
 import java.util.Optional;
+import org.glassfish.jersey.server.ContainerRequest;
 
 /**
  * A value factory which extracts an {@link Optional optional} {@link

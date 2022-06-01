@@ -1,37 +1,36 @@
 package io.dropwizard.hibernate;
 
-import org.junit.jupiter.api.Test;
-
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+
+import java.util.List;
+import org.junit.jupiter.api.Test;
 
 class ScanningHibernateBundleTest {
 
     @Test
     void testFindEntityClassesFromDirectory() {
-        //given
+        // given
         String packageWithEntities = "io.dropwizard.hibernate.fake.entities.pckg";
-        //when
+        // when
         List<Class<?>> findEntityClassesFromDirectory =
-            ScanningHibernateBundle.findEntityClassesFromDirectory(new String[]{packageWithEntities});
+                ScanningHibernateBundle.findEntityClassesFromDirectory(new String[] {packageWithEntities});
 
-        //then
+        // then
         assertFalse(findEntityClassesFromDirectory.isEmpty());
         assertEquals(4, findEntityClassesFromDirectory.size());
     }
 
     @Test
     void testFindEntityClassesFromMultipleDirectories() {
-        //given
+        // given
         String packageWithEntities = "io.dropwizard.hibernate.fake.entities.pckg";
         String packageWithEntities2 = "io.dropwizard.hibernate.fake2.entities.pckg";
-        //when
-        List<Class<?>> findEntityClassesFromDirectory =
-            ScanningHibernateBundle.findEntityClassesFromDirectory(new String[]{packageWithEntities, packageWithEntities2});
+        // when
+        List<Class<?>> findEntityClassesFromDirectory = ScanningHibernateBundle.findEntityClassesFromDirectory(
+                new String[] {packageWithEntities, packageWithEntities2});
 
-        //then
+        // then
         assertFalse(findEntityClassesFromDirectory.isEmpty());
         assertEquals(8, findEntityClassesFromDirectory.size());
     }

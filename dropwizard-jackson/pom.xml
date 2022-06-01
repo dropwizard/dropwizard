@@ -95,10 +95,10 @@
                 <executions>
                     <execution>
                         <id>default-testCompile</id>
-                        <phase>test-compile</phase>
                         <goals>
                             <goal>testCompile</goal>
                         </goals>
+                        <phase>test-compile</phase>
                         <configuration>
                             <compilerArgument>-parameters</compilerArgument>
                         </configuration>

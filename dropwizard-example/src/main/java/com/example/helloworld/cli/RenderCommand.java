@@ -4,13 +4,12 @@ import com.example.helloworld.HelloWorldConfiguration;
 import com.example.helloworld.core.Template;
 import io.dropwizard.core.cli.ConfiguredCommand;
 import io.dropwizard.core.setup.Bootstrap;
+import java.util.Optional;
 import net.sourceforge.argparse4j.impl.Arguments;
 import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Optional;
 
 public class RenderCommand extends ConfiguredCommand<HelloWorldConfiguration> {
     private static final Logger LOGGER = LoggerFactory.getLogger(RenderCommand.class);
@@ -22,17 +21,18 @@ public class RenderCommand extends ConfiguredCommand<HelloWorldConfiguration> {
     @Override
     public void configure(Subparser subparser) {
         super.configure(subparser);
-        subparser.addArgument("-i", "--include-default")
-                 .action(Arguments.storeTrue())
-                 .dest("include-default")
-                 .help("Also render the template with the default name");
+        subparser
+                .addArgument("-i", "--include-default")
+                .action(Arguments.storeTrue())
+                .dest("include-default")
+                .help("Also render the template with the default name");
         subparser.addArgument("names").nargs("*");
     }
 
     @Override
-    protected void run(Bootstrap<HelloWorldConfiguration> bootstrap,
-                       Namespace namespace,
-                       HelloWorldConfiguration configuration) throws Exception {
+    protected void run(
+            Bootstrap<HelloWorldConfiguration> bootstrap, Namespace namespace, HelloWorldConfiguration configuration)
+            throws Exception {
         final Template template = configuration.buildTemplate();
 
         if (Boolean.TRUE.equals(namespace.getBoolean("include-default"))) {

@@ -1,11 +1,22 @@
 package io.dropwizard.health;
 
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
+import static java.util.Collections.unmodifiableList;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.LoggingEvent;
 import ch.qos.logback.core.Appender;
 import com.codahale.metrics.health.HealthCheck;
 import com.codahale.metrics.health.HealthCheckRegistry;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,18 +27,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
-import static java.util.Collections.unmodifiableList;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.fail;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
-
 @ExtendWith(MockitoExtension.class)
 class HealthCheckConfigValidatorTest {
 
@@ -36,15 +35,15 @@ class HealthCheckConfigValidatorTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        ch.qos.logback.classic.Logger logger = (ch.qos.logback.classic.Logger) LoggerFactory
-            .getLogger(HealthCheckConfigValidator.class);
+        ch.qos.logback.classic.Logger logger =
+                (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(HealthCheckConfigValidator.class);
         logger.addAppender(mockLogAppender);
     }
 
     @AfterEach
     void tearDown() throws Exception {
-        ch.qos.logback.classic.Logger logger = (ch.qos.logback.classic.Logger) LoggerFactory
-            .getLogger(HealthCheckConfigValidator.class);
+        ch.qos.logback.classic.Logger logger =
+                (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(HealthCheckConfigValidator.class);
         logger.detachAppender(mockLogAppender);
         MDC.clear();
     }
@@ -105,12 +104,9 @@ class HealthCheckConfigValidatorTest {
         verify(mockLogAppender).doAppend(captor.capture());
         LoggingEvent logEvent = captor.getValue();
         assertThat(logEvent.getLevel()).isEqualTo(Level.INFO);
-        assertThat(logEvent.getFormattedMessage())
-            .doesNotContain("  * check-1");
-        assertThat(logEvent.getFormattedMessage())
-            .contains("  * check-2");
-        assertThat(logEvent.getFormattedMessage())
-            .contains("  * check-3");
+        assertThat(logEvent.getFormattedMessage()).doesNotContain("  * check-1");
+        assertThat(logEvent.getFormattedMessage()).contains("  * check-2");
+        assertThat(logEvent.getFormattedMessage()).contains("  * check-3");
     }
 
     @Test
@@ -139,16 +135,11 @@ class HealthCheckConfigValidatorTest {
             // then
             verify(mockLogAppender).doAppend(captor.capture());
             LoggingEvent logEvent = captor.getValue();
-            assertThat(logEvent.getLevel())
-                .isEqualTo(Level.ERROR);
-            assertThat(logEvent.getFormattedMessage())
-                .doesNotContain("  * check-1");
-            assertThat(logEvent.getFormattedMessage())
-                .contains("  * check-3");
-            assertThat(logEvent.getFormattedMessage())
-                .contains("  * check-3");
-            assertThat(e.getMessage())
-                .contains("[check-3, check-2]");
+            assertThat(logEvent.getLevel()).isEqualTo(Level.ERROR);
+            assertThat(logEvent.getFormattedMessage()).doesNotContain("  * check-1");
+            assertThat(logEvent.getFormattedMessage()).contains("  * check-3");
+            assertThat(logEvent.getFormattedMessage()).contains("  * check-3");
+            assertThat(e.getMessage()).contains("[check-3, check-2]");
         }
     }
 }

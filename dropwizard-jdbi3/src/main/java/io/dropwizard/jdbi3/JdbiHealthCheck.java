@@ -4,11 +4,10 @@ import com.codahale.metrics.health.HealthCheck;
 import io.dropwizard.db.TimeBoundHealthCheck;
 import io.dropwizard.util.DirectExecutorService;
 import io.dropwizard.util.Duration;
-import org.jdbi.v3.core.Handle;
-import org.jdbi.v3.core.Jdbi;
-
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
+import org.jdbi.v3.core.Handle;
+import org.jdbi.v3.core.Jdbi;
 
 public class JdbiHealthCheck extends HealthCheck {
     private final Jdbi jdbi;
@@ -16,7 +15,8 @@ public class JdbiHealthCheck extends HealthCheck {
     private final int validationQueryTimeout;
     private final TimeBoundHealthCheck timeBoundHealthCheck;
 
-    public JdbiHealthCheck(ExecutorService executorService, Duration duration, Jdbi jdbi, Optional<String> validationQuery) {
+    public JdbiHealthCheck(
+            ExecutorService executorService, Duration duration, Jdbi jdbi, Optional<String> validationQuery) {
         this.jdbi = jdbi;
         this.validationQuery = validationQuery;
         this.validationQueryTimeout = (int) duration.toSeconds();
@@ -30,15 +30,14 @@ public class JdbiHealthCheck extends HealthCheck {
     @Override
     protected Result check() throws Exception {
         return timeBoundHealthCheck.check(() -> {
-                try (Handle handle = jdbi.open()) {
-                    if (validationQuery.isPresent()) {
-                        handle.execute(validationQuery.get());
-                    } else if (!handle.getConnection().isValid(validationQueryTimeout)) {
-                        return Result.unhealthy("Connection::isValid returned false.");
-                    }
-                    return Result.healthy();
+            try (Handle handle = jdbi.open()) {
+                if (validationQuery.isPresent()) {
+                    handle.execute(validationQuery.get());
+                } else if (!handle.getConnection().isValid(validationQueryTimeout)) {
+                    return Result.unhealthy("Connection::isValid returned false.");
                 }
+                return Result.healthy();
             }
-        );
+        });
     }
 }

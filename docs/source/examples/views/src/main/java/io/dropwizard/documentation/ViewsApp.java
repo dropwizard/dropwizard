@@ -10,13 +10,12 @@ import io.dropwizard.jersey.validation.ValidationErrorMessage;
 import io.dropwizard.views.common.View;
 import io.dropwizard.views.common.ViewBundle;
 import io.dropwizard.views.common.ViewRenderException;
-import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.glassfish.jersey.spi.ExtendedExceptionMapper;
-
+import java.util.Map;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.Map;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.glassfish.jersey.spi.ExtendedExceptionMapper;
 
 public class ViewsApp extends Application<ViewsConfiguration> {
     @Override
@@ -77,12 +76,14 @@ public class ViewsApp extends Application<ViewsConfiguration> {
         });
         // views: ViewsApp#run->ErrorEntityWriter->ErrorMessage
         // views: ViewsApp#run->ErrorEntityWriter->ValidationErrorMessage
-        environment.jersey().register(new ErrorEntityWriter<ValidationErrorMessage, View>(MediaType.TEXT_HTML_TYPE, View.class) {
-            @Override
-            protected View getRepresentation(ValidationErrorMessage message) {
-                return new ValidationErrorView(message);
-            }
-        });
+        environment
+                .jersey()
+                .register(new ErrorEntityWriter<ValidationErrorMessage, View>(MediaType.TEXT_HTML_TYPE, View.class) {
+                    @Override
+                    protected View getRepresentation(ValidationErrorMessage message) {
+                        return new ValidationErrorView(message);
+                    }
+                });
         // views: ViewsApp#run->ErrorEntityWriter->ValidationErrorMessage
     }
 }

@@ -22,8 +22,5 @@ public interface ConnectorFactory extends Discoverable {
      * @param threadPool the application's thread pool
      * @return a {@link Connector}
      */
-    Connector build(Server server,
-                    MetricRegistry metrics,
-                    String name,
-                    @Nullable ThreadPool threadPool);
+    Connector build(Server server, MetricRegistry metrics, String name, @Nullable ThreadPool threadPool);
 }

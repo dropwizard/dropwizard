@@ -29,9 +29,8 @@ import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.hibernate.HibernateBundle;
 import io.dropwizard.migrations.MigrationsBundle;
 import io.dropwizard.views.common.ViewBundle;
-import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
-
 import java.util.Map;
+import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 
 public class HelloWorldApplication extends Application<HelloWorldConfiguration> {
     public static void main(String[] args) throws Exception {
@@ -39,12 +38,12 @@ public class HelloWorldApplication extends Application<HelloWorldConfiguration> 
     }
 
     private final HibernateBundle<HelloWorldConfiguration> hibernateBundle =
-        new HibernateBundle<HelloWorldConfiguration>(Person.class) {
-            @Override
-            public DataSourceFactory getDataSourceFactory(HelloWorldConfiguration configuration) {
-                return configuration.getDataSourceFactory();
-            }
-        };
+            new HibernateBundle<HelloWorldConfiguration>(Person.class) {
+                @Override
+                public DataSourceFactory getDataSourceFactory(HelloWorldConfiguration configuration) {
+                    return configuration.getDataSourceFactory();
+                }
+            };
 
     @Override
     public String getName() {
@@ -54,12 +53,8 @@ public class HelloWorldApplication extends Application<HelloWorldConfiguration> 
     @Override
     public void initialize(Bootstrap<HelloWorldConfiguration> bootstrap) {
         // Enable variable substitution with environment variables
-        bootstrap.setConfigurationSourceProvider(
-                new SubstitutingSourceProvider(
-                        bootstrap.getConfigurationSourceProvider(),
-                        new EnvironmentVariableSubstitutor(false)
-                )
-        );
+        bootstrap.setConfigurationSourceProvider(new SubstitutingSourceProvider(
+                bootstrap.getConfigurationSourceProvider(), new EnvironmentVariableSubstitutor(false)));
 
         bootstrap.addCommand(new RenderCommand());
         bootstrap.addBundle(new AssetsBundle());
@@ -86,11 +81,13 @@ public class HelloWorldApplication extends Application<HelloWorldConfiguration> 
         environment.healthChecks().register("template", new TemplateHealthCheck(template));
         environment.admin().addTask(new EchoTask());
         environment.jersey().register(DateRequiredFeature.class);
-        environment.jersey().register(new AuthDynamicFeature(new BasicCredentialAuthFilter.Builder<User>()
-                .setAuthenticator(new ExampleAuthenticator())
-                .setAuthorizer(new ExampleAuthorizer())
-                .setRealm("SUPER SECRET STUFF")
-                .buildAuthFilter()));
+        environment
+                .jersey()
+                .register(new AuthDynamicFeature(new BasicCredentialAuthFilter.Builder<User>()
+                        .setAuthenticator(new ExampleAuthenticator())
+                        .setAuthorizer(new ExampleAuthorizer())
+                        .setRealm("SUPER SECRET STUFF")
+                        .buildAuthFilter()));
         environment.jersey().register(new AuthValueFactoryProvider.Binder<>(User.class));
         environment.jersey().register(RolesAllowedDynamicFeature.class);
         environment.jersey().register(new HelloWorldResource(template));

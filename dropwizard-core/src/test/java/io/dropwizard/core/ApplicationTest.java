@@ -1,16 +1,14 @@
 package io.dropwizard.core;
 
-import io.dropwizard.core.setup.Bootstrap;
-import io.dropwizard.core.setup.Environment;
-import org.junit.jupiter.api.Test;
-
-import java.io.File;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
+import io.dropwizard.core.setup.Bootstrap;
+import io.dropwizard.core.setup.Environment;
+import java.io.File;
+import org.junit.jupiter.api.Test;
+
 class ApplicationTest {
-    private static class FakeConfiguration extends Configuration {
-    }
+    private static class FakeConfiguration extends Configuration {}
 
     private static class FakeApplication extends Application<FakeConfiguration> {
         boolean fatalError = false;
@@ -24,8 +22,7 @@ class ApplicationTest {
         }
     }
 
-    private static class PoserApplication extends FakeApplication {
-    }
+    private static class PoserApplication extends FakeApplication {}
 
     private static class WrapperApplication<C extends FakeConfiguration> extends Application<C> {
         private final Application<C> application;
@@ -47,14 +44,12 @@ class ApplicationTest {
 
     @Test
     void hasAReferenceToItsTypeParameter() throws Exception {
-        assertThat(new FakeApplication().getConfigurationClass())
-                .isSameAs(FakeConfiguration.class);
+        assertThat(new FakeApplication().getConfigurationClass()).isSameAs(FakeConfiguration.class);
     }
 
     @Test
     void canDetermineConfiguration() throws Exception {
-        assertThat(new PoserApplication().getConfigurationClass())
-                .isSameAs(FakeConfiguration.class);
+        assertThat(new PoserApplication().getConfigurationClass()).isSameAs(FakeConfiguration.class);
     }
 
     @Test

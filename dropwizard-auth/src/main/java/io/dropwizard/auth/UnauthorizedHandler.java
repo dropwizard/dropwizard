@@ -1,9 +1,8 @@
 package io.dropwizard.auth;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
-
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 public interface UnauthorizedHandler {
     @Nullable

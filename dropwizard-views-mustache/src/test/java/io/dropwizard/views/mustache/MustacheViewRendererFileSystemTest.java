@@ -1,17 +1,15 @@
 package io.dropwizard.views.mustache;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+
 import com.codahale.metrics.MetricRegistry;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.logging.common.BootstrapLogging;
 import io.dropwizard.views.common.ViewMessageBodyWriter;
 import io.dropwizard.views.common.ViewRenderExceptionMapper;
 import io.dropwizard.views.common.ViewRenderer;
-import org.glassfish.jersey.server.ResourceConfig;
-import org.glassfish.jersey.test.JerseyTest;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
+import java.util.Collections;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -19,10 +17,11 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
-import java.util.Collections;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import org.glassfish.jersey.server.ResourceConfig;
+import org.glassfish.jersey.test.JerseyTest;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test class for {@link MustacheViewRenderer} configured to load Mustache
@@ -102,20 +101,19 @@ class MustacheViewRendererFileSystemTest extends JerseyTest {
     void returnsA500ForViewsWithBadTemplatePaths() {
         Invocation.Builder request = target("/test/bad").request();
         assertThatExceptionOfType(WebApplicationException.class)
-            .isThrownBy(() -> request.get(String.class))
-            .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(500))
-            .satisfies(e -> assertThat(e.getResponse().readEntity(String.class))
-                .isEqualTo(ViewRenderExceptionMapper.TEMPLATE_ERROR_MSG));
+                .isThrownBy(() -> request.get(String.class))
+                .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(500))
+                .satisfies(e -> assertThat(e.getResponse().readEntity(String.class))
+                        .isEqualTo(ViewRenderExceptionMapper.TEMPLATE_ERROR_MSG));
     }
 
     @Test
     void returnsA500ForViewsThatCantCompile() {
         Invocation.Builder request = target("/test/error").request();
         assertThatExceptionOfType(WebApplicationException.class)
-            .isThrownBy(() -> request.get(String.class))
-            .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(500))
-            .satisfies(e -> assertThat(e.getResponse().readEntity(String.class))
-                .isEqualTo(ViewRenderExceptionMapper.TEMPLATE_ERROR_MSG));
+                .isThrownBy(() -> request.get(String.class))
+                .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(500))
+                .satisfies(e -> assertThat(e.getResponse().readEntity(String.class))
+                        .isEqualTo(ViewRenderExceptionMapper.TEMPLATE_ERROR_MSG));
     }
-
 }

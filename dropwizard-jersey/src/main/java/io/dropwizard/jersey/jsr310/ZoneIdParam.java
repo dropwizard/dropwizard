@@ -1,9 +1,8 @@
 package io.dropwizard.jersey.jsr310;
 
 import io.dropwizard.jersey.params.AbstractParam;
-import org.checkerframework.checker.nullness.qual.Nullable;
-
 import java.time.ZoneId;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * A parameter encapsulating time-zone IDs, such as Europe/Paris.

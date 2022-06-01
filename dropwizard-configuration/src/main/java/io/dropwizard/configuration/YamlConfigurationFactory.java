@@ -2,9 +2,8 @@ package io.dropwizard.configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import org.checkerframework.checker.nullness.qual.Nullable;
-
 import javax.validation.Validator;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * A factory class for loading YAML configuration files, binding them to configuration objects, and
@@ -22,10 +21,8 @@ public class YamlConfigurationFactory<T> extends BaseConfigurationFactory<T> {
      * @param objectMapper   the Jackson {@link ObjectMapper} to use
      * @param propertyPrefix the system property name prefix used by overrides
      */
-    public YamlConfigurationFactory(Class<T> klass,
-                                    @Nullable Validator validator,
-                                    ObjectMapper objectMapper,
-                                    String propertyPrefix) {
+    public YamlConfigurationFactory(
+            Class<T> klass, @Nullable Validator validator, ObjectMapper objectMapper, String propertyPrefix) {
         super(new YAMLFactory(), YAMLFactory.FORMAT_NAME_YAML, klass, validator, objectMapper, propertyPrefix);
     }
 }

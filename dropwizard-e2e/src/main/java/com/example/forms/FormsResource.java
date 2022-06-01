@@ -1,17 +1,16 @@
 package com.example.forms;
 
-import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
-import org.glassfish.jersey.media.multipart.FormDataParam;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
+import java.io.InputStream;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.StreamingOutput;
-import java.io.InputStream;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
+import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 
 @Path("/")
 public class FormsResource {
@@ -19,8 +18,9 @@ public class FormsResource {
     @Path("uploadFile")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.TEXT_PLAIN)
-    public StreamingOutput uploadFile(@FormDataParam("file") InputStream file,
-                                      @FormDataParam("file") FormDataContentDisposition fileDisposition) {
+    public StreamingOutput uploadFile(
+            @FormDataParam("file") InputStream file,
+            @FormDataParam("file") FormDataContentDisposition fileDisposition) {
 
         // Silly example that echoes back the file name and the contents
         return output -> {

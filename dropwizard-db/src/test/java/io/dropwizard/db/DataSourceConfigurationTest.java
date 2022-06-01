@@ -1,15 +1,14 @@
 package io.dropwizard.db;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.validation.Validators;
 import io.dropwizard.util.Duration;
-import org.junit.jupiter.api.Test;
-
 import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.Test;
 
 class DataSourceConfigurationTest {
 
@@ -85,8 +84,7 @@ class DataSourceConfigurationTest {
         assertThat(ds.getRollbackOnReturn()).isFalse();
         assertThat(ds.getAutoCommitByDefault()).isNull();
         assertThat(ds.getDefaultCatalog()).isNull();
-        assertThat(ds.getDefaultTransactionIsolation())
-                .isEqualTo(DataSourceFactory.TransactionIsolation.DEFAULT);
+        assertThat(ds.getDefaultTransactionIsolation()).isEqualTo(DataSourceFactory.TransactionIsolation.DEFAULT);
         assertThat(ds.getUseFairQueue()).isTrue();
         assertThat(ds.getInitializationQuery()).isNull();
         assertThat(ds.getLogAbandonedConnections()).isFalse();
@@ -111,17 +109,19 @@ class DataSourceConfigurationTest {
 
     @Test
     void testInitialSizeZeroIsAllowed() throws Exception {
-        assertThat(getDataSourceFactory("yaml/empty_initial_pool.yml").getInitialSize()).isZero();
+        assertThat(getDataSourceFactory("yaml/empty_initial_pool.yml").getInitialSize())
+                .isZero();
     }
 
     @Test
     void testEmptyDriverClassIsAllowed() throws Exception {
-        assertThat(getDataSourceFactory("yaml/empty_driver_class_db_pool.yml").getDriverClass()).isNull();
+        assertThat(getDataSourceFactory("yaml/empty_driver_class_db_pool.yml").getDriverClass())
+                .isNull();
     }
 
     private DataSourceFactory getDataSourceFactory(String resourceName) throws Exception {
-        return new YamlConfigurationFactory<>(DataSourceFactory.class,
-                Validators.newValidator(), Jackson.newObjectMapper(), "dw")
+        return new YamlConfigurationFactory<>(
+                        DataSourceFactory.class, Validators.newValidator(), Jackson.newObjectMapper(), "dw")
                 .build(new ResourceConfigurationSourceProvider(), resourceName);
     }
 }

@@ -2,8 +2,6 @@ package io.dropwizard.logging.json.layout;
 
 import ch.qos.logback.access.spi.IAccessEvent;
 import io.dropwizard.logging.json.AccessAttribute;
-import org.checkerframework.checker.nullness.qual.Nullable;
-
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -13,6 +11,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * Builds JSON messages from access log events as {@link IAccessEvent}.
@@ -33,9 +32,12 @@ public class AccessJsonLayout extends AbstractJsonLayout<IAccessEvent> {
     private final Map<String, Object> additionalFields;
     private final Map<String, String> customFieldNames;
 
-    public AccessJsonLayout(JsonFormatter jsonFormatter, TimestampFormatter timestampFormatter,
-                            Set<AccessAttribute> includes, Map<String, String> customFieldNames,
-                            Map<String, Object> additionalFields) {
+    public AccessJsonLayout(
+            JsonFormatter jsonFormatter,
+            TimestampFormatter timestampFormatter,
+            Set<AccessAttribute> includes,
+            Map<String, String> customFieldNames,
+            Map<String, Object> additionalFields) {
         super(jsonFormatter);
         this.timestampFormatter = timestampFormatter;
         this.additionalFields = new HashMap<>(additionalFields);
@@ -46,32 +48,41 @@ public class AccessJsonLayout extends AbstractJsonLayout<IAccessEvent> {
     @Override
     protected Map<String, Object> toJsonMap(IAccessEvent event) {
         return new MapBuilder(timestampFormatter, customFieldNames, additionalFields, includes.size())
-            .addNumber("port", isIncluded(AccessAttribute.LOCAL_PORT), event::getLocalPort)
-            .addNumber("contentLength", isIncluded(AccessAttribute.CONTENT_LENGTH), event::getContentLength)
-            .addTimestamp("timestamp", isIncluded(AccessAttribute.TIMESTAMP), event.getTimeStamp())
-            .add("method", isIncluded(AccessAttribute.METHOD), event::getMethod)
-            .add("protocol", isIncluded(AccessAttribute.PROTOCOL), event::getProtocol)
-            .add("requestContent", isIncluded(AccessAttribute.REQUEST_CONTENT), event::getRequestContent)
-            .add("remoteAddress", isIncluded(AccessAttribute.REMOTE_ADDRESS), event::getRemoteAddr)
-            .add("remoteUser", isIncluded(AccessAttribute.REMOTE_USER), event::getRemoteUser)
-            .addMap("headers", !requestHeaders.isEmpty(),
-                () -> filterHeaders(event.getRequestHeaderMap(), requestHeaders))
-            .addMap("params", isIncluded(AccessAttribute.REQUEST_PARAMETERS), event::getRequestParameterMap)
-            .addNumber("requestTime", isIncluded(AccessAttribute.REQUEST_TIME), event::getElapsedTime)
-            .add("uri", isIncluded(AccessAttribute.REQUEST_URI), event::getRequestURI)
-            .add("url", isIncluded(AccessAttribute.REQUEST_URL), event::getRequestURL)
-            .add("pathQuery", isIncluded(AccessAttribute.PATH_QUERY), () -> event.getRequestURI() + event.getQueryString())
-            .add("remoteHost", isIncluded(AccessAttribute.REMOTE_HOST), event::getRemoteHost)
-            .add("responseContent", isIncluded(AccessAttribute.RESPONSE_CONTENT), event::getResponseContent)
-            .addMap("responseHeaders", !responseHeaders.isEmpty(),
-                () -> filterHeaders(event.getResponseHeaderMap(), responseHeaders))
-            .add("serverName", isIncluded(AccessAttribute.SERVER_NAME), event::getServerName)
-            .addNumber("status", isIncluded(AccessAttribute.STATUS_CODE), event::getStatusCode)
-            .add("userAgent", isIncluded(AccessAttribute.USER_AGENT), () -> event.getRequestHeader(USER_AGENT))
-            .add("version", jsonProtocolVersion != null, jsonProtocolVersion)
-            .addMap("requestAttributes", !requestAttributes.isEmpty(),
-                () -> filterRequestAttributes(requestAttributes, event))
-            .build();
+                .addNumber("port", isIncluded(AccessAttribute.LOCAL_PORT), event::getLocalPort)
+                .addNumber("contentLength", isIncluded(AccessAttribute.CONTENT_LENGTH), event::getContentLength)
+                .addTimestamp("timestamp", isIncluded(AccessAttribute.TIMESTAMP), event.getTimeStamp())
+                .add("method", isIncluded(AccessAttribute.METHOD), event::getMethod)
+                .add("protocol", isIncluded(AccessAttribute.PROTOCOL), event::getProtocol)
+                .add("requestContent", isIncluded(AccessAttribute.REQUEST_CONTENT), event::getRequestContent)
+                .add("remoteAddress", isIncluded(AccessAttribute.REMOTE_ADDRESS), event::getRemoteAddr)
+                .add("remoteUser", isIncluded(AccessAttribute.REMOTE_USER), event::getRemoteUser)
+                .addMap(
+                        "headers",
+                        !requestHeaders.isEmpty(),
+                        () -> filterHeaders(event.getRequestHeaderMap(), requestHeaders))
+                .addMap("params", isIncluded(AccessAttribute.REQUEST_PARAMETERS), event::getRequestParameterMap)
+                .addNumber("requestTime", isIncluded(AccessAttribute.REQUEST_TIME), event::getElapsedTime)
+                .add("uri", isIncluded(AccessAttribute.REQUEST_URI), event::getRequestURI)
+                .add("url", isIncluded(AccessAttribute.REQUEST_URL), event::getRequestURL)
+                .add(
+                        "pathQuery",
+                        isIncluded(AccessAttribute.PATH_QUERY),
+                        () -> event.getRequestURI() + event.getQueryString())
+                .add("remoteHost", isIncluded(AccessAttribute.REMOTE_HOST), event::getRemoteHost)
+                .add("responseContent", isIncluded(AccessAttribute.RESPONSE_CONTENT), event::getResponseContent)
+                .addMap(
+                        "responseHeaders",
+                        !responseHeaders.isEmpty(),
+                        () -> filterHeaders(event.getResponseHeaderMap(), responseHeaders))
+                .add("serverName", isIncluded(AccessAttribute.SERVER_NAME), event::getServerName)
+                .addNumber("status", isIncluded(AccessAttribute.STATUS_CODE), event::getStatusCode)
+                .add("userAgent", isIncluded(AccessAttribute.USER_AGENT), () -> event.getRequestHeader(USER_AGENT))
+                .add("version", jsonProtocolVersion != null, jsonProtocolVersion)
+                .addMap(
+                        "requestAttributes",
+                        !requestAttributes.isEmpty(),
+                        () -> filterRequestAttributes(requestAttributes, event))
+                .build();
     }
 
     private boolean isIncluded(AccessAttribute attribute) {
@@ -80,8 +91,8 @@ public class AccessJsonLayout extends AbstractJsonLayout<IAccessEvent> {
 
     private Map<String, String> filterRequestAttributes(Set<String> requestAttributeNames, IAccessEvent event) {
         return requestAttributeNames.stream()
-            .filter(name -> event.getAttribute(name) != null)
-            .collect(Collectors.toMap(Function.identity(), event::getAttribute));
+                .filter(name -> event.getAttribute(name) != null)
+                .collect(Collectors.toMap(Function.identity(), event::getAttribute));
     }
 
     private Map<String, String> filterHeaders(Map<String, String> headers, Set<String> filteredHeaderNames) {
@@ -89,8 +100,8 @@ public class AccessJsonLayout extends AbstractJsonLayout<IAccessEvent> {
             return Collections.emptyMap();
         }
         return headers.entrySet().stream()
-            .filter(e -> filteredHeaderNames.contains(e.getKey()))
-            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                .filter(e -> filteredHeaderNames.contains(e.getKey()))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     public Set<AccessAttribute> getIncludes() {

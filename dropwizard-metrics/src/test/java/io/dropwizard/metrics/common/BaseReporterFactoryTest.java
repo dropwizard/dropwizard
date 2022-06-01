@@ -1,18 +1,17 @@
 package io.dropwizard.metrics.common;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+
 import com.codahale.metrics.Metric;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.ScheduledReporter;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
-
 import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Stream;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 class BaseReporterFactoryTest {
     private static final Set<String> INCLUDES = Set.of("inc", "both", "inc.+");
@@ -68,8 +67,7 @@ class BaseReporterFactoryTest {
                 Arguments.of(INCLUDES, EXCLUDES, "any", false, false, false, "case4"),
                 Arguments.of(INCLUDES, EXCLUDES, "incWithSuffix", false, true, true, "case4"),
                 Arguments.of(INCLUDES, EXCLUDES, "excWithSuffix", false, false, false, "case4"),
-                Arguments.of(INCLUDES, EXCLUDES, "prefiXincSuffix", false, false, true, "case4")
-        );
+                Arguments.of(INCLUDES, EXCLUDES, "prefiXincSuffix", false, false, true, "case4"));
     }
 
     private final BaseReporterFactory factory = new BaseReporterFactory() {
@@ -83,46 +81,64 @@ class BaseReporterFactoryTest {
 
     @ParameterizedTest
     @MethodSource("data")
-    void testDefaultMatching(Set<String> includes, Set<String> excludes, String name,
-                                    boolean expectedDefaultResult, boolean expectedRegexResult,
-                                    boolean expectedSubstringResult, String msg) {
+    void testDefaultMatching(
+            Set<String> includes,
+            Set<String> excludes,
+            String name,
+            boolean expectedDefaultResult,
+            boolean expectedRegexResult,
+            boolean expectedSubstringResult,
+            String msg) {
         factory.setIncludes(includes);
         factory.setExcludes(excludes);
 
         factory.setUseRegexFilters(false);
         factory.setUseSubstringMatching(false);
         assertThat(factory.getFilter().matches(name, metric))
-                .overridingErrorMessage(msg + ": expected 'matches(%s)=%s' for default matcher", name, expectedDefaultResult)
+                .overridingErrorMessage(
+                        msg + ": expected 'matches(%s)=%s' for default matcher", name, expectedDefaultResult)
                 .isEqualTo(expectedDefaultResult);
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    void testRegexMatching(Set<String> includes, Set<String> excludes, String name,
-                                  boolean expectedDefaultResult, boolean expectedRegexResult,
-                                  boolean expectedSubstringResult, String msg) {
+    void testRegexMatching(
+            Set<String> includes,
+            Set<String> excludes,
+            String name,
+            boolean expectedDefaultResult,
+            boolean expectedRegexResult,
+            boolean expectedSubstringResult,
+            String msg) {
         factory.setIncludes(includes);
         factory.setExcludes(excludes);
 
         factory.setUseRegexFilters(true);
         factory.setUseSubstringMatching(false);
         assertThat(factory.getFilter().matches(name, metric))
-                .overridingErrorMessage(msg + ": expected 'matches(%s)=%s' for regex matcher", name, expectedRegexResult)
+                .overridingErrorMessage(
+                        msg + ": expected 'matches(%s)=%s' for regex matcher", name, expectedRegexResult)
                 .isEqualTo(expectedRegexResult);
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    void tesSubstringMatching(Set<String> includes, Set<String> excludes, String name,
-                                     boolean expectedDefaultResult, boolean expectedRegexResult,
-                                     boolean expectedSubstringResult, String msg) {
+    void tesSubstringMatching(
+            Set<String> includes,
+            Set<String> excludes,
+            String name,
+            boolean expectedDefaultResult,
+            boolean expectedRegexResult,
+            boolean expectedSubstringResult,
+            String msg) {
         factory.setIncludes(includes);
         factory.setExcludes(excludes);
 
         factory.setUseRegexFilters(false);
         factory.setUseSubstringMatching(true);
         assertThat(factory.getFilter().matches(name, metric))
-            .overridingErrorMessage(msg + ": expected 'matches(%s)=%s' for substring matcher", name, expectedSubstringResult)
-            .isEqualTo(expectedSubstringResult);
+                .overridingErrorMessage(
+                        msg + ": expected 'matches(%s)=%s' for substring matcher", name, expectedSubstringResult)
+                .isEqualTo(expectedSubstringResult);
     }
 }

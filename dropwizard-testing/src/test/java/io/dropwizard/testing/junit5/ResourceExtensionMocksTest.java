@@ -1,18 +1,17 @@
 package io.dropwizard.testing.junit5;
 
-import io.dropwizard.testing.app.Person;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
 
+import io.dropwizard.testing.app.Person;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 @ExtendWith(DropwizardExtensionsSupport.class)
@@ -20,9 +19,8 @@ class ResourceExtensionMocksTest {
     @Mock
     private Person mockPerson;
 
-    private final ResourceExtension resources = ResourceExtension.builder()
-            .addProvider(this::createResource)
-            .build();
+    private final ResourceExtension resources =
+            ResourceExtension.builder().addProvider(this::createResource).build();
 
     private TestResource createResource() {
         return new TestResource(mockPerson);

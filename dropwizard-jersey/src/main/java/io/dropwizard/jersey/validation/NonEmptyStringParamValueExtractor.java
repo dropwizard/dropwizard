@@ -1,11 +1,10 @@
 package io.dropwizard.jersey.validation;
 
 import io.dropwizard.jersey.params.NonEmptyStringParam;
-import org.hibernate.validator.internal.engine.valueextraction.ValueExtractorDescriptor;
-
 import javax.validation.valueextraction.ExtractedValue;
 import javax.validation.valueextraction.UnwrapByDefault;
 import javax.validation.valueextraction.ValueExtractor;
+import org.hibernate.validator.internal.engine.valueextraction.ValueExtractorDescriptor;
 
 /**
  * Let's the validator know that when validating a {@link NonEmptyStringParam} to validate the
@@ -15,11 +14,12 @@ import javax.validation.valueextraction.ValueExtractor;
  * @since 2.0
  */
 @UnwrapByDefault
-public class NonEmptyStringParamValueExtractor implements ValueExtractor<@ExtractedValue(type = String.class) NonEmptyStringParam> {
-    static final ValueExtractorDescriptor DESCRIPTOR = new ValueExtractorDescriptor(new NonEmptyStringParamValueExtractor());
+public class NonEmptyStringParamValueExtractor
+        implements ValueExtractor<@ExtractedValue(type = String.class) NonEmptyStringParam> {
+    static final ValueExtractorDescriptor DESCRIPTOR =
+            new ValueExtractorDescriptor(new NonEmptyStringParamValueExtractor());
 
-    private NonEmptyStringParamValueExtractor() {
-    }
+    private NonEmptyStringParamValueExtractor() {}
 
     @Override
     public void extractValues(NonEmptyStringParam originalValue, ValueExtractor.ValueReceiver receiver) {

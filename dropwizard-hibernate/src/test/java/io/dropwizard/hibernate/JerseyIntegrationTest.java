@@ -1,5 +1,10 @@
 package io.dropwizard.hibernate;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import com.codahale.metrics.MetricRegistry;
 import io.dropwizard.core.setup.Environment;
 import io.dropwizard.db.DataSourceFactory;
@@ -10,16 +15,10 @@ import io.dropwizard.jersey.jackson.JacksonFeature;
 import io.dropwizard.jersey.optional.EmptyOptionalExceptionMapper;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import io.dropwizard.logging.common.BootstrapLogging;
-import org.checkerframework.checker.nullness.qual.Nullable;
-import org.glassfish.jersey.client.ClientConfig;
-import org.glassfish.jersey.test.JerseyTest;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.Collections;
+import java.util.Optional;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -32,15 +31,15 @@ import javax.ws.rs.core.Application;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.util.Collections;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.glassfish.jersey.client.ClientConfig;
+import org.glassfish.jersey.test.JerseyTest;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 class JerseyIntegrationTest extends JerseyTest {
     static {
@@ -121,20 +120,17 @@ class JerseyIntegrationTest extends JerseyTest {
         dbConfig.setDriverClass("org.h2.Driver");
         dbConfig.setValidationQuery("SELECT 1");
 
-        this.sessionFactory = factory.build(bundle,
-                                            environment,
-                                            dbConfig,
-                                            Collections.singletonList(Person.class));
+        this.sessionFactory = factory.build(bundle, environment, dbConfig, Collections.singletonList(Person.class));
 
         try (Session session = sessionFactory.openSession()) {
             Transaction transaction = session.beginTransaction();
             session.createNativeQuery("DROP TABLE people IF EXISTS").executeUpdate();
             session.createNativeQuery(
-                "CREATE TABLE people (name varchar(100) primary key, email varchar(16), birthday timestamp with time zone)")
-                .executeUpdate();
+                            "CREATE TABLE people (name varchar(100) primary key, email varchar(16), birthday timestamp with time zone)")
+                    .executeUpdate();
             session.createNativeQuery(
-                "INSERT INTO people VALUES ('Coda', 'coda@example.com', '1979-01-02 00:22:00+0:00')")
-                .executeUpdate();
+                            "INSERT INTO people VALUES ('Coda', 'coda@example.com', '1979-01-02 00:22:00+0:00')")
+                    .executeUpdate();
             transaction.commit();
         }
 
@@ -156,24 +152,22 @@ class JerseyIntegrationTest extends JerseyTest {
 
     @Test
     void findsExistingData() {
-        final Person coda = target("/people/Coda").request(MediaType.APPLICATION_JSON).get(Person.class);
+        final Person coda =
+                target("/people/Coda").request(MediaType.APPLICATION_JSON).get(Person.class);
 
-        assertThat(coda.getName())
-                .isEqualTo("Coda");
+        assertThat(coda.getName()).isEqualTo("Coda");
 
-        assertThat(coda.getEmail())
-                .isEqualTo("coda@example.com");
+        assertThat(coda.getEmail()).isEqualTo("coda@example.com");
 
-        assertThat(coda.getBirthday())
-                .isEqualTo(ZonedDateTime.of(1979, 1, 2, 0, 22, 0, 0, ZoneId.of("UTC")));
+        assertThat(coda.getBirthday()).isEqualTo(ZonedDateTime.of(1979, 1, 2, 0, 22, 0, 0, ZoneId.of("UTC")));
     }
 
     @Test
     void doesNotFindMissingData() {
         Invocation.Builder request = target("/people/Poof").request(MediaType.APPLICATION_JSON);
         assertThatExceptionOfType(WebApplicationException.class)
-            .isThrownBy(() -> request.get(Person.class))
-            .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(404));
+                .isThrownBy(() -> request.get(Person.class))
+                .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(404));
     }
 
     @Test
@@ -181,24 +175,19 @@ class JerseyIntegrationTest extends JerseyTest {
         final Person person = new Person();
         person.setName("Hank");
         person.setEmail("hank@example.com");
-        person.setBirthday(ZonedDateTime.of(1971,3, 14, 14, 19, 12, 0, ZoneId.of("UTC")));
+        person.setBirthday(ZonedDateTime.of(1971, 3, 14, 14, 19, 12, 0, ZoneId.of("UTC")));
 
         target("/people/Hank").request().put(Entity.entity(person, MediaType.APPLICATION_JSON));
 
-        final Person hank = target("/people/Hank")
-                .request(MediaType.APPLICATION_JSON)
-                .get(Person.class);
+        final Person hank =
+                target("/people/Hank").request(MediaType.APPLICATION_JSON).get(Person.class);
 
-        assertThat(hank.getName())
-                .isEqualTo("Hank");
+        assertThat(hank.getName()).isEqualTo("Hank");
 
-        assertThat(hank.getEmail())
-                .isEqualTo("hank@example.com");
+        assertThat(hank.getEmail()).isEqualTo("hank@example.com");
 
-        assertThat(hank.getBirthday())
-                .isEqualTo(person.getBirthday());
+        assertThat(hank.getBirthday()).isEqualTo(person.getBirthday());
     }
-
 
     @Test
     void testSqlExceptionIsHandled() {
@@ -207,8 +196,8 @@ class JerseyIntegrationTest extends JerseyTest {
         person.setEmail("jeff.hammersmith@targetprocessinc.com");
         person.setBirthday(ZonedDateTime.of(1984, 2, 11, 0, 0, 0, 0, ZoneId.of("UTC")));
 
-        final Response response = target("/people/Jeff").request().
-                put(Entity.entity(person, MediaType.APPLICATION_JSON));
+        final Response response =
+                target("/people/Jeff").request().put(Entity.entity(person, MediaType.APPLICATION_JSON));
 
         assertThat(response.getStatusInfo()).isEqualTo(Response.Status.BAD_REQUEST);
         assertThat(response.getHeaderString(HttpHeaders.CONTENT_TYPE)).isEqualTo(MediaType.APPLICATION_JSON);

@@ -1,15 +1,5 @@
 package io.dropwizard.auth;
 
-import com.codahale.metrics.MetricRegistry;
-import com.github.benmanes.caffeine.cache.CaffeineSpec;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.InOrder;
-
-import javax.ws.rs.container.ContainerRequestContext;
-import java.security.Principal;
-import java.util.Set;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 import static org.mockito.ArgumentMatchers.any;
@@ -21,27 +11,38 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.codahale.metrics.MetricRegistry;
+import com.github.benmanes.caffeine.cache.CaffeineSpec;
+import java.security.Principal;
+import java.util.Set;
+import javax.ws.rs.container.ContainerRequestContext;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.InOrder;
+
 class CachingAuthorizerTest {
     @SuppressWarnings("unchecked")
     private final Authorizer<Principal> underlying = mock(Authorizer.class);
-    private final CachingAuthorizer<Principal> cached = new CachingAuthorizer<>(
-        new MetricRegistry(),
-        underlying,
-        CaffeineSpec.parse("maximumSize=1")
-    );
+
+    private final CachingAuthorizer<Principal> cached =
+            new CachingAuthorizer<>(new MetricRegistry(), underlying, CaffeineSpec.parse("maximumSize=1"));
 
     private final Principal principal = new PrincipalImpl("principal");
     private final Principal principal2 = new PrincipalImpl("principal2");
     private final String role = "popular_kids";
     private final ContainerRequestContext requestContext = mock(ContainerRequestContext.class);
-    private final AuthorizationContext<Principal> authorizationContext = new DefaultAuthorizationContext<>(principal, role, requestContext);
-    private final AuthorizationContext<Principal> authorizationContext2 = new DefaultAuthorizationContext<>(principal2, role, requestContext);
+    private final AuthorizationContext<Principal> authorizationContext =
+            new DefaultAuthorizationContext<>(principal, role, requestContext);
+    private final AuthorizationContext<Principal> authorizationContext2 =
+            new DefaultAuthorizationContext<>(principal2, role, requestContext);
 
     @BeforeEach
     void setUp() throws Exception {
         when(underlying.authorize(any(), anyString(), any())).thenReturn(true);
-        when(underlying.getAuthorizationContext(eq(principal), anyString(), any())).thenReturn(authorizationContext);
-        when(underlying.getAuthorizationContext(eq(principal2), anyString(), any())).thenReturn(authorizationContext2);
+        when(underlying.getAuthorizationContext(eq(principal), anyString(), any()))
+                .thenReturn(authorizationContext);
+        when(underlying.getAuthorizationContext(eq(principal2), anyString(), any()))
+                .thenReturn(authorizationContext2);
     }
 
     @Test
@@ -140,7 +141,7 @@ class CachingAuthorizerTest {
         final RuntimeException e = new NullPointerException();
         when(underlying.authorize(principal, role, requestContext)).thenThrow(e);
         assertThatNullPointerException()
-            .isThrownBy(() -> cached.authorize(principal, role, requestContext))
-            .isSameAs(e);
+                .isThrownBy(() -> cached.authorize(principal, role, requestContext))
+                .isSameAs(e);
     }
 }

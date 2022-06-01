@@ -6,6 +6,10 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.dropwizard.jetty.HttpsConnectorFactory;
 import io.dropwizard.jetty.SslReload;
 import io.dropwizard.metrics.jetty10.InstrumentedConnectionFactory;
+import java.util.Arrays;
+import java.util.Collections;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.eclipse.jetty.alpn.server.ALPNServerConnectionFactory;
 import org.eclipse.jetty.http2.server.HTTP2ServerConnectionFactory;
@@ -18,11 +22,6 @@ import org.eclipse.jetty.server.SslConnectionFactory;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.util.thread.ScheduledExecutorScheduler;
 import org.eclipse.jetty.util.thread.ThreadPool;
-
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import java.util.Arrays;
-import java.util.Collections;
 
 /**
  * Builds HTTP/2 over TLS (h2) connectors.
@@ -115,16 +114,24 @@ public class Http2ConnectorFactory extends HttpsConnectorFactory {
         // If negotiation succeeds, the client and server switch to HTTP/2 protocol.
         final SslConnectionFactory sslConnectionFactory = new SslConnectionFactory(sslContextFactory, "alpn");
 
-        return buildConnector(server, new ScheduledExecutorScheduler(), buildBufferPool(), name, threadPool,
-            new InstrumentedConnectionFactory(sslConnectionFactory, metrics.timer(httpConnections())),
-            alpn, http2, http1);
+        return buildConnector(
+                server,
+                new ScheduledExecutorScheduler(),
+                buildBufferPool(),
+                name,
+                threadPool,
+                new InstrumentedConnectionFactory(sslConnectionFactory, metrics.timer(httpConnections())),
+                alpn,
+                http2,
+                http1);
     }
 
     void checkSupportedCipherSuites() {
         if (getSupportedCipherSuites() == null) {
             setSupportedCipherSuites(Collections.singletonList(HTTP2_DEFAULT_CIPHER));
         } else if (!getSupportedCipherSuites().contains(HTTP2_DEFAULT_CIPHER)) {
-            throw new IllegalArgumentException("HTTP/2 server configuration must include cipher: " + HTTP2_DEFAULT_CIPHER);
+            throw new IllegalArgumentException(
+                    "HTTP/2 server configuration must include cipher: " + HTTP2_DEFAULT_CIPHER);
         }
     }
 }

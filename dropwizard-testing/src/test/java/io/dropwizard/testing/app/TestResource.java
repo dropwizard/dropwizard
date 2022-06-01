@@ -11,7 +11,7 @@ public class TestResource {
     private final String message;
 
     public TestResource() {
-      this(DEFAULT_MESSAGE);
+        this(DEFAULT_MESSAGE);
     }
 
     public TestResource(String message) {

@@ -6,8 +6,7 @@ import java.net.URL;
  * @since 2.0
  */
 public final class Resources {
-    private Resources() {
-    }
+    private Resources() {}
 
     /**
      * Returns a {@code URL} pointing to {@code resourceName} if the resource is found using the

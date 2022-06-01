@@ -1,5 +1,12 @@
 package io.dropwizard.auth;
 
+import java.lang.reflect.ParameterizedType;
+import java.security.Principal;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.Function;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.glassfish.jersey.internal.inject.AbstractBinder;
 import org.glassfish.jersey.server.ContainerRequest;
@@ -7,14 +14,6 @@ import org.glassfish.jersey.server.internal.inject.AbstractValueParamProvider;
 import org.glassfish.jersey.server.internal.inject.MultivaluedParameterExtractorProvider;
 import org.glassfish.jersey.server.model.Parameter;
 import org.glassfish.jersey.server.spi.internal.ValueParamProvider;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import java.lang.reflect.ParameterizedType;
-import java.security.Principal;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Function;
 
 /**
  * Value factory provider supporting injection of a hierarchy of
@@ -30,7 +29,6 @@ public class PolymorphicAuthValueFactoryProvider<T extends Principal> extends Ab
      */
     protected final Set<Class<? extends T>> principalClassSet;
 
-
     /**
      * {@link Principal} value factory provider injection constructor.
      *
@@ -39,9 +37,7 @@ public class PolymorphicAuthValueFactoryProvider<T extends Principal> extends Ab
      */
     @Inject
     public PolymorphicAuthValueFactoryProvider(
-        MultivaluedParameterExtractorProvider mpep,
-        PrincipalClassSetProvider<T> principalClassSetProvider
-    ) {
+            MultivaluedParameterExtractorProvider mpep, PrincipalClassSetProvider<T> principalClassSetProvider) {
         super(() -> mpep, org.glassfish.jersey.model.Parameter.Source.UNKNOWN);
         this.principalClassSet = principalClassSetProvider.clazzSet;
     }
@@ -55,10 +51,14 @@ public class PolymorphicAuthValueFactoryProvider<T extends Principal> extends Ab
             return request -> new PrincipalContainerRequestValueFactory(request).provide();
         } else {
             final boolean isOptionalPrincipal = parameter.getRawType() == Optional.class
-                && ParameterizedType.class.isAssignableFrom(parameter.getType().getClass())
-                && principalClassSet.contains(((ParameterizedType) parameter.getType()).getActualTypeArguments()[0]);
+                    && ParameterizedType.class.isAssignableFrom(
+                            parameter.getType().getClass())
+                    && principalClassSet.contains(
+                            ((ParameterizedType) parameter.getType()).getActualTypeArguments()[0]);
 
-            return isOptionalPrincipal ? request -> new OptionalPrincipalContainerRequestValueFactory(request).provide() : null;
+            return isOptionalPrincipal
+                    ? request -> new OptionalPrincipalContainerRequestValueFactory(request).provide()
+                    : null;
         }
     }
 
@@ -88,7 +88,9 @@ public class PolymorphicAuthValueFactoryProvider<T extends Principal> extends Ab
         @Override
         protected void configure() {
             bind(new PrincipalClassSetProvider<>(principalClassSet)).to(PrincipalClassSetProvider.class);
-            bind(PolymorphicAuthValueFactoryProvider.class).to(ValueParamProvider.class).in(Singleton.class);
+            bind(PolymorphicAuthValueFactoryProvider.class)
+                    .to(ValueParamProvider.class)
+                    .in(Singleton.class);
         }
     }
 }

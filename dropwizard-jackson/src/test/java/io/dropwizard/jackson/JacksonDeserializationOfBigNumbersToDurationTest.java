@@ -1,17 +1,15 @@
 package io.dropwizard.jackson;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.checkerframework.checker.nullness.qual.Nullable;
-import org.junit.jupiter.api.Test;
-
-import java.time.Duration;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.jupiter.api.Assertions.assertTimeout;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.time.Duration;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.junit.jupiter.api.Test;
 
 class JacksonDeserializationOfBigNumbersToDurationTest {
 
@@ -20,7 +18,8 @@ class JacksonDeserializationOfBigNumbersToDurationTest {
     @Test
     void testDoesNotAttemptToDeserializeExtremelyBigNumbers() throws Exception {
         Task task = objectMapper.readValue("{\"id\": 42, \"duration\": 1e1000000000}", Task.class);
-        assertTimeout(Duration.ofSeconds(5L), () -> assertThat(task.getDuration()).isEqualTo(Duration.ofSeconds(0)));
+        assertTimeout(
+                Duration.ofSeconds(5L), () -> assertThat(task.getDuration()).isEqualTo(Duration.ofSeconds(0)));
     }
 
     @Test
@@ -61,19 +60,22 @@ class JacksonDeserializationOfBigNumbersToDurationTest {
 
     @Test
     void testCanNotDeserializeValueMoreThanMaxDuration() {
-        assertThatExceptionOfType(JsonMappingException.class).isThrownBy(
-            () -> objectMapper.readValue("{\"id\": 42, \"duration\": 9223372036854775808}", Task.class));
+        assertThatExceptionOfType(JsonMappingException.class)
+                .isThrownBy(
+                        () -> objectMapper.readValue("{\"id\": 42, \"duration\": 9223372036854775808}", Task.class));
     }
 
     @Test
     void testCanNotDeserializeValueLessThanMinDuration() {
-        assertThatExceptionOfType(JsonMappingException.class).isThrownBy(
-            () -> objectMapper.readValue("{\"id\": 42, \"duration\": -9223372036854775809}", Task.class));
+        assertThatExceptionOfType(JsonMappingException.class)
+                .isThrownBy(
+                        () -> objectMapper.readValue("{\"id\": 42, \"duration\": -9223372036854775809}", Task.class));
     }
 
     static class Task {
 
         private int id;
+
         @Nullable
         private Duration duration;
 
@@ -98,5 +100,4 @@ class JacksonDeserializationOfBigNumbersToDurationTest {
             this.duration = duration;
         }
     }
-
 }

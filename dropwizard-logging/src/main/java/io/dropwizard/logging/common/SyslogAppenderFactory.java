@@ -10,14 +10,13 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.dropwizard.logging.common.async.AsyncAppenderFactory;
 import io.dropwizard.logging.common.filter.LevelFilterFactory;
 import io.dropwizard.logging.common.layout.LayoutFactory;
-
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 import java.lang.management.ManagementFactory;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
 /**
  * An {@link AppenderFactory} implementation which provides an appender that sends events to a
@@ -117,7 +116,8 @@ public class SyslogAppenderFactory extends AbstractAppenderFactory<ILoggingEvent
     // make an attempt to get the PID of the process
     // this will only work on UNIX platforms; for others, the PID will be "unknown"
     static {
-        final Matcher matcher = PID_PATTERN.matcher(ManagementFactory.getRuntimeMXBean().getName());
+        final Matcher matcher =
+                PID_PATTERN.matcher(ManagementFactory.getRuntimeMXBean().getName());
         if (matcher.find()) {
             pid = "[" + matcher.group(1) + "]";
         }
@@ -199,8 +199,12 @@ public class SyslogAppenderFactory extends AbstractAppenderFactory<ILoggingEvent
     }
 
     @Override
-    public Appender<ILoggingEvent> build(LoggerContext context, String applicationName, LayoutFactory<ILoggingEvent> layoutFactory,
-                                         LevelFilterFactory<ILoggingEvent> levelFilterFactory, AsyncAppenderFactory<ILoggingEvent> asyncAppenderFactory) {
+    public Appender<ILoggingEvent> build(
+            LoggerContext context,
+            String applicationName,
+            LayoutFactory<ILoggingEvent> layoutFactory,
+            LevelFilterFactory<ILoggingEvent> levelFilterFactory,
+            AsyncAppenderFactory<ILoggingEvent> asyncAppenderFactory) {
         final SyslogAppender appender = new SyslogAppender();
         appender.setName("syslog-appender");
         appender.setContext(context);

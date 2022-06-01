@@ -1,14 +1,16 @@
 package io.dropwizard.testing;
 
-import java.io.File;
-
 import static io.dropwizard.util.Resources.getResource;
+
+import java.io.File;
 
 /**
  * A set of helper methods for working with classpath resources.
  */
 public class ResourceHelpers {
-    private ResourceHelpers() { /* singleton */ }
+    private ResourceHelpers() {
+        /* singleton */
+    }
 
     /**
      * Detects the absolute path of a class path resource.

@@ -1,17 +1,16 @@
 package io.dropwizard.request.logging.layout;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import ch.qos.logback.access.spi.AccessEvent;
 import ch.qos.logback.access.spi.ServerAdapter;
+import java.util.Collections;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.Collections;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 class SafeRequestParameterConverterTest {
 
@@ -21,8 +20,8 @@ class SafeRequestParameterConverterTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        accessEvent = new AccessEvent(httpServletRequest, Mockito.mock(HttpServletResponse.class),
-            Mockito.mock(ServerAdapter.class));
+        accessEvent = new AccessEvent(
+                httpServletRequest, Mockito.mock(HttpServletResponse.class), Mockito.mock(ServerAdapter.class));
 
         safeRequestParameterConverter.setOptionList(Collections.singletonList("name"));
         safeRequestParameterConverter.start();
@@ -35,7 +34,7 @@ class SafeRequestParameterConverterTest {
 
     @Test
     void testConvertOneParameter() throws Exception {
-        Mockito.when(httpServletRequest.getParameterValues("name")).thenReturn(new String[]{"Alice"});
+        Mockito.when(httpServletRequest.getParameterValues("name")).thenReturn(new String[] {"Alice"});
         Mockito.when(httpServletRequest.getParameterNames())
                 .thenReturn(Collections.enumeration(Collections.singleton("name")));
 
@@ -50,7 +49,7 @@ class SafeRequestParameterConverterTest {
 
     @Test
     void testConvertSeveralParameters() throws Exception {
-        Mockito.when(httpServletRequest.getParameterValues("name")).thenReturn(new String[]{"Alice", "Bob"});
+        Mockito.when(httpServletRequest.getParameterValues("name")).thenReturn(new String[] {"Alice", "Bob"});
         Mockito.when(httpServletRequest.getParameterNames())
                 .thenReturn(Collections.enumeration(Collections.singleton("name")));
 

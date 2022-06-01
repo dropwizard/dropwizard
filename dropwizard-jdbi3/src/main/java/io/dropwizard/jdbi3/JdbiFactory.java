@@ -8,13 +8,12 @@ import io.dropwizard.core.setup.Environment;
 import io.dropwizard.db.ManagedDataSource;
 import io.dropwizard.db.PooledDataSourceFactory;
 import io.dropwizard.util.Duration;
+import java.util.Optional;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.core.statement.SqlStatements;
 import org.jdbi.v3.core.statement.TemplateEngine;
 import org.jdbi.v3.guava.GuavaPlugin;
 import org.jdbi.v3.sqlobject.SqlObjectPlugin;
-
-import java.util.Optional;
 
 public class JdbiFactory {
     private final StatementNameStrategy nameStrategy;
@@ -41,9 +40,7 @@ public class JdbiFactory {
      * @see #build(Environment, PooledDataSourceFactory, ManagedDataSource,
      * String)
      */
-    public Jdbi build(Environment environment,
-                      PooledDataSourceFactory configuration,
-                      String name) {
+    public Jdbi build(Environment environment, PooledDataSourceFactory configuration, String name) {
         final ManagedDataSource dataSource = configuration.build(environment.metrics(), name);
         return build(environment, configuration, dataSource, name);
     }
@@ -60,10 +57,8 @@ public class JdbiFactory {
      * @param name
      * @return A fully configured {@link Jdbi} object
      */
-    public Jdbi build(Environment environment,
-                      PooledDataSourceFactory configuration,
-                      ManagedDataSource dataSource,
-                      String name) {
+    public Jdbi build(
+            Environment environment, PooledDataSourceFactory configuration, ManagedDataSource dataSource, String name) {
 
         // Create the instance
         final Jdbi jdbi = newInstance(dataSource);
@@ -73,11 +68,15 @@ public class JdbiFactory {
 
         // Setup the required health checks.
         final Optional<String> validationQuery = configuration.getValidationQuery();
-        environment.healthChecks().register(name, new JdbiHealthCheck(
-            environment.getHealthCheckExecutorService(),
-            configuration.getValidationQueryTimeout().orElseGet(() -> Duration.seconds(5)),
-            jdbi,
-            validationQuery));
+        environment
+                .healthChecks()
+                .register(
+                        name,
+                        new JdbiHealthCheck(
+                                environment.getHealthCheckExecutorService(),
+                                configuration.getValidationQueryTimeout().orElseGet(() -> Duration.seconds(5)),
+                                jdbi,
+                                validationQuery));
 
         // Setup the SQL logger
         jdbi.setSqlLogger(buildSQLLogger(environment.metrics(), nameStrategy));

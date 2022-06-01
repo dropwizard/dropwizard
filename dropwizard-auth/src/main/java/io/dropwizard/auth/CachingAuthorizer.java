@@ -1,5 +1,7 @@
 package io.dropwizard.auth;
 
+import static com.codahale.metrics.MetricRegistry.name;
+
 import com.codahale.metrics.Meter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
@@ -9,9 +11,6 @@ import com.github.benmanes.caffeine.cache.CaffeineSpec;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.github.benmanes.caffeine.cache.stats.CacheStats;
 import com.github.benmanes.caffeine.cache.stats.StatsCounter;
-import org.checkerframework.checker.nullness.qual.Nullable;
-
-import javax.ws.rs.container.ContainerRequestContext;
 import java.security.Principal;
 import java.util.HashSet;
 import java.util.Set;
@@ -19,8 +18,8 @@ import java.util.concurrent.CompletionException;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-
-import static com.codahale.metrics.MetricRegistry.name;
+import javax.ws.rs.container.ContainerRequestContext;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * An {@link Authorizer} decorator which uses a {@link Caffeine} cache to
@@ -57,9 +56,7 @@ public class CachingAuthorizer<P extends Principal> implements Authorizer<P> {
      * @param cacheSpec      {@link CaffeineSpec}
      */
     public CachingAuthorizer(
-        final MetricRegistry metricRegistry,
-        final Authorizer<P> authorizer,
-        final CaffeineSpec cacheSpec) {
+            final MetricRegistry metricRegistry, final Authorizer<P> authorizer, final CaffeineSpec cacheSpec) {
         this(metricRegistry, authorizer, Caffeine.from(cacheSpec));
     }
 
@@ -71,10 +68,14 @@ public class CachingAuthorizer<P extends Principal> implements Authorizer<P> {
      * @param builder        a {@link CaffeineSpec}
      */
     public CachingAuthorizer(
-        final MetricRegistry metricRegistry,
-        final Authorizer<P> authorizer,
-        final Caffeine<Object, Object> builder) {
-        this(metricRegistry, authorizer, builder, () -> new MetricsStatsCounter(metricRegistry, name(CachingAuthorizer.class)));
+            final MetricRegistry metricRegistry,
+            final Authorizer<P> authorizer,
+            final Caffeine<Object, Object> builder) {
+        this(
+                metricRegistry,
+                authorizer,
+                builder,
+                () -> new MetricsStatsCounter(metricRegistry, name(CachingAuthorizer.class)));
     }
 
     /**
@@ -86,20 +87,17 @@ public class CachingAuthorizer<P extends Principal> implements Authorizer<P> {
      * @param supplier       a {@link Supplier<StatsCounter>}
      */
     public CachingAuthorizer(
-        final MetricRegistry metricRegistry,
-        final Authorizer<P> authorizer,
-        final Caffeine<Object, Object> builder,
-        final Supplier<StatsCounter> supplier
-        ) {
+            final MetricRegistry metricRegistry,
+            final Authorizer<P> authorizer,
+            final Caffeine<Object, Object> builder,
+            final Supplier<StatsCounter> supplier) {
         this.underlying = authorizer;
         this.cacheMisses = metricRegistry.meter(name(authorizer.getClass(), "cache-misses"));
         this.getsTimer = metricRegistry.timer(name(authorizer.getClass(), "gets"));
-        this.cache = builder
-                .recordStats(supplier)
-                .build(key -> {
-                    cacheMisses.mark();
-                    return underlying.authorize(key.getPrincipal(), key.getRole(), key.getRequestContext());
-                });
+        this.cache = builder.recordStats(supplier).build(key -> {
+            cacheMisses.mark();
+            return underlying.authorize(key.getPrincipal(), key.getRole(), key.getRequestContext());
+        });
     }
 
     @Override
@@ -120,7 +118,8 @@ public class CachingAuthorizer<P extends Principal> implements Authorizer<P> {
     }
 
     @Override
-    public AuthorizationContext<P> getAuthorizationContext(P principal, String role, @Nullable ContainerRequestContext requestContext) {
+    public AuthorizationContext<P> getAuthorizationContext(
+            P principal, String role, @Nullable ContainerRequestContext requestContext) {
         return underlying.getAuthorizationContext(principal, role, requestContext);
     }
 

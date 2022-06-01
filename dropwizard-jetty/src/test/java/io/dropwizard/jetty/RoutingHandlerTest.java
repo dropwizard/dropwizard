@@ -1,5 +1,18 @@
 package io.dropwizard.jetty;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.Arrays;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.HttpChannel;
@@ -10,30 +23,13 @@ import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.junit.jupiter.api.Test;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 class RoutingHandlerTest {
     private final Connector connector1 = mock(Connector.class);
     private final Connector connector2 = mock(Connector.class);
     private final Handler handler1 = spy(new ContextHandler());
     private final Handler handler2 = spy(new ContextHandler());
 
-    private final RoutingHandler handler = new RoutingHandler(Map.of(connector1,
-                                                                      handler1,
-                                                                      connector2,
-                                                                      handler2));
+    private final RoutingHandler handler = new RoutingHandler(Map.of(connector1, handler1, connector2, handler2));
 
     @Test
     void startsAndStopsAllHandlers() throws Exception {
@@ -41,18 +37,14 @@ class RoutingHandlerTest {
         handler2.setServer(mock(Server.class));
         handler.start();
         try {
-            assertThat(handler1.isStarted())
-                    .isTrue();
-            assertThat(handler2.isStarted())
-                    .isTrue();
+            assertThat(handler1.isStarted()).isTrue();
+            assertThat(handler2.isStarted()).isTrue();
         } finally {
             handler.stop();
         }
 
-        assertThat(handler1.isStopped())
-                .isTrue();
-        assertThat(handler2.isStopped())
-                .isTrue();
+        assertThat(handler1.isStopped()).isTrue();
+        assertThat(handler2.isStopped()).isTrue();
     }
 
     @Test
@@ -103,7 +95,7 @@ class RoutingHandlerTest {
     private Set<SessionHandler> getSessionHandlers(final RoutingHandler routingHandler) {
         return Arrays.stream(routingHandler.getServer().getChildHandlersByClass(ContextHandler.class))
                 .map(handler -> ((ContextHandler) handler).getChildHandlerByClass(SessionHandler.class))
-                .filter(Objects::nonNull).collect(Collectors.toSet());
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
     }
-
 }

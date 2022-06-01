@@ -1,11 +1,12 @@
 package io.dropwizard.servlets.tasks;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
-import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
-
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.time.Duration;
@@ -13,10 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 
 class LogConfigurationTaskTest {
 
@@ -54,9 +53,9 @@ class LogConfigurationTaskTest {
         // given
         Level oneEffectiveBefore = logger1.getEffectiveLevel();
         Map<String, List<String>> parameters = Map.of(
-            "logger", List.of("logger.one"),
-            "level", List.of("debug"),
-            "duration", List.of(Duration.ofMillis(2_000).toString()));
+                "logger", List.of("logger.one"),
+                "level", List.of("debug"),
+                "duration", List.of(Duration.ofMillis(2_000).toString()));
 
         Timer timer = mock(Timer.class);
         ArgumentCaptor<TimerTask> timerAction = ArgumentCaptor.forClass(TimerTask.class);
@@ -67,7 +66,8 @@ class LogConfigurationTaskTest {
 
         // then
         assertThat(logger1.getLevel()).isEqualTo(Level.DEBUG);
-        assertThat(stringWriter).hasToString(String.format("Configured logging level for logger.one to DEBUG for 2000 milliseconds%n"));
+        assertThat(stringWriter)
+                .hasToString(String.format("Configured logging level for logger.one to DEBUG for 2000 milliseconds%n"));
         verify(timer).schedule(timerAction.capture(), timerDuration.capture());
         assertThat(timerDuration.getValue()).isEqualTo(2_000);
 
@@ -109,6 +109,8 @@ class LogConfigurationTaskTest {
         assertThat(logger2.getEffectiveLevel()).isEqualTo(Level.INFO);
 
         assertThat(stringWriter)
-                .hasToString(String.format("Configured logging level for logger.one to INFO%nConfigured logging level for logger.two to INFO%n"));
+                .hasToString(
+                        String.format(
+                                "Configured logging level for logger.one to INFO%nConfigured logging level for logger.two to INFO%n"));
     }
 }

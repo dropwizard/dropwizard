@@ -1,11 +1,10 @@
 package io.dropwizard.servlets.tasks;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
-
 import java.io.PrintWriter;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * An arbitrary administrative task which can be performed via the admin interface.
@@ -14,6 +13,7 @@ import java.util.Optional;
  */
 public abstract class Task {
     private final String name;
+
     @Nullable
     private final String responseContentType;
 
@@ -64,6 +64,5 @@ public abstract class Task {
      * @param output     a {@link PrintWriter} wrapping the output stream of the task
      * @throws Exception if something goes wrong
      */
-    public abstract void execute(Map<String, List<String>> parameters,
-                                 PrintWriter output) throws Exception;
+    public abstract void execute(Map<String, List<String>> parameters, PrintWriter output) throws Exception;
 }

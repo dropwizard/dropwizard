@@ -1,8 +1,7 @@
 package io.dropwizard.auth;
 
-import org.glassfish.jersey.internal.inject.InjectionManager;
-
 import javax.ws.rs.container.ContainerRequestFilter;
+import org.glassfish.jersey.internal.inject.InjectionManager;
 
 /**
  * Utility class to help with injection into auth filters.

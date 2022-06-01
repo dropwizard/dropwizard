@@ -1,6 +1,17 @@
 package io.dropwizard.jetty;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import io.dropwizard.util.DataSize;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpTester;
 import org.eclipse.jetty.server.handler.gzip.GzipHandler;
@@ -8,18 +19,6 @@ import org.eclipse.jetty.servlet.ServletTester;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 class GzipHandlerTest {
 
@@ -92,7 +91,6 @@ class GzipHandlerTest {
         HttpTester.Response response = HttpTester.parseResponse(servletTester.getResponses(request.generate()));
         assertThat(response.getStatus()).isEqualTo(200);
         assertThat(response.getContent()).isEqualTo("Banner has been updated");
-
     }
 
     private void setRequestPostPlainText(byte[] content) {
@@ -112,7 +110,10 @@ class GzipHandlerTest {
         protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
             resp.setCharacterEncoding(StandardCharsets.UTF_8.toString());
             resp.setContentType(PLAIN_TEXT_UTF_8);
-            resp.getWriter().write(new String(getClass().getResourceAsStream("/assets/banner.txt").readAllBytes(), StandardCharsets.UTF_8));
+            resp.getWriter()
+                    .write(new String(
+                            getClass().getResourceAsStream("/assets/banner.txt").readAllBytes(),
+                            StandardCharsets.UTF_8));
         }
 
         @Override
@@ -123,8 +124,7 @@ class GzipHandlerTest {
             assertThat(req.getContentLength()).isEqualTo(-1);
             assertThat(req.getContentLengthLong()).isEqualTo(-1L);
 
-            assertThat(req.getInputStream())
-                .hasSameContentAs(getClass().getResourceAsStream("/assets/new-banner.txt"));
+            assertThat(req.getInputStream()).hasSameContentAs(getClass().getResourceAsStream("/assets/new-banner.txt"));
 
             resp.setContentType(PLAIN_TEXT_UTF_8);
             resp.getWriter().write("Banner has been updated");

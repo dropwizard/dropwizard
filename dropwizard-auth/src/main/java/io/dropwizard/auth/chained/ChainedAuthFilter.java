@@ -1,15 +1,14 @@
 package io.dropwizard.auth.chained;
 
 import io.dropwizard.auth.AuthFilter;
-
+import java.io.IOException;
+import java.security.Principal;
+import java.util.List;
 import javax.annotation.Priority;
 import javax.ws.rs.Priorities;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.SecurityContext;
-import java.io.IOException;
-import java.security.Principal;
-import java.util.List;
 
 /**
  * Chains together authFilters, short circuits when the first filter

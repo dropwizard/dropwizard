@@ -1,18 +1,17 @@
 package io.dropwizard.configuration;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import io.dropwizard.validation.BaseValidator;
+import java.util.Locale;
+import java.util.Set;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validator;
+import javax.validation.constraints.NotNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
-
-import javax.validation.ConstraintViolation;
-import javax.validation.Validator;
-import javax.validation.constraints.NotNull;
-import java.util.Locale;
-import java.util.Set;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @EnabledIf("isDefaultLocaleEnglish")
 class ConfigurationValidationExceptionTest {
@@ -34,15 +33,12 @@ class ConfigurationValidationExceptionTest {
     @Test
     void formatsTheViolationsIntoAHumanReadableMessage() {
         assertThat(e.getMessage())
-            .isEqualToNormalizingNewlines(
-                "config.yml has an error:\n" +
-                "  * woo must not be null\n");
+                .isEqualToNormalizingNewlines("config.yml has an error:\n" + "  * woo must not be null\n");
     }
 
     @Test
     void retainsTheSetOfExceptions() {
-        assertThat(e.getConstraintViolations())
-                .isNotEmpty();
+        assertThat(e.getConstraintViolations()).isNotEmpty();
     }
 
     private static boolean isDefaultLocaleEnglish() {

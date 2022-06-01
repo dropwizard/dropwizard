@@ -1,7 +1,11 @@
 package io.dropwizard.jersey.validation;
 
-import org.hibernate.validator.parameternameprovider.ReflectionParameterNameProvider;
-
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import javax.ws.rs.CookieParam;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.HeaderParam;
@@ -9,12 +13,7 @@ import javax.ws.rs.MatrixParam;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import org.hibernate.validator.parameternameprovider.ReflectionParameterNameProvider;
 
 /**
  * Adds jersey support to parameter name discovery in hibernate validator.
@@ -62,5 +61,4 @@ public class JerseyParameterNameProvider extends ReflectionParameterNameProvider
 
         return Optional.empty();
     }
-
 }

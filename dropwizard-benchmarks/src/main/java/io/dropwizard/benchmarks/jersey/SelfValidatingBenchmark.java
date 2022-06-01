@@ -6,6 +6,8 @@ import io.dropwizard.validation.ValidationMethod;
 import io.dropwizard.validation.selfvalidating.SelfValidating;
 import io.dropwizard.validation.selfvalidating.SelfValidation;
 import io.dropwizard.validation.selfvalidating.ViolationCollector;
+import java.util.concurrent.TimeUnit;
+import javax.validation.Validator;
 import org.glassfish.jersey.server.model.Invocable;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
@@ -16,9 +18,6 @@ import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
-
-import javax.validation.Validator;
-import java.util.concurrent.TimeUnit;
 
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
@@ -99,11 +98,11 @@ public class SelfValidatingBenchmark {
 
     public static void main(String[] args) throws Exception {
         new Runner(new OptionsBuilder()
-            .include(SelfValidatingBenchmark.class.getSimpleName())
-            .forks(1)
-            .warmupIterations(5)
-            .measurementIterations(8)
-            .build())
-            .run();
+                        .include(SelfValidatingBenchmark.class.getSimpleName())
+                        .forks(1)
+                        .warmupIterations(5)
+                        .measurementIterations(8)
+                        .build())
+                .run();
     }
 }

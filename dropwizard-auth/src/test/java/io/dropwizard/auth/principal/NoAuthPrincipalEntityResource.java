@@ -1,16 +1,16 @@
 package io.dropwizard.auth.principal;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Contains resource methods which don't authenticate but use principal instance injection and thus might be affected by authentication logic.
@@ -41,7 +41,6 @@ public class NoAuthPrincipalEntityResource {
     }
 
     @Retention(RetentionPolicy.RUNTIME)
-    @Target({ ElementType.PARAMETER })
-    public @interface DummyAnnotation {
-    }
+    @Target({ElementType.PARAMETER})
+    public @interface DummyAnnotation {}
 }

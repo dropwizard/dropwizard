@@ -1,18 +1,17 @@
 package io.dropwizard.validation;
 
-import io.dropwizard.util.Duration;
-import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
-import javax.validation.Valid;
-import javax.validation.Validator;
+import io.dropwizard.util.Duration;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
+import javax.validation.Valid;
+import javax.validation.Validator;
+import org.junit.jupiter.api.Test;
 
 class DurationValidatorTest {
     @SuppressWarnings("unused")
@@ -47,24 +46,31 @@ class DurationValidatorTest {
         public void setTooBig(Duration tooBig) {
             this.tooBig = tooBig;
         }
+
         public void setTooBigExclusive(Duration tooBigExclusive) {
             this.tooBigExclusive = tooBigExclusive;
         }
+
         public void setTooSmall(Duration tooSmall) {
             this.tooSmall = tooSmall;
         }
+
         public void setTooSmallExclusive(Duration tooSmallExclusive) {
             this.tooSmallExclusive = tooSmallExclusive;
         }
+
         public void setOutOfRange(Duration outOfRange) {
             this.outOfRange = outOfRange;
         }
+
         public void setMaxDurs(List<Duration> maxDurs) {
             this.maxDurs = maxDurs;
         }
+
         public void setMinDurs(List<Duration> minDurs) {
             this.minDurs = minDurs;
         }
+
         public void setRangeDurs(List<Duration> rangeDurs) {
             this.rangeDurs = rangeDurs;
         }
@@ -74,23 +80,22 @@ class DurationValidatorTest {
 
     @Test
     void returnsASetOfErrorsForAnObject() throws Exception {
-        assumeTrue("en".equals(Locale.getDefault().getLanguage()),
+        assumeTrue(
+                "en".equals(Locale.getDefault().getLanguage()),
                 "This test executes when the defined language is English ('en'). If not, it is skipped.");
 
-        final Collection<String> errors =
-                ConstraintViolations.format(validator.validate(new Example()));
+        final Collection<String> errors = ConstraintViolations.format(validator.validate(new Example()));
 
         assertThat(errors)
                 .containsOnly(
-                            "outOfRange must be between 10 MINUTES and 30 MINUTES",
-                            "tooBig must be less than or equal to 30 SECONDS",
-                            "tooBigExclusive must be less than 30 SECONDS",
-                            "tooSmall must be greater than or equal to 30 SECONDS",
-                            "tooSmallExclusive must be greater than 30 SECONDS",
-                            "maxDurs[0].<list element> must be less than or equal to 30 SECONDS",
-                            "minDurs[0].<list element> must be greater than or equal to 30 SECONDS",
-                            "rangeDurs[0].<list element> must be between 10 MINUTES and 30 MINUTES");
-
+                        "outOfRange must be between 10 MINUTES and 30 MINUTES",
+                        "tooBig must be less than or equal to 30 SECONDS",
+                        "tooBigExclusive must be less than 30 SECONDS",
+                        "tooSmall must be greater than or equal to 30 SECONDS",
+                        "tooSmallExclusive must be greater than 30 SECONDS",
+                        "maxDurs[0].<list element> must be less than or equal to 30 SECONDS",
+                        "minDurs[0].<list element> must be greater than or equal to 30 SECONDS",
+                        "rangeDurs[0].<list element> must be between 10 MINUTES and 30 MINUTES");
     }
 
     @Test
@@ -105,7 +110,6 @@ class DurationValidatorTest {
         example.setMinDurs(Collections.singletonList(Duration.seconds(100)));
         example.setRangeDurs(Collections.singletonList(Duration.minutes(15)));
 
-        assertThat(validator.validate(example))
-                .isEmpty();
+        assertThat(validator.validate(example)).isEmpty();
     }
 }

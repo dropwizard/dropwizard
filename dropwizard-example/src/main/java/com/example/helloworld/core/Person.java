@@ -1,5 +1,6 @@
 package com.example.helloworld.core;
 
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -9,14 +10,10 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
-import java.util.Objects;
 
 @Entity
 @Table(name = "people")
-@NamedQuery(
-    name = "com.example.helloworld.core.Person.findAll",
-    query = "SELECT p FROM Person p"
-)
+@NamedQuery(name = "com.example.helloworld.core.Person.findAll", query = "SELECT p FROM Person p")
 public class Person {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,8 +30,7 @@ public class Person {
     @Max(value = 9999)
     private int yearBorn;
 
-    public Person() {
-    }
+    public Person() {}
 
     public Person(String fullName, String jobTitle, int yearBorn) {
         this.fullName = fullName;
@@ -86,10 +82,10 @@ public class Person {
 
         Person person = (Person) o;
 
-        return id == person.id &&
-                yearBorn == person.yearBorn &&
-                Objects.equals(fullName, person.fullName) &&
-                Objects.equals(jobTitle, person.jobTitle);
+        return id == person.id
+                && yearBorn == person.yearBorn
+                && Objects.equals(fullName, person.fullName)
+                && Objects.equals(jobTitle, person.jobTitle);
     }
 
     @Override

@@ -1,9 +1,15 @@
 package io.dropwizard.core.cli;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIOException;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import io.dropwizard.core.Application;
 import io.dropwizard.core.Configuration;
 import io.dropwizard.core.server.ServerFactory;
 import io.dropwizard.core.setup.Environment;
+import java.io.IOException;
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.component.AbstractLifeCycle;
@@ -11,18 +17,10 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatIOException;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 class ServerCommandTest {
     private static class MyApplication extends Application<Configuration> {
         @Override
-        public void run(Configuration configuration, Environment environment) throws Exception {
-        }
+        public void run(Configuration configuration, Environment environment) throws Exception {}
     }
 
     private final MyApplication application = new MyApplication();
@@ -57,28 +55,24 @@ class ServerCommandTest {
 
     @Test
     void hasAName() {
-        assertThat(command.getName())
-                .isEqualTo("server");
+        assertThat(command.getName()).isEqualTo("server");
     }
 
     @Test
     void hasADescription() {
-        assertThat(command.getDescription())
-                .isEqualTo("Runs the Dropwizard application as an HTTP server");
+        assertThat(command.getDescription()).isEqualTo("Runs the Dropwizard application as an HTTP server");
     }
 
     @Test
     void hasTheApplicationsConfigurationClass() {
-        assertThat(command.getConfigurationClass())
-                .isEqualTo(application.getConfigurationClass());
+        assertThat(command.getConfigurationClass()).isEqualTo(application.getConfigurationClass());
     }
 
     @Test
     void buildsAndRunsAConfiguredServer() throws Exception {
         command.run(environment, namespace, configuration);
 
-        assertThat(server.isStarted())
-                .isTrue();
+        assertThat(server.isStarted()).isTrue();
     }
 
     @Test
@@ -92,11 +86,10 @@ class ServerCommandTest {
         });
 
         assertThatIOException()
-            .isThrownBy(() -> command.run(environment, namespace, configuration))
-            .withMessage("oh crap");
+                .isThrownBy(() -> command.run(environment, namespace, configuration))
+                .withMessage("oh crap");
 
-        assertThat(server.isStarted())
-                .isFalse();
+        assertThat(server.isStarted()).isFalse();
         this.throwException = false;
     }
 }

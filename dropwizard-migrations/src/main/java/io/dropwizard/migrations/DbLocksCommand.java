@@ -2,12 +2,11 @@ package io.dropwizard.migrations;
 
 import io.dropwizard.core.Configuration;
 import io.dropwizard.db.DatabaseConfiguration;
+import java.io.PrintStream;
 import liquibase.Liquibase;
 import net.sourceforge.argparse4j.impl.Arguments;
 import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
-
-import java.io.PrintStream;
 
 public class DbLocksCommand<T extends Configuration> extends AbstractLiquibaseCommand<T> {
 
@@ -25,17 +24,19 @@ public class DbLocksCommand<T extends Configuration> extends AbstractLiquibaseCo
     public void configure(Subparser subparser) {
         super.configure(subparser);
 
-        subparser.addArgument("-l", "--list")
-                 .dest("list")
-                 .action(Arguments.storeTrue())
-                 .setDefault(Boolean.FALSE)
-                 .help("list all open locks");
+        subparser
+                .addArgument("-l", "--list")
+                .dest("list")
+                .action(Arguments.storeTrue())
+                .setDefault(Boolean.FALSE)
+                .help("list all open locks");
 
-        subparser.addArgument("-r", "--force-release")
-                 .dest("release")
-                 .action(Arguments.storeTrue())
-                 .setDefault(Boolean.FALSE)
-                 .help("forcibly release all open locks");
+        subparser
+                .addArgument("-r", "--force-release")
+                .dest("release")
+                .action(Arguments.storeTrue())
+                .setDefault(Boolean.FALSE)
+                .help("forcibly release all open locks");
     }
 
     @Override

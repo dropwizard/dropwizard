@@ -1,8 +1,7 @@
 package io.dropwizard.auth;
 
-import org.glassfish.jersey.server.ContainerRequest;
-
 import java.security.Principal;
+import org.glassfish.jersey.server.ContainerRequest;
 
 /**
  * A value factory which extracts the {@link Principal} from the

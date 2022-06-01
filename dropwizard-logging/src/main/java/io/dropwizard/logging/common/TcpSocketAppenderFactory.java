@@ -10,7 +10,6 @@ import io.dropwizard.util.DataSize;
 import io.dropwizard.util.Duration;
 import io.dropwizard.validation.MinDataSize;
 import io.dropwizard.validation.PortRange;
-
 import javax.net.SocketFactory;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -54,7 +53,8 @@ import javax.validation.constraints.NotNull;
  * </table>
  */
 @JsonTypeName("tcp")
-public class TcpSocketAppenderFactory<E extends DeferredProcessingAware> extends AbstractOutputStreamAppenderFactory<E> {
+public class TcpSocketAppenderFactory<E extends DeferredProcessingAware>
+        extends AbstractOutputStreamAppenderFactory<E> {
 
     @NotEmpty
     private String host = "localhost";
@@ -122,8 +122,8 @@ public class TcpSocketAppenderFactory<E extends DeferredProcessingAware> extends
 
     @Override
     protected OutputStreamAppender<E> appender(LoggerContext context) {
-        final OutputStreamAppender<E> appender = new DropwizardSocketAppender<>(host, port,
-            (int) connectionTimeout.toMilliseconds(), (int) sendBufferSize.toBytes(), socketFactory());
+        final OutputStreamAppender<E> appender = new DropwizardSocketAppender<>(
+                host, port, (int) connectionTimeout.toMilliseconds(), (int) sendBufferSize.toBytes(), socketFactory());
         appender.setContext(context);
         appender.setName("tcp-socket-appender");
         appender.setImmediateFlush(immediateFlush);
@@ -133,5 +133,4 @@ public class TcpSocketAppenderFactory<E extends DeferredProcessingAware> extends
     protected SocketFactory socketFactory() {
         return SocketFactory.getDefault();
     }
-
 }

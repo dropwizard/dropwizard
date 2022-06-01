@@ -4,12 +4,11 @@ import com.codahale.metrics.health.HealthCheck;
 import io.dropwizard.db.TimeBoundHealthCheck;
 import io.dropwizard.util.DirectExecutorService;
 import io.dropwizard.util.Duration;
+import java.util.Optional;
+import java.util.concurrent.ExecutorService;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-
-import java.util.Optional;
-import java.util.concurrent.ExecutorService;
 
 public class SessionFactoryHealthCheck extends HealthCheck {
     private final SessionFactory sessionFactory;
@@ -17,21 +16,20 @@ public class SessionFactoryHealthCheck extends HealthCheck {
     private final int validationQueryTimeout;
     private final TimeBoundHealthCheck timeBoundHealthCheck;
 
-    public SessionFactoryHealthCheck(SessionFactory sessionFactory,
-                                     Optional<String> validationQuery) {
+    public SessionFactoryHealthCheck(SessionFactory sessionFactory, Optional<String> validationQuery) {
         this(new DirectExecutorService(), Duration.seconds(0), sessionFactory, validationQuery);
     }
 
-    public SessionFactoryHealthCheck(ExecutorService executorService,
-                                     Duration duration,
-                                     SessionFactory sessionFactory,
-                                     Optional<String> validationQuery) {
+    public SessionFactoryHealthCheck(
+            ExecutorService executorService,
+            Duration duration,
+            SessionFactory sessionFactory,
+            Optional<String> validationQuery) {
         this.sessionFactory = sessionFactory;
         this.validationQuery = validationQuery;
         this.validationQueryTimeout = (int) duration.toSeconds();
         this.timeBoundHealthCheck = new TimeBoundHealthCheck(executorService, duration);
     }
-
 
     public SessionFactory getSessionFactory() {
         return sessionFactory;
@@ -50,7 +48,7 @@ public class SessionFactoryHealthCheck extends HealthCheck {
                 try {
                     if (validationQuery.isPresent()) {
                         session.createNativeQuery(validationQuery.get()).list();
-                    } else if (!isValidConnection(session)){
+                    } else if (!isValidConnection(session)) {
                         result = Result.unhealthy("Connection::isValid returned false.");
                     }
                     txn.commit();
@@ -66,7 +64,6 @@ public class SessionFactoryHealthCheck extends HealthCheck {
     }
 
     private boolean isValidConnection(Session session) {
-        return Boolean.TRUE.equals(session.doReturningWork(connection
-                -> connection.isValid(validationQueryTimeout)));
+        return Boolean.TRUE.equals(session.doReturningWork(connection -> connection.isValid(validationQueryTimeout)));
     }
 }

@@ -12,9 +12,7 @@
     <artifactId>dropwizard-dependencies</artifactId>
     <packaging>pom</packaging>
     <name>Dropwizard Dependencies</name>
-    <description>
-        Bill of materials to make sure a consistent set of versions is used for Dropwizard's transitive dependencies.
-    </description>
+    <description>Bill of materials to make sure a consistent set of versions is used for Dropwizard's transitive dependencies.</description>
 
     <properties>
         <!-- External dependencies -->

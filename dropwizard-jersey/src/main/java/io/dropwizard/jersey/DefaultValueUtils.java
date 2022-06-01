@@ -1,13 +1,11 @@
 package io.dropwizard.jersey;
 
+import java.lang.annotation.Annotation;
+import javax.ws.rs.DefaultValue;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-import javax.ws.rs.DefaultValue;
-import java.lang.annotation.Annotation;
-
 public final class DefaultValueUtils {
-    private DefaultValueUtils() {
-    }
+    private DefaultValueUtils() {}
 
     /**
      * Returns the value of the {@link DefaultValue#value()} if found in annotations.

@@ -1,9 +1,5 @@
 package io.dropwizard.hibernate;
 
-import javassist.util.proxy.Proxy;
-import javassist.util.proxy.ProxyFactory;
-import org.hibernate.SessionFactory;
-
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Collections;
@@ -11,6 +7,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import javassist.util.proxy.Proxy;
+import javassist.util.proxy.ProxyFactory;
+import org.hibernate.SessionFactory;
 
 /**
  * A factory for creating proxies for components that use Hibernate data access objects
@@ -35,7 +34,6 @@ public class UnitOfWorkAwareProxyFactory {
         sessionFactories = Collections.unmodifiableMap(sessionFactoriesBuilder);
     }
 
-
     /**
      * Creates a new <b>@UnitOfWork</b> aware proxy of a class with the default constructor.
      *
@@ -44,7 +42,7 @@ public class UnitOfWorkAwareProxyFactory {
      * @return a new proxy
      */
     public <T> T create(Class<T> clazz) {
-        return create(clazz, new Class<?>[]{}, new Object[]{});
+        return create(clazz, new Class<?>[] {}, new Object[] {});
     }
 
     /**
@@ -57,7 +55,7 @@ public class UnitOfWorkAwareProxyFactory {
      * @return a new proxy
      */
     public <T> T create(Class<T> clazz, Class<?> constructorParamType, Object constructorArguments) {
-        return create(clazz, new Class<?>[]{constructorParamType}, new Object[]{constructorArguments});
+        return create(clazz, new Class<?>[] {constructorParamType}, new Object[] {constructorArguments});
     }
 
     /**
@@ -75,19 +73,20 @@ public class UnitOfWorkAwareProxyFactory {
         factory.setSuperclass(clazz);
 
         try {
-            final Proxy proxy = (Proxy) (constructorParamTypes.length == 0 ?
-                    factory.createClass().getConstructor().newInstance() :
-                    factory.create(constructorParamTypes, constructorArguments));
+            final Proxy proxy = (Proxy)
+                    (constructorParamTypes.length == 0
+                            ? factory.createClass().getConstructor().newInstance()
+                            : factory.create(constructorParamTypes, constructorArguments));
             proxy.setHandler((self, overridden, proceed, args) -> {
                 final UnitOfWork[] unitsOfWork = overridden.getAnnotationsByType(UnitOfWork.class);
                 final Map<UnitOfWork, UnitOfWorkAspect> unitOfWorkAspectMap = new HashMap<>();
-                Arrays
-                    .stream(unitsOfWork)
-                    .collect(Collectors.toMap(UnitOfWork::value, Function.identity(), (first, second) -> second))
-                    .values()
-                    .forEach(unitOfWork -> unitOfWorkAspectMap.put(unitOfWork, newAspect(sessionFactories)));
+                Arrays.stream(unitsOfWork)
+                        .collect(Collectors.toMap(UnitOfWork::value, Function.identity(), (first, second) -> second))
+                        .values()
+                        .forEach(unitOfWork -> unitOfWorkAspectMap.put(unitOfWork, newAspect(sessionFactories)));
                 try {
-                    unitOfWorkAspectMap.forEach((unitOfWork, unitOfWorkAspect) -> unitOfWorkAspect.beforeStart(unitOfWork));
+                    unitOfWorkAspectMap.forEach(
+                            (unitOfWork, unitOfWorkAspect) -> unitOfWorkAspect.beforeStart(unitOfWork));
                     Object result = proceed.invoke(self, args);
                     unitOfWorkAspectMap.values().forEach(UnitOfWorkAspect::afterEnd);
                     return result;
@@ -102,8 +101,10 @@ public class UnitOfWorkAwareProxyFactory {
                 }
             });
             return (T) proxy;
-        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException |
-                InvocationTargetException e) {
+        } catch (NoSuchMethodException
+                | InstantiationException
+                | IllegalAccessException
+                | InvocationTargetException e) {
             throw new IllegalStateException("Unable to create a proxy for the class '" + clazz + "'", e);
         }
     }

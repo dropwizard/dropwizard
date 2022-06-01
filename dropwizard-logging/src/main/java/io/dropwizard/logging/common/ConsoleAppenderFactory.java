@@ -6,7 +6,6 @@ import ch.qos.logback.core.OutputStreamAppender;
 import ch.qos.logback.core.spi.DeferredProcessingAware;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-
 import javax.validation.constraints.NotNull;
 
 /**

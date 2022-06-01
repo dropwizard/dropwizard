@@ -4,10 +4,9 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.LoggingEvent;
 import ch.qos.logback.core.spi.AppenderAttachableImpl;
+import java.io.IOException;
 import org.eclipse.jetty.server.RequestLog;
 import org.eclipse.jetty.util.component.AbstractLifeCycle;
-
-import java.io.IOException;
 
 /**
  * A SLF4J-backed {@link RequestLog.Writer}.

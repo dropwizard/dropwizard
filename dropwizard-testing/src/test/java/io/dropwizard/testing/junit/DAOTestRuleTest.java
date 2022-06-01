@@ -1,21 +1,21 @@
 package io.dropwizard.testing.junit;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+
 import io.dropwizard.testing.app.TestEntity;
+import java.io.Serializable;
+import javax.validation.ConstraintViolationException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.junit.Rule;
 import org.junit.Test;
 
-import javax.validation.ConstraintViolationException;
-import java.io.Serializable;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-
 public class DAOTestRuleTest {
     @SuppressWarnings("deprecation")
     @Rule
-    public final DAOTestRule daoTestRule = DAOTestRule.newBuilder().addEntityClass(TestEntity.class).build();
+    public final DAOTestRule daoTestRule =
+            DAOTestRule.newBuilder().addEntityClass(TestEntity.class).build();
 
     @Test
     public void ruleCreatedSessionFactory() {
@@ -26,14 +26,16 @@ public class DAOTestRuleTest {
 
     @Test
     public void ruleCanOpenTransaction() {
-        final Long id = daoTestRule.inTransaction(() -> persist(new TestEntity("description")).getId());
+        final Long id = daoTestRule.inTransaction(
+                () -> persist(new TestEntity("description")).getId());
 
         assertThat(id).isNotNull();
     }
 
     @Test
     public void ruleCanRoundtrip() {
-        final Long id = daoTestRule.inTransaction(() -> persist(new TestEntity("description")).getId());
+        final Long id = daoTestRule.inTransaction(
+                () -> persist(new TestEntity("description")).getId());
 
         final TestEntity testEntity = get(id);
 
@@ -43,8 +45,8 @@ public class DAOTestRuleTest {
 
     @Test
     public void transactionThrowsExceptionAsExpected() {
-        assertThatExceptionOfType(ConstraintViolationException.class).isThrownBy(()->
-            daoTestRule.inTransaction(() -> persist(new TestEntity(null))));
+        assertThatExceptionOfType(ConstraintViolationException.class)
+                .isThrownBy(() -> daoTestRule.inTransaction(() -> persist(new TestEntity(null))));
     }
 
     @Test
@@ -57,14 +59,13 @@ public class DAOTestRuleTest {
         testEntity.setDescription("newDescription");
         // ... but cause a constraint violation during the actual update
         assertThatExceptionOfType(ConstraintViolationException.class)
-            .isThrownBy(() -> daoTestRule.inTransaction(() -> {
-                persist(testEntity);
-                persist(new TestEntity(null));
-            }));
+                .isThrownBy(() -> daoTestRule.inTransaction(() -> {
+                    persist(testEntity);
+                    persist(new TestEntity(null));
+                }));
         // ... the entity has the original value
         assertThat(get(testEntity.getId()).getDescription()).isEqualTo("description");
     }
-
 
     private TestEntity persist(TestEntity testEntity) {
         final Session currentSession = daoTestRule.getSessionFactory().getCurrentSession();

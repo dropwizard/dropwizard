@@ -1,15 +1,14 @@
 package io.dropwizard.hibernate;
 
-import org.hibernate.CacheMode;
-import org.hibernate.FlushMode;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
-
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import org.hibernate.CacheMode;
+import org.hibernate.FlushMode;
 
 /**
  * When annotating a Jersey resource method, wraps the method in a Hibernate session.

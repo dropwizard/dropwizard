@@ -1,20 +1,18 @@
 package io.dropwizard.jersey.setup;
 
+import static java.util.Objects.requireNonNull;
+
 import io.dropwizard.jersey.DropwizardResourceConfig;
+import java.util.function.Function;
+import javax.servlet.Servlet;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.glassfish.jersey.server.ResourceConfig;
-
-import javax.servlet.Servlet;
-import java.util.function.Function;
-
-import static java.util.Objects.requireNonNull;
 
 public class JerseyEnvironment {
     private final JerseyContainerHolder holder;
     private final DropwizardResourceConfig config;
 
-    public JerseyEnvironment(JerseyContainerHolder holder,
-                             DropwizardResourceConfig config) {
+    public JerseyEnvironment(JerseyContainerHolder holder, DropwizardResourceConfig config) {
         this.holder = holder;
         this.config = config;
     }

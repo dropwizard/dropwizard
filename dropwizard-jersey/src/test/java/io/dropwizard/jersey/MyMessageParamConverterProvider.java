@@ -1,12 +1,11 @@
 package io.dropwizard.jersey;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
-
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
 import javax.ws.rs.ext.ParamConverter;
 import javax.ws.rs.ext.ParamConverterProvider;
 import javax.ws.rs.ext.Provider;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Type;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 @Provider
 public class MyMessageParamConverterProvider implements ParamConverterProvider {

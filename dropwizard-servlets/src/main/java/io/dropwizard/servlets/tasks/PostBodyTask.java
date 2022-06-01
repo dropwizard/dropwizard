@@ -37,9 +37,8 @@ public abstract class PostBodyTask extends Task {
      * @param output     a {@link PrintWriter} wrapping the output stream of the task
      * @throws Exception
      */
-    public abstract void execute(Map<String, List<String>> parameters,
-                                 String body,
-                                 PrintWriter output) throws Exception;
+    public abstract void execute(Map<String, List<String>> parameters, String body, PrintWriter output)
+            throws Exception;
 
     /**
      * Deprecated, use {@link #execute(Map, String, PrintWriter)} or inherit from Task instead.

@@ -1,9 +1,17 @@
 package io.dropwizard.auth;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import io.dropwizard.auth.basic.BasicCredentialAuthFilter;
 import io.dropwizard.auth.util.AuthUtil;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.logging.common.BootstrapLogging;
+import java.security.Principal;
+import java.util.Collections;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.ext.ExceptionMapper;
 import org.glassfish.jersey.servlet.ServletProperties;
 import org.glassfish.jersey.test.DeploymentContext;
 import org.glassfish.jersey.test.JerseyTest;
@@ -13,15 +21,6 @@ import org.glassfish.jersey.test.grizzly.GrizzlyWebTestContainerFactory;
 import org.glassfish.jersey.test.spi.TestContainerException;
 import org.glassfish.jersey.test.spi.TestContainerFactory;
 import org.junit.jupiter.api.Test;
-
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.ext.ExceptionMapper;
-import java.security.Principal;
-import java.util.Collections;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 class CustomAuthExceptionTest extends JerseyTest {
     static {
@@ -60,7 +59,7 @@ class CustomAuthExceptionTest extends JerseyTest {
         public CustomAuthResourceConfig() {
             super();
             property(TestProperties.CONTAINER_PORT, "0");
-            BasicCredentialAuthFilter.Builder<Principal> builder  = new BasicCredentialAuthFilter.Builder<>();
+            BasicCredentialAuthFilter.Builder<Principal> builder = new BasicCredentialAuthFilter.Builder<>();
             builder.setAuthorizer(AuthUtil.getTestAuthorizer("admin", "admin"));
             builder.setAuthenticator(AuthUtil.getBasicAuthenticator(Collections.singletonList("admin")));
             builder.setPrefix("Custom");
@@ -80,8 +79,8 @@ class CustomAuthExceptionTest extends JerseyTest {
     protected DeploymentContext configureDeployment() {
         forceSet(TestProperties.CONTAINER_PORT, "0");
         return ServletDeploymentContext.builder(new CustomAuthResourceConfig())
-            .initParam(ServletProperties.JAXRS_APPLICATION_CLASS, CustomAuthResourceConfig.class.getName())
-            .build();
+                .initParam(ServletProperties.JAXRS_APPLICATION_CLASS, CustomAuthResourceConfig.class.getName())
+                .build();
     }
 
     @Test

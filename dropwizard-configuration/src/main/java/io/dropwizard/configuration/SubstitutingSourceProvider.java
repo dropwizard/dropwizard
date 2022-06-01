@@ -1,13 +1,12 @@
 package io.dropwizard.configuration;
 
-import org.apache.commons.text.StringSubstitutor;
+import static java.util.Objects.requireNonNull;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-
-import static java.util.Objects.requireNonNull;
+import org.apache.commons.text.StringSubstitutor;
 
 /**
  * A delegating {@link ConfigurationSourceProvider} which replaces variables in the underlying configuration

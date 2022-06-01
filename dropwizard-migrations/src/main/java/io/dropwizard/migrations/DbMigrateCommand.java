@@ -2,16 +2,15 @@ package io.dropwizard.migrations;
 
 import io.dropwizard.core.Configuration;
 import io.dropwizard.db.DatabaseConfiguration;
-import liquibase.Liquibase;
-import net.sourceforge.argparse4j.impl.Arguments;
-import net.sourceforge.argparse4j.inf.Namespace;
-import net.sourceforge.argparse4j.inf.Subparser;
-
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.stream.Collectors;
+import liquibase.Liquibase;
+import net.sourceforge.argparse4j.impl.Arguments;
+import net.sourceforge.argparse4j.inf.Namespace;
+import net.sourceforge.argparse4j.inf.Subparser;
 
 public class DbMigrateCommand<T extends Configuration> extends AbstractLiquibaseCommand<T> {
 
@@ -29,21 +28,24 @@ public class DbMigrateCommand<T extends Configuration> extends AbstractLiquibase
     public void configure(Subparser subparser) {
         super.configure(subparser);
 
-        subparser.addArgument("-n", "--dry-run")
-                 .action(Arguments.storeTrue())
-                 .dest("dry-run")
-                 .setDefault(Boolean.FALSE)
-                 .help("output the DDL to stdout, don't run it");
+        subparser
+                .addArgument("-n", "--dry-run")
+                .action(Arguments.storeTrue())
+                .dest("dry-run")
+                .setDefault(Boolean.FALSE)
+                .help("output the DDL to stdout, don't run it");
 
-        subparser.addArgument("-c", "--count")
-                 .type(Integer.class)
-                 .dest("count")
-                 .help("only apply the next N change sets");
+        subparser
+                .addArgument("-c", "--count")
+                .type(Integer.class)
+                .dest("count")
+                .help("only apply the next N change sets");
 
-        subparser.addArgument("-i", "--include")
-                 .action(Arguments.append())
-                 .dest("contexts")
-                 .help("include change sets from the given context");
+        subparser
+                .addArgument("-i", "--include")
+                .action(Arguments.append())
+                .dest("contexts")
+                .help("include change sets from the given context");
     }
 
     @Override
@@ -72,8 +74,6 @@ public class DbMigrateCommand<T extends Configuration> extends AbstractLiquibase
         if (contexts == null) {
             return "";
         }
-        return contexts.stream()
-                .map(Object::toString)
-                .collect(Collectors.joining(","));
+        return contexts.stream().map(Object::toString).collect(Collectors.joining(","));
     }
 }

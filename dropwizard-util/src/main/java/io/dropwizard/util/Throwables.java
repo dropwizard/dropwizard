@@ -1,18 +1,16 @@
 package io.dropwizard.util;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
-
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * @since 2.0
  */
 public final class Throwables {
-    private Throwables() {
-    }
+    private Throwables() {}
 
     /**
      * Search an exception chain for an exception matching a given condition.

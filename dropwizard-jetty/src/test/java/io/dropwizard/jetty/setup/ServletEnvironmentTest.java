@@ -1,6 +1,15 @@
 package io.dropwizard.jetty.setup;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import io.dropwizard.jetty.MutableServletContextHandler;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import javax.servlet.Filter;
+import javax.servlet.FilterRegistration;
+import javax.servlet.Servlet;
+import javax.servlet.ServletContextListener;
+import javax.servlet.ServletRegistration;
 import org.eclipse.jetty.security.ConstraintSecurityHandler;
 import org.eclipse.jetty.security.SecurityHandler;
 import org.eclipse.jetty.server.DebugListener;
@@ -15,16 +24,6 @@ import org.eclipse.jetty.util.resource.ResourceCollection;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-
-import javax.servlet.Filter;
-import javax.servlet.FilterRegistration;
-import javax.servlet.Servlet;
-import javax.servlet.ServletContextListener;
-import javax.servlet.ServletRegistration;
-import java.nio.file.Files;
-import java.nio.file.Path;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 class ServletEnvironmentTest {
 
@@ -121,7 +120,8 @@ class ServletEnvironmentTest {
 
     @Test
     void setsBaseResource(@TempDir Path tempDir) throws Exception {
-        final Resource testResource = Resource.newResource(tempDir.resolve("dir").toUri());
+        final Resource testResource =
+                Resource.newResource(tempDir.resolve("dir").toUri());
         environment.setBaseResource(testResource);
 
         assertThat(handler.getBaseResource()).isEqualTo(testResource);
@@ -132,18 +132,20 @@ class ServletEnvironmentTest {
         Resource wooResource = Resource.newResource(Files.createDirectory(tempDir.resolve("dir-1")));
         Resource fooResource = Resource.newResource(Files.createDirectory(tempDir.resolve("dir-2")));
 
-        final Resource[] testResources = new Resource[]{wooResource, fooResource};
+        final Resource[] testResources = new Resource[] {wooResource, fooResource};
         environment.setBaseResource(testResources);
 
         assertThat(handler.getBaseResource()).isExactlyInstanceOf(ResourceCollection.class);
-        assertThat(((ResourceCollection) handler.getBaseResource()).getResources()).contains(wooResource, fooResource);
+        assertThat(((ResourceCollection) handler.getBaseResource()).getResources())
+                .contains(wooResource, fooResource);
     }
 
     @Test
     void setsResourceBase() throws Exception {
         environment.setResourceBase("/woo");
 
-        assertThat(handler.getResourceBase()).isEqualTo(handler.newResource("/woo").toString());
+        assertThat(handler.getResourceBase())
+                .isEqualTo(handler.newResource("/woo").toString());
     }
 
     @Test
@@ -151,12 +153,12 @@ class ServletEnvironmentTest {
         String wooResource = Files.createDirectory(tempDir.resolve("dir-1")).toString();
         String fooResource = Files.createDirectory(tempDir.resolve("dir-2")).toString();
 
-        final String[] testResources = new String[]{wooResource, fooResource};
+        final String[] testResources = new String[] {wooResource, fooResource};
         environment.setBaseResource(testResources);
 
         assertThat(handler.getBaseResource()).isExactlyInstanceOf(ResourceCollection.class);
         assertThat(((ResourceCollection) handler.getBaseResource()).getResources())
-            .contains(Resource.newResource(wooResource), Resource.newResource(fooResource));
+                .contains(Resource.newResource(wooResource), Resource.newResource(fooResource));
     }
 
     @Test
@@ -174,7 +176,6 @@ class ServletEnvironmentTest {
         assertThat(handler.getSessionHandler()).isEqualTo(sessionHandler);
         assertThat(handler.isSessionsEnabled()).isTrue();
     }
-
 
     @Test
     void setsSecurityHandlers() {

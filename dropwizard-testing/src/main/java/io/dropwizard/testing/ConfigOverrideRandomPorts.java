@@ -21,6 +21,7 @@ public class ConfigOverrideRandomPorts extends ConfigOverride {
 
     @Nullable
     private String applicationConnectorsPort = null;
+
     @Nullable
     private String adminConnectorsPort = null;
 

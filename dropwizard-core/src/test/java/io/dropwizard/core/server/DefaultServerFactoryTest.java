@@ -1,5 +1,8 @@
 package io.dropwizard.core.server;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,19 +18,7 @@ import io.dropwizard.jetty.ServerPushFilterFactory;
 import io.dropwizard.logging.common.ConsoleAppenderFactory;
 import io.dropwizard.logging.common.FileAppenderFactory;
 import io.dropwizard.logging.common.SyslogAppenderFactory;
-import io.dropwizard.core.setup.Environment;
-import io.dropwizard.core.setup.ExceptionMapperBinder;
 import io.dropwizard.validation.BaseValidator;
-import org.eclipse.jetty.server.AbstractNetworkConnector;
-import org.eclipse.jetty.server.Connector;
-import org.eclipse.jetty.server.NetworkConnector;
-import org.eclipse.jetty.server.Server;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -39,9 +30,15 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import org.eclipse.jetty.server.AbstractNetworkConnector;
+import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.NetworkConnector;
+import org.eclipse.jetty.server.Server;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 class DefaultServerFactoryTest {
     private final Environment environment = new Environment("test");
@@ -51,21 +48,22 @@ class DefaultServerFactoryTest {
     void setUp() throws Exception {
 
         final ObjectMapper objectMapper = Jackson.newObjectMapper();
-        objectMapper.getSubtypeResolver().registerSubtypes(ConsoleAppenderFactory.class,
-                                                           FileAppenderFactory.class,
-                                                           SyslogAppenderFactory.class,
-                                                           HttpConnectorFactory.class);
+        objectMapper
+                .getSubtypeResolver()
+                .registerSubtypes(
+                        ConsoleAppenderFactory.class,
+                        FileAppenderFactory.class,
+                        SyslogAppenderFactory.class,
+                        HttpConnectorFactory.class);
 
-        http = new YamlConfigurationFactory<>(DefaultServerFactory.class,
-                                              BaseValidator.newValidator(),
-                                              objectMapper, "dw")
+        http = new YamlConfigurationFactory<>(
+                        DefaultServerFactory.class, BaseValidator.newValidator(), objectMapper, "dw")
                 .build(new ResourceConfigurationSourceProvider(), "yaml/server.yml");
     }
 
     @Test
     void loadsGzipConfig() {
-        assertThat(http.getGzipFilterFactory().isEnabled())
-                .isFalse();
+        assertThat(http.getGzipFilterFactory().isEnabled()).isFalse();
     }
 
     @Test
@@ -78,14 +76,12 @@ class DefaultServerFactoryTest {
 
     @Test
     void hasAMaximumNumberOfThreads() {
-        assertThat(http.getMaxThreads())
-                .isEqualTo(101);
+        assertThat(http.getMaxThreads()).isEqualTo(101);
     }
 
     @Test
     void hasAMinimumNumberOfThreads() {
-        assertThat(http.getMinThreads())
-                .isEqualTo(89);
+        assertThat(http.getMinThreads()).isEqualTo(89);
     }
 
     @Test
@@ -100,8 +96,7 @@ class DefaultServerFactoryTest {
 
     @Test
     void isDiscoverable() {
-        assertThat(new DiscoverableSubtypeResolver().getDiscoveredSubtypes())
-                .contains(DefaultServerFactory.class);
+        assertThat(new DiscoverableSubtypeResolver().getDiscoveredSubtypes()).contains(DefaultServerFactory.class);
     }
 
     @Test
@@ -110,7 +105,8 @@ class DefaultServerFactoryTest {
 
         http.build(environment);
         assertThat(environment.jersey().getResourceConfig().getSingletons())
-            .filteredOn(x -> x instanceof ExceptionMapperBinder).hasSize(1);
+                .filteredOn(x -> x instanceof ExceptionMapperBinder)
+                .hasSize(1);
     }
 
     @Test
@@ -120,7 +116,8 @@ class DefaultServerFactoryTest {
         Environment environment = new Environment("test");
         http.build(environment);
         assertThat(environment.jersey().getResourceConfig().getSingletons())
-            .filteredOn(x -> x instanceof ExceptionMapperBinder).isEmpty();
+                .filteredOn(x -> x instanceof ExceptionMapperBinder)
+                .isEmpty();
     }
 
     @Test
@@ -151,10 +148,10 @@ class DefaultServerFactoryTest {
     void defaultsDetailedJsonProcessingExceptionToFalse() {
         http.build(environment);
         assertThat(environment.jersey().getResourceConfig().getSingletons())
-            .filteredOn(x -> x instanceof ExceptionMapperBinder)
-            .map(x -> (ExceptionMapperBinder) x)
-            .singleElement()
-            .satisfies(x -> assertThat(x.isShowDetails()).isFalse());
+                .filteredOn(x -> x instanceof ExceptionMapperBinder)
+                .map(x -> (ExceptionMapperBinder) x)
+                .singleElement()
+                .satisfies(x -> assertThat(x.isShowDetails()).isFalse());
     }
 
     @Test
@@ -163,10 +160,10 @@ class DefaultServerFactoryTest {
 
         http.build(environment);
         assertThat(environment.jersey().getResourceConfig().getSingletons())
-            .filteredOn(x -> x instanceof ExceptionMapperBinder)
-            .map(x -> (ExceptionMapperBinder) x)
-            .singleElement()
-            .satisfies(x -> assertThat(x.isShowDetails()).isTrue());
+                .filteredOn(x -> x instanceof ExceptionMapperBinder)
+                .map(x -> (ExceptionMapperBinder) x)
+                .singleElement()
+                .satisfies(x -> assertThat(x.isShowDetails()).isTrue());
     }
 
     @Test
@@ -183,14 +180,16 @@ class DefaultServerFactoryTest {
         ((AbstractNetworkConnector) server.getConnectors()[0]).setPort(0);
         ((AbstractNetworkConnector) server.getConnectors()[1]).setPort(0);
 
-        ScheduledFuture<Void> cleanup = executor.schedule(() -> {
-            if (!server.isStopped()) {
-                server.stop();
-            }
-            executor.shutdownNow();
-            return null;
-        }, 5, TimeUnit.SECONDS);
-
+        ScheduledFuture<Void> cleanup = executor.schedule(
+                () -> {
+                    if (!server.isStopped()) {
+                        server.stop();
+                    }
+                    executor.shutdownNow();
+                    return null;
+                },
+                5,
+                TimeUnit.SECONDS);
 
         server.start();
 
@@ -241,22 +240,21 @@ class DefaultServerFactoryTest {
         http.configure(environment);
 
         assertEquals(http.getAdminContextPath(), environment.getAdminContext().getContextPath());
-        assertEquals(http.getApplicationContextPath(), environment.getApplicationContext().getContextPath());
+        assertEquals(
+                http.getApplicationContextPath(),
+                environment.getApplicationContext().getContextPath());
     }
 
     @Test
     void testDeserializeWithoutJsonAutoDetect() throws ConfigurationException, IOException {
-        final ObjectMapper objectMapper = Jackson.newObjectMapper()
-            .setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE);
+        final ObjectMapper objectMapper =
+                Jackson.newObjectMapper().setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE);
 
         assertThat(new YamlConfigurationFactory<>(
-                DefaultServerFactory.class,
-                BaseValidator.newValidator(),
-                objectMapper,
-                "dw"
-                ).build(new ResourceConfigurationSourceProvider(), "yaml/server.yml")
-                .getMaxThreads())
-            .isEqualTo(101);
+                                DefaultServerFactory.class, BaseValidator.newValidator(), objectMapper, "dw")
+                        .build(new ResourceConfigurationSourceProvider(), "yaml/server.yml")
+                        .getMaxThreads())
+                .isEqualTo(101);
     }
 
     @Path("/test")

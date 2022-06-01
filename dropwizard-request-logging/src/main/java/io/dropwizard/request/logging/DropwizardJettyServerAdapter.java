@@ -1,12 +1,11 @@
 package io.dropwizard.request.logging;
 
 import ch.qos.logback.access.spi.ServerAdapter;
+import java.util.Map;
+import java.util.stream.Collectors;
 import org.eclipse.jetty.http.HttpField;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Response;
-
-import java.util.Map;
-import java.util.stream.Collectors;
 
 class DropwizardJettyServerAdapter implements ServerAdapter {
     private final Request request;

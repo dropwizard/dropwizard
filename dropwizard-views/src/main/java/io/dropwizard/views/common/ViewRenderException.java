@@ -58,5 +58,4 @@ public class ViewRenderException extends IOException {
     public ViewRenderException(Throwable cause) {
         super(cause);
     }
-
 }

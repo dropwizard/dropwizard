@@ -1,9 +1,17 @@
 package io.dropwizard.auth.principal;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import io.dropwizard.auth.AbstractAuthResourceConfig;
 import io.dropwizard.auth.AuthDynamicFeature;
 import io.dropwizard.auth.AuthValueFactoryProvider;
 import io.dropwizard.logging.common.BootstrapLogging;
+import java.security.Principal;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.container.ContainerRequestFilter;
+import javax.ws.rs.container.DynamicFeature;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
 import org.glassfish.jersey.internal.inject.AbstractBinder;
 import org.glassfish.jersey.servlet.ServletProperties;
 import org.glassfish.jersey.test.DeploymentContext;
@@ -13,15 +21,6 @@ import org.glassfish.jersey.test.TestProperties;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.container.ContainerRequestFilter;
-import javax.ws.rs.container.DynamicFeature;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
-import java.security.Principal;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Testing that principal entity is not affected by authentication logic and can be injected as any other entity.
@@ -47,9 +46,10 @@ class NoAuthPrincipalEntityTest extends JerseyTest {
     @Override
     protected DeploymentContext configureDeployment() {
         forceSet(TestProperties.CONTAINER_PORT, "0");
-        return ServletDeploymentContext
-                .builder(new NoAuthPrincipalInjectedResourceConfig())
-                .initParam(ServletProperties.JAXRS_APPLICATION_CLASS, NoAuthPrincipalInjectedResourceConfig.class.getName())
+        return ServletDeploymentContext.builder(new NoAuthPrincipalInjectedResourceConfig())
+                .initParam(
+                        ServletProperties.JAXRS_APPLICATION_CLASS,
+                        NoAuthPrincipalInjectedResourceConfig.class.getName())
                 .build();
     }
 
@@ -60,21 +60,25 @@ class NoAuthPrincipalEntityTest extends JerseyTest {
             packages("io.dropwizard.jersey.jackson");
         }
 
-        @Override protected Class<? extends Principal> getPrincipalClass() {
+        @Override
+        protected Class<? extends Principal> getPrincipalClass() {
             return JsonPrincipal.class;
         }
 
-        @Override protected ContainerRequestFilter getAuthFilter() {
+        @Override
+        protected ContainerRequestFilter getAuthFilter() {
             return requestContext -> {
                 throw new AssertionError("Authentication must not be performed");
             };
         }
 
-        @Override protected AbstractBinder getAuthBinder() {
+        @Override
+        protected AbstractBinder getAuthBinder() {
             return new AuthValueFactoryProvider.Binder<>(getPrincipalClass());
         }
 
-        @Override protected DynamicFeature getAuthDynamicFeature(ContainerRequestFilter authFilter) {
+        @Override
+        protected DynamicFeature getAuthDynamicFeature(ContainerRequestFilter authFilter) {
             return new AuthDynamicFeature(authFilter);
         }
     }
@@ -82,10 +86,11 @@ class NoAuthPrincipalEntityTest extends JerseyTest {
     @Test
     void principalEntityResourceWithoutAuth200() {
         String principalName = "Astar Seran";
-        assertThat(target("/no-auth-test/principal-entity").request()
-                .header(HttpHeaders.AUTHORIZATION, "Anything here")
-                .post(Entity.entity(new JsonPrincipal(principalName), MediaType.APPLICATION_JSON))
-                .readEntity(String.class))
+        assertThat(target("/no-auth-test/principal-entity")
+                        .request()
+                        .header(HttpHeaders.AUTHORIZATION, "Anything here")
+                        .post(Entity.entity(new JsonPrincipal(principalName), MediaType.APPLICATION_JSON))
+                        .readEntity(String.class))
                 .isEqualTo(principalName);
     }
 
@@ -99,10 +104,11 @@ class NoAuthPrincipalEntityTest extends JerseyTest {
     @Test
     void annotatedPrincipalEntityResourceWithoutAuth200() {
         String principalName = "Astar Seran";
-        assertThat(target("/no-auth-test/annotated-principal-entity").request()
-                .header(HttpHeaders.AUTHORIZATION, "Anything here")
-                .post(Entity.entity(new JsonPrincipal(principalName), MediaType.APPLICATION_JSON))
-                .readEntity(String.class))
+        assertThat(target("/no-auth-test/annotated-principal-entity")
+                        .request()
+                        .header(HttpHeaders.AUTHORIZATION, "Anything here")
+                        .post(Entity.entity(new JsonPrincipal(principalName), MediaType.APPLICATION_JSON))
+                        .readEntity(String.class))
                 .isEqualTo(principalName);
     }
 }

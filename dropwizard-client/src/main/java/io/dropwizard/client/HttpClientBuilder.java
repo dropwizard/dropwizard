@@ -12,6 +12,10 @@ import io.dropwizard.client.ssl.TlsConfiguration;
 import io.dropwizard.core.setup.Environment;
 import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.util.Duration;
+import java.io.IOException;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+import javax.net.ssl.HostnameVerifier;
 import org.apache.hc.client5.http.DnsResolver;
 import org.apache.hc.client5.http.HttpRequestRetryStrategy;
 import org.apache.hc.client5.http.SystemDefaultDnsResolver;
@@ -46,11 +50,6 @@ import org.apache.hc.core5.http.protocol.HttpProcessor;
 import org.apache.hc.core5.util.TimeValue;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-import javax.net.ssl.HostnameVerifier;
-import java.io.IOException;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
 /**
  * A convenience class for building {@link org.apache.hc.client5.http.classic.HttpClient} instances.
  * <p>
@@ -68,10 +67,12 @@ public class HttpClientBuilder {
         public boolean retryRequest(HttpRequest request, IOException exception, int execCount, HttpContext context) {
             return false;
         }
+
         @Override
         public boolean retryRequest(HttpResponse response, int execCount, HttpContext context) {
             return false;
         }
+
         @Override
         @Nullable
         public TimeValue getRetryInterval(HttpResponse response, int execCount, HttpContext context) {
@@ -86,6 +87,7 @@ public class HttpClientBuilder {
 
     @Nullable
     private Environment environment;
+
     private HttpClientConfiguration configuration = new HttpClientConfiguration();
     private DnsResolver resolver = new SystemDefaultDnsResolver();
 
@@ -108,6 +110,7 @@ public class HttpClientBuilder {
 
     @Nullable
     private RedirectStrategy redirectStrategy;
+
     private boolean disableContentCompression;
 
     @Nullable
@@ -276,7 +279,8 @@ public class HttpClientBuilder {
      * @return an {@link org.apache.hc.client5.http.impl.classic.CloseableHttpClient}
      */
     public CloseableHttpClient build(String name) {
-        final CloseableHttpClient client = buildWithDefaultRequestConfiguration(name).getClient();
+        final CloseableHttpClient client =
+                buildWithDefaultRequestConfiguration(name).getClient();
         // If the environment is present, we tie the client with the server lifecycle
         if (environment != null) {
             environment.lifecycle().manage(new Managed() {
@@ -297,8 +301,7 @@ public class HttpClientBuilder {
      * @return an {@link io.dropwizard.client.ConfiguredCloseableHttpClient}
      */
     ConfiguredCloseableHttpClient buildWithDefaultRequestConfiguration(String name) {
-        return createClient(createBuilder(),
-                createConnectionManager(createConfiguredRegistry(), name), name);
+        return createClient(createBuilder(), createConnectionManager(createConfiguredRegistry(), name), name);
     }
 
     /**
@@ -336,8 +339,7 @@ public class HttpClientBuilder {
      * function.
      */
     protected org.apache.hc.client5.http.impl.classic.HttpClientBuilder customizeBuilder(
-        org.apache.hc.client5.http.impl.classic.HttpClientBuilder builder
-    ) {
+            org.apache.hc.client5.http.impl.classic.HttpClientBuilder builder) {
         return builder;
     }
 
@@ -354,21 +356,24 @@ public class HttpClientBuilder {
             final org.apache.hc.client5.http.impl.classic.HttpClientBuilder builder,
             final InstrumentedHttpClientConnectionManager manager,
             final String name) {
-        final String cookiePolicy = configuration.isCookiesEnabled() ? StandardCookieSpec.RELAXED : StandardCookieSpec.IGNORE;
+        final String cookiePolicy =
+                configuration.isCookiesEnabled() ? StandardCookieSpec.RELAXED : StandardCookieSpec.IGNORE;
         final Integer timeout = (int) configuration.getTimeout().toMilliseconds();
-        final Integer connectionTimeout = (int) configuration.getConnectionTimeout().toMilliseconds();
-        final Integer connectionRequestTimeout = (int) configuration.getConnectionRequestTimeout().toMilliseconds();
+        final Integer connectionTimeout =
+                (int) configuration.getConnectionTimeout().toMilliseconds();
+        final Integer connectionRequestTimeout =
+                (int) configuration.getConnectionRequestTimeout().toMilliseconds();
         final long keepAlive = configuration.getKeepAlive().toMilliseconds();
-        final ConnectionReuseStrategy reuseStrategy = keepAlive == 0
-                ? ((request, response, context) -> false)
-                : new DefaultConnectionReuseStrategy();
+        final ConnectionReuseStrategy reuseStrategy =
+                keepAlive == 0 ? ((request, response, context) -> false) : new DefaultConnectionReuseStrategy();
         final HttpRequestRetryStrategy retryHandler = configuration.getRetries() == 0
                 ? NO_RETRIES
-                : (httpRequestRetryStrategy == null ? new DefaultHttpRequestRetryStrategy(configuration.getRetries(),
-                TimeValue.ofSeconds(1L)) : httpRequestRetryStrategy);
+                : (httpRequestRetryStrategy == null
+                        ? new DefaultHttpRequestRetryStrategy(configuration.getRetries(), TimeValue.ofSeconds(1L))
+                        : httpRequestRetryStrategy);
 
-        final RequestConfig requestConfig
-                = RequestConfig.custom().setCookieSpec(cookiePolicy)
+        final RequestConfig requestConfig = RequestConfig.custom()
+                .setCookieSpec(cookiePolicy)
                 .setResponseTimeout(timeout, TimeUnit.MILLISECONDS)
                 .setConnectTimeout(connectionTimeout, TimeUnit.MILLISECONDS)
                 .setConnectionRequestTimeout(connectionRequestTimeout, TimeUnit.MILLISECONDS)
@@ -381,11 +386,11 @@ public class HttpClientBuilder {
         manager.setDefaultSocketConfig(socketConfig);
 
         builder.setRequestExecutor(createRequestExecutor(name))
-            .setConnectionManager(manager)
-            .setDefaultRequestConfig(requestConfig)
-            .setConnectionReuseStrategy(reuseStrategy)
-            .setRetryStrategy(retryHandler)
-            .setUserAgent(createUserAgent(name));
+                .setConnectionManager(manager)
+                .setDefaultRequestConfig(requestConfig)
+                .setConnectionReuseStrategy(reuseStrategy)
+                .setRetryStrategy(retryHandler)
+                .setUserAgent(createUserAgent(name));
 
         if (keepAlive != 0) {
             // either keep alive based on response header Keep-Alive,
@@ -458,10 +463,10 @@ public class HttpClientBuilder {
      * @return the user agent string to be used by this client
      */
     protected String createUserAgent(String name) {
-        final String defaultUserAgent = environmentName == null ? name : String.format("%s (%s)", environmentName, name);
+        final String defaultUserAgent =
+                environmentName == null ? name : String.format("%s (%s)", environmentName, name);
         return configuration.getUserAgent().orElse(defaultUserAgent);
     }
-
 
     /**
      * Create a InstrumentedHttpClientConnectionManager based on the
@@ -472,15 +477,16 @@ public class HttpClientBuilder {
      * @param name
      * @return a InstrumentedHttpClientConnectionManger instance
      */
-    protected InstrumentedHttpClientConnectionManager createConnectionManager(Registry<ConnectionSocketFactory> registry,
-                                                                              String name) {
+    protected InstrumentedHttpClientConnectionManager createConnectionManager(
+            Registry<ConnectionSocketFactory> registry, String name) {
         final Duration ttl = configuration.getTimeToLive();
-        final InstrumentedHttpClientConnectionManager manager = InstrumentedHttpClientConnectionManager.builder(metricRegistry)
-            .socketFactoryRegistry(registry)
-            .dnsResolver(resolver)
-            .timeToLive(TimeValue.of(ttl.getQuantity(), ttl.getUnit()))
-            .name(name)
-            .build();
+        final InstrumentedHttpClientConnectionManager manager = InstrumentedHttpClientConnectionManager.builder(
+                        metricRegistry)
+                .socketFactoryRegistry(registry)
+                .dnsResolver(resolver)
+                .timeToLive(TimeValue.of(ttl.getQuantity(), ttl.getUnit()))
+                .name(name)
+                .build();
         return configureConnectionManager(manager);
     }
 
@@ -498,8 +504,8 @@ public class HttpClientBuilder {
         if (tlsConfiguration == null) {
             sslConnectionSocketFactory = SSLConnectionSocketFactory.getSocketFactory();
         } else {
-            sslConnectionSocketFactory = new DropwizardSSLConnectionSocketFactory(tlsConfiguration,
-                verifier).getSocketFactory();
+            sslConnectionSocketFactory =
+                    new DropwizardSSLConnectionSocketFactory(tlsConfiguration, verifier).getSocketFactory();
         }
 
         return RegistryBuilder.<ConnectionSocketFactory>create()
@@ -508,12 +514,12 @@ public class HttpClientBuilder {
                 .build();
     }
 
-
     protected InstrumentedHttpClientConnectionManager configureConnectionManager(
             InstrumentedHttpClientConnectionManager connectionManager) {
         connectionManager.setDefaultMaxPerRoute(configuration.getMaxConnectionsPerRoute());
         connectionManager.setMaxTotal(configuration.getMaxConnections());
-        connectionManager.setValidateAfterInactivity(TimeValue.ofMilliseconds((int) configuration.getValidateAfterInactivityPeriod().toMilliseconds()));
+        connectionManager.setValidateAfterInactivity(TimeValue.ofMilliseconds(
+                (int) configuration.getValidateAfterInactivityPeriod().toMilliseconds()));
         return connectionManager;
     }
 
@@ -525,10 +531,11 @@ public class HttpClientBuilder {
     protected Credentials configureCredentials(AuthConfiguration auth) {
 
         if (null != auth.getCredentialType() && auth.getCredentialType().equalsIgnoreCase(AuthConfiguration.NT_CREDS)) {
-            return new NTCredentials(auth.getUsername(), auth.getPassword().toCharArray(), auth.getHostname(), auth.getDomain());
+            return new NTCredentials(
+                    auth.getUsername(), auth.getPassword().toCharArray(), auth.getHostname(), auth.getDomain());
         } else {
-            return new UsernamePasswordCredentials(auth.getUsername(), auth.getPassword().toCharArray());
+            return new UsernamePasswordCredentials(
+                    auth.getUsername(), auth.getPassword().toCharArray());
         }
-
     }
 }

@@ -1,7 +1,15 @@
 package io.dropwizard.jersey.sessions;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import io.dropwizard.jersey.AbstractJerseyTest;
 import io.dropwizard.jersey.DropwizardResourceConfig;
+import java.util.Map;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.Invocation;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.NewCookie;
+import javax.ws.rs.core.Response;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.ServerProperties;
 import org.glassfish.jersey.servlet.ServletProperties;
@@ -12,20 +20,10 @@ import org.glassfish.jersey.test.spi.TestContainerException;
 import org.glassfish.jersey.test.spi.TestContainerFactory;
 import org.junit.jupiter.api.Test;
 
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.Invocation;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.NewCookie;
-import javax.ws.rs.core.Response;
-import java.util.Map;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
 class FlashFactoryTest extends AbstractJerseyTest {
 
     @Override
-    protected TestContainerFactory getTestContainerFactory()
-            throws TestContainerException {
+    protected TestContainerFactory getTestContainerFactory() throws TestContainerException {
         return new GrizzlyWebTestContainerFactory();
     }
 
@@ -41,8 +39,8 @@ class FlashFactoryTest extends AbstractJerseyTest {
 
     @Test
     void passesInHttpSessions() throws Exception {
-        Response firstResponse = target("/flash").request(MediaType.TEXT_PLAIN)
-                .post(Entity.entity("Mr. Peeps", MediaType.TEXT_PLAIN));
+        Response firstResponse =
+                target("/flash").request(MediaType.TEXT_PLAIN).post(Entity.entity("Mr. Peeps", MediaType.TEXT_PLAIN));
 
         final Map<String, NewCookie> cookies = firstResponse.getCookies();
         firstResponse.close();
@@ -66,4 +64,3 @@ class FlashFactoryTest extends AbstractJerseyTest {
         assertThat(thirdResponse).isEqualTo("null");
     }
 }
-

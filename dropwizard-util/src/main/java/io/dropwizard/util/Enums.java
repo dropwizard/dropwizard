@@ -22,8 +22,7 @@ public class Enums {
      */
     @Nullable
     public static Enum<?> fromStringFuzzy(String value, Enum<?>[] constants) {
-        final String text = value
-                .replace(" ", "")
+        final String text = value.replace(" ", "")
                 .replace("\n", "")
                 .replace("\r", "")
                 .replace("\t", "")
@@ -46,5 +45,4 @@ public class Enums {
 
         return null;
     }
-
 }

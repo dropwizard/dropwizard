@@ -1,19 +1,20 @@
 package io.dropwizard.util;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
+import static java.util.Objects.requireNonNull;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
-
-import static java.util.Objects.requireNonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * Helper methods for class type parameters.
  * @see <a href="http://gafter.blogspot.com/2006/12/super-type-tokens.html">Super Type Tokens</a>
  */
 public class Generics {
-    private Generics() { /* singleton */ }
+    private Generics() {
+        /* singleton */
+    }
 
     /**
      * Finds the type parameter for the given class.

@@ -1,11 +1,11 @@
 package io.dropwizard.hibernate;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+
 import io.dropwizard.db.ManagedDataSource;
 import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.Test;
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 
 class SessionFactoryManagerTest {
     private final SessionFactory factory = mock(SessionFactory.class);

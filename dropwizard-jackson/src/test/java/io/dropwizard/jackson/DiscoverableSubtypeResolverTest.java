@@ -1,10 +1,10 @@
 package io.dropwizard.jackson;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 class DiscoverableSubtypeResolverTest {
     private final ObjectMapper mapper = new ObjectMapper();
@@ -17,10 +17,8 @@ class DiscoverableSubtypeResolverTest {
 
     @Test
     void discoversSubtypes() throws Exception {
-        assertThat(mapper.readValue("{\"type\":\"a\"}", ExampleSPI.class))
-                .isInstanceOf(ImplA.class);
+        assertThat(mapper.readValue("{\"type\":\"a\"}", ExampleSPI.class)).isInstanceOf(ImplA.class);
 
-        assertThat(mapper.readValue("{\"type\":\"b\"}", ExampleSPI.class))
-                .isInstanceOf(ImplB.class);
+        assertThat(mapper.readValue("{\"type\":\"b\"}", ExampleSPI.class)).isInstanceOf(ImplB.class);
     }
 }

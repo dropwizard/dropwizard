@@ -16,8 +16,7 @@ public class JarLocation {
     }
 
     public Optional<String> getVersion() {
-        return Optional.ofNullable(klass.getPackage())
-            .map(Package::getImplementationVersion);
+        return Optional.ofNullable(klass.getPackage()).map(Package::getImplementationVersion);
     }
 
     @Override

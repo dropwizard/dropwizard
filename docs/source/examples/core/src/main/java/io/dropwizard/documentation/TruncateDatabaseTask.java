@@ -2,7 +2,6 @@ package io.dropwizard.documentation;
 
 import io.dropwizard.documentation.db.Database;
 import io.dropwizard.servlets.tasks.Task;
-
 import java.io.PrintWriter;
 import java.util.List;
 import java.util.Map;

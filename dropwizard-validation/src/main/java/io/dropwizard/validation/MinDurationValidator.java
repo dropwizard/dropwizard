@@ -1,10 +1,9 @@
 package io.dropwizard.validation;
 
 import io.dropwizard.util.Duration;
-
+import java.util.concurrent.TimeUnit;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Check that a {@link Duration} being validated is greater than or equal to the

@@ -1,10 +1,11 @@
 package io.dropwizard.testing.junit5;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.configuration.ConfigurationMetadata;
 import io.dropwizard.core.Configuration;
-import org.junit.jupiter.api.Test;
-
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
@@ -13,9 +14,7 @@ import java.net.URLClassLoader;
 import java.security.CodeSource;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
+import org.junit.jupiter.api.Test;
 
 /**
  * Verify that Logback can be excluded from the classpath without generating any noise.
@@ -135,7 +134,8 @@ class LogbackExcludedTest {
         }
 
         private static Optional<URL> getUrl(Class<?> clazz) {
-            return Optional.ofNullable(clazz.getProtectionDomain().getCodeSource()).map(CodeSource::getLocation);
+            return Optional.ofNullable(clazz.getProtectionDomain().getCodeSource())
+                    .map(CodeSource::getLocation);
         }
     }
 }

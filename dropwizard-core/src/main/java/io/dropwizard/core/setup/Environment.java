@@ -1,5 +1,7 @@
 package io.dropwizard.core.setup;
 
+import static java.util.Objects.requireNonNull;
+
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.SharedMetricRegistries;
 import com.codahale.metrics.health.HealthCheckRegistry;
@@ -17,17 +19,14 @@ import io.dropwizard.jersey.validation.Validators;
 import io.dropwizard.jetty.MutableServletContextHandler;
 import io.dropwizard.jetty.setup.ServletEnvironment;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
-import org.checkerframework.checker.nullness.qual.Nullable;
-
-import javax.servlet.Servlet;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
-
-import static java.util.Objects.requireNonNull;
+import javax.servlet.Servlet;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * A Dropwizard application's environment.
@@ -61,13 +60,14 @@ public class Environment {
      * @param name                the name of the application
      * @param objectMapper the {@link ObjectMapper} for the application
      */
-    public Environment(String name,
-                       ObjectMapper objectMapper,
-                       ValidatorFactory validatorFactory,
-                       MetricRegistry metricRegistry,
-                       @Nullable ClassLoader classLoader,
-                       HealthCheckRegistry healthCheckRegistry,
-                       Configuration configuration) {
+    public Environment(
+            String name,
+            ObjectMapper objectMapper,
+            ValidatorFactory validatorFactory,
+            MetricRegistry metricRegistry,
+            @Nullable ClassLoader classLoader,
+            HealthCheckRegistry healthCheckRegistry,
+            Configuration configuration) {
         this.name = name;
         this.objectMapper = objectMapper;
         this.metricRegistry = metricRegistry;
@@ -98,7 +98,8 @@ public class Environment {
         this.jerseyEnvironment = jerseyEnv;
 
         final HealthCheckConfiguration healthCheckConfig = adminFactory.getHealthChecks();
-        this.healthCheckExecutorService = this.lifecycle().executorService("TimeBoundHealthCheck-pool-%d")
+        this.healthCheckExecutorService = this.lifecycle()
+                .executorService("TimeBoundHealthCheck-pool-%d")
                 .workQueue(new ArrayBlockingQueue<>(healthCheckConfig.getWorkQueueSize()))
                 .minThreads(healthCheckConfig.getMinThreads())
                 .maxThreads(healthCheckConfig.getMaxThreads())
@@ -131,7 +132,14 @@ public class Environment {
      * @since 2.0
      */
     public Environment(String name) {
-        this(name, Jackson.newObjectMapper(), Validators.newValidatorFactory(), new MetricRegistry(), ClassLoader.getSystemClassLoader(), new HealthCheckRegistry(), new Configuration());
+        this(
+                name,
+                Jackson.newObjectMapper(),
+                Validators.newValidatorFactory(),
+                new MetricRegistry(),
+                ClassLoader.getSystemClassLoader(),
+                new HealthCheckRegistry(),
+                new Configuration());
     }
 
     /**
@@ -219,8 +227,8 @@ public class Environment {
     }
 
     /*
-    * Internal Accessors
-    */
+     * Internal Accessors
+     */
 
     public MutableServletContextHandler getApplicationContext() {
         return servletContext;

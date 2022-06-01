@@ -6,7 +6,6 @@ import ch.qos.logback.core.LayoutBase;
 import ch.qos.logback.core.pattern.PatternLayoutBase;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.dropwizard.logging.common.layout.DiscoverableLayoutFactory;
-
 import java.util.Collections;
 import java.util.Map;
 import java.util.TimeZone;

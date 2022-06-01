@@ -1,18 +1,16 @@
 package io.dropwizard.jersey.jsr310;
 
-import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.Test;
 
 class OffsetDateTimeParamTest {
     @Test
     void parsesDateTimes() throws Exception {
         final OffsetDateTimeParam param = new OffsetDateTimeParam("2012-11-19T13:37+01:00");
 
-        assertThat(param.get())
-                .isEqualTo(OffsetDateTime.of(2012, 11, 19, 13, 37, 0, 0, ZoneOffset.ofHours(1)));
+        assertThat(param.get()).isEqualTo(OffsetDateTime.of(2012, 11, 19, 13, 37, 0, 0, ZoneOffset.ofHours(1)));
     }
 }

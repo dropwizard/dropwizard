@@ -1,14 +1,16 @@
 package io.dropwizard.validation;
 
-import javax.validation.ConstraintViolation;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import javax.validation.ConstraintViolation;
 
 public class ConstraintViolations {
-    private ConstraintViolations() { /* singleton */ }
+    private ConstraintViolations() {
+        /* singleton */
+    }
 
     public static <T> String format(ConstraintViolation<T> v) {
         if (v.getConstraintDescriptor().getAnnotation() instanceof ValidationMethod) {

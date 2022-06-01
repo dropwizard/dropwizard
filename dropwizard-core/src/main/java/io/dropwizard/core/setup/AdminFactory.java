@@ -2,10 +2,9 @@ package io.dropwizard.core.setup;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.servlets.tasks.TaskConfiguration;
-
+import java.util.StringJoiner;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.util.StringJoiner;
 
 /**
  * A factory for configuring the admin interface for the environment.

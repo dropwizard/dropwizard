@@ -1,5 +1,7 @@
 package io.dropwizard.jersey;
 
+import static java.util.Objects.requireNonNull;
+
 import com.codahale.metrics.Clock;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.jersey2.InstrumentedResourceMethodApplicationListener;
@@ -10,9 +12,22 @@ import io.dropwizard.jersey.params.AbstractParamConverterProvider;
 import io.dropwizard.jersey.sessions.SessionFactoryProvider;
 import io.dropwizard.jersey.validation.FuzzyEnumParamConverterProvider;
 import io.dropwizard.util.JavaVersion;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.UUID;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.LoaderClassPath;
+import javax.validation.constraints.NotNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.glassfish.jersey.internal.inject.AbstractBinder;
 import org.glassfish.jersey.internal.inject.Providers;
@@ -26,22 +41,6 @@ import org.glassfish.jersey.server.monitoring.RequestEvent;
 import org.glassfish.jersey.server.monitoring.RequestEventListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.validation.constraints.NotNull;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.UUID;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-
-import static java.util.Objects.requireNonNull;
 
 public class DropwizardResourceConfig extends ResourceConfig {
     private static final Logger LOGGER = LoggerFactory.getLogger(DropwizardResourceConfig.class);
@@ -165,9 +164,13 @@ public class DropwizardResourceConfig extends ResourceConfig {
                 cc.setSuperclass(pool.get(SpecificBinder.class.getName()));
                 final Object binderProxy;
                 if (JavaVersion.isJava8()) {
-                    binderProxy = cc.toClass().getConstructor(Object.class, Class.class).newInstance(object, clazz);
+                    binderProxy = cc.toClass()
+                            .getConstructor(Object.class, Class.class)
+                            .newInstance(object, clazz);
                 } else {
-                    binderProxy = cc.toClass(SpecificBinder.class).getConstructor(Object.class, Class.class).newInstance(object, clazz);
+                    binderProxy = cc.toClass(SpecificBinder.class)
+                            .getConstructor(Object.class, Class.class)
+                            .newInstance(object, clazz);
                 }
                 super.register(binderProxy);
                 return super.register(clazz);
@@ -248,9 +251,8 @@ public class DropwizardResourceConfig extends ResourceConfig {
                         .map(x -> x.getClass().getCanonicalName())
                         .collect(Collectors.joining(", "));
 
-                final String providerClasses = providers.stream()
-                        .map(Class::getCanonicalName)
-                        .collect(Collectors.joining(", "));
+                final String providerClasses =
+                        providers.stream().map(Class::getCanonicalName).collect(Collectors.joining(", "));
 
                 LOGGER.debug("resources = {}", resourceClasses);
                 LOGGER.debug("providers = {}", providerClasses);
@@ -272,11 +274,13 @@ public class DropwizardResourceConfig extends ResourceConfig {
                         methodLines.add(new EndpointLogLine(method.getHttpMethod(), path, handler));
                         break;
                     case SUB_RESOURCE_LOCATOR:
-                        final ResolvedType responseType = TYPE_RESOLVER
-                                .resolve(method.getInvocable().getResponseType());
-                        final Class<?> erasedType = !responseType.getTypeBindings().isEmpty() ?
-                                responseType.getTypeBindings().getBoundType(0).getErasedType() :
-                                responseType.getErasedType();
+                        final ResolvedType responseType =
+                                TYPE_RESOLVER.resolve(method.getInvocable().getResponseType());
+                        final Class<?> erasedType = !responseType
+                                        .getTypeBindings()
+                                        .isEmpty()
+                                ? responseType.getTypeBindings().getBoundType(0).getErasedType()
+                                : responseType.getErasedType();
 
                         final Resource res = Resource.from(erasedType);
                         if (res == null) {
@@ -327,11 +331,12 @@ public class DropwizardResourceConfig extends ResourceConfig {
             final StringBuilder msg = new StringBuilder(1024);
             final Set<EndpointLogLine> endpointLogLines = new TreeSet<>(new EndpointComparator());
             final String contextPath = config.getContextPath();
-            final String normalizedContextPath = contextPath.isEmpty() || contextPath.equals("/") ? "" :
-                    contextPath.startsWith("/") ? contextPath : "/" + contextPath;
-            final String pattern = config.getUrlPattern().endsWith("/*") ?
-                    config.getUrlPattern().substring(0, config.getUrlPattern().length() - 1) :
-                    config.getUrlPattern();
+            final String normalizedContextPath = contextPath.isEmpty() || contextPath.equals("/")
+                    ? ""
+                    : contextPath.startsWith("/") ? contextPath : "/" + contextPath;
+            final String pattern = config.getUrlPattern().endsWith("/*")
+                    ? config.getUrlPattern().substring(0, config.getUrlPattern().length() - 1)
+                    : config.getUrlPattern();
 
             final String path = mergePaths(normalizedContextPath, pattern);
 
@@ -377,7 +382,7 @@ public class DropwizardResourceConfig extends ResourceConfig {
 
         @Override
         protected void configure() {
-                bind(metricRegistry).to(MetricRegistry.class);
+            bind(metricRegistry).to(MetricRegistry.class);
         }
     }
 }

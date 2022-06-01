@@ -1,8 +1,8 @@
 package io.dropwizard.auth.basic;
 
-import org.junit.jupiter.api.Test;
-
 import static org.assertj.core.api.Assertions.assertThat;
+
+import org.junit.jupiter.api.Test;
 
 class BasicCredentialsTest {
     private final BasicCredentials credentials = new BasicCredentials("u", "p");
@@ -18,23 +18,23 @@ class BasicCredentialsTest {
     }
 
     @Test
-    @SuppressWarnings({ "ObjectEqualsNull", "LiteralAsArgToStringEquals" })
+    @SuppressWarnings({"ObjectEqualsNull", "LiteralAsArgToStringEquals"})
     void hasAWorkingEqualsMethod() {
         assertThat(credentials)
-            .isEqualTo(credentials)
-            .isEqualTo(new BasicCredentials("u", "p"))
-            .isNotEqualTo(null)
-            .isNotEqualTo("string")
-            .isNotEqualTo(new BasicCredentials("u1", "p"))
-            .isNotEqualTo(new BasicCredentials("u", "p1"));
+                .isEqualTo(credentials)
+                .isEqualTo(new BasicCredentials("u", "p"))
+                .isNotEqualTo(null)
+                .isNotEqualTo("string")
+                .isNotEqualTo(new BasicCredentials("u1", "p"))
+                .isNotEqualTo(new BasicCredentials("u", "p1"));
     }
 
     @Test
     void hasAWorkingHashCode() {
         assertThat(credentials.hashCode())
-            .hasSameHashCodeAs(new BasicCredentials("u", "p"))
-            .isNotEqualTo(new BasicCredentials("u1", "p").hashCode())
-            .isNotEqualTo(new BasicCredentials("u", "p1").hashCode());
+                .hasSameHashCodeAs(new BasicCredentials("u", "p"))
+                .isNotEqualTo(new BasicCredentials("u1", "p").hashCode())
+                .isNotEqualTo(new BasicCredentials("u", "p1").hashCode());
     }
 
     @Test

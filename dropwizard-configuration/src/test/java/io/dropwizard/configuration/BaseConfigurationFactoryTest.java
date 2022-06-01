@@ -1,27 +1,26 @@
 package io.dropwizard.configuration;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.benmanes.caffeine.cache.CaffeineSpec;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.validation.BaseValidator;
-import org.assertj.core.api.ThrowableAssertAlternative;
-import org.assertj.core.data.MapEntry;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Test;
-
-import javax.validation.Valid;
-import javax.validation.Validator;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import javax.validation.Valid;
+import javax.validation.Validator;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import org.assertj.core.api.ThrowableAssertAlternative;
+import org.assertj.core.data.MapEntry;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 public abstract class BaseConfigurationFactoryTest {
 
@@ -40,7 +39,6 @@ public abstract class BaseConfigurationFactoryTest {
             server.port = port;
             return server;
         }
-
     }
 
     @SuppressWarnings("UnusedDeclaration")
@@ -109,8 +107,8 @@ public abstract class BaseConfigurationFactoryTest {
         Map<String, String> properties = Map.of("debug", "true", "settings.enabled", "false");
 
         @JsonProperty
-        List<ExampleServer> servers = Arrays.asList(
-                ExampleServer.create(8080), ExampleServer.create(8081), ExampleServer.create(8082));
+        List<ExampleServer> servers =
+                Arrays.asList(ExampleServer.create(8080), ExampleServer.create(8081), ExampleServer.create(8082));
 
         @JsonProperty
         @Valid
@@ -154,7 +152,7 @@ public abstract class BaseConfigurationFactoryTest {
 
     @AfterEach
     void resetConfigOverrides() {
-        for (Enumeration<?> props = System.getProperties().propertyNames(); props.hasMoreElements();) {
+        for (Enumeration<?> props = System.getProperties().propertyNames(); props.hasMoreElements(); ) {
             String keyString = (String) props.nextElement();
             if (keyString.startsWith("dw.")) {
                 System.clearProperty(keyString);
@@ -164,88 +162,74 @@ public abstract class BaseConfigurationFactoryTest {
 
     @Test
     void usesDefaultedCacheBuilderSpec() throws Exception {
-        final ExampleWithDefaults example =
-            new YamlConfigurationFactory<>(ExampleWithDefaults.class, validator, Jackson.newObjectMapper(), "dw")
+        final ExampleWithDefaults example = new YamlConfigurationFactory<>(
+                        ExampleWithDefaults.class, validator, Jackson.newObjectMapper(), "dw")
                 .build();
         assertThat(example.cacheBuilderSpec)
-            .isNotNull()
-            .isEqualTo(CaffeineSpec.parse("initialCapacity=0,maximumSize=0"));
+                .isNotNull()
+                .isEqualTo(CaffeineSpec.parse("initialCapacity=0,maximumSize=0"));
     }
 
     @Test
     void loadsValidConfigFiles() throws Exception {
         final Example example = factory.build(configurationSourceProvider, validFile);
 
-        assertThat(example.getName())
-                .isEqualTo("Coda Hale");
+        assertThat(example.getName()).isEqualTo("Coda Hale");
 
         assertThat(example.getType())
-            .satisfies(type -> assertThat(type).element(0).isEqualTo("coder"))
-            .satisfies(type -> assertThat(type).element(1).isEqualTo("wizard"));
+                .satisfies(type -> assertThat(type).element(0).isEqualTo("coder"))
+                .satisfies(type -> assertThat(type).element(1).isEqualTo("wizard"));
 
         assertThat(example.getProperties())
-                .contains(MapEntry.entry("debug", "true"),
-                        MapEntry.entry("settings.enabled", "false"));
+                .contains(MapEntry.entry("debug", "true"), MapEntry.entry("settings.enabled", "false"));
 
         assertThat(example.getServers())
-            .hasSize(3)
-            .element(0)
-            .extracting(ExampleServer::getPort)
-            .isEqualTo(8080);
-
+                .hasSize(3)
+                .element(0)
+                .extracting(ExampleServer::getPort)
+                .isEqualTo(8080);
     }
 
     @Test
     void handlesSimpleOverride() throws Exception {
         System.setProperty("dw.name", "Coda Hale Overridden");
         final Example example = factory.build(configurationSourceProvider, validFile);
-        assertThat(example.getName())
-            .isEqualTo("Coda Hale Overridden");
+        assertThat(example.getName()).isEqualTo("Coda Hale Overridden");
     }
 
     @Test
     void handlesExistingOverrideWithPeriod() throws Exception {
         System.setProperty("dw.my\\.logger.level", "debug");
         final Example example = factory.build(configurationSourceProvider, validFile);
-        assertThat(example.getLogger())
-            .containsEntry("level", "debug");
+        assertThat(example.getLogger()).containsEntry("level", "debug");
     }
 
     @Test
     void handlesNewOverrideWithPeriod() throws Exception {
         System.setProperty("dw.my\\.logger.com\\.example", "error");
         final Example example = factory.build(configurationSourceProvider, validFile);
-        assertThat(example.getLogger())
-            .containsEntry("com.example", "error");
+        assertThat(example.getLogger()).containsEntry("com.example", "error");
     }
 
     @Test
     void handlesArrayOverride() throws Exception {
         System.setProperty("dw.type", "coder,wizard,overridden");
         final Example example = factory.build(configurationSourceProvider, validFile);
-        assertThat(example.getType())
-            .hasSize(3)
-            .element(2)
-            .isEqualTo("overridden");
+        assertThat(example.getType()).hasSize(3).element(2).isEqualTo("overridden");
     }
 
     @Test
     void handlesArrayOverrideEscaped() throws Exception {
         System.setProperty("dw.type", "coder,wizard,overr\\,idden");
         final Example example = factory.build(configurationSourceProvider, validFile);
-        assertThat(example.getType())
-            .hasSize(3)
-            .element(2)
-            .isEqualTo("overr,idden");
+        assertThat(example.getType()).hasSize(3).element(2).isEqualTo("overr,idden");
     }
 
     @Test
     void handlesSingleElementArrayOverride() throws Exception {
         System.setProperty("dw.type", "overridden");
         final Example example = factory.build(configurationSourceProvider, validFile);
-        assertThat(example.getType())
-            .singleElement()
-            .isEqualTo("overridden");
+        assertThat(example.getType()).singleElement().isEqualTo("overridden");
     }
 
     @Test
@@ -253,18 +237,15 @@ public abstract class BaseConfigurationFactoryTest {
         System.setProperty("dw.type", "coder,wizard,overridden");
         final Example example = factory.build(configurationSourceProvider, validNoTypeFile);
 
-        assertThat(example.getType())
-            .hasSize(3)
-            .element(2)
-            .isEqualTo("overridden");}
+        assertThat(example.getType()).hasSize(3).element(2).isEqualTo("overridden");
+    }
 
     @Test
     void overridesArrayWithIndices() throws Exception {
         System.setProperty("dw.type[1]", "overridden");
         final Example example = factory.build(configurationSourceProvider, validFile);
 
-        assertThat(example.getType())
-            .containsExactly("coder", "overridden");
+        assertThat(example.getType()).containsExactly("coder", "overridden");
     }
 
     @Test
@@ -272,8 +253,7 @@ public abstract class BaseConfigurationFactoryTest {
         System.setProperty("dw.type[0]", "overridden");
         final Example example = factory.build(configurationSourceProvider, validFile);
 
-        assertThat(example.getType())
-            .containsExactly("overridden", "wizard");
+        assertThat(example.getType()).containsExactly("overridden", "wizard");
     }
 
     @Test
@@ -283,9 +263,15 @@ public abstract class BaseConfigurationFactoryTest {
         final Example example = factory.build(configurationSourceProvider, validFile);
 
         assertThat(example.getServers())
-            .hasSize(3)
-            .satisfies(servers -> assertThat(servers).element(0).extracting(ExampleServer::getPort).isEqualTo(7000))
-            .satisfies(servers -> assertThat(servers).element(2).extracting(ExampleServer::getPort).isEqualTo(9000));
+                .hasSize(3)
+                .satisfies(servers -> assertThat(servers)
+                        .element(0)
+                        .extracting(ExampleServer::getPort)
+                        .isEqualTo(7000))
+                .satisfies(servers -> assertThat(servers)
+                        .element(2)
+                        .extracting(ExampleServer::getPort)
+                        .isEqualTo(9000));
     }
 
     @Test
@@ -293,16 +279,15 @@ public abstract class BaseConfigurationFactoryTest {
         System.setProperty("dw.properties.settings.enabled", "true");
         final Example example = factory.build(configurationSourceProvider, validFile);
         assertThat(example.getProperties())
-                .contains(MapEntry.entry("debug", "true"),
-                        MapEntry.entry("settings.enabled", "true"));
+                .contains(MapEntry.entry("debug", "true"), MapEntry.entry("settings.enabled", "true"));
     }
 
     @Test
     void throwsAnExceptionOnUnexpectedArrayOverride() {
         System.setProperty("dw.servers.port", "9000");
         assertThatIllegalArgumentException()
-            .isThrownBy(() -> factory.build(configurationSourceProvider, validFile))
-            .withMessageContaining("target is an array but no index specified");
+                .isThrownBy(() -> factory.build(configurationSourceProvider, validFile))
+                .withMessageContaining("target is an array but no index specified");
     }
 
     @Test
@@ -310,48 +295,48 @@ public abstract class BaseConfigurationFactoryTest {
         System.setProperty("dw.servers", "one,two");
 
         assertThatExceptionOfType(ConfigurationParsingException.class)
-            .isThrownBy(() -> factory.build(configurationSourceProvider, validFile));
+                .isThrownBy(() -> factory.build(configurationSourceProvider, validFile));
     }
 
     @Test
     void throwsAnExceptionOnOverrideArrayIndexOutOfBounds() {
         System.setProperty("dw.type[2]", "invalid");
         assertThatExceptionOfType(ArrayIndexOutOfBoundsException.class)
-            .isThrownBy(() -> factory.build(configurationSourceProvider, validFile))
-            .withMessageContaining("index is greater than size of array");
+                .isThrownBy(() -> factory.build(configurationSourceProvider, validFile))
+                .withMessageContaining("index is greater than size of array");
     }
 
     @Test
     void throwsAnExceptionOnOverrideArrayPropertyIndexOutOfBounds() {
         System.setProperty("dw.servers[4].port", "9000");
         assertThatExceptionOfType(ArrayIndexOutOfBoundsException.class)
-            .isThrownBy(() -> factory.build(configurationSourceProvider, validFile))
-            .withMessageContaining("index is greater than size of array");
+                .isThrownBy(() -> factory.build(configurationSourceProvider, validFile))
+                .withMessageContaining("index is greater than size of array");
     }
 
     @Test
     void throwsAnExceptionOnMalformedFiles() {
         assertThatExceptionOfType(ConfigurationParsingException.class)
-            .isThrownBy(() -> factory.build(configurationSourceProvider, malformedFile))
-            .withMessageContaining(malformedFileError);
+                .isThrownBy(() -> factory.build(configurationSourceProvider, malformedFile))
+                .withMessageContaining(malformedFileError);
     }
 
     @Test
     void throwsAnExceptionOnEmptyFiles() {
         assertThatExceptionOfType(ConfigurationParsingException.class)
-            .isThrownBy(() -> factory.build(configurationSourceProvider, emptyFile))
-            .withMessageContaining(" * Configuration at " + emptyFile + " must not be empty");
+                .isThrownBy(() -> factory.build(configurationSourceProvider, emptyFile))
+                .withMessageContaining(" * Configuration at " + emptyFile + " must not be empty");
     }
 
     @Test
     void throwsAnExceptionOnInvalidFiles() {
-        ThrowableAssertAlternative<ConfigurationValidationException> t = assertThatExceptionOfType(ConfigurationValidationException.class)
-            .isThrownBy(() -> factory.build(configurationSourceProvider, invalidFile));
+        ThrowableAssertAlternative<ConfigurationValidationException> t = assertThatExceptionOfType(
+                        ConfigurationValidationException.class)
+                .isThrownBy(() -> factory.build(configurationSourceProvider, invalidFile));
 
         if ("en".equals(Locale.getDefault().getLanguage())) {
             t.withMessageEndingWith(String.format(
-                    "%s has an error:%n  * name must match \"[\\w]+[\\s]+[\\w]+([\\s][\\w]+)?\"%n",
-                    invalidFile));
+                    "%s has an error:%n  * name must match \"[\\w]+[\\s]+[\\w]+([\\s][\\w]+)?\"%n", invalidFile));
         }
     }
 
@@ -363,61 +348,76 @@ public abstract class BaseConfigurationFactoryTest {
         System.setProperty("dw.servers[0].port", "8090");
         System.setProperty("dw.servers[2].port", "8092");
 
-        final ExampleWithDefaults example =
-                new YamlConfigurationFactory<>(ExampleWithDefaults.class, validator, Jackson.newObjectMapper(), "dw")
-                        .build();
+        final ExampleWithDefaults example = new YamlConfigurationFactory<>(
+                        ExampleWithDefaults.class, validator, Jackson.newObjectMapper(), "dw")
+                .build();
 
         assertThat(example)
-            .satisfies(eg -> assertThat(eg.name).isEqualTo("Coda Hale Overridden"))
-            .satisfies(eg -> assertThat(eg.type)
-                .hasSize(3)
-                .element(2)
-                .isEqualTo("overridden"))
-            .satisfies(eg -> assertThat(eg.properties).containsEntry("settings.enabled", "true"))
-            .satisfies(eg -> assertThat(eg.servers)
-                .satisfies(servers -> assertThat(servers).element(0).extracting(ExampleServer::getPort).isEqualTo(8090))
-                .satisfies(servers -> assertThat(servers).element(2).extracting(ExampleServer::getPort).isEqualTo(8092)));
+                .satisfies(eg -> assertThat(eg.name).isEqualTo("Coda Hale Overridden"))
+                .satisfies(eg -> assertThat(eg.type).hasSize(3).element(2).isEqualTo("overridden"))
+                .satisfies(eg -> assertThat(eg.properties).containsEntry("settings.enabled", "true"))
+                .satisfies(eg -> assertThat(eg.servers)
+                        .satisfies(servers -> assertThat(servers)
+                                .element(0)
+                                .extracting(ExampleServer::getPort)
+                                .isEqualTo(8090))
+                        .satisfies(servers -> assertThat(servers)
+                                .element(2)
+                                .extracting(ExampleServer::getPort)
+                                .isEqualTo(8092)));
     }
 
     @Test
     void handleDefaultConfigurationWithoutOverriding() throws Exception {
-        final ExampleWithDefaults example =
-                new YamlConfigurationFactory<>(ExampleWithDefaults.class, validator, Jackson.newObjectMapper(), "dw")
-                        .build();
+        final ExampleWithDefaults example = new YamlConfigurationFactory<>(
+                        ExampleWithDefaults.class, validator, Jackson.newObjectMapper(), "dw")
+                .build();
 
         assertThat(example)
-            .satisfies(eg -> assertThat(eg.name).isEqualTo("Coda Hale"))
-            .satisfies(eg -> assertThat(eg.type).containsExactly("coder", "wizard"))
-            .satisfies(eg -> assertThat(eg.properties).containsOnly(MapEntry.entry("debug", "true"), MapEntry.entry("settings.enabled", "false")))
-            .satisfies(eg -> assertThat(eg.servers)
-                .satisfies(servers -> assertThat(servers).element(0).extracting(ExampleServer::getPort).isEqualTo(8080))
-                .satisfies(servers -> assertThat(servers).element(1).extracting(ExampleServer::getPort).isEqualTo(8081))
-                .satisfies(servers -> assertThat(servers).element(2).extracting(ExampleServer::getPort).isEqualTo(8082)));
+                .satisfies(eg -> assertThat(eg.name).isEqualTo("Coda Hale"))
+                .satisfies(eg -> assertThat(eg.type).containsExactly("coder", "wizard"))
+                .satisfies(eg -> assertThat(eg.properties)
+                        .containsOnly(MapEntry.entry("debug", "true"), MapEntry.entry("settings.enabled", "false")))
+                .satisfies(eg -> assertThat(eg.servers)
+                        .satisfies(servers -> assertThat(servers)
+                                .element(0)
+                                .extracting(ExampleServer::getPort)
+                                .isEqualTo(8080))
+                        .satisfies(servers -> assertThat(servers)
+                                .element(1)
+                                .extracting(ExampleServer::getPort)
+                                .isEqualTo(8081))
+                        .satisfies(servers -> assertThat(servers)
+                                .element(2)
+                                .extracting(ExampleServer::getPort)
+                                .isEqualTo(8082)));
     }
 
     @Test
     void throwsAnExceptionIfDefaultConfigurationCantBeInstantiated() {
         System.setProperty("dw.name", "Coda Hale Overridden");
-        final YamlConfigurationFactory<NonInstantiableExample> factory =
-            new YamlConfigurationFactory<>(NonInstantiableExample.class, validator, Jackson.newObjectMapper(), "dw");
+        final YamlConfigurationFactory<NonInstantiableExample> factory = new YamlConfigurationFactory<>(
+                NonInstantiableExample.class, validator, Jackson.newObjectMapper(), "dw");
         assertThatIllegalArgumentException()
-            .isThrownBy(factory::build)
-            .withMessage("Unable to create an instance of the configuration class: " +
-                "'io.dropwizard.configuration.BaseConfigurationFactoryTest.NonInstantiableExample'");
+                .isThrownBy(factory::build)
+                .withMessage("Unable to create an instance of the configuration class: "
+                        + "'io.dropwizard.configuration.BaseConfigurationFactoryTest.NonInstantiableExample'");
     }
 
     @Test
     void incorrectTypeIsFound() {
         assertThatExceptionOfType(ConfigurationParsingException.class)
-            .isThrownBy(() -> factory.build(configurationSourceProvider, wrongTypeFile))
-            .withMessage("%s has an error:%n" +
-                "  * Incorrect type of value at: age; is of type: String, expected: int%n", wrongTypeFile);
+                .isThrownBy(() -> factory.build(configurationSourceProvider, wrongTypeFile))
+                .withMessage(
+                        "%s has an error:%n"
+                                + "  * Incorrect type of value at: age; is of type: String, expected: int%n",
+                        wrongTypeFile);
     }
 
     @Test
     void printsDetailedInformationOnMalformedContent() {
         assertThatExceptionOfType(ConfigurationParsingException.class)
-            .isThrownBy(() -> factory.build(configurationSourceProvider, malformedAdvancedFile))
-            .withMessageContaining(malformedAdvancedFileError);
+                .isThrownBy(() -> factory.build(configurationSourceProvider, malformedAdvancedFile))
+                .withMessageContaining(malformedAdvancedFileError);
     }
 }

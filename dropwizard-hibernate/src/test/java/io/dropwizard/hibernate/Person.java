@@ -1,13 +1,12 @@
 package io.dropwizard.hibernate;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.checkerframework.checker.nullness.qual.Nullable;
-
+import java.time.ZonedDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.time.ZonedDateTime;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 @Entity
 @Table(name = "people")

@@ -1,14 +1,13 @@
 package io.dropwizard.health;
 
 import io.dropwizard.util.Duration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 class HealthCheckScheduler {
     private static final Logger LOGGER = LoggerFactory.getLogger(HealthCheckScheduler.class);
@@ -45,8 +44,8 @@ class HealthCheckScheduler {
     }
 
     private void schedule(final ScheduledHealthCheck check, final Duration initialDelay, final Duration delay) {
-        final ScheduledFuture<?> taskFuture = executorService.scheduleWithFixedDelay(check,
-            initialDelay.toMilliseconds(), delay.toMilliseconds(), TimeUnit.MILLISECONDS);
+        final ScheduledFuture<?> taskFuture = executorService.scheduleWithFixedDelay(
+                check, initialDelay.toMilliseconds(), delay.toMilliseconds(), TimeUnit.MILLISECONDS);
         futures.put(check.getName(), taskFuture);
         LOGGER.debug("Scheduled check: check={}", check);
     }

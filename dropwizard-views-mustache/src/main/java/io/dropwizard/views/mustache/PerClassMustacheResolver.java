@@ -2,13 +2,12 @@ package io.dropwizard.views.mustache;
 
 import com.github.mustachejava.MustacheResolver;
 import io.dropwizard.views.common.View;
-import org.checkerframework.checker.nullness.qual.Nullable;
-
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * {@link MustacheResolver} implementation that resolves mustache

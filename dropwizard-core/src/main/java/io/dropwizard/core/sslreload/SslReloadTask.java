@@ -2,7 +2,6 @@ package io.dropwizard.core.sslreload;
 
 import io.dropwizard.jetty.SslReload;
 import io.dropwizard.servlets.tasks.Task;
-
 import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.Collections;
@@ -40,4 +39,3 @@ public class SslReloadTask extends Task {
         this.reloader = reloader;
     }
 }
-

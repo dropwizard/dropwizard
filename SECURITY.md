@@ -8,7 +8,7 @@ For example, Dropwizard 2.0.x will receive critical security fixes while Dropwiz
 
 Once Dropwizard 2.2.x has been released, Dropwizard 2.0.x will be unsupported and Dropwizard 2.1.x will only receive critical security fixes.
 
-| Version | Supported          |
+| Version |     Supported      |
 |---------|--------------------|
 | 2.1.x   | :white_check_mark: |
 | 2.0.x   | :white_check_mark: |

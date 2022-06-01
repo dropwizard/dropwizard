@@ -1,5 +1,7 @@
 package io.dropwizard.logging.common;
 
+import static java.util.Objects.requireNonNull;
+
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.core.FileAppender;
 import ch.qos.logback.core.OutputStreamAppender;
@@ -18,11 +20,8 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.dropwizard.util.DataSize;
 import io.dropwizard.validation.MinDataSize;
 import io.dropwizard.validation.ValidationMethod;
-import org.checkerframework.checker.nullness.qual.Nullable;
-
 import javax.validation.constraints.Min;
-
-import static java.util.Objects.requireNonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * An {@link AppenderFactory} implementation which provides an appender that writes events to a file, archiving older
@@ -247,10 +246,14 @@ public class FileAppenderFactory<E extends DeferredProcessingAware> extends Abst
      * @since 2.0
      */
     @JsonIgnore
-    @ValidationMethod(message = "totalSizeCap has no effect when using maxFileSize and an archivedLogFilenamePattern without %d, as archivedFileCount implicitly controls the total size cap")
+    @ValidationMethod(
+            message =
+                    "totalSizeCap has no effect when using maxFileSize and an archivedLogFilenamePattern without %d, as archivedFileCount implicitly controls the total size cap")
     public boolean isTotalSizeCapValid() {
-        return !archive || totalSizeCap == null ||
-            !(maxFileSize != null && !requireNonNull(archivedLogFilenamePattern).contains("%d"));
+        return !archive
+                || totalSizeCap == null
+                || !(maxFileSize != null
+                        && !requireNonNull(archivedLogFilenamePattern).contains("%d"));
     }
 
     @JsonIgnore
@@ -262,15 +265,17 @@ public class FileAppenderFactory<E extends DeferredProcessingAware> extends Abst
     @JsonIgnore
     @ValidationMethod(message = "when specifying maxFileSize, archivedLogFilenamePattern must contain %i")
     public boolean isValidForMaxFileSizeSetting() {
-        return !archive || maxFileSize == null ||
-                (archivedLogFilenamePattern != null && archivedLogFilenamePattern.contains("%i"));
+        return !archive
+                || maxFileSize == null
+                || (archivedLogFilenamePattern != null && archivedLogFilenamePattern.contains("%i"));
     }
 
     @JsonIgnore
     @ValidationMethod(message = "when archivedLogFilenamePattern contains %i, maxFileSize must be specified")
     public boolean isMaxFileSizeSettingSpecified() {
-        return !archive || !(archivedLogFilenamePattern != null && archivedLogFilenamePattern.contains("%i")) ||
-                maxFileSize != null;
+        return !archive
+                || !(archivedLogFilenamePattern != null && archivedLogFilenamePattern.contains("%i"))
+                || maxFileSize != null;
     }
 
     @JsonIgnore
@@ -297,7 +302,8 @@ public class FileAppenderFactory<E extends DeferredProcessingAware> extends Abst
             appender.setFile(currentLogFilename);
             appender.setBufferSize(new FileSize(bufferSize.toBytes()));
 
-            if (maxFileSize != null && !requireNonNull(archivedLogFilenamePattern).contains("%d")) {
+            if (maxFileSize != null
+                    && !requireNonNull(archivedLogFilenamePattern).contains("%d")) {
                 final FixedWindowRollingPolicy rollingPolicy = new FixedWindowRollingPolicy();
                 rollingPolicy.setContext(context);
                 rollingPolicy.setMaxIndex(getArchivedFileCount());
@@ -318,14 +324,16 @@ public class FileAppenderFactory<E extends DeferredProcessingAware> extends Abst
                 if (maxFileSize == null) {
                     rollingPolicy = new TimeBasedRollingPolicy<>();
 
-                    final TimeBasedFileNamingAndTriggeringPolicy<E> triggeringPolicy = new DefaultTimeBasedFileNamingAndTriggeringPolicy<>();
+                    final TimeBasedFileNamingAndTriggeringPolicy<E> triggeringPolicy =
+                            new DefaultTimeBasedFileNamingAndTriggeringPolicy<>();
                     triggeringPolicy.setContext(context);
                     triggeringPolicy.setTimeBasedRollingPolicy(rollingPolicy);
                     appender.setTriggeringPolicy(triggeringPolicy);
                 } else {
                     // Creating a size and time policy does not need a separate triggering policy set
                     // on the appender because this policy registers the trigger policy
-                    final SizeAndTimeBasedRollingPolicy<E> sizeAndTimeBasedRollingPolicy = new SizeAndTimeBasedRollingPolicy<>();
+                    final SizeAndTimeBasedRollingPolicy<E> sizeAndTimeBasedRollingPolicy =
+                            new SizeAndTimeBasedRollingPolicy<>();
                     sizeAndTimeBasedRollingPolicy.setMaxFileSize(new FileSize(maxFileSize.toBytes()));
                     rollingPolicy = sizeAndTimeBasedRollingPolicy;
                 }

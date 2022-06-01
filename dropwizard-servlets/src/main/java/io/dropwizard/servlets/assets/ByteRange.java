@@ -1,7 +1,6 @@
 package io.dropwizard.servlets.assets;
 
 import com.google.errorprone.annotations.Immutable;
-
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
@@ -27,8 +26,7 @@ public final class ByteRange {
         return end;
     }
 
-    public static ByteRange parse(final String byteRange,
-                                  final int resourceLength) {
+    public static ByteRange parse(final String byteRange, final int resourceLength) {
         final String asciiString = new String(byteRange.getBytes(), StandardCharsets.US_ASCII);
         // missing separator
         if (!byteRange.contains("-")) {

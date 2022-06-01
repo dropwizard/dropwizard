@@ -6,18 +6,16 @@ import io.dropwizard.core.setup.Environment;
 import io.dropwizard.jetty.ConnectorFactory;
 import io.dropwizard.jetty.ContextRoutingHandler;
 import io.dropwizard.jetty.HttpConnectorFactory;
-import io.dropwizard.core.setup.Environment;
+import java.util.Map;
+import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.thread.ThreadPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-import java.util.Map;
 
 /**
  * A single-connector implementation of {@link ServerFactory}, suitable for PaaS deployments
@@ -107,24 +105,23 @@ public class SimpleServerFactory extends AbstractServerFactory {
         final ThreadPool threadPool = createThreadPool(environment.metrics());
         final Server server = buildServer(environment.lifecycle(), threadPool);
 
-        final Handler applicationHandler = createAppServlet(server,
-                                                            environment.jersey(),
-                                                            environment.getObjectMapper(),
-                                                            environment.getValidator(),
-                                                            environment.getApplicationContext(),
-                                                            environment.getJerseyServletContainer(),
-                                                            environment.metrics());
+        final Handler applicationHandler = createAppServlet(
+                server,
+                environment.jersey(),
+                environment.getObjectMapper(),
+                environment.getValidator(),
+                environment.getApplicationContext(),
+                environment.getJerseyServletContainer(),
+                environment.metrics());
 
-        final Handler adminHandler = createAdminServlet(server,
-                                                        environment.getAdminContext(),
-                                                        environment.metrics(),
-                                                        environment.healthChecks(),
-                                                        environment.admin());
+        final Handler adminHandler = createAdminServlet(
+                server,
+                environment.getAdminContext(),
+                environment.metrics(),
+                environment.healthChecks(),
+                environment.admin());
 
-        final Connector conn = connector.build(server,
-                                               environment.metrics(),
-                                               environment.getName(),
-                                               null);
+        final Connector conn = connector.build(server, environment.metrics(), environment.getName(), null);
 
         server.addConnector(conn);
 

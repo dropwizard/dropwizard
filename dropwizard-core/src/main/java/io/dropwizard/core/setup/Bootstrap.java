@@ -1,5 +1,7 @@
 package io.dropwizard.core.setup;
 
+import static java.util.Objects.requireNonNull;
+
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheckRegistry;
 import com.codahale.metrics.jmx.JmxReporter;
@@ -22,14 +24,11 @@ import io.dropwizard.core.cli.Command;
 import io.dropwizard.core.cli.ConfiguredCommand;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.validation.Validators;
-import org.checkerframework.checker.nullness.qual.Nullable;
-
-import javax.validation.ValidatorFactory;
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.List;
-
-import static java.util.Objects.requireNonNull;
+import javax.validation.ValidatorFactory;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * The pre-start application environment, containing everything required to bootstrap a Dropwizard
@@ -44,8 +43,10 @@ public class Bootstrap<T extends Configuration> {
 
     private ObjectMapper objectMapper;
     private MetricRegistry metricRegistry;
+
     @Nullable
     private JmxReporter jmxReporter;
+
     private ConfigurationSourceProvider configurationSourceProvider;
     private ClassLoader classLoader;
     private ConfigurationFactoryFactory<T> configurationFactoryFactory;
@@ -82,8 +83,8 @@ public class Bootstrap<T extends Configuration> {
         }
 
         getMetricRegistry().register("jvm.attribute", new JvmAttributeGaugeSet());
-        getMetricRegistry().register("jvm.buffers", new BufferPoolMetricSet(ManagementFactory
-                                                                               .getPlatformMBeanServer()));
+        getMetricRegistry()
+                .register("jvm.buffers", new BufferPoolMetricSet(ManagementFactory.getPlatformMBeanServer()));
         getMetricRegistry().register("jvm.classloader", new ClassLoadingGaugeSet());
         getMetricRegistry().register("jvm.filedescriptor", new FileDescriptorRatioGauge());
         getMetricRegistry().register("jvm.gc", new GarbageCollectorMetricSet());

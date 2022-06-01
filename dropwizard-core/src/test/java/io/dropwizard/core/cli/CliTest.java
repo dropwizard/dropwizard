@@ -1,26 +1,5 @@
 package io.dropwizard.core.cli;
 
-import io.dropwizard.core.Application;
-import io.dropwizard.core.Configuration;
-import io.dropwizard.core.setup.Bootstrap;
-import io.dropwizard.core.setup.Environment;
-import io.dropwizard.util.JarLocation;
-import net.sourceforge.argparse4j.impl.Arguments;
-import net.sourceforge.argparse4j.inf.Namespace;
-import net.sourceforge.argparse4j.inf.Subparser;
-import net.sourceforge.argparse4j.internal.UnrecognizedArgumentException;
-import net.sourceforge.argparse4j.internal.UnrecognizedCommandException;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import java.io.ByteArrayOutputStream;
-import java.io.PrintWriter;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.Optional;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doNothing;
@@ -32,14 +11,33 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import io.dropwizard.core.Application;
+import io.dropwizard.core.Configuration;
+import io.dropwizard.core.setup.Bootstrap;
+import io.dropwizard.core.setup.Environment;
+import io.dropwizard.util.JarLocation;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintWriter;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.Optional;
+import net.sourceforge.argparse4j.impl.Arguments;
+import net.sourceforge.argparse4j.inf.Namespace;
+import net.sourceforge.argparse4j.inf.Subparser;
+import net.sourceforge.argparse4j.internal.UnrecognizedArgumentException;
+import net.sourceforge.argparse4j.internal.UnrecognizedCommandException;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 class CliTest {
     private static final Locale DEFAULT_LOCALE = Locale.getDefault();
 
     private final JarLocation location = mock(JarLocation.class);
     private final Application<Configuration> app = new Application<Configuration>() {
         @Override
-        public void run(Configuration configuration, Environment environment) throws Exception {
-        }
+        public void run(Configuration configuration, Environment environment) throws Exception {}
     };
 
     private static final class BadAppException extends Exception {
@@ -55,7 +53,6 @@ class CliTest {
         public void printStackTrace(PrintWriter writer) {
             writer.println(BAD_APP_EXCEPTION_STACK_TRACE);
         }
-
 
         @Override
         public boolean equals(Object o) {
@@ -80,8 +77,7 @@ class CliTest {
 
         @Override
         public void configure(Subparser subparser) {
-            subparser.addArgument("--debug")
-                .action(Arguments.storeTrue());
+            subparser.addArgument("--debug").action(Arguments.storeTrue());
         }
 
         @Override
@@ -130,26 +126,20 @@ class CliTest {
 
     @Test
     void handlesShortVersionCommands() throws Exception {
-        assertThat(cli.run("-v"))
-                .isEmpty();
+        assertThat(cli.run("-v")).isEmpty();
 
-        assertThat(stdOut)
-                .hasToString(String.format("1.0.0%n"));
+        assertThat(stdOut).hasToString(String.format("1.0.0%n"));
 
-        assertThat(stdErr.toString())
-                .isEmpty();
+        assertThat(stdErr.toString()).isEmpty();
     }
 
     @Test
     void handlesLongVersionCommands() throws Exception {
-        assertThat(cli.run("--version"))
-                .isEmpty();
+        assertThat(cli.run("--version")).isEmpty();
 
-        assertThat(stdOut)
-                .hasToString(String.format("1.0.0%n"));
+        assertThat(stdOut).hasToString(String.format("1.0.0%n"));
 
-        assertThat(stdErr.toString())
-                .isEmpty();
+        assertThat(stdErr.toString()).isEmpty();
     }
 
     @Test
@@ -157,123 +147,98 @@ class CliTest {
         when(location.getVersion()).thenReturn(Optional.empty());
         final Cli newCli = new Cli(location, bootstrap, stdOut, stdErr);
 
-        assertThat(newCli.run("--version"))
-                .isEmpty();
+        assertThat(newCli.run("--version")).isEmpty();
 
         assertThat(stdOut)
-                .hasToString(String.format("No application version detected. Add a Implementation-Version entry to your JAR's manifest to enable this.%n"));
+                .hasToString(
+                        String.format(
+                                "No application version detected. Add a Implementation-Version entry to your JAR's manifest to enable this.%n"));
 
-        assertThat(stdErr.toString())
-                .isEmpty();
+        assertThat(stdErr.toString()).isEmpty();
     }
 
     @Test
     void handlesZeroArgumentsAsHelpCommand() throws Exception {
-        assertThat(cli.run())
-                .isEmpty();
+        assertThat(cli.run()).isEmpty();
 
         assertThat(stdOut)
-                .hasToString(String.format(
-                        "usage: java -jar dw-thing.jar [-h] [-v] {check,custom} ...%n" +
-                                "%n" +
-                                "positional arguments:%n" +
-                                "  {check,custom}         available commands%n" +
-                                "%n" +
-                                "named arguments:%n" +
-                                "  -h, --help             show this help message and exit%n" +
-                                "  -v, --version          show the application version and exit%n"
-                ));
+                .hasToString(String.format("usage: java -jar dw-thing.jar [-h] [-v] {check,custom} ...%n" + "%n"
+                        + "positional arguments:%n"
+                        + "  {check,custom}         available commands%n"
+                        + "%n"
+                        + "named arguments:%n"
+                        + "  -h, --help             show this help message and exit%n"
+                        + "  -v, --version          show the application version and exit%n"));
 
-        assertThat(stdErr.toString())
-                .isEmpty();
+        assertThat(stdErr.toString()).isEmpty();
     }
 
     @Test
     void handlesShortHelpCommands() throws Exception {
-        assertThat(cli.run("-h"))
-                .isEmpty();
+        assertThat(cli.run("-h")).isEmpty();
 
         assertThat(stdOut)
-                .hasToString(String.format(
-                        "usage: java -jar dw-thing.jar [-h] [-v] {check,custom} ...%n" +
-                                "%n" +
-                                "positional arguments:%n" +
-                                "  {check,custom}         available commands%n" +
-                                "%n" +
-                                "named arguments:%n" +
-                                "  -h, --help             show this help message and exit%n" +
-                                "  -v, --version          show the application version and exit%n"
-                ));
+                .hasToString(String.format("usage: java -jar dw-thing.jar [-h] [-v] {check,custom} ...%n" + "%n"
+                        + "positional arguments:%n"
+                        + "  {check,custom}         available commands%n"
+                        + "%n"
+                        + "named arguments:%n"
+                        + "  -h, --help             show this help message and exit%n"
+                        + "  -v, --version          show the application version and exit%n"));
 
-        assertThat(stdErr.toString())
-                .isEmpty();
+        assertThat(stdErr.toString()).isEmpty();
     }
 
     @Test
     void handlesLongHelpCommands() throws Exception {
-        assertThat(cli.run("--help"))
-                .isEmpty();
+        assertThat(cli.run("--help")).isEmpty();
 
         assertThat(stdOut)
-                .hasToString(String.format(
-                        "usage: java -jar dw-thing.jar [-h] [-v] {check,custom} ...%n" +
-                                "%n" +
-                                "positional arguments:%n" +
-                                "  {check,custom}         available commands%n" +
-                                "%n" +
-                                "named arguments:%n" +
-                                "  -h, --help             show this help message and exit%n" +
-                                "  -v, --version          show the application version and exit%n"
-                ));
+                .hasToString(String.format("usage: java -jar dw-thing.jar [-h] [-v] {check,custom} ...%n" + "%n"
+                        + "positional arguments:%n"
+                        + "  {check,custom}         available commands%n"
+                        + "%n"
+                        + "named arguments:%n"
+                        + "  -h, --help             show this help message and exit%n"
+                        + "  -v, --version          show the application version and exit%n"));
 
-        assertThat(stdErr.toString())
-                .isEmpty();
+        assertThat(stdErr.toString()).isEmpty();
     }
 
     @Test
     void handlesShortHelpSubcommands() throws Exception {
-        assertThat(cli.run("check", "-h"))
-                .isEmpty();
+        assertThat(cli.run("check", "-h")).isEmpty();
 
         assertThat(stdOut)
-                .hasToString(String.format(
-                        "usage: java -jar dw-thing.jar check [-h] [file]%n" +
-                                "%n" +
-                                "Parses and validates the configuration file%n" +
-                                "%n" +
-                                "positional arguments:%n" +
-                                "  file                   application configuration file%n" +
-                                "%n" +
-                                "named arguments:%n" +
-                                "  -h, --help             show this help message and exit%n"
-                ));
+                .hasToString(String.format("usage: java -jar dw-thing.jar check [-h] [file]%n" + "%n"
+                        + "Parses and validates the configuration file%n"
+                        + "%n"
+                        + "positional arguments:%n"
+                        + "  file                   application configuration file%n"
+                        + "%n"
+                        + "named arguments:%n"
+                        + "  -h, --help             show this help message and exit%n"));
 
-        assertThat(stdErr.toString())
-                .isEmpty();
+        assertThat(stdErr.toString()).isEmpty();
 
         verify(command, never()).run(any(), any(Namespace.class), any(Configuration.class));
     }
 
     @Test
     void handlesLongHelpSubcommands() throws Exception {
-        assertThat(cli.run("check", "--help"))
-                .isEmpty();
+        assertThat(cli.run("check", "--help")).isEmpty();
 
         assertThat(stdOut)
-                .hasToString(String.format(
-                        "usage: java -jar dw-thing.jar check [-h] [file]%n" +
-                                "%n" +
-                                "Parses and validates the configuration file%n" +
-                                "%n" +
-                                "positional arguments:%n" +
-                                "  file                   application configuration file%n" +
-                                "%n" +
-                                "named arguments:%n" +
-                                "  -h, --help             show this help message and exit%n"
-                ));
+                .hasToString(String.format("usage: java -jar dw-thing.jar check [-h] [file]%n" + "%n"
+                        + "Parses and validates the configuration file%n"
+                        + "%n"
+                        + "positional arguments:%n"
+                        + "  file                   application configuration file%n"
+                        + "%n"
+                        + "named arguments:%n"
+                        + "  -h, --help             show this help message and exit%n"));
 
-        assertThat(stdErr.toString())
-                .isEmpty();
+        assertThat(stdErr.toString()).isEmpty();
 
         verify(command, never()).run(any(), any(Namespace.class), any(Configuration.class));
     }
@@ -283,21 +248,18 @@ class CliTest {
         assertThat(cli.run("--yes"))
                 .hasValueSatisfying(t -> assertThat(t).isInstanceOf(UnrecognizedArgumentException.class));
 
-        assertThat(stdOut.toString())
-                .isEmpty();
+        assertThat(stdOut.toString()).isEmpty();
 
         assertThat(stdErr)
-                .hasToString(String.format(
-                        "unrecognized arguments: '--yes'%n" +
-                                "usage: java -jar dw-thing.jar [-h] [-v] {check,custom} ...%n" +
-                                "%n" +
-                                "positional arguments:%n" +
-                                "  {check,custom}         available commands%n" +
-                                "%n" +
-                                "named arguments:%n" +
-                                "  -h, --help             show this help message and exit%n" +
-                                "  -v, --version          show the application version and exit%n"
-                ));
+                .hasToString(String.format("unrecognized arguments: '--yes'%n"
+                        + "usage: java -jar dw-thing.jar [-h] [-v] {check,custom} ...%n"
+                        + "%n"
+                        + "positional arguments:%n"
+                        + "  {check,custom}         available commands%n"
+                        + "%n"
+                        + "named arguments:%n"
+                        + "  -h, --help             show this help message and exit%n"
+                        + "  -v, --version          show the application version and exit%n"));
     }
 
     @Test
@@ -305,22 +267,19 @@ class CliTest {
         assertThat(cli.run("check", "--yes"))
                 .hasValueSatisfying(t -> assertThat(t).isExactlyInstanceOf(UnrecognizedArgumentException.class));
 
-        assertThat(stdOut.toString())
-                .isEmpty();
+        assertThat(stdOut.toString()).isEmpty();
 
         assertThat(stdErr)
                 .hasToString(String.format(
-                        "unrecognized arguments: '--yes'%n" +
-                                "usage: java -jar dw-thing.jar check [-h] [file]%n" +
-                                "%n" +
-                                "Parses and validates the configuration file%n" +
-                                "%n" +
-                                "positional arguments:%n" +
-                                "  file                   application configuration file%n" +
-                                "%n" +
-                                "named arguments:%n" +
-                                "  -h, --help             show this help message and exit%n"
-                ));
+                        "unrecognized arguments: '--yes'%n" + "usage: java -jar dw-thing.jar check [-h] [file]%n"
+                                + "%n"
+                                + "Parses and validates the configuration file%n"
+                                + "%n"
+                                + "positional arguments:%n"
+                                + "  file                   application configuration file%n"
+                                + "%n"
+                                + "named arguments:%n"
+                                + "  -h, --help             show this help message and exit%n"));
     }
 
     @Test
@@ -328,33 +287,27 @@ class CliTest {
         assertThat(cli.run("plop"))
                 .hasValueSatisfying(t -> assertThat(t).isInstanceOf(UnrecognizedCommandException.class));
 
-        assertThat(stdOut.toString())
-                .isEmpty();
+        assertThat(stdOut.toString()).isEmpty();
 
         assertThat(stdErr)
-                .hasToString(String.format(
-                        "invalid choice: 'plop' (choose from 'check', 'custom')%n" +
-                                "usage: java -jar dw-thing.jar [-h] [-v] {check,custom} ...%n" +
-                                "%n" +
-                                "positional arguments:%n" +
-                                "  {check,custom}         available commands%n" +
-                                "%n" +
-                                "named arguments:%n" +
-                                "  -h, --help             show this help message and exit%n" +
-                                "  -v, --version          show the application version and exit%n"
-                ));
+                .hasToString(String.format("invalid choice: 'plop' (choose from 'check', 'custom')%n"
+                        + "usage: java -jar dw-thing.jar [-h] [-v] {check,custom} ...%n"
+                        + "%n"
+                        + "positional arguments:%n"
+                        + "  {check,custom}         available commands%n"
+                        + "%n"
+                        + "named arguments:%n"
+                        + "  -h, --help             show this help message and exit%n"
+                        + "  -v, --version          show the application version and exit%n"));
     }
 
     @Test
     void runsCommands() throws Exception {
-        assertThat(cli.run("check"))
-                .isEmpty();
+        assertThat(cli.run("check")).isEmpty();
 
-        assertThat(stdOut.toString())
-                .isEmpty();
+        assertThat(stdOut.toString()).isEmpty();
 
-        assertThat(stdErr.toString())
-                .isEmpty();
+        assertThat(stdErr.toString()).isEmpty();
 
         verify(command).run(eq(bootstrap), any(Namespace.class), any(Configuration.class));
     }
@@ -363,14 +316,11 @@ class CliTest {
     void unhandledExceptionsMessagesArePrintedForCheck() throws Exception {
         doThrow(new BadAppException()).when(command).run(any(), any(Namespace.class), any(Configuration.class));
 
-        assertThat(cli.run("check"))
-                .hasValue(new BadAppException());
+        assertThat(cli.run("check")).hasValue(new BadAppException());
 
-        assertThat(stdOut.toString())
-                .isEmpty();
+        assertThat(stdOut.toString()).isEmpty();
 
-        assertThat(stdErr)
-                .hasToString(String.format("I'm a bad exception%n"));
+        assertThat(stdErr).hasToString(String.format("I'm a bad exception%n"));
     }
 
     @Test
@@ -378,13 +328,12 @@ class CliTest {
         doThrow(new BadAppException()).when(command).run(any(), any(Namespace.class), any(Configuration.class));
 
         assertThat(cli.run("custom"))
-                .hasValueSatisfying(t -> assertThat(t).isInstanceOf(RuntimeException.class).hasMessage("I did not expect this!"));
+                .hasValueSatisfying(
+                        t -> assertThat(t).isInstanceOf(RuntimeException.class).hasMessage("I did not expect this!"));
 
-        assertThat(stdOut)
-            .hasToString(String.format("I did not expect this!%n"));
+        assertThat(stdOut).hasToString(String.format("I did not expect this!%n"));
 
-        assertThat(stdErr.toString())
-            .isEmpty();
+        assertThat(stdErr.toString()).isEmpty();
     }
 
     @Test
@@ -392,13 +341,13 @@ class CliTest {
         doThrow(new BadAppException()).when(command).run(any(), any(Namespace.class), any(Configuration.class));
 
         assertThat(cli.run("custom", "--debug"))
-                .hasValueSatisfying(t -> assertThat(t).isInstanceOf(RuntimeException.class).hasMessage("I did not expect this!"));
+                .hasValueSatisfying(
+                        t -> assertThat(t).isInstanceOf(RuntimeException.class).hasMessage("I did not expect this!"));
 
-        assertThat(stdOut.toString())
-            .isEmpty();
+        assertThat(stdOut.toString()).isEmpty();
 
         assertThat(stdErr.toString())
-            .startsWith(String.format("java.lang.RuntimeException: I did not expect this!%n" +
-                "\tat io.dropwizard.core.cli.CliTest$CustomCommand.run(CliTest.java"));
+                .startsWith(String.format("java.lang.RuntimeException: I did not expect this!%n"
+                        + "\tat io.dropwizard.core.cli.CliTest$CustomCommand.run(CliTest.java"));
     }
 }

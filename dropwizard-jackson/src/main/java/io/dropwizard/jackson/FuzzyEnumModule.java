@@ -14,14 +14,13 @@ import com.fasterxml.jackson.databind.deser.Deserializers;
 import com.fasterxml.jackson.databind.deser.std.StdScalarDeserializer;
 import com.fasterxml.jackson.databind.introspect.AnnotatedMethod;
 import io.dropwizard.util.Enums;
-import org.checkerframework.checker.nullness.qual.Nullable;
-
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * A module for deserializing enums that is more permissive than the default.
@@ -56,7 +55,8 @@ public class FuzzyEnumModule extends Module {
             if (constant != null) {
                 return constant;
             }
-            throw ctxt.weirdStringException(jp.getText(), handledType(), jp.getText() + " was not one of " + acceptedValues);
+            throw ctxt.weirdStringException(
+                    jp.getText(), handledType(), jp.getText() + " was not one of " + acceptedValues);
         }
 
         /**
@@ -73,14 +73,17 @@ public class FuzzyEnumModule extends Module {
         @Override
         @SuppressWarnings("unchecked")
         @Nullable
-        public JsonDeserializer<?> findEnumDeserializer(Class<?> type,
-                                                        DeserializationConfig config,
-                                                        BeanDescription desc) throws JsonMappingException {
+        public JsonDeserializer<?> findEnumDeserializer(
+                Class<?> type, DeserializationConfig config, BeanDescription desc) throws JsonMappingException {
             // If the user configured to use `toString` method to deserialize enums
-            if (config.hasDeserializationFeatures(DeserializationFeature.READ_ENUMS_USING_TO_STRING.getMask()) ||
-                config.hasDeserializationFeatures(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL.getMask()) ||
-                // The presence of @JsonEnumDefaultValue will cause a fallback to the default, however lets short circuit here
-                config.hasDeserializationFeatures(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE.getMask())) {
+            if (config.hasDeserializationFeatures(DeserializationFeature.READ_ENUMS_USING_TO_STRING.getMask())
+                    || config.hasDeserializationFeatures(
+                            DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL.getMask())
+                    ||
+                    // The presence of @JsonEnumDefaultValue will cause a fallback to the default, however lets short
+                    // circuit here
+                    config.hasDeserializationFeatures(
+                            DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE.getMask())) {
                 return null;
             }
 
@@ -98,7 +101,8 @@ public class FuzzyEnumModule extends Module {
             // Jackson to do the deserialization
             for (Field field : type.getFields()) {
                 for (Annotation annotation : field.getAnnotations()) {
-                    final String packageName = annotation.annotationType().getPackage().getName();
+                    final String packageName =
+                            annotation.annotationType().getPackage().getName();
                     if (packageName.equals("com.fasterxml.jackson.annotation")) {
                         return null;
                     }

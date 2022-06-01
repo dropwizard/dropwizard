@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.dropwizard.jetty.HttpConnectorFactory;
 import io.dropwizard.jetty.HttpsConnectorFactory;
 import io.dropwizard.metrics.jetty10.InstrumentedConnectionFactory;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.eclipse.jetty.http2.server.HTTP2CServerConnectionFactory;
 import org.eclipse.jetty.http2.server.HTTP2ServerConnectionFactory;
@@ -15,9 +17,6 @@ import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.thread.ScheduledExecutorScheduler;
 import org.eclipse.jetty.util.thread.ThreadPool;
-
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 
 /**
  * Builds HTTP/2 clear text (h2c) connectors.
@@ -96,7 +95,13 @@ public class Http2CConnectorFactory extends HttpConnectorFactory {
         // request with an Upgrade header with "h2c" value. The server supports HTTP/2 clear text connections,
         // so it will return the predefined HTTP/2 preamble and the client and the server will switch to the
         // new protocol.
-        return buildConnector(server, new ScheduledExecutorScheduler(), buildBufferPool(), name, threadPool,
-                new InstrumentedConnectionFactory(http11, metrics.timer(httpConnections())), http2c);
+        return buildConnector(
+                server,
+                new ScheduledExecutorScheduler(),
+                buildBufferPool(),
+                name,
+                threadPool,
+                new InstrumentedConnectionFactory(http11, metrics.timer(httpConnections())),
+                http2c);
     }
 }

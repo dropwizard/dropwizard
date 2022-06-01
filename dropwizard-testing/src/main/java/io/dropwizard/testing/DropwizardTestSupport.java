@@ -1,5 +1,7 @@
 package io.dropwizard.testing;
 
+import static java.util.Objects.requireNonNull;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.configuration.ConfigurationSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
@@ -13,14 +15,6 @@ import io.dropwizard.core.setup.Bootstrap;
 import io.dropwizard.core.setup.Environment;
 import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.logging.common.LoggingUtil;
-import net.sourceforge.argparse4j.inf.Namespace;
-import org.checkerframework.checker.nullness.qual.Nullable;
-import org.eclipse.jetty.server.Connector;
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.ServerConnector;
-import org.slf4j.Logger;
-
-import javax.validation.constraints.NotNull;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,8 +23,13 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
-
-import static java.util.Objects.requireNonNull;
+import javax.validation.constraints.NotNull;
+import net.sourceforge.argparse4j.inf.Namespace;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
+import org.slf4j.Logger;
 
 /**
  * A test support class for starting and stopping your application at the start and end of a test class.
@@ -47,11 +46,15 @@ public class DropwizardTestSupport<C extends Configuration> {
 
     @Nullable
     protected final String configPath;
+
     @Nullable
     protected final ConfigurationSourceProvider configSourceProvider;
+
     protected final Set<ConfigOverride> configOverrides;
+
     @Nullable
     protected final String customPropertyPrefix;
+
     protected final Function<Application<C>, Command> commandInstantiator;
 
     /**
@@ -72,71 +75,82 @@ public class DropwizardTestSupport<C extends Configuration> {
 
     @Nullable
     protected Server jettyServer;
+
     protected List<ServiceListener<C>> listeners = new ArrayList<>();
 
-    public DropwizardTestSupport(Class<? extends Application<C>> applicationClass,
-                                 @Nullable String configPath,
-                                 ConfigOverride... configOverrides) {
+    public DropwizardTestSupport(
+            Class<? extends Application<C>> applicationClass,
+            @Nullable String configPath,
+            ConfigOverride... configOverrides) {
         this(applicationClass, configPath, (String) null, configOverrides);
     }
 
     /**
      * @since 2.0
      */
-    public DropwizardTestSupport(Class<? extends Application<C>> applicationClass,
-                                 @Nullable String configPath,
-                                 @Nullable ConfigurationSourceProvider configSourceProvider,
-                                 ConfigOverride... configOverrides) {
+    public DropwizardTestSupport(
+            Class<? extends Application<C>> applicationClass,
+            @Nullable String configPath,
+            @Nullable ConfigurationSourceProvider configSourceProvider,
+            ConfigOverride... configOverrides) {
         this(applicationClass, configPath, configSourceProvider, null, configOverrides);
     }
 
     /**
      * @since 2.0
      */
-    public DropwizardTestSupport(Class<? extends Application<C>> applicationClass,
-                                 @Nullable String configPath,
-                                 @Nullable ConfigurationSourceProvider configSourceProvider,
-                                 @Nullable String customPropertyPrefix,
-                                 ConfigOverride... configOverrides) {
-        this(applicationClass, configPath, configSourceProvider, customPropertyPrefix, ServerCommand::new, configOverrides);
+    public DropwizardTestSupport(
+            Class<? extends Application<C>> applicationClass,
+            @Nullable String configPath,
+            @Nullable ConfigurationSourceProvider configSourceProvider,
+            @Nullable String customPropertyPrefix,
+            ConfigOverride... configOverrides) {
+        this(
+                applicationClass,
+                configPath,
+                configSourceProvider,
+                customPropertyPrefix,
+                ServerCommand::new,
+                configOverrides);
     }
 
     /**
      * @since 2.0
      */
-    public DropwizardTestSupport(Class<? extends Application<C>> applicationClass,
-                                 @Nullable String configPath,
-                                 @Nullable String customPropertyPrefix,
-                                 ConfigOverride... configOverrides) {
+    public DropwizardTestSupport(
+            Class<? extends Application<C>> applicationClass,
+            @Nullable String configPath,
+            @Nullable String customPropertyPrefix,
+            ConfigOverride... configOverrides) {
         this(applicationClass, configPath, customPropertyPrefix, ServerCommand::new, configOverrides);
     }
 
     /**
      * @since 2.0
      */
-    public DropwizardTestSupport(Class<? extends Application<C>> applicationClass,
-                                 @Nullable String configPath,
-                                 @Nullable String customPropertyPrefix,
-                                 Function<Application<C>, Command> commandInstantiator,
-                                 ConfigOverride... configOverrides) {
+    public DropwizardTestSupport(
+            Class<? extends Application<C>> applicationClass,
+            @Nullable String configPath,
+            @Nullable String customPropertyPrefix,
+            Function<Application<C>, Command> commandInstantiator,
+            ConfigOverride... configOverrides) {
         this(applicationClass, configPath, null, customPropertyPrefix, commandInstantiator, configOverrides);
     }
 
     /**
      * @since 2.0
      */
-    public DropwizardTestSupport(Class<? extends Application<C>> applicationClass,
-                                 @Nullable String configPath,
-                                 @Nullable ConfigurationSourceProvider configSourceProvider,
-                                 @Nullable String customPropertyPrefix,
-                                 Function<Application<C>, Command> commandInstantiator,
-                                 ConfigOverride... configOverrides) {
+    public DropwizardTestSupport(
+            Class<? extends Application<C>> applicationClass,
+            @Nullable String configPath,
+            @Nullable ConfigurationSourceProvider configSourceProvider,
+            @Nullable String customPropertyPrefix,
+            Function<Application<C>, Command> commandInstantiator,
+            ConfigOverride... configOverrides) {
         this.applicationClass = applicationClass;
         this.configPath = configPath;
         this.configSourceProvider = configSourceProvider;
-        this.configOverrides = Optional.ofNullable(configOverrides)
-            .map(Set::of)
-            .orElse(Set.of());
+        this.configOverrides = Optional.ofNullable(configOverrides).map(Set::of).orElse(Set.of());
         this.customPropertyPrefix = customPropertyPrefix;
         this.explicitConfig = false;
         this.commandInstantiator = commandInstantiator;
@@ -153,11 +167,9 @@ public class DropwizardTestSupport<C extends Configuration> {
      * @param configuration Pre-constructed configuration object caller provides; will not
      *   be manipulated in any way, no overriding
      */
-    public DropwizardTestSupport(Class<? extends Application<C>> applicationClass,
-                                 C configuration) {
+    public DropwizardTestSupport(Class<? extends Application<C>> applicationClass, C configuration) {
         this(applicationClass, configuration, ServerCommand::new);
     }
-
 
     /**
      * Alternate constructor that allows specifying the command the Dropwizard application is started with.
@@ -168,9 +180,10 @@ public class DropwizardTestSupport<C extends Configuration> {
      * @param commandInstantiator The {@link Function} used to instantiate the {@link Command} used to
      *   start the Application
      */
-    public DropwizardTestSupport(Class<? extends Application<C>> applicationClass,
-                                 @Nullable C configuration,
-                                 Function<Application<C>, Command> commandInstantiator) {
+    public DropwizardTestSupport(
+            Class<? extends Application<C>> applicationClass,
+            @Nullable C configuration,
+            Function<Application<C>, Command> commandInstantiator) {
         if (configuration == null) {
             throw new IllegalArgumentException("Can not pass null configuration for explicitly configured instance");
         }
@@ -192,7 +205,8 @@ public class DropwizardTestSupport<C extends Configuration> {
     public DropwizardTestSupport<C> manage(final Managed managed) {
         return addListener(new ServiceListener<C>() {
             @Override
-            public void onRun(C configuration, Environment environment, DropwizardTestSupport<C> rule) throws Exception {
+            public void onRun(C configuration, Environment environment, DropwizardTestSupport<C> rule)
+                    throws Exception {
                 environment.lifecycle().manage(managed);
             }
         });
@@ -285,19 +299,17 @@ public class DropwizardTestSupport<C extends Configuration> {
 
         if (explicitConfig) {
             bootstrap.setConfigurationFactoryFactory((klass, validator, objectMapper, propertyPrefix) ->
-                new POJOConfigurationFactory<>(getConfiguration()));
+                    new POJOConfigurationFactory<>(getConfiguration()));
         } else if (customPropertyPrefix != null) {
-            @NotNull
-            final String prefix = customPropertyPrefix;
+            @NotNull final String prefix = customPropertyPrefix;
             bootstrap.setConfigurationFactoryFactory((klass, validator, objectMapper, propertyPrefix) ->
-                new YamlConfigurationFactory<>(klass, validator, objectMapper, prefix));
+                    new YamlConfigurationFactory<>(klass, validator, objectMapper, prefix));
         }
 
-
         final Map<String, Object> namespaceAttributes = Optional.ofNullable(configPath)
-            .filter(path -> !path.isEmpty())
-            .map(path -> Collections.singletonMap("file", (Object)path))
-            .orElse(Collections.emptyMap());
+                .filter(path -> !path.isEmpty())
+                .map(path -> Collections.singletonMap("file", (Object) path))
+                .orElse(Collections.emptyMap());
 
         final Namespace namespace = new Namespace(namespaceAttributes);
         final Command command = commandInstantiator.apply(application);
@@ -324,18 +336,23 @@ public class DropwizardTestSupport<C extends Configuration> {
     }
 
     public int getAdminPort() {
-        final Connector[] connectors = requireNonNull(jettyServer, "jettyServer").getConnectors();
+        final Connector[] connectors =
+                requireNonNull(jettyServer, "jettyServer").getConnectors();
         return ((ServerConnector) connectors[connectors.length - 1]).getLocalPort();
     }
 
     public int getPort(int connectorIndex) {
-        return ((ServerConnector) requireNonNull(jettyServer, "jettyServer").getConnectors()[connectorIndex]).getLocalPort();
+        return ((ServerConnector) requireNonNull(jettyServer, "jettyServer").getConnectors()[connectorIndex])
+                .getLocalPort();
     }
 
     public Application<C> newApplication() {
         try {
             return applicationClass.getConstructor().newInstance();
-        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+        } catch (NoSuchMethodException
+                | InstantiationException
+                | IllegalAccessException
+                | InvocationTargetException e) {
             throw new RuntimeException(e);
         }
     }

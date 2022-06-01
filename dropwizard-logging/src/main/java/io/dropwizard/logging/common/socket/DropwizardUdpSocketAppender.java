@@ -2,7 +2,6 @@ package io.dropwizard.logging.common.socket;
 
 import ch.qos.logback.core.OutputStreamAppender;
 import ch.qos.logback.core.spi.DeferredProcessingAware;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.DatagramPacket;

@@ -22,6 +22,6 @@ public interface HealthResponseProviderFactory extends Discoverable {
      *                              states.
      * @param mapper                A Jackson object mapper to allow writing JSON responses (if needed).
      */
-    HealthResponseProvider build(HealthStatusChecker healthStatusChecker, HealthStateAggregator healthStateAggregator,
-                                 ObjectMapper mapper);
+    HealthResponseProvider build(
+            HealthStatusChecker healthStatusChecker, HealthStateAggregator healthStateAggregator, ObjectMapper mapper);
 }

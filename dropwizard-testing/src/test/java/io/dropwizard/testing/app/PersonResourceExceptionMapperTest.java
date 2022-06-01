@@ -1,79 +1,84 @@
 package io.dropwizard.testing.app;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.guava.GuavaModule;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.validation.JerseyViolationException;
 import io.dropwizard.testing.junit.ResourceTestRule;
-import org.glassfish.jersey.spi.ExtendedExceptionMapper;
-import org.junit.ClassRule;
-import org.junit.Test;
-
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
+import org.glassfish.jersey.spi.ExtendedExceptionMapper;
+import org.junit.ClassRule;
+import org.junit.Test;
 
 public class PersonResourceExceptionMapperTest {
     private static final PeopleStore PEOPLE_STORE = mock(PeopleStore.class);
 
-    private static final ObjectMapper OBJECT_MAPPER = Jackson.newObjectMapper()
-        .registerModule(new GuavaModule());
+    private static final ObjectMapper OBJECT_MAPPER = Jackson.newObjectMapper().registerModule(new GuavaModule());
 
     @SuppressWarnings("deprecation")
     @ClassRule
     public static final ResourceTestRule RESOURCES = ResourceTestRule.builder()
-        .addResource(new PersonResource(PEOPLE_STORE))
-        .setRegisterDefaultExceptionMappers(false)
-        .addProvider(new MyJerseyExceptionMapper())
-        .addProvider(new GenericExceptionMapper())
-        .setMapper(OBJECT_MAPPER)
-        .build();
+            .addResource(new PersonResource(PEOPLE_STORE))
+            .setRegisterDefaultExceptionMappers(false)
+            .addProvider(new MyJerseyExceptionMapper())
+            .addProvider(new GenericExceptionMapper())
+            .setMapper(OBJECT_MAPPER)
+            .build();
 
     @Test
     public void testDefaultConstraintViolation() {
-        assertThat(RESOURCES.target("/person/blah/index")
-            .queryParam("ind", -1).request()
-            .get().readEntity(String.class))
-            .isEqualTo("Invalid data");
+        assertThat(RESOURCES
+                        .target("/person/blah/index")
+                        .queryParam("ind", -1)
+                        .request()
+                        .get()
+                        .readEntity(String.class))
+                .isEqualTo("Invalid data");
     }
 
     @Test
     public void testDefaultJsonProcessingMapper() {
-        assertThat(RESOURCES.target("/person/blah/runtime-exception")
-            .request()
-            .post(Entity.json("{ \"he: \"ho\"}"))
-            .readEntity(String.class))
-            .startsWith("Something went wrong: Unexpected character");
+        assertThat(RESOURCES
+                        .target("/person/blah/runtime-exception")
+                        .request()
+                        .post(Entity.json("{ \"he: \"ho\"}"))
+                        .readEntity(String.class))
+                .startsWith("Something went wrong: Unexpected character");
     }
 
     @Test
     public void testDefaultExceptionMapper() {
-        assertThat(RESOURCES.target("/person/blah/runtime-exception")
-            .request()
-            .post(Entity.json("{}"))
-            .readEntity(String.class))
-            .isEqualTo("Something went wrong: I'm an exception!");
+        assertThat(RESOURCES
+                        .target("/person/blah/runtime-exception")
+                        .request()
+                        .post(Entity.json("{}"))
+                        .readEntity(String.class))
+                .isEqualTo("Something went wrong: I'm an exception!");
     }
 
     @Test
     public void testDefaultEofExceptionMapper() {
-        assertThat(RESOURCES.target("/person/blah/eof-exception")
-            .request()
-            .get().readEntity(String.class))
-            .isEqualTo("Something went wrong: I'm an eof exception!");
+        assertThat(RESOURCES
+                        .target("/person/blah/eof-exception")
+                        .request()
+                        .get()
+                        .readEntity(String.class))
+                .isEqualTo("Something went wrong: I'm an eof exception!");
     }
 
     private static class MyJerseyExceptionMapper implements ExceptionMapper<JerseyViolationException> {
         @Override
         public Response toResponse(JerseyViolationException exception) {
             return Response.status(Response.Status.BAD_REQUEST)
-                .type(MediaType.TEXT_PLAIN)
-                .entity("Invalid data")
-                .build();
+                    .type(MediaType.TEXT_PLAIN)
+                    .entity("Invalid data")
+                    .build();
         }
     }
 
@@ -86,9 +91,9 @@ public class PersonResourceExceptionMapperTest {
         @Override
         public Response toResponse(Throwable exception) {
             return Response.status(Response.Status.BAD_REQUEST)
-                .type(MediaType.TEXT_PLAIN)
-                .entity(String.format("Something went wrong: %s", exception.getMessage()))
-                .build();
+                    .type(MediaType.TEXT_PLAIN)
+                    .entity(String.format("Something went wrong: %s", exception.getMessage()))
+                    .build();
         }
     }
 }

@@ -1,12 +1,11 @@
 package io.dropwizard.jdbi3.jersey;
 
-import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-
-import java.sql.SQLException;
-
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+
+import java.sql.SQLException;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
 
 class LoggingSQLExceptionMapperTest {
     @Test

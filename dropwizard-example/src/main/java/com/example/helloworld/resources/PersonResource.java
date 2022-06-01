@@ -4,7 +4,7 @@ import com.example.helloworld.core.Person;
 import com.example.helloworld.db.PersonDAO;
 import com.example.helloworld.views.PersonView;
 import io.dropwizard.hibernate.UnitOfWork;
-
+import java.util.OptionalLong;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.GET;
 import javax.ws.rs.NotFoundException;
@@ -12,7 +12,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import java.util.OptionalLong;
 
 @Path("/people/{personId}")
 @Produces(MediaType.APPLICATION_JSON)
@@ -35,7 +34,9 @@ public class PersonResource {
     @UnitOfWork
     @Produces(MediaType.TEXT_HTML)
     public PersonView getPersonViewFreemarker(@PathParam("personId") OptionalLong personId) {
-        return new PersonView(PersonView.Template.FREEMARKER, findSafely(personId.orElseThrow(() -> new BadRequestException("person ID is required"))));
+        return new PersonView(
+                PersonView.Template.FREEMARKER,
+                findSafely(personId.orElseThrow(() -> new BadRequestException("person ID is required"))));
     }
 
     @GET
@@ -43,7 +44,9 @@ public class PersonResource {
     @UnitOfWork
     @Produces(MediaType.TEXT_HTML)
     public PersonView getPersonViewMustache(@PathParam("personId") OptionalLong personId) {
-        return new PersonView(PersonView.Template.MUSTACHE, findSafely(personId.orElseThrow(() -> new BadRequestException("person ID is required"))));
+        return new PersonView(
+                PersonView.Template.MUSTACHE,
+                findSafely(personId.orElseThrow(() -> new BadRequestException("person ID is required"))));
     }
 
     private Person findSafely(long personId) {

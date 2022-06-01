@@ -1,25 +1,24 @@
 package io.dropwizard.views.common;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import io.dropwizard.core.Configuration;
-import io.dropwizard.core.setup.Environment;
-import io.dropwizard.jersey.setup.JerseyEnvironment;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
-
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.WebApplicationException;
-import java.io.OutputStream;
-import java.util.Collections;
-import java.util.Locale;
-import java.util.Map;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.dropwizard.core.Configuration;
+import io.dropwizard.core.setup.Environment;
+import io.dropwizard.jersey.setup.JerseyEnvironment;
+import java.io.OutputStream;
+import java.util.Collections;
+import java.util.Locale;
+import java.util.Map;
+import javax.validation.constraints.NotNull;
+import javax.ws.rs.WebApplicationException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 
 class ViewBundleTest {
     private JerseyEnvironment jerseyEnvironment = mock(JerseyEnvironment.class);
@@ -57,7 +56,8 @@ class ViewBundleTest {
         final String configurationKey = "freemarker";
         final String testKey = "testKey";
         final Map<String, String> freeMarkerConfig = Collections.singletonMap(testKey, "yes");
-        final Map<String, Map<String, String>> viewRendererConfig = Collections.singletonMap(configurationKey, freeMarkerConfig);
+        final Map<String, Map<String, String>> viewRendererConfig =
+                Collections.singletonMap(configurationKey, freeMarkerConfig);
 
         final MyConfiguration myConfiguration = new MyConfiguration();
         myConfiguration.setViewRendererConfiguration(viewRendererConfig);
@@ -70,7 +70,7 @@ class ViewBundleTest {
 
             @Override
             public void render(View view, Locale locale, OutputStream output) throws WebApplicationException {
-                //nothing to do
+                // nothing to do
             }
 
             @Override
@@ -95,8 +95,6 @@ class ViewBundleTest {
         verify(jerseyEnvironment).register(captor.capture());
 
         final ViewMessageBodyWriter capturedRenderer = captor.getValue();
-        assertThat(capturedRenderer.getRenderers())
-            .hasSize(1)
-            .contains(renderer);
+        assertThat(capturedRenderer.getRenderers()).hasSize(1).contains(renderer);
     }
 }

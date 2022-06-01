@@ -2,13 +2,12 @@ package io.dropwizard.migrations;
 
 import io.dropwizard.core.Configuration;
 import io.dropwizard.db.DatabaseConfiguration;
+import java.util.List;
+import java.util.stream.Collectors;
 import liquibase.Liquibase;
 import net.sourceforge.argparse4j.impl.Arguments;
 import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class DbTestCommand<T extends Configuration> extends AbstractLiquibaseCommand<T> {
     public DbTestCommand(DatabaseConfiguration<T> strategy, Class<T> configurationClass, String migrationsFileName) {
@@ -19,10 +18,11 @@ public class DbTestCommand<T extends Configuration> extends AbstractLiquibaseCom
     public void configure(Subparser subparser) {
         super.configure(subparser);
 
-        subparser.addArgument("-i", "--include")
-                 .action(Arguments.append())
-                 .dest("contexts")
-                 .help("include change sets from the given context");
+        subparser
+                .addArgument("-i", "--include")
+                .action(Arguments.append())
+                .dest("contexts")
+                .help("include change sets from the given context");
     }
 
     @Override
@@ -35,8 +35,6 @@ public class DbTestCommand<T extends Configuration> extends AbstractLiquibaseCom
         if (contexts == null) {
             return "";
         }
-        return contexts.stream()
-                .map(Object::toString)
-                .collect(Collectors.joining(","));
+        return contexts.stream().map(Object::toString).collect(Collectors.joining(","));
     }
 }

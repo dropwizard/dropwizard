@@ -1,5 +1,10 @@
 package io.dropwizard.jdbi3.jersey;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+
+import java.sql.SQLException;
 import org.jdbi.v3.core.JdbiException;
 import org.jdbi.v3.core.result.NoResultsException;
 import org.jdbi.v3.core.statement.StatementContext;
@@ -7,12 +12,6 @@ import org.jdbi.v3.core.transaction.TransactionException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
-
-import java.sql.SQLException;
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
 
 class LoggingJdbiExceptionMapperTest {
     private LoggingJdbiExceptionMapper jdbiExceptionMapper;

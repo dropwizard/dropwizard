@@ -1,5 +1,9 @@
 package io.dropwizard.jetty;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
+
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
@@ -13,6 +17,8 @@ import io.dropwizard.metrics.jetty10.InstrumentedConnectionFactory;
 import io.dropwizard.util.DataSize;
 import io.dropwizard.util.Duration;
 import io.dropwizard.validation.BaseValidator;
+import java.util.Optional;
+import javax.validation.Validator;
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.eclipse.jetty.http.CookieCompliance;
 import org.eclipse.jetty.http.HttpCompliance;
@@ -28,13 +34,6 @@ import org.eclipse.jetty.util.thread.ThreadPool;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import javax.validation.Validator;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
-
 class HttpConnectorFactoryTest {
 
     private final ObjectMapper objectMapper = Jackson.newObjectMapper();
@@ -42,21 +41,25 @@ class HttpConnectorFactoryTest {
 
     @BeforeEach
     void setUp() {
-        objectMapper.getSubtypeResolver().registerSubtypes(ConsoleAppenderFactory.class,
-                FileAppenderFactory.class, SyslogAppenderFactory.class, HttpConnectorFactory.class);
+        objectMapper
+                .getSubtypeResolver()
+                .registerSubtypes(
+                        ConsoleAppenderFactory.class,
+                        FileAppenderFactory.class,
+                        SyslogAppenderFactory.class,
+                        HttpConnectorFactory.class);
     }
 
     @Test
     void isDiscoverable() {
-        assertThat(new DiscoverableSubtypeResolver().getDiscoveredSubtypes())
-                .contains(HttpConnectorFactory.class);
+        assertThat(new DiscoverableSubtypeResolver().getDiscoveredSubtypes()).contains(HttpConnectorFactory.class);
     }
 
     @Test
     void testParseMinimalConfiguration() throws Exception {
-        HttpConnectorFactory http =
-                new YamlConfigurationFactory<>(HttpConnectorFactory.class, validator, objectMapper, "dw")
-                        .build(new ResourceConfigurationSourceProvider(), "yaml/http-connector-minimal.yml");
+        HttpConnectorFactory http = new YamlConfigurationFactory<>(
+                        HttpConnectorFactory.class, validator, objectMapper, "dw")
+                .build(new ResourceConfigurationSourceProvider(), "yaml/http-connector-minimal.yml");
 
         assertThat(http.getPort()).isEqualTo(8080);
         assertThat(http.getBindHost()).isNull();
@@ -86,9 +89,9 @@ class HttpConnectorFactoryTest {
 
     @Test
     void testParseFullConfiguration() throws Exception {
-        HttpConnectorFactory http =
-                new YamlConfigurationFactory<>(HttpConnectorFactory.class, validator, objectMapper, "dw")
-                        .build(new ResourceConfigurationSourceProvider(), "yaml/http-connector.yml");
+        HttpConnectorFactory http = new YamlConfigurationFactory<>(
+                        HttpConnectorFactory.class, validator, objectMapper, "dw")
+                .build(new ResourceConfigurationSourceProvider(), "yaml/http-connector.yml");
 
         assertThat(http.getPort()).isEqualTo(9090);
         assertThat(http.getBindHost()).isEqualTo("127.0.0.1");
@@ -136,7 +139,8 @@ class HttpConnectorFactoryTest {
 
         try {
             server = new Server();
-            try (final ServerConnector connector = (ServerConnector) http.build(server, metrics, "test-http-connector", threadPool)) {
+            try (final ServerConnector connector =
+                    (ServerConnector) http.build(server, metrics, "test-http-connector", threadPool)) {
 
                 assertThat(connector.getPort()).isEqualTo(8080);
                 assertThat(connector.getHost()).isEqualTo("127.0.0.1");
@@ -155,29 +159,32 @@ class HttpConnectorFactoryTest {
                 assertThat(connector.getSelectorManager().getSelectorCount()).isEqualTo(2);
 
                 InstrumentedConnectionFactory connectionFactory =
-                    (InstrumentedConnectionFactory) connector.getConnectionFactory("http/1.1");
+                        (InstrumentedConnectionFactory) connector.getConnectionFactory("http/1.1");
                 assertThat(connectionFactory).isInstanceOf(InstrumentedConnectionFactory.class);
                 assertThat(connectionFactory)
-                    .extracting("connectionFactory")
-                    .asInstanceOf(InstanceOfAssertFactories.type(HttpConnectionFactory.class))
-                    .satisfies(factory -> {
-                        assertThat(factory.getInputBufferSize()).isEqualTo(8192);
-                        assertThat(factory.getHttpConfiguration().getHttpCompliance()).isEqualTo(HttpCompliance.RFC7230);
-                    })
-                    .extracting(HttpConnectionFactory::getHttpConfiguration)
-                    .satisfies(config -> {
-                        assertThat(config.getHeaderCacheSize()).isEqualTo(512);
-                        assertThat(config.getOutputBufferSize()).isEqualTo(32768);
-                        assertThat(config.getRequestHeaderSize()).isEqualTo(8192);
-                        assertThat(config.getResponseHeaderSize()).isEqualTo(8192);
-                        assertThat(config.getSendDateHeader()).isTrue();
-                        assertThat(config.getSendServerVersion()).isFalse();
-                        assertThat(config.getCustomizers()).noneMatch(customizer -> customizer.getClass().equals(ForwardedRequestCustomizer.class));
-                        assertThat(config.getMinRequestDataRate()).isEqualTo(42);
-                        assertThat(config.getMinResponseDataRate()).isEqualTo(200);
-                        assertThat(config.getRequestCookieCompliance()).isEqualTo(CookieCompliance.RFC6265);
-                        assertThat(config.getResponseCookieCompliance()).isEqualTo(CookieCompliance.RFC6265);
-                    });
+                        .extracting("connectionFactory")
+                        .asInstanceOf(InstanceOfAssertFactories.type(HttpConnectionFactory.class))
+                        .satisfies(factory -> {
+                            assertThat(factory.getInputBufferSize()).isEqualTo(8192);
+                            assertThat(factory.getHttpConfiguration().getHttpCompliance())
+                                    .isEqualTo(HttpCompliance.RFC7230);
+                        })
+                        .extracting(HttpConnectionFactory::getHttpConfiguration)
+                        .satisfies(config -> {
+                            assertThat(config.getHeaderCacheSize()).isEqualTo(512);
+                            assertThat(config.getOutputBufferSize()).isEqualTo(32768);
+                            assertThat(config.getRequestHeaderSize()).isEqualTo(8192);
+                            assertThat(config.getResponseHeaderSize()).isEqualTo(8192);
+                            assertThat(config.getSendDateHeader()).isTrue();
+                            assertThat(config.getSendServerVersion()).isFalse();
+                            assertThat(config.getCustomizers())
+                                    .noneMatch(customizer ->
+                                            customizer.getClass().equals(ForwardedRequestCustomizer.class));
+                            assertThat(config.getMinRequestDataRate()).isEqualTo(42);
+                            assertThat(config.getMinResponseDataRate()).isEqualTo(200);
+                            assertThat(config.getRequestCookieCompliance()).isEqualTo(CookieCompliance.RFC6265);
+                            assertThat(config.getResponseCookieCompliance()).isEqualTo(CookieCompliance.RFC6265);
+                        });
             }
         } finally {
             if (server != null) {
@@ -198,7 +205,8 @@ class HttpConnectorFactoryTest {
 
         try {
             server = new Server();
-            try (final ServerConnector connector = (ServerConnector) http.build(server, metrics, "test-http-connector-with-proxy-protocol", threadPool)) {
+            try (final ServerConnector connector = (ServerConnector)
+                    http.build(server, metrics, "test-http-connector-with-proxy-protocol", threadPool)) {
                 assertThat(connector.getConnectionFactories().toArray()[0]).isInstanceOf(ProxyConnectionFactory.class);
             }
         } finally {
@@ -221,7 +229,8 @@ class HttpConnectorFactoryTest {
 
         try {
             server = new Server();
-            try (final ServerConnector connector = (ServerConnector) http.build(server, metrics, "test-http-connector", threadPool)) {
+            try (final ServerConnector connector =
+                    (ServerConnector) http.build(server, metrics, "test-http-connector", threadPool)) {
                 assertThat(connector.getAcceptQueueSize()).isEqualTo(NetUtil.getTcpBacklog());
             }
         } finally {

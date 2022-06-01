@@ -25,7 +25,9 @@ class TcpServer implements AutoCloseable {
 
     Future<List<String>> receive() {
         return es.submit(() -> {
-            try (Socket s = serverSocket.accept(); BufferedReader reader = new BufferedReader(new InputStreamReader(s.getInputStream(), StandardCharsets.UTF_8))) {
+            try (Socket s = serverSocket.accept();
+                    BufferedReader reader =
+                            new BufferedReader(new InputStreamReader(s.getInputStream(), StandardCharsets.UTF_8))) {
                 return reader.lines().collect(Collectors.toList());
             } catch (IOException e) {
                 throw new IllegalStateException("Error reading logs", e);

@@ -1,5 +1,7 @@
 package io.dropwizard.http2;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.core.Configuration;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
@@ -12,8 +14,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(DropwizardExtensionsSupport.class)
 class Http2CIntegrationTest extends Http2TestCommon {
@@ -43,7 +43,8 @@ class Http2CIntegrationTest extends Http2TestCommon {
 
     @Test
     void testHttp1() throws Exception {
-        assertResponse(http1Client.GET("http://localhost:" + appRule.getLocalPort() + "/api/test"), HttpVersion.HTTP_1_1);
+        assertResponse(
+                http1Client.GET("http://localhost:" + appRule.getLocalPort() + "/api/test"), HttpVersion.HTTP_1_1);
     }
 
     @Test
@@ -54,6 +55,6 @@ class Http2CIntegrationTest extends Http2TestCommon {
     @Test
     void testHttp2cManyRequests() throws Exception {
         assertThat(performManyAsyncRequests(http2Client, "http://localhost:" + appRule.getLocalPort() + "/api/test"))
-            .isTrue();
+                .isTrue();
     }
 }

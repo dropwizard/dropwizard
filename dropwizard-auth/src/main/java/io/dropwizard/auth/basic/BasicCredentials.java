@@ -1,8 +1,8 @@
 package io.dropwizard.auth.basic;
 
-import java.util.Objects;
-
 import static java.util.Objects.requireNonNull;
+
+import java.util.Objects;
 
 /**
  * A set of user-provided Basic Authentication credentials, consisting of a username and a
@@ -57,7 +57,6 @@ public class BasicCredentials {
         final BasicCredentials other = (BasicCredentials) obj;
         return Objects.equals(this.username, other.username) && Objects.equals(this.password, other.password);
     }
-
 
     @Override
     public String toString() {

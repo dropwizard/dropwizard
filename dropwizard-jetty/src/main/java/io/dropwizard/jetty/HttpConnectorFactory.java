@@ -1,5 +1,7 @@
 package io.dropwizard.jetty;
 
+import static com.codahale.metrics.MetricRegistry.name;
+
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
@@ -19,6 +21,13 @@ import io.dropwizard.util.Duration;
 import io.dropwizard.validation.MinDataSize;
 import io.dropwizard.validation.MinDuration;
 import io.dropwizard.validation.PortRange;
+import java.io.IOException;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.concurrent.TimeUnit;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.valueextraction.Unwrapping;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.eclipse.jetty.http.CookieCompliance;
 import org.eclipse.jetty.http.HttpCompliance;
@@ -36,16 +45,6 @@ import org.eclipse.jetty.util.ArrayUtil;
 import org.eclipse.jetty.util.thread.ScheduledExecutorScheduler;
 import org.eclipse.jetty.util.thread.Scheduler;
 import org.eclipse.jetty.util.thread.ThreadPool;
-
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-import javax.validation.valueextraction.Unwrapping;
-import java.io.IOException;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.concurrent.TimeUnit;
-
-import static com.codahale.metrics.MetricRegistry.name;
 
 /**
  * Builds HTTP connectors.
@@ -341,12 +340,15 @@ public class HttpConnectorFactory implements ConnectorFactory {
     private boolean useDateHeader = true;
     private boolean useForwardedHeaders = false;
     private boolean useProxyProtocol = false;
+
     @JsonSerialize(using = HttpComplianceSerializer.class)
     @JsonDeserialize(using = HttpComplianceDeserializer.class)
     private HttpCompliance httpCompliance = HttpCompliance.RFC7230;
+
     @JsonSerialize(using = CookieComplianceSerializer.class)
     @JsonDeserialize(using = CookieComplianceDeserializer.class)
     private CookieCompliance requestCookieCompliance = CookieCompliance.RFC6265;
+
     @JsonSerialize(using = CookieComplianceSerializer.class)
     @JsonDeserialize(using = CookieComplianceDeserializer.class)
     private CookieCompliance responseCookieCompliance = CookieCompliance.RFC6265;
@@ -631,7 +633,9 @@ public class HttpConnectorFactory implements ConnectorFactory {
         }
 
         @Override
-        public void serialize(HttpCompliance httpCompliance, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
+        public void serialize(
+                HttpCompliance httpCompliance, JsonGenerator jsonGenerator, SerializerProvider serializerProvider)
+                throws IOException {
             if (httpCompliance == null) {
                 jsonGenerator.writeNull();
             } else {
@@ -650,7 +654,8 @@ public class HttpConnectorFactory implements ConnectorFactory {
         }
 
         @Override
-        public @Nullable HttpCompliance deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
+        public @Nullable HttpCompliance deserialize(
+                JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
             if (jsonParser.getText() != null && !jsonParser.getText().isEmpty()) {
                 return HttpCompliance.valueOf(jsonParser.getText());
             }
@@ -668,7 +673,9 @@ public class HttpConnectorFactory implements ConnectorFactory {
         }
 
         @Override
-        public void serialize(CookieCompliance cookieCompliance, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
+        public void serialize(
+                CookieCompliance cookieCompliance, JsonGenerator jsonGenerator, SerializerProvider serializerProvider)
+                throws IOException {
             if (cookieCompliance == null) {
                 jsonGenerator.writeNull();
             } else {
@@ -687,7 +694,9 @@ public class HttpConnectorFactory implements ConnectorFactory {
         }
 
         @Override
-        public @Nullable CookieCompliance deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException, JacksonException {
+        public @Nullable CookieCompliance deserialize(
+                JsonParser jsonParser, DeserializationContext deserializationContext)
+                throws IOException, JacksonException {
             if (jsonParser.getText() != null && !jsonParser.getText().isEmpty()) {
                 return CookieCompliance.valueOf(jsonParser.getText());
             }
@@ -696,10 +705,7 @@ public class HttpConnectorFactory implements ConnectorFactory {
     }
 
     @Override
-    public Connector build(Server server,
-                           MetricRegistry metrics,
-                           String name,
-                           @Nullable ThreadPool threadPool) {
+    public Connector build(Server server, MetricRegistry metrics, String name, @Nullable ThreadPool threadPool) {
         final HttpConfiguration httpConfig = buildHttpConfiguration();
 
         final HttpConnectionFactory httpConnectionFactory = buildHttpConnectionFactory(httpConfig);
@@ -708,35 +714,41 @@ public class HttpConnectorFactory implements ConnectorFactory {
 
         final ByteBufferPool bufferPool = buildBufferPool();
 
-        return buildConnector(server, scheduler, bufferPool, name, threadPool,
-                              new InstrumentedConnectionFactory(httpConnectionFactory,
-                                                                metrics.timer(httpConnections())));
+        return buildConnector(
+                server,
+                scheduler,
+                bufferPool,
+                name,
+                threadPool,
+                new InstrumentedConnectionFactory(httpConnectionFactory, metrics.timer(httpConnections())));
     }
 
     /**
      * Get name of the timer that tracks incoming HTTP connections
      */
     protected String httpConnections() {
-        return name(HttpConnectionFactory.class,  bindHost, Integer.toString(port), "connections");
+        return name(HttpConnectionFactory.class, bindHost, Integer.toString(port), "connections");
     }
 
-    protected ServerConnector buildConnector(Server server,
-                                             Scheduler scheduler,
-                                             ByteBufferPool bufferPool,
-                                             String name,
-                                             @Nullable ThreadPool threadPool,
-                                             ConnectionFactory... factories) {
+    protected ServerConnector buildConnector(
+            Server server,
+            Scheduler scheduler,
+            ByteBufferPool bufferPool,
+            String name,
+            @Nullable ThreadPool threadPool,
+            ConnectionFactory... factories) {
         if (useProxyProtocol) {
             factories = ArrayUtil.prependToArray(new ProxyConnectionFactory(), factories, ConnectorFactory.class);
         }
 
-        final ServerConnector connector = new ServerConnector(server,
-                                                              threadPool,
-                                                              scheduler,
-                                                              bufferPool,
-                                                              acceptorThreads.orElse(-1),
-                                                              selectorThreads.orElse(-1),
-                                                              factories);
+        final ServerConnector connector = new ServerConnector(
+                server,
+                threadPool,
+                scheduler,
+                bufferPool,
+                acceptorThreads.orElse(-1),
+                selectorThreads.orElse(-1),
+                factories);
         connector.setPort(port);
         connector.setHost(bindHost);
         connector.setInheritChannel(inheritChannel);
@@ -784,9 +796,8 @@ public class HttpConnectorFactory implements ConnectorFactory {
     }
 
     protected ByteBufferPool buildBufferPool() {
-        return buildBufferPool((int) minBufferPoolSize.toBytes(),
-                               (int) bufferPoolIncrement.toBytes(),
-                               (int) maxBufferPoolSize.toBytes());
+        return buildBufferPool((int) minBufferPoolSize.toBytes(), (int) bufferPoolIncrement.toBytes(), (int)
+                maxBufferPoolSize.toBytes());
     }
 
     // This method only exists so that mockito can spy on the constructor parameters.

@@ -3,12 +3,11 @@ package io.dropwizard.client.proxy;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.validation.OneOf;
 import io.dropwizard.validation.PortRange;
-import org.checkerframework.checker.nullness.qual.Nullable;
-
+import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.util.List;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * Configuration of access to a remote host through a proxy server
@@ -62,7 +61,9 @@ public class ProxyConfiguration {
     @PortRange(min = -1)
     private Integer port = -1;
 
-    @OneOf(value = {"http", "https"}, ignoreCase = true)
+    @OneOf(
+            value = {"http", "https"},
+            ignoreCase = true)
     private String scheme = "http";
 
     @Valid
@@ -72,8 +73,7 @@ public class ProxyConfiguration {
     @Nullable
     private List<String> nonProxyHosts;
 
-    public ProxyConfiguration() {
-    }
+    public ProxyConfiguration() {}
 
     public ProxyConfiguration(@NotNull String host) {
         this.host = host;

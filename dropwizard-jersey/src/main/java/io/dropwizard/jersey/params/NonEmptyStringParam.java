@@ -1,8 +1,7 @@
 package io.dropwizard.jersey.params;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
-
 import java.util.Optional;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * A parameter encapsulating optional string values with the condition that empty string inputs are

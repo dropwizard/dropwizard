@@ -16,6 +16,5 @@ import java.lang.annotation.Target;
 @Documented
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-@Inherited //used by classmate reflection
-public @interface SelfValidation {
-}
+@Inherited // used by classmate reflection
+public @interface SelfValidation {}

@@ -1,9 +1,8 @@
 package io.dropwizard.jersey.jsr310;
 
 import io.dropwizard.jersey.params.AbstractParam;
-import org.checkerframework.checker.nullness.qual.Nullable;
-
 import java.time.LocalDateTime;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * A parameter encapsulating date/time values. All non-parsable values will return a {@code 400 Bad

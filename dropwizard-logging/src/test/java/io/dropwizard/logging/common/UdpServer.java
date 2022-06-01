@@ -1,5 +1,7 @@
 package io.dropwizard.logging.common;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -9,8 +11,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class UdpServer implements AutoCloseable {
 
@@ -27,7 +27,7 @@ public class UdpServer implements AutoCloseable {
     public Future<List<String>> receive() {
         return es.submit(() -> {
             List<String> messages = new ArrayList<>();
-            for (; messageCount > 0; messageCount--){
+            for (; messageCount > 0; messageCount--) {
                 byte[] buffer = new byte[128];
                 DatagramPacket datagramPacket = new DatagramPacket(buffer, buffer.length);
                 try {

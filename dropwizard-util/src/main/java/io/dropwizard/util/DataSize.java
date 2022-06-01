@@ -1,8 +1,9 @@
 package io.dropwizard.util;
 
+import static java.util.Objects.requireNonNull;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Locale;
@@ -10,8 +11,6 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static java.util.Objects.requireNonNull;
 
 /**
  * A data size with SI or IEC prefix, such as "128KB" or "5 Gibibytes".

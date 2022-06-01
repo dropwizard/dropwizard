@@ -1,5 +1,18 @@
 package io.dropwizard.hibernate;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.hibernate.resource.transaction.spi.TransactionStatus.ACTIVE;
+import static org.hibernate.resource.transaction.spi.TransactionStatus.NOT_ACTIVE;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
+
+import java.lang.reflect.Method;
 import org.glassfish.jersey.server.ExtendedUriInfo;
 import org.glassfish.jersey.server.model.Resource;
 import org.glassfish.jersey.server.monitoring.RequestEvent;
@@ -13,20 +26,6 @@ import org.hibernate.context.internal.ManagedSessionContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
-
-import java.lang.reflect.Method;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
-import static org.hibernate.resource.transaction.spi.TransactionStatus.ACTIVE;
-import static org.hibernate.resource.transaction.spi.TransactionStatus.NOT_ACTIVE;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.inOrder;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
 
 @SuppressWarnings("HibernateResourceOpenedButNotSafelyClosed")
 class UnitOfWorkApplicationListenerTest {
@@ -85,10 +84,11 @@ class UnitOfWorkApplicationListenerTest {
     @Test
     void bindsAndUnbindsTheSessionToTheManagedContext() throws Exception {
         doAnswer(invocation -> {
-            assertThat(ManagedSessionContext.hasBind(sessionFactory))
-                .isTrue();
-            return null;
-        }).when(session).beginTransaction();
+                    assertThat(ManagedSessionContext.hasBind(sessionFactory)).isTrue();
+                    return null;
+                })
+                .when(session)
+                .beginTransaction();
 
         execute();
 
@@ -236,8 +236,8 @@ class UnitOfWorkApplicationListenerTest {
     void throwsExceptionOnNotRegisteredDatabase() throws Exception {
         prepareResourceMethod("methodWithUnitOfWorkOnNotRegisteredDatabase");
         assertThatIllegalArgumentException()
-            .isThrownBy(this::execute)
-            .withMessage("Unregistered Hibernate bundle: 'warehouse'");
+                .isThrownBy(this::execute)
+                .withMessage("Unregistered Hibernate bundle: 'warehouse'");
     }
 
     private void prepareResourceMethod(String resourceMethodName) throws NoSuchMethodException {
@@ -247,11 +247,12 @@ class UnitOfWorkApplicationListenerTest {
         if (methodDefinedOnInterface(resourceMethodName, interfaceClass.getMethods())) {
             definitionMethod = interfaceClass.getMethod(resourceMethodName);
         }
-        when(uriInfo.getMatchedResourceMethod()).thenReturn(Resource.builder()
-            .addMethod()
-            .handlingMethod(handlingMethod)
-            .handledBy(new MockResource(), definitionMethod)
-            .build());
+        when(uriInfo.getMatchedResourceMethod())
+                .thenReturn(Resource.builder()
+                        .addMethod()
+                        .handlingMethod(handlingMethod)
+                        .handledBy(new MockResource(), definitionMethod)
+                        .build());
     }
 
     private static boolean methodDefinedOnInterface(String methodName, Method[] methods) {
@@ -281,49 +282,36 @@ class UnitOfWorkApplicationListenerTest {
     public static class MockResource implements MockResourceInterface {
 
         @UnitOfWork(readOnly = false, cacheMode = CacheMode.NORMAL, transactional = true, flushMode = FlushMode.AUTO)
-        public void methodWithDefaultAnnotation() {
-        }
+        public void methodWithDefaultAnnotation() {}
 
         @UnitOfWork(readOnly = true, cacheMode = CacheMode.NORMAL, transactional = true, flushMode = FlushMode.AUTO)
-        public void methodWithReadOnlyAnnotation() {
-        }
+        public void methodWithReadOnlyAnnotation() {}
 
         @UnitOfWork(readOnly = false, cacheMode = CacheMode.IGNORE, transactional = true, flushMode = FlushMode.AUTO)
-        public void methodWithCacheModeIgnoreAnnotation() {
-        }
+        public void methodWithCacheModeIgnoreAnnotation() {}
 
         @UnitOfWork(readOnly = false, cacheMode = CacheMode.NORMAL, transactional = true, flushMode = FlushMode.ALWAYS)
-        public void methodWithFlushModeAlwaysAnnotation() {
-        }
+        public void methodWithFlushModeAlwaysAnnotation() {}
 
         @UnitOfWork(readOnly = false, cacheMode = CacheMode.NORMAL, transactional = false, flushMode = FlushMode.AUTO)
-        public void methodWithTransactionalFalseAnnotation() {
-        }
+        public void methodWithTransactionalFalseAnnotation() {}
 
         @UnitOfWork(readOnly = true)
         @Override
-        public void handlingMethodAnnotated() {
-        }
+        public void handlingMethodAnnotated() {}
 
         @Override
-        public void definitionMethodAnnotated() {
-        }
+        public void definitionMethodAnnotated() {}
 
         @UnitOfWork(readOnly = false)
         @Override
-        public void bothMethodsAnnotated() {
-
-        }
+        public void bothMethodsAnnotated() {}
 
         @UnitOfWork("analytics")
-        public void methodWithUnitOfWorkOnAnalyticsDatabase() {
-
-        }
+        public void methodWithUnitOfWorkOnAnalyticsDatabase() {}
 
         @UnitOfWork("warehouse")
-        public void methodWithUnitOfWorkOnNotRegisteredDatabase() {
-
-        }
+        public void methodWithUnitOfWorkOnNotRegisteredDatabase() {}
     }
 
     public interface MockResourceInterface {

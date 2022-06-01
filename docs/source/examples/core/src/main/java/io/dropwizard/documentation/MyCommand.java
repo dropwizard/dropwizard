@@ -16,7 +16,8 @@ public class MyCommand extends Command {
     @Override
     public void configure(Subparser subparser) {
         // Add a command line option
-        subparser.addArgument("-u", "--user")
+        subparser
+                .addArgument("-u", "--user")
                 .dest("user")
                 .type(String.class)
                 .required(true)

@@ -1,9 +1,8 @@
 package io.dropwizard.configuration;
 
 import io.dropwizard.validation.ConstraintViolations;
-
-import javax.validation.ConstraintViolation;
 import java.util.Set;
+import javax.validation.ConstraintViolation;
 
 /**
  * An exception thrown where there is an error validating a configuration object.

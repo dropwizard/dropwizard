@@ -1,11 +1,5 @@
 package io.dropwizard.core.sslreload;
 
-import io.dropwizard.jetty.SslReload;
-import org.junit.jupiter.api.Test;
-
-import java.io.PrintWriter;
-import java.util.Set;
-
 import static java.util.Collections.emptyMap;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
@@ -15,6 +9,11 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+
+import io.dropwizard.jetty.SslReload;
+import java.io.PrintWriter;
+import java.util.Set;
+import org.junit.jupiter.api.Test;
 
 class SslReloadTaskTest {
     @Test
@@ -37,8 +36,8 @@ class SslReloadTaskTest {
         reloadTask.setReloaders(Set.of(failingDryRun, ok));
 
         assertThat(catchRuntimeException(() -> reloadTask.execute(emptyMap(), mock(PrintWriter.class)))
-            .getMessage())
-            .isEqualTo("Dry run failed");
+                        .getMessage())
+                .isEqualTo("Dry run failed");
 
         verify(failingDryRun, never()).reload();
         verify(ok, never()).reload();

@@ -1,21 +1,20 @@
 package com.example.helloworld.resources;
 
-import com.example.helloworld.core.Person;
-import com.example.helloworld.db.PersonDAO;
-import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
-import io.dropwizard.testing.junit5.ResourceExtension;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-
-import javax.ws.rs.core.Response;
-import java.util.Optional;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import com.example.helloworld.core.Person;
+import com.example.helloworld.db.PersonDAO;
+import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
+import io.dropwizard.testing.junit5.ResourceExtension;
+import java.util.Optional;
+import javax.ws.rs.core.Response;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * Unit tests for {@link PersonResource}.
@@ -23,9 +22,8 @@ import static org.mockito.Mockito.when;
 @ExtendWith(DropwizardExtensionsSupport.class)
 class PersonResourceTest {
     private static final PersonDAO DAO = mock(PersonDAO.class);
-    public static final ResourceExtension RULE = ResourceExtension.builder()
-            .addResource(new PersonResource(DAO))
-            .build();
+    public static final ResourceExtension RULE =
+            ResourceExtension.builder().addResource(new PersonResource(DAO)).build();
 
     @AfterEach
     void tearDown() {

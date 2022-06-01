@@ -1,5 +1,8 @@
 package io.dropwizard.servlets;
 
+import static io.dropwizard.servlets.Servlets.getFullUrl;
+
+import java.io.IOException;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -7,9 +10,6 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-
-import static io.dropwizard.servlets.Servlets.getFullUrl;
 
 /**
  * A servlet filter which adds the request method and URI to the thread name processing the request
@@ -18,15 +18,18 @@ import static io.dropwizard.servlets.Servlets.getFullUrl;
 public class ThreadNameFilter implements Filter {
 
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException { /* unused */ }
+    public void init(FilterConfig filterConfig) throws ServletException {
+        /* unused */
+    }
 
     @Override
-    public void destroy() { /* unused */ }
+    public void destroy() {
+        /* unused */
+    }
 
     @Override
-    public void doFilter(ServletRequest request,
-                         ServletResponse response,
-                         FilterChain chain) throws IOException, ServletException {
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+            throws IOException, ServletException {
         final HttpServletRequest req = (HttpServletRequest) request;
         final Thread current = Thread.currentThread();
         final String oldName = current.getName();

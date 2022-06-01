@@ -5,7 +5,6 @@ import com.codahale.metrics.ScheduledReporter;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import io.dropwizard.jackson.Discoverable;
 import io.dropwizard.util.Duration;
-
 import java.util.Optional;
 
 /**

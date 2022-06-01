@@ -3,9 +3,8 @@ package io.dropwizard.request.logging.layout;
 import ch.qos.logback.access.pattern.AccessConverter;
 import ch.qos.logback.access.spi.IAccessEvent;
 import ch.qos.logback.core.util.OptionHelper;
-import org.checkerframework.checker.nullness.qual.Nullable;
-
 import java.util.Arrays;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * A safe version of {@link ch.qos.logback.access.pattern.RequestParameterConverter} which works

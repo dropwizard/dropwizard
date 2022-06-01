@@ -8,13 +8,12 @@ import io.dropwizard.configuration.ConfigurationSourceProvider;
 import io.dropwizard.core.Configuration;
 import io.dropwizard.core.setup.Bootstrap;
 import io.dropwizard.util.Generics;
+import java.io.IOException;
+import javax.validation.Validator;
 import net.sourceforge.argparse4j.inf.Argument;
 import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
 import org.checkerframework.checker.nullness.qual.Nullable;
-
-import javax.validation.Validator;
-import java.io.IOException;
 
 /**
  * A command whose first parameter is the location of a YAML configuration file. That file is parsed
@@ -73,26 +72,28 @@ public abstract class ConfiguredCommand<T extends Configuration> extends Command
      * @return the register argument
      */
     protected Argument addFileArgument(Subparser subparser) {
-        return subparser.addArgument("file")
-                        .nargs("?")
-                        .help("application configuration file");
+        return subparser.addArgument("file").nargs("?").help("application configuration file");
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public void run(Bootstrap<?> wildcardBootstrap, Namespace namespace) throws Exception {
         final Bootstrap<T> bootstrap = (Bootstrap<T>) wildcardBootstrap;
-        configuration = parseConfiguration(bootstrap.getConfigurationFactoryFactory(),
-                                           bootstrap.getConfigurationSourceProvider(),
-                                           bootstrap.getValidatorFactory().getValidator(),
-                                           namespace.getString("file"),
-                                           getConfigurationClass(),
-                                           bootstrap.getObjectMapper());
+        configuration = parseConfiguration(
+                bootstrap.getConfigurationFactoryFactory(),
+                bootstrap.getConfigurationSourceProvider(),
+                bootstrap.getValidatorFactory().getValidator(),
+                namespace.getString("file"),
+                getConfigurationClass(),
+                bootstrap.getObjectMapper());
 
         try {
             if (configuration != null) {
-                configuration.getLoggingFactory().configure(bootstrap.getMetricRegistry(),
-                                                            bootstrap.getApplication().getName());
+                configuration
+                        .getLoggingFactory()
+                        .configure(
+                                bootstrap.getMetricRegistry(),
+                                bootstrap.getApplication().getName());
             }
 
             run(bootstrap, namespace, configuration);
@@ -123,18 +124,18 @@ public abstract class ConfiguredCommand<T extends Configuration> extends Command
      * @param configuration the configuration object
      * @throws Exception if something goes wrong
      */
-    protected abstract void run(Bootstrap<T> bootstrap,
-                                Namespace namespace,
-                                T configuration) throws Exception;
+    protected abstract void run(Bootstrap<T> bootstrap, Namespace namespace, T configuration) throws Exception;
 
-    private T parseConfiguration(ConfigurationFactoryFactory<T> configurationFactoryFactory,
-                                 ConfigurationSourceProvider provider,
-                                 Validator validator,
-                                 String path,
-                                 Class<T> klass,
-                                 ObjectMapper objectMapper) throws IOException, ConfigurationException {
-        final ConfigurationFactory<T> configurationFactory = configurationFactoryFactory
-                .create(klass, validator, objectMapper, "dw");
+    private T parseConfiguration(
+            ConfigurationFactoryFactory<T> configurationFactoryFactory,
+            ConfigurationSourceProvider provider,
+            Validator validator,
+            String path,
+            Class<T> klass,
+            ObjectMapper objectMapper)
+            throws IOException, ConfigurationException {
+        final ConfigurationFactory<T> configurationFactory =
+                configurationFactoryFactory.create(klass, validator, objectMapper, "dw");
         if (path != null) {
             return configurationFactory.build(provider, path);
         }

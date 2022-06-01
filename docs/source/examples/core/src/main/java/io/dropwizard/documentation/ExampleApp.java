@@ -22,8 +22,7 @@ public class ExampleApp extends Application<ExampleConfiguration> {
 
     @Override
     // core: ExampleApp#run
-    public void run(ExampleConfiguration configuration,
-                    Environment environment) {
+    public void run(ExampleConfiguration configuration, Environment environment) {
         MessageQueueClient messageQueue = configuration.getMessageQueueFactory().build(environment);
     }
     // core: ExampleApp#run

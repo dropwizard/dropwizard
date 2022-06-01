@@ -3,9 +3,8 @@ package io.dropwizard.logging.common.socket;
 import ch.qos.logback.core.OutputStreamAppender;
 import ch.qos.logback.core.spi.DeferredProcessingAware;
 import io.dropwizard.logging.common.ResilientSocketOutputStream;
-
-import javax.net.SocketFactory;
 import java.io.OutputStream;
+import javax.net.SocketFactory;
 
 /**
  * Sends log events to a TCP server, a connection to which is represented as {@link ResilientSocketOutputStream}.
@@ -18,8 +17,8 @@ public class DropwizardSocketAppender<E extends DeferredProcessingAware> extends
     private final int sendBufferSize;
     private final SocketFactory socketFactory;
 
-    public DropwizardSocketAppender(String host, int port, int connectionTimeoutMs, int sendBufferSize,
-                                    SocketFactory socketFactory) {
+    public DropwizardSocketAppender(
+            String host, int port, int connectionTimeoutMs, int sendBufferSize, SocketFactory socketFactory) {
         this.host = host;
         this.port = port;
         this.connectionTimeoutMs = connectionTimeoutMs;
@@ -34,10 +33,9 @@ public class DropwizardSocketAppender<E extends DeferredProcessingAware> extends
     }
 
     protected OutputStream socketOutputStream() {
-        final ResilientSocketOutputStream outputStream = new ResilientSocketOutputStream(host, port,
-            connectionTimeoutMs, sendBufferSize, socketFactory);
+        final ResilientSocketOutputStream outputStream =
+                new ResilientSocketOutputStream(host, port, connectionTimeoutMs, sendBufferSize, socketFactory);
         outputStream.setContext(context);
         return outputStream;
     }
 }
-

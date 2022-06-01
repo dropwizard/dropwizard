@@ -1,13 +1,12 @@
 package io.dropwizard.testing.junit5;
 
+import static io.dropwizard.testing.ConfigOverride.config;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.testing.app.TestApplication;
 import io.dropwizard.testing.app.TestConfiguration;
 import org.junit.jupiter.api.Test;
-
-import static io.dropwizard.testing.ConfigOverride.config;
-import static org.assertj.core.api.Assertions.assertThat;
 
 class DropwizardAppExtensionResetConfigOverrideTest {
     private final DropwizardAppExtension<TestConfiguration> dropwizardAppExtension = new DropwizardAppExtension<>(

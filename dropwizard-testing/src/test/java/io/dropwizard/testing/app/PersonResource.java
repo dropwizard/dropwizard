@@ -1,11 +1,13 @@
 package io.dropwizard.testing.app;
 
+import static java.util.Objects.requireNonNull;
+
 import com.codahale.metrics.annotation.Timed;
 import io.dropwizard.jersey.params.IntParam;
 import io.dropwizard.validation.Validated;
-import org.checkerframework.checker.nullness.qual.Nullable;
-import org.eclipse.jetty.io.EofException;
-
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.groups.Default;
@@ -17,11 +19,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import static java.util.Objects.requireNonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.eclipse.jetty.io.EofException;
 
 @Path("/person/{name}")
 @Produces(MediaType.APPLICATION_JSON)
@@ -48,8 +47,7 @@ public class PersonResource {
     @GET
     @Timed
     @Path("/index")
-    public Person getPersonWithIndex(@QueryParam("ind") @Min(0) IntParam index,
-                                     @PathParam("name") String name) {
+    public Person getPersonWithIndex(@QueryParam("ind") @Min(0) IntParam index, @PathParam("name") String name) {
         return getPersonList(name).get(index.get());
     }
 
@@ -68,12 +66,13 @@ public class PersonResource {
     @POST
     @Path("/validation-groups-exception")
     public String validationGroupsException(
-        @Valid @Validated(Partial1.class) @BeanParam BeanParameter params,
-        @Valid @Validated(Default.class) byte[] entity) {
+            @Valid @Validated(Partial1.class) @BeanParam BeanParameter params,
+            @Valid @Validated(Default.class) byte[] entity) {
         return requireNonNull(params.age).toString() + entity.length;
     }
 
-    public interface Partial1 { }
+    public interface Partial1 {}
+
     public static class BeanParameter {
         @QueryParam("age")
         @Nullable

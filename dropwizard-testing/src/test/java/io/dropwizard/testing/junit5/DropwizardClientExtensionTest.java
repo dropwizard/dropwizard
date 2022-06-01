@@ -1,21 +1,22 @@
 package io.dropwizard.testing.junit5;
 
-import io.dropwizard.testing.app.TestResource;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.assertj.core.api.Assertions.assertThat;
 
+import io.dropwizard.testing.app.TestResource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 @ExtendWith(DropwizardExtensionsSupport.class)
 class DropwizardClientExtensionTest {
 
-    private static final DropwizardClientExtension EXTENSION_WITH_INSTANCE = new DropwizardClientExtension(new TestResource("foo"));
-    private static final DropwizardClientExtension EXTENSION_WITH_CLASS = new DropwizardClientExtension(TestResource.class);
+    private static final DropwizardClientExtension EXTENSION_WITH_INSTANCE =
+            new DropwizardClientExtension(new TestResource("foo"));
+    private static final DropwizardClientExtension EXTENSION_WITH_CLASS =
+            new DropwizardClientExtension(TestResource.class);
 
     @Test
     void shouldGetStringBodyFromDropWizard() throws IOException {

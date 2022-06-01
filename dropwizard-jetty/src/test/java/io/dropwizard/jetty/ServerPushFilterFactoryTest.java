@@ -1,18 +1,5 @@
 package io.dropwizard.jetty;
 
-import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
-import io.dropwizard.configuration.YamlConfigurationFactory;
-import io.dropwizard.jackson.Jackson;
-import io.dropwizard.util.Duration;
-import io.dropwizard.validation.BaseValidator;
-import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.eclipse.jetty.servlets.PushCacheFilter;
-import org.junit.jupiter.api.Test;
-
-import javax.servlet.DispatcherType;
-import java.util.Arrays;
-import java.util.EnumSet;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -20,13 +7,27 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
+import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
+import io.dropwizard.configuration.YamlConfigurationFactory;
+import io.dropwizard.jackson.Jackson;
+import io.dropwizard.util.Duration;
+import io.dropwizard.validation.BaseValidator;
+import java.util.Arrays;
+import java.util.EnumSet;
+import javax.servlet.DispatcherType;
+import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.servlets.PushCacheFilter;
+import org.junit.jupiter.api.Test;
+
 class ServerPushFilterFactoryTest {
 
     @Test
     void testLoadConfiguration() throws Exception {
         final ServerPushFilterFactory serverPush = new YamlConfigurationFactory<>(
-                ServerPushFilterFactory.class, BaseValidator.newValidator(),
-                Jackson.newObjectMapper(), "dw-server-push")
+                        ServerPushFilterFactory.class,
+                        BaseValidator.newValidator(),
+                        Jackson.newObjectMapper(),
+                        "dw-server-push")
                 .build(new ResourceConfigurationSourceProvider(), "yaml/server-push.yml");
         assertThat(serverPush.isEnabled()).isTrue();
         assertThat(serverPush.getAssociatePeriod()).isEqualTo(Duration.seconds(5));

@@ -1,14 +1,13 @@
 package io.dropwizard.jersey.params;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
-import org.glassfish.jersey.internal.inject.ExtractorException;
-import org.glassfish.jersey.server.internal.LocalizationMessages;
-
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.ext.ParamConverter;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.glassfish.jersey.internal.inject.ExtractorException;
+import org.glassfish.jersey.server.internal.LocalizationMessages;
 
 /**
  * Converter to Jersey for Dropwizard's *Param classes.
@@ -23,6 +22,7 @@ import java.lang.reflect.InvocationTargetException;
 public class AbstractParamConverter<T> implements ParamConverter<T> {
     private final Constructor<T> constructor;
     private final String parameterName;
+
     @Nullable
     private final String defaultValue;
 
@@ -39,7 +39,8 @@ public class AbstractParamConverter<T> implements ParamConverter<T> {
     @Nullable
     public T fromString(String value) {
         try {
-            final String defaultedValue = (value == null || value.isEmpty()) && defaultValue != null ? defaultValue : value;
+            final String defaultedValue =
+                    (value == null || value.isEmpty()) && defaultValue != null ? defaultValue : value;
             return constructor.newInstance(defaultedValue, parameterName);
         } catch (InvocationTargetException ex) {
             final Throwable cause = ex.getCause();
@@ -63,5 +64,4 @@ public class AbstractParamConverter<T> implements ParamConverter<T> {
         }
         return value.toString();
     }
-
 }

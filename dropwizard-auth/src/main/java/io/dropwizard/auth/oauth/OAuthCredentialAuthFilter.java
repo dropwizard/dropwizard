@@ -2,15 +2,14 @@ package io.dropwizard.auth.oauth;
 
 import io.dropwizard.auth.AuthFilter;
 import io.dropwizard.auth.Authenticator;
-import org.checkerframework.checker.nullness.qual.Nullable;
-
+import java.io.IOException;
+import java.security.Principal;
 import javax.annotation.Priority;
 import javax.ws.rs.Priorities;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.SecurityContext;
-import java.io.IOException;
-import java.security.Principal;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 @Priority(Priorities.AUTHENTICATION)
 public class OAuthCredentialAuthFilter<P extends Principal> extends AuthFilter<String, P> {
@@ -22,8 +21,7 @@ public class OAuthCredentialAuthFilter<P extends Principal> extends AuthFilter<S
      */
     public static final String OAUTH_ACCESS_TOKEN_PARAM = "access_token";
 
-    private OAuthCredentialAuthFilter() {
-    }
+    private OAuthCredentialAuthFilter() {}
 
     @Override
     public void filter(final ContainerRequestContext requestContext) throws IOException {

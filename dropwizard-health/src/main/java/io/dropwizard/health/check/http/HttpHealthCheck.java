@@ -1,23 +1,24 @@
 package io.dropwizard.health.check.http;
 
 import com.codahale.metrics.health.HealthCheck;
+import java.time.Duration;
+import java.util.Objects;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.core.Response;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.client.JerseyClientBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.core.Response;
-import java.time.Duration;
-import java.util.Objects;
-
 public class HttpHealthCheck extends HealthCheck {
     // visible for testing
     static final Duration DEFAULT_TIMEOUT = Duration.ofSeconds(2);
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpHealthCheck.class);
+
     @NonNull
     private final String url;
+
     @NonNull
     private final Client client;
 
@@ -25,20 +26,17 @@ public class HttpHealthCheck extends HealthCheck {
         this(url, DEFAULT_TIMEOUT, DEFAULT_TIMEOUT);
     }
 
-    public HttpHealthCheck(@NonNull final String url,
-                           final Duration readTimeout,
-                           final Duration connectionTimeout) {
+    public HttpHealthCheck(@NonNull final String url, final Duration readTimeout, final Duration connectionTimeout) {
         this.url = Objects.requireNonNull(url);
         if (readTimeout.toMillis() <= 0L || connectionTimeout.toMillis() <= 0L) {
             throw new IllegalStateException();
         }
         this.client = JerseyClientBuilder.createClient()
-            .property(ClientProperties.CONNECT_TIMEOUT, (int) connectionTimeout.toMillis())
-            .property(ClientProperties.READ_TIMEOUT, (int) readTimeout.toMillis());
+                .property(ClientProperties.CONNECT_TIMEOUT, (int) connectionTimeout.toMillis())
+                .property(ClientProperties.READ_TIMEOUT, (int) readTimeout.toMillis());
     }
 
-    public HttpHealthCheck(@NonNull final String url,
-                           @NonNull final Client client) {
+    public HttpHealthCheck(@NonNull final String url, @NonNull final Client client) {
         this.url = Objects.requireNonNull(url);
         this.client = Objects.requireNonNull(client);
     }

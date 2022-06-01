@@ -1,5 +1,13 @@
 package io.dropwizard.client;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.httpclient5.HttpClientMetricNameStrategies;
 import com.codahale.metrics.httpclient5.HttpClientMetricNameStrategy;
@@ -10,6 +18,33 @@ import io.dropwizard.jersey.gzip.GZipDecoder;
 import io.dropwizard.jersey.validation.Validators;
 import io.dropwizard.lifecycle.setup.ExecutorServiceBuilder;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.net.ProxySelector;
+import java.net.SocketAddress;
+import java.net.URI;
+import java.security.cert.X509Certificate;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+import javax.validation.Validator;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.ext.MessageBodyReader;
+import javax.ws.rs.ext.Provider;
 import org.apache.hc.client5.http.DnsResolver;
 import org.apache.hc.client5.http.HttpRequestRetryStrategy;
 import org.apache.hc.client5.http.SystemDefaultDnsResolver;
@@ -39,42 +74,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
-import javax.validation.Validator;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.ext.MessageBodyReader;
-import javax.ws.rs.ext.Provider;
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Type;
-import java.net.InetSocketAddress;
-import java.net.Proxy;
-import java.net.ProxySelector;
-import java.net.SocketAddress;
-import java.net.URI;
-import java.security.cert.X509Certificate;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 class JerseyClientBuilderTest {
     private final MetricRegistry metricRegistry = new MetricRegistry();
     private final JerseyClientBuilder builder = new JerseyClientBuilder(metricRegistry);
@@ -101,24 +100,24 @@ class JerseyClientBuilderTest {
     @Test
     void throwsAnExceptionWithoutAnEnvironmentOrAThreadPoolAndObjectMapper() {
         assertThatIllegalStateException()
-            .isThrownBy(() -> builder.build("test"))
-            .withMessage("Must have either an environment or both an executor service and an object mapper");
+                .isThrownBy(() -> builder.build("test"))
+                .withMessage("Must have either an environment or both an executor service and an object mapper");
     }
 
     @Test
     void throwsAnExceptionWithoutAnEnvironmentAndOnlyObjectMapper() {
         JerseyClientBuilder configuredBuilder = builder.using(objectMapper);
         assertThatIllegalStateException()
-            .isThrownBy(() -> configuredBuilder.build("test"))
-            .withMessage("Must have either an environment or both an executor service and an object mapper");
+                .isThrownBy(() -> configuredBuilder.build("test"))
+                .withMessage("Must have either an environment or both an executor service and an object mapper");
     }
 
     @Test
     void throwsAnExceptionWithoutAnEnvironmentAndOnlyAThreadPool() {
         JerseyClientBuilder configuredBuilder = builder.using(executorService);
         assertThatIllegalStateException()
-            .isThrownBy(() -> configuredBuilder.build("test"))
-            .withMessage("Must have either an environment or both an executor service and an object mapper");
+                .isThrownBy(() -> configuredBuilder.build("test"))
+                .withMessage("Must have either an environment or both an executor service and an object mapper");
     }
 
     @Test
@@ -147,14 +146,14 @@ class JerseyClientBuilderTest {
                 .using(executorService, objectMapper)
                 .build("test");
 
-        assertThat(client.getConfiguration().isRegistered(FakeMessageBodyReader.class)).isTrue();
+        assertThat(client.getConfiguration().isRegistered(FakeMessageBodyReader.class))
+                .isTrue();
     }
 
     @Test
     void createsAnRxEnabledClient() {
         final Client client =
-            builder.using(executorService, objectMapper)
-                .buildRx("test", RxFlowableInvokerProvider.class);
+                builder.using(executorService, objectMapper).buildRx("test", RxFlowableInvokerProvider.class);
 
         for (Object o : client.getConfiguration().getInstances()) {
             if (o instanceof DropwizardExecutorProvider) {
@@ -173,7 +172,6 @@ class JerseyClientBuilderTest {
                 assertThat(provider.getExecutorService()).isSameAs(executorService);
             }
         }
-
     }
 
     @Test
@@ -185,26 +183,26 @@ class JerseyClientBuilderTest {
                 assertThat(provider.getExecutorService()).isSameAs(executorService);
             }
         }
-
     }
 
     @Test
     void createsNewConnectorProvider() {
-        final JerseyClient clientA = (JerseyClient) builder.using(executorService, objectMapper).build("testA");
+        final JerseyClient clientA =
+                (JerseyClient) builder.using(executorService, objectMapper).build("testA");
         final JerseyClient clientB = (JerseyClient) builder.build("testB");
         assertThat(clientA.getConfiguration().getConnectorProvider())
-            .isNotSameAs(clientB.getConfiguration().getConnectorProvider());
+                .isNotSameAs(clientB.getConfiguration().getConnectorProvider());
     }
 
     @Test
-    void usesSameConnectorProvider()  {
+    void usesSameConnectorProvider() {
         final JerseyClient clientA = (JerseyClient) builder.using(executorService, objectMapper)
-            .using(mock(ConnectorProvider.class))
-            .build("testA");
+                .using(mock(ConnectorProvider.class))
+                .build("testA");
         final JerseyClient clientB = (JerseyClient) builder.build("testB");
 
         assertThat(clientA.getConfiguration().getConnectorProvider())
-            .isSameAs(clientB.getConfiguration().getConnectorProvider());
+                .isSameAs(clientB.getConfiguration().getConnectorProvider());
     }
 
     @Test
@@ -213,9 +211,9 @@ class JerseyClientBuilderTest {
         configuration.setGzipEnabled(true);
 
         final Client client = builder.using(configuration)
-                .using(executorService, objectMapper).build("test");
-        assertThat(client.getConfiguration().getInstances())
-                .anyMatch(element -> element instanceof GZipDecoder);
+                .using(executorService, objectMapper)
+                .build("test");
+        assertThat(client.getConfiguration().getInstances()).anyMatch(element -> element instanceof GZipDecoder);
         assertThat(client.getConfiguration().getInstances())
                 .anyMatch(element -> element instanceof ConfiguredGZipEncoder);
         verify(apacheHttpClientBuilder, never()).disableContentCompression(true);
@@ -227,10 +225,10 @@ class JerseyClientBuilderTest {
         configuration.setGzipEnabled(false);
 
         final Client client = builder.using(configuration)
-                .using(executorService, objectMapper).build("test");
+                .using(executorService, objectMapper)
+                .build("test");
 
-        assertThat(client.getConfiguration().getInstances())
-                .noneMatch(element -> element instanceof GZipDecoder);
+        assertThat(client.getConfiguration().getInstances()).noneMatch(element -> element instanceof GZipDecoder);
         assertThat(client.getConfiguration().getInstances())
                 .noneMatch(element -> element instanceof ConfiguredGZipEncoder);
         verify(apacheHttpClientBuilder).disableContentCompression(true);
@@ -270,7 +268,8 @@ class JerseyClientBuilderTest {
 
     @Test
     void usesACustomHttpRequestRetryHandler() {
-        final HttpRequestRetryStrategy customRetryHandler = new DefaultHttpRequestRetryStrategy(2, TimeValue.ofSeconds(1));
+        final HttpRequestRetryStrategy customRetryHandler =
+                new DefaultHttpRequestRetryStrategy(2, TimeValue.ofSeconds(1));
         builder.using(customRetryHandler);
         verify(apacheHttpClientBuilder).using(customRetryHandler);
     }
@@ -292,24 +291,25 @@ class JerseyClientBuilderTest {
     @Test
     void usesACustomConnectionFactoryRegistry() throws Exception {
         final SSLContext ctx = SSLContext.getInstance("TLSv1.2");
-        ctx.init(null, new TrustManager[]{
-            new X509TrustManager() {
+        ctx.init(
+                null,
+                new TrustManager[] {
+                    new X509TrustManager() {
 
-                @Override
-                public void checkClientTrusted(X509Certificate[] xcs, String string) {
-                }
+                        @Override
+                        public void checkClientTrusted(X509Certificate[] xcs, String string) {}
 
-                @Override
-                public void checkServerTrusted(X509Certificate[] xcs, String string) {
-                }
+                        @Override
+                        public void checkServerTrusted(X509Certificate[] xcs, String string) {}
 
-                @Override
-                @Nullable
-                public X509Certificate[] getAcceptedIssuers() {
-                    return null;
-                }
-            }
-        }, null);
+                        @Override
+                        @Nullable
+                        public X509Certificate[] getAcceptedIssuers() {
+                            return null;
+                        }
+                    }
+                },
+                null);
         final Registry<ConnectionSocketFactory> customRegistry = RegistryBuilder.<ConnectionSocketFactory>create()
                 .register("http", PlainConnectionSocketFactory.getSocketFactory())
                 .register("https", new SSLConnectionSocketFactory(ctx, new NoopHostnameVerifier()))
@@ -330,13 +330,12 @@ class JerseyClientBuilderTest {
         final HttpRoutePlanner customHttpRoutePlanner = new SystemDefaultRoutePlanner(new ProxySelector() {
             @Override
             public List<Proxy> select(URI uri) {
-                return Collections.singletonList(new Proxy(Proxy.Type.HTTP, new InetSocketAddress("192.168.53.12", 8080)));
+                return Collections.singletonList(
+                        new Proxy(Proxy.Type.HTTP, new InetSocketAddress("192.168.53.12", 8080)));
             }
 
             @Override
-            public void connectFailed(URI uri, SocketAddress sa, IOException ioe) {
-
-            }
+            public void connectFailed(URI uri, SocketAddress sa, IOException ioe) {}
         });
         builder.using(customHttpRoutePlanner);
         verify(apacheHttpClientBuilder).using(customHttpRoutePlanner);
@@ -351,18 +350,24 @@ class JerseyClientBuilderTest {
 
     @Test
     void apacheConnectorCanOverridden() {
-        assertThat(new JerseyClientBuilder(new MetricRegistry()) {
-            @Override
-            protected DropwizardApacheConnector createDropwizardApacheConnector(ConfiguredCloseableHttpClient configuredClient) {
-                return new DropwizardApacheConnector(configuredClient.getClient(), configuredClient.getDefaultRequestConfig(),
-                    true) {
-                    @Override
-                    protected HttpEntity getHttpEntity(ClientRequest jerseyRequest) {
-                        return new GzipCompressingEntity(new ByteArrayEntity((byte[]) jerseyRequest.getEntity(), ContentType.DEFAULT_BINARY));
-                    }
-                };
-            }
-        }.using(environment).build("test")).isNotNull();
+        assertThat(
+                        new JerseyClientBuilder(new MetricRegistry()) {
+                            @Override
+                            protected DropwizardApacheConnector createDropwizardApacheConnector(
+                                    ConfiguredCloseableHttpClient configuredClient) {
+                                return new DropwizardApacheConnector(
+                                        configuredClient.getClient(),
+                                        configuredClient.getDefaultRequestConfig(),
+                                        true) {
+                                    @Override
+                                    protected HttpEntity getHttpEntity(ClientRequest jerseyRequest) {
+                                        return new GzipCompressingEntity(new ByteArrayEntity(
+                                                (byte[]) jerseyRequest.getEntity(), ContentType.DEFAULT_BINARY));
+                                    }
+                                };
+                            }
+                        }.using(environment).build("test"))
+                .isNotNull();
     }
 
     @Provider
@@ -375,10 +380,14 @@ class JerseyClientBuilderTest {
 
         @Override
         @Nullable
-        public JerseyClientBuilderTest readFrom(Class<JerseyClientBuilderTest> type, Type genericType,
-                                                Annotation[] annotations, MediaType mediaType,
-                                                MultivaluedMap<String, String> httpHeaders, InputStream entityStream)
-            throws WebApplicationException {
+        public JerseyClientBuilderTest readFrom(
+                Class<JerseyClientBuilderTest> type,
+                Type genericType,
+                Annotation[] annotations,
+                MediaType mediaType,
+                MultivaluedMap<String, String> httpHeaders,
+                InputStream entityStream)
+                throws WebApplicationException {
             return null;
         }
     }

@@ -1,12 +1,11 @@
 package io.dropwizard.validation;
 
-import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.Collection;
 import javax.validation.Valid;
 import javax.validation.Validator;
-import java.util.Collection;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.Test;
 
 @SuppressWarnings({"FieldMayBeFinal", "MethodMayBeStatic", "UnusedDeclaration"})
 class MethodValidatorTest {
@@ -36,11 +35,8 @@ class MethodValidatorTest {
 
     @Test
     void complainsAboutMethodsWhichReturnFalse() throws Exception {
-        final Collection<String> errors =
-                ConstraintViolations.format(validator.validate(new Example()));
+        final Collection<String> errors = ConstraintViolations.format(validator.validate(new Example()));
 
-        assertThat(errors)
-                .containsOnly("must have a false thing",
-                              "also needs something special");
+        assertThat(errors).containsOnly("must have a false thing", "also needs something special");
     }
 }

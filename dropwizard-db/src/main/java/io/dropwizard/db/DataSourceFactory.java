@@ -6,13 +6,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.util.Duration;
 import io.dropwizard.validation.MinDuration;
 import io.dropwizard.validation.ValidationMethod;
-import org.apache.tomcat.jdbc.pool.PoolProperties;
-import org.checkerframework.checker.nullness.qual.Nullable;
-
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import java.sql.Connection;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -20,6 +13,12 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import org.apache.tomcat.jdbc.pool.PoolProperties;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * A factory for pooled {@link ManagedDataSource}s.

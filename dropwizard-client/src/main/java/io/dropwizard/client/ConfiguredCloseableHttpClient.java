@@ -7,7 +7,8 @@ public class ConfiguredCloseableHttpClient {
     private final CloseableHttpClient closeableHttpClient;
     private final RequestConfig defaultRequestConfig;
 
-    /* package */ ConfiguredCloseableHttpClient(CloseableHttpClient closeableHttpClient, RequestConfig defaultRequestConfig) {
+    /* package */ ConfiguredCloseableHttpClient(
+            CloseableHttpClient closeableHttpClient, RequestConfig defaultRequestConfig) {
         this.closeableHttpClient = closeableHttpClient;
         this.defaultRequestConfig = defaultRequestConfig;
     }

@@ -1,5 +1,13 @@
 package io.dropwizard.client;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.validateMockitoUsage;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.httpclient5.HttpClientMetricNameStrategies;
 import com.codahale.metrics.httpclient5.InstrumentedHttpClientConnectionManager;
@@ -11,6 +19,16 @@ import io.dropwizard.core.setup.Environment;
 import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import io.dropwizard.util.Duration;
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.net.ProxySelector;
+import java.net.SocketAddress;
+import java.net.URI;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import javax.net.ssl.HostnameVerifier;
 import org.apache.hc.client5.http.DnsResolver;
 import org.apache.hc.client5.http.HttpRequestRetryStrategy;
 import org.apache.hc.client5.http.HttpRoute;
@@ -57,25 +75,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
-import javax.net.ssl.HostnameVerifier;
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.net.Proxy;
-import java.net.ProxySelector;
-import java.net.SocketAddress;
-import java.net.URI;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.validateMockitoUsage;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 class AnotherHttpClientBuilder extends org.apache.hc.client5.http.impl.classic.HttpClientBuilder {
     public static AnotherHttpClientBuilder create() {
         return new AnotherHttpClientBuilder();
@@ -83,8 +82,7 @@ class AnotherHttpClientBuilder extends org.apache.hc.client5.http.impl.classic.H
 }
 
 class HttpClientBuilderTest {
-    static class CustomRequestExecutor extends HttpRequestExecutor {
-    }
+    static class CustomRequestExecutor extends HttpRequestExecutor {}
 
     static class CustomBuilder extends HttpClientBuilder {
         public boolean customized;
@@ -94,7 +92,8 @@ class HttpClientBuilderTest {
             this(metricRegistry, org.apache.hc.client5.http.impl.classic.HttpClientBuilder.create());
         }
 
-        public CustomBuilder(MetricRegistry metricRegistry, org.apache.hc.client5.http.impl.classic.HttpClientBuilder builder) {
+        public CustomBuilder(
+                MetricRegistry metricRegistry, org.apache.hc.client5.http.impl.classic.HttpClientBuilder builder) {
             super(metricRegistry);
             customized = false;
             this.builder = builder;
@@ -112,8 +111,7 @@ class HttpClientBuilderTest {
 
         @Override
         protected org.apache.hc.client5.http.impl.classic.HttpClientBuilder customizeBuilder(
-                org.apache.hc.client5.http.impl.classic.HttpClientBuilder builder
-        ) {
+                org.apache.hc.client5.http.impl.classic.HttpClientBuilder builder) {
             customized = true;
             return builder;
         }
@@ -134,7 +132,9 @@ class HttpClientBuilderTest {
         final MetricRegistry metricRegistry = new MetricRegistry();
         configuration = new HttpClientConfiguration();
         builder = new HttpClientBuilder(metricRegistry);
-        connectionManager = spy(InstrumentedHttpClientConnectionManager.builder(metricRegistry).socketFactoryRegistry(registry).build());
+        connectionManager = spy(InstrumentedHttpClientConnectionManager.builder(metricRegistry)
+                .socketFactoryRegistry(registry)
+                .build());
         apacheBuilder = org.apache.hc.client5.http.impl.classic.HttpClientBuilder.create();
         anotherApacheBuilder = spy(AnotherHttpClientBuilder.create());
     }
@@ -155,7 +155,6 @@ class HttpClientBuilderTest {
         verify(connectionManager).setMaxTotal(412);
     }
 
-
     @Test
     void setsTheMaximumRoutePoolSize() {
         configuration.setMaxConnectionsPerRoute(413);
@@ -170,7 +169,8 @@ class HttpClientBuilderTest {
     @Test
     void setsTheUserAgent() {
         configuration.setUserAgent(Optional.of("qwerty"));
-        assertThat(builder.using(configuration).createClient(apacheBuilder, connectionManager, "test")).isNotNull();
+        assertThat(builder.using(configuration).createClient(apacheBuilder, connectionManager, "test"))
+                .isNotNull();
 
         assertThat(apacheBuilder).extracting("userAgent").isEqualTo("qwerty");
     }
@@ -186,7 +186,6 @@ class HttpClientBuilderTest {
                 .extracting("dnsResolver")
                 .isEqualTo(resolver);
     }
-
 
     @Test
     void usesASystemDnsResolverByDefault() {
@@ -209,9 +208,7 @@ class HttpClientBuilderTest {
         final SSLConnectionSocketFactory socketFactory =
                 (SSLConnectionSocketFactory) configuredRegistry.lookup("https");
 
-        assertThat(socketFactory)
-                .isNotNull()
-                .extracting("hostnameVerifier").isSameAs(customVerifier);
+        assertThat(socketFactory).isNotNull().extracting("hostnameVerifier").isSameAs(customVerifier);
     }
 
     @Test
@@ -228,9 +225,7 @@ class HttpClientBuilderTest {
 
         final SSLConnectionSocketFactory socketFactory =
                 (SSLConnectionSocketFactory) configuredRegistry.lookup("https");
-        assertThat(socketFactory)
-                .isNotNull()
-                .extracting("hostnameVerifier").isSameAs(customVerifier);
+        assertThat(socketFactory).isNotNull().extracting("hostnameVerifier").isSameAs(customVerifier);
     }
 
     @Test
@@ -241,10 +236,7 @@ class HttpClientBuilderTest {
 
         final SSLConnectionSocketFactory socketFactory =
                 (SSLConnectionSocketFactory) configuredRegistry.lookup("https");
-        assertThat(socketFactory)
-                .isNotNull()
-                .extracting("hostnameVerifier")
-                .isInstanceOf(HostnameVerifier.class);
+        assertThat(socketFactory).isNotNull().extracting("hostnameVerifier").isInstanceOf(HostnameVerifier.class);
     }
 
     @Test
@@ -259,123 +251,132 @@ class HttpClientBuilderTest {
 
         final SSLConnectionSocketFactory socketFactory =
                 (SSLConnectionSocketFactory) configuredRegistry.lookup("https");
-        assertThat(socketFactory)
-                .isNotNull()
-                .extracting("hostnameVerifier")
-                .isInstanceOf(HostnameVerifier.class);
+        assertThat(socketFactory).isNotNull().extracting("hostnameVerifier").isInstanceOf(HostnameVerifier.class);
     }
 
     @Test
     void doesNotReuseConnectionsIfKeepAliveIsZero() {
         configuration.setKeepAlive(Duration.seconds(0));
-        assertThat(builder.using(configuration).createClient(apacheBuilder, connectionManager, "test")).isNotNull();
+        assertThat(builder.using(configuration).createClient(apacheBuilder, connectionManager, "test"))
+                .isNotNull();
 
-        assertThat(apacheBuilder).extracting("reuseStrategy")
-                .isInstanceOf(ConnectionReuseStrategy.class);
+        assertThat(apacheBuilder).extracting("reuseStrategy").isInstanceOf(ConnectionReuseStrategy.class);
     }
-
 
     @Test
     void reusesConnectionsIfKeepAliveIsNonZero() {
         configuration.setKeepAlive(Duration.seconds(1));
-        assertThat(builder.using(configuration).createClient(apacheBuilder, connectionManager, "test")).isNotNull();
+        assertThat(builder.using(configuration).createClient(apacheBuilder, connectionManager, "test"))
+                .isNotNull();
 
-        assertThat(apacheBuilder).extracting("reuseStrategy")
-                .isInstanceOf(DefaultConnectionReuseStrategy.class);
+        assertThat(apacheBuilder).extracting("reuseStrategy").isInstanceOf(DefaultConnectionReuseStrategy.class);
     }
 
     @Test
     void usesKeepAliveForPersistentConnections() {
         configuration.setKeepAlive(Duration.seconds(1));
-        assertThat(builder.using(configuration).createClient(apacheBuilder, connectionManager, "test")).isNotNull();
+        assertThat(builder.using(configuration).createClient(apacheBuilder, connectionManager, "test"))
+                .isNotNull();
 
         final HttpContext context = mock(HttpContext.class);
         final HttpResponse response = mock(HttpResponse.class);
         when(response.headerIterator()).thenReturn(Collections.emptyIterator());
         when(response.headerIterator(any())).thenReturn(Collections.emptyIterator());
 
-        assertThat(apacheBuilder).extracting("keepAliveStrategy")
-                .isInstanceOfSatisfying(DefaultConnectionKeepAliveStrategy.class,
-                        strategy -> assertThat(strategy.getKeepAliveDuration(response, context)).isEqualByComparingTo(TimeValue.ofMinutes(3)));
+        assertThat(apacheBuilder)
+                .extracting("keepAliveStrategy")
+                .isInstanceOfSatisfying(DefaultConnectionKeepAliveStrategy.class, strategy -> assertThat(
+                                strategy.getKeepAliveDuration(response, context))
+                        .isEqualByComparingTo(TimeValue.ofMinutes(3)));
     }
 
     @Test
     void usesDefaultForNonPersistentConnections() {
         configuration.setKeepAlive(Duration.seconds(1));
-        assertThat(builder.using(configuration).createClient(apacheBuilder, connectionManager, "test")).isNotNull();
+        assertThat(builder.using(configuration).createClient(apacheBuilder, connectionManager, "test"))
+                .isNotNull();
 
         final HttpContext context = mock(HttpContext.class);
         final HttpResponse response = mock(HttpResponse.class);
         BasicHeaderIterator basicHeaderIterator = new BasicHeaderIterator(
-                new Header[]{new BasicHeader(HttpHeaders.CONNECTION, "timeout=50")},
-                HttpHeaders.CONNECTION
-        );
+                new Header[] {new BasicHeader(HttpHeaders.CONNECTION, "timeout=50")}, HttpHeaders.CONNECTION);
         when(response.headerIterator()).thenReturn(basicHeaderIterator);
         when(response.headerIterator(any())).thenReturn(basicHeaderIterator);
 
-        assertThat(apacheBuilder).extracting("keepAliveStrategy")
-                .isInstanceOfSatisfying(DefaultConnectionKeepAliveStrategy.class,
-                        strategy -> assertThat(strategy.getKeepAliveDuration(response, context)).isEqualByComparingTo(TimeValue.ofMilliseconds(50_000L)));
+        assertThat(apacheBuilder)
+                .extracting("keepAliveStrategy")
+                .isInstanceOfSatisfying(DefaultConnectionKeepAliveStrategy.class, strategy -> assertThat(
+                                strategy.getKeepAliveDuration(response, context))
+                        .isEqualByComparingTo(TimeValue.ofMilliseconds(50_000L)));
     }
 
     @Test
     void ignoresCookiesByDefault() {
-        assertThat(builder.using(configuration).createClient(apacheBuilder, connectionManager, "test")).isNotNull();
+        assertThat(builder.using(configuration).createClient(apacheBuilder, connectionManager, "test"))
+                .isNotNull();
 
         assertThat(apacheBuilder)
                 .extracting("defaultRequestConfig")
-                .isInstanceOfSatisfying(RequestConfig.class, requestConfig ->
-                        assertThat(requestConfig.getCookieSpec()).isEqualTo(StandardCookieSpec.IGNORE));
+                .isInstanceOfSatisfying(RequestConfig.class, requestConfig -> assertThat(requestConfig.getCookieSpec())
+                        .isEqualTo(StandardCookieSpec.IGNORE));
     }
 
     @Test
     void usesBestMatchCookiePolicyIfCookiesAreEnabled() {
         configuration.setCookiesEnabled(true);
-        assertThat(builder.using(configuration).createClient(apacheBuilder, connectionManager, "test")).isNotNull();
+        assertThat(builder.using(configuration).createClient(apacheBuilder, connectionManager, "test"))
+                .isNotNull();
 
         assertThat(apacheBuilder)
                 .extracting("defaultRequestConfig")
-                .isInstanceOfSatisfying(RequestConfig.class, requestConfig ->
-                        assertThat(requestConfig.getCookieSpec()).isEqualTo(StandardCookieSpec.RELAXED));
+                .isInstanceOfSatisfying(RequestConfig.class, requestConfig -> assertThat(requestConfig.getCookieSpec())
+                        .isEqualTo(StandardCookieSpec.RELAXED));
     }
 
     @Test
     void setsTheSocketTimeout() {
         configuration.setTimeout(Duration.milliseconds(500));
-        assertThat(builder.using(configuration).createClient(apacheBuilder, connectionManager, "test")).isNotNull();
+        assertThat(builder.using(configuration).createClient(apacheBuilder, connectionManager, "test"))
+                .isNotNull();
 
         assertThat(apacheBuilder)
                 .extracting("defaultRequestConfig")
-                .isInstanceOfSatisfying(RequestConfig.class, requestConfig ->
-                        assertThat(requestConfig.getResponseTimeout()).isEqualTo(Timeout.ofMilliseconds(500L)));
+                .isInstanceOfSatisfying(
+                        RequestConfig.class, requestConfig -> assertThat(requestConfig.getResponseTimeout())
+                                .isEqualTo(Timeout.ofMilliseconds(500L)));
     }
 
     @Test
     void setsTheConnectTimeout() {
         configuration.setConnectionTimeout(Duration.milliseconds(500));
-        assertThat(builder.using(configuration).createClient(apacheBuilder, connectionManager, "test")).isNotNull();
+        assertThat(builder.using(configuration).createClient(apacheBuilder, connectionManager, "test"))
+                .isNotNull();
 
         assertThat(apacheBuilder)
                 .extracting("defaultRequestConfig")
-                .isInstanceOfSatisfying(RequestConfig.class, requestConfig ->
-                        assertThat(requestConfig.getConnectTimeout()).isEqualTo(Timeout.ofMilliseconds(500L)));
+                .isInstanceOfSatisfying(
+                        RequestConfig.class, requestConfig -> assertThat(requestConfig.getConnectTimeout())
+                                .isEqualTo(Timeout.ofMilliseconds(500L)));
     }
 
     @Test
     void setsTheConnectionRequestTimeout() {
         configuration.setConnectionRequestTimeout(Duration.milliseconds(123));
 
-        assertThat(builder.using(configuration).createClient(apacheBuilder, connectionManager, "test")).isNotNull();
+        assertThat(builder.using(configuration).createClient(apacheBuilder, connectionManager, "test"))
+                .isNotNull();
         assertThat(apacheBuilder)
                 .extracting("defaultRequestConfig")
-                .isInstanceOfSatisfying(RequestConfig.class, requestConfig ->
-                        assertThat(requestConfig.getConnectionRequestTimeout()).isEqualTo(Timeout.ofMilliseconds(123L)));
+                .isInstanceOfSatisfying(
+                        RequestConfig.class, requestConfig -> assertThat(requestConfig.getConnectionRequestTimeout())
+                                .isEqualTo(Timeout.ofMilliseconds(123L)));
     }
 
     @Test
     void usesTheDefaultRoutePlanner() {
         final CloseableHttpClient httpClient = builder.using(configuration)
-                .createClient(apacheBuilder, connectionManager, "test").getClient();
+                .createClient(apacheBuilder, connectionManager, "test")
+                .getClient();
 
         assertThat(apacheBuilder).extracting("routePlanner").isNull();
         assertThat(httpClient).isNotNull();
@@ -387,16 +388,17 @@ class HttpClientBuilderTest {
         final HttpRoutePlanner routePlanner = new SystemDefaultRoutePlanner(new ProxySelector() {
             @Override
             public List<Proxy> select(URI uri) {
-                return Collections.singletonList(new Proxy(Proxy.Type.HTTP, new InetSocketAddress("192.168.52.1", 8080)));
+                return Collections.singletonList(
+                        new Proxy(Proxy.Type.HTTP, new InetSocketAddress("192.168.52.1", 8080)));
             }
 
             @Override
-            public void connectFailed(URI uri, SocketAddress sa, IOException ioe) {
-
-            }
+            public void connectFailed(URI uri, SocketAddress sa, IOException ioe) {}
         });
-        final CloseableHttpClient httpClient = builder.using(configuration).using(routePlanner)
-                .createClient(apacheBuilder, connectionManager, "test").getClient();
+        final CloseableHttpClient httpClient = builder.using(configuration)
+                .using(routePlanner)
+                .createClient(apacheBuilder, connectionManager, "test")
+                .getClient();
 
         assertThat(apacheBuilder).extracting("routePlanner").isSameAs(routePlanner);
         assertThat(httpClient).isNotNull();
@@ -407,13 +409,16 @@ class HttpClientBuilderTest {
     void usesACustomHttpRequestRetryHandler() {
         final HttpRequestRetryStrategy customHandler = new HttpRequestRetryStrategy() {
             @Override
-            public boolean retryRequest(HttpRequest request, IOException exception, int execCount, HttpContext context) {
+            public boolean retryRequest(
+                    HttpRequest request, IOException exception, int execCount, HttpContext context) {
                 return false;
             }
+
             @Override
             public boolean retryRequest(HttpResponse response, int execCount, HttpContext context) {
                 return false;
             }
+
             @Override
             @Nullable
             public TimeValue getRetryInterval(HttpResponse response, int execCount, HttpContext context) {
@@ -422,8 +427,10 @@ class HttpClientBuilderTest {
         };
 
         configuration.setRetries(1);
-        assertThat(builder.using(configuration).using(customHandler)
-                .createClient(apacheBuilder, connectionManager, "test")).isNotNull();
+        assertThat(builder.using(configuration)
+                        .using(customHandler)
+                        .createClient(apacheBuilder, connectionManager, "test"))
+                .isNotNull();
 
         assertThat(apacheBuilder).extracting("retryStrategy").isSameAs(customHandler);
     }
@@ -432,8 +439,7 @@ class HttpClientBuilderTest {
     void usesCredentialsProvider() {
         final CredentialsStore credentialsProvider = new CredentialsStore() {
             @Override
-            public void setCredentials(AuthScope authscope, Credentials credentials) {
-            }
+            public void setCredentials(AuthScope authscope, Credentials credentials) {}
 
             @Override
             @Nullable
@@ -442,12 +448,13 @@ class HttpClientBuilderTest {
             }
 
             @Override
-            public void clear() {
-            }
+            public void clear() {}
         };
 
-        assertThat(builder.using(configuration).using(credentialsProvider)
-                .createClient(apacheBuilder, connectionManager, "test")).isNotNull();
+        assertThat(builder.using(configuration)
+                        .using(credentialsProvider)
+                        .createClient(apacheBuilder, connectionManager, "test"))
+                .isNotNull();
 
         assertThat(apacheBuilder).extracting("credentialsProvider").isSameAs(credentialsProvider);
     }
@@ -477,15 +484,17 @@ class HttpClientBuilderTest {
         ProxyConfiguration proxy = new ProxyConfiguration("192.168.52.11", 8080, "http", auth);
         config.setProxyConfiguration(proxy);
 
-        CloseableHttpClient httpClient = checkProxy(config, new HttpHost("dropwizard.io", 80),
-                new HttpHost("http", "192.168.52.11", 8080));
+        CloseableHttpClient httpClient =
+                checkProxy(config, new HttpHost("dropwizard.io", 80), new HttpHost("http", "192.168.52.11", 8080));
 
         final AuthScope authScope = new AuthScope("192.168.52.11", 8080);
         final HttpContext httpContext = mock(HttpContext.class);
         final Credentials credentials = new UsernamePasswordCredentials("secret", "stuff".toCharArray());
-        assertThat(httpClient).extracting("credentialsProvider")
-                .isInstanceOfSatisfying(CredentialsProvider.class, credentialsProvider ->
-                        assertThat(credentialsProvider.getCredentials(authScope, httpContext)).isEqualTo(credentials));
+        assertThat(httpClient)
+                .extracting("credentialsProvider")
+                .isInstanceOfSatisfying(CredentialsProvider.class, credentialsProvider -> assertThat(
+                                credentialsProvider.getCredentials(authScope, httpContext))
+                        .isEqualTo(credentials));
     }
 
     @Test
@@ -495,15 +504,17 @@ class HttpClientBuilderTest {
         ProxyConfiguration proxy = new ProxyConfiguration("192.168.52.11", 8080, "http", auth);
         config.setProxyConfiguration(proxy);
 
-        CloseableHttpClient httpClient = checkProxy(config, new HttpHost("dropwizard.io", 80),
-                new HttpHost("http", "192.168.52.11", 8080));
+        CloseableHttpClient httpClient =
+                checkProxy(config, new HttpHost("dropwizard.io", 80), new HttpHost("http", "192.168.52.11", 8080));
 
         AuthScope authScope = new AuthScope(null, "192.168.52.11", 8080, "realm", "NTLM");
         Credentials credentials = new NTCredentials("secret", "stuff".toCharArray(), "host", "domain");
 
-        assertThat(httpClient).extracting("credentialsProvider")
-                .isInstanceOfSatisfying(CredentialsProvider.class, credentialsProvider ->
-                        assertThat(credentialsProvider.getCredentials(authScope, mock(HttpContext.class))).isEqualTo(credentials));
+        assertThat(httpClient)
+                .extracting("credentialsProvider")
+                .isInstanceOfSatisfying(CredentialsProvider.class, credentialsProvider -> assertThat(
+                                credentialsProvider.getCredentials(authScope, mock(HttpContext.class)))
+                        .isEqualTo(credentials));
     }
 
     @Test
@@ -531,22 +542,23 @@ class HttpClientBuilderTest {
         checkProxy(new HttpClientConfiguration(), new HttpHost("dropwizard.io", 80), null);
     }
 
-    private CloseableHttpClient checkProxy(HttpClientConfiguration config, HttpHost target,
-                                           @Nullable HttpHost expectedProxy) {
+    private CloseableHttpClient checkProxy(
+            HttpClientConfiguration config, HttpHost target, @Nullable HttpHost expectedProxy) {
         CloseableHttpClient httpClient = builder.using(config).build("test");
 
-        assertThat(httpClient).extracting("routePlanner")
-                        .isInstanceOfSatisfying(HttpRoutePlanner.class, routePlanner -> {
-                            HttpRoute route;
-                            try {
-                                route = routePlanner.determineRoute(target, new BasicHttpContext());
-                            } catch (HttpException e) {
-                                throw new RuntimeException(e);
-                            }
-                            assertThat(route.getProxyHost()).isEqualTo(expectedProxy);
-                            assertThat(route.getTargetHost()).isEqualTo(target);
-                            assertThat(route.getHopCount()).isEqualTo(expectedProxy != null ? 2 : 1);
-                        });
+        assertThat(httpClient)
+                .extracting("routePlanner")
+                .isInstanceOfSatisfying(HttpRoutePlanner.class, routePlanner -> {
+                    HttpRoute route;
+                    try {
+                        route = routePlanner.determineRoute(target, new BasicHttpContext());
+                    } catch (HttpException e) {
+                        throw new RuntimeException(e);
+                    }
+                    assertThat(route.getProxyHost()).isEqualTo(expectedProxy);
+                    assertThat(route.getTargetHost()).isEqualTo(target);
+                    assertThat(route.getHopCount()).isEqualTo(expectedProxy != null ? 2 : 1);
+                });
 
         return httpClient;
     }
@@ -566,20 +578,24 @@ class HttpClientBuilderTest {
     @Test
     void usesACustomHttpClientMetricNameStrategy() {
         assertThat(builder.using(HttpClientMetricNameStrategies.HOST_AND_METHOD)
-                .createClient(apacheBuilder, connectionManager, "test"))
+                        .createClient(apacheBuilder, connectionManager, "test"))
                 .isNotNull();
-        assertThat(apacheBuilder).extracting("requestExec")
-                .isInstanceOfSatisfying(InstrumentedHttpRequestExecutor.class, executor ->
-                        assertThat(executor).extracting("metricNameStrategy").isSameAs(HttpClientMetricNameStrategies.HOST_AND_METHOD));
+        assertThat(apacheBuilder)
+                .extracting("requestExec")
+                .isInstanceOfSatisfying(InstrumentedHttpRequestExecutor.class, executor -> assertThat(executor)
+                        .extracting("metricNameStrategy")
+                        .isSameAs(HttpClientMetricNameStrategies.HOST_AND_METHOD));
     }
 
     @Test
     void usesMethodOnlyHttpClientMetricNameStrategyByDefault() {
         assertThat(builder.createClient(apacheBuilder, connectionManager, "test"))
                 .isNotNull();
-        assertThat(apacheBuilder).extracting("requestExec")
-                .isInstanceOfSatisfying(InstrumentedHttpRequestExecutor.class, executor ->
-                        assertThat(executor).extracting("metricNameStrategy").isSameAs(HttpClientMetricNameStrategies.METHOD_ONLY));
+        assertThat(apacheBuilder)
+                .extracting("requestExec")
+                .isInstanceOfSatisfying(InstrumentedHttpRequestExecutor.class, executor -> assertThat(executor)
+                        .extracting("metricNameStrategy")
+                        .isSameAs(HttpClientMetricNameStrategies.METHOD_ONLY));
     }
 
     @Test
@@ -592,12 +608,12 @@ class HttpClientBuilderTest {
 
     @Test
     void disablesContentCompression() {
-        ConfiguredCloseableHttpClient client = builder
-                .disableContentCompression(true)
-                .createClient(apacheBuilder, connectionManager, "test");
+        ConfiguredCloseableHttpClient client =
+                builder.disableContentCompression(true).createClient(apacheBuilder, connectionManager, "test");
         assertThat(client).isNotNull();
         assertThat(apacheBuilder)
-                .extracting("contentCompressionDisabled", InstanceOfAssertFactories.BOOLEAN).isTrue();
+                .extracting("contentCompressionDisabled", InstanceOfAssertFactories.BOOLEAN)
+                .isTrue();
     }
 
     @Test
@@ -629,9 +645,7 @@ class HttpClientBuilderTest {
     void usesACustomRedirectStrategy() {
         RedirectStrategy neverFollowRedirectStrategy = new RedirectStrategy() {
             @Override
-            public boolean isRedirected(HttpRequest httpRequest,
-                                        HttpResponse httpResponse,
-                                        HttpContext httpContext) {
+            public boolean isRedirected(HttpRequest httpRequest, HttpResponse httpResponse, HttpContext httpContext) {
                 return false;
             }
 
@@ -641,17 +655,17 @@ class HttpClientBuilderTest {
                 return null;
             }
         };
-        ConfiguredCloseableHttpClient client = builder.using(neverFollowRedirectStrategy)
-                .createClient(apacheBuilder, connectionManager, "test");
+        ConfiguredCloseableHttpClient client =
+                builder.using(neverFollowRedirectStrategy).createClient(apacheBuilder, connectionManager, "test");
         assertThat(client).isNotNull();
         assertThat(apacheBuilder).extracting("redirectStrategy").isSameAs(neverFollowRedirectStrategy);
     }
 
     @Test
     void usesDefaultHeaders() {
-        final ConfiguredCloseableHttpClient client =
-                builder.using(Collections.singletonList(new BasicHeader(HttpHeaders.ACCEPT_LANGUAGE, "de")))
-                        .createClient(apacheBuilder, connectionManager, "test");
+        final ConfiguredCloseableHttpClient client = builder.using(
+                        Collections.singletonList(new BasicHeader(HttpHeaders.ACCEPT_LANGUAGE, "de")))
+                .createClient(apacheBuilder, connectionManager, "test");
         assertThat(client).isNotNull();
 
         assertThat(apacheBuilder)
@@ -666,13 +680,18 @@ class HttpClientBuilderTest {
     void usesHttpProcessor() {
         HttpProcessor httpProcessor = mock(HttpProcessor.class);
         final ConfiguredCloseableHttpClient client =
-                builder.using(httpProcessor)
-                        .createClient(apacheBuilder, connectionManager, "test");
+                builder.using(httpProcessor).createClient(apacheBuilder, connectionManager, "test");
         assertThat(client).isNotNull();
-        assertThat(apacheBuilder).extracting("requestInterceptors").asList()
-                .satisfies(requestInterceptors -> assertThat(requestInterceptors).hasSize(1));
-        assertThat(apacheBuilder).extracting("responseInterceptors").asList()
-                .satisfies(responseInterceptors -> assertThat(responseInterceptors).hasSize(1));
+        assertThat(apacheBuilder)
+                .extracting("requestInterceptors")
+                .asList()
+                .satisfies(
+                        requestInterceptors -> assertThat(requestInterceptors).hasSize(1));
+        assertThat(apacheBuilder)
+                .extracting("responseInterceptors")
+                .asList()
+                .satisfies(
+                        responseInterceptors -> assertThat(responseInterceptors).hasSize(1));
     }
 
     @Test
@@ -681,24 +700,24 @@ class HttpClientBuilderTest {
         assertThat(builder.customized).isFalse();
         builder.createClient(apacheBuilder, connectionManager, "test");
         assertThat(builder.customized).isTrue();
-        assertThat(apacheBuilder).extracting("requestExec")
-                .isInstanceOf(CustomRequestExecutor.class);
+        assertThat(apacheBuilder).extracting("requestExec").isInstanceOf(CustomRequestExecutor.class);
     }
 
     @Test
     void buildWithAnotherBuilder() {
         CustomBuilder builder = new CustomBuilder(new MetricRegistry(), anotherApacheBuilder);
         builder.build("test");
-        assertThat(anotherApacheBuilder).extracting("requestExec")
-                .isInstanceOf(CustomRequestExecutor.class);
+        assertThat(anotherApacheBuilder).extracting("requestExec").isInstanceOf(CustomRequestExecutor.class);
     }
 
     @Test
     void configureCredentialReturnsNTCredentialsForNTLMConfig() {
-        assertThat(builder.configureCredentials(new AuthConfiguration("username", "password", "NTLM", "realm", "hostname", "domain", "NT")))
+        assertThat(builder.configureCredentials(
+                        new AuthConfiguration("username", "password", "NTLM", "realm", "hostname", "domain", "NT")))
                 .isInstanceOfSatisfying(NTCredentials.class, credentials -> assertThat(credentials)
                         .satisfies(c -> assertThat(c.getPassword()).isEqualTo("password".toCharArray()))
-                        .satisfies(c -> assertThat(c.getUserPrincipal().getName()).isEqualTo("DOMAIN\\username")));
+                        .satisfies(
+                                c -> assertThat(c.getUserPrincipal().getName()).isEqualTo("DOMAIN\\username")));
     }
 
     @Test
@@ -706,6 +725,7 @@ class HttpClientBuilderTest {
         assertThat(builder.configureCredentials(new AuthConfiguration("username", "password")))
                 .isInstanceOfSatisfying(UsernamePasswordCredentials.class, upCredentials -> assertThat(upCredentials)
                         .satisfies(c -> assertThat(c.getPassword()).isEqualTo("password".toCharArray()))
-                        .satisfies(c -> assertThat(c.getUserPrincipal().getName()).isEqualTo("username")));
+                        .satisfies(
+                                c -> assertThat(c.getUserPrincipal().getName()).isEqualTo("username")));
     }
 }

@@ -1,19 +1,18 @@
 package io.dropwizard.jersey.guava;
 
 import com.google.common.base.Optional;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
+import java.util.List;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import javax.ws.rs.ext.ParamConverter;
+import javax.ws.rs.ext.ParamConverterProvider;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.glassfish.jersey.internal.inject.InjectionManager;
 import org.glassfish.jersey.internal.inject.Providers;
 import org.glassfish.jersey.internal.util.ReflectionHelper;
 import org.glassfish.jersey.internal.util.collection.ClassTypePair;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import javax.ws.rs.ext.ParamConverter;
-import javax.ws.rs.ext.ParamConverterProvider;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Type;
-import java.util.List;
 
 @Singleton
 public class OptionalParamConverterProvider implements ParamConverterProvider {
@@ -29,7 +28,8 @@ public class OptionalParamConverterProvider implements ParamConverterProvider {
      */
     @Override
     @Nullable
-    public <T> ParamConverter<T> getConverter(final Class<T> rawType, final Type genericType, final Annotation[] annotations) {
+    public <T> ParamConverter<T> getConverter(
+            final Class<T> rawType, final Type genericType, final Annotation[] annotations) {
         if (Optional.class.equals(rawType)) {
             final List<ClassTypePair> ctps = ReflectionHelper.getTypeArgumentAndClass(genericType);
             final ClassTypePair ctp = (ctps.size() == 1) ? ctps.get(0) : null;

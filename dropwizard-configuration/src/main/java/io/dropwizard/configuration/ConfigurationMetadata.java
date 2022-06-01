@@ -8,7 +8,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatVisitorWrapper;
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonObjectFormatVisitor;
 import com.fasterxml.jackson.databind.jsontype.TypeDeserializer;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -128,8 +127,7 @@ public class ConfigurationMetadata extends JsonFormatVisitorWrapper.Base {
                 }
 
                 // build the complete field path
-                String name = !currentPrefix.isEmpty() ? currentPrefix + "." + prop.getName()
-                        : prop.getName();
+                String name = !currentPrefix.isEmpty() ? currentPrefix + "." + prop.getName() : prop.getName();
 
                 // set state for the recursive traversal
                 int oldFieldSize = fields.size();
@@ -152,8 +150,7 @@ public class ConfigurationMetadata extends JsonFormatVisitorWrapper.Base {
                         mapper.getDeserializationConfig().findTypeDeserializer(fieldType);
 
                 // get the default impl if available
-                Class<?> defaultImpl =
-                        typeDeserializer != null ? typeDeserializer.getDefaultImpl() : null;
+                Class<?> defaultImpl = typeDeserializer != null ? typeDeserializer.getDefaultImpl() : null;
 
                 // remember current property
                 parentProps.add(prop);

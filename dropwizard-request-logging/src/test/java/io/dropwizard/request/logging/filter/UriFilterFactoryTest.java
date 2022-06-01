@@ -1,20 +1,19 @@
 package io.dropwizard.request.logging.filter;
 
-import ch.qos.logback.access.spi.IAccessEvent;
-import ch.qos.logback.core.filter.Filter;
-import ch.qos.logback.core.spi.FilterReply;
-import io.dropwizard.jackson.DiscoverableSubtypeResolver;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
+
+import ch.qos.logback.access.spi.IAccessEvent;
+import ch.qos.logback.core.filter.Filter;
+import ch.qos.logback.core.spi.FilterReply;
+import io.dropwizard.jackson.DiscoverableSubtypeResolver;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 class UriFilterFactoryTest {
     private final IAccessEvent accessEvent = mock(IAccessEvent.class);

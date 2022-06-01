@@ -5,11 +5,9 @@ import io.dropwizard.configuration.ConfigurationSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.core.Configuration;
 import io.dropwizard.jackson.Jackson;
-
 import java.io.File;
 
-public class POJOConfigurationFactory<C extends Configuration>
-    extends YamlConfigurationFactory<C> {
+public class POJOConfigurationFactory<C extends Configuration> extends YamlConfigurationFactory<C> {
     protected final C configuration;
 
     @SuppressWarnings("unchecked")

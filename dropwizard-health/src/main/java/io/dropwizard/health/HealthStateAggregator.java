@@ -1,9 +1,8 @@
 package io.dropwizard.health;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
-
 import java.util.Collection;
 import java.util.Optional;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public interface HealthStateAggregator {
     @NonNull

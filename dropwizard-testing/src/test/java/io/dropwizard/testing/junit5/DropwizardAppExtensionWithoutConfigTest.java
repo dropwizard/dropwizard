@@ -4,30 +4,33 @@ import io.dropwizard.core.Application;
 import io.dropwizard.core.Configuration;
 import io.dropwizard.core.setup.Environment;
 import io.dropwizard.testing.ConfigOverride;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-
+import java.util.Collections;
+import java.util.Map;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.Collections;
-import java.util.Map;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 @ExtendWith(DropwizardExtensionsSupport.class)
 class DropwizardAppExtensionWithoutConfigTest {
 
-    private static final DropwizardAppExtension<Configuration> EXTENSION = new DropwizardAppExtension<>(TestApplication.class, null,
-        ConfigOverride.config("server.applicationConnectors[0].port", "0"),
-        ConfigOverride.config("server.adminConnectors[0].port", "0"));
+    private static final DropwizardAppExtension<Configuration> EXTENSION = new DropwizardAppExtension<>(
+            TestApplication.class,
+            null,
+            ConfigOverride.config("server.applicationConnectors[0].port", "0"),
+            ConfigOverride.config("server.adminConnectors[0].port", "0"));
 
     @Test
     void runWithoutConfigFile() {
-        Map<?, ?> response = EXTENSION.client().target("http://localhost:" + EXTENSION.getLocalPort() + "/test")
-            .request()
-            .get(Map.class);
+        Map<?, ?> response = EXTENSION
+                .client()
+                .target("http://localhost:" + EXTENSION.getLocalPort() + "/test")
+                .request()
+                .get(Map.class);
         Assertions.assertEquals(Collections.singletonMap("color", "orange"), response);
     }
 

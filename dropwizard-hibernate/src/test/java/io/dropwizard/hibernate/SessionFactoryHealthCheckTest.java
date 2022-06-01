@@ -1,17 +1,5 @@
 package io.dropwizard.hibernate;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
-import org.hibernate.jdbc.ReturningWork;
-import org.hibernate.query.NativeQuery;
-import org.junit.jupiter.api.Test;
-import org.mockito.InOrder;
-
-import java.util.Optional;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hibernate.resource.transaction.spi.TransactionStatus.ACTIVE;
 import static org.mockito.ArgumentMatchers.any;
@@ -22,20 +10,29 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.Optional;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.hibernate.jdbc.ReturningWork;
+import org.hibernate.query.NativeQuery;
+import org.junit.jupiter.api.Test;
+import org.mockito.InOrder;
+
 @SuppressWarnings("HibernateResourceOpenedButNotSafelyClosed")
 class SessionFactoryHealthCheckTest {
     private final SessionFactory factory = mock(SessionFactory.class);
 
     @Test
     void hasASessionFactory() throws Exception {
-        assertThat(healthCheck().getSessionFactory())
-                .isEqualTo(factory);
+        assertThat(healthCheck().getSessionFactory()).isEqualTo(factory);
     }
 
     @Test
     void hasAValidationQuery() throws Exception {
-        assertThat(healthCheck("SELECT 1").getValidationQuery())
-                .isEqualTo(Optional.of("SELECT 1"));
+        assertThat(healthCheck("SELECT 1").getValidationQuery()).isEqualTo(Optional.of("SELECT 1"));
     }
 
     @Test
@@ -93,8 +90,7 @@ class SessionFactoryHealthCheckTest {
         when(session.createNativeQuery(anyString())).thenReturn(query);
         when(query.list()).thenThrow(new HibernateException("OH NOE"));
 
-        assertThat(healthCheck("SELECT 1").execute().isHealthy())
-                .isFalse();
+        assertThat(healthCheck("SELECT 1").execute().isHealthy()).isFalse();
 
         final InOrder inOrder = inOrder(factory, session, transaction, query);
         inOrder.verify(factory).openSession();
@@ -134,5 +130,4 @@ class SessionFactoryHealthCheckTest {
     private SessionFactoryHealthCheck healthCheck(@Nullable String validationQuery) {
         return new SessionFactoryHealthCheck(factory, Optional.ofNullable(validationQuery));
     }
-
 }

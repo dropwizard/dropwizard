@@ -1,5 +1,8 @@
 package io.dropwizard.core.server;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,15 +18,6 @@ import io.dropwizard.logging.common.FileAppenderFactory;
 import io.dropwizard.logging.common.SyslogAppenderFactory;
 import io.dropwizard.servlets.tasks.Task;
 import io.dropwizard.validation.BaseValidator;
-import org.eclipse.jetty.server.AbstractNetworkConnector;
-import org.eclipse.jetty.server.Server;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import javax.validation.Validator;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
@@ -33,9 +27,14 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import javax.validation.Validator;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import org.eclipse.jetty.server.AbstractNetworkConnector;
+import org.eclipse.jetty.server.Server;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class SimpleServerFactoryTest {
 
@@ -46,16 +45,20 @@ public class SimpleServerFactoryTest {
     void setUp() throws Exception {
         final ObjectMapper objectMapper = environment.getObjectMapper();
         final Validator validator = environment.getValidator();
-        objectMapper.getSubtypeResolver().registerSubtypes(ConsoleAppenderFactory.class,
-                FileAppenderFactory.class, SyslogAppenderFactory.class, HttpConnectorFactory.class);
+        objectMapper
+                .getSubtypeResolver()
+                .registerSubtypes(
+                        ConsoleAppenderFactory.class,
+                        FileAppenderFactory.class,
+                        SyslogAppenderFactory.class,
+                        HttpConnectorFactory.class);
         http = (SimpleServerFactory) new YamlConfigurationFactory<>(ServerFactory.class, validator, objectMapper, "dw")
                 .build(new ResourceConfigurationSourceProvider(), "yaml/simple_server.yml");
     }
 
     @Test
     void isDiscoverable() {
-        assertThat(new DiscoverableSubtypeResolver().getDiscoveredSubtypes())
-                .contains(SimpleServerFactory.class);
+        assertThat(new DiscoverableSubtypeResolver().getDiscoveredSubtypes()).contains(SimpleServerFactory.class);
     }
 
     @Test
@@ -71,8 +74,9 @@ public class SimpleServerFactoryTest {
     @Test
     void testGetPort() {
         assertThat(http.getConnector())
-            .isInstanceOfSatisfying(HttpConnectorFactory.class, httpConnectorFactory ->
-                assertThat(httpConnectorFactory.getPort()).isZero());
+                .isInstanceOfSatisfying(
+                        HttpConnectorFactory.class, httpConnectorFactory -> assertThat(httpConnectorFactory.getPort())
+                                .isZero());
     }
 
     @Test
@@ -97,22 +101,21 @@ public class SimpleServerFactoryTest {
         http.configure(environment);
 
         assertEquals(http.getAdminContextPath(), environment.getAdminContext().getContextPath());
-        assertEquals(http.getApplicationContextPath(), environment.getApplicationContext().getContextPath());
+        assertEquals(
+                http.getApplicationContextPath(),
+                environment.getApplicationContext().getContextPath());
     }
 
     @Test
     void testDeserializeWithoutJsonAutoDetect() throws ConfigurationException, IOException {
-        final ObjectMapper objectMapper = Jackson.newObjectMapper()
-            .setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE);
+        final ObjectMapper objectMapper =
+                Jackson.newObjectMapper().setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE);
 
         assertThat(new YamlConfigurationFactory<>(
-                SimpleServerFactory.class,
-                BaseValidator.newValidator(),
-                objectMapper,
-                "dw"
-                ).build(new ResourceConfigurationSourceProvider(), "yaml/simple_server.yml")
-                .getApplicationContextPath())
-            .isEqualTo("/service");
+                                SimpleServerFactory.class, BaseValidator.newValidator(), objectMapper, "dw")
+                        .build(new ResourceConfigurationSourceProvider(), "yaml/simple_server.yml")
+                        .getApplicationContextPath())
+                .isEqualTo("/service");
     }
 
     public static String httpRequest(String requestMethod, String url) throws Exception {
@@ -142,7 +145,10 @@ public class SimpleServerFactoryTest {
 
         @Override
         public void execute(Map<String, List<String>> parameters, PrintWriter output) throws Exception {
-            final String name = parameters.getOrDefault("name", Collections.emptyList()).iterator().next();
+            final String name = parameters
+                    .getOrDefault("name", Collections.emptyList())
+                    .iterator()
+                    .next();
             output.print("Hello, " + name + "!");
             output.flush();
         }

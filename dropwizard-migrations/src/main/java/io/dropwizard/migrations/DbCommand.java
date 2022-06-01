@@ -1,30 +1,36 @@
 package io.dropwizard.migrations;
 
+import static java.util.Objects.requireNonNull;
+
 import io.dropwizard.core.Configuration;
 import io.dropwizard.db.DatabaseConfiguration;
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import liquibase.Liquibase;
 import liquibase.Scope;
 import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-import java.util.Map;
-import java.util.SortedMap;
-import java.util.TreeMap;
-
-import static java.util.Objects.requireNonNull;
-
 public class DbCommand<T extends Configuration> extends AbstractLiquibaseCommand<T> {
     private static final String COMMAND_NAME_ATTR = "subcommand";
     private final SortedMap<String, AbstractLiquibaseCommand<T>> subcommands;
+
     @Nullable
     private final Map<String, Object> scopedObjects;
 
-    public DbCommand(String name, DatabaseConfiguration<T> strategy, Class<T> configurationClass, String migrationsFileName) {
+    public DbCommand(
+            String name, DatabaseConfiguration<T> strategy, Class<T> configurationClass, String migrationsFileName) {
         this(name, strategy, configurationClass, migrationsFileName, null);
     }
 
-    public DbCommand(String name, DatabaseConfiguration<T> strategy, Class<T> configurationClass, String migrationsFileName, @Nullable Map<String, Object> scopedObjects) {
+    public DbCommand(
+            String name,
+            DatabaseConfiguration<T> strategy,
+            Class<T> configurationClass,
+            String migrationsFileName,
+            @Nullable Map<String, Object> scopedObjects) {
         super(name, "Run database migration tasks", strategy, configurationClass, migrationsFileName);
         this.subcommands = new TreeMap<>();
         addSubcommand(new DbCalculateChecksumCommand<>(strategy, configurationClass, migrationsFileName));
@@ -50,10 +56,11 @@ public class DbCommand<T extends Configuration> extends AbstractLiquibaseCommand
     @Override
     public void configure(Subparser subparser) {
         for (AbstractLiquibaseCommand<T> subcommand : subcommands.values()) {
-            final Subparser cmdParser = subparser.addSubparsers()
-                                                 .addParser(subcommand.getName())
-                                                 .setDefault(COMMAND_NAME_ATTR, subcommand.getName())
-                                                 .description(subcommand.getDescription());
+            final Subparser cmdParser = subparser
+                    .addSubparsers()
+                    .addParser(subcommand.getName())
+                    .setDefault(COMMAND_NAME_ATTR, subcommand.getName())
+                    .description(subcommand.getDescription());
             subcommand.configure(cmdParser);
         }
     }
@@ -65,7 +72,7 @@ public class DbCommand<T extends Configuration> extends AbstractLiquibaseCommand
             scopeId = Scope.enter(scopedObjects);
         }
         final AbstractLiquibaseCommand<T> subcommand =
-            requireNonNull(subcommands.get(namespace.getString(COMMAND_NAME_ATTR)), "Unable find the command");
+                requireNonNull(subcommands.get(namespace.getString(COMMAND_NAME_ATTR)), "Unable find the command");
         try {
             subcommand.run(namespace, liquibase);
         } finally {

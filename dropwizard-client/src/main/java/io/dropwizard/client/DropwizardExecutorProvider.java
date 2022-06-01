@@ -1,9 +1,8 @@
 package io.dropwizard.client;
 
+import java.util.concurrent.ExecutorService;
 import org.glassfish.jersey.client.ClientAsyncExecutor;
 import org.glassfish.jersey.spi.ExecutorServiceProvider;
-
-import java.util.concurrent.ExecutorService;
 
 /**
  * An {@link ExecutorServiceProvider} implementation for use within
@@ -26,9 +25,9 @@ class DropwizardExecutorProvider implements ExecutorServiceProvider {
     @Override
     public void dispose(ExecutorService executorService) {
         /*
-         Jersey makes copies of clients, including the executor
-         This means we cannot shut down the ExecutorService here as it may be in use elsewhere
-         https://github.com/dropwizard/dropwizard/issues/2218
-         */
+        Jersey makes copies of clients, including the executor
+        This means we cannot shut down the ExecutorService here as it may be in use elsewhere
+        https://github.com/dropwizard/dropwizard/issues/2218
+        */
     }
 }

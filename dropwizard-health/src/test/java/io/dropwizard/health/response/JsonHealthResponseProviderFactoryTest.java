@@ -1,5 +1,10 @@
 package io.dropwizard.health.response;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
@@ -8,20 +13,14 @@ import io.dropwizard.health.HealthStatusChecker;
 import io.dropwizard.jackson.DiscoverableSubtypeResolver;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.validation.Validators;
+import java.util.Collections;
+import java.util.List;
+import javax.validation.Validator;
+import javax.ws.rs.core.MediaType;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import javax.validation.Validator;
-import javax.ws.rs.core.MediaType;
-import java.util.Collections;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.isNull;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class JsonHealthResponseProviderFactoryTest {
@@ -32,6 +31,7 @@ class JsonHealthResponseProviderFactoryTest {
 
     @Mock
     private HealthStatusChecker healthStatusChecker;
+
     @Mock
     private HealthStateAggregator healthStateAggregator;
 
@@ -50,12 +50,13 @@ class JsonHealthResponseProviderFactoryTest {
     @Test
     void testBuildJsonHealthResponseProvider() throws Exception {
         // given
-        final HealthResponseProviderFactory factory = configFactory.build(new ResourceConfigurationSourceProvider(), "/yml/json-response-provider.yml");
+        final HealthResponseProviderFactory factory =
+                configFactory.build(new ResourceConfigurationSourceProvider(), "/yml/json-response-provider.yml");
 
         // when
         when(healthStatusChecker.isHealthy(isNull())).thenReturn(true);
-        final HealthResponseProvider responseProvider = factory.build(healthStatusChecker, healthStateAggregator,
-                mapper);
+        final HealthResponseProvider responseProvider =
+                factory.build(healthStatusChecker, healthStateAggregator, mapper);
         final HealthResponse response = responseProvider.healthResponse(Collections.emptyMap());
 
         // then

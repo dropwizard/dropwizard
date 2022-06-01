@@ -1,21 +1,20 @@
 package io.dropwizard.core.cli;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import io.dropwizard.core.Application;
 import io.dropwizard.core.Configuration;
 import io.dropwizard.core.setup.Bootstrap;
 import io.dropwizard.core.setup.Environment;
 import io.dropwizard.util.JarLocation;
+import java.io.ByteArrayOutputStream;
+import java.util.Optional;
 import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.io.ByteArrayOutputStream;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 class CommandTest {
     private static class TestCommand extends Command {
@@ -29,14 +28,12 @@ class CommandTest {
         }
 
         @Override
-        public void run(Bootstrap<?> bootstrap, Namespace namespace) throws Exception {
-        }
+        public void run(Bootstrap<?> bootstrap, Namespace namespace) throws Exception {}
     }
 
     private final Application<Configuration> app = new Application<Configuration>() {
         @Override
-        public void run(Configuration configuration, Environment environment) throws Exception {
-        }
+        public void run(Configuration configuration, Environment environment) throws Exception {}
     };
 
     private final ByteArrayOutputStream stdOut = new ByteArrayOutputStream();
@@ -57,23 +54,18 @@ class CommandTest {
 
     @Test
     void listHelpOnceOnArgumentOmission() throws Exception {
-        assertThat(cli.run("test", "-h"))
-            .isEmpty();
+        assertThat(cli.run("test", "-h")).isEmpty();
 
         assertThat(stdOut)
-            .hasToString(String.format(
-                "usage: java -jar dw-thing.jar test [-h] {a,b,c}%n" +
-                    "%n" +
-                    "test%n" +
-                    "%n" +
-                    "positional arguments:%n" +
-                    "  {a,b,c}                Type to use%n" +
-                    "%n" +
-                    "named arguments:%n" +
-                    "  -h, --help             show this help message and exit%n"
-            ));
+                .hasToString(String.format("usage: java -jar dw-thing.jar test [-h] {a,b,c}%n" + "%n"
+                        + "test%n"
+                        + "%n"
+                        + "positional arguments:%n"
+                        + "  {a,b,c}                Type to use%n"
+                        + "%n"
+                        + "named arguments:%n"
+                        + "  -h, --help             show this help message and exit%n"));
 
-        assertThat(stdErr.toString())
-            .isEmpty();
+        assertThat(stdErr.toString()).isEmpty();
     }
 }

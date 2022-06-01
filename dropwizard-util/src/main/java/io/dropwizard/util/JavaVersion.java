@@ -6,8 +6,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * @since 2.0
  */
 public final class JavaVersion {
-    private JavaVersion() {
-    }
+    private JavaVersion() {}
 
     public static boolean isJava8() {
         final String specVersion = getJavaSpecVersion();

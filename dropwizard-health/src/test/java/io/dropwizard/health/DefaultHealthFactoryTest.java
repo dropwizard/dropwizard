@@ -1,5 +1,13 @@
 package io.dropwizard.health;
 
+import static java.util.Collections.singletonList;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheckRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,31 +22,23 @@ import io.dropwizard.jetty.setup.ServletEnvironment;
 import io.dropwizard.lifecycle.ExecutorServiceManager;
 import io.dropwizard.lifecycle.JettyManaged;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
-import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
-
+import java.util.stream.Collectors;
 import javax.servlet.Servlet;
 import javax.servlet.ServletRegistration;
 import javax.validation.Validator;
-import java.util.stream.Collectors;
-
-import static java.util.Collections.singletonList;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 
 class DefaultHealthFactoryTest {
     private final ObjectMapper objectMapper = Jackson.newObjectMapper();
     private final Validator validator = Validators.newValidator();
     private final YamlConfigurationFactory<DefaultHealthFactory> configFactory =
-        new YamlConfigurationFactory<>(DefaultHealthFactory.class, validator, objectMapper, "dw");
+            new YamlConfigurationFactory<>(DefaultHealthFactory.class, validator, objectMapper, "dw");
 
     @Test
     void shouldBuildHealthFactoryFromYaml() throws Exception {
-        final DefaultHealthFactory healthFactory = configFactory.build(new ResourceConfigurationSourceProvider(), "/yml/health.yml");
+        final DefaultHealthFactory healthFactory =
+                configFactory.build(new ResourceConfigurationSourceProvider(), "/yml/health.yml");
 
         assertThat(healthFactory.isDelayedShutdownHandlerEnabled()).isTrue();
         assertThat(healthFactory.isEnabled()).isTrue();
@@ -46,19 +46,19 @@ class DefaultHealthFactoryTest {
         assertThat(healthFactory.getShutdownWaitPeriod().toMilliseconds()).isEqualTo(1L);
         assertThat(healthFactory.getHealthCheckUrlPaths()).isEqualTo(singletonList("/health-check"));
 
-        assertThat(healthFactory.getHealthCheckConfigurations()
-            .stream()
-            .map(HealthCheckConfiguration::getName)
-            .collect(Collectors.toList()))
-            .contains("foundationdb", "kafka", "redis");
-        assertThat(healthFactory.getHealthCheckConfigurations()
-            .stream()
-            .map(HealthCheckConfiguration::isCritical)
-            .collect(Collectors.toList()))
-            .contains(true, false, false);
+        assertThat(healthFactory.getHealthCheckConfigurations().stream()
+                        .map(HealthCheckConfiguration::getName)
+                        .collect(Collectors.toList()))
+                .contains("foundationdb", "kafka", "redis");
+        assertThat(healthFactory.getHealthCheckConfigurations().stream()
+                        .map(HealthCheckConfiguration::isCritical)
+                        .collect(Collectors.toList()))
+                .contains(true, false, false);
         healthFactory.getHealthCheckConfigurations().forEach(healthCheckConfig -> {
-            assertThat(healthCheckConfig.getSchedule().getCheckInterval().toSeconds()).isEqualTo(5L);
-            assertThat(healthCheckConfig.getSchedule().getDowntimeInterval().toSeconds()).isEqualTo(30L);
+            assertThat(healthCheckConfig.getSchedule().getCheckInterval().toSeconds())
+                    .isEqualTo(5L);
+            assertThat(healthCheckConfig.getSchedule().getDowntimeInterval().toSeconds())
+                    .isEqualTo(30L);
             assertThat(healthCheckConfig.getSchedule().getFailureAttempts()).isEqualTo(3);
             assertThat(healthCheckConfig.getSchedule().getSuccessAttempts()).isEqualTo(2);
         });
@@ -66,7 +66,8 @@ class DefaultHealthFactoryTest {
 
     @Test
     void configure() throws Exception {
-        final DefaultHealthFactory healthFactory = configFactory.build(new ResourceConfigurationSourceProvider(), "/yml/health.yml");
+        final DefaultHealthFactory healthFactory =
+                configFactory.build(new ResourceConfigurationSourceProvider(), "/yml/health.yml");
 
         LifecycleEnvironment lifecycleEnvironment = new LifecycleEnvironment(new MetricRegistry());
 
@@ -74,28 +75,30 @@ class DefaultHealthFactoryTest {
         ServletEnvironment servletEnvironment = mock(ServletEnvironment.class);
         ArgumentCaptor<Servlet> servletCaptor = ArgumentCaptor.forClass(Servlet.class);
         when(servletEnvironment.addServlet(eq("health-check-test-servlet"), any(Servlet.class)))
-            .thenReturn(mockServletRegistration);
+                .thenReturn(mockServletRegistration);
 
         HealthEnvironment healthEnvironment = new HealthEnvironment(mock(HealthCheckRegistry.class));
 
         healthFactory.configure(
-            lifecycleEnvironment,
-            servletEnvironment,
-            mock(JerseyEnvironment.class),
-            healthEnvironment,
-            new ObjectMapper(),
-            "test");
+                lifecycleEnvironment,
+                servletEnvironment,
+                mock(JerseyEnvironment.class),
+                healthEnvironment,
+                new ObjectMapper(),
+                "test");
 
         assertThat(lifecycleEnvironment.getManagedObjects())
-            .hasSize(2)
-            .allSatisfy(obj -> assertThat(obj).isInstanceOf(JettyManaged.class))
-            .map(managed -> ((JettyManaged)managed).getManaged())
-            .satisfies(obj -> assertThat(obj).element(0).isInstanceOfSatisfying(ExecutorServiceManager.class, executorServiceManager ->
-                assertThat(executorServiceManager.getPoolName()).isEqualTo("health-check-test-scheduled-executor")))
-            .satisfies(obj -> assertThat(obj).element(1).isInstanceOf(HealthCheckConfigValidator.class));
+                .hasSize(2)
+                .allSatisfy(obj -> assertThat(obj).isInstanceOf(JettyManaged.class))
+                .map(managed -> ((JettyManaged) managed).getManaged())
+                .satisfies(obj -> assertThat(obj)
+                        .element(0)
+                        .isInstanceOfSatisfying(ExecutorServiceManager.class, executorServiceManager -> assertThat(
+                                        executorServiceManager.getPoolName())
+                                .isEqualTo("health-check-test-scheduled-executor")))
+                .satisfies(obj -> assertThat(obj).element(1).isInstanceOf(HealthCheckConfigValidator.class));
 
-        assertThat(healthFactory.getHealthResponderFactory())
-            .isInstanceOf(ServletHealthResponderFactory.class);
+        assertThat(healthFactory.getHealthResponderFactory()).isInstanceOf(ServletHealthResponderFactory.class);
 
         verify(servletEnvironment).addServlet(eq("health-check-test-servlet"), servletCaptor.capture());
         assertThat(servletCaptor.getValue()).isInstanceOf(ServletHealthResponder.class);

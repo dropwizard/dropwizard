@@ -16,6 +16,6 @@ public class ClassicLogFormat {
         // `AbstractNCSARequestLog`, and this is the best approximation
         // of that class
         return "%{client}a - %u %{dd/MMM/yyyy:HH:mm:ss Z|" + tz.getID()
-            + "}t \"%m %U %H\" %s %O \"%{Referer}i\" \"%{User-Agent}i\" %{ms}T";
+                + "}t \"%m %U %H\" %s %O \"%{Referer}i\" \"%{User-Agent}i\" %{ms}T";
     }
 }

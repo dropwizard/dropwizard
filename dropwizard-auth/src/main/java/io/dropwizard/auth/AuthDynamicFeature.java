@@ -1,11 +1,7 @@
 package io.dropwizard.auth;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
-import org.glassfish.jersey.InjectionManagerProvider;
-import org.glassfish.jersey.internal.inject.InjectionManager;
-import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
-import org.glassfish.jersey.server.model.AnnotatedMethod;
-
+import java.lang.annotation.Annotation;
+import java.util.Optional;
 import javax.annotation.security.DenyAll;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
@@ -14,8 +10,11 @@ import javax.ws.rs.container.DynamicFeature;
 import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.Feature;
 import javax.ws.rs.core.FeatureContext;
-import java.lang.annotation.Annotation;
-import java.util.Optional;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.glassfish.jersey.InjectionManagerProvider;
+import org.glassfish.jersey.internal.inject.InjectionManager;
+import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
+import org.glassfish.jersey.server.model.AnnotatedMethod;
 
 /**
  * A {@link DynamicFeature} that registers the provided auth filter
@@ -69,10 +68,11 @@ public class AuthDynamicFeature implements Feature, DynamicFeature {
 
         // Second, check for any authorization annotations on the class or method.
         // Note that @DenyAll shouldn't be attached to classes.
-        final boolean annotationOnClass = (resourceInfo.getResourceClass().getAnnotation(RolesAllowed.class) != null) ||
-            (resourceInfo.getResourceClass().getAnnotation(PermitAll.class) != null);
-        final boolean annotationOnMethod = am.isAnnotationPresent(RolesAllowed.class) || am.isAnnotationPresent(DenyAll.class) ||
-            am.isAnnotationPresent(PermitAll.class);
+        final boolean annotationOnClass = (resourceInfo.getResourceClass().getAnnotation(RolesAllowed.class) != null)
+                || (resourceInfo.getResourceClass().getAnnotation(PermitAll.class) != null);
+        final boolean annotationOnMethod = am.isAnnotationPresent(RolesAllowed.class)
+                || am.isAnnotationPresent(DenyAll.class)
+                || am.isAnnotationPresent(PermitAll.class);
 
         if (annotationOnClass || annotationOnMethod) {
             registerAuthFilter(context);

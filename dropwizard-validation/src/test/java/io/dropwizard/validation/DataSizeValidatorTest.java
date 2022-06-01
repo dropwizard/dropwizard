@@ -1,17 +1,16 @@
 package io.dropwizard.validation;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
+
 import io.dropwizard.util.DataSize;
 import io.dropwizard.util.DataSizeUnit;
-import org.junit.jupiter.api.Test;
-
-import javax.validation.Valid;
-import javax.validation.Validator;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
+import javax.validation.Valid;
+import javax.validation.Validator;
+import org.junit.jupiter.api.Test;
 
 class DataSizeValidatorTest {
     @SuppressWarnings("unused")
@@ -66,17 +65,18 @@ class DataSizeValidatorTest {
 
     @Test
     void returnsASetOfErrorsForAnObject() {
-        assumeTrue("en".equals(Locale.getDefault().getLanguage()),
+        assumeTrue(
+                "en".equals(Locale.getDefault().getLanguage()),
                 "This test executes when the defined language is English ('en'). If not, it is skipped.");
 
         assertThat(ConstraintViolations.format(validator.validate(new Example())))
-                .containsOnly("outOfRange must be between 10 KILOBYTES and 100 KILOBYTES",
+                .containsOnly(
+                        "outOfRange must be between 10 KILOBYTES and 100 KILOBYTES",
                         "tooBig must be less than or equal to 30 KILOBYTES",
                         "tooSmall must be greater than or equal to 30 KILOBYTES",
                         "maxDataSize[0].<list element> must be less than or equal to 30 KILOBYTES",
                         "minDataSize[0].<list element> must be greater than or equal to 30 KILOBYTES",
                         "rangeDataSize[0].<list element> must be between 10 KILOBYTES and 100 KILOBYTES");
-
     }
 
     @Test

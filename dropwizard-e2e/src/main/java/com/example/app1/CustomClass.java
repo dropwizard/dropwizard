@@ -1,4 +1,3 @@
 package com.example.app1;
 
-public class CustomClass {
-}
+public class CustomClass {}

@@ -16,14 +16,12 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.deser.Deserializers;
 import com.fasterxml.jackson.databind.ser.Serializers;
 import com.google.common.cache.CacheBuilderSpec;
-
 import java.io.IOException;
 
 public class GuavaExtrasModule extends Module {
     private static class CacheBuilderSpecDeserializer extends JsonDeserializer<CacheBuilderSpec> {
         @Override
-        public CacheBuilderSpec deserialize(JsonParser jp,
-                                            DeserializationContext ctxt) throws IOException {
+        public CacheBuilderSpec deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
             final String text = jp.getText();
             final boolean disabled = "off".equalsIgnoreCase(text) || "disabled".equalsIgnoreCase(text);
             return disabled ? CacheBuilderSpec.disableCaching() : CacheBuilderSpec.parse(text);
@@ -32,16 +30,16 @@ public class GuavaExtrasModule extends Module {
 
     private static class CacheBuilderSpecSerializer extends JsonSerializer<CacheBuilderSpec> {
         @Override
-        public void serialize(CacheBuilderSpec value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+        public void serialize(CacheBuilderSpec value, JsonGenerator gen, SerializerProvider serializers)
+                throws IOException {
             gen.writeString(value.toParsableString());
         }
     }
 
     private static class GuavaExtrasDeserializers extends Deserializers.Base {
         @Override
-        public JsonDeserializer<?> findBeanDeserializer(JavaType type,
-                                                        DeserializationConfig config,
-                                                        BeanDescription beanDesc) throws JsonMappingException {
+        public JsonDeserializer<?> findBeanDeserializer(
+                JavaType type, DeserializationConfig config, BeanDescription beanDesc) throws JsonMappingException {
             if (CacheBuilderSpec.class.isAssignableFrom(type.getRawClass())) {
                 return new CacheBuilderSpecDeserializer();
             }

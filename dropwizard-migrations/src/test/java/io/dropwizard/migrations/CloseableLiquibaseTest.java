@@ -1,5 +1,8 @@
 package io.dropwizard.migrations;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.parallel.ExecutionMode.SAME_THREAD;
+
 import com.codahale.metrics.MetricRegistry;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.db.ManagedPooledDataSource;
@@ -7,9 +10,6 @@ import org.apache.tomcat.jdbc.pool.ConnectionPool;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.parallel.ExecutionMode.SAME_THREAD;
 
 @Execution(SAME_THREAD)
 class CloseableLiquibaseTest {

@@ -1,6 +1,7 @@
 package io.dropwizard.benchmarks.util;
 
 import io.dropwizard.util.DataSize;
+import java.util.concurrent.TimeUnit;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Mode;
@@ -9,8 +10,6 @@ import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
-
-import java.util.concurrent.TimeUnit;
 
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
@@ -29,11 +28,11 @@ public class DataSizeBenchmark {
 
     public static void main(String[] args) throws Exception {
         new Runner(new OptionsBuilder()
-                .include(DataSizeBenchmark.class.getSimpleName())
-                .forks(1)
-                .warmupIterations(5)
-                .measurementIterations(5)
-                .build())
+                        .include(DataSizeBenchmark.class.getSimpleName())
+                        .forks(1)
+                        .warmupIterations(5)
+                        .measurementIterations(5)
+                        .build())
                 .run();
     }
 }

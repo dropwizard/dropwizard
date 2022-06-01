@@ -1,22 +1,21 @@
 package io.dropwizard.jersey.jackson;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.jersey.AbstractJerseyTest;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.jersey.errors.LoggingExceptionMapper;
-import org.glassfish.jersey.client.ClientConfig;
-import org.junit.jupiter.api.Test;
-
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import org.glassfish.jersey.client.ClientConfig;
+import org.junit.jupiter.api.Test;
 
 abstract class JsonProcessingExceptionMapperTest extends AbstractJerseyTest {
 
@@ -27,7 +26,7 @@ abstract class JsonProcessingExceptionMapperTest extends AbstractJerseyTest {
         return DropwizardResourceConfig.forTesting()
                 .packages("io.dropwizard.jersey.jackson")
                 .register(new JsonProcessingExceptionMapper(showDetails()))
-                .register(new LoggingExceptionMapper<Throwable>() { });
+                .register(new LoggingExceptionMapper<Throwable>() {});
     }
 
     @Override
@@ -44,8 +43,8 @@ abstract class JsonProcessingExceptionMapperTest extends AbstractJerseyTest {
 
     @Test
     void returnsA500ForListNonDeserializableRepresentationClasses() throws Exception {
-        final List<BrokenRepresentation> ent =
-                Arrays.asList(new BrokenRepresentation(Collections.emptyList()),
+        final List<BrokenRepresentation> ent = Arrays.asList(
+                new BrokenRepresentation(Collections.emptyList()),
                 new BrokenRepresentation(Collections.singletonList("whoo")));
 
         assertEndpointReturns500("brokenList", ent);
@@ -53,7 +52,9 @@ abstract class JsonProcessingExceptionMapperTest extends AbstractJerseyTest {
 
     @Test
     void returnsA500ForNonSerializableRepresentationClassesOutbound() throws Exception {
-        Response response = target("/json/brokenOutbound").request(MediaType.APPLICATION_JSON).get();
+        Response response = target("/json/brokenOutbound")
+                .request(MediaType.APPLICATION_JSON)
+                .get();
         assertThat(response.getStatus()).isEqualTo(500);
         assertThat(response.getMediaType()).isEqualTo(MediaType.APPLICATION_JSON_TYPE);
     }
@@ -76,7 +77,6 @@ abstract class JsonProcessingExceptionMapperTest extends AbstractJerseyTest {
     @Test
     void returnsA500ForCustomDeserializerUnexpected() throws Exception {
         assertEndpointReturns500("custom", "\"SQL_INECTION\"");
-
     }
 
     @Test
@@ -121,8 +121,8 @@ abstract class JsonProcessingExceptionMapperTest extends AbstractJerseyTest {
 
     private <T> void assertEndpointReturns400WithoutDetails(String endpoint, T entity) {
         Response response = target(String.format("/json/%s", endpoint))
-            .request(MediaType.APPLICATION_JSON)
-            .post(Entity.entity(entity, MediaType.APPLICATION_JSON));
+                .request(MediaType.APPLICATION_JSON)
+                .post(Entity.entity(entity, MediaType.APPLICATION_JSON));
         assertThat(response.getStatus()).isEqualTo(400);
 
         JsonNode errorMessage = response.readEntity(JsonNode.class);
@@ -133,8 +133,8 @@ abstract class JsonProcessingExceptionMapperTest extends AbstractJerseyTest {
 
     private <T> void assertEndpointReturns400(String endpoint, T entity) {
         Response response = target(String.format("/json/%s", endpoint))
-            .request(MediaType.APPLICATION_JSON)
-            .post(Entity.entity(entity, MediaType.APPLICATION_JSON));
+                .request(MediaType.APPLICATION_JSON)
+                .post(Entity.entity(entity, MediaType.APPLICATION_JSON));
         assertThat(response.getStatus()).isEqualTo(400);
 
         JsonNode errorMessage = response.readEntity(JsonNode.class);
@@ -149,14 +149,14 @@ abstract class JsonProcessingExceptionMapperTest extends AbstractJerseyTest {
 
     private <T> void assertEndpointReturns500(String endpoint, T entity) {
         Response response = target(String.format("/json/%s", endpoint))
-            .request(MediaType.APPLICATION_JSON)
-            .post(Entity.entity(entity, MediaType.APPLICATION_JSON));
+                .request(MediaType.APPLICATION_JSON)
+                .post(Entity.entity(entity, MediaType.APPLICATION_JSON));
         assertThat(response.getStatus()).isEqualTo(500);
 
         JsonNode errorMessage = response.readEntity(JsonNode.class);
         assertThat(errorMessage.path("code").asInt()).isEqualTo(500);
         assertThat(errorMessage.path("message").asText())
-            .matches("There was an error processing your request. It has been logged \\(ID \\w+\\).");
+                .matches("There was an error processing your request. It has been logged \\(ID \\w+\\).");
         assertThat(errorMessage.has("details")).isFalse();
     }
 }

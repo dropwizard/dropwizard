@@ -1,27 +1,28 @@
 package io.dropwizard.testing.junit;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.core.setup.Environment;
 import io.dropwizard.testing.app.DropwizardTestApplication;
 import io.dropwizard.testing.app.TestConfiguration;
-import org.junit.ClassRule;
-import org.junit.Test;
-
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.ClassRule;
+import org.junit.Test;
 
 public class DropwizardAppRuleTest {
     @SuppressWarnings("deprecation")
     @ClassRule
-    public static final DropwizardAppRule<TestConfiguration> RULE =
-        new DropwizardAppRule<>(DropwizardTestApplication.class, "test-config.yaml", new ResourceConfigurationSourceProvider());
+    public static final DropwizardAppRule<TestConfiguration> RULE = new DropwizardAppRule<>(
+            DropwizardTestApplication.class, "test-config.yaml", new ResourceConfigurationSourceProvider());
 
     @Test
     public void canGetExpectedResourceOverHttp() {
-        final String content = RULE.client().target(
-            "http://localhost:" + RULE.getLocalPort() + "/test").request().get(String.class);
+        final String content = RULE.client()
+                .target("http://localhost:" + RULE.getLocalPort() + "/test")
+                .request()
+                .get(String.class);
 
         assertThat(content).isEqualTo("Yes, it's here");
     }
@@ -46,39 +47,40 @@ public class DropwizardAppRuleTest {
 
     @Test
     public void canPerformAdminTask() {
-        final String response
-            = RULE.client().target("http://localhost:"
-            + RULE.getAdminPort() + "/tasks/hello?name=test_user")
-            .request()
-            .post(Entity.entity("", MediaType.TEXT_PLAIN), String.class);
+        final String response = RULE.client()
+                .target("http://localhost:" + RULE.getAdminPort() + "/tasks/hello?name=test_user")
+                .request()
+                .post(Entity.entity("", MediaType.TEXT_PLAIN), String.class);
 
         assertThat(response).isEqualTo("Hello has been said to test_user");
     }
 
     @Test
     public void canPerformAdminTaskWithPostBody() {
-        final String response
-            = RULE.client().target("http://localhost:"
-            + RULE.getAdminPort() + "/tasks/echo")
-            .request()
-            .post(Entity.entity("Custom message", MediaType.TEXT_PLAIN), String.class);
+        final String response = RULE.client()
+                .target("http://localhost:" + RULE.getAdminPort() + "/tasks/echo")
+                .request()
+                .post(Entity.entity("Custom message", MediaType.TEXT_PLAIN), String.class);
 
         assertThat(response).isEqualTo("Custom message");
     }
 
     @Test
     public void clientUsesJacksonMapperFromEnvironment() {
-        assertThat(RULE.client().target("http://localhost:" + RULE.getLocalPort() + "/message")
-            .request()
-            .get(DropwizardTestApplication.MessageView.class).getMessage())
-            .contains("Yes, it's here");
+        assertThat(RULE.client()
+                        .target("http://localhost:" + RULE.getLocalPort() + "/message")
+                        .request()
+                        .get(DropwizardTestApplication.MessageView.class)
+                        .getMessage())
+                .contains("Yes, it's here");
     }
 
     @Test
     public void clientSupportsPatchMethod() {
-        assertThat(RULE.client().target("http://localhost:" + RULE.getLocalPort() + "/echoPatch")
-            .request()
-            .method("PATCH", Entity.text("Patch is working"), String.class))
-            .contains("Patch is working");
+        assertThat(RULE.client()
+                        .target("http://localhost:" + RULE.getLocalPort() + "/echoPatch")
+                        .request()
+                        .method("PATCH", Entity.text("Patch is working"), String.class))
+                .contains("Patch is working");
     }
 }

@@ -1,7 +1,13 @@
 package io.dropwizard.auth;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.logging.common.BootstrapLogging;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.client.Invocation;
+import javax.ws.rs.core.HttpHeaders;
 import org.glassfish.jersey.servlet.ServletProperties;
 import org.glassfish.jersey.test.DeploymentContext;
 import org.glassfish.jersey.test.JerseyTest;
@@ -13,13 +19,6 @@ import org.glassfish.jersey.test.spi.TestContainerFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.client.Invocation;
-import javax.ws.rs.core.HttpHeaders;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 public abstract class AuthBaseTest<T extends DropwizardResourceConfig> extends JerseyTest {
     protected static final String ADMIN_ROLE = "ADMIN";
@@ -38,16 +37,20 @@ public abstract class AuthBaseTest<T extends DropwizardResourceConfig> extends J
     }
 
     @Override
-    protected TestContainerFactory getTestContainerFactory()
-        throws TestContainerException {
+    protected TestContainerFactory getTestContainerFactory() throws TestContainerException {
         return new GrizzlyWebTestContainerFactory();
     }
 
     protected abstract DropwizardResourceConfig getDropwizardResourceConfig();
+
     protected abstract Class<T> getDropwizardResourceConfigClass();
+
     protected abstract String getPrefix();
+
     protected abstract String getOrdinaryGuyValidToken();
+
     protected abstract String getGoodGuyValidToken();
+
     protected abstract String getBadGuyToken();
 
     @Override
@@ -66,129 +69,132 @@ public abstract class AuthBaseTest<T extends DropwizardResourceConfig> extends J
     protected DeploymentContext configureDeployment() {
         forceSet(TestProperties.CONTAINER_PORT, "0");
         return ServletDeploymentContext.builder(getDropwizardResourceConfig())
-            .initParam(ServletProperties.JAXRS_APPLICATION_CLASS, getDropwizardResourceConfigClass().getName())
-            .build();
+                .initParam(
+                        ServletProperties.JAXRS_APPLICATION_CLASS,
+                        getDropwizardResourceConfigClass().getName())
+                .build();
     }
 
     @Test
     void respondsToMissingCredentialsWith401() {
         Invocation.Builder request = target("/test/admin").request();
         assertThatExceptionOfType(WebApplicationException.class)
-            .isThrownBy(() -> request.get(String.class))
-            .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(401))
-            .satisfies(e -> assertThat(e.getResponse().getHeaders().get(HttpHeaders.WWW_AUTHENTICATE))
-                .containsOnly(getPrefix() + " realm=\"realm\""));
+                .isThrownBy(() -> request.get(String.class))
+                .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(401))
+                .satisfies(e -> assertThat(e.getResponse().getHeaders().get(HttpHeaders.WWW_AUTHENTICATE))
+                        .containsOnly(getPrefix() + " realm=\"realm\""));
     }
 
     @Test
     void resourceWithoutAuth200() {
-        assertThat(target("/test/noauth").request()
-            .get(String.class))
-            .isEqualTo("hello");
+        assertThat(target("/test/noauth").request().get(String.class)).isEqualTo("hello");
     }
 
     @Test
     void resourceWithAuthenticationWithoutAuthorizationWithCorrectCredentials200() {
-        assertThat(target("/test/profile").request()
-            .header(HttpHeaders.AUTHORIZATION, getPrefix() + " " + getOrdinaryGuyValidToken())
-            .get(String.class))
-            .isEqualTo("'" + ORDINARY_USER + "' has user privileges");
+        assertThat(target("/test/profile")
+                        .request()
+                        .header(HttpHeaders.AUTHORIZATION, getPrefix() + " " + getOrdinaryGuyValidToken())
+                        .get(String.class))
+                .isEqualTo("'" + ORDINARY_USER + "' has user privileges");
     }
 
     @Test
     void resourceWithAuthenticationWithoutAuthorizationNoCredentials401() {
         Invocation.Builder request = target("/test/profile").request();
         assertThatExceptionOfType(WebApplicationException.class)
-            .isThrownBy(() -> request.get(String.class))
-            .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(401))
-            .satisfies(e -> assertThat(e.getResponse().getHeaders().get(HttpHeaders.WWW_AUTHENTICATE))
-                .containsOnly(getPrefix() + " realm=\"realm\""));
+                .isThrownBy(() -> request.get(String.class))
+                .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(401))
+                .satisfies(e -> assertThat(e.getResponse().getHeaders().get(HttpHeaders.WWW_AUTHENTICATE))
+                        .containsOnly(getPrefix() + " realm=\"realm\""));
     }
 
     @Test
     void resourceWithValidOptionalAuthentication200() {
-        assertThat(target("/test/optional").request()
-            .header(HttpHeaders.AUTHORIZATION, getPrefix() + " " + getOrdinaryGuyValidToken())
-            .get(String.class))
-            .isEqualTo("principal was present");
+        assertThat(target("/test/optional")
+                        .request()
+                        .header(HttpHeaders.AUTHORIZATION, getPrefix() + " " + getOrdinaryGuyValidToken())
+                        .get(String.class))
+                .isEqualTo("principal was present");
     }
 
     @Test
     void resourceWithInvalidOptionalAuthentication200() {
-        assertThat(target("/test/optional").request()
-            .header(HttpHeaders.AUTHORIZATION, getPrefix() + " " + getBadGuyToken())
-            .get(String.class))
-            .isEqualTo("principal was not present");
+        assertThat(target("/test/optional")
+                        .request()
+                        .header(HttpHeaders.AUTHORIZATION, getPrefix() + " " + getBadGuyToken())
+                        .get(String.class))
+                .isEqualTo("principal was not present");
     }
 
     @Test
     void resourceWithoutOptionalAuthentication200() {
-        assertThat(target("/test/optional").request()
-            .get(String.class))
-            .isEqualTo("principal was not present");
+        assertThat(target("/test/optional").request().get(String.class)).isEqualTo("principal was not present");
     }
 
     @Test
     void resourceWithAuthorizationPrincipalIsNotAuthorized403() {
-        Invocation.Builder request = target("/test/admin").request()
-            .header(HttpHeaders.AUTHORIZATION, getPrefix() + " " + getOrdinaryGuyValidToken());
+        Invocation.Builder request = target("/test/admin")
+                .request()
+                .header(HttpHeaders.AUTHORIZATION, getPrefix() + " " + getOrdinaryGuyValidToken());
         assertThatExceptionOfType(WebApplicationException.class)
-            .isThrownBy(() -> request.get(String.class))
-            .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(403));
+                .isThrownBy(() -> request.get(String.class))
+                .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(403));
     }
-
 
     @Test
     void resourceWithDenyAllAndNoAuth401() {
         Invocation.Builder request = target("/test/denied").request();
         assertThatExceptionOfType(WebApplicationException.class)
-            .isThrownBy(() -> request.get(String.class))
-            .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(401));
+                .isThrownBy(() -> request.get(String.class))
+                .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(401));
     }
 
     @Test
     void resourceWithDenyAllAndAuth403() {
-        Invocation.Builder request = target("/test/denied").request()
-            .header(HttpHeaders.AUTHORIZATION, getPrefix() + " " + getGoodGuyValidToken());
+        Invocation.Builder request = target("/test/denied")
+                .request()
+                .header(HttpHeaders.AUTHORIZATION, getPrefix() + " " + getGoodGuyValidToken());
         assertThatExceptionOfType(WebApplicationException.class)
-            .isThrownBy(() -> request.get(String.class))
-            .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(403));
+                .isThrownBy(() -> request.get(String.class))
+                .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(403));
     }
 
     @Test
     void transformsCredentialsToPrincipals() {
-        assertThat(target("/test/admin").request()
-            .header(HttpHeaders.AUTHORIZATION, getPrefix() + " " + getGoodGuyValidToken())
-            .get(String.class))
-            .isEqualTo("'" + ADMIN_USER + "' has admin privileges");
+        assertThat(target("/test/admin")
+                        .request()
+                        .header(HttpHeaders.AUTHORIZATION, getPrefix() + " " + getGoodGuyValidToken())
+                        .get(String.class))
+                .isEqualTo("'" + ADMIN_USER + "' has admin privileges");
     }
 
     @Test
     void transformsCredentialsToPrincipalsWhenAuthAnnotationExistsWithoutMethodAnnotation() {
-        assertThat(target("/test/implicit-permitall").request()
-            .header(HttpHeaders.AUTHORIZATION, getPrefix() + " " + getGoodGuyValidToken())
-            .get(String.class))
-            .isEqualTo("'" + ADMIN_USER + "' has user privileges");
+        assertThat(target("/test/implicit-permitall")
+                        .request()
+                        .header(HttpHeaders.AUTHORIZATION, getPrefix() + " " + getGoodGuyValidToken())
+                        .get(String.class))
+                .isEqualTo("'" + ADMIN_USER + "' has user privileges");
     }
-
 
     @Test
     void respondsToNonBasicCredentialsWith401() {
-        Invocation.Builder request = target("/test/admin").request()
-            .header(HttpHeaders.AUTHORIZATION, "Derp irrelevant");
+        Invocation.Builder request =
+                target("/test/admin").request().header(HttpHeaders.AUTHORIZATION, "Derp irrelevant");
         assertThatExceptionOfType(WebApplicationException.class)
-            .isThrownBy(() -> request.get(String.class))
-            .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(401))
+                .isThrownBy(() -> request.get(String.class))
+                .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(401))
                 .satisfies(e -> assertThat(e.getResponse().getHeaders().get(HttpHeaders.WWW_AUTHENTICATE))
-                    .containsOnly(getPrefix() + " realm=\"realm\""));
+                        .containsOnly(getPrefix() + " realm=\"realm\""));
     }
 
     @Test
     void respondsToExceptionsWith500() {
-        Invocation.Builder request = target("/test/admin").request()
-            .header(HttpHeaders.AUTHORIZATION, getPrefix() + " " + getBadGuyToken());
+        Invocation.Builder request =
+                target("/test/admin").request().header(HttpHeaders.AUTHORIZATION, getPrefix() + " " + getBadGuyToken());
         assertThatExceptionOfType(WebApplicationException.class)
-            .isThrownBy(() -> request.get(String.class))
-            .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(500));
+                .isThrownBy(() -> request.get(String.class))
+                .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(500));
     }
 }

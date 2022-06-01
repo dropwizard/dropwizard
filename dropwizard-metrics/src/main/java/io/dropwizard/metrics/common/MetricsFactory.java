@@ -4,14 +4,13 @@ import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import io.dropwizard.util.Duration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A factory for configuring the metrics sub-system for the environment.
@@ -107,10 +106,10 @@ public class MetricsFactory {
     public void configure(LifecycleEnvironment environment, MetricRegistry registry) {
         for (ReporterFactory reporter : reporters) {
             try {
-                final ScheduledReporterManager manager =
-                        new ScheduledReporterManager(reporter.build(registry),
-                                                     reporter.getFrequency().orElseGet(this::getFrequency),
-                                                     isReportOnStop());
+                final ScheduledReporterManager manager = new ScheduledReporterManager(
+                        reporter.build(registry),
+                        reporter.getFrequency().orElseGet(this::getFrequency),
+                        isReportOnStop());
                 environment.manage(manager);
             } catch (Exception e) {
                 LOGGER.warn("Failed to create reporter, metrics may not be properly reported.", e);
@@ -120,6 +119,7 @@ public class MetricsFactory {
 
     @Override
     public String toString() {
-        return "MetricsFactory{frequency=" + frequency + ", reporters=" + reporters + ", reportOnStop=" + reportOnStop + '}';
+        return "MetricsFactory{frequency=" + frequency + ", reporters=" + reporters + ", reportOnStop=" + reportOnStop
+                + '}';
     }
 }

@@ -1,9 +1,8 @@
 package io.dropwizard.logging.json.layout;
 
 import ch.qos.logback.core.LayoutBase;
-import org.checkerframework.checker.nullness.qual.Nullable;
-
 import java.util.Map;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * Provides the common functionality for building JSON representations

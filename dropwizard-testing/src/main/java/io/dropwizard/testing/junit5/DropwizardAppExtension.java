@@ -11,6 +11,9 @@ import io.dropwizard.jersey.jackson.JacksonFeature;
 import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.DropwizardTestSupport;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
+import javax.ws.rs.client.Client;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.client.HttpUrlConnectorProvider;
@@ -19,11 +22,7 @@ import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
-import javax.ws.rs.client.Client;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Function;
-
-//@formatter:off
+// @formatter:off
 /**
  * An extension for starting and stopping your application at the start and end of a test class.
  * <p>
@@ -34,9 +33,9 @@ import java.util.function.Function;
  *
  * @param <C> the configuration type
  */
-//@formatter:on
-public class DropwizardAppExtension<C extends Configuration> implements DropwizardExtension,
-    BeforeAllCallback, AfterAllCallback {
+// @formatter:on
+public class DropwizardAppExtension<C extends Configuration>
+        implements DropwizardExtension, BeforeAllCallback, AfterAllCallback {
 
     private static final int DEFAULT_CONNECT_TIMEOUT_MS = 1000;
     private static final int DEFAULT_READ_TIMEOUT_MS = 5000;
@@ -52,58 +51,77 @@ public class DropwizardAppExtension<C extends Configuration> implements Dropwiza
         this(applicationClass, (String) null);
     }
 
-    public DropwizardAppExtension(Class<? extends Application<C>> applicationClass,
-                                  @Nullable String configPath,
-                                  ConfigOverride... configOverrides) {
+    public DropwizardAppExtension(
+            Class<? extends Application<C>> applicationClass,
+            @Nullable String configPath,
+            ConfigOverride... configOverrides) {
         this(applicationClass, configPath, (String) null, configOverrides);
     }
 
     /**
      * @since 2.0
      */
-    public DropwizardAppExtension(Class<? extends Application<C>> applicationClass,
-                                  @Nullable String configPath,
-                                  ConfigurationSourceProvider configSourceProvider,
-                                  ConfigOverride... configOverrides) {
+    public DropwizardAppExtension(
+            Class<? extends Application<C>> applicationClass,
+            @Nullable String configPath,
+            ConfigurationSourceProvider configSourceProvider,
+            ConfigOverride... configOverrides) {
         this(applicationClass, configPath, configSourceProvider, null, configOverrides);
     }
 
     /**
      * @since 2.0
      */
-    public DropwizardAppExtension(Class<? extends Application<C>> applicationClass,
-                                  @Nullable String configPath,
-                                  @Nullable String customPropertyPrefix,
-                                  ConfigOverride... configOverrides) {
+    public DropwizardAppExtension(
+            Class<? extends Application<C>> applicationClass,
+            @Nullable String configPath,
+            @Nullable String customPropertyPrefix,
+            ConfigOverride... configOverrides) {
         this(applicationClass, configPath, customPropertyPrefix, ServerCommand::new, configOverrides);
     }
 
     /**
      * @since 2.0
      */
-    public DropwizardAppExtension(Class<? extends Application<C>> applicationClass,
-                                  @Nullable String configPath,
-                                  ConfigurationSourceProvider configSourceProvider,
-                                  @Nullable String customPropertyPrefix,
-                                  ConfigOverride... configOverrides) {
-        this(applicationClass, configPath, configSourceProvider, customPropertyPrefix, ServerCommand::new, configOverrides);
+    public DropwizardAppExtension(
+            Class<? extends Application<C>> applicationClass,
+            @Nullable String configPath,
+            ConfigurationSourceProvider configSourceProvider,
+            @Nullable String customPropertyPrefix,
+            ConfigOverride... configOverrides) {
+        this(
+                applicationClass,
+                configPath,
+                configSourceProvider,
+                customPropertyPrefix,
+                ServerCommand::new,
+                configOverrides);
     }
 
-    public DropwizardAppExtension(Class<? extends Application<C>> applicationClass,
-                                  @Nullable String configPath,
-                                  @Nullable String customPropertyPrefix,
-                                  Function<Application<C>, Command> commandInstantiator,
-                                  ConfigOverride... configOverrides) {
-        this(new DropwizardTestSupport<>(applicationClass, configPath, customPropertyPrefix, commandInstantiator, configOverrides));
+    public DropwizardAppExtension(
+            Class<? extends Application<C>> applicationClass,
+            @Nullable String configPath,
+            @Nullable String customPropertyPrefix,
+            Function<Application<C>, Command> commandInstantiator,
+            ConfigOverride... configOverrides) {
+        this(new DropwizardTestSupport<>(
+                applicationClass, configPath, customPropertyPrefix, commandInstantiator, configOverrides));
     }
 
-    public DropwizardAppExtension(Class<? extends Application<C>> applicationClass,
-                                  @Nullable String configPath,
-                                  ConfigurationSourceProvider configSourceProvider,
-                                  @Nullable String customPropertyPrefix,
-                                  Function<Application<C>, Command> commandInstantiator,
-                                  ConfigOverride... configOverrides) {
-        this(new DropwizardTestSupport<>(applicationClass, configPath, configSourceProvider, customPropertyPrefix, commandInstantiator, configOverrides));
+    public DropwizardAppExtension(
+            Class<? extends Application<C>> applicationClass,
+            @Nullable String configPath,
+            ConfigurationSourceProvider configSourceProvider,
+            @Nullable String customPropertyPrefix,
+            Function<Application<C>, Command> commandInstantiator,
+            ConfigOverride... configOverrides) {
+        this(new DropwizardTestSupport<>(
+                applicationClass,
+                configPath,
+                configSourceProvider,
+                customPropertyPrefix,
+                commandInstantiator,
+                configOverrides));
     }
 
     /**
@@ -112,8 +130,7 @@ public class DropwizardAppExtension<C extends Configuration> implements Dropwiza
      *
      * @since 0.9
      */
-    public DropwizardAppExtension(Class<? extends Application<C>> applicationClass,
-                                  C configuration) {
+    public DropwizardAppExtension(Class<? extends Application<C>> applicationClass, C configuration) {
         this(new DropwizardTestSupport<>(applicationClass, configuration));
     }
 
@@ -122,8 +139,10 @@ public class DropwizardAppExtension<C extends Configuration> implements Dropwiza
      *
      * @since 1.1.0
      */
-    public DropwizardAppExtension(Class<? extends Application<C>> applicationClass,
-                                  C configuration, Function<Application<C>, Command> commandInstantiator) {
+    public DropwizardAppExtension(
+            Class<? extends Application<C>> applicationClass,
+            C configuration,
+            Function<Application<C>, Command> commandInstantiator) {
         this(new DropwizardTestSupport<>(applicationClass, configuration, commandInstantiator));
     }
 
@@ -134,7 +153,8 @@ public class DropwizardAppExtension<C extends Configuration> implements Dropwiza
     public DropwizardAppExtension<C> addListener(final ServiceListener<C> listener) {
         this.testSupport.addListener(new DropwizardTestSupport.ServiceListener<C>() {
             @Override
-            public void onRun(C configuration, Environment environment, DropwizardTestSupport<C> rule) throws Exception {
+            public void onRun(C configuration, Environment environment, DropwizardTestSupport<C> rule)
+                    throws Exception {
                 listener.onRun(configuration, environment, DropwizardAppExtension.this);
             }
 
@@ -149,7 +169,8 @@ public class DropwizardAppExtension<C extends Configuration> implements Dropwiza
     public DropwizardAppExtension<C> manage(final Managed managed) {
         return addListener(new ServiceListener<C>() {
             @Override
-            public void onRun(C configuration, Environment environment, DropwizardAppExtension<C> rule) throws Exception {
+            public void onRun(C configuration, Environment environment, DropwizardAppExtension<C> rule)
+                    throws Exception {
                 environment.lifecycle().manage(managed);
             }
         });
@@ -252,9 +273,9 @@ public class DropwizardAppExtension<C extends Configuration> implements Dropwiza
 
     protected JerseyClientBuilder clientBuilder() {
         return new JerseyClientBuilder()
-            .register(new JacksonFeature(getObjectMapper()))
-            .property(ClientProperties.CONNECT_TIMEOUT, DEFAULT_CONNECT_TIMEOUT_MS)
-            .property(ClientProperties.READ_TIMEOUT, DEFAULT_READ_TIMEOUT_MS)
-            .property(HttpUrlConnectorProvider.SET_METHOD_WORKAROUND, true);
+                .register(new JacksonFeature(getObjectMapper()))
+                .property(ClientProperties.CONNECT_TIMEOUT, DEFAULT_CONNECT_TIMEOUT_MS)
+                .property(ClientProperties.READ_TIMEOUT, DEFAULT_READ_TIMEOUT_MS)
+                .property(HttpUrlConnectorProvider.SET_METHOD_WORKAROUND, true);
     }
 }

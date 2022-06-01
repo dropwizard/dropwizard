@@ -1,7 +1,6 @@
 package io.dropwizard.documentation;
 
 import io.dropwizard.core.Configuration;
-
 import java.util.Collections;
 import java.util.Map;
 

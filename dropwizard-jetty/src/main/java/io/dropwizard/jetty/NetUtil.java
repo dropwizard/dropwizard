@@ -28,7 +28,6 @@ import java.util.Locale;
  * It has been modified, to remove dependencies on other classes, and to convert to methods, rather than a
  * static value.
  */
-
 class NetUtil {
     static final int DEFAULT_TCP_BACKLOG_WINDOWS = 200;
     static final int DEFAULT_TCP_BACKLOG_LINUX = 128;
@@ -60,7 +59,6 @@ class NetUtil {
                 return tcpBacklog;
             }
         });
-
     }
 
     private static boolean isWindows() {

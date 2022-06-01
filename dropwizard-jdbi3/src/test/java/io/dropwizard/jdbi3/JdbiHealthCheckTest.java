@@ -1,7 +1,18 @@
 package io.dropwizard.jdbi3;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import com.codahale.metrics.health.HealthCheck;
 import io.dropwizard.util.Duration;
+import java.sql.Connection;
+import java.util.Optional;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.jdbi.v3.core.Handle;
 import org.jdbi.v3.core.Jdbi;
@@ -9,18 +20,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.stubbing.Answer;
-
-import java.sql.Connection;
-import java.util.Optional;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 class JdbiHealthCheckTest {
     private static final String VALIDATION_QUERY = "select 1";
@@ -91,9 +90,7 @@ class JdbiHealthCheckTest {
     }
 
     private JdbiHealthCheck healthCheck(@Nullable String validationQuery) {
-        return new JdbiHealthCheck(executorService,
-            Duration.milliseconds(100),
-            jdbi,
-            Optional.ofNullable(validationQuery));
+        return new JdbiHealthCheck(
+                executorService, Duration.milliseconds(100), jdbi, Optional.ofNullable(validationQuery));
     }
 }

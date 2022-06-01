@@ -40,6 +40,6 @@ public abstract class AbstractJerseyTest extends JerseyTest {
     @Override
     protected void configureClient(ClientConfig config) {
         config.property(ClientProperties.CONNECT_TIMEOUT, DEFAULT_CONNECT_TIMEOUT_MS)
-            .property(ClientProperties.READ_TIMEOUT, DEFAULT_READ_TIMEOUT_MS);
+                .property(ClientProperties.READ_TIMEOUT, DEFAULT_READ_TIMEOUT_MS);
     }
 }

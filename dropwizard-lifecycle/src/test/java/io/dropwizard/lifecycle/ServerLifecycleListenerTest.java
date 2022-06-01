@@ -1,18 +1,17 @@
 package io.dropwizard.lifecycle;
 
-import org.assertj.core.api.Assertions;
-import org.eclipse.jetty.server.Connector;
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.ServerConnector;
-import org.junit.jupiter.api.Test;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import org.assertj.core.api.Assertions;
+import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
+import org.junit.jupiter.api.Test;
 
 class ServerLifecycleListenerTest {
     private static final String APPLICATION = "application";
@@ -26,8 +25,7 @@ class ServerLifecycleListenerTest {
         int localPort = 5673;
         int adminPort = 12345;
         Server server = configureAndGetSingleConnectorServer(localPort, adminPort);
-        ServerLifecycleListener listener = (server1) -> {
-        };
+        ServerLifecycleListener listener = (server1) -> {};
         int retrievedLocalPort = listener.getLocalPort(server);
         Assertions.assertThat(retrievedLocalPort).isEqualTo(localPort);
     }
@@ -37,8 +35,7 @@ class ServerLifecycleListenerTest {
         int localPort = 5673;
         int adminPort = 12345;
         Server server = configureAndGetSingleConnectorServer(localPort, adminPort);
-        ServerLifecycleListener listener = (server1) -> {
-        };
+        ServerLifecycleListener listener = (server1) -> {};
         int retrievedAdminPort = listener.getAdminPort(server);
         Assertions.assertThat(retrievedAdminPort).isEqualTo(adminPort);
     }
@@ -49,7 +46,8 @@ class ServerLifecycleListenerTest {
         ServerConnector adminConnector = mock(ServerConnector.class);
         Connector[] connectors = {applicationConnector, adminConnector};
         when(server.getConnectors()).thenReturn(connectors);
-        configuredServerConnector(applicationConnector, applicationPort, Arrays.asList("ssl", "http/1.1", "http/2"), APPLICATION, HOST_1);
+        configuredServerConnector(
+                applicationConnector, applicationPort, Arrays.asList("ssl", "http/1.1", "http/2"), APPLICATION, HOST_1);
         configuredServerConnector(adminConnector, adminPort, Arrays.asList("tls", "http/2"), ADMIN, HOST_2);
         return server;
     }
@@ -57,34 +55,36 @@ class ServerLifecycleListenerTest {
     @Test
     void getPortDescriptorList() {
         Server server = configureMultiProtocolServer();
-        ServerLifecycleListener listener = (server1) -> {
-        };
+        ServerLifecycleListener listener = (server1) -> {};
         List<PortDescriptor> portDescriptorList = listener.getPortDescriptorList(server);
         PortDescriptor[] portDescriptors = buildCompletePortDescriptorsArray();
-        Assertions.assertThat(portDescriptorList).usingElementComparator((o1, o2) -> {
-            if (Objects.equals(o1.getConnectorType(), o2.getConnectorType()) &&
-                Objects.equals(o1.getProtocol(), o2.getProtocol()) &&
-                Objects.equals(o1.getPort(), o2.getPort()) &&
-                Objects.equals(o1.getHost(), o2.getHost())) {
-                return 0;
-            } else {
-                return -1;
-            }
-        }).contains(portDescriptors);
+        Assertions.assertThat(portDescriptorList)
+                .usingElementComparator((o1, o2) -> {
+                    if (Objects.equals(o1.getConnectorType(), o2.getConnectorType())
+                            && Objects.equals(o1.getProtocol(), o2.getProtocol())
+                            && Objects.equals(o1.getPort(), o2.getPort())
+                            && Objects.equals(o1.getHost(), o2.getHost())) {
+                        return 0;
+                    } else {
+                        return -1;
+                    }
+                })
+                .contains(portDescriptors);
     }
 
     private PortDescriptor[] buildCompletePortDescriptorsArray() {
-        return Stream.of(getPortDescriptors(5673, ADMIN, new String[]{"ssl", "http/1.1", "http/2"}, HOST_1),
-            getPortDescriptors(12345, APPLICATION, new String[]{"tls", "http/2"}, HOST_2),
-            getPortDescriptors(1234, APPLICATION, new String[]{"http/1.1", "http/2", "websocket"}, HOST_3))
-            .flatMap(Arrays::stream)
-            .toArray(PortDescriptor[]::new);
+        return Stream.of(
+                        getPortDescriptors(5673, ADMIN, new String[] {"ssl", "http/1.1", "http/2"}, HOST_1),
+                        getPortDescriptors(12345, APPLICATION, new String[] {"tls", "http/2"}, HOST_2),
+                        getPortDescriptors(1234, APPLICATION, new String[] {"http/1.1", "http/2", "websocket"}, HOST_3))
+                .flatMap(Arrays::stream)
+                .toArray(PortDescriptor[]::new);
     }
 
     private PortDescriptor[] getPortDescriptors(int port, String type, String[] protocols, String host) {
         return Arrays.stream(protocols)
-            .map(protocol -> getPortDescriptor(protocol, port, type, host))
-            .toArray(PortDescriptor[]::new);
+                .map(protocol -> getPortDescriptor(protocol, port, type, host))
+                .toArray(PortDescriptor[]::new);
     }
 
     private PortDescriptor getPortDescriptor(String protocol, int port, String type, String host) {
@@ -100,11 +100,13 @@ class ServerLifecycleListenerTest {
         when(server.getConnectors()).thenReturn(connectors);
         configuredServerConnector(connectorMock1, 5673, Arrays.asList("ssl", "http/1.1", "http/2"), ADMIN, HOST_1);
         configuredServerConnector(connectorMock2, 12345, Arrays.asList("tls", "http/2"), APPLICATION, HOST_2);
-        configuredServerConnector(connectorMock3, 1234, Arrays.asList("http/1.1", "http/2", "websocket"), APPLICATION, "192.168.67.20");
+        configuredServerConnector(
+                connectorMock3, 1234, Arrays.asList("http/1.1", "http/2", "websocket"), APPLICATION, "192.168.67.20");
         return server;
     }
 
-    private void configuredServerConnector(ServerConnector connectorMock1, int localPort, List<String> protocols, String portType, String host) {
+    private void configuredServerConnector(
+            ServerConnector connectorMock1, int localPort, List<String> protocols, String portType, String host) {
         when(connectorMock1.getLocalPort()).thenReturn(localPort);
         when(connectorMock1.getProtocols()).thenReturn(protocols);
         when(connectorMock1.getName()).thenReturn(portType);

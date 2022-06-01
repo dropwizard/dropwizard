@@ -1,16 +1,15 @@
 package io.dropwizard.testing.app;
 
-import io.dropwizard.testing.junit.ResourceTestRule;
-import org.glassfish.jersey.test.grizzly.GrizzlyWebTestContainerFactory;
-import org.junit.Rule;
-import org.junit.Test;
+import static org.assertj.core.api.Assertions.assertThat;
 
+import io.dropwizard.testing.junit.ResourceTestRule;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import org.glassfish.jersey.test.grizzly.GrizzlyWebTestContainerFactory;
+import org.junit.Rule;
+import org.junit.Test;
 
 /**
  * Tests {@link io.dropwizard.testing.junit.ResourceTestRule} with a different
@@ -27,24 +26,22 @@ public class ResourceTestRuleWithGrizzlyTest {
 
     @Test
     public void testResource() {
-        assertThat(resourceTestRule.target("test").request()
-                .get(String.class))
-                .isEqualTo("test");
+        assertThat(resourceTestRule.target("test").request().get(String.class)).isEqualTo("test");
     }
 
     @Test
     public void testExceptionMapper() {
-        final Response resp = resourceTestRule.target("test").request()
-                .post(Entity.json(""));
+        final Response resp = resourceTestRule.target("test").request().post(Entity.json(""));
         assertThat(resp.getStatus()).isEqualTo(500);
         assertThat(resp.readEntity(String.class)).isEqualTo("Can't touch this");
     }
 
     @Test
     public void testClientSupportsPatchMethod() {
-        final String resp = resourceTestRule.target("test")
-            .request()
-            .method("PATCH", Entity.text("Patch is working"), String.class);
+        final String resp = resourceTestRule
+                .target("test")
+                .request()
+                .method("PATCH", Entity.text("Patch is working"), String.class);
         assertThat(resp).isEqualTo("Patch is working");
     }
 

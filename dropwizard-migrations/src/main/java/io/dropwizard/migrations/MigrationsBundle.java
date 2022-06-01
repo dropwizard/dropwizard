@@ -4,11 +4,11 @@ import io.dropwizard.core.Configuration;
 import io.dropwizard.core.ConfiguredBundle;
 import io.dropwizard.core.setup.Bootstrap;
 import io.dropwizard.db.DatabaseConfiguration;
+import java.util.Map;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-import java.util.Map;
-
-public abstract class MigrationsBundle<T extends Configuration> implements ConfiguredBundle<T>, DatabaseConfiguration<T> {
+public abstract class MigrationsBundle<T extends Configuration>
+        implements ConfiguredBundle<T>, DatabaseConfiguration<T> {
     private static final String DEFAULT_NAME = "db";
     private static final String DEFAULT_MIGRATIONS_FILE = "migrations.xml";
 

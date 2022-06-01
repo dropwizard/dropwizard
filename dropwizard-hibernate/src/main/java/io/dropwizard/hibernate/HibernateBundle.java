@@ -1,5 +1,7 @@
 package io.dropwizard.hibernate;
 
+import static java.util.Objects.requireNonNull;
+
 import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
 import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module.Feature;
 import io.dropwizard.core.ConfiguredBundle;
@@ -8,21 +10,19 @@ import io.dropwizard.core.setup.Environment;
 import io.dropwizard.db.DatabaseConfiguration;
 import io.dropwizard.db.PooledDataSourceFactory;
 import io.dropwizard.util.Duration;
-import org.checkerframework.checker.nullness.qual.Nullable;
-import org.hibernate.SessionFactory;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
-import static java.util.Objects.requireNonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.hibernate.SessionFactory;
 
 public abstract class HibernateBundle<T> implements ConfiguredBundle<T>, DatabaseConfiguration<T> {
     public static final String DEFAULT_NAME = "hibernate";
 
     @Nullable
     protected SessionFactory sessionFactory;
+
     protected boolean lazyLoadingEnabled = true;
 
     protected final List<Class<?>> entities;
@@ -37,8 +37,7 @@ public abstract class HibernateBundle<T> implements ConfiguredBundle<T>, Databas
         this.sessionFactoryFactory = new SessionFactoryFactory();
     }
 
-    protected HibernateBundle(List<Class<?>> entities,
-                              SessionFactoryFactory sessionFactoryFactory) {
+    protected HibernateBundle(List<Class<?>> entities, SessionFactoryFactory sessionFactoryFactory) {
         this.entities = entities;
         this.sessionFactoryFactory = sessionFactoryFactory;
     }
@@ -70,15 +69,18 @@ public abstract class HibernateBundle<T> implements ConfiguredBundle<T>, Databas
     @Override
     public void run(T configuration, Environment environment) throws Exception {
         final PooledDataSourceFactory dbConfig = getDataSourceFactory(configuration);
-        this.sessionFactory = requireNonNull(sessionFactoryFactory.build(this, environment, dbConfig,
-            entities, name()));
+        this.sessionFactory =
+                requireNonNull(sessionFactoryFactory.build(this, environment, dbConfig, entities, name()));
         registerUnitOfWorkListenerIfAbsent(environment).registerSessionFactory(name(), sessionFactory);
-        environment.healthChecks().register(name(),
-                                            new SessionFactoryHealthCheck(
-                                                    environment.getHealthCheckExecutorService(),
-                                                    dbConfig.getValidationQueryTimeout().orElse(Duration.seconds(5)),
-                                                    sessionFactory,
-                                                    dbConfig.getValidationQuery()));
+        environment
+                .healthChecks()
+                .register(
+                        name(),
+                        new SessionFactoryHealthCheck(
+                                environment.getHealthCheckExecutorService(),
+                                dbConfig.getValidationQueryTimeout().orElse(Duration.seconds(5)),
+                                sessionFactory,
+                                dbConfig.getValidationQuery()));
     }
 
     protected UnitOfWorkApplicationListener registerUnitOfWorkListenerIfAbsent(Environment environment) {
@@ -104,6 +106,5 @@ public abstract class HibernateBundle<T> implements ConfiguredBundle<T>, Databas
         return requireNonNull(sessionFactory);
     }
 
-    protected void configure(org.hibernate.cfg.Configuration configuration) {
-    }
+    protected void configure(org.hibernate.cfg.Configuration configuration) {}
 }

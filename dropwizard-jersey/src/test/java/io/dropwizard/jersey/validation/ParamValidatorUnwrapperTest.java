@@ -1,19 +1,18 @@
 package io.dropwizard.jersey.validation;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import io.dropwizard.jersey.params.IntParam;
 import io.dropwizard.jersey.params.NonEmptyStringParam;
-import org.hibernate.validator.constraints.Length;
-import org.junit.jupiter.api.Test;
-
+import java.util.Set;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.valueextraction.Unwrapping;
-import java.util.Set;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import org.hibernate.validator.constraints.Length;
+import org.junit.jupiter.api.Test;
 
 class ParamValidatorUnwrapperTest {
     private static class Example {

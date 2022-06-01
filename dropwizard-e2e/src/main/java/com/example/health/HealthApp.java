@@ -5,7 +5,6 @@ import io.dropwizard.core.Application;
 import io.dropwizard.core.Configuration;
 import io.dropwizard.core.setup.Environment;
 import io.dropwizard.health.HealthStateListener;
-
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -27,21 +26,27 @@ public class HealthApp extends Application<Configuration> {
         environment.healthChecks().register(CRITICAL_HEALTH_CHECK_NAME_1, new HealthCheck() {
             @Override
             protected Result check() {
-                return criticalCheckHealthy1.get() ? Result.healthy() : Result.builder().unhealthy().build();
+                return criticalCheckHealthy1.get()
+                        ? Result.healthy()
+                        : Result.builder().unhealthy().build();
             }
         });
 
         environment.healthChecks().register(CRITICAL_HEALTH_CHECK_NAME_2, new HealthCheck() {
             @Override
             protected Result check() {
-                return criticalCheckHealthy2.get() ? Result.healthy() : Result.builder().unhealthy().build();
+                return criticalCheckHealthy2.get()
+                        ? Result.healthy()
+                        : Result.builder().unhealthy().build();
             }
         });
 
         environment.healthChecks().register(NON_CRITICAL_HEALTH_CHECK_NAME, new HealthCheck() {
             @Override
             protected Result check() {
-                return nonCriticalCheckHealthy.get() ? Result.healthy() : Result.builder().unhealthy().build();
+                return nonCriticalCheckHealthy.get()
+                        ? Result.healthy()
+                        : Result.builder().unhealthy().build();
             }
         });
 

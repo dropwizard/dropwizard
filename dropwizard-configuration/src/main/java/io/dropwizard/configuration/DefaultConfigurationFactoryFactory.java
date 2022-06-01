@@ -2,21 +2,14 @@ package io.dropwizard.configuration;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import javax.validation.Validator;
 
 public class DefaultConfigurationFactoryFactory<T> implements ConfigurationFactoryFactory<T> {
     @Override
     public ConfigurationFactory<T> create(
-            Class<T>     klass,
-            Validator    validator,
-            ObjectMapper objectMapper,
-            String       propertyPrefix) {
+            Class<T> klass, Validator validator, ObjectMapper objectMapper, String propertyPrefix) {
         return new YamlConfigurationFactory<>(
-            klass,
-            validator,
-            configureObjectMapper(objectMapper.copy()),
-            propertyPrefix);
+                klass, validator, configureObjectMapper(objectMapper.copy()), propertyPrefix);
     }
 
     /**
@@ -30,5 +23,4 @@ public class DefaultConfigurationFactoryFactory<T> implements ConfigurationFacto
     protected ObjectMapper configureObjectMapper(ObjectMapper objectMapper) {
         return objectMapper.enable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
     }
-
 }

@@ -2,6 +2,7 @@ package io.dropwizard.migrations;
 
 import io.dropwizard.core.Configuration;
 import io.dropwizard.db.DatabaseConfiguration;
+import java.util.function.Consumer;
 import liquibase.Liquibase;
 import liquibase.change.CheckSum;
 import net.sourceforge.argparse4j.inf.Namespace;
@@ -9,16 +10,19 @@ import net.sourceforge.argparse4j.inf.Subparser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.function.Consumer;
-
 public class DbCalculateChecksumCommand<T extends Configuration> extends AbstractLiquibaseCommand<T> {
     private static final Logger LOGGER = LoggerFactory.getLogger("liquibase");
 
     private Consumer<CheckSum> checkSumConsumer = checkSum -> LOGGER.info("checksum = {}", checkSum);
 
-    public DbCalculateChecksumCommand(DatabaseConfiguration<T> strategy, Class<T> configurationClass, String migrationsFileName) {
-        super("calculate-checksum", "Calculates and prints a checksum for a change set", strategy,
-            configurationClass, migrationsFileName);
+    public DbCalculateChecksumCommand(
+            DatabaseConfiguration<T> strategy, Class<T> configurationClass, String migrationsFileName) {
+        super(
+                "calculate-checksum",
+                "Calculates and prints a checksum for a change set",
+                strategy,
+                configurationClass,
+                migrationsFileName);
     }
 
     void setCheckSumConsumer(Consumer<CheckSum> checkSumConsumer) {
@@ -34,11 +38,11 @@ public class DbCalculateChecksumCommand<T extends Configuration> extends Abstrac
     }
 
     @Override
-    public void run(Namespace namespace,
-                    Liquibase liquibase) throws Exception {
-        final CheckSum checkSum = liquibase.calculateCheckSum("migrations.xml",
-            namespace.<String>getList("id").get(0),
-            namespace.<String>getList("author").get(0));
+    public void run(Namespace namespace, Liquibase liquibase) throws Exception {
+        final CheckSum checkSum = liquibase.calculateCheckSum(
+                "migrations.xml",
+                namespace.<String>getList("id").get(0),
+                namespace.<String>getList("author").get(0));
         checkSumConsumer.accept(checkSum);
     }
 }

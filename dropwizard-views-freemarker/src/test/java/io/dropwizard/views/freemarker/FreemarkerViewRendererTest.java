@@ -1,18 +1,15 @@
 package io.dropwizard.views.freemarker;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+
 import com.codahale.metrics.MetricRegistry;
 import freemarker.template.Configuration;
 import io.dropwizard.logging.common.BootstrapLogging;
 import io.dropwizard.views.common.ViewMessageBodyWriter;
 import io.dropwizard.views.common.ViewRenderExceptionMapper;
 import io.dropwizard.views.common.ViewRenderer;
-import org.glassfish.jersey.server.ResourceConfig;
-import org.glassfish.jersey.test.JerseyTest;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
-
+import java.util.Collections;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -25,10 +22,12 @@ import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Form;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.Collections;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import org.glassfish.jersey.server.ResourceConfig;
+import org.glassfish.jersey.test.JerseyTest;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 class FreemarkerViewRendererTest extends JerseyTest {
     static {
@@ -93,15 +92,13 @@ class FreemarkerViewRendererTest extends JerseyTest {
 
     @Test
     void rendersViewsWithAbsoluteTemplatePaths() {
-        final String response = target("/test/absolute")
-                .request().get(String.class);
+        final String response = target("/test/absolute").request().get(String.class);
         assertThat(response).isEqualTo("Woop woop. yay\n");
     }
 
     @Test
     void rendersViewsWithRelativeTemplatePaths() {
-        final String response = target("/test/relative")
-                .request().get(String.class);
+        final String response = target("/test/relative").request().get(String.class);
         assertThat(response).isEqualTo("Ok.\n");
     }
 
@@ -109,10 +106,10 @@ class FreemarkerViewRendererTest extends JerseyTest {
     void returnsA500ForViewsWithBadTemplatePaths() {
         Invocation.Builder request = target("/test/bad").request();
         assertThatExceptionOfType(WebApplicationException.class)
-            .isThrownBy(() -> request.get(String.class))
-            .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(500))
-            .satisfies(e -> assertThat(e.getResponse().readEntity(String.class))
-                .isEqualTo(ViewRenderExceptionMapper.TEMPLATE_ERROR_MSG));
+                .isThrownBy(() -> request.get(String.class))
+                .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(500))
+                .satisfies(e -> assertThat(e.getResponse().readEntity(String.class))
+                        .isEqualTo(ViewRenderExceptionMapper.TEMPLATE_ERROR_MSG));
     }
 
     @Test
@@ -120,17 +117,16 @@ class FreemarkerViewRendererTest extends JerseyTest {
     void returnsA500ForViewsThatCantCompile() {
         Invocation.Builder request = target("/test/error").request();
         assertThatExceptionOfType(WebApplicationException.class)
-            .isThrownBy(() -> request.get(String.class))
-            .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(500))
-            .satisfies(e -> assertThat(e.getResponse().readEntity(String.class))
-                .isEqualTo(ViewRenderExceptionMapper.TEMPLATE_ERROR_MSG));
+                .isThrownBy(() -> request.get(String.class))
+                .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(500))
+                .satisfies(e -> assertThat(e.getResponse().readEntity(String.class))
+                        .isEqualTo(ViewRenderExceptionMapper.TEMPLATE_ERROR_MSG));
     }
 
     @Test
     void rendersViewsUsingUnsafeInputWithAutoEscapingEnabled() {
         final String unsafe = "<script>alert(\"hello\")</script>";
-        final Response response = target("/test/auto-escaping")
-            .request().post(Entity.form(new Form("input", unsafe)));
+        final Response response = target("/test/auto-escaping").request().post(Entity.form(new Form("input", unsafe)));
         assertThat(response.getStatus()).isEqualTo(Response.Status.OK.getStatusCode());
         assertThat(response.getHeaderString("content-type")).isEqualToIgnoringCase(MediaType.TEXT_HTML);
         assertThat(response.readEntity(String.class)).doesNotContain(unsafe);

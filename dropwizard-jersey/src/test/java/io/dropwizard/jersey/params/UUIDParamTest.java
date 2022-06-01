@@ -1,22 +1,20 @@
 package io.dropwizard.jersey.params;
 
-import io.dropwizard.jersey.errors.ErrorMessage;
-import org.junit.jupiter.api.Test;
-
-import javax.ws.rs.WebApplicationException;
-import java.util.UUID;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+
+import io.dropwizard.jersey.errors.ErrorMessage;
+import java.util.UUID;
+import javax.ws.rs.WebApplicationException;
+import org.junit.jupiter.api.Test;
 
 class UUIDParamTest {
     private void UuidParamNegativeTest(String input) {
         assertThatExceptionOfType(WebApplicationException.class)
-            .isThrownBy(() -> new UUIDParam(input))
-            .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(400))
-            .satisfies(e -> assertThat(e.getResponse().getEntity()).isEqualTo(
-                new ErrorMessage(400, "Parameter is not a UUID.")
-            ));
+                .isThrownBy(() -> new UUIDParam(input))
+                .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(400))
+                .satisfies(e -> assertThat(e.getResponse().getEntity())
+                        .isEqualTo(new ErrorMessage(400, "Parameter is not a UUID.")));
     }
 
     @Test

@@ -1,18 +1,17 @@
 package io.dropwizard.validation.valuehandling;
 
-import org.hibernate.validator.HibernateValidator;
-import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.Optional;
+import java.util.Set;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.valueextraction.Unwrapping;
-import java.util.Optional;
-import java.util.Set;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import org.hibernate.validator.HibernateValidator;
+import org.junit.jupiter.api.Test;
 
 // Dropwizard used to supply its own Java 8 optional validator but since
 // Hibernate Validator 5.2, it's built in, so the class was removed but
@@ -28,8 +27,7 @@ class OptionalValidatedValueUnwrapperTest {
         Optional<Integer> notNull = Optional.of(123);
     }
 
-    private final Validator validator = Validation
-            .byProvider(HibernateValidator.class)
+    private final Validator validator = Validation.byProvider(HibernateValidator.class)
             .configure()
             .buildValidatorFactory()
             .getValidator();

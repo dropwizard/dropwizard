@@ -1,13 +1,14 @@
 package io.dropwizard.jersey.validation;
 
+import static java.util.Objects.requireNonNull;
+
 import io.dropwizard.validation.ConstraintViolations;
 import io.dropwizard.validation.Validated;
-import org.glassfish.jersey.server.internal.inject.ConfiguredValidator;
-import org.glassfish.jersey.server.model.Invocable;
-import org.glassfish.jersey.server.model.Parameter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
@@ -15,13 +16,11 @@ import javax.validation.executable.ExecutableValidator;
 import javax.validation.groups.Default;
 import javax.validation.metadata.BeanDescriptor;
 import javax.ws.rs.WebApplicationException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import static java.util.Objects.requireNonNull;
+import org.glassfish.jersey.server.internal.inject.ConfiguredValidator;
+import org.glassfish.jersey.server.model.Invocable;
+import org.glassfish.jersey.server.model.Parameter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DropwizardConfiguredValidator implements ConfiguredValidator {
     private static final Logger LOGGER = LoggerFactory.getLogger(DropwizardConfiguredValidator.class);
@@ -43,7 +42,8 @@ public class DropwizardConfiguredValidator implements ConfiguredValidator {
             violations.addAll(validate(resource, groups));
         }
 
-        violations.addAll(forExecutables().validateParameters(resource, invocable.getHandlingMethod(), objects, groups));
+        violations.addAll(
+                forExecutables().validateParameters(resource, invocable.getHandlingMethod(), objects, groups));
         if (!violations.isEmpty()) {
             throw new JerseyViolationException(violations, invocable);
         }
@@ -63,23 +63,27 @@ public class DropwizardConfiguredValidator implements ConfiguredValidator {
         }
 
         switch (groups.size()) {
-            // No parameters were annotated with Validated, so validate under the default group
-            case 0: return new Class<?>[] {Default.class};
+                // No parameters were annotated with Validated, so validate under the default group
+            case 0:
+                return new Class<?>[] {Default.class};
 
-            // A single parameter was annotated with Validated, so use their group
-            case 1: return groups.get(0);
+                // A single parameter was annotated with Validated, so use their group
+            case 1:
+                return groups.get(0);
 
-            // Multiple parameters were annotated with Validated, so we must check if
-            // all groups are equal to each other, if not, throw an exception because
-            // the validator is unable to handle parameters validated under different
-            // groups. If the parameters have the same group, we can grab the first
-            // group.
+                // Multiple parameters were annotated with Validated, so we must check if
+                // all groups are equal to each other, if not, throw an exception because
+                // the validator is unable to handle parameters validated under different
+                // groups. If the parameters have the same group, we can grab the first
+                // group.
             default:
                 for (int i = 0; i < groups.size(); i++) {
                     for (int j = i; j < groups.size(); j++) {
                         if (!Arrays.deepEquals(groups.get(i), groups.get(j))) {
-                            throw new WebApplicationException("Parameters must have the same validation groups in " +
-                                invocable.getHandlingMethod().getName(), 500);
+                            throw new WebApplicationException(
+                                    "Parameters must have the same validation groups in "
+                                            + invocable.getHandlingMethod().getName(),
+                                    500);
                         }
                     }
                 }
@@ -94,13 +98,14 @@ public class DropwizardConfiguredValidator implements ConfiguredValidator {
         // the specified constraint group.
         final Class<?>[] groups;
         if (invocable.getHandlingMethod().isAnnotationPresent(Validated.class)) {
-            groups = invocable.getHandlingMethod().getAnnotation(Validated.class).value();
+            groups =
+                    invocable.getHandlingMethod().getAnnotation(Validated.class).value();
         } else {
-            groups = new Class<?>[]{Default.class};
+            groups = new Class<?>[] {Default.class};
         }
 
         final Set<ConstraintViolation<Object>> violations =
-            forExecutables().validateReturnValue(resource, invocable.getHandlingMethod(), returnValue, groups);
+                forExecutables().validateReturnValue(resource, invocable.getHandlingMethod(), returnValue, groups);
         if (!violations.isEmpty()) {
             LOGGER.trace("Response validation failed: {}", ConstraintViolations.copyOf(violations));
             throw new JerseyViolationException(violations, invocable);

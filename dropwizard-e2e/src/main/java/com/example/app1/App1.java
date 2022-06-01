@@ -1,5 +1,7 @@
 package com.example.app1;
 
+import static io.dropwizard.util.Throwables.findThrowableInChain;
+
 import com.github.mustachejava.MustacheNotFoundException;
 import io.dropwizard.core.Application;
 import io.dropwizard.core.Configuration;
@@ -7,14 +9,11 @@ import io.dropwizard.core.setup.Bootstrap;
 import io.dropwizard.core.setup.Environment;
 import io.dropwizard.jersey.optional.EmptyOptionalNoContentExceptionMapper;
 import io.dropwizard.views.common.ViewBundle;
-import org.eclipse.jetty.io.EofException;
-import org.glassfish.jersey.spi.ExtendedExceptionMapper;
-
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
-
-import static io.dropwizard.util.Throwables.findThrowableInChain;
+import org.eclipse.jetty.io.EofException;
+import org.glassfish.jersey.spi.ExtendedExceptionMapper;
 
 public class App1 extends Application<Configuration> {
     public volatile boolean wasEofExceptionHit = false;
@@ -40,7 +39,6 @@ public class App1 extends Application<Configuration> {
             }
         });
 
-
         // Ensure that we can override the 503 response of a view that refers to
         // a missing Mustache template and return a 404 instead
         env.jersey().register(new ExtendedExceptionMapper<WebApplicationException>() {
@@ -51,7 +49,8 @@ public class App1 extends Application<Configuration> {
 
             @Override
             public boolean isMappable(WebApplicationException e) {
-                return findThrowableInChain(t -> t.getClass() == MustacheNotFoundException.class, e).isPresent();
+                return findThrowableInChain(t -> t.getClass() == MustacheNotFoundException.class, e)
+                        .isPresent();
             }
         });
 

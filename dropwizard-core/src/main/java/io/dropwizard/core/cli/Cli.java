@@ -1,17 +1,9 @@
 package io.dropwizard.core.cli;
 
+import static java.util.Objects.requireNonNull;
+
 import io.dropwizard.core.setup.Bootstrap;
 import io.dropwizard.util.JarLocation;
-import net.sourceforge.argparse4j.ArgumentParsers;
-import net.sourceforge.argparse4j.helper.HelpScreenException;
-import net.sourceforge.argparse4j.impl.Arguments;
-import net.sourceforge.argparse4j.inf.Argument;
-import net.sourceforge.argparse4j.inf.ArgumentAction;
-import net.sourceforge.argparse4j.inf.ArgumentParser;
-import net.sourceforge.argparse4j.inf.ArgumentParserException;
-import net.sourceforge.argparse4j.inf.Namespace;
-import net.sourceforge.argparse4j.inf.Subparser;
-
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -21,8 +13,15 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.SortedMap;
 import java.util.TreeMap;
-
-import static java.util.Objects.requireNonNull;
+import net.sourceforge.argparse4j.ArgumentParsers;
+import net.sourceforge.argparse4j.helper.HelpScreenException;
+import net.sourceforge.argparse4j.impl.Arguments;
+import net.sourceforge.argparse4j.inf.Argument;
+import net.sourceforge.argparse4j.inf.ArgumentAction;
+import net.sourceforge.argparse4j.inf.ArgumentParser;
+import net.sourceforge.argparse4j.inf.ArgumentParserException;
+import net.sourceforge.argparse4j.inf.Namespace;
+import net.sourceforge.argparse4j.inf.Subparser;
 
 /**
  * The command-line runner for Dropwizard application.
@@ -72,8 +71,8 @@ public class Cli {
                 parser.printVersion(stdOut);
             } else {
                 final Namespace namespace = parser.parseArgs(arguments);
-                final Command command = requireNonNull(commands.get(namespace.getString(COMMAND_NAME_ATTR)),
-                    "Command is not found");
+                final Command command =
+                        requireNonNull(commands.get(namespace.getString(COMMAND_NAME_ATTR)), "Command is not found");
                 try {
                     command.run(bootstrap, namespace);
                 } catch (Throwable e) {
@@ -107,21 +106,21 @@ public class Cli {
     private ArgumentParser buildParser(JarLocation location) {
         final String usage = "java -jar " + location;
         final ArgumentParser p = ArgumentParsers.newFor(usage).addHelp(false).build();
-        p.version(location.getVersion().orElse(
-                "No application version detected. Add a Implementation-Version " +
-                        "entry to your JAR's manifest to enable this."));
+        p.version(location.getVersion()
+                .orElse("No application version detected. Add a Implementation-Version "
+                        + "entry to your JAR's manifest to enable this."));
         addHelp(p);
         p.addArgument("-v", "--version")
-            .action(Arguments.help()) // never gets called; intercepted in #run
-            .help("show the application version and exit");
+                .action(Arguments.help()) // never gets called; intercepted in #run
+                .help("show the application version and exit");
         return p;
     }
 
     private void addHelp(ArgumentParser p) {
         p.addArgument("-h", "--help")
-            .action(new SafeHelpAction(stdOut))
-            .help("show this help message and exit")
-            .setDefault(Arguments.SUPPRESS);
+                .action(new SafeHelpAction(stdOut))
+                .help("show this help message and exit")
+                .setDefault(Arguments.SUPPRESS);
     }
 
     private void addCommand(Command command) {
@@ -130,9 +129,10 @@ public class Cli {
         final Subparser subparser = parser.addSubparsers().addParser(command.getName(), false);
         command.configure(subparser);
         addHelp(subparser);
-        subparser.description(command.getDescription())
-                 .setDefault(COMMAND_NAME_ATTR, command.getName())
-                 .defaultHelp(true);
+        subparser
+                .description(command.getDescription())
+                .setDefault(COMMAND_NAME_ATTR, command.getName())
+                .defaultHelp(true);
     }
 
     public PrintWriter getStdOut() {
@@ -151,8 +151,7 @@ public class Cli {
         }
 
         @Override
-        public void run(ArgumentParser parser, Argument arg,
-                        Map<String, Object> attrs, String flag, Object value)
+        public void run(ArgumentParser parser, Argument arg, Map<String, Object> attrs, String flag, Object value)
                 throws ArgumentParserException {
             parser.printHelp(out);
             throw new HelpScreenException(parser);

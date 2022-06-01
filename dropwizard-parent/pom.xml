@@ -12,10 +12,8 @@
     <packaging>pom</packaging>
 
     <name>Dropwizard Parent</name>
-    <description>
-        Dropwizard is a Java framework for developing ops-friendly, high-performance, RESTful web
-        applications.
-    </description>
+    <description>Dropwizard is a Java framework for developing ops-friendly, high-performance, RESTful web
+        applications.</description>
 
     <properties>
         <maven.compiler.release>11</maven.compiler.release>
@@ -27,6 +25,153 @@
         <surefire.argLine>-Duser.language=en -Duser.region=US -Duser.timezone=UTC</surefire.argLine>
         <argLine>${surefire.argLine} --illegal-access=deny --add-opens java.base/java.net=ALL-UNNAMED</argLine>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.dropwizard</groupId>
+                <artifactId>dropwizard-dependencies</artifactId>
+                <version>3.0.0-SNAPSHOT</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <compilerArgs>
+                        <arg>-XDcompilePolicy=simple</arg>
+                        <!-- When run as plugin all args must be passed together -->
+                        <arg>-Xplugin:ErrorProne -XepDisableWarningsInGeneratedCode -Xep:EqualsGetClass:OFF -Xep:NullAway:ERROR -XepOpt:NullAway:AnnotatedPackages=io.dropwizard -XepOpt:NullAway:ExcludedFieldAnnotations=org.mockito.Mock -XepOpt:NullAway:UnannotatedSubPackages=io.dropwizard.benchmarks</arg>
+                    </compilerArgs>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>com.google.errorprone</groupId>
+                            <artifactId>error_prone_core</artifactId>
+                            <version>${error_prone.version}</version>
+                        </path>
+                        <!-- enable extended nullability checks -->
+                        <path>
+                            <groupId>com.uber.nullaway</groupId>
+                            <artifactId>nullaway</artifactId>
+                            <version>${nullaway.version}</version>
+                        </path>
+                        <path>
+                            <groupId>jp.skypencil.errorprone.slf4j</groupId>
+                            <artifactId>errorprone-slf4j</artifactId>
+                            <version>0.1.12</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>enforce</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <dependencyConvergence/>
+                                <bannedDependencies>
+                                    <excludes>
+                                        <!-- Replaced with jakarta.activation:jakarta.activation-api -->
+                                        <exclude>javax.activation:javax.activation-api</exclude>
+                                        <!-- Replaced with jakarta.servlet:jakarta.servlet-api -->
+                                        <exclude>javax.servlet:javax.servlet-api</exclude>
+                                        <!-- Replaced with jakarta.validation:jakarta.validation-api -->
+                                        <exclude>javax.validation:validation-api</exclude>
+                                        <!-- Replaced with jakarta.xml.bind:jakarta.xml.bind-api -->
+                                        <exclude>javax.xml.bind:jaxb-api</exclude>
+                                        <!-- This should not exist as it will force SLF4J calls to be delegated to log4j -->
+                                        <exclude>org.slf4j:slf4j-log4j12</exclude>
+                                        <!-- This should not exist as it will force SLF4J calls to be delegated to jul -->
+                                        <exclude>org.slf4j:slf4j-jdk14</exclude>
+                                        <!-- Ensure only the slf4j binding for logback is on the classpath -->
+                                        <exclude>log4j:log4j</exclude>
+                                        <!-- As recommended from the slf4j guide, exclude commons-logging -->
+                                        <exclude>commons-logging:commons-logging</exclude>
+                                    </excludes>
+                                </bannedDependencies>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.simplify4u.plugins</groupId>
+                <artifactId>pgpverify-maven-plugin</artifactId>
+                <configuration>
+                    <quiet>true</quiet>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <doclint>none</doclint>
+                    <quiet>true</quiet>
+                </configuration>
+                <reportSets>
+                    <reportSet>
+                        <id>html</id>
+                        <reports>
+                            <report>javadoc</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+        </plugins>
+    </reporting>
 
     <profiles>
         <profile>
@@ -127,7 +272,7 @@
                                             </goals>
                                         </pluginExecutionFilter>
                                         <action>
-                                            <ignore />
+                                            <ignore/>
                                         </action>
                                     </pluginExecution>
                                 </pluginExecutions>
@@ -138,151 +283,4 @@
             </build>
         </profile>
     </profiles>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>io.dropwizard</groupId>
-                <artifactId>dropwizard-dependencies</artifactId>
-                <version>3.0.0-SNAPSHOT</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <compilerArgs>
-                        <arg>-XDcompilePolicy=simple</arg>
-                        <!-- When run as plugin all args must be passed together -->
-                        <arg>-Xplugin:ErrorProne -XepDisableWarningsInGeneratedCode -Xep:EqualsGetClass:OFF -Xep:NullAway:ERROR -XepOpt:NullAway:AnnotatedPackages=io.dropwizard -XepOpt:NullAway:ExcludedFieldAnnotations=org.mockito.Mock -XepOpt:NullAway:UnannotatedSubPackages=io.dropwizard.benchmarks</arg>
-                    </compilerArgs>
-                    <annotationProcessorPaths>
-                        <path>
-                            <groupId>com.google.errorprone</groupId>
-                            <artifactId>error_prone_core</artifactId>
-                            <version>${error_prone.version}</version>
-                        </path>
-                        <!-- enable extended nullability checks -->
-                        <path>
-                            <groupId>com.uber.nullaway</groupId>
-                            <artifactId>nullaway</artifactId>
-                            <version>${nullaway.version}</version>
-                        </path>
-                        <path>
-                            <groupId>jp.skypencil.errorprone.slf4j</groupId>
-                            <artifactId>errorprone-slf4j</artifactId>
-                            <version>0.1.12</version>
-                        </path>
-                    </annotationProcessorPaths>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-enforcer-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>enforce</id>
-                        <configuration>
-                            <rules>
-                                <dependencyConvergence />
-                                <bannedDependencies>
-                                    <excludes>
-                                        <!-- Replaced with jakarta.activation:jakarta.activation-api -->
-                                        <exclude>javax.activation:javax.activation-api</exclude>
-                                        <!-- Replaced with jakarta.servlet:jakarta.servlet-api -->
-                                        <exclude>javax.servlet:javax.servlet-api</exclude>
-                                        <!-- Replaced with jakarta.validation:jakarta.validation-api -->
-                                        <exclude>javax.validation:validation-api</exclude>
-                                        <!-- Replaced with jakarta.xml.bind:jakarta.xml.bind-api -->
-                                        <exclude>javax.xml.bind:jaxb-api</exclude>
-                                        <!-- This should not exist as it will force SLF4J calls to be delegated to log4j -->
-                                        <exclude>org.slf4j:slf4j-log4j12</exclude>
-                                        <!-- This should not exist as it will force SLF4J calls to be delegated to jul -->
-                                        <exclude>org.slf4j:slf4j-jdk14</exclude>
-                                        <!-- Ensure only the slf4j binding for logback is on the classpath -->
-                                        <exclude>log4j:log4j</exclude>
-                                        <!-- As recommended from the slf4j guide, exclude commons-logging -->
-                                        <exclude>commons-logging:commons-logging</exclude>
-                                    </excludes>
-                                </bannedDependencies>
-                            </rules>
-                        </configuration>
-                        <goals>
-                            <goal>enforce</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                        </manifest>
-                    </archive>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>prepare-agent</id>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>report</id>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.simplify4u.plugins</groupId>
-                <artifactId>pgpverify-maven-plugin</artifactId>
-                <configuration>
-                    <quiet>true</quiet>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
-
-    <reporting>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <configuration>
-                    <doclint>none</doclint>
-                    <quiet>true</quiet>
-                </configuration>
-                <reportSets>
-                    <reportSet>
-                        <id>html</id>
-                        <reports>
-                            <report>javadoc</report>
-                        </reports>
-                    </reportSet>
-                </reportSets>
-            </plugin>
-        </plugins>
-    </reporting>
 </project>

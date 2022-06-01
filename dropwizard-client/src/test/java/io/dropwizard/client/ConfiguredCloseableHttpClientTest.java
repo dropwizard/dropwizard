@@ -1,12 +1,12 @@
 package io.dropwizard.client;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 class ConfiguredCloseableHttpClientTest {
     private ConfiguredCloseableHttpClient configuredClient;

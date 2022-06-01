@@ -2,17 +2,16 @@ package io.dropwizard.jersey.errors;
 
 import com.codahale.metrics.Counter;
 import com.codahale.metrics.MetricRegistry;
-import org.eclipse.jetty.io.EofException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import java.io.IOException;
 import javax.annotation.Priority;
 import javax.inject.Inject;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.ext.Provider;
 import javax.ws.rs.ext.WriterInterceptor;
 import javax.ws.rs.ext.WriterInterceptorContext;
-import java.io.IOException;
+import org.eclipse.jetty.io.EofException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A {@link WriterInterceptor} to swallow {@link org.eclipse.jetty.io.EofException} which occurs when a client

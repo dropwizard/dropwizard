@@ -1,5 +1,7 @@
 package io.dropwizard.core.setup;
 
+import static java.util.Objects.requireNonNull;
+
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheckRegistry;
 import com.codahale.metrics.health.jvm.ThreadDeadlockHealthCheck;
@@ -12,8 +14,6 @@ import io.dropwizard.servlets.tasks.TaskServlet;
 import org.eclipse.jetty.util.component.LifeCycle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static java.util.Objects.requireNonNull;
 
 /**
  * The administrative environment of a Dropwizard application.
@@ -31,10 +31,11 @@ public class AdminEnvironment extends ServletEnvironment {
      * @param handler      a servlet context handler
      * @param healthChecks a health check registry
      */
-    public AdminEnvironment(MutableServletContextHandler handler,
-                            HealthCheckRegistry healthChecks,
-                            MetricRegistry metricRegistry,
-                            AdminFactory adminFactory) {
+    public AdminEnvironment(
+            MutableServletContextHandler handler,
+            HealthCheckRegistry healthChecks,
+            MetricRegistry metricRegistry,
+            AdminFactory adminFactory) {
         super(handler);
         this.healthChecks = healthChecks;
         this.healthChecks.register("deadlocks", new ThreadDeadlockHealthCheck());
@@ -65,11 +66,9 @@ public class AdminEnvironment extends ServletEnvironment {
         final StringBuilder stringBuilder = new StringBuilder(1024).append(String.format("%n%n"));
 
         for (Task task : tasks.getTasks()) {
-            final String taskClassName = firstNonNull(task.getClass().getCanonicalName(), task.getClass().getName());
-            stringBuilder.append(String.format("    %-7s /tasks/%s (%s)%n",
-                                               "POST",
-                                               task.getName(),
-                                               taskClassName));
+            final String taskClassName = firstNonNull(
+                    task.getClass().getCanonicalName(), task.getClass().getName());
+            stringBuilder.append(String.format("    %-7s /tasks/%s (%s)%n", "POST", task.getName(), taskClassName));
         }
 
         LOGGER.info("tasks = {}", stringBuilder);
@@ -83,16 +82,14 @@ public class AdminEnvironment extends ServletEnvironment {
     private void logHealthChecks() {
         if (healthChecks.getNames().size() <= 1) {
             LOGGER.warn(String.format(
-                    "%n" +
-                            "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!%n" +
-                            "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!%n" +
-                            "!    THIS APPLICATION HAS NO HEALTHCHECKS. THIS MEANS YOU WILL NEVER KNOW      !%n" +
-                            "!     IF IT DIES IN PRODUCTION, WHICH MEANS YOU WILL NEVER KNOW IF YOU'RE      !%n" +
-                            "!    LETTING YOUR USERS DOWN. YOU SHOULD ADD A HEALTHCHECK FOR EACH OF YOUR    !%n" +
-                            "!         APPLICATION'S DEPENDENCIES WHICH FULLY (BUT LIGHTLY) TESTS IT.       !%n" +
-                            "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!%n" +
-                            "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-            ));
+                    "%n" + "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!%n"
+                            + "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!%n"
+                            + "!    THIS APPLICATION HAS NO HEALTHCHECKS. THIS MEANS YOU WILL NEVER KNOW      !%n"
+                            + "!     IF IT DIES IN PRODUCTION, WHICH MEANS YOU WILL NEVER KNOW IF YOU'RE      !%n"
+                            + "!    LETTING YOUR USERS DOWN. YOU SHOULD ADD A HEALTHCHECK FOR EACH OF YOUR    !%n"
+                            + "!         APPLICATION'S DEPENDENCIES WHICH FULLY (BUT LIGHTLY) TESTS IT.       !%n"
+                            + "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!%n"
+                            + "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"));
         }
         LOGGER.debug("health checks = {}", healthChecks.getNames());
     }

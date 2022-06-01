@@ -1,25 +1,20 @@
 package io.dropwizard.servlets.tasks;
 
-import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.PrintWriter;
 import java.util.List;
 import java.util.Map;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.Test;
 
 class TaskTest {
     private final Task task = new Task("test") {
         @Override
-        public void execute(Map<String, List<String>> parameters,
-                            PrintWriter output) throws Exception {
-
-        }
+        public void execute(Map<String, List<String>> parameters, PrintWriter output) throws Exception {}
     };
 
     @Test
     void hasAName() throws Exception {
-        assertThat(task.getName())
-                .isEqualTo("test");
+        assertThat(task.getName()).isEqualTo("test");
     }
 }

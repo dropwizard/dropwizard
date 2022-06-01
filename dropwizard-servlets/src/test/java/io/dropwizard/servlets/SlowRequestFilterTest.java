@@ -1,21 +1,20 @@
 package io.dropwizard.servlets;
 
-import io.dropwizard.util.Duration;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import io.dropwizard.util.Duration;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
 
 class SlowRequestFilterTest {
 
@@ -45,9 +44,11 @@ class SlowRequestFilterTest {
     @Test
     void logsSlowRequests() throws Exception {
         doAnswer(invocationOnMock -> {
-            slowRequestFilter.setCurrentTimeProvider(() -> 1510330745000000L);
-            return null;
-        }).when(chain).doFilter(request, response);
+                    slowRequestFilter.setCurrentTimeProvider(() -> 1510330745000000L);
+                    return null;
+                })
+                .when(chain)
+                .doFilter(request, response);
 
         slowRequestFilter.doFilter(request, response, chain);
 
@@ -57,13 +58,14 @@ class SlowRequestFilterTest {
     @Test
     void doesNotLogFastRequests() throws Exception {
         doAnswer(invocationOnMock -> {
-            slowRequestFilter.setCurrentTimeProvider(() -> 1510330743000000L);
-            return null;
-        }).when(chain).doFilter(request, response);
+                    slowRequestFilter.setCurrentTimeProvider(() -> 1510330743000000L);
+                    return null;
+                })
+                .when(chain)
+                .doFilter(request, response);
 
         slowRequestFilter.doFilter(request, response, chain);
 
         verify(logger, never()).warn("Slow request: {} {} ({}ms)", "GET", "/some/path", 499L);
     }
-
 }

@@ -1,5 +1,7 @@
 package io.dropwizard.testing.junit;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import io.dropwizard.testing.app.TestEntity;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -7,22 +9,20 @@ import org.hibernate.cfg.AvailableSettings;
 import org.junit.Rule;
 import org.junit.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 public class DAOTestRuleConfigTest {
     @SuppressWarnings("deprecation")
     @Rule
     public final DAOTestRule database = DAOTestRule.newBuilder()
-        .setUrl("jdbc:h2:mem:rule-config-test")
-        .setDriver(org.h2.Driver.class)
-        .setUsername("username")
-        .useSqlComments(true)
-        .setHbm2DdlAuto("create")
-        .setShowSql(true)
-        .addEntityClass(TestEntity.class)
-        .setProperty(AvailableSettings.FORMAT_SQL, "true")
-        .customizeConfiguration(c -> c.setProperty("foobar", "baz"))
-        .build();
+            .setUrl("jdbc:h2:mem:rule-config-test")
+            .setDriver(org.h2.Driver.class)
+            .setUsername("username")
+            .useSqlComments(true)
+            .setHbm2DdlAuto("create")
+            .setShowSql(true)
+            .addEntityClass(TestEntity.class)
+            .setProperty(AvailableSettings.FORMAT_SQL, "true")
+            .customizeConfiguration(c -> c.setProperty("foobar", "baz"))
+            .build();
 
     @Test
     public void explicitConfigCreatesSessionFactory() {

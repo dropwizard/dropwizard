@@ -2,11 +2,10 @@ package com.example.validation;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
+import java.util.Collection;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
-import java.util.Collection;
 
 public class ValidatedBean {
     @JsonProperty("string")
@@ -22,9 +21,10 @@ public class ValidatedBean {
     private final Collection<@NotBlank String> list;
 
     @JsonCreator
-    public ValidatedBean(@JsonProperty("string") String string,
-                         @JsonProperty("number") Long number,
-                         @JsonProperty("list") Collection<String> list) {
+    public ValidatedBean(
+            @JsonProperty("string") String string,
+            @JsonProperty("number") Long number,
+            @JsonProperty("list") Collection<String> list) {
         this.string = string;
         this.number = number;
         this.list = list;

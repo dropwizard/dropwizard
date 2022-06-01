@@ -3,7 +3,6 @@ package io.dropwizard.documentation.mq;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.core.setup.Environment;
 import io.dropwizard.lifecycle.Managed;
-
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
@@ -41,8 +40,7 @@ public final class MessageQueueFactory {
         MessageQueueClient client = new MessageQueueClient(getHost(), getPort());
         environment.lifecycle().manage(new Managed() {
             @Override
-            public void start() {
-            }
+            public void start() {}
 
             @Override
             public void stop() {

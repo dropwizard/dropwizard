@@ -11,8 +11,6 @@ import freemarker.template.Version;
 import io.dropwizard.views.common.View;
 import io.dropwizard.views.common.ViewRenderException;
 import io.dropwizard.views.common.ViewRenderer;
-import org.checkerframework.checker.nullness.qual.NonNull;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -22,6 +20,7 @@ import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  * A {@link ViewRenderer} which renders Freemarker ({@code .ftl, .ftlh or .ftlx}) templates.
@@ -83,16 +82,15 @@ public class FreemarkerViewRenderer implements ViewRenderer {
     }
 
     @Override
-    public void render(View view,
-                       Locale locale,
-                       OutputStream output) throws IOException {
+    public void render(View view, Locale locale, OutputStream output) throws IOException {
         final Configuration configuration = configurationCache.get(view.getClass());
         if (configuration == null) {
             throw new ViewRenderException("Couldn't find view class " + view.getClass());
         }
 
         try {
-            final Charset charset = view.getCharset().orElseGet(() -> Charset.forName(configuration.getEncoding(locale)));
+            final Charset charset =
+                    view.getCharset().orElseGet(() -> Charset.forName(configuration.getEncoding(locale)));
             final Template template = configuration.getTemplate(view.getTemplateName(), locale, charset.name());
             template.process(view, new OutputStreamWriter(output, template.getEncoding()));
         } catch (Exception e) {

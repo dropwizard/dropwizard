@@ -1,10 +1,6 @@
 package io.dropwizard.jackson;
 
 import com.fasterxml.jackson.databind.jsontype.impl.StdSubtypeResolver;
-import org.checkerframework.checker.nullness.qual.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,6 +10,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A subtype resolver which discovers subtypes via
@@ -58,8 +57,8 @@ public class DiscoverableSubtypeResolver extends StdSubtypeResolver {
             while (resources.hasMoreElements()) {
                 final URL url = resources.nextElement();
                 try (InputStream input = url.openStream();
-                     InputStreamReader streamReader = new InputStreamReader(input, StandardCharsets.UTF_8);
-                     BufferedReader reader = new BufferedReader(streamReader)) {
+                        InputStreamReader streamReader = new InputStreamReader(input, StandardCharsets.UTF_8);
+                        BufferedReader reader = new BufferedReader(streamReader)) {
                     String line;
                     while ((line = reader.readLine()) != null) {
                         if (!line.startsWith("#")) {

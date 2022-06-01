@@ -1,17 +1,16 @@
 package io.dropwizard.jersey.errors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static java.util.Objects.requireNonNull;
 
+import java.util.Locale;
+import java.util.concurrent.ThreadLocalRandom;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
-import java.util.Locale;
-import java.util.concurrent.ThreadLocalRandom;
-
-import static java.util.Objects.requireNonNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Provider
 public abstract class LoggingExceptionMapper<E extends Throwable> implements ExceptionMapper<E> {
@@ -63,7 +62,8 @@ public abstract class LoggingExceptionMapper<E extends Throwable> implements Exc
 
     @SuppressWarnings("UnusedParameters")
     protected String formatErrorMessage(long id, E exception) {
-        return String.format(Locale.ROOT, "There was an error processing your request. It has been logged (ID %016x).", id);
+        return String.format(
+                Locale.ROOT, "There was an error processing your request. It has been logged (ID %016x).", id);
     }
 
     protected long logException(E exception) {

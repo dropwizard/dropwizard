@@ -21,6 +21,5 @@ public class AssetsApp extends Application<Configuration> {
     }
 
     @Override
-    public void run(Configuration configuration, Environment environment) {
-    }
+    public void run(Configuration configuration, Environment environment) {}
 }

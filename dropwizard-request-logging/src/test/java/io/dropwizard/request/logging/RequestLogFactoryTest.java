@@ -1,5 +1,7 @@
 package io.dropwizard.request.logging;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
@@ -12,35 +14,32 @@ import io.dropwizard.validation.BaseValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 class RequestLogFactoryTest {
     private LogbackAccessRequestLogFactory logbackAccessRequestLogFactory;
 
     @BeforeEach
     void setUp() throws Exception {
         final ObjectMapper objectMapper = Jackson.newObjectMapper();
-        objectMapper.getSubtypeResolver().registerSubtypes(ConsoleAppenderFactory.class,
-                                                           FileAppenderFactory.class,
-                                                           SyslogAppenderFactory.class);
-        this.logbackAccessRequestLogFactory = new YamlConfigurationFactory<>(LogbackAccessRequestLogFactory.class,
-                                                     BaseValidator.newValidator(),
-                                                     objectMapper, "dw")
+        objectMapper
+                .getSubtypeResolver()
+                .registerSubtypes(ConsoleAppenderFactory.class, FileAppenderFactory.class, SyslogAppenderFactory.class);
+        this.logbackAccessRequestLogFactory = new YamlConfigurationFactory<>(
+                        LogbackAccessRequestLogFactory.class, BaseValidator.newValidator(), objectMapper, "dw")
                 .build(new ResourceConfigurationSourceProvider(), "yaml/requestLog.yml");
     }
 
     @Test
     void fileAppenderFactoryIsSet() {
         assertThat(logbackAccessRequestLogFactory)
-            .extracting(LogbackAccessRequestLogFactory::getAppenders)
-            .asList()
-            .singleElement()
-            .isInstanceOf(FileAppenderFactory.class);
+                .extracting(LogbackAccessRequestLogFactory::getAppenders)
+                .asList()
+                .singleElement()
+                .isInstanceOf(FileAppenderFactory.class);
     }
 
     @Test
     void isDiscoverable() {
         assertThat(new DiscoverableSubtypeResolver().getDiscoveredSubtypes())
-            .contains(LogbackAccessRequestLogFactory.class);
+                .contains(LogbackAccessRequestLogFactory.class);
     }
 }

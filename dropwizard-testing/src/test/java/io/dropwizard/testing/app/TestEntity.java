@@ -1,6 +1,6 @@
 package io.dropwizard.testing.app;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
+import static java.util.Objects.requireNonNull;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,8 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-
-import static java.util.Objects.requireNonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 @Entity
 @Table(name = "test_entities")

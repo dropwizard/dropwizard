@@ -1,10 +1,9 @@
 package io.dropwizard.jdbi3;
 
+import java.util.Objects;
 import org.jdbi.v3.core.extension.ExtensionMethod;
 import org.jdbi.v3.core.statement.StatementContext;
 import org.jdbi.v3.core.statement.TemplateEngine;
-
-import java.util.Objects;
 
 /**
  * Jdbi {@link TemplateEngine} that prepends the SQLObject's type and method name in front of every

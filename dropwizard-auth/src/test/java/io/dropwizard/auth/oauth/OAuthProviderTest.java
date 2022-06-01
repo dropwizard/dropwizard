@@ -1,16 +1,15 @@
 package io.dropwizard.auth.oauth;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import io.dropwizard.auth.AbstractAuthResourceConfig;
 import io.dropwizard.auth.AuthBaseTest;
 import io.dropwizard.auth.AuthResource;
 import io.dropwizard.auth.util.AuthUtil;
 import io.dropwizard.jersey.DropwizardResourceConfig;
-import org.junit.jupiter.api.Test;
-
-import javax.ws.rs.container.ContainerRequestFilter;
 import java.util.Arrays;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import javax.ws.rs.container.ContainerRequestFilter;
+import org.junit.jupiter.api.Test;
 
 class OAuthProviderTest extends AuthBaseTest<OAuthProviderTest.OAuthTestResourceConfig> {
     public static class OAuthTestResourceConfig extends AbstractAuthResourceConfig {
@@ -18,22 +17,24 @@ class OAuthProviderTest extends AuthBaseTest<OAuthProviderTest.OAuthTestResource
             register(AuthResource.class);
         }
 
-        @Override protected ContainerRequestFilter getAuthFilter() {
+        @Override
+        protected ContainerRequestFilter getAuthFilter() {
             return new OAuthCredentialAuthFilter.Builder<>()
-                .setAuthenticator(AuthUtil.getMultiplyUsersOAuthAuthenticator(Arrays.asList(ADMIN_USER, ORDINARY_USER)))
-                .setAuthorizer(AuthUtil.getTestAuthorizer(ADMIN_USER, ADMIN_ROLE))
-                .setPrefix(BEARER_PREFIX)
-                .buildAuthFilter();
+                    .setAuthenticator(
+                            AuthUtil.getMultiplyUsersOAuthAuthenticator(Arrays.asList(ADMIN_USER, ORDINARY_USER)))
+                    .setAuthorizer(AuthUtil.getTestAuthorizer(ADMIN_USER, ADMIN_ROLE))
+                    .setPrefix(BEARER_PREFIX)
+                    .buildAuthFilter();
         }
     }
 
     @Test
     void checksQueryStringAccessTokenIfAuthorizationHeaderMissing() {
         assertThat(target("/test/profile")
-            .queryParam(OAuthCredentialAuthFilter.OAUTH_ACCESS_TOKEN_PARAM, getOrdinaryGuyValidToken())
-            .request()
-            .get(String.class))
-            .isEqualTo("'" + ORDINARY_USER + "' has user privileges");
+                        .queryParam(OAuthCredentialAuthFilter.OAUTH_ACCESS_TOKEN_PARAM, getOrdinaryGuyValidToken())
+                        .request()
+                        .get(String.class))
+                .isEqualTo("'" + ORDINARY_USER + "' has user privileges");
     }
 
     @Override

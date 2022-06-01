@@ -3,12 +3,11 @@ package io.dropwizard.logging.common;
 import ch.qos.logback.classic.LoggerContext;
 import com.google.errorprone.annotations.concurrent.GuardedBy;
 import io.dropwizard.util.Duration;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
-
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 public class LoggingUtil {
     private static final Duration LOGGER_CONTEXT_AWAITING_TIMEOUT = Duration.seconds(10);
@@ -16,10 +15,10 @@ public class LoggingUtil {
 
     @GuardedBy("JUL_HIJACKING_LOCK")
     private static boolean julHijacked = false;
+
     private static final Lock JUL_HIJACKING_LOCK = new ReentrantLock();
 
-    private LoggingUtil() {
-    }
+    private LoggingUtil() {}
 
     /**
      * Acquires the logger context.

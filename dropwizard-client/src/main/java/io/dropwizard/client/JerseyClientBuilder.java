@@ -1,5 +1,7 @@
 package io.dropwizard.client;
 
+import static java.util.Objects.requireNonNull;
+
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.httpclient5.HttpClientMetricNameStrategy;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -10,6 +12,17 @@ import io.dropwizard.jersey.jackson.JacksonFeature;
 import io.dropwizard.jersey.validation.HibernateValidationBinder;
 import io.dropwizard.jersey.validation.Validators;
 import io.dropwizard.lifecycle.Managed;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ExecutorService;
+import javax.net.ssl.HostnameVerifier;
+import javax.validation.Validator;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.RxInvokerProvider;
+import javax.ws.rs.core.Configuration;
 import org.apache.hc.client5.http.DnsResolver;
 import org.apache.hc.client5.http.HttpRequestRetryStrategy;
 import org.apache.hc.client5.http.auth.CredentialsStore;
@@ -19,21 +32,6 @@ import org.apache.hc.core5.http.config.Registry;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.spi.ConnectorProvider;
-
-import javax.net.ssl.HostnameVerifier;
-import javax.validation.Validator;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.RxInvokerProvider;
-import javax.ws.rs.core.Configuration;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.ExecutorService;
-
-import static java.util.Objects.requireNonNull;
-
 
 /**
  * A convenience class for building {@link Client} instances.
@@ -319,8 +317,8 @@ public class JerseyClientBuilder {
      */
     public Client build(String name) {
         if ((environment == null) && ((executorService == null) || (objectMapper == null))) {
-            throw new IllegalStateException("Must have either an environment or both " +
-                    "an executor service and an object mapper");
+            throw new IllegalStateException(
+                    "Must have either an environment or both " + "an executor service and an object mapper");
         }
 
         if (executorService == null) {
@@ -328,12 +326,13 @@ public class JerseyClientBuilder {
             // configuration. The DisposableExecutorService decorator
             // is used to ensure that the service is shut down if the
             // Jersey client disposes of it.
-            executorService = requireNonNull(environment).lifecycle()
-                .executorService("jersey-client-" + name + "-%d")
-                .minThreads(configuration.getMinThreads())
-                .maxThreads(configuration.getMaxThreads())
-                .workQueue(new ArrayBlockingQueue<>(configuration.getWorkQueueSize()))
-                .build();
+            executorService = requireNonNull(environment)
+                    .lifecycle()
+                    .executorService("jersey-client-" + name + "-%d")
+                    .minThreads(configuration.getMinThreads())
+                    .maxThreads(configuration.getMaxThreads())
+                    .workQueue(new ArrayBlockingQueue<>(configuration.getWorkQueueSize()))
+                    .build();
         }
 
         if (objectMapper == null) {
@@ -347,14 +346,13 @@ public class JerseyClientBuilder {
         return build(name, executorService, objectMapper, validator);
     }
 
-    private Client build(String name, ExecutorService threadPool,
-                         ObjectMapper objectMapper,
-                         Validator validator) {
+    private Client build(String name, ExecutorService threadPool, ObjectMapper objectMapper, Validator validator) {
         if (!configuration.isGzipEnabled()) {
             apacheHttpClientBuilder.disableContentCompression(true);
         }
 
-        final Client client = org.glassfish.jersey.client.JerseyClientBuilder.createClient(buildConfig(name, threadPool, objectMapper, validator));
+        final Client client = org.glassfish.jersey.client.JerseyClientBuilder.createClient(
+                buildConfig(name, threadPool, objectMapper, validator));
         client.register(new JerseyIgnoreRequestUserAgentHeaderFilter());
 
         // Tie the client to server lifecycle
@@ -374,9 +372,11 @@ public class JerseyClientBuilder {
         return client;
     }
 
-    private Configuration buildConfig(final String name, final ExecutorService threadPool,
-                                      final ObjectMapper objectMapper,
-                                      final Validator validator) {
+    private Configuration buildConfig(
+            final String name,
+            final ExecutorService threadPool,
+            final ObjectMapper objectMapper,
+            final Validator validator) {
         final ClientConfig config = new ClientConfig();
 
         for (Object singleton : this.singletons) {
@@ -411,8 +411,11 @@ public class JerseyClientBuilder {
      * Builds {@link DropwizardApacheConnector} based on the configured Apache HTTP client
      * as {@link ConfiguredCloseableHttpClient} and the chunked encoding configuration set by the user.
      */
-    protected DropwizardApacheConnector createDropwizardApacheConnector(ConfiguredCloseableHttpClient configuredClient) {
-        return new DropwizardApacheConnector(configuredClient.getClient(), configuredClient.getDefaultRequestConfig(),
+    protected DropwizardApacheConnector createDropwizardApacheConnector(
+            ConfiguredCloseableHttpClient configuredClient) {
+        return new DropwizardApacheConnector(
+                configuredClient.getClient(),
+                configuredClient.getDefaultRequestConfig(),
                 configuration.isChunkedEncodingEnabled());
     }
 }

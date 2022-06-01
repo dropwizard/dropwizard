@@ -1,22 +1,20 @@
 package com.example.request_log;
 
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledOnOs;
-import org.junit.jupiter.api.condition.OS;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.nio.file.Files;
 import java.util.List;
 import java.util.regex.Pattern;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 @DisabledOnOs(OS.WINDOWS) // FIXME: Make tests run on Windows
 class RequestLogPatternIntegrationTest extends AbstractRequestLogPatternIntegrationTest {
 
     private static final Pattern REQUEST_LOG_PATTERN = Pattern.compile(
-        "127\\.0\\.0\\.1 - - \\[.+\\] \"GET /greet\\?name=Charley HTTP/1\\.1\" 200 15 \"-\" \"TestApplication \\(test-request-logs\\)\" \\d+"
-    );
+            "127\\.0\\.0\\.1 - - \\[.+\\] \"GET /greet\\?name=Charley HTTP/1\\.1\" 200 15 \"-\" \"TestApplication \\(test-request-logs\\)\" \\d+");
 
     @Test
     void testDefaultPattern() throws Exception {
@@ -30,6 +28,8 @@ class RequestLogPatternIntegrationTest extends AbstractRequestLogPatternIntegrat
         Thread.sleep(100L);
 
         List<String> logs = Files.readAllLines(requestLogFile, UTF_8);
-        assertThat(logs).hasSize(100).allMatch(s -> REQUEST_LOG_PATTERN.matcher(s).matches());
+        assertThat(logs)
+                .hasSize(100)
+                .allMatch(s -> REQUEST_LOG_PATTERN.matcher(s).matches());
     }
 }

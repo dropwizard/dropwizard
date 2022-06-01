@@ -6,11 +6,6 @@ import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheck;
 import com.codahale.metrics.health.HealthCheckRegistryListener;
 import io.dropwizard.util.Duration;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -21,41 +16,59 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-class HealthCheckManager implements HealthCheckRegistryListener, HealthStatusChecker, ShutdownNotifier,
-    HealthStateListener, HealthStateAggregator {
+class HealthCheckManager
+        implements HealthCheckRegistryListener,
+                HealthStatusChecker,
+                ShutdownNotifier,
+                HealthStateListener,
+                HealthStateAggregator {
     private static final Logger LOGGER = LoggerFactory.getLogger(HealthCheckManager.class);
 
     private final AtomicBoolean isAppAlive = new AtomicBoolean(true);
     private final AtomicBoolean isAppHealthy = new AtomicBoolean(false);
     private final AtomicInteger unhealthyCriticalHealthChecks = new AtomicInteger();
     private final AtomicInteger unhealthyCriticalAliveChecks = new AtomicInteger();
+
     @NonNull
     private final HealthCheckScheduler scheduler;
+
     @NonNull
     private final Map<String, HealthCheckConfiguration> configs;
+
     @NonNull
     private final Collection<HealthStateListener> healthStateListeners;
+
     @NonNull
     private final MetricRegistry metrics;
+
     private final Duration shutdownWaitPeriod;
     private final boolean initialOverallState;
+
     @NonNull
     private final String aggregateHealthyName;
+
     @NonNull
     private final String aggregateUnhealthyName;
+
     @NonNull
     private Map<String, ScheduledHealthCheck> checks;
+
     private volatile boolean shuttingDown = false;
 
-    public HealthCheckManager(final List<HealthCheckConfiguration> configs,
-                              final HealthCheckScheduler scheduler,
-                              final MetricRegistry metrics,
-                              final Duration shutdownWaitPeriod,
-                              final boolean initialOverallState,
-                              final Collection<HealthStateListener> healthStateListeners) {
-        this.configs = configs.stream()
-            .collect(Collectors.toMap(HealthCheckConfiguration::getName, Function.identity()));
+    public HealthCheckManager(
+            final List<HealthCheckConfiguration> configs,
+            final HealthCheckScheduler scheduler,
+            final MetricRegistry metrics,
+            final Duration shutdownWaitPeriod,
+            final boolean initialOverallState,
+            final Collection<HealthStateListener> healthStateListeners) {
+        this.configs =
+                configs.stream().collect(Collectors.toMap(HealthCheckConfiguration::getName, Function.identity()));
         this.scheduler = Objects.requireNonNull(scheduler);
         this.metrics = Objects.requireNonNull(metrics);
         this.shutdownWaitPeriod = shutdownWaitPeriod;
@@ -89,12 +102,13 @@ class HealthCheckManager implements HealthCheckRegistryListener, HealthStatusChe
         final boolean critical = (type == HealthCheckType.ALIVE) || config.isCritical();
         final boolean initialState = config.isInitialState();
 
-        final State state = new State(name, schedule.getFailureAttempts(), schedule.getSuccessAttempts(), initialState, this);
+        final State state =
+                new State(name, schedule.getFailureAttempts(), schedule.getSuccessAttempts(), initialState, this);
         final Counter healthyCheckCounter = metrics.counter(MetricRegistry.name("health", name, "healthy"));
         final Counter unhealthyCheckCounter = metrics.counter(MetricRegistry.name("health", name, "unhealthy"));
 
-        final ScheduledHealthCheck check = new ScheduledHealthCheck(name, type, critical, healthCheck, schedule, state,
-            healthyCheckCounter, unhealthyCheckCounter);
+        final ScheduledHealthCheck check = new ScheduledHealthCheck(
+                name, type, critical, healthCheck, schedule, state, healthyCheckCounter, unhealthyCheckCounter);
         checks.put(name, check);
 
         // handle initial state of 'false' to ensure counts line up
@@ -132,8 +146,11 @@ class HealthCheckManager implements HealthCheckRegistryListener, HealthStatusChe
             try {
                 listener.onStateChanged(name, isNowHealthy);
             } catch (final RuntimeException e) {
-                LOGGER.warn("Exception thrown for healthCheckName: {} from Health State listener onStateChanged: {}",
-                    name, listener, e);
+                LOGGER.warn(
+                        "Exception thrown for healthCheckName: {} from Health State listener onStateChanged: {}",
+                        name,
+                        listener,
+                        e);
                 // swallow error
             }
         });
@@ -145,17 +162,11 @@ class HealthCheckManager implements HealthCheckRegistryListener, HealthStatusChe
     }
 
     private long calculateNumberOfHealthyChecks() {
-        return checks.values()
-            .stream()
-            .filter(ScheduledHealthCheck::isHealthy)
-            .count();
+        return checks.values().stream().filter(ScheduledHealthCheck::isHealthy).count();
     }
 
     private long calculateNumberOfUnhealthyChecks() {
-        return checks.values()
-            .stream()
-            .filter(check -> !check.isHealthy())
-            .count();
+        return checks.values().stream().filter(check -> !check.isHealthy()).count();
     }
 
     private void handleCriticalHealthChange(final String name, final HealthCheckType type, final boolean isNowHealthy) {
@@ -176,9 +187,14 @@ class HealthCheckManager implements HealthCheckRegistryListener, HealthStatusChe
         } else {
             ScheduledHealthCheck healthCheck = checks.get(name);
             HealthCheckConfiguration healthCheckConfiguration = configs.get(name);
-            if (healthCheck != null && healthCheckConfiguration != null
-                && !healthCheckConfiguration.isInitialState() && !healthCheck.isPreviouslyRecovered()) {
-                LOGGER.warn("A critical unhealthy initialized dependency has not yet recovered: name={}, type={}", name, type);
+            if (healthCheck != null
+                    && healthCheckConfiguration != null
+                    && !healthCheckConfiguration.isInitialState()
+                    && !healthCheck.isPreviouslyRecovered()) {
+                LOGGER.warn(
+                        "A critical unhealthy initialized dependency has not yet recovered: name={}, type={}",
+                        name,
+                        type);
             } else {
                 LOGGER.error("A critical dependency is now unhealthy: name={}, type={}", name, type);
             }
@@ -199,15 +215,21 @@ class HealthCheckManager implements HealthCheckRegistryListener, HealthStatusChe
         LOGGER.debug("current status: unhealthy-critical={}", count);
     }
 
-    private void handleNonCriticalHealthChange(final String name, final HealthCheckType type, final boolean isNowHealthy) {
+    private void handleNonCriticalHealthChange(
+            final String name, final HealthCheckType type, final boolean isNowHealthy) {
         if (isNowHealthy) {
             LOGGER.info("A non-critical dependency is now healthy: name={}, type={}", name, type);
         } else {
             ScheduledHealthCheck healthCheck = checks.get(name);
             HealthCheckConfiguration healthCheckConfiguration = configs.get(name);
-            if (healthCheck != null && healthCheckConfiguration != null
-                && !healthCheckConfiguration.isInitialState() && !healthCheck.isPreviouslyRecovered()) {
-                LOGGER.info("A non-critical unhealthy initialized dependency has not yet recovered: name={}, type={}", name, type);
+            if (healthCheck != null
+                    && healthCheckConfiguration != null
+                    && !healthCheckConfiguration.isInitialState()
+                    && !healthCheck.isPreviouslyRecovered()) {
+                LOGGER.info(
+                        "A non-critical unhealthy initialized dependency has not yet recovered: name={}, type={}",
+                        name,
+                        type);
             } else {
                 LOGGER.warn("A non-critical dependency is now unhealthy: name={}, type={}", name, type);
             }
@@ -256,8 +278,11 @@ class HealthCheckManager implements HealthCheckRegistryListener, HealthStatusChe
             try {
                 listener.onHealthyCheck(healthCheckName);
             } catch (final RuntimeException e) {
-                LOGGER.warn("Exception thrown for healthCheckName: {} from Health State listener onHealthyCheck: {}",
-                    healthCheckName, listener, e);
+                LOGGER.warn(
+                        "Exception thrown for healthCheckName: {} from Health State listener onHealthyCheck: {}",
+                        healthCheckName,
+                        listener,
+                        e);
                 // swallow error
             }
         });
@@ -269,8 +294,11 @@ class HealthCheckManager implements HealthCheckRegistryListener, HealthStatusChe
             try {
                 listener.onUnhealthyCheck(healthCheckName);
             } catch (final RuntimeException e) {
-                LOGGER.warn("Exception thrown for healthCheckName: {} from Health State listener onUnhealthyCheck: {}",
-                    healthCheckName, listener, e);
+                LOGGER.warn(
+                        "Exception thrown for healthCheckName: {} from Health State listener onUnhealthyCheck: {}",
+                        healthCheckName,
+                        listener,
+                        e);
                 // swallow error
             }
         });
@@ -279,16 +307,12 @@ class HealthCheckManager implements HealthCheckRegistryListener, HealthStatusChe
     @NonNull
     @Override
     public Collection<HealthStateView> healthStateViews() {
-        return checks.values()
-            .stream()
-            .map(ScheduledHealthCheck::view)
-            .collect(Collectors.toList());
+        return checks.values().stream().map(ScheduledHealthCheck::view).collect(Collectors.toList());
     }
 
     @NonNull
     @Override
     public Optional<HealthStateView> healthStateView(@NonNull final String name) {
-        return Optional.ofNullable(checks.get(name))
-            .map(ScheduledHealthCheck::view);
+        return Optional.ofNullable(checks.get(name)).map(ScheduledHealthCheck::view);
     }
 }

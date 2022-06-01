@@ -1,12 +1,11 @@
 package io.dropwizard.logging.json.layout;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
+import static java.util.Objects.requireNonNull;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
-
-import static java.util.Objects.requireNonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * Builds a Java map based on the provided configuration and customization.
@@ -27,8 +26,11 @@ public class MapBuilder {
 
     private final Map<String, Object> map;
 
-    public MapBuilder(TimestampFormatter timestampFormatter, Map<String, String> customFieldNames,
-                      Map<String, Object> additionalFields, int expectedSize) {
+    public MapBuilder(
+            TimestampFormatter timestampFormatter,
+            Map<String, String> customFieldNames,
+            Map<String, Object> additionalFields,
+            int expectedSize) {
         this.timestampFormatter = timestampFormatter;
         this.customFieldNames = requireNonNull(customFieldNames);
         this.additionalFields = requireNonNull(additionalFields);
@@ -114,7 +116,6 @@ public class MapBuilder {
         return this;
     }
 
-
     /**
      * Adds and optionally formats the timestamp to the provided map under the provided field name,
      * if it's should be included.
@@ -134,5 +135,4 @@ public class MapBuilder {
         map.putAll(additionalFields);
         return map;
     }
-
 }

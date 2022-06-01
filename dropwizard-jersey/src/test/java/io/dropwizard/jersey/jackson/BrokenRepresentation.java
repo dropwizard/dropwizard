@@ -1,7 +1,6 @@
 package io.dropwizard.jersey.jackson;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.List;
 
 public class BrokenRepresentation {

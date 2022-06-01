@@ -1,5 +1,7 @@
 package io.dropwizard.logging.common;
 
+import static java.util.Objects.requireNonNull;
+
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
@@ -26,16 +28,6 @@ import io.dropwizard.logging.common.filter.LevelFilterFactory;
 import io.dropwizard.logging.common.filter.ThresholdLevelFilterFactory;
 import io.dropwizard.logging.common.layout.DropwizardLayoutFactory;
 import io.dropwizard.logging.common.layout.LayoutFactory;
-import org.checkerframework.checker.nullness.qual.Nullable;
-
-import javax.management.InstanceAlreadyExistsException;
-import javax.management.MBeanRegistrationException;
-import javax.management.MBeanServer;
-import javax.management.MalformedObjectNameException;
-import javax.management.NotCompliantMBeanException;
-import javax.management.ObjectName;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.io.PrintStream;
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
@@ -46,8 +38,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 import java.util.concurrent.locks.ReentrantLock;
-
-import static java.util.Objects.requireNonNull;
+import javax.management.InstanceAlreadyExistsException;
+import javax.management.MBeanRegistrationException;
+import javax.management.MBeanServer;
+import javax.management.MalformedObjectNameException;
+import javax.management.NotCompliantMBeanException;
+import javax.management.ObjectName;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 @JsonTypeName("default")
 public class DefaultLoggingFactory implements LoggingFactory {
@@ -135,7 +134,8 @@ public class DefaultLoggingFactory implements LoggingFactory {
         final LayoutFactory<ILoggingEvent> layoutFactory = new DropwizardLayoutFactory();
 
         for (AppenderFactory<ILoggingEvent> output : appenders) {
-            root.addAppender(output.build(loggerContext, name, layoutFactory, levelFilterFactory, asyncAppenderFactory));
+            root.addAppender(
+                    output.build(loggerContext, name, layoutFactory, levelFilterFactory, asyncAppenderFactory));
         }
 
         StatusPrinter.setPrintStream(configurationErrorsStream);
@@ -150,13 +150,12 @@ public class DefaultLoggingFactory implements LoggingFactory {
         try {
             final ObjectName objectName = new ObjectName("io.dropwizard:type=Logging");
             if (!server.isRegistered(objectName)) {
-                server.registerMBean(new JMXConfigurator(loggerContext,
-                                server,
-                                objectName),
-                        objectName);
+                server.registerMBean(new JMXConfigurator(loggerContext, server, objectName), objectName);
             }
-        } catch (MalformedObjectNameException | InstanceAlreadyExistsException |
-                NotCompliantMBeanException | MBeanRegistrationException e) {
+        } catch (MalformedObjectNameException
+                | InstanceAlreadyExistsException
+                | NotCompliantMBeanException
+                | MBeanRegistrationException e) {
             throw new RuntimeException(e);
         } finally {
             MBEAN_REGISTRATION_LOCK.unlock();
@@ -275,7 +274,8 @@ public class DefaultLoggingFactory implements LoggingFactory {
                 logger.setAdditive(configuration.isAdditive());
 
                 for (AppenderFactory<ILoggingEvent> appender : configuration.getAppenders()) {
-                    logger.addAppender(appender.build(loggerContext, name, layoutFactory, levelFilterFactory, asyncAppenderFactory));
+                    logger.addAppender(appender.build(
+                            loggerContext, name, layoutFactory, levelFilterFactory, asyncAppenderFactory));
                 }
             } else {
                 throw new IllegalArgumentException("Unsupported format of logger '" + entry.getKey() + "'");
@@ -298,10 +298,6 @@ public class DefaultLoggingFactory implements LoggingFactory {
 
     @Override
     public String toString() {
-        return "DefaultLoggingFactory{"
-                + "level=" + level
-                + ", loggers=" + loggers
-                + ", appenders=" + appenders
-                + '}';
+        return "DefaultLoggingFactory{" + "level=" + level + ", loggers=" + loggers + ", appenders=" + appenders + '}';
     }
 }

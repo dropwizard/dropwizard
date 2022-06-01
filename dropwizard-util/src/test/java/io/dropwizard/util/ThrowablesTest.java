@@ -1,10 +1,10 @@
 package io.dropwizard.util;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
-import org.junit.jupiter.api.Test;
-
 import static io.dropwizard.util.Throwables.findThrowableInChain;
 import static org.assertj.core.api.Assertions.assertThat;
+
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.junit.jupiter.api.Test;
 
 class ThrowablesTest {
     @Test
@@ -26,9 +26,12 @@ class ThrowablesTest {
         final RuntimeException second = new RuntimeException("second", first);
         final RuntimeException third = new RuntimeException("third", second);
 
-        assertThat(findThrowableInChain(t -> "third".equals(t.getMessage()), third)).contains(third);
-        assertThat(findThrowableInChain(t -> "second".equals(t.getMessage()), third)).contains(second);
-        assertThat(findThrowableInChain(t -> "first".equals(t.getMessage()), third)).contains(first);
+        assertThat(findThrowableInChain(t -> "third".equals(t.getMessage()), third))
+                .contains(third);
+        assertThat(findThrowableInChain(t -> "second".equals(t.getMessage()), third))
+                .contains(second);
+        assertThat(findThrowableInChain(t -> "first".equals(t.getMessage()), third))
+                .contains(first);
         assertThat(findThrowableInChain(t -> false, third)).isEmpty();
     }
 
@@ -44,16 +47,23 @@ class ThrowablesTest {
         final RuntimeException fourth = new RuntimeException("fourth", third);
         final RuntimeException fifth = new RuntimeException("fifth", fourth);
 
-        assertThat(findThrowableInChain(t -> "fifth".equals(t.getMessage()), fifth)).contains(fifth);
-        assertThat(findThrowableInChain(t -> "fourth".equals(t.getMessage()), fifth)).contains(fourth);
-        assertThat(findThrowableInChain(t -> "third".equals(t.getMessage()), fifth)).contains(third);
-        assertThat(findThrowableInChain(t -> "second".equals(t.getMessage()), fifth)).contains(second);
-        assertThat(findThrowableInChain(t -> "first".equals(t.getMessage()), fifth)).contains(first);
+        assertThat(findThrowableInChain(t -> "fifth".equals(t.getMessage()), fifth))
+                .contains(fifth);
+        assertThat(findThrowableInChain(t -> "fourth".equals(t.getMessage()), fifth))
+                .contains(fourth);
+        assertThat(findThrowableInChain(t -> "third".equals(t.getMessage()), fifth))
+                .contains(third);
+        assertThat(findThrowableInChain(t -> "second".equals(t.getMessage()), fifth))
+                .contains(second);
+        assertThat(findThrowableInChain(t -> "first".equals(t.getMessage()), fifth))
+                .contains(first);
         assertThat(findThrowableInChain(t -> false, fifth)).isEmpty();
 
         // Starting in the loop
-        assertThat(findThrowableInChain(t -> "third".equals(t.getMessage()), second)).contains(third);
-        assertThat(findThrowableInChain(t -> "fourth".equals(t.getMessage()), second)).isEmpty();
+        assertThat(findThrowableInChain(t -> "third".equals(t.getMessage()), second))
+                .contains(third);
+        assertThat(findThrowableInChain(t -> "fourth".equals(t.getMessage()), second))
+                .isEmpty();
     }
 
     /**
@@ -77,5 +87,4 @@ class ThrowablesTest {
             return cause;
         }
     }
-
 }

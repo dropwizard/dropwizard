@@ -1,11 +1,10 @@
 package io.dropwizard.client;
 
-import org.glassfish.jersey.client.ClientRequest;
-
+import java.io.IOException;
 import javax.ws.rs.client.ClientRequestContext;
 import javax.ws.rs.client.ClientRequestFilter;
 import javax.ws.rs.ext.Provider;
-import java.io.IOException;
+import org.glassfish.jersey.client.ClientRequest;
 
 /**
  * Prevents Jersey from modification Request's User-Agent header with default value,

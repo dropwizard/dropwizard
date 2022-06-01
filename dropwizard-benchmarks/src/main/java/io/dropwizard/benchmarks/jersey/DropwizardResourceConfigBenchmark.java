@@ -1,6 +1,16 @@
 package io.dropwizard.benchmarks.jersey;
 
 import io.dropwizard.jersey.DropwizardResourceConfig;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.core.Application;
 import org.glassfish.jersey.test.JerseyTest;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
@@ -11,17 +21,6 @@ import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
-
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Application;
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
@@ -54,11 +53,11 @@ public class DropwizardResourceConfigBenchmark {
 
     public static void main(String[] args) throws Exception {
         new Runner(new OptionsBuilder()
-                .include(DropwizardResourceConfigBenchmark.class.getSimpleName())
-                .forks(1)
-                .warmupIterations(10)
-                .measurementIterations(5)
-                .build())
+                        .include(DropwizardResourceConfigBenchmark.class.getSimpleName())
+                        .forks(1)
+                        .warmupIterations(10)
+                        .measurementIterations(5)
+                        .build())
                 .run();
     }
 
@@ -107,36 +106,31 @@ public class DropwizardResourceConfigBenchmark {
 
         @POST
         @Path("{assetId}/clusters/{code}/start")
-        public void start(@PathParam("assetId") String assetId,
-                                      @PathParam("code") String code) {
+        public void start(@PathParam("assetId") String assetId, @PathParam("code") String code) {
             // stub implementation
         }
 
         @POST
         @Path("{assetId}/clusters/{code}/complete")
-        public void complete(@PathParam("assetId") String assetId,
-                                         @PathParam("code") String code) {
+        public void complete(@PathParam("assetId") String assetId, @PathParam("code") String code) {
             // stub implementation
         }
 
         @POST
         @Path("{assetId}/clusters/{code}/abort")
-        public void abort(@PathParam("assetId") String assetId,
-                                      @PathParam("code") String code) {
+        public void abort(@PathParam("assetId") String assetId, @PathParam("code") String code) {
             // stub implementation
         }
 
         @POST
         @Path("{assetId}/clusters/{code}/delete")
-        public void delete(@PathParam("assetId") String assetId,
-                                       @PathParam("code") String code) {
+        public void delete(@PathParam("assetId") String assetId, @PathParam("code") String code) {
             // stub implementation
         }
 
         @GET
         @Path("{assetId}/clusters/{code}")
-        public String getStatus(@PathParam("assetId") String assetId,
-                                @PathParam("code") String code) {
+        public String getStatus(@PathParam("assetId") String assetId, @PathParam("code") String code) {
             return "distributed";
         }
     }

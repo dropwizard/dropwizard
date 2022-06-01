@@ -1,5 +1,9 @@
 package io.dropwizard.logging.json.layout;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.pattern.ThrowableProxyConverter;
 import ch.qos.logback.classic.spi.ILoggingEvent;
@@ -7,21 +11,16 @@ import ch.qos.logback.classic.spi.LoggerContextVO;
 import ch.qos.logback.classic.spi.ThrowableProxyVO;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.logging.json.EventAttribute;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import org.slf4j.Marker;
-
 import java.time.ZoneId;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import org.slf4j.Marker;
 
 class EventJsonLayoutTest {
     private static final String timestamp = "2018-01-02T15:19:21.000+0000";
@@ -43,7 +42,8 @@ class EventJsonLayoutTest {
             EventAttribute.TIMESTAMP,
             EventAttribute.CALLER_DATA));
 
-    private final TimestampFormatter timestampFormatter = new TimestampFormatter("yyyy-MM-dd'T'HH:mm:ss.SSSZ", ZoneId.of("UTC"));
+    private final TimestampFormatter timestampFormatter =
+            new TimestampFormatter("yyyy-MM-dd'T'HH:mm:ss.SSSZ", ZoneId.of("UTC"));
     private final JsonFormatter jsonFormatter = new JsonFormatter(Jackson.newObjectMapper(), false, true);
     private ThrowableProxyConverter throwableProxyConverter = Mockito.mock(ThrowableProxyConverter.class);
     private ILoggingEvent event = Mockito.mock(ILoggingEvent.class);
@@ -62,14 +62,21 @@ class EventJsonLayoutTest {
         when(event.getLoggerName()).thenReturn(logger);
         when(event.getFormattedMessage()).thenReturn(message);
         when(event.getLoggerContextVO()).thenReturn(new LoggerContextVO("test", Collections.emptyMap(), 0));
-        when(event.getCallerData()).thenReturn(new StackTraceElement[]{
-                new StackTraceElement("declaringClass", "methodName", "fileName", 42)
+        when(event.getCallerData()).thenReturn(new StackTraceElement[] {
+            new StackTraceElement("declaringClass", "methodName", "fileName", 42)
         });
 
         when(marker.getName()).thenReturn("marker");
 
-        eventJsonLayout = new EventJsonLayout(jsonFormatter, timestampFormatter, throwableProxyConverter,
-                DEFAULT_EVENT_ATTRIBUTES, Collections.emptyMap(), Collections.emptyMap(), Collections.emptySet(), false);
+        eventJsonLayout = new EventJsonLayout(
+                jsonFormatter,
+                timestampFormatter,
+                throwableProxyConverter,
+                DEFAULT_EVENT_ATTRIBUTES,
+                Collections.emptyMap(),
+                Collections.emptyMap(),
+                Collections.emptySet(),
+                false);
 
         defaultExpectedFields = new HashMap<>();
         defaultExpectedFields.put("timestamp", timestamp);
@@ -127,9 +134,16 @@ class EventJsonLayoutTest {
         final Map<String, String> customFieldNames = Map.of(
                 "timestamp", "@timestamp",
                 "message", "@message");
-        Map<String, Object> map = new EventJsonLayout(jsonFormatter, timestampFormatter, throwableProxyConverter, DEFAULT_EVENT_ATTRIBUTES,
-                customFieldNames, Collections.emptyMap(), Collections.emptySet(), false)
-            .toJsonMap(event);
+        Map<String, Object> map = new EventJsonLayout(
+                        jsonFormatter,
+                        timestampFormatter,
+                        throwableProxyConverter,
+                        DEFAULT_EVENT_ATTRIBUTES,
+                        customFieldNames,
+                        Collections.emptyMap(),
+                        Collections.emptySet(),
+                        false)
+                .toJsonMap(event);
 
         final HashMap<String, Object> expectedFields = new HashMap<>(defaultExpectedFields);
         expectedFields.put("@timestamp", timestamp);
@@ -141,13 +155,17 @@ class EventJsonLayoutTest {
 
     @Test
     void testAddNewField() {
-        final Map<String, Object> additionalFields = Map.of(
-                "serviceName", "userService",
-                "serviceBuild", 207);
-        Map<String, Object> map = new EventJsonLayout(jsonFormatter, timestampFormatter, throwableProxyConverter, DEFAULT_EVENT_ATTRIBUTES,
-            Collections.emptyMap(), additionalFields,
-            Collections.emptySet(), false)
-            .toJsonMap(event);
+        final Map<String, Object> additionalFields = Map.of("serviceName", "userService", "serviceBuild", 207);
+        Map<String, Object> map = new EventJsonLayout(
+                        jsonFormatter,
+                        timestampFormatter,
+                        throwableProxyConverter,
+                        DEFAULT_EVENT_ATTRIBUTES,
+                        Collections.emptyMap(),
+                        additionalFields,
+                        Collections.emptySet(),
+                        false)
+                .toJsonMap(event);
 
         final HashMap<String, Object> expectedFields = new HashMap<>(defaultExpectedFields);
         expectedFields.put("serviceName", "userService");
@@ -158,8 +176,15 @@ class EventJsonLayoutTest {
     @Test
     void testFilterMdc() {
         final Set<String> includesMdcKeys = Set.of("userId", "orderId");
-        Map<String, Object> map = new EventJsonLayout(jsonFormatter, timestampFormatter, throwableProxyConverter, DEFAULT_EVENT_ATTRIBUTES,
-            Collections.emptyMap(), Collections.emptyMap(), includesMdcKeys, false)
+        Map<String, Object> map = new EventJsonLayout(
+                        jsonFormatter,
+                        timestampFormatter,
+                        throwableProxyConverter,
+                        DEFAULT_EVENT_ATTRIBUTES,
+                        Collections.emptyMap(),
+                        Collections.emptyMap(),
+                        includesMdcKeys,
+                        false)
                 .toJsonMap(event);
 
         final Map<String, String> expectedMdc = Map.of(
@@ -172,8 +197,15 @@ class EventJsonLayoutTest {
 
     @Test
     void testFlattensMdcMap() {
-        Map<String, Object> map = new EventJsonLayout(jsonFormatter, timestampFormatter, throwableProxyConverter,
-                DEFAULT_EVENT_ATTRIBUTES, Collections.emptyMap(), Collections.emptyMap(), Collections.emptySet(), true)
+        Map<String, Object> map = new EventJsonLayout(
+                        jsonFormatter,
+                        timestampFormatter,
+                        throwableProxyConverter,
+                        DEFAULT_EVENT_ATTRIBUTES,
+                        Collections.emptyMap(),
+                        Collections.emptyMap(),
+                        Collections.emptySet(),
+                        true)
                 .toJsonMap(event);
 
         final HashMap<String, Object> expectedFields = new HashMap<>(defaultExpectedFields);

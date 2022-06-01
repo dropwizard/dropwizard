@@ -1,27 +1,26 @@
 package io.dropwizard.views.mustache;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
+
 import com.codahale.metrics.MetricRegistry;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.logging.common.BootstrapLogging;
 import io.dropwizard.views.common.ViewMessageBodyWriter;
 import io.dropwizard.views.common.ViewRenderExceptionMapper;
 import io.dropwizard.views.common.ViewRenderer;
-import org.glassfish.jersey.server.ResourceConfig;
-import org.glassfish.jersey.test.JerseyTest;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
+import java.util.Collections;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
-import java.util.Collections;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
+import org.glassfish.jersey.server.ResourceConfig;
+import org.glassfish.jersey.test.JerseyTest;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 class MustacheViewRendererTest extends JerseyTest {
     static {
@@ -96,8 +95,7 @@ class MustacheViewRendererTest extends JerseyTest {
             target("/test/bad").request().get(String.class);
             failBecauseExceptionWasNotThrown(WebApplicationException.class);
         } catch (WebApplicationException e) {
-            assertThat(e.getResponse().getStatus())
-                    .isEqualTo(500);
+            assertThat(e.getResponse().getStatus()).isEqualTo(500);
 
             assertThat(e.getResponse().readEntity(String.class))
                     .isEqualTo(ViewRenderExceptionMapper.TEMPLATE_ERROR_MSG);
@@ -110,11 +108,10 @@ class MustacheViewRendererTest extends JerseyTest {
             target("/test/error").request().get(String.class);
             failBecauseExceptionWasNotThrown(WebApplicationException.class);
         } catch (WebApplicationException e) {
-            assertThat(e.getResponse().getStatus())
-                    .isEqualTo(500);
+            assertThat(e.getResponse().getStatus()).isEqualTo(500);
 
             assertThat(e.getResponse().readEntity(String.class))
-                .isEqualTo(ViewRenderExceptionMapper.TEMPLATE_ERROR_MSG);
+                    .isEqualTo(ViewRenderExceptionMapper.TEMPLATE_ERROR_MSG);
         }
     }
 

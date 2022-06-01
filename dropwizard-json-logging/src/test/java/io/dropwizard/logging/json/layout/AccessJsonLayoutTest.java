@@ -1,23 +1,22 @@
 package io.dropwizard.logging.json.layout;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.entry;
+import static org.mockito.Mockito.when;
+
 import ch.qos.logback.access.spi.IAccessEvent;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.logging.json.AccessAttribute;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-
 import java.time.ZoneId;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Map;
 import java.util.Set;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.entry;
-import static org.mockito.Mockito.when;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 class AccessJsonLayoutTest {
 
@@ -35,21 +34,27 @@ class AccessJsonLayoutTest {
     private String remoteAddress = "192.168.52.15";
     private IAccessEvent event = Mockito.mock(IAccessEvent.class);
 
-    private TimestampFormatter timestampFormatter = new TimestampFormatter("yyyy-MM-dd'T'HH:mm:ss.SSSZ", ZoneId.of("UTC"));
+    private TimestampFormatter timestampFormatter =
+            new TimestampFormatter("yyyy-MM-dd'T'HH:mm:ss.SSSZ", ZoneId.of("UTC"));
     private ObjectMapper objectMapper = Jackson.newObjectMapper();
     private JsonFormatter jsonFormatter = new JsonFormatter(objectMapper, false, true);
-    private Set<AccessAttribute> includes = EnumSet.of(AccessAttribute.REMOTE_ADDRESS,
-        AccessAttribute.REMOTE_USER, AccessAttribute.REQUEST_TIME, AccessAttribute.REQUEST_URI,
-        AccessAttribute.STATUS_CODE, AccessAttribute.METHOD, AccessAttribute.PROTOCOL, AccessAttribute.CONTENT_LENGTH,
-        AccessAttribute.USER_AGENT, AccessAttribute.TIMESTAMP);
-    private AccessJsonLayout accessJsonLayout = new AccessJsonLayout(jsonFormatter, timestampFormatter,
-        includes, Collections.emptyMap(), Collections.emptyMap());
+    private Set<AccessAttribute> includes = EnumSet.of(
+            AccessAttribute.REMOTE_ADDRESS,
+            AccessAttribute.REMOTE_USER,
+            AccessAttribute.REQUEST_TIME,
+            AccessAttribute.REQUEST_URI,
+            AccessAttribute.STATUS_CODE,
+            AccessAttribute.METHOD,
+            AccessAttribute.PROTOCOL,
+            AccessAttribute.CONTENT_LENGTH,
+            AccessAttribute.USER_AGENT,
+            AccessAttribute.TIMESTAMP);
+    private AccessJsonLayout accessJsonLayout = new AccessJsonLayout(
+            jsonFormatter, timestampFormatter, includes, Collections.emptyMap(), Collections.emptyMap());
 
     @BeforeEach
     void setUp() {
-        requestHeaders = Map.of(
-                "Host", "api.example.io",
-                "User-Agent", userAgent);
+        requestHeaders = Map.of("Host", "api.example.io", "User-Agent", userAgent);
         responseHeaders = Map.of(
                 "Content-Type", "application/json",
                 "Transfer-Encoding", "chunked");
@@ -78,12 +83,13 @@ class AccessJsonLayoutTest {
 
     @Test
     void testProducesDefaultJsonMap() {
-        assertThat(accessJsonLayout.toJsonMap(event)).containsOnly(
-            entry("timestamp", timestamp), entry("remoteUser", "john"),
-            entry("method", "GET"), entry("uri", uri),
-            entry("protocol", "HTTP/1.1"), entry("status", 200),
-            entry("requestTime", 100L), entry("contentLength", 78L),
-            entry("userAgent", userAgent), entry("remoteAddress", remoteAddress));
+        assertThat(accessJsonLayout.toJsonMap(event))
+                .containsOnly(
+                        entry("timestamp", timestamp), entry("remoteUser", "john"),
+                        entry("method", "GET"), entry("uri", uri),
+                        entry("protocol", "HTTP/1.1"), entry("status", 200),
+                        entry("requestTime", 100L), entry("contentLength", 78L),
+                        entry("userAgent", userAgent), entry("remoteAddress", remoteAddress));
     }
 
     @Test
@@ -91,12 +97,17 @@ class AccessJsonLayoutTest {
         includes.remove(AccessAttribute.REMOTE_ADDRESS);
         accessJsonLayout.setIncludes(includes);
 
-        assertThat(accessJsonLayout.toJsonMap(event)).containsOnly(
-            entry("timestamp", timestamp), entry("remoteUser", "john"),
-            entry("method", "GET"), entry("uri", uri),
-            entry("protocol", "HTTP/1.1"), entry("status", 200),
-            entry("requestTime", 100L), entry("contentLength", 78L),
-            entry("userAgent", userAgent));
+        assertThat(accessJsonLayout.toJsonMap(event))
+                .containsOnly(
+                        entry("timestamp", timestamp),
+                        entry("remoteUser", "john"),
+                        entry("method", "GET"),
+                        entry("uri", uri),
+                        entry("protocol", "HTTP/1.1"),
+                        entry("status", 200),
+                        entry("requestTime", 100L),
+                        entry("contentLength", 78L),
+                        entry("userAgent", userAgent));
     }
 
     @Test
@@ -104,38 +115,55 @@ class AccessJsonLayoutTest {
         includes.remove(AccessAttribute.TIMESTAMP);
         accessJsonLayout.setIncludes(includes);
 
-        assertThat(accessJsonLayout.toJsonMap(event)).containsOnly(
-            entry("remoteUser", "john"),
-            entry("method", "GET"), entry("uri", uri),
-            entry("protocol", "HTTP/1.1"), entry("status", 200),
-            entry("requestTime", 100L), entry("contentLength", 78L),
-            entry("userAgent", userAgent), entry("remoteAddress", remoteAddress));
+        assertThat(accessJsonLayout.toJsonMap(event))
+                .containsOnly(
+                        entry("remoteUser", "john"),
+                        entry("method", "GET"),
+                        entry("uri", uri),
+                        entry("protocol", "HTTP/1.1"),
+                        entry("status", 200),
+                        entry("requestTime", 100L),
+                        entry("contentLength", 78L),
+                        entry("userAgent", userAgent),
+                        entry("remoteAddress", remoteAddress));
     }
 
     @Test
     void testEnableSpecificResponseHeader() {
         accessJsonLayout.setResponseHeaders(Collections.singleton("transfer-encoding"));
 
-        assertThat(accessJsonLayout.toJsonMap(event)).containsOnly(
-            entry("timestamp", timestamp), entry("remoteUser", "john"),
-            entry("method", "GET"), entry("uri", uri),
-            entry("protocol", "HTTP/1.1"), entry("status", 200),
-            entry("requestTime", 100L), entry("contentLength", 78L),
-            entry("userAgent", userAgent), entry("remoteAddress", remoteAddress),
-            entry("responseHeaders", Collections.singletonMap("Transfer-Encoding", "chunked")));
+        assertThat(accessJsonLayout.toJsonMap(event))
+                .containsOnly(
+                        entry("timestamp", timestamp),
+                        entry("remoteUser", "john"),
+                        entry("method", "GET"),
+                        entry("uri", uri),
+                        entry("protocol", "HTTP/1.1"),
+                        entry("status", 200),
+                        entry("requestTime", 100L),
+                        entry("contentLength", 78L),
+                        entry("userAgent", userAgent),
+                        entry("remoteAddress", remoteAddress),
+                        entry("responseHeaders", Collections.singletonMap("Transfer-Encoding", "chunked")));
     }
 
     @Test
     void testEnableSpecificRequestHeader() {
         accessJsonLayout.setRequestHeaders(Collections.singleton("user-agent"));
 
-        assertThat(accessJsonLayout.toJsonMap(event)).containsOnly(
-            entry("timestamp", timestamp), entry("remoteUser", "john"),
-            entry("method", "GET"), entry("uri", uri),
-            entry("protocol", "HTTP/1.1"), entry("status", 200),
-            entry("requestTime", 100L), entry("contentLength", 78L),
-            entry("userAgent", userAgent), entry("remoteAddress", remoteAddress),
-            entry("headers", Collections.singletonMap("User-Agent", userAgent)));
+        assertThat(accessJsonLayout.toJsonMap(event))
+                .containsOnly(
+                        entry("timestamp", timestamp),
+                        entry("remoteUser", "john"),
+                        entry("method", "GET"),
+                        entry("uri", uri),
+                        entry("protocol", "HTTP/1.1"),
+                        entry("status", 200),
+                        entry("requestTime", 100L),
+                        entry("contentLength", 78L),
+                        entry("userAgent", userAgent),
+                        entry("remoteAddress", remoteAddress),
+                        entry("headers", Collections.singletonMap("User-Agent", userAgent)));
     }
 
     @Test
@@ -144,19 +172,27 @@ class AccessJsonLayoutTest {
         accessJsonLayout.setRequestHeaders(Set.of("Host", "User-Agent"));
         accessJsonLayout.setResponseHeaders(Set.of("Transfer-Encoding", "Content-Type"));
 
-        assertThat(accessJsonLayout.toJsonMap(event)).containsOnly(
-            entry("timestamp", timestamp), entry("remoteUser", "john"),
-            entry("method", "GET"), entry("uri", uri),
-            entry("protocol", "HTTP/1.1"), entry("status", 200),
-            entry("requestTime", 100L), entry("contentLength", 78L),
-            entry("userAgent", userAgent), entry("remoteAddress", remoteAddress),
-            entry("responseHeaders", this.responseHeaders),
-            entry("responseContent", responseContent),
-            entry("port", 8080), entry("requestContent", ""),
-            entry("headers", this.requestHeaders),
-            entry("remoteHost", remoteHost), entry("url", url),
-            entry("serverName", serverName),
-            entry("pathQuery", pathQuery));
+        assertThat(accessJsonLayout.toJsonMap(event))
+                .containsOnly(
+                        entry("timestamp", timestamp),
+                        entry("remoteUser", "john"),
+                        entry("method", "GET"),
+                        entry("uri", uri),
+                        entry("protocol", "HTTP/1.1"),
+                        entry("status", 200),
+                        entry("requestTime", 100L),
+                        entry("contentLength", 78L),
+                        entry("userAgent", userAgent),
+                        entry("remoteAddress", remoteAddress),
+                        entry("responseHeaders", this.responseHeaders),
+                        entry("responseContent", responseContent),
+                        entry("port", 8080),
+                        entry("requestContent", ""),
+                        entry("headers", this.requestHeaders),
+                        entry("remoteHost", remoteHost),
+                        entry("url", url),
+                        entry("serverName", serverName),
+                        entry("pathQuery", pathQuery));
     }
 
     @Test
@@ -164,15 +200,16 @@ class AccessJsonLayoutTest {
         final Map<String, Object> additionalFields = Map.of(
                 "serviceName", "user-service",
                 "serviceVersion", "1.2.3");
-        accessJsonLayout = new AccessJsonLayout(jsonFormatter, timestampFormatter, includes, Collections.emptyMap(),
-                additionalFields);
-        assertThat(accessJsonLayout.toJsonMap(event)).containsOnly(
-            entry("timestamp", timestamp), entry("remoteUser", "john"),
-            entry("method", "GET"), entry("uri", uri),
-            entry("protocol", "HTTP/1.1"), entry("status", 200),
-            entry("requestTime", 100L), entry("contentLength", 78L),
-            entry("userAgent", userAgent), entry("remoteAddress", remoteAddress),
-            entry("serviceName", "user-service"), entry("serviceVersion", "1.2.3"));
+        accessJsonLayout = new AccessJsonLayout(
+                jsonFormatter, timestampFormatter, includes, Collections.emptyMap(), additionalFields);
+        assertThat(accessJsonLayout.toJsonMap(event))
+                .containsOnly(
+                        entry("timestamp", timestamp), entry("remoteUser", "john"),
+                        entry("method", "GET"), entry("uri", uri),
+                        entry("protocol", "HTTP/1.1"), entry("status", 200),
+                        entry("requestTime", 100L), entry("contentLength", 78L),
+                        entry("userAgent", userAgent), entry("remoteAddress", remoteAddress),
+                        entry("serviceName", "user-service"), entry("serviceVersion", "1.2.3"));
     }
 
     @Test
@@ -183,13 +220,15 @@ class AccessJsonLayoutTest {
                 "remoteAddress", "remote_address",
                 "contentLength", "content_length",
                 "requestTime", "request_time");
-        accessJsonLayout = new AccessJsonLayout(jsonFormatter, timestampFormatter, includes, customFieldNames, Collections.emptyMap());
-        assertThat(accessJsonLayout.toJsonMap(event)).containsOnly(
-            entry("timestamp", timestamp), entry("remote_user", "john"),
-            entry("method", "GET"), entry("uri", uri),
-            entry("protocol", "HTTP/1.1"), entry("status", 200),
-            entry("request_time", 100L), entry("content_length", 78L),
-            entry("user_agent", userAgent), entry("remote_address", remoteAddress));
+        accessJsonLayout = new AccessJsonLayout(
+                jsonFormatter, timestampFormatter, includes, customFieldNames, Collections.emptyMap());
+        assertThat(accessJsonLayout.toJsonMap(event))
+                .containsOnly(
+                        entry("timestamp", timestamp), entry("remote_user", "john"),
+                        entry("method", "GET"), entry("uri", uri),
+                        entry("protocol", "HTTP/1.1"), entry("status", 200),
+                        entry("request_time", 100L), entry("content_length", 78L),
+                        entry("user_agent", userAgent), entry("remote_address", remoteAddress));
     }
 
     @Test
@@ -198,8 +237,7 @@ class AccessJsonLayoutTest {
         final String attribute2 = "attribute2";
         final String attribute3 = "attribute3";
 
-        final Map<String, String> attributes =
-            Map.of(
+        final Map<String, String> attributes = Map.of(
                 attribute1, "value1",
                 attribute2, "value2",
                 attribute3, "value3");
@@ -209,8 +247,7 @@ class AccessJsonLayoutTest {
         when(event.getAttribute(attribute3)).thenReturn(attributes.get(attribute3));
 
         accessJsonLayout.setRequestAttributes(attributes.keySet());
-        assertThat(accessJsonLayout.toJsonMap(event))
-            .containsEntry("requestAttributes", attributes);
+        assertThat(accessJsonLayout.toJsonMap(event)).containsEntry("requestAttributes", attributes);
     }
 
     @Test
@@ -237,8 +274,7 @@ class AccessJsonLayoutTest {
 
         accessJsonLayout.setRequestAttributes(Set.of(attribute1, attribute2, attribute3));
         assertThat(accessJsonLayout.toJsonMap(event))
-            .containsEntry("requestAttributes", Map.of(attribute1, "value1", attribute2, "value2"));
-
+                .containsEntry("requestAttributes", Map.of(attribute1, "value1", attribute2, "value2"));
     }
 
     @Test

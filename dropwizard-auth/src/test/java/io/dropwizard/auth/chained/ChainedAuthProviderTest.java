@@ -1,5 +1,7 @@
 package io.dropwizard.auth.chained;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import io.dropwizard.auth.AuthBaseTest;
 import io.dropwizard.auth.AuthDynamicFeature;
 import io.dropwizard.auth.AuthFilter;
@@ -11,19 +13,17 @@ import io.dropwizard.auth.basic.BasicCredentials;
 import io.dropwizard.auth.oauth.OAuthCredentialAuthFilter;
 import io.dropwizard.auth.util.AuthUtil;
 import io.dropwizard.jersey.DropwizardResourceConfig;
+import java.security.Principal;
+import java.util.Arrays;
+import java.util.List;
+import javax.ws.rs.core.HttpHeaders;
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 import org.glassfish.jersey.test.TestProperties;
 import org.junit.jupiter.api.Test;
 
-import javax.ws.rs.core.HttpHeaders;
-import java.security.Principal;
-import java.util.Arrays;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
 class ChainedAuthProviderTest extends AuthBaseTest<ChainedAuthProviderTest.ChainedAuthTestResourceConfig> {
     private static final String BEARER_USER = "A12B3C4D";
+
     public static class ChainedAuthTestResourceConfig extends DropwizardResourceConfig {
 
         public ChainedAuthTestResourceConfig() {
@@ -31,15 +31,15 @@ class ChainedAuthProviderTest extends AuthBaseTest<ChainedAuthProviderTest.Chain
 
             final Authorizer<Principal> authorizer = AuthUtil.getTestAuthorizer(ADMIN_USER, ADMIN_ROLE);
             final AuthFilter<BasicCredentials, Principal> basicAuthFilter = new BasicCredentialAuthFilter.Builder<>()
-                .setAuthenticator(AuthUtil.getBasicAuthenticator(Arrays.asList(ADMIN_USER, ORDINARY_USER)))
-                .setAuthorizer(authorizer)
-                .buildAuthFilter();
+                    .setAuthenticator(AuthUtil.getBasicAuthenticator(Arrays.asList(ADMIN_USER, ORDINARY_USER)))
+                    .setAuthorizer(authorizer)
+                    .buildAuthFilter();
 
             final AuthFilter<String, Principal> oAuthFilter = new OAuthCredentialAuthFilter.Builder<>()
-                .setAuthenticator(AuthUtil.getSingleUserOAuthAuthenticator(BEARER_USER, ADMIN_USER))
-                .setPrefix(BEARER_PREFIX)
-                .setAuthorizer(authorizer)
-                .buildAuthFilter();
+                    .setAuthenticator(AuthUtil.getSingleUserOAuthAuthenticator(BEARER_USER, ADMIN_USER))
+                    .setPrefix(BEARER_PREFIX)
+                    .setAuthorizer(authorizer)
+                    .buildAuthFilter();
 
             property(TestProperties.CONTAINER_PORT, "0");
             register(new AuthValueFactoryProvider.Binder<>(Principal.class));
@@ -49,18 +49,19 @@ class ChainedAuthProviderTest extends AuthBaseTest<ChainedAuthProviderTest.Chain
         }
 
         @SuppressWarnings("rawtypes")
-        public List<AuthFilter> buildHandlerList(AuthFilter<BasicCredentials, Principal> basicAuthFilter,
-                                                 AuthFilter<String, Principal> oAuthFilter) {
+        public List<AuthFilter> buildHandlerList(
+                AuthFilter<BasicCredentials, Principal> basicAuthFilter, AuthFilter<String, Principal> oAuthFilter) {
             return Arrays.asList(basicAuthFilter, oAuthFilter);
         }
     }
 
     @Test
     void transformsBearerCredentialsToPrincipals() throws Exception {
-        assertThat(target("/test/admin").request()
-            .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + " " + BEARER_USER)
-            .get(String.class))
-            .isEqualTo("'" + ADMIN_USER + "' has admin privileges");
+        assertThat(target("/test/admin")
+                        .request()
+                        .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + " " + BEARER_USER)
+                        .get(String.class))
+                .isEqualTo("'" + ADMIN_USER + "' has admin privileges");
     }
 
     @Override

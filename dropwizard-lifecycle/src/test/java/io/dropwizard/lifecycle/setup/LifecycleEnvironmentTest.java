@@ -1,24 +1,23 @@
 package io.dropwizard.lifecycle.setup;
 
+import static org.assertj.core.api.Assertions.as;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.InstanceOfAssertFactories.BOOLEAN;
+import static org.assertj.core.api.InstanceOfAssertFactories.STRING;
+import static org.mockito.Mockito.mock;
+
 import com.codahale.metrics.MetricRegistry;
 import io.dropwizard.lifecycle.JettyManaged;
 import io.dropwizard.lifecycle.Managed;
-import org.eclipse.jetty.util.component.ContainerLifeCycle;
-import org.eclipse.jetty.util.component.LifeCycle;
-import org.junit.jupiter.api.Test;
-
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
-
-import static org.assertj.core.api.Assertions.as;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.InstanceOfAssertFactories.BOOLEAN;
-import static org.assertj.core.api.InstanceOfAssertFactories.STRING;
-import static org.mockito.Mockito.mock;
+import org.eclipse.jetty.util.component.ContainerLifeCycle;
+import org.eclipse.jetty.util.component.LifeCycle;
+import org.junit.jupiter.api.Test;
 
 class LifecycleEnvironmentTest {
 
@@ -32,8 +31,7 @@ class LifecycleEnvironmentTest {
         final ContainerLifeCycle container = new ContainerLifeCycle();
         environment.attach(container);
 
-        assertThat(container.getBeans())
-            .contains(lifeCycle);
+        assertThat(container.getBeans()).contains(lifeCycle);
     }
 
     @Test
@@ -45,28 +43,30 @@ class LifecycleEnvironmentTest {
         environment.attach(container);
 
         assertThat(container.getBeans())
-            .filteredOn(bean -> bean instanceof JettyManaged)
-            .singleElement()
-            .isInstanceOfSatisfying(JettyManaged.class, jettyManaged ->
-                assertThat(jettyManaged.getManaged()).isSameAs(managed));
+                .filteredOn(bean -> bean instanceof JettyManaged)
+                .singleElement()
+                .isInstanceOfSatisfying(JettyManaged.class, jettyManaged -> assertThat(jettyManaged.getManaged())
+                        .isSameAs(managed));
     }
 
     @Test
     void scheduledExecutorServiceBuildsDaemonThreads() {
-        final ScheduledExecutorService executorService = environment.scheduledExecutorService("daemon-%d", true).build();
+        final ScheduledExecutorService executorService =
+                environment.scheduledExecutorService("daemon-%d", true).build();
 
         assertThat(executorService.submit(() -> Thread.currentThread().isDaemon()))
-            .succeedsWithin(1, TimeUnit.SECONDS, as(BOOLEAN))
-            .isTrue();
+                .succeedsWithin(1, TimeUnit.SECONDS, as(BOOLEAN))
+                .isTrue();
     }
 
     @Test
     void scheduledExecutorServiceBuildsUserThreadsByDefault() {
-        final ScheduledExecutorService executorService = environment.scheduledExecutorService("user-%d").build();
+        final ScheduledExecutorService executorService =
+                environment.scheduledExecutorService("user-%d").build();
 
         assertThat(executorService.submit(() -> Thread.currentThread().isDaemon()))
-            .succeedsWithin(1, TimeUnit.SECONDS, as(BOOLEAN))
-            .isFalse();
+                .succeedsWithin(1, TimeUnit.SECONDS, as(BOOLEAN))
+                .isFalse();
     }
 
     @Test
@@ -76,11 +76,13 @@ class LifecycleEnvironmentTest {
 
         final ThreadFactory tfactory = buildThreadFactory(expectedNamePattern);
 
-        final ScheduledExecutorService executorService = environment.scheduledExecutorService("DropWizard Service", tfactory).build();
+        final ScheduledExecutorService executorService = environment
+                .scheduledExecutorService("DropWizard Service", tfactory)
+                .build();
 
         assertThat(executorService.submit(() -> Thread.currentThread().getName()))
-            .succeedsWithin(1, TimeUnit.SECONDS, as(STRING))
-            .startsWith(expectedName);
+                .succeedsWithin(1, TimeUnit.SECONDS, as(STRING))
+                .startsWith(expectedName);
     }
 
     @Test
@@ -90,16 +92,18 @@ class LifecycleEnvironmentTest {
 
         final ThreadFactory tfactory = buildThreadFactory(expectedNamePattern);
 
-        final ExecutorService executorService = environment.executorService("Dropwizard Service", tfactory).build();
+        final ExecutorService executorService =
+                environment.executorService("Dropwizard Service", tfactory).build();
 
         assertThat(executorService.submit(() -> Thread.currentThread().getName()))
-            .succeedsWithin(1, TimeUnit.SECONDS, as(STRING))
-            .startsWith(expectedName);
+                .succeedsWithin(1, TimeUnit.SECONDS, as(STRING))
+                .startsWith(expectedName);
     }
 
     private ThreadFactory buildThreadFactory(String expectedNamePattern) {
         return new ThreadFactory() {
             final AtomicLong counter = new AtomicLong(0L);
+
             @Override
             public Thread newThread(Runnable r) {
                 final Thread thread = Executors.defaultThreadFactory().newThread(r);

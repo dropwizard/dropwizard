@@ -1,5 +1,9 @@
 package io.dropwizard.testing;
 
+import static io.dropwizard.jackson.Jackson.newObjectMapper;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatNoException;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.configuration.JsonConfigurationFactory;
 import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
@@ -13,30 +17,25 @@ import io.dropwizard.servlets.tasks.PostBodyTask;
 import io.dropwizard.servlets.tasks.Task;
 import io.dropwizard.testing.app.TestConfiguration;
 import io.dropwizard.validation.BaseValidator;
+import java.io.PrintWriter;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import javax.validation.Validator;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.MediaType;
 import org.glassfish.jersey.client.JerseyClientBuilder;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import javax.validation.Validator;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.MediaType;
-import java.io.PrintWriter;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import static io.dropwizard.jackson.Jackson.newObjectMapper;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatNoException;
-
 class DropwizardTestSupportTest {
     private static final TestServiceListener<TestConfiguration> TEST_SERVICE_LISTENER = new TestServiceListener<>();
     private static final TestManaged TEST_MANAGED = new TestManaged();
-    private static final DropwizardTestSupport<TestConfiguration> TEST_SUPPORT =
-            new DropwizardTestSupport<>(TestApplication.class, "test-config.yaml", new ResourceConfigurationSourceProvider())
-                    .addListener(TEST_SERVICE_LISTENER)
-                    .manage(TEST_MANAGED);
+    private static final DropwizardTestSupport<TestConfiguration> TEST_SUPPORT = new DropwizardTestSupport<>(
+                    TestApplication.class, "test-config.yaml", new ResourceConfigurationSourceProvider())
+            .addListener(TEST_SERVICE_LISTENER)
+            .manage(TEST_MANAGED);
 
     @BeforeAll
     static void setUp() throws Exception {
@@ -58,8 +57,10 @@ class DropwizardTestSupportTest {
 
     @Test
     void canGetExpectedResourceOverHttp() {
-        final String content = JerseyClientBuilder.createClient().target(
-                "http://localhost:" + TEST_SUPPORT.getLocalPort() + "/test").request().get(String.class);
+        final String content = JerseyClientBuilder.createClient()
+                .target("http://localhost:" + TEST_SUPPORT.getLocalPort() + "/test")
+                .request()
+                .get(String.class);
 
         assertThat(content).isEqualTo("Yes, it's here");
     }
@@ -84,9 +85,8 @@ class DropwizardTestSupportTest {
 
     @Test
     void canPerformAdminTask() {
-        final String response
-                = JerseyClientBuilder.createClient().target("http://localhost:"
-                + TEST_SUPPORT.getAdminPort() + "/tasks/hello?name=test_user")
+        final String response = JerseyClientBuilder.createClient()
+                .target("http://localhost:" + TEST_SUPPORT.getAdminPort() + "/tasks/hello?name=test_user")
                 .request()
                 .post(Entity.entity("", MediaType.TEXT_PLAIN), String.class);
 
@@ -95,9 +95,8 @@ class DropwizardTestSupportTest {
 
     @Test
     void canPerformAdminTaskWithPostBody() {
-        final String response
-                = JerseyClientBuilder.createClient().target("http://localhost:"
-                + TEST_SUPPORT.getAdminPort() + "/tasks/echo")
+        final String response = JerseyClientBuilder.createClient()
+                .target("http://localhost:" + TEST_SUPPORT.getAdminPort() + "/tasks/echo")
                 .request()
                 .post(Entity.entity("Custom message", MediaType.TEXT_PLAIN), String.class);
 
@@ -106,18 +105,13 @@ class DropwizardTestSupportTest {
 
     @Test
     void isCustomFactoryCalled() throws Exception {
-        //load the test-config so that we can call the support with an explicit config
+        // load the test-config so that we can call the support with an explicit config
         TestConfiguration config = new YamlConfigurationFactory<>(
-                TestConfiguration.class,
-                BaseValidator.newValidator(),
-                newObjectMapper(),
-                "dw"
-        ).build(new ResourceConfigurationSourceProvider(), "test-config.yaml");
+                        TestConfiguration.class, BaseValidator.newValidator(), newObjectMapper(), "dw")
+                .build(new ResourceConfigurationSourceProvider(), "test-config.yaml");
 
-        DropwizardTestSupport<TestConfiguration> support = new DropwizardTestSupport<>(
-                FailingApplication.class,
-                config
-        );
+        DropwizardTestSupport<TestConfiguration> support =
+                new DropwizardTestSupport<>(FailingApplication.class, config);
 
         assertThatNoException().isThrownBy(() -> {
             try {
@@ -135,16 +129,15 @@ class DropwizardTestSupportTest {
         }
 
         @Override
-        public void run(TestConfiguration configuration, Environment environment) {
-        }
+        public void run(TestConfiguration configuration, Environment environment) {}
     }
 
     public static class FailingConfigurationFactory extends JsonConfigurationFactory<TestConfiguration> {
-        FailingConfigurationFactory(Class<TestConfiguration> klass, Validator validator, ObjectMapper objectMapper, String propertyPrefix) {
+        FailingConfigurationFactory(
+                Class<TestConfiguration> klass, Validator validator, ObjectMapper objectMapper, String propertyPrefix) {
             super(klass, validator, objectMapper, propertyPrefix);
             throw new IllegalStateException();
         }
-
     }
 
     public static class TestApplication extends io.dropwizard.testing.app.TestApplication {

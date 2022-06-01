@@ -1,9 +1,8 @@
 package io.dropwizard.metrics.common;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import javax.validation.constraints.NotNull;
 import java.util.Locale;
+import javax.validation.constraints.NotNull;
 
 /**
  * A base {@link ReporterFactory} for configuring metric reporters with formatting options.

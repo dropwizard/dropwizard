@@ -11,18 +11,17 @@ import io.dropwizard.jersey.jackson.JacksonFeature;
 import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.DropwizardTestSupport;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
+import javax.ws.rs.client.Client;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.client.HttpUrlConnectorProvider;
 import org.glassfish.jersey.client.JerseyClientBuilder;
 import org.junit.rules.ExternalResource;
 
-import javax.ws.rs.client.Client;
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Function;
-
-//@formatter:off
+// @formatter:off
 /**
  * A JUnit rule for starting and stopping your application at the start and end of a test class.
  * <p>
@@ -70,7 +69,7 @@ import java.util.function.Function;
  *
  * @deprecated Deprecated since Dropwizard 2.0.0. Please migrate to JUnit 5 and {@link io.dropwizard.testing.junit5.DropwizardAppExtension}.
  */
-//@formatter:on
+// @formatter:on
 @Deprecated
 public class DropwizardAppRule<C extends Configuration> extends ExternalResource {
 
@@ -88,19 +87,21 @@ public class DropwizardAppRule<C extends Configuration> extends ExternalResource
         this(applicationClass, (String) null);
     }
 
-    public DropwizardAppRule(Class<? extends Application<C>> applicationClass,
-                             @Nullable String configPath,
-                             ConfigOverride... configOverrides) {
+    public DropwizardAppRule(
+            Class<? extends Application<C>> applicationClass,
+            @Nullable String configPath,
+            ConfigOverride... configOverrides) {
         this(applicationClass, configPath, (String) null, configOverrides);
     }
 
     /**
      * @since 2.0
      */
-    public DropwizardAppRule(Class<? extends Application<C>> applicationClass,
-                             @Nullable String configPath,
-                             ConfigurationSourceProvider configSourceProvider,
-                             ConfigOverride... configOverrides) {
+    public DropwizardAppRule(
+            Class<? extends Application<C>> applicationClass,
+            @Nullable String configPath,
+            ConfigurationSourceProvider configSourceProvider,
+            ConfigOverride... configOverrides) {
         this(applicationClass, configPath, configSourceProvider, null, configOverrides);
     }
 
@@ -108,69 +109,86 @@ public class DropwizardAppRule<C extends Configuration> extends ExternalResource
      * @deprecated Use {@link #DropwizardAppRule(Class, String, String, ConfigOverride...)} instead.
      */
     @Deprecated
-    public DropwizardAppRule(Class<? extends Application<C>> applicationClass,
-                             @Nullable String configPath,
-                             Optional<String> customPropertyPrefix,
-                             ConfigOverride... configOverrides) {
+    public DropwizardAppRule(
+            Class<? extends Application<C>> applicationClass,
+            @Nullable String configPath,
+            Optional<String> customPropertyPrefix,
+            ConfigOverride... configOverrides) {
         this(applicationClass, configPath, customPropertyPrefix.orElse(null), configOverrides);
     }
 
     /**
      * @since 2.0
      */
-    public DropwizardAppRule(Class<? extends Application<C>> applicationClass,
-                             @Nullable String configPath,
-                             @Nullable String customPropertyPrefix,
-                             ConfigOverride... configOverrides) {
+    public DropwizardAppRule(
+            Class<? extends Application<C>> applicationClass,
+            @Nullable String configPath,
+            @Nullable String customPropertyPrefix,
+            ConfigOverride... configOverrides) {
         this(applicationClass, configPath, customPropertyPrefix, ServerCommand::new, configOverrides);
     }
 
     /**
      * @since 2.0
      */
-    public DropwizardAppRule(Class<? extends Application<C>> applicationClass,
-                             @Nullable String configPath,
-                             ConfigurationSourceProvider configSourceProvider,
-                             @Nullable String customPropertyPrefix,
-                             ConfigOverride... configOverrides) {
-        this(applicationClass, configPath, configSourceProvider, customPropertyPrefix, ServerCommand::new, configOverrides);
+    public DropwizardAppRule(
+            Class<? extends Application<C>> applicationClass,
+            @Nullable String configPath,
+            ConfigurationSourceProvider configSourceProvider,
+            @Nullable String customPropertyPrefix,
+            ConfigOverride... configOverrides) {
+        this(
+                applicationClass,
+                configPath,
+                configSourceProvider,
+                customPropertyPrefix,
+                ServerCommand::new,
+                configOverrides);
     }
 
     /**
      * @deprecated Use {@link #DropwizardAppRule(Class, String, String, Function, ConfigOverride...)} instead.
      */
     @Deprecated
-    public DropwizardAppRule(Class<? extends Application<C>> applicationClass,
-                             @Nullable String configPath,
-                             Optional<String> customPropertyPrefix,
-                             Function<Application<C>, Command> commandInstantiator,
-                             ConfigOverride... configOverrides) {
+    public DropwizardAppRule(
+            Class<? extends Application<C>> applicationClass,
+            @Nullable String configPath,
+            Optional<String> customPropertyPrefix,
+            Function<Application<C>, Command> commandInstantiator,
+            ConfigOverride... configOverrides) {
         this(applicationClass, configPath, customPropertyPrefix.orElse(null), commandInstantiator, configOverrides);
     }
 
     /**
      * @since 2.0
      */
-    public DropwizardAppRule(Class<? extends Application<C>> applicationClass,
-                             @Nullable String configPath,
-                             @Nullable String customPropertyPrefix,
-                             Function<Application<C>,
-                             Command> commandInstantiator,
-                             ConfigOverride... configOverrides) {
-        this(new DropwizardTestSupport<>(applicationClass, configPath, customPropertyPrefix, commandInstantiator, configOverrides));
+    public DropwizardAppRule(
+            Class<? extends Application<C>> applicationClass,
+            @Nullable String configPath,
+            @Nullable String customPropertyPrefix,
+            Function<Application<C>, Command> commandInstantiator,
+            ConfigOverride... configOverrides) {
+        this(new DropwizardTestSupport<>(
+                applicationClass, configPath, customPropertyPrefix, commandInstantiator, configOverrides));
     }
 
     /**
      * @since 2.0
      */
-    public DropwizardAppRule(Class<? extends Application<C>> applicationClass,
-                             @Nullable String configPath,
-                             ConfigurationSourceProvider configSourceProvider,
-                             @Nullable String customPropertyPrefix,
-                             Function<Application<C>,
-                             Command> commandInstantiator,
-                             ConfigOverride... configOverrides) {
-        this(new DropwizardTestSupport<>(applicationClass, configPath, configSourceProvider, customPropertyPrefix, commandInstantiator, configOverrides));
+    public DropwizardAppRule(
+            Class<? extends Application<C>> applicationClass,
+            @Nullable String configPath,
+            ConfigurationSourceProvider configSourceProvider,
+            @Nullable String customPropertyPrefix,
+            Function<Application<C>, Command> commandInstantiator,
+            ConfigOverride... configOverrides) {
+        this(new DropwizardTestSupport<>(
+                applicationClass,
+                configPath,
+                configSourceProvider,
+                customPropertyPrefix,
+                commandInstantiator,
+                configOverrides));
     }
 
     /**
@@ -179,8 +197,7 @@ public class DropwizardAppRule<C extends Configuration> extends ExternalResource
      *
      * @since 0.9
      */
-    public DropwizardAppRule(Class<? extends Application<C>> applicationClass,
-                             C configuration) {
+    public DropwizardAppRule(Class<? extends Application<C>> applicationClass, C configuration) {
         this(new DropwizardTestSupport<>(applicationClass, configuration));
     }
 
@@ -189,8 +206,10 @@ public class DropwizardAppRule<C extends Configuration> extends ExternalResource
      *
      * @since 1.1.0
      */
-    public DropwizardAppRule(Class<? extends Application<C>> applicationClass,
-                             C configuration, Function<Application<C>, Command> commandInstantiator) {
+    public DropwizardAppRule(
+            Class<? extends Application<C>> applicationClass,
+            C configuration,
+            Function<Application<C>, Command> commandInstantiator) {
         this(new DropwizardTestSupport<>(applicationClass, configuration, commandInstantiator));
     }
 
@@ -201,7 +220,8 @@ public class DropwizardAppRule<C extends Configuration> extends ExternalResource
     public DropwizardAppRule<C> addListener(final ServiceListener<C> listener) {
         this.testSupport.addListener(new DropwizardTestSupport.ServiceListener<C>() {
             @Override
-            public void onRun(C configuration, Environment environment, DropwizardTestSupport<C> rule) throws Exception {
+            public void onRun(C configuration, Environment environment, DropwizardTestSupport<C> rule)
+                    throws Exception {
                 listener.onRun(configuration, environment, DropwizardAppRule.this);
             }
 
@@ -308,9 +328,9 @@ public class DropwizardAppRule<C extends Configuration> extends ExternalResource
 
     protected JerseyClientBuilder clientBuilder() {
         return new JerseyClientBuilder()
-            .register(new JacksonFeature(getObjectMapper()))
-            .property(ClientProperties.CONNECT_TIMEOUT, DEFAULT_CONNECT_TIMEOUT_MS)
-            .property(ClientProperties.READ_TIMEOUT, DEFAULT_READ_TIMEOUT_MS)
-            .property(HttpUrlConnectorProvider.SET_METHOD_WORKAROUND, true);
+                .register(new JacksonFeature(getObjectMapper()))
+                .property(ClientProperties.CONNECT_TIMEOUT, DEFAULT_CONNECT_TIMEOUT_MS)
+                .property(ClientProperties.READ_TIMEOUT, DEFAULT_READ_TIMEOUT_MS)
+                .property(HttpUrlConnectorProvider.SET_METHOD_WORKAROUND, true);
     }
 }

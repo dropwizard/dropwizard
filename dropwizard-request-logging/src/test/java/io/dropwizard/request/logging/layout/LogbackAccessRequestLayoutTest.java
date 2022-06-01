@@ -1,13 +1,12 @@
 package io.dropwizard.request.logging.layout;
 
-import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.core.Context;
-import org.junit.jupiter.api.Test;
-
-import java.util.TimeZone;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
+
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.core.Context;
+import java.util.TimeZone;
+import org.junit.jupiter.api.Test;
 
 class LogbackAccessRequestLayoutTest {
     final Context context = mock(LoggerContext.class);
@@ -21,13 +20,13 @@ class LogbackAccessRequestLayoutTest {
 
     @Test
     void hasAContext() throws Exception {
-        assertThat(layout.getContext())
-            .isEqualTo(context);
+        assertThat(layout.getContext()).isEqualTo(context);
     }
 
     @Test
     void hasAPatternWithATimeZone() throws Exception {
         assertThat(layout.getPattern())
-            .isEqualTo("%h %l %u [%t{dd/MMM/yyyy:HH:mm:ss Z,UTC}] \"%r\" %s %b \"%i{Referer}\" \"%i{User-Agent}\" %D");
+                .isEqualTo(
+                        "%h %l %u [%t{dd/MMM/yyyy:HH:mm:ss Z,UTC}] \"%r\" %s %b \"%i{Referer}\" \"%i{User-Agent}\" %D");
     }
 }

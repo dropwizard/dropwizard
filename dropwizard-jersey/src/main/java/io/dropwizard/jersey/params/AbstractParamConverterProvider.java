@@ -2,13 +2,12 @@ package io.dropwizard.jersey.params;
 
 import io.dropwizard.jersey.DefaultValueUtils;
 import io.dropwizard.jersey.validation.JerseyParameterNameProvider;
-import org.checkerframework.checker.nullness.qual.Nullable;
-
-import javax.ws.rs.ext.ParamConverter;
-import javax.ws.rs.ext.ParamConverterProvider;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Type;
+import javax.ws.rs.ext.ParamConverter;
+import javax.ws.rs.ext.ParamConverterProvider;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * Provides converters to Jersey for Dropwizard's *Param classes.
@@ -23,7 +22,8 @@ public class AbstractParamConverterProvider implements ParamConverterProvider {
     @Nullable
     public <T> ParamConverter<T> getConverter(Class<T> rawType, Type genericType, Annotation[] annotations) {
         if (AbstractParam.class.isAssignableFrom(rawType)) {
-            final String parameterName = JerseyParameterNameProvider.getParameterNameFromAnnotations(annotations).orElse("Parameter");
+            final String parameterName = JerseyParameterNameProvider.getParameterNameFromAnnotations(annotations)
+                    .orElse("Parameter");
             final Constructor<T> constructor;
             try {
                 constructor = rawType.getConstructor(String.class, String.class);
@@ -37,5 +37,4 @@ public class AbstractParamConverterProvider implements ParamConverterProvider {
         }
         return null;
     }
-
 }

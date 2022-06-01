@@ -4,11 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.health.HealthStateAggregator;
 import io.dropwizard.health.HealthStateView;
 import io.dropwizard.health.HealthStatusChecker;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.ws.rs.core.MediaType;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -18,6 +13,10 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import javax.ws.rs.core.MediaType;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class JsonHealthResponseProvider implements HealthResponseProvider {
     public static final String CHECK_TYPE_QUERY_PARAM = "type";
@@ -28,14 +27,17 @@ public class JsonHealthResponseProvider implements HealthResponseProvider {
 
     @NonNull
     private final HealthStatusChecker healthStatusChecker;
+
     @NonNull
     private final HealthStateAggregator healthStateAggregator;
+
     @NonNull
     private final ObjectMapper mapper;
 
-    public JsonHealthResponseProvider(@NonNull final HealthStatusChecker healthStatusChecker,
-                                      @NonNull final HealthStateAggregator healthStateAggregator,
-                                      @NonNull final ObjectMapper mapper) {
+    public JsonHealthResponseProvider(
+            @NonNull final HealthStatusChecker healthStatusChecker,
+            @NonNull final HealthStateAggregator healthStateAggregator,
+            @NonNull final ObjectMapper mapper) {
         this.healthStatusChecker = Objects.requireNonNull(healthStatusChecker);
         this.healthStateAggregator = Objects.requireNonNull(healthStateAggregator);
         this.mapper = Objects.requireNonNull(mapper);
@@ -44,10 +46,9 @@ public class JsonHealthResponseProvider implements HealthResponseProvider {
     @NonNull
     @Override
     public HealthResponse healthResponse(final Map<String, Collection<String>> queryParams) {
-        final String type = queryParams.getOrDefault(CHECK_TYPE_QUERY_PARAM, Collections.emptyList())
-            .stream()
-            .findFirst()
-            .orElse(null);
+        final String type = queryParams.getOrDefault(CHECK_TYPE_QUERY_PARAM, Collections.emptyList()).stream()
+                .findFirst()
+                .orElse(null);
 
         final Collection<HealthStateView> views = getViews(queryParams);
 
@@ -73,12 +74,11 @@ public class JsonHealthResponseProvider implements HealthResponseProvider {
     }
 
     private Set<String> getNamesFromQueryParams(final Map<String, Collection<String>> queryParams) {
-        return queryParams.getOrDefault(NAME_QUERY_PARAM, Collections.emptyList())
-            .stream()
-            // normalize all names to lowercase
-            .map(String::toLowerCase)
-            // maintain order by using a linked hash set
-            .collect(Collectors.toCollection(LinkedHashSet::new));
+        return queryParams.getOrDefault(NAME_QUERY_PARAM, Collections.emptyList()).stream()
+                // normalize all names to lowercase
+                .map(String::toLowerCase)
+                // maintain order by using a linked hash set
+                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     private Collection<HealthStateView> getViews(final Map<String, Collection<String>> queryParams) {
@@ -88,9 +88,9 @@ public class JsonHealthResponseProvider implements HealthResponseProvider {
             return List.copyOf(healthStateAggregator.healthStateViews());
         } else {
             return names.stream()
-                .map(healthStateAggregator::healthStateView)
-                .flatMap(Optional::stream)
-                .collect(Collectors.toUnmodifiableList());
+                    .map(healthStateAggregator::healthStateView)
+                    .flatMap(Optional::stream)
+                    .collect(Collectors.toUnmodifiableList());
         }
     }
 

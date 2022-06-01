@@ -1,6 +1,12 @@
 package io.dropwizard.http2;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.eclipse.jetty.util.resource.Resource.newResource;
+
 import io.dropwizard.logging.common.BootstrapLogging;
+import java.nio.charset.StandardCharsets;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.api.ContentResponse;
 import org.eclipse.jetty.client.api.Result;
@@ -13,13 +19,6 @@ import org.eclipse.jetty.io.ClientConnector;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-
-import java.nio.charset.StandardCharsets;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.eclipse.jetty.util.resource.Resource.newResource;
 
 /**
  * Common code for HTTP/2 connector tests
@@ -51,7 +50,6 @@ class Http2TestCommon {
 
         http2Client = new HttpClient(new HttpClientTransportOverHTTP2(new HTTP2Client(http2Connector)));
         http2Client.start();
-
     }
 
     @AfterEach
@@ -71,16 +69,15 @@ class Http2TestCommon {
         final int amount = 100;
         final CountDownLatch latch = new CountDownLatch(amount);
         for (int i = 0; i < amount; i++) {
-            client.newRequest(url)
-                    .send(new BufferingResponseListener() {
-                        @Override
-                        public void onComplete(Result result) {
-                            assertThat(result.getResponse().getVersion()).isEqualTo(HttpVersion.HTTP_2);
-                            assertThat(result.getResponse().getStatus()).isEqualTo(200);
-                            assertThat(getContentAsString(StandardCharsets.UTF_8)).isEqualTo(FakeApplication.HELLO_WORLD);
-                            latch.countDown();
-                        }
-                    });
+            client.newRequest(url).send(new BufferingResponseListener() {
+                @Override
+                public void onComplete(Result result) {
+                    assertThat(result.getResponse().getVersion()).isEqualTo(HttpVersion.HTTP_2);
+                    assertThat(result.getResponse().getStatus()).isEqualTo(200);
+                    assertThat(getContentAsString(StandardCharsets.UTF_8)).isEqualTo(FakeApplication.HELLO_WORLD);
+                    latch.countDown();
+                }
+            });
         }
 
         return latch.await(30, TimeUnit.SECONDS);

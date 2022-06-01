@@ -1,9 +1,9 @@
 package io.dropwizard.jersey;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.glassfish.jersey.internal.inject.Providers;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Demonstrates that DropwizardResourceConfig.register needs to include an extra condition for hk2 binder, but not for
@@ -15,9 +15,7 @@ class ProvidersBinderTest {
     void demonstrateThatHk2BinderIsNotPickedUpAsProvider() {
         org.glassfish.hk2.utilities.Binder binder = new org.glassfish.hk2.utilities.binding.AbstractBinder() {
             @Override
-            protected void configure() {
-
-            }
+            protected void configure() {}
         };
         assertThat(Providers.isProvider(binder.getClass())).isFalse();
     }
@@ -26,9 +24,7 @@ class ProvidersBinderTest {
     void demonstrateThatJerseyBinderIsPickedUpAsProvider() {
         org.glassfish.jersey.internal.inject.Binder binder = new org.glassfish.jersey.internal.inject.AbstractBinder() {
             @Override
-            protected void configure() {
-
-            }
+            protected void configure() {}
         };
         assertThat(Providers.isProvider(binder.getClass())).isTrue();
     }

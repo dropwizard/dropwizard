@@ -1,12 +1,11 @@
 package io.dropwizard.jdbi3.jersey;
 
 import io.dropwizard.jersey.errors.LoggingExceptionMapper;
+import java.sql.SQLException;
+import javax.ws.rs.ext.Provider;
 import org.jdbi.v3.core.JdbiException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.ws.rs.ext.Provider;
-import java.sql.SQLException;
 
 /**
  * Iterates through a {@link JdbiException}'s cause if it's a {@link SQLException} otherwise log as normal.

@@ -1,15 +1,14 @@
 package io.dropwizard.validation;
 
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIf;
+import static org.assertj.core.api.Assertions.assertThat;
 
-import javax.validation.Valid;
-import javax.validation.Validator;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import javax.validation.Valid;
+import javax.validation.Validator;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 
 @EnabledIf("isDefaultLocaleEnglish")
 class PortRangeValidatorTest {
@@ -25,7 +24,6 @@ class PortRangeValidatorTest {
         List<@PortRange Integer> ports = Collections.emptyList();
     }
 
-
     private final Validator validator = BaseValidator.newValidator();
     private final Example example = new Example();
 
@@ -33,16 +31,14 @@ class PortRangeValidatorTest {
     void acceptsNonPrivilegedPorts() {
         example.port = 2048;
 
-        assertThat(validator.validate(example))
-                .isEmpty();
+        assertThat(validator.validate(example)).isEmpty();
     }
 
     @Test
     void acceptsDynamicPorts() {
         example.port = 0;
 
-        assertThat(validator.validate(example))
-                .isEmpty();
+        assertThat(validator.validate(example)).isEmpty();
     }
 
     @Test
@@ -73,7 +69,7 @@ class PortRangeValidatorTest {
     void rejectsInvalidPortsInList() {
         example.ports = Collections.singletonList(-1);
         assertThat(ConstraintViolations.format(validator.validate(example)))
-            .containsOnly("ports[0].<list element> must be between 1 and 65535");
+                .containsOnly("ports[0].<list element> must be between 1 and 65535");
     }
 
     private static boolean isDefaultLocaleEnglish() {

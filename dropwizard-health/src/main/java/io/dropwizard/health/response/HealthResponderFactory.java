@@ -6,7 +6,6 @@ import io.dropwizard.health.HealthEnvironment;
 import io.dropwizard.jackson.Discoverable;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
 import io.dropwizard.jetty.setup.ServletEnvironment;
-
 import java.util.Collection;
 
 /**
@@ -27,7 +26,12 @@ public interface HealthResponderFactory extends Discoverable {
      * @param servlets               The servlet environment.
      * @param mapper                 A Jackson object mapper to allow writing JSON responses (if needed).
      */
-    void configure(final String name, final Collection<String> healthCheckUrlPaths,
-                   final HealthResponseProvider healthResponseProvider, final HealthEnvironment health,
-                   final JerseyEnvironment jersey, final ServletEnvironment servlets, final ObjectMapper mapper);
+    void configure(
+            final String name,
+            final Collection<String> healthCheckUrlPaths,
+            final HealthResponseProvider healthResponseProvider,
+            final HealthEnvironment health,
+            final JerseyEnvironment jersey,
+            final ServletEnvironment servlets,
+            final ObjectMapper mapper);
 }

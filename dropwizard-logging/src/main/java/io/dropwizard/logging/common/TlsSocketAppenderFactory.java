@@ -3,15 +3,14 @@ package io.dropwizard.logging.common;
 import ch.qos.logback.core.spi.DeferredProcessingAware;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import org.checkerframework.checker.nullness.qual.Nullable;
-import org.eclipse.jetty.util.ssl.SslContextFactory;
-
-import javax.net.SocketFactory;
-import javax.validation.constraints.NotEmpty;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.util.List;
+import javax.net.SocketFactory;
+import javax.validation.constraints.NotEmpty;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.eclipse.jetty.util.ssl.SslContextFactory;
 
 /**
  * An {@link AppenderFactory} implementation which provides an appender that writes events to a TCP socket
@@ -145,19 +144,25 @@ public class TlsSocketAppenderFactory<E extends DeferredProcessingAware> extends
 
     @Nullable
     private String keyStorePath;
+
     @Nullable
     private String keyStorePassword;
+
     @NotEmpty
     private String keyStoreType = "JKS";
+
     @Nullable
     private String keyStoreProvider;
 
     @Nullable
     private String trustStorePath;
+
     @Nullable
     private String trustStorePassword;
+
     @NotEmpty
     private String trustStoreType = "JKS";
+
     @Nullable
     private String trustStoreProvider;
 
@@ -166,11 +171,13 @@ public class TlsSocketAppenderFactory<E extends DeferredProcessingAware> extends
 
     @Nullable
     private List<String> supportedProtocols;
+
     @Nullable
     private List<String> excludedProtocols;
 
     @Nullable
     private List<String> supportedCipherSuites;
+
     @Nullable
     private List<String> excludedCipherSuites;
 
@@ -423,6 +430,4 @@ public class TlsSocketAppenderFactory<E extends DeferredProcessingAware> extends
             }
         };
     }
-
-
 }

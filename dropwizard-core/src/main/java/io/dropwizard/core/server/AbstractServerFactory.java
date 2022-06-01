@@ -26,6 +26,21 @@ import io.dropwizard.servlets.ThreadNameFilter;
 import io.dropwizard.util.Duration;
 import io.dropwizard.validation.MinDuration;
 import io.dropwizard.validation.ValidationMethod;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.EnumSet;
+import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.BlockingQueue;
+import java.util.stream.Collectors;
+import javax.servlet.DispatcherType;
+import javax.servlet.Servlet;
+import javax.validation.Valid;
+import javax.validation.Validator;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
@@ -39,22 +54,6 @@ import org.eclipse.jetty.util.BlockingArrayQueue;
 import org.eclipse.jetty.util.thread.ThreadPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.servlet.DispatcherType;
-import javax.servlet.Servlet;
-import javax.validation.Valid;
-import javax.validation.Validator;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.EnumSet;
-import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.BlockingQueue;
-import java.util.stream.Collectors;
 
 /**
  * A base class for {@link ServerFactory} implementations.
@@ -550,16 +549,18 @@ public abstract class AbstractServerFactory implements ServerFactory {
         this.dumpBeforeStop = dumpBeforeStop;
     }
 
-    protected Handler createAdminServlet(Server server,
-                                         MutableServletContextHandler handler,
-                                         MetricRegistry metrics,
-                                         HealthCheckRegistry healthChecks,
-                                         AdminEnvironment admin) {
+    protected Handler createAdminServlet(
+            Server server,
+            MutableServletContextHandler handler,
+            MetricRegistry metrics,
+            HealthCheckRegistry healthChecks,
+            AdminEnvironment admin) {
         configureSessionsAndSecurity(handler, server);
         handler.setServer(server);
         handler.getServletContext().setAttribute(MetricsServlet.METRICS_REGISTRY, metrics);
         handler.getServletContext().setAttribute(HealthCheckServlet.HEALTH_CHECK_REGISTRY, healthChecks);
-        handler.getServletContext().setAttribute(AdminServlet.HEALTHCHECK_ENABLED_PARAM_KEY, admin.isHealthCheckServletEnabled());
+        handler.getServletContext()
+                .setAttribute(AdminServlet.HEALTHCHECK_ENABLED_PARAM_KEY, admin.isHealthCheckServletEnabled());
         handler.addServlet(AdminServlet.class, "/*");
         final String allowedMethodsParam = String.join(",", allowedMethods);
         handler.addFilter(AllowedMethodsFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST))
@@ -577,13 +578,14 @@ public abstract class AbstractServerFactory implements ServerFactory {
         }
     }
 
-    protected Handler createAppServlet(Server server,
-                                       JerseyEnvironment jersey,
-                                       ObjectMapper objectMapper,
-                                       Validator validator,
-                                       MutableServletContextHandler handler,
-                                       @Nullable Servlet jerseyContainer,
-                                       MetricRegistry metricRegistry) {
+    protected Handler createAppServlet(
+            Server server,
+            JerseyEnvironment jersey,
+            ObjectMapper objectMapper,
+            Validator validator,
+            MutableServletContextHandler handler,
+            @Nullable Servlet jerseyContainer,
+            MetricRegistry metricRegistry) {
         configureSessionsAndSecurity(handler, server);
         final String allowedMethodsParam = String.join(",", allowedMethods);
         handler.addFilter(AllowedMethodsFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST))
@@ -609,15 +611,13 @@ public abstract class AbstractServerFactory implements ServerFactory {
 
     protected ThreadPool createThreadPool(MetricRegistry metricRegistry) {
         final BlockingQueue<Runnable> queue = new BlockingArrayQueue<>(minThreads, maxThreads, maxQueuedRequests);
-        final InstrumentedQueuedThreadPool threadPool =
-                new InstrumentedQueuedThreadPool(metricRegistry, maxThreads, minThreads,
-                                                 (int) idleThreadTimeout.toMilliseconds(), queue);
+        final InstrumentedQueuedThreadPool threadPool = new InstrumentedQueuedThreadPool(
+                metricRegistry, maxThreads, minThreads, (int) idleThreadTimeout.toMilliseconds(), queue);
         threadPool.setName("dw");
         return threadPool;
     }
 
-    protected Server buildServer(LifecycleEnvironment lifecycle,
-                                 ThreadPool threadPool) {
+    protected Server buildServer(LifecycleEnvironment lifecycle, ThreadPool threadPool) {
         final Server server = new Server(threadPool);
         server.addEventListener(buildSetUIDListener());
         lifecycle.attach(server);
@@ -704,13 +704,12 @@ public abstract class AbstractServerFactory implements ServerFactory {
     @SuppressWarnings("Slf4jFormatShouldBeConst")
     protected void printBanner(String name) {
         String msg = "Starting " + name;
-        try (final InputStream resourceStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("banner.txt")) {
+        try (final InputStream resourceStream =
+                Thread.currentThread().getContextClassLoader().getResourceAsStream("banner.txt")) {
             if (resourceStream != null) {
                 try (final InputStreamReader inputStreamReader = new InputStreamReader(resourceStream);
-                     final BufferedReader bufferedReader = new BufferedReader(inputStreamReader)) {
-                    final String banner = bufferedReader
-                        .lines()
-                        .collect(Collectors.joining(System.lineSeparator()));
+                        final BufferedReader bufferedReader = new BufferedReader(inputStreamReader)) {
+                    final String banner = bufferedReader.lines().collect(Collectors.joining(System.lineSeparator()));
                     msg = String.format("Starting %s%n%s", name, banner);
                 }
             }
