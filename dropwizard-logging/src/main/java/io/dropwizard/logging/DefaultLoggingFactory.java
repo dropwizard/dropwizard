@@ -18,7 +18,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
-import io.dropwizard.jackson.Jackson;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.dropwizard.jackson.DefaultObjectMapperFactory;
 import io.dropwizard.logback.AsyncAppenderBaseProxy;
 import io.dropwizard.logging.async.AsyncAppenderFactory;
 import io.dropwizard.logging.async.AsyncLoggingEventAppenderFactory;
@@ -120,12 +121,17 @@ public class DefaultLoggingFactory implements LoggingFactory {
 
     @Override
     public void configure(MetricRegistry metricRegistry, String name) {
+        configure(new DefaultObjectMapperFactory().newObjectMapper(), metricRegistry, name);
+    }
+
+    @Override
+    public void configure(ObjectMapper objectMapper, MetricRegistry metricRegistry, String name) {
         LoggingUtil.hijackJDKLogging();
 
         CHANGE_LOGGER_CONTEXT_LOCK.lock();
         final Logger root;
         try {
-            root = configureLoggers(name);
+            root = configureLoggers(objectMapper, name);
         } finally {
             CHANGE_LOGGER_CONTEXT_LOCK.unlock();
         }
@@ -241,7 +247,7 @@ public class DefaultLoggingFactory implements LoggingFactory {
         root.addAppender(appender);
     }
 
-    private Logger configureLoggers(String name) {
+    private Logger configureLoggers(ObjectMapper objectMapper, String name) {
         final Logger root = loggerContext.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
         loggerContext.reset();
 
@@ -267,7 +273,7 @@ public class DefaultLoggingFactory implements LoggingFactory {
                 // A level and an appender
                 final LoggerConfiguration configuration;
                 try {
-                    configuration = Jackson.newObjectMapper().treeToValue(jsonNode, LoggerConfiguration.class);
+                    configuration = objectMapper.treeToValue(jsonNode, LoggerConfiguration.class);
                 } catch (JsonProcessingException e) {
                     throw new IllegalArgumentException("Wrong format of logger '" + entry.getKey() + "'", e);
                 }

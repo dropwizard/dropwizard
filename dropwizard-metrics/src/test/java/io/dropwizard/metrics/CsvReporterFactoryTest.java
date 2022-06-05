@@ -4,8 +4,8 @@ import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
+import io.dropwizard.jackson.DefaultObjectMapperFactory;
 import io.dropwizard.jackson.DiscoverableSubtypeResolver;
-import io.dropwizard.jackson.Jackson;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import io.dropwizard.validation.BaseValidator;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,7 +16,7 @@ import java.io.File;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class CsvReporterFactoryTest {
-    private final ObjectMapper objectMapper = Jackson.newObjectMapper();
+    private final ObjectMapper objectMapper = new DefaultObjectMapperFactory().newObjectMapper();
     private final YamlConfigurationFactory<MetricsFactory> factory =
             new YamlConfigurationFactory<>(MetricsFactory.class,
                                            BaseValidator.newValidator(),

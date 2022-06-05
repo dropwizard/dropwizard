@@ -6,8 +6,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.configuration.ConfigurationException;
 import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
+import io.dropwizard.jackson.DefaultObjectMapperFactory;
 import io.dropwizard.jackson.DiscoverableSubtypeResolver;
-import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jetty.HttpConnectorFactory;
 import io.dropwizard.logging.ConsoleAppenderFactory;
 import io.dropwizard.logging.FileAppenderFactory;
@@ -25,8 +25,8 @@ import javax.validation.Validator;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -103,7 +103,7 @@ public class SimpleServerFactoryTest {
 
     @Test
     void testDeserializeWithoutJsonAutoDetect() throws ConfigurationException, IOException {
-        final ObjectMapper objectMapper = Jackson.newObjectMapper()
+        final ObjectMapper objectMapper = new DefaultObjectMapperFactory().newObjectMapper()
             .setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE);
 
         assertThat(new YamlConfigurationFactory<>(

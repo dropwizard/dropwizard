@@ -17,8 +17,8 @@ import io.dropwizard.configuration.ConfigurationException;
 import io.dropwizard.configuration.ConfigurationValidationException;
 import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
+import io.dropwizard.jackson.DefaultObjectMapperFactory;
 import io.dropwizard.jackson.DiscoverableSubtypeResolver;
-import io.dropwizard.jackson.Jackson;
 import io.dropwizard.logging.async.AsyncLoggingEventAppenderFactory;
 import io.dropwizard.logging.filter.NullLevelFilterFactory;
 import io.dropwizard.logging.layout.DropwizardLayoutFactory;
@@ -45,7 +45,7 @@ class FileAppenderFactoryTest {
         BootstrapLogging.bootstrap();
     }
 
-    private final ObjectMapper mapper = Jackson.newObjectMapper();
+    private final ObjectMapper mapper = new DefaultObjectMapperFactory().newObjectMapper();
     private final Validator validator = BaseValidator.newValidator();
 
     @Test

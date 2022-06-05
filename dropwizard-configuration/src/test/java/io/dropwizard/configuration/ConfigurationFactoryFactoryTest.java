@@ -3,9 +3,8 @@ package io.dropwizard.configuration;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.configuration.BaseConfigurationFactoryTest.Example;
-import io.dropwizard.jackson.Jackson;
+import io.dropwizard.jackson.DefaultObjectMapperFactory;
 import io.dropwizard.validation.BaseValidator;
-
 import org.junit.jupiter.api.Test;
 
 import javax.validation.Validator;
@@ -19,12 +18,13 @@ class ConfigurationFactoryFactoryTest {
     private final ConfigurationSourceProvider configurationSourceProvider = new ResourceConfigurationSourceProvider();
     private final ConfigurationFactoryFactory<Example> factoryFactory = new DefaultConfigurationFactoryFactory<>();
     private final Validator validator = BaseValidator.newValidator();
+    private final ObjectMapper objectMapper = new DefaultObjectMapperFactory().newObjectMapper();
 
     @Test
     void createDefaultFactory() throws Exception {
         String validFile = "factory-test-valid.yml";
         ConfigurationFactory<Example> factory =
-            factoryFactory.create(Example.class, validator, Jackson.newObjectMapper(), "dw");
+            factoryFactory.create(Example.class, validator, objectMapper, "dw");
         final Example example = factory.build(configurationSourceProvider, validFile);
         assertThat(example.getName())
             .isEqualTo("Coda Hale");
@@ -34,7 +34,7 @@ class ConfigurationFactoryFactoryTest {
     void createDefaultFactoryFailsUnknownProperty() {
         String validFileWithUnknownProp = "factory-test-unknown-property.yml";
         ConfigurationFactory<Example> factory =
-            factoryFactory.create(Example.class, validator, Jackson.newObjectMapper(), "dw");
+            factoryFactory.create(Example.class, validator, objectMapper, "dw");
 
         assertThatExceptionOfType(ConfigurationException.class)
             .isThrownBy(() -> factory.build(configurationSourceProvider, validFileWithUnknownProp))
@@ -49,7 +49,7 @@ class ConfigurationFactoryFactoryTest {
             customFactory.create(
                 Example.class,
                 validator,
-                Jackson.newObjectMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES),
+                objectMapper.copy().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES),
                 "dw");
         Example example = factory.build(configurationSourceProvider, validFileWithUnknownProp);
         assertThat(example.getName())

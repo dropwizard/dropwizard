@@ -4,7 +4,7 @@ import com.codahale.metrics.MetricAttribute;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
-import io.dropwizard.jackson.Jackson;
+import io.dropwizard.jackson.DefaultObjectMapperFactory;
 import io.dropwizard.logging.BootstrapLogging;
 import io.dropwizard.util.Duration;
 import io.dropwizard.validation.BaseValidator;
@@ -21,7 +21,7 @@ class MetricsFactoryTest {
         BootstrapLogging.bootstrap();
     }
 
-    private final ObjectMapper objectMapper = Jackson.newObjectMapper();
+    private final ObjectMapper objectMapper = new DefaultObjectMapperFactory().newObjectMapper();
     private final YamlConfigurationFactory<MetricsFactory> factory = new YamlConfigurationFactory<>(
         MetricsFactory.class, BaseValidator.newValidator(), objectMapper, "dw");
     private MetricsFactory config;

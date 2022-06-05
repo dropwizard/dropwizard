@@ -2,7 +2,8 @@ package io.dropwizard.logging.json;
 
 import ch.qos.logback.core.spi.DeferredProcessingAware;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.dropwizard.jackson.Jackson;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.dropwizard.jackson.DefaultObjectMapperFactory;
 import io.dropwizard.logging.json.layout.JsonFormatter;
 import io.dropwizard.logging.json.layout.TimestampFormatter;
 import io.dropwizard.logging.layout.DiscoverableLayoutFactory;
@@ -116,7 +117,11 @@ public abstract class AbstractJsonLayoutBaseFactory<E extends DeferredProcessing
     }
 
     protected JsonFormatter createDropwizardJsonFormatter() {
-        return new JsonFormatter(Jackson.newObjectMapper(), isPrettyPrint(), isAppendLineSeparator());
+        return createDropwizardJsonFormatter(new DefaultObjectMapperFactory().newObjectMapper());
+    }
+
+    protected JsonFormatter createDropwizardJsonFormatter(ObjectMapper objectMapper) {
+        return new JsonFormatter(objectMapper, isPrettyPrint(), isAppendLineSeparator());
     }
 
     protected TimestampFormatter createTimestampFormatter(TimeZone timeZone) {

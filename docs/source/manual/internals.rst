@@ -40,7 +40,7 @@ Startup Sequence
 
 	Bootstrap(application: Application<T>) {
 	  this.application = application;
-	  this.objectMapper = Jackson.newObjectMapper();
+	  this.objectMapper = new DefaultObjectMapperFactory().newObjectMapper();
 	  this.bundles = new ArrayList<>();
 	  this.configuredBundles = new ArrayList<>();
 	  this.commands = new ArrayList<>();

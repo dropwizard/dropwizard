@@ -4,8 +4,8 @@ import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.jetty9.InstrumentedConnectionFactory;
 import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
+import io.dropwizard.jackson.DefaultObjectMapperFactory;
 import io.dropwizard.jackson.DiscoverableSubtypeResolver;
-import io.dropwizard.jackson.Jackson;
 import io.dropwizard.validation.BaseValidator;
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.eclipse.jetty.server.ConnectionFactory;
@@ -61,7 +61,7 @@ class HttpsConnectorFactoryTest {
     @Test
     void testParsingConfiguration() throws Exception {
         HttpsConnectorFactory https = new YamlConfigurationFactory<>(HttpsConnectorFactory.class, validator,
-                Jackson.newObjectMapper(), "dw-https")
+                new DefaultObjectMapperFactory().newObjectMapper(), "dw-https")
                 .build(new ResourceConfigurationSourceProvider(), "yaml/https-connector.yml");
 
         assertThat(https.getPort()).isEqualTo(8443);

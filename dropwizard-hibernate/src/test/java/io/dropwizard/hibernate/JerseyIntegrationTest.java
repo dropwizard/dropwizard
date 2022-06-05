@@ -2,7 +2,7 @@ package io.dropwizard.hibernate;
 
 import com.codahale.metrics.MetricRegistry;
 import io.dropwizard.db.DataSourceFactory;
-import io.dropwizard.jackson.Jackson;
+import io.dropwizard.jackson.DefaultObjectMapperFactory;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.jersey.errors.ErrorMessage;
 import io.dropwizard.jersey.jackson.JacksonFeature;
@@ -15,9 +15,6 @@ import org.glassfish.jersey.test.JerseyTest;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,6 +32,8 @@ import javax.ws.rs.core.Application;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -143,7 +142,7 @@ class JerseyIntegrationTest extends JerseyTest {
         config.register(new UnitOfWorkApplicationListener("hr-db", sessionFactory));
         config.register(new PersonResource(new PersonDAO(sessionFactory)));
         config.register(new PersistenceExceptionMapper());
-        config.register(new JacksonFeature(Jackson.newObjectMapper()));
+        config.register(new JacksonFeature(new DefaultObjectMapperFactory().newObjectMapper()));
         config.register(new DataExceptionMapper());
         config.register(new EmptyOptionalExceptionMapper());
 
@@ -152,7 +151,7 @@ class JerseyIntegrationTest extends JerseyTest {
 
     @Override
     protected void configureClient(ClientConfig config) {
-        config.register(new JacksonFeature(Jackson.newObjectMapper()));
+        config.register(new JacksonFeature(new DefaultObjectMapperFactory().newObjectMapper()));
     }
 
     @Test

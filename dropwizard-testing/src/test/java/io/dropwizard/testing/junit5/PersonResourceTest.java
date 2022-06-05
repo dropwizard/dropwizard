@@ -2,7 +2,7 @@ package io.dropwizard.testing.junit5;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.guava.GuavaModule;
-import io.dropwizard.jackson.Jackson;
+import io.dropwizard.jackson.DefaultObjectMapperFactory;
 import io.dropwizard.testing.app.PeopleStore;
 import io.dropwizard.testing.app.Person;
 import io.dropwizard.testing.app.PersonResource;
@@ -34,7 +34,7 @@ class PersonResourceTest {
         }
     }
 
-    private static final ObjectMapper OBJECT_MAPPER = Jackson.newObjectMapper()
+    private static final ObjectMapper OBJECT_MAPPER = new DefaultObjectMapperFactory().newObjectMapper()
         .registerModule(new GuavaModule());
 
     private final PeopleStore peopleStore = mock(PeopleStore.class);

@@ -20,7 +20,6 @@ import io.dropwizard.configuration.ConfigurationFactoryFactory;
 import io.dropwizard.configuration.ConfigurationSourceProvider;
 import io.dropwizard.configuration.DefaultConfigurationFactoryFactory;
 import io.dropwizard.configuration.FileConfigurationSourceProvider;
-import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.validation.Validators;
 
 import javax.annotation.Nullable;
@@ -61,7 +60,7 @@ public class Bootstrap<T extends Configuration> {
      */
     public Bootstrap(Application<T> application) {
         this.application = application;
-        this.objectMapper = Jackson.newObjectMapper();
+        this.objectMapper = application.getObjectMapperFactory().newObjectMapper();
         this.configuredBundles = new ArrayList<>();
         this.commands = new ArrayList<>();
         this.validatorFactory = Validators.newValidatorFactory();
@@ -83,7 +82,7 @@ public class Bootstrap<T extends Configuration> {
 
         getMetricRegistry().register("jvm.attribute", new JvmAttributeGaugeSet());
         getMetricRegistry().register("jvm.buffers", new BufferPoolMetricSet(ManagementFactory
-                                                                               .getPlatformMBeanServer()));
+                .getPlatformMBeanServer()));
         getMetricRegistry().register("jvm.classloader", new ClassLoadingGaugeSet());
         getMetricRegistry().register("jvm.filedescriptor", new FileDescriptorRatioGauge());
         getMetricRegistry().register("jvm.gc", new GarbageCollectorMetricSet());
@@ -178,8 +177,8 @@ public class Bootstrap<T extends Configuration> {
 
     /**
      * Sets the given {@link ObjectMapper} to the bootstrap.
-     * <p<b>WARNING:</b> The mapper should be created by {@link Jackson#newMinimalObjectMapper()}
-     * or {@link Jackson#newObjectMapper()}, otherwise it will not work with Dropwizard.</p>
+     * <p<b>WARNING:</b> The mapper should be created by {@link io.dropwizard.jackson.DefaultObjectMapperFactory#newObjectMapper()},
+     * otherwise it will not work with Dropwizard.
      *
      * @param objectMapper an {@link ObjectMapper}
      */

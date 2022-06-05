@@ -4,7 +4,7 @@ import com.codahale.metrics.MetricFilter;
 import com.codahale.metrics.MetricRegistry;
 import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
-import io.dropwizard.jackson.Jackson;
+import io.dropwizard.jackson.DefaultObjectMapperFactory;
 import io.dropwizard.util.Duration;
 import io.dropwizard.validation.BaseValidator;
 import org.apache.tomcat.jdbc.pool.interceptor.ConnectionState;
@@ -138,7 +138,7 @@ class DataSourceFactoryTest {
     @Test
     void createDefaultFactory() throws Exception {
         final DataSourceFactory factory = new YamlConfigurationFactory<>(DataSourceFactory.class,
-            BaseValidator.newValidator(), Jackson.newObjectMapper(), "dw")
+            BaseValidator.newValidator(), new DefaultObjectMapperFactory().newObjectMapper(), "dw")
             .build(new ResourceConfigurationSourceProvider(), "yaml/minimal_db_pool.yml");
 
         assertThat(factory.getDriverClass()).isEqualTo("org.postgresql.Driver");

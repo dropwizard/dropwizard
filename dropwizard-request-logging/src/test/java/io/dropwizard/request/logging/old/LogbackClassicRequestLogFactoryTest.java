@@ -5,8 +5,8 @@ import ch.qos.logback.core.Appender;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
+import io.dropwizard.jackson.DefaultObjectMapperFactory;
 import io.dropwizard.jackson.DiscoverableSubtypeResolver;
-import io.dropwizard.jackson.Jackson;
 import io.dropwizard.logging.BootstrapLogging;
 import io.dropwizard.logging.ConsoleAppenderFactory;
 import io.dropwizard.logging.FileAppenderFactory;
@@ -42,7 +42,7 @@ class LogbackClassicRequestLogFactoryTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        final ObjectMapper objectMapper = Jackson.newObjectMapper();
+        final ObjectMapper objectMapper = new DefaultObjectMapperFactory().newObjectMapper();
         objectMapper.getSubtypeResolver().registerSubtypes(ConsoleAppenderFactory.class, FileAppenderFactory.class,
             SyslogAppenderFactory.class);
         this.requestLog = new YamlConfigurationFactory<>(RequestLogFactory.class,

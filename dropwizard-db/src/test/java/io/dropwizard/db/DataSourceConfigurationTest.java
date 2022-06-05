@@ -2,7 +2,7 @@ package io.dropwizard.db;
 
 import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
-import io.dropwizard.jackson.Jackson;
+import io.dropwizard.jackson.DefaultObjectMapperFactory;
 import io.dropwizard.jersey.validation.Validators;
 import io.dropwizard.util.Duration;
 import org.junit.jupiter.api.Test;
@@ -121,7 +121,7 @@ class DataSourceConfigurationTest {
 
     private DataSourceFactory getDataSourceFactory(String resourceName) throws Exception {
         return new YamlConfigurationFactory<>(DataSourceFactory.class,
-                Validators.newValidator(), Jackson.newObjectMapper(), "dw")
+                Validators.newValidator(), new DefaultObjectMapperFactory().newObjectMapper(), "dw")
                 .build(new ResourceConfigurationSourceProvider(), resourceName);
     }
 }

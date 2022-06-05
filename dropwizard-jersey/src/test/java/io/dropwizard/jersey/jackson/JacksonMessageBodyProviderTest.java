@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.dropwizard.jackson.Jackson;
+import io.dropwizard.jackson.DefaultObjectMapperFactory;
 import io.dropwizard.validation.Validated;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
@@ -35,7 +35,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 @SuppressWarnings("unchecked")
@@ -100,7 +99,7 @@ public class JacksonMessageBodyProviderTest {
 
     }
 
-    private final ObjectMapper mapper = spy(Jackson.newObjectMapper());
+    private final ObjectMapper mapper = new DefaultObjectMapperFactory().newObjectMapper();
     private final JacksonMessageBodyProvider provider =
             new JacksonMessageBodyProvider(mapper);
 

@@ -1,8 +1,9 @@
 package io.dropwizard.configuration;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.benmanes.caffeine.cache.CaffeineSpec;
-import io.dropwizard.jackson.Jackson;
+import io.dropwizard.jackson.DefaultObjectMapperFactory;
 import io.dropwizard.util.Maps;
 import io.dropwizard.validation.BaseValidator;
 import org.assertj.core.api.ThrowableAssertAlternative;
@@ -26,6 +27,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 public abstract class BaseConfigurationFactoryTest {
+    protected final ObjectMapper objectMapper = new DefaultObjectMapperFactory().newObjectMapper();
 
     @SuppressWarnings("UnusedDeclaration")
     public static class ExampleServer {
@@ -167,7 +169,7 @@ public abstract class BaseConfigurationFactoryTest {
     @Test
     void usesDefaultedCacheBuilderSpec() throws Exception {
         final ExampleWithDefaults example =
-            new YamlConfigurationFactory<>(ExampleWithDefaults.class, validator, Jackson.newObjectMapper(), "dw")
+            new YamlConfigurationFactory<>(ExampleWithDefaults.class, validator, objectMapper, "dw")
                 .build();
         assertThat(example.cacheBuilderSpec)
             .isNotNull()
@@ -366,7 +368,7 @@ public abstract class BaseConfigurationFactoryTest {
         System.setProperty("dw.servers[2].port", "8092");
 
         final ExampleWithDefaults example =
-                new YamlConfigurationFactory<>(ExampleWithDefaults.class, validator, Jackson.newObjectMapper(), "dw")
+                new YamlConfigurationFactory<>(ExampleWithDefaults.class, validator, objectMapper, "dw")
                         .build();
 
         assertThat(example)
@@ -384,7 +386,7 @@ public abstract class BaseConfigurationFactoryTest {
     @Test
     void handleDefaultConfigurationWithoutOverriding() throws Exception {
         final ExampleWithDefaults example =
-                new YamlConfigurationFactory<>(ExampleWithDefaults.class, validator, Jackson.newObjectMapper(), "dw")
+                new YamlConfigurationFactory<>(ExampleWithDefaults.class, validator, objectMapper, "dw")
                         .build();
 
         assertThat(example)
@@ -401,7 +403,7 @@ public abstract class BaseConfigurationFactoryTest {
     void throwsAnExceptionIfDefaultConfigurationCantBeInstantiated() {
         System.setProperty("dw.name", "Coda Hale Overridden");
         final YamlConfigurationFactory<NonInstantiableExample> factory =
-            new YamlConfigurationFactory<>(NonInstantiableExample.class, validator, Jackson.newObjectMapper(), "dw");
+            new YamlConfigurationFactory<>(NonInstantiableExample.class, validator, objectMapper, "dw");
         assertThatIllegalArgumentException()
             .isThrownBy(factory::build)
             .withMessage("Unable to create an instance of the configuration class: " +

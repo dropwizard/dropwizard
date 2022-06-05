@@ -568,7 +568,7 @@ assert the expected widget is deserialized based on the ``type`` field.
 
     public class WidgetFactoryTest {
 
-        private final ObjectMapper objectMapper = Jackson.newObjectMapper();
+        private final ObjectMapper objectMapper = new DefaultObjectMapperFactory().newObjectMapper();
         private final Validator validator = Validators.newValidator();
         private final YamlConfigurationFactory<WidgetFactory> factory =
                 new YamlConfigurationFactory<>(WidgetFactory.class, validator, objectMapper, "dw");
@@ -611,7 +611,7 @@ In order to test this, we would require the following in our test class:
 
     public class WidgetFactoryTest {
 
-        private final ObjectMapper objectMapper = Jackson.newObjectMapper();
+        private final ObjectMapper objectMapper = new DefaultObjectMapperFactory().newObjectMapper();
         private final Validator validator = Validators.newValidator();
         private final YamlConfigurationFactory<WidgetFactory> factory =
                 new YamlConfigurationFactory<>(WidgetFactory.class, validator, objectMapper, "dw");

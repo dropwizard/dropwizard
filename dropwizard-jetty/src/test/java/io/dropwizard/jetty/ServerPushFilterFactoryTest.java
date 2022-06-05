@@ -2,7 +2,7 @@ package io.dropwizard.jetty;
 
 import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
-import io.dropwizard.jackson.Jackson;
+import io.dropwizard.jackson.DefaultObjectMapperFactory;
 import io.dropwizard.util.Duration;
 import io.dropwizard.validation.BaseValidator;
 import org.eclipse.jetty.servlet.ServletContextHandler;
@@ -26,7 +26,7 @@ class ServerPushFilterFactoryTest {
     void testLoadConfiguration() throws Exception {
         final ServerPushFilterFactory serverPush = new YamlConfigurationFactory<>(
                 ServerPushFilterFactory.class, BaseValidator.newValidator(),
-                Jackson.newObjectMapper(), "dw-server-push")
+                new DefaultObjectMapperFactory().newObjectMapper(), "dw-server-push")
                 .build(new ResourceConfigurationSourceProvider(), "yaml/server-push.yml");
         assertThat(serverPush.isEnabled()).isTrue();
         assertThat(serverPush.getAssociatePeriod()).isEqualTo(Duration.seconds(5));

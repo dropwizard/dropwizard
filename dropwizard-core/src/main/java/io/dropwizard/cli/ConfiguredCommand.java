@@ -91,7 +91,8 @@ public abstract class ConfiguredCommand<T extends Configuration> extends Command
 
         try {
             if (configuration != null) {
-                configuration.getLoggingFactory().configure(bootstrap.getMetricRegistry(),
+                configuration.getLoggingFactory().configure(bootstrap.getObjectMapper(),
+                                                            bootstrap.getMetricRegistry(),
                                                             bootstrap.getApplication().getName());
             }
 

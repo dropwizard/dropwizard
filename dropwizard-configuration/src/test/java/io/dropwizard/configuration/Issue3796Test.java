@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.fasterxml.jackson.databind.node.TextNode;
-import io.dropwizard.jackson.Jackson;
+import io.dropwizard.jackson.DefaultObjectMapperFactory;
 import io.dropwizard.validation.BaseValidator;
 import org.junit.jupiter.api.Test;
 
@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class Issue3796Test {
     @Test
     void configurationWithCustomDeserializerCanBeRead() throws IOException, ConfigurationException {
-        final ConfigurationFactory<CustomConfiguration> factory = new YamlConfigurationFactory<>(CustomConfiguration.class, BaseValidator.newValidator(), Jackson.newObjectMapper(), "dw");
+        final ConfigurationFactory<CustomConfiguration> factory = new YamlConfigurationFactory<>(CustomConfiguration.class, BaseValidator.newValidator(), new DefaultObjectMapperFactory().newObjectMapper(), "dw");
         final CustomConfiguration testObject = factory.build(new ResourceConfigurationSourceProvider(), "issue-3796.yml");
 
         assertThat(testObject).isNotNull();

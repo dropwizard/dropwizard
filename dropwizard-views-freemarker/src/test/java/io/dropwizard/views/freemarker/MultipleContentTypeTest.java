@@ -2,7 +2,7 @@ package io.dropwizard.views.freemarker;
 
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.dropwizard.jackson.Jackson;
+import io.dropwizard.jackson.DefaultObjectMapperFactory;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.logging.BootstrapLogging;
 import io.dropwizard.views.View;
@@ -182,7 +182,7 @@ class MultipleContentTypeTest extends JerseyTest {
         public void writeTo(Info info, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType,
                             MultivaluedMap<String, Object> httpHeaders, OutputStream entityStream)
                 throws IOException, WebApplicationException {
-            Jackson.newObjectMapper().writeValue(entityStream, info);
+            new DefaultObjectMapperFactory().newObjectMapper().writeValue(entityStream, info);
         }
     }
 }

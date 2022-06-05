@@ -1,9 +1,9 @@
 package com.example.helloworld.core;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.dropwizard.jackson.DefaultObjectMapperFactory;
 import org.junit.jupiter.api.Test;
 
-import static io.dropwizard.jackson.Jackson.newObjectMapper;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /*
@@ -11,7 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * updating the docs too.
  */
 class PersonTest {
-    private static final ObjectMapper MAPPER = newObjectMapper();
+    private static final ObjectMapper MAPPER = new DefaultObjectMapperFactory().newObjectMapper();
 
     @Test
     void serializesToJSON() throws Exception {

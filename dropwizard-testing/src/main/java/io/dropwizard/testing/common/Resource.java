@@ -3,7 +3,7 @@ package io.dropwizard.testing.common;
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
-import io.dropwizard.jackson.Jackson;
+import io.dropwizard.jackson.DefaultObjectMapperFactory;
 import io.dropwizard.jersey.validation.Validators;
 import io.dropwizard.logging.BootstrapLogging;
 import io.dropwizard.testing.junit5.ResourceExtension;
@@ -43,7 +43,7 @@ public class Resource {
         private final Set<Class<?>> providers = new HashSet<>();
         private final Map<String, Object> properties = new HashMap<>();
         private MetricRegistry metricRegistry = new MetricRegistry();
-        private ObjectMapper mapper = Jackson.newObjectMapper();
+        private ObjectMapper mapper = new DefaultObjectMapperFactory().newObjectMapper();
         private Validator validator = Validators.newValidator();
         private Consumer<ClientConfig> clientConfigurator = c -> {
         };

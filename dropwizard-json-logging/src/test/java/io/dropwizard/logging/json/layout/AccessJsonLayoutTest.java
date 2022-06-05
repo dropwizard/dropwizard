@@ -3,7 +3,7 @@ package io.dropwizard.logging.json.layout;
 import ch.qos.logback.access.spi.IAccessEvent;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.dropwizard.jackson.Jackson;
+import io.dropwizard.jackson.DefaultObjectMapperFactory;
 import io.dropwizard.logging.json.AccessAttribute;
 import io.dropwizard.util.Maps;
 import io.dropwizard.util.Sets;
@@ -38,7 +38,7 @@ class AccessJsonLayoutTest {
     private IAccessEvent event = Mockito.mock(IAccessEvent.class);
 
     private TimestampFormatter timestampFormatter = new TimestampFormatter("yyyy-MM-dd'T'HH:mm:ss.SSSZ", ZoneId.of("UTC"));
-    private ObjectMapper objectMapper = Jackson.newObjectMapper();
+    private ObjectMapper objectMapper = new DefaultObjectMapperFactory().newObjectMapper();
     private JsonFormatter jsonFormatter = new JsonFormatter(objectMapper, false, true);
     private Set<AccessAttribute> includes = EnumSet.of(AccessAttribute.REMOTE_ADDRESS,
         AccessAttribute.REMOTE_USER, AccessAttribute.REQUEST_TIME, AccessAttribute.REQUEST_URI,

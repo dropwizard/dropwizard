@@ -3,7 +3,7 @@ package io.dropwizard.client;
 import com.codahale.metrics.MetricRegistry;
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
-import io.dropwizard.jackson.Jackson;
+import io.dropwizard.jackson.DefaultObjectMapperFactory;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
@@ -37,7 +37,7 @@ class JerseyIgnoreRequestUserAgentHeaderFilterTest {
         clientConfiguration.setTimeout(Duration.milliseconds(2500L));
         clientBuilder = new JerseyClientBuilder(new MetricRegistry())
             .using(clientConfiguration)
-            .using(Executors.newSingleThreadExecutor(), Jackson.newObjectMapper());
+            .using(Executors.newSingleThreadExecutor(), new DefaultObjectMapperFactory().newObjectMapper());
     }
 
     @Test

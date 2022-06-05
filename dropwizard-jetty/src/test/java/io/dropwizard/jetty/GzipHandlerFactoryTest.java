@@ -2,7 +2,7 @@ package io.dropwizard.jetty;
 
 import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
-import io.dropwizard.jackson.Jackson;
+import io.dropwizard.jackson.DefaultObjectMapperFactory;
 import io.dropwizard.util.DataSize;
 import io.dropwizard.util.Sets;
 import io.dropwizard.validation.BaseValidator;
@@ -23,7 +23,7 @@ class GzipHandlerFactoryTest {
     @BeforeEach
     void setUp() throws Exception {
         this.gzip = new YamlConfigurationFactory<>(GzipHandlerFactory.class,
-                BaseValidator.newValidator(), Jackson.newObjectMapper(), "dw")
+                BaseValidator.newValidator(), new DefaultObjectMapperFactory().newObjectMapper(), "dw")
                 .build(new ResourceConfigurationSourceProvider(),"yaml/gzip.yml");
     }
 
@@ -71,7 +71,7 @@ class GzipHandlerFactoryTest {
     @Test
     void testBuildDefault() throws Exception {
         final GzipHandler handler = new YamlConfigurationFactory<>(GzipHandlerFactory.class,
-                BaseValidator.newValidator(), Jackson.newObjectMapper(), "dw")
+                BaseValidator.newValidator(), new DefaultObjectMapperFactory().newObjectMapper(), "dw")
                 .build(new ResourceConfigurationSourceProvider(), "yaml/default_gzip.yml")
                 .build(null);
 

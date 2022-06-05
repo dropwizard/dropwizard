@@ -1,20 +1,25 @@
 package io.dropwizard.testing;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.Configuration;
 import io.dropwizard.configuration.ConfigurationSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
-import io.dropwizard.jackson.Jackson;
+import io.dropwizard.jackson.DefaultObjectMapperFactory;
 
 import java.io.File;
 
 public class POJOConfigurationFactory<C extends Configuration>
     extends YamlConfigurationFactory<C> {
     protected final C configuration;
+    
+    public POJOConfigurationFactory(C cfg) {
+        this(cfg, new DefaultObjectMapperFactory().newObjectMapper());
+    }
 
     @SuppressWarnings("unchecked")
-    public POJOConfigurationFactory(C cfg) {
-        super((Class<C>) cfg.getClass(), null, Jackson.newObjectMapper(), "dw");
+    public POJOConfigurationFactory(C cfg, ObjectMapper objectMapper) {
+        super((Class<C>) cfg.getClass(), null, objectMapper, "dw");
         configuration = cfg;
     }
 

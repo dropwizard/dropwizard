@@ -5,7 +5,7 @@ import ch.qos.logback.classic.pattern.ThrowableProxyConverter;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.LoggerContextVO;
 import ch.qos.logback.classic.spi.ThrowableProxyVO;
-import io.dropwizard.jackson.Jackson;
+import io.dropwizard.jackson.DefaultObjectMapperFactory;
 import io.dropwizard.logging.json.EventAttribute;
 import io.dropwizard.util.Maps;
 import io.dropwizard.util.Sets;
@@ -46,7 +46,7 @@ class EventJsonLayoutTest {
             EventAttribute.CALLER_DATA));
 
     private final TimestampFormatter timestampFormatter = new TimestampFormatter("yyyy-MM-dd'T'HH:mm:ss.SSSZ", ZoneId.of("UTC"));
-    private final JsonFormatter jsonFormatter = new JsonFormatter(Jackson.newObjectMapper(), false, true);
+    private final JsonFormatter jsonFormatter = new JsonFormatter(new DefaultObjectMapperFactory().newObjectMapper(), false, true);
     private ThrowableProxyConverter throwableProxyConverter = Mockito.mock(ThrowableProxyConverter.class);
     private ILoggingEvent event = Mockito.mock(ILoggingEvent.class);
     private Marker marker = Mockito.mock(Marker.class);

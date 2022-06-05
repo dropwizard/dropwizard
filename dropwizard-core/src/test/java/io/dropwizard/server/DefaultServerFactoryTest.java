@@ -6,8 +6,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.configuration.ConfigurationException;
 import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
+import io.dropwizard.jackson.DefaultObjectMapperFactory;
 import io.dropwizard.jackson.DiscoverableSubtypeResolver;
-import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jetty.HttpConnectorFactory;
 import io.dropwizard.jetty.ServerPushFilterFactory;
 import io.dropwizard.logging.ConsoleAppenderFactory;
@@ -27,8 +27,8 @@ import org.junit.jupiter.api.Test;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
@@ -44,12 +44,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class DefaultServerFactoryTest {
     private final Environment environment = new Environment("test");
+    private final ObjectMapper objectMapper = new DefaultObjectMapperFactory().newObjectMapper();
     private DefaultServerFactory http;
 
     @BeforeEach
     void setUp() throws Exception {
-
-        final ObjectMapper objectMapper = Jackson.newObjectMapper();
         objectMapper.getSubtypeResolver().registerSubtypes(ConsoleAppenderFactory.class,
                                                            FileAppenderFactory.class,
                                                            SyslogAppenderFactory.class,
@@ -245,13 +244,13 @@ class DefaultServerFactoryTest {
 
     @Test
     void testDeserializeWithoutJsonAutoDetect() throws ConfigurationException, IOException {
-        final ObjectMapper objectMapper = Jackson.newObjectMapper()
+        final ObjectMapper mapper = objectMapper.copy()
             .setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE);
 
         assertThat(new YamlConfigurationFactory<>(
                 DefaultServerFactory.class,
                 BaseValidator.newValidator(),
-                objectMapper,
+                mapper,
                 "dw"
                 ).build(new ResourceConfigurationSourceProvider(), "yaml/server.yml")
                 .getMaxThreads())

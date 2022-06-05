@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.Configuration;
 import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
-import io.dropwizard.jackson.Jackson;
+import io.dropwizard.jackson.DefaultObjectMapperFactory;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import org.assertj.core.api.AbstractListAssert;
@@ -34,7 +34,7 @@ public class BeanValidatorTest {
     public static final DropwizardAppExtension<Configuration> APP = new DropwizardAppExtension<>(
         DefaultValidatorApp.class, "app1/config.yml", new ResourceConfigurationSourceProvider());
 
-    private final ObjectMapper mapper = Jackson.newMinimalObjectMapper();
+    private final ObjectMapper mapper = new DefaultObjectMapperFactory().newObjectMapper();
     private WebTarget target;
 
     @BeforeEach

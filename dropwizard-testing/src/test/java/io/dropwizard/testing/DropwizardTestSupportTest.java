@@ -6,6 +6,7 @@ import io.dropwizard.Configuration;
 import io.dropwizard.configuration.JsonConfigurationFactory;
 import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
+import io.dropwizard.jackson.DefaultObjectMapperFactory;
 import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.servlets.tasks.PostBodyTask;
 import io.dropwizard.servlets.tasks.Task;
@@ -26,7 +27,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static io.dropwizard.jackson.Jackson.newObjectMapper;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
 
@@ -110,7 +110,7 @@ class DropwizardTestSupportTest {
         TestConfiguration config = new YamlConfigurationFactory<>(
                 TestConfiguration.class,
                 BaseValidator.newValidator(),
-                newObjectMapper(),
+                new DefaultObjectMapperFactory().newObjectMapper(),
                 "dw"
         ).build(new ResourceConfigurationSourceProvider(), "test-config.yaml");
 

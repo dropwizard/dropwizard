@@ -4,11 +4,15 @@ import ch.qos.logback.classic.Level;
 import io.dropwizard.cli.CheckCommand;
 import io.dropwizard.cli.Cli;
 import io.dropwizard.cli.ServerCommand;
+import io.dropwizard.jackson.DefaultObjectMapperFactory;
+import io.dropwizard.jackson.ObjectMapperFactory;
 import io.dropwizard.logging.BootstrapLogging;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.util.Generics;
 import io.dropwizard.util.JarLocation;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * The base class for Dropwizard applications.
@@ -22,8 +26,25 @@ import io.dropwizard.util.JarLocation;
  * @param <T> the type of configuration class for this application
  */
 public abstract class Application<T extends Configuration> {
+
+    private ObjectMapperFactory objectMapperFactory;
+
     protected Application() {
+        this(new DefaultObjectMapperFactory());
+    }
+
+    protected Application(ObjectMapperFactory objectMapperFactory) {
         bootstrapLogging();
+        this.objectMapperFactory = requireNonNull(objectMapperFactory, "objectMapperFactory");
+    }
+
+    public ObjectMapperFactory getObjectMapperFactory() {
+        return objectMapperFactory;
+    }
+
+    public Application<T> setObjectMapperFactory(ObjectMapperFactory objectMapperFactory) {
+        this.objectMapperFactory = requireNonNull(objectMapperFactory, "objectMapperFactory");
+        return this;
     }
 
     /**

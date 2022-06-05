@@ -1,6 +1,7 @@
 package io.dropwizard.logging.json.layout;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.dropwizard.jackson.DefaultObjectMapperFactory;
 import io.dropwizard.util.Maps;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -10,7 +11,6 @@ import java.util.Arrays;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import static io.dropwizard.jackson.Jackson.newObjectMapper;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class JsonFormatterTest {
@@ -18,7 +18,7 @@ class JsonFormatterTest {
     private final SortedMap<String, Object> map = new TreeMap<>(Maps.of(
             "name", "Jim",
             "hobbies", Arrays.asList("Reading", "Biking", "Snorkeling")));
-    private final ObjectMapper objectMapper = newObjectMapper();
+    private final ObjectMapper objectMapper = new DefaultObjectMapperFactory().newObjectMapper();
 
     @ParameterizedTest
     @ValueSource(booleans={true, false})

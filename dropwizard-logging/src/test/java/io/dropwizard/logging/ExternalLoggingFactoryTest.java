@@ -2,8 +2,8 @@ package io.dropwizard.logging;
 
 import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
+import io.dropwizard.jackson.DefaultObjectMapperFactory;
 import io.dropwizard.jackson.DiscoverableSubtypeResolver;
-import io.dropwizard.jackson.Jackson;
 import io.dropwizard.validation.BaseValidator;
 import org.junit.jupiter.api.Test;
 
@@ -14,7 +14,7 @@ class ExternalLoggingFactoryTest {
     @Test
     void canBeDeserialized() throws Exception {
         LoggingFactory externalRequestLogFactory = new YamlConfigurationFactory<>(LoggingFactory.class,
-            BaseValidator.newValidator(), Jackson.newObjectMapper(), "dw")
+            BaseValidator.newValidator(), new DefaultObjectMapperFactory().newObjectMapper(), "dw")
             .build(new ResourceConfigurationSourceProvider(), "yaml/logging_external.yml");
         assertThat(externalRequestLogFactory)
             .isNotNull()

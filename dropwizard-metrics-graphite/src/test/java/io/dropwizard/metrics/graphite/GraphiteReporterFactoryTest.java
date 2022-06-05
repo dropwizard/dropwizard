@@ -5,8 +5,8 @@ import com.codahale.metrics.graphite.Graphite;
 import com.codahale.metrics.graphite.GraphiteReporter;
 import com.codahale.metrics.graphite.GraphiteUDP;
 import io.dropwizard.configuration.YamlConfigurationFactory;
+import io.dropwizard.jackson.DefaultObjectMapperFactory;
 import io.dropwizard.jackson.DiscoverableSubtypeResolver;
-import io.dropwizard.jackson.Jackson;
 import io.dropwizard.validation.BaseValidator;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -35,7 +35,7 @@ class GraphiteReporterFactoryTest {
     @Test
     void createDefaultFactory() throws Exception {
         final GraphiteReporterFactory factory = new YamlConfigurationFactory<>(GraphiteReporterFactory.class,
-             BaseValidator.newValidator(), Jackson.newObjectMapper(), "dw")
+             BaseValidator.newValidator(), new DefaultObjectMapperFactory().newObjectMapper(), "dw")
             .build();
         assertThat(factory.getFrequency()).isNotPresent();
     }

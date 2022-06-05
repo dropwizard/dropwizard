@@ -2,7 +2,7 @@ package io.dropwizard.testing.junit5;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.guava.GuavaModule;
-import io.dropwizard.jackson.Jackson;
+import io.dropwizard.jackson.DefaultObjectMapperFactory;
 import io.dropwizard.jersey.validation.JerseyViolationException;
 import io.dropwizard.testing.app.PeopleStore;
 import io.dropwizard.testing.app.PersonResource;
@@ -21,7 +21,7 @@ import static org.mockito.Mockito.mock;
 @ExtendWith(DropwizardExtensionsSupport.class)
 class PersonResourceExceptionMapperTest {
 
-    private static final ObjectMapper OBJECT_MAPPER = Jackson.newObjectMapper()
+    private static final ObjectMapper OBJECT_MAPPER = new DefaultObjectMapperFactory().newObjectMapper()
         .registerModule(new GuavaModule());
 
     private PeopleStore peopleStore = mock(PeopleStore.class);

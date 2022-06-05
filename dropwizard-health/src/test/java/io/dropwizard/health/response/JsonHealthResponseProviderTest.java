@@ -6,7 +6,7 @@ import io.dropwizard.health.HealthCheckType;
 import io.dropwizard.health.HealthStateAggregator;
 import io.dropwizard.health.HealthStateView;
 import io.dropwizard.health.HealthStatusChecker;
-import io.dropwizard.jackson.Jackson;
+import io.dropwizard.jackson.DefaultObjectMapperFactory;
 import io.dropwizard.util.ByteStreams;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,7 +33,7 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class JsonHealthResponseProviderTest {
-    private final ObjectMapper mapper = Jackson.newObjectMapper();
+    private final ObjectMapper mapper = new DefaultObjectMapperFactory().newObjectMapper();
     @Mock
     private HealthStatusChecker healthStatusChecker;
     @Mock

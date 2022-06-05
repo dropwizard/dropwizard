@@ -1,6 +1,5 @@
 package io.dropwizard.logging;
 
-import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
 /**
@@ -8,12 +7,6 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
  */
 @JsonTypeName("external")
 public class ExternalLoggingFactory implements LoggingFactory {
-
-    @Override
-    public void configure(MetricRegistry metricRegistry, String name) {
-        // Do nothing
-    }
-
     @Override
     public void stop() {
         // Do nothing

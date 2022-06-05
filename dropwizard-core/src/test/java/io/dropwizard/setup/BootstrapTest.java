@@ -9,7 +9,6 @@ import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.configuration.DefaultConfigurationFactoryFactory;
 import io.dropwizard.configuration.FileConfigurationSourceProvider;
-import io.dropwizard.jackson.Jackson;
 import org.hibernate.validator.HibernateValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -115,7 +114,7 @@ class BootstrapTest {
 
     @Test
     void canUseCustomObjectMapper() {
-        final ObjectMapper minimalObjectMapper = Jackson.newMinimalObjectMapper();
+        final ObjectMapper minimalObjectMapper = new ObjectMapper();
         bootstrap.setObjectMapper(minimalObjectMapper);
         assertThat(bootstrap.getObjectMapper()).isSameAs(minimalObjectMapper);
     }

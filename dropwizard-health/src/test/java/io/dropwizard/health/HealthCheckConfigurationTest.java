@@ -3,7 +3,7 @@ package io.dropwizard.health;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
-import io.dropwizard.jackson.Jackson;
+import io.dropwizard.jackson.DefaultObjectMapperFactory;
 import io.dropwizard.jersey.validation.Validators;
 import org.junit.jupiter.api.Test;
 
@@ -12,7 +12,7 @@ import javax.validation.Validator;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class HealthCheckConfigurationTest {
-    private final ObjectMapper objectMapper = Jackson.newObjectMapper();
+    private final ObjectMapper objectMapper = new DefaultObjectMapperFactory().newObjectMapper();
     private final Validator validator = Validators.newValidator();
     private final YamlConfigurationFactory<HealthCheckConfiguration> configFactory =
         new YamlConfigurationFactory<>(HealthCheckConfiguration.class, validator, objectMapper, "dw");

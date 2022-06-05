@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-import static io.dropwizard.jackson.Jackson.newObjectMapper;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -17,7 +16,7 @@ class JsonConfigurationFactoryTest extends BaseConfigurationFactoryTest {
 
     @BeforeEach
     void setUp() {
-        this.factory = new JsonConfigurationFactory<>(Example.class, validator, newObjectMapper(), "dw");
+        this.factory = new JsonConfigurationFactory<>(Example.class, validator, objectMapper, "dw");
         this.malformedFile = "factory-test-malformed.json";
         this.malformedFileError = "* Malformed JSON at line:";
         this.emptyFile = "factory-test-empty.json";
@@ -43,7 +42,7 @@ class JsonConfigurationFactoryTest extends BaseConfigurationFactoryTest {
 
     @Test
     void configuredMapperAllowsComment() throws IOException, ConfigurationException {
-        ObjectMapper mapper = newObjectMapper()
+        ObjectMapper mapper = objectMapper.copy()
             .configure(Feature.ALLOW_COMMENTS, true);
 
         JsonConfigurationFactory<Example> factory = new JsonConfigurationFactory<>(Example.class, validator, mapper, "dw");

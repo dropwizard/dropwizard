@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
-import io.dropwizard.jackson.Jackson;
+import io.dropwizard.jackson.DefaultObjectMapperFactory;
 import io.dropwizard.util.Duration;
 import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.protocol.HttpContext;
@@ -49,7 +49,7 @@ class JerseyClientIntegrationTest {
     private static final String TRANSFER_ENCODING = "Transfer-Encoding";
     private static final String CHUNKED = "chunked";
     private static final String GZIP = "gzip";
-    private static final ObjectMapper JSON_MAPPER = Jackson.newObjectMapper();
+    private static final ObjectMapper JSON_MAPPER = new DefaultObjectMapperFactory().newObjectMapper();
     private static final String GZIP_DEFLATE = "gzip,deflate";
     private static final String JSON_TOKEN = JSON_MAPPER.createObjectNode()
             .put("id", 214)

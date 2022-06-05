@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.health.HealthEnvironment;
+import io.dropwizard.jackson.DefaultObjectMapperFactory;
 import io.dropwizard.jackson.DiscoverableSubtypeResolver;
-import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
 import io.dropwizard.jersey.validation.Validators;
 import io.dropwizard.jetty.setup.ServletEnvironment;
@@ -43,7 +43,7 @@ class ServletHealthResponderFactoryTest {
     private static final HealthResponse FAIL = new HealthResponse(false, "unhealthy", MediaType.TEXT_PLAIN,
         Response.SC_SERVICE_UNAVAILABLE);
 
-    private final ObjectMapper mapper = Jackson.newObjectMapper();
+    private final ObjectMapper mapper = new DefaultObjectMapperFactory().newObjectMapper();
     private final Validator validator = Validators.newValidator();
     private final YamlConfigurationFactory<HealthResponderFactory> configFactory =
         new YamlConfigurationFactory<>(HealthResponderFactory.class, validator, mapper, "dw");

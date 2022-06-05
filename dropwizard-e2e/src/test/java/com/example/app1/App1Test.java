@@ -4,7 +4,7 @@ import io.dropwizard.Configuration;
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.client.JerseyClientConfiguration;
 import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
-import io.dropwizard.jackson.Jackson;
+import io.dropwizard.jackson.DefaultObjectMapperFactory;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import io.dropwizard.util.Duration;
@@ -41,7 +41,7 @@ public class App1Test {
         // Avoid flakiness with default timeouts in CI builds
         config.setTimeout(Duration.seconds(5));
         client = new JerseyClientBuilder(RULE.getEnvironment())
-            .withProvider(new CustomJsonProvider(Jackson.newObjectMapper()))
+            .withProvider(new CustomJsonProvider(new DefaultObjectMapperFactory().newObjectMapper()))
             .using(config)
             .build("test client");
     }

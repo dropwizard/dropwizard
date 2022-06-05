@@ -4,7 +4,7 @@ import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
-import io.dropwizard.jackson.Jackson;
+import io.dropwizard.jackson.DefaultObjectMapperFactory;
 import io.dropwizard.validation.BaseValidator;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -26,7 +26,7 @@ class UdpSocketAppenderFactoryTest {
     @Test
     void testSendLogsByTcp() throws Exception {
         final int messageCount = 100;
-        ObjectMapper objectMapper = Jackson.newObjectMapper();
+        ObjectMapper objectMapper = new DefaultObjectMapperFactory().newObjectMapper();
         objectMapper.getSubtypeResolver().registerSubtypes(UdpSocketAppenderFactory.class);
 
         try (DatagramSocket datagramSocket = new DatagramSocket(UDP_PORT); UdpServer udpServer = new UdpServer(datagramSocket, messageCount)) {

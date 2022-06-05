@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.dropwizard.jackson.Jackson;
+import io.dropwizard.jackson.DefaultObjectMapperFactory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -20,6 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
 
 class ConfigurationMetadataTest {
+    private final ObjectMapper objectMapper = new DefaultObjectMapperFactory().newObjectMapper();
 
     @SuppressWarnings("UnusedDeclaration")
     public static class ExampleConfiguration {
@@ -141,7 +142,7 @@ class ConfigurationMetadataTest {
                                         boolean isCollectionOrArrayType,
                                         Class<?> klass) {
         final ConfigurationMetadata metadata = new ConfigurationMetadata(
-                Jackson.newObjectMapper(), ExampleConfiguration.class);
+                objectMapper, ExampleConfiguration.class);
 
         assertThat(metadata.fields.get(name)).isNotNull().satisfies((f) -> {
             assertThat(f.isPrimitive()).isEqualTo(isPrimitive);
@@ -173,7 +174,7 @@ class ConfigurationMetadataTest {
     @MethodSource("provideArgsForIsCollectionOfStringsShouldWork")
     void isCollectionOfStringsShouldWork(String name, boolean isCollectionOfStrings) {
         final ConfigurationMetadata metadata = new ConfigurationMetadata(
-                Jackson.newObjectMapper(), ExampleConfiguration.class);
+                objectMapper, ExampleConfiguration.class);
 
         assertThat(metadata.isCollectionOfStrings(name)).isEqualTo(isCollectionOfStrings);
     }
@@ -197,13 +198,13 @@ class ConfigurationMetadataTest {
     @Test
     void issue3528ShouldNotProduceOutOfMemoryError() {
         assertThatNoException().isThrownBy(
-                () -> new ConfigurationMetadata(Jackson.newObjectMapper(), Issue3528Configuration.class));
+                () -> new ConfigurationMetadata(objectMapper, Issue3528Configuration.class));
     }
 
     @Test
     void fieldsAnnotatedWithJsonIgnoreShouldBeIgnored() {
         final ConfigurationMetadata metadata =
-                new ConfigurationMetadata(Jackson.newObjectMapper(), SelfReferencingIgnoredConfiguration.class);
+                new ConfigurationMetadata(objectMapper, SelfReferencingIgnoredConfiguration.class);
 
         assertThat(metadata.fields).containsOnlyKeys("str", "number");
     }
@@ -211,7 +212,7 @@ class ConfigurationMetadataTest {
     @Test
     void selfReferencingConfigurationShouldNotLoop() {
         final ConfigurationMetadata metadata =
-                new ConfigurationMetadata(Jackson.newObjectMapper(), SelfReferencingConfiguration.class);
+                new ConfigurationMetadata(objectMapper, SelfReferencingConfiguration.class);
 
         assertThat(metadata.fields).containsOnlyKeys("selfReferencingConfiguration.str", "str");
     }

@@ -13,35 +13,37 @@ import java.nio.file.Paths;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SuppressWarnings("deprecation")
-class JacksonTest {
+class BaseObjectMapperFactoryTest {
+    private final ObjectMapperFactory objectMapperFactory = new BaseObjectMapperFactory() {
+    };
+
     @Test
     void objectMapperUsesGivenCustomJsonFactory() {
         JsonFactory factory = Mockito.mock(JsonFactory.class);
 
-        ObjectMapper mapper = Jackson.newObjectMapper(factory);
+        ObjectMapper mapper = objectMapperFactory.newObjectMapper(factory);
 
         assertThat(mapper.getFactory()).isSameAs(factory);
     }
 
     @Test
     void objectMapperCanHandleNullInsteadOfCustomJsonFactory() {
-        ObjectMapper mapper = Jackson.newObjectMapper(null);
+        ObjectMapper mapper = objectMapperFactory.newObjectMapper(null);
 
         assertThat(mapper.getFactory()).isNotNull();
     }
 
     @Test
     void objectMapperCanDeserializeJdk7Types() throws IOException {
-        final LogMetadata metadata = Jackson.newObjectMapper()
-            .readValue("{\"path\": \"/var/log/app/server.log\"}", LogMetadata.class);
+        final LogMetadata metadata = new DefaultObjectMapperFactory().newObjectMapper()
+                .readValue("{\"path\": \"/var/log/app/server.log\"}", LogMetadata.class);
         assertThat(metadata).isNotNull();
         assertThat(metadata.path).isEqualTo(Paths.get("/var/log/app/server.log"));
     }
 
     @Test
     void objectMapperSerializesNullValues() throws IOException {
-        final ObjectMapper mapper = Jackson.newObjectMapper();
+        final ObjectMapper mapper = objectMapperFactory.newObjectMapper();
         final Issue1627 pojo = new Issue1627(null, null);
         final String json = "{\"string\":null,\"uuid\":null}";
 
@@ -50,14 +52,13 @@ class JacksonTest {
 
     @Test
     void objectMapperIgnoresUnknownProperties() throws JsonProcessingException {
-        assertThat(Jackson.newObjectMapper()
+        assertThat(objectMapperFactory.newObjectMapper()
                 .readValue("{\"unknown\": 4711, \"path\": \"/var/log/app/objectMapperIgnoresUnknownProperties.log\"}", LogMetadata.class)
                 .path)
-            .hasFileName("objectMapperIgnoresUnknownProperties.log");
+                .hasFileName("objectMapperIgnoresUnknownProperties.log");
     }
 
     static class LogMetadata {
-
         @Nullable
         public Path path;
     }

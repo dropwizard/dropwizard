@@ -1,7 +1,7 @@
 package io.dropwizard;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.dropwizard.jackson.Jackson;
+import io.dropwizard.jackson.DefaultObjectMapperFactory;
 import io.dropwizard.jetty.ConnectorFactory;
 import io.dropwizard.logging.AppenderFactory;
 import org.junit.jupiter.api.Test;
@@ -29,7 +29,7 @@ class ConfigurationTest {
 
     @Test
     void ensureConfigSerializable() throws Exception {
-        final ObjectMapper mapper = Jackson.newObjectMapper();
+        final ObjectMapper mapper = new DefaultObjectMapperFactory().newObjectMapper();
         Class<?>[] dummyArray = {};
 
         mapper.getSubtypeResolver()

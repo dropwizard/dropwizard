@@ -7,7 +7,7 @@ import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.health.response.ServletHealthResponder;
 import io.dropwizard.health.response.ServletHealthResponderFactory;
-import io.dropwizard.jackson.Jackson;
+import io.dropwizard.jackson.DefaultObjectMapperFactory;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
 import io.dropwizard.jersey.validation.Validators;
 import io.dropwizard.jetty.setup.ServletEnvironment;
@@ -31,7 +31,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class DefaultHealthFactoryTest {
-    private final ObjectMapper objectMapper = Jackson.newObjectMapper();
+    private final ObjectMapper objectMapper = new DefaultObjectMapperFactory().newObjectMapper();
     private final Validator validator = Validators.newValidator();
     private final YamlConfigurationFactory<DefaultHealthFactory> configFactory =
         new YamlConfigurationFactory<>(DefaultHealthFactory.class, validator, objectMapper, "dw");

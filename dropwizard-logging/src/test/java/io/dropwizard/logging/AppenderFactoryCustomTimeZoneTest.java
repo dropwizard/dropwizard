@@ -9,7 +9,7 @@ import ch.qos.logback.core.pattern.PatternLayoutBase;
 import io.dropwizard.configuration.ConfigurationSourceProvider;
 import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
-import io.dropwizard.jackson.Jackson;
+import io.dropwizard.jackson.DefaultObjectMapperFactory;
 import io.dropwizard.logging.async.AsyncLoggingEventAppenderFactory;
 import io.dropwizard.logging.filter.NullLevelFilterFactory;
 import io.dropwizard.logging.layout.DropwizardLayoutFactory;
@@ -32,7 +32,7 @@ class AppenderFactoryCustomTimeZoneTest {
 
     @SuppressWarnings("rawtypes")
     private final YamlConfigurationFactory<ConsoleAppenderFactory> factory = new YamlConfigurationFactory<>(
-        ConsoleAppenderFactory.class, BaseValidator.newValidator(), Jackson.newObjectMapper(), "dw");
+        ConsoleAppenderFactory.class, BaseValidator.newValidator(), new DefaultObjectMapperFactory().newObjectMapper(), "dw");
 
     @ParameterizedTest
     @CsvSource({

@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertTimeout;
 
 class JacksonDeserializationOfBigNumbersToDurationTest {
 
-    private final ObjectMapper objectMapper = Jackson.newObjectMapper();
+    private final ObjectMapper objectMapper = new DefaultObjectMapperFactory().newObjectMapper();
 
     @Test
     void testDoesNotAttemptToDeserializeExtremelyBigNumbers() throws Exception {

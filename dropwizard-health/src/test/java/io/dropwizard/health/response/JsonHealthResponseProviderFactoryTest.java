@@ -5,17 +5,19 @@ import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.health.HealthStateAggregator;
 import io.dropwizard.health.HealthStatusChecker;
+import io.dropwizard.jackson.DefaultObjectMapperFactory;
 import io.dropwizard.jackson.DiscoverableSubtypeResolver;
-import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.validation.Validators;
-import java.util.Collections;
-import java.util.List;
-import javax.validation.Validator;
-import javax.ws.rs.core.MediaType;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import javax.validation.Validator;
+import javax.ws.rs.core.MediaType;
+import java.util.Collections;
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -23,7 +25,7 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class JsonHealthResponseProviderFactoryTest {
-    private final ObjectMapper mapper = Jackson.newObjectMapper();
+    private final ObjectMapper mapper = new DefaultObjectMapperFactory().newObjectMapper();
     private final Validator validator = Validators.newValidator();
     private final YamlConfigurationFactory<HealthResponseProviderFactory> configFactory =
             new YamlConfigurationFactory<>(HealthResponseProviderFactory.class, validator, mapper, "dw");
