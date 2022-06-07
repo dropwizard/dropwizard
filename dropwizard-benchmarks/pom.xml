@@ -13,7 +13,7 @@
         <!-- see https://issues.apache.org/jira/browse/MCOMPILER-235 -->
         <maven.compiler.useIncrementalCompilation>false</maven.compiler.useIncrementalCompilation>
         <jmh.version>1.35</jmh.version>
-        <!-- Skip deployment of this sub-module -->
+        <cyclonedx.skip>true</cyclonedx.skip>
         <maven.source.skip>true</maven.source.skip>
         <maven.javadoc.skip>true</maven.javadoc.skip>
         <maven.install.skip>true</maven.install.skip>
