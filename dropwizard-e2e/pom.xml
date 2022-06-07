@@ -13,7 +13,7 @@
     <name>Dropwizard End-to-end Tests</name>
 
     <properties>
-        <!-- No need to deploy dropwizard-e2e -->
+        <cyclonedx.skip>true</cyclonedx.skip>
         <maven.source.skip>true</maven.source.skip>
         <maven.javadoc.skip>true</maven.javadoc.skip>
         <maven.install.skip>true</maven.install.skip>
