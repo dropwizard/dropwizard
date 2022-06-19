@@ -22,9 +22,10 @@
         <argparse4j.version>0.9.0</argparse4j.version>
         <byte-buddy.version>1.12.10</byte-buddy.version>
         <caffeine.version>3.1.1</caffeine.version>
-        <checker-qual.version>3.22.1</checker-qual.version>
+        <checker-qual.version>3.22.2</checker-qual.version>
         <classmate.version>1.5.1</classmate.version>
         <commons-codec.version>1.15</commons-codec.version>
+        <commons-lang3.version>3.12.0</commons-lang3.version>
         <commons-text.version>1.9</commons-text.version>
         <conscrypt-openjdk-uber.version>2.5.2</conscrypt-openjdk-uber.version>
         <error_prone.version>2.14.0</error_prone.version>
@@ -46,10 +47,10 @@
         <javax.persistence-api.version>2.2</javax.persistence-api.version>
         <jaxb-api.version>2.3.3</jaxb-api.version>
         <jdbi3.version>3.30.0</jdbi3.version>
-        <jersey.version>2.35</jersey.version>
+        <jersey.version>2.36</jersey.version>
         <jetty-setuid-java.version>1.0.4</jetty-setuid-java.version>
         <jetty.version>10.0.9</jetty.version>
-        <liquibase-core.version>4.11.0</liquibase-core.version>
+        <liquibase-core.version>4.12.0</liquibase-core.version>
         <liquibase-slf4j.version>4.1.0</liquibase-slf4j.version>
         <logback-throttling-appender.version>1.1.9</logback-throttling-appender.version>
         <logback.version>1.2.11</logback.version>
@@ -64,7 +65,7 @@
         <assertj.version>3.23.1</assertj.version>
         <awaitility.version>4.2.0</awaitility.version>
         <bcprov-jdk15on.version>1.70</bcprov-jdk15on.version>
-        <h2.version>2.1.212</h2.version>
+        <h2.version>2.1.214</h2.version>
         <junit.version>4.13.2</junit.version>
         <junit5.version>5.8.2</junit5.version>
         <mockito.version>4.6.1</mockito.version>
@@ -92,6 +93,11 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-text</artifactId>
                 <version>${commons-text.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${commons-lang3.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.google.guava</groupId>
