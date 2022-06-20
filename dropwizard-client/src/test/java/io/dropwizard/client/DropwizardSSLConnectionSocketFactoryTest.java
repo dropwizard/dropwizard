@@ -14,8 +14,6 @@ import org.glassfish.jersey.client.ClientResponse;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledOnOs;
-import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import javax.net.ssl.HostnameVerifier;
@@ -153,7 +151,6 @@ class DropwizardSSLConnectionSocketFactoryTest {
     }
 
     @Test
-    @DisabledOnOs(OS.WINDOWS) // https://github.com/dropwizard/dropwizard/issues/4330
     void shouldReturn200IfAbleToClientAuth() throws Exception {
         tlsConfiguration.setKeyStorePath(toFile("stores/client/keycert.p12"));
         tlsConfiguration.setKeyStorePassword("password");
@@ -176,7 +173,6 @@ class DropwizardSSLConnectionSocketFactoryTest {
     }
 
     @Test
-    @DisabledOnOs(OS.WINDOWS) // https://github.com/dropwizard/dropwizard/issues/4330
     void shouldReturn200IfAbleToClientAuthSpecifyingCertAliasForGoodCert() throws Exception {
         tlsConfiguration.setKeyStorePath(toFile("stores/client/twokeys.p12"));
         tlsConfiguration.setKeyStorePassword("password");
@@ -263,7 +259,6 @@ class DropwizardSSLConnectionSocketFactoryTest {
     }
 
     @Test
-    @DisabledOnOs(OS.WINDOWS) // https://github.com/dropwizard/dropwizard/issues/4330
     void shouldSucceedWithBcProvider() throws Exception {
         // switching host verifier off for simplicity
         tlsConfiguration.setVerifyHostname(false);
