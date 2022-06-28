@@ -305,7 +305,7 @@ class JerseyClientBuilderTest {
 
                 @Override
                 @Nullable
-                public X509Certificate[] getAcceptedIssuers() {
+                public X509Certificate @Nullable [] getAcceptedIssuers() {
                     return null;
                 }
             }
