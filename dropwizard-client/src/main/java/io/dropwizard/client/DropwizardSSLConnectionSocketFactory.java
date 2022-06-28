@@ -47,7 +47,7 @@ public class DropwizardSSLConnectionSocketFactory {
     }
 
     @Nullable
-    private String[] getSupportedCiphers() {
+    private String @Nullable [] getSupportedCiphers() {
         final List<String> supportedCiphers = configuration.getSupportedCiphers();
         if (supportedCiphers == null) {
             return null;
@@ -56,7 +56,7 @@ public class DropwizardSSLConnectionSocketFactory {
     }
 
     @Nullable
-    private String[] getSupportedProtocols() {
+    private String @Nullable [] getSupportedProtocols() {
         final List<String> supportedProtocols = configuration.getSupportedProtocols();
         if (supportedProtocols == null) {
             return null;
