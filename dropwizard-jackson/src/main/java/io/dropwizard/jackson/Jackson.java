@@ -12,6 +12,7 @@ import com.fasterxml.jackson.module.blackbird.BlackbirdModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 
 import javax.annotation.Nullable;
+import java.util.function.Consumer;
 
 /**
  * A utility class for Jackson.
@@ -24,9 +25,18 @@ public class Jackson {
      * support for {@link JsonSnakeCase}. Also includes all {@link Discoverable} interface implementations.
      */
     public static ObjectMapper newObjectMapper() {
-        final ObjectMapper mapper = new ObjectMapper();
+        return newObjectMapper(Jackson::configure);
+    }
 
-        return configure(mapper);
+    /**
+     * Creates a new {@link ObjectMapper} configured with the given {@link Consumer} instance.
+     *
+     * @param configurer the {@link Consumer} to configure the {@link ObjectMapper}
+     */
+    public static ObjectMapper newObjectMapper(Consumer<ObjectMapper> configurer) {
+        final ObjectMapper mapper = new ObjectMapper();
+        configurer.accept(mapper);
+        return mapper;
     }
 
     /**
@@ -38,9 +48,20 @@ public class Jackson {
      *                    for the created {@link com.fasterxml.jackson.databind.ObjectMapper} instance.
      */
     public static ObjectMapper newObjectMapper(@Nullable JsonFactory jsonFactory) {
-        final ObjectMapper mapper = new ObjectMapper(jsonFactory);
+        return newObjectMapper(jsonFactory, Jackson::configure);
+    }
 
-        return configure(mapper);
+    /**
+     * Creates a new {@link ObjectMapper} with a custom {@link JsonFactory} configured with the given {@link Consumer} instance.
+     *
+     * @param jsonFactory instance of {@link com.fasterxml.jackson.core.JsonFactory} to use
+     *                    for the created {@link com.fasterxml.jackson.databind.ObjectMapper} instance.
+     * @param configurer the {@link Consumer} to configure the {@link ObjectMapper}
+     */
+    public static ObjectMapper newObjectMapper(@Nullable JsonFactory jsonFactory, Consumer<ObjectMapper> configurer) {
+        final ObjectMapper mapper = new ObjectMapper(jsonFactory);
+        configurer.accept(mapper);
+        return mapper;
     }
 
     /**
@@ -55,7 +76,7 @@ public class Jackson {
                 .disable(FAIL_ON_UNKNOWN_PROPERTIES);
     }
 
-    private static ObjectMapper configure(ObjectMapper mapper) {
+    public static ObjectMapper configure(ObjectMapper mapper) {
         mapper.registerModule(new GuavaModule());
         mapper.registerModule(new GuavaExtrasModule());
         mapper.registerModule(new CaffeineModule());

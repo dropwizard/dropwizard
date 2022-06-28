@@ -1,14 +1,18 @@
 package io.dropwizard;
 
 import ch.qos.logback.classic.Level;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.cli.CheckCommand;
 import io.dropwizard.cli.Cli;
 import io.dropwizard.cli.ServerCommand;
+import io.dropwizard.jackson.Jackson;
 import io.dropwizard.logging.BootstrapLogging;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.util.Generics;
 import io.dropwizard.util.JarLocation;
+
+import java.util.function.Consumer;
 
 /**
  * The base class for Dropwizard applications.
@@ -55,6 +59,16 @@ public abstract class Application<T extends Configuration> {
      */
     public String getName() {
         return getClass().getSimpleName();
+    }
+
+    /**
+     * Returns a {@link Consumer} instance used from the {@link Bootstrap} to configure the application's {@link ObjectMapper}.
+     * Defaults to {@link Jackson#configure(ObjectMapper)}.
+     *
+     * @return the {@link Consumer} to configure the {@link ObjectMapper}
+     */
+    public Consumer<ObjectMapper> getObjectMapperConfigurer() {
+        return Jackson::configure;
     }
 
     /**

@@ -25,7 +25,7 @@ class JacksonTest {
 
     @Test
     void objectMapperCanHandleNullInsteadOfCustomJsonFactory() {
-        ObjectMapper mapper = Jackson.newObjectMapper(null);
+        ObjectMapper mapper = Jackson.newObjectMapper((JsonFactory) null);
 
         assertThat(mapper.getFactory()).isNotNull();
     }

@@ -61,7 +61,7 @@ public class Bootstrap<T extends Configuration> {
      */
     public Bootstrap(Application<T> application) {
         this.application = application;
-        this.objectMapper = Jackson.newObjectMapper();
+        this.objectMapper = Jackson.newObjectMapper(application.getObjectMapperConfigurer());
         this.configuredBundles = new ArrayList<>();
         this.commands = new ArrayList<>();
         this.validatorFactory = Validators.newValidatorFactory();
