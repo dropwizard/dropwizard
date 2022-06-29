@@ -103,7 +103,7 @@ The upgrade of Jersey from version 2.33 to 2.35 introduces a behavior change in 
 If such a parameter is invalid, now a status code ``404`` is returned instead of the former ``400`` status code.
 
 Jackson Blackbird as default
-----------------------------
+============================
 
 Dropwizard is now registering the `Jackson Blackbird`_ module.
 This is the recommended setup for Java 9 and later.
