@@ -101,3 +101,23 @@ Upgrade to Jersey 2.35
 ----------------------
 The upgrade of Jersey from version 2.33 to 2.35 introduces a behavior change in the handling of ``Optional<T>`` parameters.
 If such a parameter is invalid, now a status code ``404`` is returned instead of the former ``400`` status code.
+
+Jackson Blackbird as default
+============================
+
+Dropwizard is now registering the `Jackson Blackbird`_ module.
+This is the recommended setup for Java 9 and later.
+
+If the `Jackson Afterburner`_ module is on the class path, it will be preferred over the `Jackson Blackbird`_ module.
+
+.. code-block:: xml
+
+    <dependency>
+      <groupId>com.fasterxml.jackson.module</groupId>
+      <artifactId>jackson-module-afterburner</artifactId>
+      <!-- Unnecessary when using dropwizard-dependencies -->
+      <version>${jackson.version}</version>
+    </dependency>
+
+.. _Jackson Blackbird: https://github.com/FasterXML/jackson-modules-base/tree/jackson-modules-base-2.13.3/blackbird#readme
+.. _Jackson Afterburner: https://github.com/FasterXML/jackson-modules-base/tree/jackson-modules-base-2.13.3/afterburner#readme
