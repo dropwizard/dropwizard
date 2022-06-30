@@ -1,6 +1,7 @@
 package io.dropwizard.jackson;
 
 import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.guava.GuavaModule;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
@@ -8,6 +9,8 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.blackbird.BlackbirdModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import org.checkerframework.checker.nullness.qual.Nullable;
+
+import java.util.List;
 
 import static com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES;
 
@@ -54,10 +57,18 @@ public class Jackson {
     }
 
     private static ObjectMapper configure(ObjectMapper mapper) {
+        final List<Module> modules = ObjectMapper.findModules();
+
         mapper.registerModule(new GuavaModule());
         mapper.registerModule(new GuavaExtrasModule());
         mapper.registerModule(new CaffeineModule());
-        mapper.registerModule(new BlackbirdModule());
+
+        final Module acceleratorModule = modules.stream()
+                .filter(module -> "AfterburnerModule" .equals(module.getModuleName()))
+                .findFirst()
+                .orElse(new BlackbirdModule());
+
+        mapper.registerModule(acceleratorModule);
         mapper.registerModule(new FuzzyEnumModule());
         mapper.registerModule(new ParameterNamesModule());
         mapper.registerModule(new Jdk8Module());
