@@ -13,6 +13,6 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target(METHOD)
 @Retention(RUNTIME)
 @Documented
-@interface UnitsOfWork {
+public @interface UnitsOfWork {
     UnitOfWork[] value();
 }

@@ -101,3 +101,48 @@ Upgrade to Jersey 2.35
 ----------------------
 The upgrade of Jersey from version 2.33 to 2.35 introduces a behavior change in the handling of ``Optional<T>`` parameters.
 If such a parameter is invalid, now a status code ``404`` is returned instead of the former ``400`` status code.
+
+Jackson Blackbird as default
+============================
+
+Dropwizard is now registering the `Jackson Blackbird`_ module.
+This is the recommended setup for Java 9 and later.
+
+If the `Jackson Afterburner`_ module is on the class path, it will be preferred over the `Jackson Blackbird`_ module.
+
+.. code-block:: xml
+
+    <dependency>
+      <groupId>com.fasterxml.jackson.module</groupId>
+      <artifactId>jackson-module-afterburner</artifactId>
+      <!-- Unnecessary when using dropwizard-dependencies -->
+      <version>${jackson.version}</version>
+    </dependency>
+
+.. _Jackson Blackbird: https://github.com/FasterXML/jackson-modules-base/tree/jackson-modules-base-2.13.3/blackbird#readme
+.. _Jackson Afterburner: https://github.com/FasterXML/jackson-modules-base/tree/jackson-modules-base-2.13.3/afterburner#readme
+
+Modification of the client in ``DropwizardAppExtension``
+========================================================
+
+The ``DropwizardAppExtension`` previously obtained a Jersey client configured with the default ``HttpUrlConnectorProvider``.
+To support HTTP methods, which are not implemented in the ``HttpURLConnection`` class, workarounds are enabled.
+These workarounds modify the JDK classes to support the requested method.
+Starting from Java 16, it is no longer possible to modify JDK classes. Therefore workarounds can cause problems on Java 16+.
+
+Dropwizard 2.1.1 changes the Jersey client returned by the ``DropwizardAppExtension#client()`` method.
+Now the ``GrizzlyConnectorProvider`` is registered by default to use the Grizzly Async Http Client instead of the ``HttpURLConnection``.
+Using the Grizzly client should cause no problems when migrating to Dropwizard 2.1.1.
+
+However, if you are experiencing issues with the client modifications, you can easily instantiate a client without the new connector:
+
+.. code-block:: java
+
+    new JerseyClientBuilder()
+        .register(new JacksonFeature(getObjectMapper()))
+        .property(ClientProperties.CONNECT_TIMEOUT, DEFAULT_CONNECT_TIMEOUT_MS)
+        .property(ClientProperties.READ_TIMEOUT, DEFAULT_READ_TIMEOUT_MS)
+        .property(HttpUrlConnectorProvider.SET_METHOD_WORKAROUND, true)
+        .build();
+
+The property ``HttpUrlConnectorProvider.SET_METHOD_WORKAROUND`` is optional and should be avoided on Java versions after Java 15.

@@ -6,11 +6,11 @@ branches:
   except:
     - gh-pages
 image:
-- 'Visual Studio 2019'
+- 'Visual Studio 2022'
 environment:
   JAVA_OPTS: '-Xms512m -Xmx2g -XX:+TieredCompilation -XX:TieredStopAtLevel=1'
   matrix:
-  - JAVA_HOME: 'C:\Program Files\Java\jdk11'
+  - JAVA_HOME: 'C:\Program Files\Java\jdk17'
     PATH: '%JAVA_HOME%\bin;%PATH%'
 cache:
 - '%USERPROFILE%\.m2\repository'
