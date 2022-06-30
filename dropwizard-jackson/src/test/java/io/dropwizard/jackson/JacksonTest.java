@@ -5,7 +5,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -16,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class JacksonTest {
     @Test
     void objectMapperUsesGivenCustomJsonFactory() {
-        JsonFactory factory = Mockito.mock(JsonFactory.class);
+        JsonFactory factory = new JsonFactory();
 
         ObjectMapper mapper = Jackson.newObjectMapper(factory);
 
@@ -53,6 +52,13 @@ class JacksonTest {
                 .readValue("{\"unknown\": 4711, \"path\": \"/var/log/app/objectMapperIgnoresUnknownProperties.log\"}", LogMetadata.class)
                 .path)
             .hasFileName("objectMapperIgnoresUnknownProperties.log");
+    }
+
+    @Test
+    void objectMapperRegistersAfterburnerButNotBlackbird() {
+        assertThat(Jackson.newObjectMapper().getRegisteredModuleIds())
+                .contains("com.fasterxml.jackson.module.afterburner.AfterburnerModule")
+                .doesNotContain("com.fasterxml.jackson.module.blackbird.BlackbirdModule");
     }
 
     static class LogMetadata {

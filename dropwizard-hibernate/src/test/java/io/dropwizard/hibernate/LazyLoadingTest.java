@@ -59,7 +59,7 @@ class LazyLoadingTest {
 
         // Raf already exists so this should cause a primary key constraint violation
         final Response response = appExtension.client().target("http://localhost:" + appExtension.getLocalPort()).path("/dogs/Raf").request().put(Entity.entity(raf, MediaType.APPLICATION_JSON));
-        assertThat(response.getStatusInfo()).isEqualTo(Response.Status.BAD_REQUEST);
+        assertThat(response.getStatusInfo().toEnum()).isEqualTo(Response.Status.BAD_REQUEST);
         assertThat(response.getHeaderString(HttpHeaders.CONTENT_TYPE)).isEqualTo(MediaType.APPLICATION_JSON);
         assertThat(response.readEntity(ErrorMessage.class).getMessage()).contains("Unique index or primary key violation", "PUBLIC.DOGS(NAME)");
     }

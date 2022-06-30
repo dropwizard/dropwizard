@@ -13,15 +13,19 @@ import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.DropwizardTestSupport;
 import jakarta.ws.rs.client.Client;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.ClientProperties;
-import org.glassfish.jersey.client.HttpUrlConnectorProvider;
 import org.glassfish.jersey.client.JerseyClientBuilder;
+import org.glassfish.jersey.grizzly.connector.GrizzlyConnectorProvider;
+
+import jakarta.ws.rs.client.Client;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
+
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
-
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Function;
 
 //@formatter:off
 /**
@@ -251,10 +255,11 @@ public class DropwizardAppExtension<C extends Configuration> implements Dropwiza
     }
 
     protected JerseyClientBuilder clientBuilder() {
-        return new JerseyClientBuilder()
+        ClientConfig clientConfig = new ClientConfig();
+        clientConfig.connectorProvider(new GrizzlyConnectorProvider())
             .register(new JacksonFeature(getObjectMapper()))
             .property(ClientProperties.CONNECT_TIMEOUT, DEFAULT_CONNECT_TIMEOUT_MS)
-            .property(ClientProperties.READ_TIMEOUT, DEFAULT_READ_TIMEOUT_MS)
-            .property(HttpUrlConnectorProvider.SET_METHOD_WORKAROUND, true);
+            .property(ClientProperties.READ_TIMEOUT, DEFAULT_READ_TIMEOUT_MS);
+        return new JerseyClientBuilder().withConfig(clientConfig);
     }
 }

@@ -41,11 +41,6 @@ public class CloseableLiquibaseWithFileSystemMigrationsFile extends CloseableLiq
     private static List<File> getRootPaths(FileSystem fileSystem) {
         List<File> rootPaths = new ArrayList<>();
         fileSystem.getRootDirectories().forEach(path -> rootPaths.add(path.toFile()));
-        try {
-            rootPaths.add(new File(CloseableLiquibase.class.getProtectionDomain().getCodeSource().getLocation().toURI()));
-        } catch (Exception ignored) {
-            // if we cannot acquire the path of the executing jar, skip it
-        }
         return rootPaths;
     }
 

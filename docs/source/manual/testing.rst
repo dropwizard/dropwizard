@@ -9,8 +9,8 @@ Testing Dropwizard
 .. rubric:: The ``dropwizard-testing`` module provides you with some handy classes for testing
             your :ref:`representation classes <man-core-representations>`
             and :ref:`resource classes <man-core-resources>`. It also provides
-            `an extension for JUnit 5.x <https://junit.org/junit5/docs/5.5.0/user-guide/#extensions-overview>`__ and
-            `a rule for JUnit 4.x <https://github.com/junit-team/junit4/wiki/Rules>`__.
+            `an extension for JUnit 5.x <https://junit.org/junit5/docs/5.5.0/user-guide/#extensions-overview>`__.
+            A rule for JUnit 4.x is provided by `dropwizard-testing-junit4 <https://github.com/dropwizard/dropwizard-testing-junit4>`_
 
 .. _man-testing-representations:
 
@@ -360,38 +360,6 @@ and can be reused across tests.
 
             Response response = client.target(
                      String.format("http://localhost:%d/login", EXT.getLocalPort()))
-                    .request()
-                    .post(Entity.json(loginForm()));
-
-            assertThat(response.getStatus()).isEqualTo(302);
-        }
-    }
-
-JUnit 4
--------
-Adding ``DropwizardAppRule`` to your JUnit4 test class will start the app prior to any tests
-running and stop it again when they've completed (roughly equivalent to having used ``@BeforeClass`` and ``@AfterClass``).
-``DropwizardAppRule`` also exposes the app's ``Configuration``,
-``Environment`` and the app object itself so that these can be queried by the tests.
-
-If you don't want to use the ``dropwizard-client`` module or find it excessive for testing, you can get access to
-a Jersey HTTP client by calling the `client` method on the rule. The returned client is managed by the rule
-and can be reused across tests.
-
-.. code-block:: java
-
-    public class LoginAcceptanceTest {
-
-        @ClassRule
-        public static final DropwizardAppRule<TestConfiguration> RULE =
-                new DropwizardAppRule<>(MyApp.class, ResourceHelpers.resourceFilePath("my-app-config.yaml"));
-
-        @Test
-        public void loginHandlerRedirectsAfterPost() {
-            Client client = RULE.client();
-
-            Response response = client.target(
-                     String.format("http://localhost:%d/login", RULE.getLocalPort()))
                     .request()
                     .post(Entity.json(loginForm()));
 
