@@ -22,8 +22,6 @@ class DurationParamTest {
         assertThatExceptionOfType(WebApplicationException.class)
             .isThrownBy(() -> new DurationParam("invalid", "param_name"))
             .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(400))
-            .satisfies(e -> assertThat(e.getResponse().getEntity()).isEqualTo(
-                    new ErrorMessage(400, "param_name is not a valid duration.")
-                ));
+            .satisfies(e -> assertThat(e.getMessage()).isEqualTo("param_name is not a valid duration."));
     }
 }

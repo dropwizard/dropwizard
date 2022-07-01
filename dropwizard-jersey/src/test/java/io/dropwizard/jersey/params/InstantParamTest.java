@@ -27,8 +27,6 @@ class InstantParamTest {
         assertThatExceptionOfType(WebApplicationException.class)
             .isThrownBy(() -> new InstantParam(null, "myDate"))
             .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(400))
-            .satisfies(e -> assertThat(e.getResponse().getEntity()).isEqualTo(
-                new ErrorMessage(400, "myDate must be in a ISO-8601 format.")
-            ));
+            .satisfies(e -> assertThat(e.getMessage()).isEqualTo("myDate must be in a ISO-8601 format."));
     }
 }
