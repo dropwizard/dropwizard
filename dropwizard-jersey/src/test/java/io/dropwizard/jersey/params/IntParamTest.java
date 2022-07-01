@@ -18,9 +18,7 @@ class IntParamTest {
         assertThatExceptionOfType(WebApplicationException.class)
             .isThrownBy(() -> new IntParam(null))
             .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(400))
-            .satisfies(e -> assertThat(e.getResponse().getEntity()).isEqualTo(
-                new ErrorMessage(400, "Parameter is not a number.")
-            ));
+            .satisfies(e -> assertThat(e.getMessage()).isEqualTo("Parameter is not a number."));
     }
 
     @Test
@@ -28,9 +26,7 @@ class IntParamTest {
         assertThatExceptionOfType(WebApplicationException.class)
             .isThrownBy(() -> new IntParam(""))
             .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(400))
-            .satisfies(e -> assertThat(e.getResponse().getEntity()).isEqualTo(
-                new ErrorMessage(400, "Parameter is not a number.")
-            ));
+            .satisfies(e -> assertThat(e.getMessage()).isEqualTo("Parameter is not a number."));
     }
 
     @Test
@@ -38,9 +34,7 @@ class IntParamTest {
         assertThatExceptionOfType(WebApplicationException.class)
             .isThrownBy(() -> new IntParam("foo"))
             .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(400))
-            .satisfies(e -> assertThat(e.getResponse().getEntity()).isEqualTo(
-                new ErrorMessage(400, "Parameter is not a number.")
-            ));
+            .satisfies(e -> assertThat(e.getMessage()).isEqualTo("Parameter is not a number."));
     }
 
     @Test
@@ -48,8 +42,6 @@ class IntParamTest {
         assertThatExceptionOfType(WebApplicationException.class)
             .isThrownBy(() -> new IntParam("foo", "customName"))
             .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(400))
-            .satisfies(e -> assertThat(e.getResponse().getEntity()).isEqualTo(
-                new ErrorMessage(400, "customName is not a number.")
-            ));
+            .satisfies(e -> assertThat(e.getMessage()).isEqualTo("customName is not a number."));
     }
 }
