@@ -23,8 +23,6 @@ class SizeParamTest {
         assertThatExceptionOfType(WebApplicationException.class)
             .isThrownBy(() -> new SizeParam("10 kelvins", "degrees"))
             .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(400))
-            .satisfies(e -> assertThat(e.getResponse().getEntity()).isEqualTo(
-                new ErrorMessage(400, "degrees is not a valid size.")
-            ));
+            .satisfies(e -> assertThat(e.getMessage()).isEqualTo("degrees is not a valid size."));
     }
 }
