@@ -8,6 +8,15 @@ import io.dropwizard.jersey.setup.JerseyEnvironment;
 import io.dropwizard.jetty.setup.ServletEnvironment;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+import static java.util.Collections.singletonList;
 
 /**
  * A servlet-based implementation of {@link HealthResponderFactory}, to respond to health check requests.
@@ -21,6 +30,10 @@ public class ServletHealthResponderFactory implements HealthResponderFactory {
 
     @JsonProperty
     private String cacheControlValue = "no-store";
+
+    @NotNull
+    @JsonProperty
+    private List<String> livenessCheckUrlPaths = Collections.emptyList();
 
     public boolean isCacheControlEnabled() {
         return cacheControlEnabled;
@@ -38,6 +51,14 @@ public class ServletHealthResponderFactory implements HealthResponderFactory {
         this.cacheControlValue = cacheControlValue;
     }
 
+    public List<String> getLivenessCheckUrlPaths() {
+        return livenessCheckUrlPaths;
+    }
+
+    public void setLivenessCheckUrlPaths(List<String> livenessCheckUrlPaths) {
+        this.livenessCheckUrlPaths = livenessCheckUrlPaths;
+    }
+
     @Override
     public void configure(final String name, final Collection<String> healthCheckUrlPaths,
                           final HealthResponseProvider healthResponseProvider,
@@ -45,8 +66,10 @@ public class ServletHealthResponderFactory implements HealthResponderFactory {
                           final ServletEnvironment servlets, final ObjectMapper mapper) {
         final ServletHealthResponder servlet = new ServletHealthResponder(healthResponseProvider, cacheControlEnabled,
             cacheControlValue);
+
+        String[] combinedMapping = Stream.of(healthCheckUrlPaths, livenessCheckUrlPaths).flatMap(Collection::stream).toArray(String[]::new);
         servlets
             .addServlet(name + SERVLET_SUFFIX, servlet)
-            .addMapping(healthCheckUrlPaths.toArray(new String[0]));
+            .addMapping(combinedMapping);
     }
 }

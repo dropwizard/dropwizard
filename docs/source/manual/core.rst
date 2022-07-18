@@ -491,6 +491,37 @@ Define the following health check configurations in your `config.yml` file:
         - name: user-cache
           critical: false
 
+For a full list of configuration options see the following snippet
+
+.. code-block: yaml
+    health:
+      enabled: true
+      delayedShutdownHandlerEnabled: true
+      shutdownWaitPeriod: 10s
+      initialOverallState: true
+      healthCheckUrlPaths: ["/alive/health", "/alive/health/readiness"]
+      responseProvider:
+        type: json
+      responder:
+        type: servlet
+        cacheControlEnabled: true
+        cacheControlValue: "no-store"
+        livenessCheckUrlPaths: ["/alive/health/liveness"]
+      healthChecks:
+        - name: ready-check
+          critical: false
+          initialState: true
+          type: ready
+          schedule:
+            checkInterval: 2500ms
+            downtimeInterval: 10s
+            failureAttempts: 2
+            successAttempts: 1
+        - name: alive-check
+          critical: false
+          initialState: true
+          type: alive
+
 .. note::
 
     This behavior was integrated from the `Dropwizard Health module`_. If you are migrating from that module

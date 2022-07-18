@@ -21,9 +21,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.dropwizard.health.HealthCheckType;
+
 import static java.util.Collections.unmodifiableList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
+
+import static io.dropwizard.health.response.JsonHealthResponseProvider.CHECK_TYPE_QUERY_PARAM;
 
 @ExtendWith(MockitoExtension.class)
 class ServletHealthResponderTest {
@@ -105,6 +109,51 @@ class ServletHealthResponderTest {
 
         // then
         assertThat(response.getStatus()).isEqualTo(Response.SC_SERVICE_UNAVAILABLE);
+        assertThat(response.get(HttpHeader.CACHE_CONTROL))
+            .isNotNull()
+            .isEqualTo(NO_STORE);
+    }
+
+    @Test
+    void shouldReturnHealthyWithNoParametersProvidedOnAlive() throws Exception {
+        // given
+        final String aliveURI =  "/alive";
+        final ServletHealthResponder servletHealthResponder = new ServletHealthResponder(healthResponseProvider, true,
+            "no-store", Collections.singletonList(aliveURI));
+        final Map<String, Collection<String>> queryParams = new HashMap<>();
+        queryParams.put(CHECK_TYPE_QUERY_PARAM, Collections.singletonList(HealthCheckType.ALIVE.name()));
+
+        // when
+        when(healthResponseProvider.healthResponse(queryParams)).thenReturn(SUCCESS);
+        servletTester.addServlet(new ServletHolder(servletHealthResponder), HEALTH_CHECK_URI);
+        servletTester.addServlet(new ServletHolder(servletHealthResponder), aliveURI);
+        servletTester.start();
+        request.setURI(aliveURI);
+        final HttpTester.Response response = executeRequest(request);
+
+        // then
+        assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
+        assertThat(response.get(HttpHeader.CACHE_CONTROL))
+            .isNotNull()
+            .isEqualTo(NO_STORE);
+    }
+
+    @Test
+    void shouldReturnHealthyWithAliveEnabledOnHealthPath() throws Exception {
+        // given
+        final String aliveURI =  "/alive";
+        final ServletHealthResponder servletHealthResponder = new ServletHealthResponder(healthResponseProvider, true,
+            "no-store", Collections.singletonList(aliveURI));
+
+        // when
+        when(healthResponseProvider.healthResponse(Collections.emptyMap())).thenReturn(SUCCESS);
+        servletTester.addServlet(new ServletHolder(servletHealthResponder), HEALTH_CHECK_URI);
+        servletTester.addServlet(new ServletHolder(servletHealthResponder), aliveURI);
+        servletTester.start();
+        final HttpTester.Response response = executeRequest(request);
+
+        // then
+        assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
         assertThat(response.get(HttpHeader.CACHE_CONTROL))
             .isNotNull()
             .isEqualTo(NO_STORE);

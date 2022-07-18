@@ -26,6 +26,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import javax.servlet.ServletRegistration;
 import javax.validation.Validator;
 import javax.ws.rs.core.MediaType;
+
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -132,6 +134,30 @@ class ServletHealthResponderFactoryTest {
         assertThat(healthyResponse.get(HttpHeader.CACHE_CONTROL)).isNull();
         assertThat(unhealthyResponse.getStatus()).isEqualTo(Response.SC_SERVICE_UNAVAILABLE);
         assertThat(unhealthyResponse.get(HttpHeader.CACHE_CONTROL)).isNull();
+    }
+
+    @Test
+    void testBuildHealthServletWithLivenessConfigured() throws Exception {
+        // given
+        HealthResponderFactory factory = configFactory.build(new ResourceConfigurationSourceProvider(), "/yml/servlet-responder-factory-liveness-configured.yml");
+        when(servlets.addServlet(eq(NAME + SERVLET_SUFFIX), servletCaptor.capture()))
+            .thenReturn(servletRegistration);
+        when(servletRegistration.addMapping(Arrays.asList("/health-check", "/alive", "/probes/liveness").toArray(new String [0])))
+            .thenReturn(Collections.singleton(HEALTH_CHECK_URI));
+        when(healthResponseProvider.healthResponse(Collections.emptyMap())).thenReturn(SUCCESS, FAIL);
+
+        // when
+        // succeed first, fail second
+        factory.configure(NAME, Collections.singletonList(HEALTH_CHECK_URI), healthResponseProvider, health, jersey,
+            servlets, mapper);
+        servletTester.addServlet(new ServletHolder(servletCaptor.getValue()), HEALTH_CHECK_URI);
+        servletTester.start();
+        HttpTester.Response healthyResponse = executeRequest(request);
+        HttpTester.Response unhealthyResponse = executeRequest(request);
+
+        // then
+        assertThat(healthyResponse.getStatus()).isEqualTo(Response.SC_OK);
+        assertThat(unhealthyResponse.getStatus()).isEqualTo(Response.SC_SERVICE_UNAVAILABLE);
     }
 
     private HttpTester.Response executeRequest(HttpTester.Request request) throws Exception {
