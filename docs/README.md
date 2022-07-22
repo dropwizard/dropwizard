@@ -2,7 +2,7 @@
 
 # local changes
 # remote changes
-
+git commit
 ## Building locally
 
 Create and enter the Python virtual environment:
