@@ -4,7 +4,7 @@
 # remote changes
 git commit
 ## Building locally
-
+after commit
 Create and enter the Python virtual environment:
 
     # virtualenv .
