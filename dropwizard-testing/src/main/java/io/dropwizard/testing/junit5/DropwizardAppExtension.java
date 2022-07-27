@@ -21,6 +21,7 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
+import org.glassfish.jersey.client.RequestEntityProcessing;
 import org.glassfish.jersey.grizzly.connector.GrizzlyConnectorProvider;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
@@ -281,7 +282,8 @@ public class DropwizardAppExtension<C extends Configuration> implements Dropwiza
         clientConfig.connectorProvider(new GrizzlyConnectorProvider())
             .register(new JacksonFeature(getObjectMapper()))
             .property(ClientProperties.CONNECT_TIMEOUT, DEFAULT_CONNECT_TIMEOUT_MS)
-            .property(ClientProperties.READ_TIMEOUT, DEFAULT_READ_TIMEOUT_MS);
+            .property(ClientProperties.READ_TIMEOUT, DEFAULT_READ_TIMEOUT_MS)
+            .property(ClientProperties.REQUEST_ENTITY_PROCESSING, RequestEntityProcessing.BUFFERED);
         return new JerseyClientBuilder().withConfig(clientConfig);
     }
 }
