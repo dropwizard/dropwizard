@@ -45,14 +45,14 @@ class DbStatusCommandTest {
     void testRun() throws Exception {
         statusCommand.run(null, new Namespace(Collections.emptyMap()), MigrationTestSupport.createConfiguration());
         assertThat(baos.toString(UTF_8.name())).matches(
-                "3 change sets have not been applied to \\S+\\R");
+                "3 changesets have not been applied to \\S+\\R");
     }
 
     @Test
     void testVerbose() throws Exception {
         statusCommand.run(null, new Namespace(Collections.singletonMap("verbose", true)), MigrationTestSupport.createConfiguration());
         assertThat(baos.toString(UTF_8.name())).matches(
-                "3 change sets have not been applied to \\S+\\R" +
+                "3 changesets have not been applied to \\S+\\R" +
                         "\\s*migrations\\.xml::1::db_dev\\R" +
                         "\\s*migrations\\.xml::2::db_dev\\R" +
                         "\\s*migrations\\.xml::3::db_dev\\R");
