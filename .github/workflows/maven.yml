@@ -37,7 +37,7 @@ jobs:
         key: ${{ runner.os }}-sonar
         restore-keys: ${{ runner.os }}-sonar
     - name: Initialize CodeQL
-      uses: github/codeql-action/init@0c670bbf0414f39666df6ce8e718ec5662c21e03 # tag=v2
+      uses: github/codeql-action/init@2ca79b6fa8d3ec278944088b4aa5f46912db5d63 # tag=v2
       if: matrix.java_version == '8'
       with:
         languages: java
@@ -67,5 +67,5 @@ jobs:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       run: ./mvnw --no-transfer-progress -Pjakarta-apis -V -B -ff -s .github/settings.xml -Dsonar.projectKey=dropwizard_dropwizard -Dsonar.organization=dropwizard -Dsonar.host.url=https://sonarcloud.io org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
     - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@0c670bbf0414f39666df6ce8e718ec5662c21e03 # tag=v2
+      uses: github/codeql-action/analyze@2ca79b6fa8d3ec278944088b4aa5f46912db5d63 # tag=v2
       if: matrix.java_version == '8'
