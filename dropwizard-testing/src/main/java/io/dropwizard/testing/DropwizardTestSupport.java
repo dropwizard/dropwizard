@@ -18,7 +18,6 @@ import net.sourceforge.argparse4j.inf.Namespace;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
-import org.slf4j.Logger;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
@@ -263,11 +262,8 @@ public class DropwizardTestSupport<C extends Configuration> {
         }
 
         // Don't leak logging appenders into other test cases
-        if (configuration != null) {
-            configuration.getLoggingFactory().reset();
-        } else {
-            LoggingUtil.getLoggerContext().getLogger(Logger.ROOT_LOGGER_NAME).detachAndStopAllAppenders();
-        }
+        // Therefore stop the LoggerContext to detach all appenders
+        LoggingUtil.getLoggerContext().stop();
     }
 
     private void applyConfigOverrides() {
