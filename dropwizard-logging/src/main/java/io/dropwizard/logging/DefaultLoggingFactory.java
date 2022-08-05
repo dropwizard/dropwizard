@@ -202,7 +202,6 @@ public class DefaultLoggingFactory implements LoggingFactory {
             // sane default.
             loggerContext.stop();
             final Logger logger = loggerContext.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
-            logger.detachAndStopAllAppenders();
             final DropwizardLayout formatter = new DropwizardLayout(loggerContext, TimeZone.getDefault());
             formatter.start();
             final LayoutWrappingEncoder<ILoggingEvent> layoutEncoder = new LayoutWrappingEncoder<>();
