@@ -21,6 +21,9 @@ class PortRangeValidatorTest {
         @PortRange(min = 10000, max = 15000)
         public int otherPort = 10001;
 
+        @PortRange
+        public Integer nullablePort = 1;
+
         @Valid
         List<@PortRange Integer> ports = Collections.emptyList();
     }
@@ -74,6 +77,14 @@ class PortRangeValidatorTest {
         example.ports = Collections.singletonList(-1);
         assertThat(ConstraintViolations.format(validator.validate(example)))
             .containsOnly("ports[0].<list element> must be between 1 and 65535");
+    }
+
+    @Test
+    @SuppressWarnings("NullAway")
+    void rejectsNull() {
+        example.nullablePort = null;
+        assertThat(ConstraintViolations.format(validator.validate(example)))
+            .isEmpty();
     }
 
     private static boolean isDefaultLocaleEnglish() {

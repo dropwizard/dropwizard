@@ -19,6 +19,6 @@ public class PortRangeValidator implements ConstraintValidator<PortRange, Intege
 
     @Override
     public boolean isValid(Integer value, ConstraintValidatorContext context) {
-        return value == 0 || (value >= min && value <= max);
+        return value == null || value == 0 || (value >= min && value <= max);
     }
 }
