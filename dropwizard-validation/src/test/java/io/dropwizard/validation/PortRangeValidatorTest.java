@@ -86,7 +86,7 @@ public class PortRangeValidatorTest {
 
     @Test
     @SuppressWarnings("NullAway")
-    void rejectsNull() {
+    void acceptsNull() {
         example.nullablePort = null;
         assertThat(ConstraintViolations.format(validator.validate(example)))
             .isEmpty();
