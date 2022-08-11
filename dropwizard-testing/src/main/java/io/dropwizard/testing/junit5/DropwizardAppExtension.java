@@ -15,6 +15,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.client.JerseyClientBuilder;
+import org.glassfish.jersey.client.RequestEntityProcessing;
 import org.glassfish.jersey.grizzly.connector.GrizzlyConnectorProvider;
 
 import javax.ws.rs.client.Client;
@@ -258,7 +259,8 @@ public class DropwizardAppExtension<C extends Configuration> implements Dropwiza
         clientConfig.connectorProvider(new GrizzlyConnectorProvider())
             .register(new JacksonFeature(getObjectMapper()))
             .property(ClientProperties.CONNECT_TIMEOUT, DEFAULT_CONNECT_TIMEOUT_MS)
-            .property(ClientProperties.READ_TIMEOUT, DEFAULT_READ_TIMEOUT_MS);
+            .property(ClientProperties.READ_TIMEOUT, DEFAULT_READ_TIMEOUT_MS)
+            .property(ClientProperties.REQUEST_ENTITY_PROCESSING, RequestEntityProcessing.BUFFERED);
         return new JerseyClientBuilder().withConfig(clientConfig);
     }
 }
