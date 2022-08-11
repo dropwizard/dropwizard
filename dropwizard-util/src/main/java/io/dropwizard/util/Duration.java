@@ -130,6 +130,10 @@ public class Duration implements Comparable<Duration>, Serializable {
         return TimeUnit.DAYS.convert(count, unit);
     }
 
+    public java.time.Duration toJavaDuration() {
+        return java.time.Duration.ofNanos(toNanoseconds());
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
