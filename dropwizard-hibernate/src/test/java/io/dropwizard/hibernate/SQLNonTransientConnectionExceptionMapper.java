@@ -12,7 +12,7 @@ public class SQLNonTransientConnectionExceptionMapper implements ExceptionMapper
     @Override
     public Response toResponse(SQLNonTransientConnectionException e) {
         return Response.status(Response.Status.SERVICE_UNAVAILABLE)
-                       .entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(), "Connection not available"))
+                       .entity(new ErrorMessage(Response.Status.SERVICE_UNAVAILABLE.getStatusCode(), "Connection not available"))
                        .build();
 
     }
