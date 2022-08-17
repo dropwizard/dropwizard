@@ -1,11 +1,13 @@
 package io.dropwizard.hibernate;
 
 import org.glassfish.jersey.server.ExtendedUriInfo;
+import org.glassfish.jersey.server.internal.process.MappableException;
 import org.glassfish.jersey.server.model.Resource;
 import org.glassfish.jersey.server.monitoring.RequestEvent;
 import org.glassfish.jersey.server.monitoring.RequestEventListener;
 import org.hibernate.CacheMode;
 import org.hibernate.FlushMode;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -17,6 +19,7 @@ import org.mockito.InOrder;
 import java.lang.reflect.Method;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.hibernate.resource.transaction.spi.TransactionStatus.ACTIVE;
 import static org.hibernate.resource.transaction.spi.TransactionStatus.NOT_ACTIVE;
@@ -24,6 +27,7 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -238,6 +242,18 @@ class UnitOfWorkApplicationListenerTest {
         assertThatIllegalArgumentException()
             .isThrownBy(this::execute)
             .withMessage("Unregistered Hibernate bundle: 'warehouse'");
+    }
+
+    @Test
+    void throwsMappableExceptionOnFailureDuringBeforeStart() throws Exception {
+        HibernateException cause = new HibernateException("Error");
+
+        reset(sessionFactory);
+        when(sessionFactory.openSession()).thenThrow(cause);
+
+        assertThatExceptionOfType(MappableException.class)
+            .isThrownBy(this::execute)
+            .withCause(cause);
     }
 
     private void prepareResourceMethod(String resourceMethodName) throws NoSuchMethodException {

@@ -73,13 +73,19 @@ public class UnitOfWorkApplicationListener implements ApplicationEventListener {
         public void onEvent(RequestEvent event) {
             final RequestEvent.Type eventType = event.getType();
             if (eventType == RequestEvent.Type.RESOURCE_METHOD_START) {
-                methodMap
-                    .computeIfAbsent(event.getUriInfo().getMatchedResourceMethod(), UnitOfWorkEventListener::registerUnitOfWorkAnnotations)
-                    .forEach(unitOfWork ->
-                        unitOfWorkAspects
-                            .computeIfAbsent(unitOfWork.value(), hibernateName -> new UnitOfWorkAspect(sessionFactories))
-                            .beforeStart(unitOfWork)
-                );
+                try {
+                    methodMap
+                        .computeIfAbsent(event.getUriInfo().getMatchedResourceMethod(), UnitOfWorkEventListener::registerUnitOfWorkAnnotations)
+                        .forEach(unitOfWork ->
+                            unitOfWorkAspects
+                                .computeIfAbsent(unitOfWork.value(), hibernateName -> new UnitOfWorkAspect(sessionFactories))
+                                .beforeStart(unitOfWork)
+                    );
+                } catch (IllegalArgumentException e) {
+                    throw e;
+                } catch (Exception e) {
+                    throw new MappableException(e);
+                }
             } else if (eventType == RequestEvent.Type.RESP_FILTERS_START) {
                 try {
                     unitOfWorkAspects
