@@ -9,7 +9,6 @@ import org.glassfish.jersey.server.monitoring.RequestEventListener;
 import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
 
-import javax.persistence.PersistenceException;
 import javax.ws.rs.ext.Provider;
 import java.util.Arrays;
 import java.util.Collection;
