@@ -6,7 +6,6 @@ import org.glassfish.jersey.server.monitoring.ApplicationEvent;
 import org.glassfish.jersey.server.monitoring.ApplicationEventListener;
 import org.glassfish.jersey.server.monitoring.RequestEvent;
 import org.glassfish.jersey.server.monitoring.RequestEventListener;
-import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
 
 import javax.ws.rs.ext.Provider;
@@ -82,7 +81,9 @@ public class UnitOfWorkApplicationListener implements ApplicationEventListener {
                                 .computeIfAbsent(unitOfWork.value(), hibernateName -> new UnitOfWorkAspect(sessionFactories))
                                 .beforeStart(unitOfWork)
                     );
-                } catch (HibernateException e) {
+                } catch (IllegalArgumentException e) {
+                    throw e;
+                } catch (Exception e) {
                     throw new MappableException(e);
                 }
             } else if (eventType == RequestEvent.Type.RESP_FILTERS_START) {
