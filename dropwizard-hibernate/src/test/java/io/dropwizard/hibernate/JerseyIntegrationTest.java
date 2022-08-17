@@ -13,7 +13,6 @@ import io.dropwizard.logging.common.BootstrapLogging;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.test.JerseyTest;
-import org.h2.tools.Server;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -33,11 +32,9 @@ import javax.ws.rs.core.Application;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.sql.SQLException;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Collections;
-import java.util.Objects;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -90,9 +87,6 @@ class JerseyIntegrationTest extends JerseyTest {
     @Nullable
     private SessionFactory sessionFactory;
 
-    @Nullable
-    private Server h2Server;
-
     @Override
     @BeforeEach
     public void setUp() throws Exception {
@@ -106,9 +100,6 @@ class JerseyIntegrationTest extends JerseyTest {
 
         if (sessionFactory != null) {
             sessionFactory.close();
-        }
-        if (h2Server != null) {
-            h2Server.stop();
         }
     }
 
@@ -125,14 +116,7 @@ class JerseyIntegrationTest extends JerseyTest {
         when(environment.lifecycle()).thenReturn(lifecycleEnvironment);
         when(environment.metrics()).thenReturn(metricRegistry);
 
-        try {
-            h2Server = Server.createTcpServer("-ifNotExists");
-            h2Server.start();
-        } catch (SQLException e) {
-            throw new RuntimeException("Failed to start the H2 TCP Server during test configuration", e);
-        }
-
-        dbConfig.setUrl("jdbc:h2:" + h2Server.getURL() + "/mem:DbTest-" + System.nanoTime());
+        dbConfig.setUrl("jdbc:h2:mem:DbTest-" + System.nanoTime());
         dbConfig.setUser("sa");
         dbConfig.setDriverClass("org.h2.Driver");
         dbConfig.setValidationQuery("SELECT 1");
@@ -160,7 +144,6 @@ class JerseyIntegrationTest extends JerseyTest {
         config.register(new PersistenceExceptionMapper());
         config.register(new JacksonFeature(Jackson.newObjectMapper()));
         config.register(new DataExceptionMapper());
-        config.register(new SQLNonTransientConnectionExceptionMapper());
         config.register(new EmptyOptionalExceptionMapper());
 
         return config;
@@ -216,20 +199,9 @@ class JerseyIntegrationTest extends JerseyTest {
                 .isEqualTo(person.getBirthday());
     }
 
-    @Test
-    void testSqlExceptionIsHandledBeforeStart() {
-        Objects.requireNonNull(h2Server).stop();
-
-        final Response response = target("/people/Jeff").request().
-            get();
-
-        assertThat(response.getStatusInfo()).isEqualTo(Response.Status.SERVICE_UNAVAILABLE);
-        assertThat(response.getHeaderString(HttpHeaders.CONTENT_TYPE)).isEqualTo(MediaType.APPLICATION_JSON);
-        assertThat(response.readEntity(ErrorMessage.class).getMessage()).isEqualTo("Connection not available");
-    }
 
     @Test
-    void testSqlExceptionIsHandledAfterEnd() {
+    void testSqlExceptionIsHandled() {
         final Person person = new Person();
         person.setName("Jeff");
         person.setEmail("jeff.hammersmith@targetprocessinc.com");
