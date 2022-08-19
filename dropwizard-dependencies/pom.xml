@@ -43,16 +43,16 @@
         <jakarta.servlet-api.version>4.0.4</jakarta.servlet-api.version>
         <jakarta.validation-api.version>2.0.2</jakarta.validation-api.version>
         <jakarta.ws.rs-api.version>2.1.6</jakarta.ws.rs-api.version>
-        <javassist.version>3.29.0-GA</javassist.version>
+        <javassist.version>3.29.1-GA</javassist.version>
         <javax.persistence-api.version>2.2</javax.persistence-api.version>
         <jaxb-api.version>2.3.3</jaxb-api.version>
         <jdbi3.version>3.32.0</jdbi3.version>
         <jersey.version>2.36</jersey.version>
         <jetty-setuid-java.version>1.0.4</jetty-setuid-java.version>
         <jetty.version>9.4.48.v20220622</jetty.version>
-        <joda-time.version>2.10.14</joda-time.version>
+        <joda-time.version>2.11.0</joda-time.version>
         <jsr305.version>3.0.2</jsr305.version>
-        <liquibase-core.version>4.14.0</liquibase-core.version>
+        <liquibase-core.version>4.15.0</liquibase-core.version>
         <liquibase-slf4j.version>4.1.0</liquibase-slf4j.version>
         <logback-throttling-appender.version>1.1.9</logback-throttling-appender.version>
         <logback.version>1.2.11</logback.version>
@@ -70,7 +70,7 @@
         <h2.version>2.1.214</h2.version>
         <junit.version>4.13.2</junit.version>
         <junit5.version>5.9.0</junit5.version>
-        <mockito.version>4.6.1</mockito.version>
+        <mockito.version>4.7.0</mockito.version>
 
         <!-- Plugin versions -->
         <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
@@ -304,12 +304,6 @@
                 <groupId>com.github.spullara.mustache.java</groupId>
                 <artifactId>compiler</artifactId>
                 <version>${mustache-compiler.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>com.google.guava</groupId>
-                        <artifactId>guava</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.freemarker</groupId>
