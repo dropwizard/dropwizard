@@ -25,7 +25,7 @@ import java.util.List;
 
 /**
  * A module for deserializing enums that is more permissive than the default.
- * <p/>
+ * <br/>
  * This deserializer is more permissive in the following ways:
  * <ul>
  * <li>Whitespace is permitted but stripped from the input.</li>

@@ -20,6 +20,8 @@ import com.github.benmanes.caffeine.cache.CaffeineSpec;
 import java.io.IOException;
 
 /**
+ * A Jackson module that can (de)serialize {@link CaffeineSpec CaffeineSpecs}.
+ *
  * @since 2.0
  */
 public class CaffeineModule extends Module {
