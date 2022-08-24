@@ -7,6 +7,8 @@ import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * An implementation of an {@link java.util.concurrent.ExecutorService} which directly executes a task, if the service has not shut down already.
+ *
  * @since 2.0
  */
 public class DirectExecutorService extends AbstractExecutorService {
