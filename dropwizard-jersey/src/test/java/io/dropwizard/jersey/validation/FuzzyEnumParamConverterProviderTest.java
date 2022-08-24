@@ -1,6 +1,5 @@
 package io.dropwizard.jersey.validation;
 
-import io.dropwizard.jersey.errors.ErrorMessage;
 import org.junit.jupiter.api.Test;
 
 import javax.annotation.Nullable;
@@ -172,10 +171,10 @@ class FuzzyEnumParamConverterProviderTest {
 
         assertThatExceptionOfType(WebApplicationException.class)
             .isThrownBy(() -> converter.fromString("B"))
-            .extracting(e -> (ErrorMessage)e.getResponse().getEntity())
-            .matches(e -> e.getCode() == 400)
-            .matches(e -> e.getMessage().contains("A_1"))
-            .matches(e -> e.getMessage().contains("A_2"));
+            .matches(e -> e.getResponse().getStatus() == 400)
+            .extracting(Throwable::getMessage)
+            .matches(msg -> msg.contains("A_1"))
+            .matches(msg -> msg.contains("A_2"));
     }
 
 
@@ -197,9 +196,9 @@ class FuzzyEnumParamConverterProviderTest {
         assertThat(converter.fromString("2")).isSameAs(ExplicitFromString.B);
         assertThatExceptionOfType(WebApplicationException.class)
             .isThrownBy(() -> converter.fromString("3"))
-            .extracting(e -> (ErrorMessage)e.getResponse().getEntity())
-            .matches(e -> e.getCode() == 400)
-            .matches(e -> e.getMessage().contains("is not a valid ExplicitFromString"));
+            .matches(e -> e.getResponse().getStatus() == 400)
+            .extracting(Throwable::getMessage)
+            .matches(msg -> msg.contains("is not a valid ExplicitFromString"));
     }
 
     @Test
@@ -219,9 +218,9 @@ class FuzzyEnumParamConverterProviderTest {
             getConverter(ExplicitFromStringThrowsOtherException.class);
         assertThatExceptionOfType(WebApplicationException.class)
             .isThrownBy(() -> converter.fromString("1"))
-            .extracting(e -> (ErrorMessage)e.getResponse().getEntity())
-            .matches(e -> e.getCode() == 400)
-            .matches(e -> e.getMessage().contains("Failed to convert"));
+            .matches(e -> e.getResponse().getStatus() == 400)
+            .extracting(Throwable::getMessage)
+            .matches(msg -> msg.contains("Failed to convert"));
     }
 
     @Test
@@ -229,10 +228,10 @@ class FuzzyEnumParamConverterProviderTest {
         final ParamConverter<ExplicitFromStringNonStatic> converter = getConverter(ExplicitFromStringNonStatic.class);
         assertThatExceptionOfType(WebApplicationException.class)
             .isThrownBy(() -> converter.fromString("1"))
-            .extracting(e -> (ErrorMessage)e.getResponse().getEntity())
-            .matches(e -> e.getCode() == 400)
-            .matches(e -> e.getMessage().contains("A"))
-            .matches(e -> e.getMessage().contains("B"));
+            .matches(e -> e.getResponse().getStatus() == 400)
+            .extracting(Throwable::getMessage)
+            .matches(msg -> msg.contains("A"))
+            .matches(msg -> msg.contains("B"));
 
         assertThat(converter.fromString("A")).isSameAs(ExplicitFromStringNonStatic.A);
     }
@@ -242,8 +241,8 @@ class FuzzyEnumParamConverterProviderTest {
         final ParamConverter<ExplicitFromStringPrivate> converter = getConverter(ExplicitFromStringPrivate.class);
         assertThatExceptionOfType(WebApplicationException.class)
             .isThrownBy(() -> converter.fromString("1"))
-            .extracting(e -> (ErrorMessage)e.getResponse().getEntity())
-            .matches(e -> e.getCode() == 400)
-            .matches(e -> e.getMessage().contains("Not permitted to call"));
+            .matches(e -> e.getResponse().getStatus() == 400)
+            .extracting(Throwable::getMessage)
+            .matches(msg -> msg.contains("Not permitted to call fromString on ExplicitFromStringPrivate"));
     }
 }
