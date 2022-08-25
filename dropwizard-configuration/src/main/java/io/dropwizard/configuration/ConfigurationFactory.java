@@ -3,6 +3,11 @@ package io.dropwizard.configuration;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * A generic interface for constructing a configuration object.
+ *
+ * @param <T> the type of the configuration objects to produce
+ */
 public interface ConfigurationFactory<T> {
 
     /**

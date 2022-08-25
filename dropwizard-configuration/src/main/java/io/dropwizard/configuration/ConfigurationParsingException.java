@@ -305,6 +305,9 @@ public class ConfigurationParsingException extends ConfigurationException {
             private static final long serialVersionUID = 1L;
             private static final LevenshteinDistance LEVENSHTEIN_DISTANCE = new LevenshteinDistance();
 
+            /**
+             * The base string for the levenshtein comparator.
+             */
             private String base;
 
             public LevenshteinComparator(String base) {
@@ -340,10 +343,23 @@ public class ConfigurationParsingException extends ConfigurationException {
                     LEVENSHTEIN_DISTANCE.apply(b, base));
             }
 
+            /**
+             * Serializes this comparator to the given {@link ObjectOutputStream}.
+             *
+             * @param stream the stream to serialize to
+             * @throws IOException if I/O errors occur while writing to the stream
+             */
             private void writeObject(ObjectOutputStream stream) throws IOException {
                 stream.defaultWriteObject();
             }
 
+            /**
+             * Deserializes this comparator from a given {@link ObjectInputStream}.
+             *
+             * @param stream the stream to deserialize from
+             * @throws IOException if I/O errors occur while reading from the stream
+             * @throws ClassNotFoundException if the class of a serialized object could not be found
+             */
             private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
                 stream.defaultReadObject();
             }

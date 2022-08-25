@@ -4,7 +4,7 @@ import java.util.Collection;
 
 /**
  * Base class for problems with a Configuration object.
- * <p/>
+ * <br/>
  * Refer to the implementations for different classes of problems:
  * <ul>
  *     <li>Parsing errors: {@link ConfigurationParsingException}</li>
@@ -17,8 +17,14 @@ public abstract class ConfigurationException extends Exception {
      */
     private static final long serialVersionUID = 7596147083618606385L;
 
+    /**
+     * A constant representing a newline sequence.
+     */
     protected static final String NEWLINE = String.format("%n");
 
+    /**
+     * The configuration related errors.
+     */
     private final Collection<String> errors;
 
     /**
@@ -44,10 +50,22 @@ public abstract class ConfigurationException extends Exception {
         this.errors = errors;
     }
 
+    /**
+     * Returns the configuration errors.
+     *
+     * @return a collection of strings representing the configuration errors
+     */
     public Collection<String> getErrors() {
         return errors;
     }
 
+    /**
+     * Formats a message for the exception reporting the errors that occurred related to the configuration.
+     *
+     * @param file the configuration file
+     * @param errors the configuration errors
+     * @return the formatted message
+     */
     protected static String formatMessage(String file, Collection<String> errors) {
         final StringBuilder msg = new StringBuilder(file);
         msg.append(errors.size() == 1 ? " has an error:" : " has the following errors:").append(NEWLINE);
