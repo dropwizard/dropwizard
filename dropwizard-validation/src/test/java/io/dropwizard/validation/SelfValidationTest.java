@@ -2,14 +2,15 @@ package io.dropwizard.validation;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
-import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.LoggingEvent;
 import ch.qos.logback.core.AppenderBase;
 import io.dropwizard.util.Maps;
 import io.dropwizard.validation.selfvalidating.SelfValidating;
+import io.dropwizard.validation.selfvalidating.SelfValidatingValidator;
 import io.dropwizard.validation.selfvalidating.SelfValidation;
 import io.dropwizard.validation.selfvalidating.ViolationCollector;
+import org.hibernate.validator.messageinterpolation.AbstractMessageInterpolator;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,6 +33,7 @@ class SelfValidationTest {
 
     private static class ListAppender extends AppenderBase<ILoggingEvent> {
         private final List<ILoggingEvent> events = new ArrayList<>();
+        private final Level level = Level.INFO;
 
         public List<ILoggingEvent> getAllLoggingEvents() {
             return events;
@@ -43,7 +45,7 @@ class SelfValidationTest {
 
         @Override
         protected void append(ILoggingEvent iLoggingEvent) {
-            if (iLoggingEvent.getLevel() != Level.DEBUG) {
+            if (iLoggingEvent.getLevel().isGreaterOrEqual(level)) {
                 events.add(iLoggingEvent);
             }
         }
@@ -54,11 +56,12 @@ class SelfValidationTest {
 
     @BeforeAll
     static void setUp() {
-        LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
-        Logger root = loggerContext.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
-        listAppender.setContext(root.getLoggerContext());
+        Logger selfValidatingValidatorLogger = (Logger)LoggerFactory.getLogger(SelfValidatingValidator.class);
+        selfValidatingValidatorLogger.setAdditive(false);
+        selfValidatingValidatorLogger.setLevel(Level.INFO);
+        listAppender.setContext(selfValidatingValidatorLogger.getLoggerContext());
         listAppender.start();
-        root.addAppender(listAppender);
+        selfValidatingValidatorLogger.addAppender(listAppender);
     }
 
     @AfterEach
@@ -295,7 +298,9 @@ class SelfValidationTest {
     void invalidExample() throws Exception {
         assertThat(ConstraintViolations.format(validator.validate(new InvalidExample())))
                 .isEmpty();
-        assertThat(listAppender.getAllLoggingEvents().stream().map(ILoggingEvent::toString)).containsExactlyInAnyOrder(
+        assertThat(listAppender.getAllLoggingEvents())
+            .map(ILoggingEvent::toString)
+            .containsExactlyInAnyOrder(
             new LoggingEvent(this.getClass().getName(),
                 logger,
                 Level.ERROR,
@@ -331,7 +336,8 @@ class SelfValidationTest {
     void giveWarningIfNoValidationMethods() {
         assertThat(ConstraintViolations.format(validator.validate(new NoValidations())))
                 .isEmpty();
-        assertThat(listAppender.getAllLoggingEvents().stream().map(ILoggingEvent::toString))
+        assertThat(listAppender.getAllLoggingEvents())
+            .map(ILoggingEvent::toString)
             .containsExactlyInAnyOrder(
                 new LoggingEvent(this.getClass().getName(),
                     logger,
@@ -360,6 +366,13 @@ class SelfValidationTest {
 
     @Test
     void messageParametersExample() {
+        Logger hibernateLogger = (Logger)LoggerFactory.getLogger(AbstractMessageInterpolator.class);
+        hibernateLogger.setAdditive(false);
+        hibernateLogger.setLevel(Level.INFO);
+        ListAppender hibernateAppender = new ListAppender();
+        hibernateAppender.setContext(hibernateLogger.getLoggerContext());
+        hibernateAppender.start();
+        hibernateLogger.addAppender(hibernateAppender);
         assertThat(ConstraintViolations.format(validator.validate(new MessageParametersExample()))).containsExactly(
                 " Mixed ${'value'} VALUE",
                 " Nested ${'nested'}",
@@ -374,7 +387,9 @@ class SelfValidationTest {
                 "{property}[1] VALUE",
                 "{property}[{key}] VALUE"
         );
-        assertThat(listAppender.getAllLoggingEvents().stream().map(ILoggingEvent::toString)).contains(
+        assertThat(hibernateAppender.getAllLoggingEvents())
+            .map(ILoggingEvent::toString)
+            .contains(
             new LoggingEvent(this.getClass().getName(),
                 logger,
                 Level.WARN,
