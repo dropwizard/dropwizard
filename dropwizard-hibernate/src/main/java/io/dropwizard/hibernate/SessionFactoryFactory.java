@@ -22,6 +22,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 public class SessionFactoryFactory {
+    @SuppressWarnings("Slf4jLoggerShouldBeNonStatic")
     private static final Logger LOGGER = LoggerFactory.getLogger(SessionFactoryFactory.class);
     private static final String DEFAULT_NAME = "hibernate";
 

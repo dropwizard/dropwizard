@@ -103,6 +103,7 @@ import java.util.concurrent.TimeUnit;
  * </table>
  */
 public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware> implements AppenderFactory<E> {
+    @SuppressWarnings("Slf4jLoggerShouldBeNonStatic")
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractAppenderFactory.class);
 
     @NotNull

@@ -15,6 +15,7 @@ import java.util.Objects;
 public class HttpHealthCheck extends HealthCheck {
     // visible for testing
     static final Duration DEFAULT_TIMEOUT = Duration.ofSeconds(2);
+    @SuppressWarnings("Slf4jLoggerShouldBeNonStatic")
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpHealthCheck.class);
     @Nonnull
     private final String url;

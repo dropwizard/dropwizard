@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
  */
 @Provider
 public class FuzzyEnumParamConverter<T> implements ParamConverter<T> {
+    @SuppressWarnings("Slf4jLoggerShouldBeNonStatic")
     private static final Logger LOGGER = LoggerFactory.getLogger(FuzzyEnumParamConverter.class);
 
     private final Class<T> rawType;

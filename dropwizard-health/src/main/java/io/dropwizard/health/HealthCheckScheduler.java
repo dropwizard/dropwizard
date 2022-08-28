@@ -11,6 +11,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 class HealthCheckScheduler {
+    @SuppressWarnings("Slf4jLoggerShouldBeNonStatic")
     private static final Logger LOGGER = LoggerFactory.getLogger(HealthCheckScheduler.class);
 
     private final ScheduledExecutorService executorService;

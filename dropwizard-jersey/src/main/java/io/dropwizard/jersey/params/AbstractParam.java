@@ -16,6 +16,7 @@ import javax.ws.rs.core.Response.Status;
  * @param <T> the type of value wrapped by the parameter
  */
 public abstract class AbstractParam<T> {
+    @SuppressWarnings("Slf4jLoggerShouldBeNonStatic")
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractParam.class);
     private final String parameterName;
     private final T value;

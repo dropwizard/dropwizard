@@ -17,6 +17,7 @@ import java.util.concurrent.ThreadFactory;
 import static java.util.Objects.requireNonNull;
 
 public class LifecycleEnvironment {
+    @SuppressWarnings("Slf4jLoggerShouldBeNonStatic")
     private static final Logger LOGGER = LoggerFactory.getLogger(LifecycleEnvironment.class);
 
     private final List<LifeCycle> managedObjects;

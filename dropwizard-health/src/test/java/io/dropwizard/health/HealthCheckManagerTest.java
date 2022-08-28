@@ -410,6 +410,7 @@ class HealthCheckManagerTest {
     }
 
     private static class CountingHealthCheck extends HealthCheck {
+        @SuppressWarnings("Slf4jLoggerShouldBeNonStatic")
         private static final Logger log = LoggerFactory.getLogger(CountingHealthCheck.class);
         private final Counter counter = new Counter();
 

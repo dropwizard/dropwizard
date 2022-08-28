@@ -18,6 +18,7 @@ import java.util.Set;
  * refresh ssl configuration on request
  */
 public class SslReloadBundle implements ConfiguredBundle<Configuration> {
+    @SuppressWarnings("Slf4jLoggerShouldBeNonStatic")
     private static final Logger LOGGER = LoggerFactory.getLogger(SslReloadBundle.class);
 
     private final SslReloadTask reloadTask = new SslReloadTask();

@@ -44,6 +44,7 @@ import java.util.List;
  * </table>
  */
 public class MetricsFactory {
+    @SuppressWarnings("Slf4jLoggerShouldBeNonStatic")
     private static final Logger LOGGER = LoggerFactory.getLogger(MetricsFactory.class);
 
     @Valid

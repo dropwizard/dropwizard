@@ -18,6 +18,7 @@ import static java.util.Objects.requireNonNull;
 @Provider
 public class PersistenceExceptionMapper implements ExtendedExceptionMapper<PersistenceException> {
 
+    @SuppressWarnings("Slf4jLoggerShouldBeNonStatic")
     private static final Logger LOGGER = LoggerFactory.getLogger(DataException.class);
 
     @Context

@@ -12,6 +12,7 @@ import java.time.Duration;
 import java.util.Objects;
 
 public class TcpHealthCheck extends HealthCheck {
+    @SuppressWarnings("Slf4jLoggerShouldBeNonStatic")
     private static final Logger LOGGER = LoggerFactory.getLogger(TcpHealthCheck.class);
 
     private static final Duration DEFAULT_CONNECTION_TIMEOUT = Duration.ofSeconds(2);

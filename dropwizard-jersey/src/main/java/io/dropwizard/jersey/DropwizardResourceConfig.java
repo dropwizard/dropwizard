@@ -44,6 +44,7 @@ import java.util.stream.Collectors;
 import static java.util.Objects.requireNonNull;
 
 public class DropwizardResourceConfig extends ResourceConfig {
+    @SuppressWarnings("Slf4jLoggerShouldBeNonStatic")
     private static final Logger LOGGER = LoggerFactory.getLogger(DropwizardResourceConfig.class);
     private static final String NEWLINE = String.format("%n");
     private static final TypeResolver TYPE_RESOLVER = new TypeResolver();

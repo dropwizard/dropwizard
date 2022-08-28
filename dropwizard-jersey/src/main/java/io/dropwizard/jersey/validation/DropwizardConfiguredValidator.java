@@ -24,6 +24,7 @@ import java.util.Set;
 import static java.util.Objects.requireNonNull;
 
 public class DropwizardConfiguredValidator implements ConfiguredValidator {
+    @SuppressWarnings("Slf4jLoggerShouldBeNonStatic")
     private static final Logger LOGGER = LoggerFactory.getLogger(DropwizardConfiguredValidator.class);
 
     private final Validator validator;

@@ -25,6 +25,7 @@ public class JsonHealthResponseProvider implements HealthResponseProvider {
     public static final String CHECK_TYPE_QUERY_PARAM = "type";
     public static final String NAME_QUERY_PARAM = "name";
     public static final String ALL_VALUE = "all";
+    @SuppressWarnings("Slf4jLoggerShouldBeNonStatic")
     private static final Logger LOGGER = LoggerFactory.getLogger(JsonHealthResponseProvider.class);
     private static final String MEDIA_TYPE = MediaType.APPLICATION_JSON;
 

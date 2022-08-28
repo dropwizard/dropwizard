@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Objects;
 
 class ScheduledHealthCheck implements Runnable {
+    @SuppressWarnings("Slf4jLoggerShouldBeNonStatic")
     private static final Logger LOGGER = LoggerFactory.getLogger(ScheduledHealthCheck.class);
 
     private final String name;

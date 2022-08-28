@@ -32,6 +32,7 @@ import static java.util.concurrent.Executors.defaultThreadFactory;
 
 @JsonTypeName("default")
 public class DefaultHealthFactory implements HealthFactory {
+    @SuppressWarnings("Slf4jLoggerShouldBeNonStatic")
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultHealthFactory.class);
 
     private static final String DEFAULT_BASE_NAME = "health-check";

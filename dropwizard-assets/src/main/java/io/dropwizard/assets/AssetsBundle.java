@@ -13,6 +13,7 @@ import java.nio.charset.StandardCharsets;
  * A bundle for serving static asset files from the classpath.
  */
 public class AssetsBundle implements ConfiguredBundle<Configuration> {
+    @SuppressWarnings("Slf4jLoggerShouldBeNonStatic")
     private static final Logger LOGGER = LoggerFactory.getLogger(AssetsBundle.class);
 
     private static final String DEFAULT_ASSETS_NAME = "assets";

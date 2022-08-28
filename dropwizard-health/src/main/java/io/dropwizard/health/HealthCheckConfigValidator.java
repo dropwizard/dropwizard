@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 class HealthCheckConfigValidator implements Managed {
+    @SuppressWarnings("Slf4jLoggerShouldBeNonStatic")
     private static final Logger LOGGER = LoggerFactory.getLogger(HealthCheckConfigValidator.class);
 
     private final List<HealthCheckConfiguration> configs;

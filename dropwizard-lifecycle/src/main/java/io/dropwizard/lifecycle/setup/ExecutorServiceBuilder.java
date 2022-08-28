@@ -19,6 +19,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class ExecutorServiceBuilder {
+    @SuppressWarnings("Slf4jLoggerShouldBeNonStatic")
     private static Logger log = LoggerFactory.getLogger(ExecutorServiceBuilder.class);
 
     private static final AtomicLong COUNT = new AtomicLong(0);

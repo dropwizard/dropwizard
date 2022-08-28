@@ -11,6 +11,7 @@ import java.util.Collection;
 import java.util.Objects;
 
 public class HealthEnvironment {
+    @SuppressWarnings("Slf4jLoggerShouldBeNonStatic")
     private static final Logger LOGGER = LoggerFactory.getLogger(HealthEnvironment.class);
 
     @Nonnull

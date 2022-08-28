@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 
 class HealthCheckManager implements HealthCheckRegistryListener, HealthStatusChecker, ShutdownNotifier,
     HealthStateListener, HealthStateAggregator {
+    @SuppressWarnings("Slf4jLoggerShouldBeNonStatic")
     private static final Logger LOGGER = LoggerFactory.getLogger(HealthCheckManager.class);
 
     private final AtomicBoolean isAppAlive = new AtomicBoolean(true);

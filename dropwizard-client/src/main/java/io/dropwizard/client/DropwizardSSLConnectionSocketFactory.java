@@ -24,6 +24,7 @@ import java.util.List;
 import static java.util.Objects.requireNonNull;
 
 public class DropwizardSSLConnectionSocketFactory {
+    @SuppressWarnings("Slf4jLoggerShouldBeNonStatic")
     private static final Logger log = LoggerFactory.getLogger(DropwizardSSLConnectionSocketFactory.class);
 
     private final TlsConfiguration configuration;

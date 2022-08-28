@@ -224,6 +224,7 @@ import java.util.stream.Collectors;
  * @see SimpleServerFactory
  */
 public abstract class AbstractServerFactory implements ServerFactory {
+    @SuppressWarnings("Slf4jLoggerShouldBeNonStatic")
     private static final Logger LOGGER = LoggerFactory.getLogger(ServerFactory.class);
 
     @Valid

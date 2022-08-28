@@ -225,6 +225,7 @@ import java.util.stream.Collectors;
  */
 @JsonTypeName("https")
 public class HttpsConnectorFactory extends HttpConnectorFactory {
+    @SuppressWarnings("Slf4jLoggerShouldBeNonStatic")
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpsConnectorFactory.class);
     private static final AtomicBoolean LOGGED = new AtomicBoolean(false);
 

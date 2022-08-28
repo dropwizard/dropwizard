@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
  * determine the instance should no longer receive requests.
  */
 public class DelayedShutdownHandler extends AbstractLifeCycle {
+    @SuppressWarnings("Slf4jLoggerShouldBeNonStatic")
     private static final Logger LOGGER = LoggerFactory.getLogger(DelayedShutdownHandler.class);
 
     private final ShutdownNotifier shutdownNotifier;

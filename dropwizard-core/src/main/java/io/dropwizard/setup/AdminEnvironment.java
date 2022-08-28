@@ -18,6 +18,7 @@ import static java.util.Objects.requireNonNull;
  * The administrative environment of a Dropwizard application.
  */
 public class AdminEnvironment extends ServletEnvironment {
+    @SuppressWarnings("Slf4jLoggerShouldBeNonStatic")
     private static final Logger LOGGER = LoggerFactory.getLogger(AdminEnvironment.class);
 
     private final HealthCheckRegistry healthChecks;

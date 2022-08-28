@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 import static java.util.Objects.requireNonNull;
 
 public class ServletHealthResponder extends HttpServlet {
+    @SuppressWarnings("Slf4jLoggerShouldBeNonStatic")
     private static final Logger LOGGER = LoggerFactory.getLogger(ServletHealthResponder.class);
 
     private final HealthResponseProvider healthResponseProvider;

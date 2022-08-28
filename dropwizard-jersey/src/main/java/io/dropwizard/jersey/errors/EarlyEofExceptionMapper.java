@@ -18,6 +18,7 @@ import javax.ws.rs.ext.Provider;
 @Provider
 public class EarlyEofExceptionMapper implements ExceptionMapper<EofException> {
 
+    @SuppressWarnings("Slf4jLoggerShouldBeNonStatic")
     private static final Logger LOGGER = LoggerFactory.getLogger(EarlyEofExceptionMapper.class);
 
     @Override

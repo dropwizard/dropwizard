@@ -41,6 +41,7 @@ import static java.util.Objects.requireNonNull;
  */
 public class TaskServlet extends HttpServlet {
     private static final long serialVersionUID = 7404713218661358124L;
+    @SuppressWarnings("Slf4jLoggerShouldBeNonStatic")
     private static final Logger LOGGER = LoggerFactory.getLogger(TaskServlet.class);
     private static final String DEFAULT_CONTENT_TYPE = "text/plain;charset=UTF-8";
     private final ConcurrentMap<String, Task> tasks;

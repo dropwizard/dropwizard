@@ -24,6 +24,7 @@ public class AllowedMethodsFilter implements Filter {
             "GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS", "PATCH"
     );
 
+    @SuppressWarnings("Slf4jLoggerShouldBeNonStatic")
     private static final Logger LOG = LoggerFactory.getLogger(AllowedMethodsFilter.class);
 
     private Set<String> allowedMethods = Collections.emptySet();

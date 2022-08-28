@@ -21,6 +21,7 @@ import java.util.List;
  */
 public class DiscoverableSubtypeResolver extends StdSubtypeResolver {
     private static final long serialVersionUID = 1L;
+    @SuppressWarnings("Slf4jLoggerShouldBeNonStatic")
     private static final Logger LOGGER = LoggerFactory.getLogger(DiscoverableSubtypeResolver.class);
 
     private final List<Class<?>> discoveredSubtypes;

@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 
 @Provider
 public class JerseyViolationExceptionMapper implements ExceptionMapper<JerseyViolationException> {
+    @SuppressWarnings("Slf4jLoggerShouldBeNonStatic")
     private static final Logger LOGGER = LoggerFactory.getLogger(JerseyViolationExceptionMapper.class);
 
     @Override

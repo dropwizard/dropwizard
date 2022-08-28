@@ -23,6 +23,7 @@ import java.util.Set;
 import static java.util.Objects.requireNonNull;
 
 public class ServletEnvironment {
+    @SuppressWarnings("Slf4jLoggerShouldBeNonStatic")
     private static final Logger LOGGER = LoggerFactory.getLogger(ServletEnvironment.class);
 
     private final MutableServletContextHandler handler;

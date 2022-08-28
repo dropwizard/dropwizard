@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import java.util.function.Consumer;
 
 public class DbCalculateChecksumCommand<T extends Configuration> extends AbstractLiquibaseCommand<T> {
+    @SuppressWarnings("Slf4jLoggerShouldBeNonStatic")
     private static final Logger LOGGER = LoggerFactory.getLogger("liquibase");
 
     private Consumer<CheckSum> checkSumConsumer = checkSum -> LOGGER.info("checksum = {}", checkSum);

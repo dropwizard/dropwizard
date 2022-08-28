@@ -20,6 +20,7 @@ import static io.dropwizard.util.Throwables.findThrowableInChain;
 @Provider
 public class ViewRenderExceptionMapper implements ExtendedExceptionMapper<WebApplicationException> {
 
+    @SuppressWarnings("Slf4jLoggerShouldBeNonStatic")
     private static final Logger LOGGER = LoggerFactory.getLogger(ViewRenderExceptionMapper.class);
 
     /**

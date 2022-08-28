@@ -68,6 +68,7 @@ import java.util.Map;
  */
 @JsonTypeName("default")
 public class DefaultServerFactory extends AbstractServerFactory {
+    @SuppressWarnings("Slf4jLoggerShouldBeNonStatic")
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultServerFactory.class);
 
     @Valid

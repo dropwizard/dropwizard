@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
  * @param <T> the {@link Configuration} subclass which is loaded from the configuration file
  */
 public class ServerCommand<T extends Configuration> extends EnvironmentCommand<T> {
+    @SuppressWarnings("Slf4jLoggerShouldBeNonStatic")
     private static final Logger LOGGER = LoggerFactory.getLogger(ServerCommand.class);
 
     private final Class<T> configurationClass;

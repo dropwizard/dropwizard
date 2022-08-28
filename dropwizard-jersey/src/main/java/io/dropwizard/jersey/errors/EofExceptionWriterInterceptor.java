@@ -24,6 +24,7 @@ import java.io.IOException;
 @Provider
 @Priority(Integer.MAX_VALUE)
 public class EofExceptionWriterInterceptor implements WriterInterceptor {
+    @SuppressWarnings("Slf4jLoggerShouldBeNonStatic")
     private static final Logger LOGGER = LoggerFactory.getLogger(EofExceptionWriterInterceptor.class);
 
     private final Counter exceptionCounter;
