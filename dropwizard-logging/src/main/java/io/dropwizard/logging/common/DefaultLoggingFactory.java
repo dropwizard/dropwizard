@@ -3,7 +3,6 @@ package io.dropwizard.logging.common;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.classic.jmx.JMXConfigurator;
 import ch.qos.logback.classic.jul.LevelChangePropagator;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
@@ -30,14 +29,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-import javax.management.InstanceAlreadyExistsException;
-import javax.management.MBeanRegistrationException;
-import javax.management.MBeanServer;
-import javax.management.MalformedObjectNameException;
-import javax.management.NotCompliantMBeanException;
-import javax.management.ObjectName;
 import java.io.PrintStream;
-import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -51,7 +43,6 @@ import static java.util.Objects.requireNonNull;
 
 @JsonTypeName("default")
 public class DefaultLoggingFactory implements LoggingFactory {
-    private static final ReentrantLock MBEAN_REGISTRATION_LOCK = new ReentrantLock();
     private static final ReentrantLock CHANGE_LOGGER_CONTEXT_LOCK = new ReentrantLock();
 
     @NotNull
@@ -143,23 +134,6 @@ public class DefaultLoggingFactory implements LoggingFactory {
             StatusPrinter.printIfErrorsOccured(loggerContext);
         } finally {
             StatusPrinter.setPrintStream(System.out);
-        }
-
-        final MBeanServer server = ManagementFactory.getPlatformMBeanServer();
-        MBEAN_REGISTRATION_LOCK.lock();
-        try {
-            final ObjectName objectName = new ObjectName("io.dropwizard:type=Logging");
-            if (!server.isRegistered(objectName)) {
-                server.registerMBean(new JMXConfigurator(loggerContext,
-                                server,
-                                objectName),
-                        objectName);
-            }
-        } catch (MalformedObjectNameException | InstanceAlreadyExistsException |
-                NotCompliantMBeanException | MBeanRegistrationException e) {
-            throw new RuntimeException(e);
-        } finally {
-            MBEAN_REGISTRATION_LOCK.unlock();
         }
 
         configureInstrumentation(root, metricRegistry);
