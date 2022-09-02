@@ -1,14 +1,21 @@
 package io.dropwizard.hibernate;
 
-import javassist.util.proxy.Proxy;
-import javassist.util.proxy.ProxyFactory;
+import net.bytebuddy.ByteBuddy;
+import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
+import net.bytebuddy.implementation.MethodDelegation;
+import net.bytebuddy.implementation.bind.annotation.Origin;
+import net.bytebuddy.implementation.bind.annotation.RuntimeType;
+import net.bytebuddy.implementation.bind.annotation.SuperCall;
+import net.bytebuddy.matcher.ElementMatchers;
 import org.hibernate.SessionFactory;
 
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Callable;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -69,39 +76,17 @@ public class UnitOfWorkAwareProxyFactory {
      * @param <T>                   the type of the class
      * @return a new proxy
      */
-    @SuppressWarnings("unchecked")
     public <T> T create(Class<T> clazz, Class<?>[] constructorParamTypes, Object[] constructorArguments) {
-        final ProxyFactory factory = new ProxyFactory();
-        factory.setSuperclass(clazz);
+        final Class<? extends T> proxied = new ByteBuddy().subclass(clazz).method(ElementMatchers.any())
+            .intercept(MethodDelegation.to(new MethodInterceptor(sessionFactories)))
+            .make()
+            .load(clazz.getClassLoader(), ClassLoadingStrategy.Default.INJECTION)
+            .getLoaded();
 
         try {
-            final Proxy proxy = (Proxy) (constructorParamTypes.length == 0 ?
-                    factory.createClass().getConstructor().newInstance() :
-                    factory.create(constructorParamTypes, constructorArguments));
-            proxy.setHandler((self, overridden, proceed, args) -> {
-                final UnitOfWork[] unitsOfWork = overridden.getAnnotationsByType(UnitOfWork.class);
-                final Map<UnitOfWork, UnitOfWorkAspect> unitOfWorkAspectMap = new HashMap<>();
-                Arrays
-                    .stream(unitsOfWork)
-                    .collect(Collectors.toMap(UnitOfWork::value, Function.identity(), (first, second) -> second))
-                    .values()
-                    .forEach(unitOfWork -> unitOfWorkAspectMap.put(unitOfWork, newAspect(sessionFactories)));
-                try {
-                    unitOfWorkAspectMap.forEach((unitOfWork, unitOfWorkAspect) -> unitOfWorkAspect.beforeStart(unitOfWork));
-                    Object result = proceed.invoke(self, args);
-                    unitOfWorkAspectMap.values().forEach(UnitOfWorkAspect::afterEnd);
-                    return result;
-                } catch (InvocationTargetException e) {
-                    unitOfWorkAspectMap.values().forEach(UnitOfWorkAspect::onError);
-                    throw e.getCause();
-                } catch (Exception e) {
-                    unitOfWorkAspectMap.values().forEach(UnitOfWorkAspect::onError);
-                    throw e;
-                } finally {
-                    unitOfWorkAspectMap.values().forEach(UnitOfWorkAspect::onFinish);
-                }
-            });
-            return (T) proxy;
+            return (constructorParamTypes.length == 0 ?
+                    proxied.getConstructor().newInstance() :
+                    proxied.getConstructor(constructorParamTypes).newInstance(constructorArguments));
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException |
                 InvocationTargetException e) {
             throw new IllegalStateException("Unable to create a proxy for the class '" + clazz + "'", e);
@@ -121,5 +106,47 @@ public class UnitOfWorkAwareProxyFactory {
      */
     public UnitOfWorkAspect newAspect(Map<String, SessionFactory> sessionFactories) {
         return new UnitOfWorkAspect(sessionFactories);
+    }
+
+    class MethodInterceptor {
+
+        private final Map<String, SessionFactory> sessionFactories;
+
+        public MethodInterceptor(Map<String, SessionFactory> sessionFactories) {
+          this.sessionFactories = sessionFactories;
+        }
+
+        @RuntimeType
+        Object invoke(@Origin Method overridden, @SuperCall Callable<Object> proxy) throws Throwable {
+            final UnitOfWork[] unitsOfWork = overridden.getAnnotationsByType(UnitOfWork.class);
+            if (unitsOfWork.length == 0) {
+                return proxy.call();
+            }
+            final Map<UnitOfWork, UnitOfWorkAspect> unitOfWorkAspectMap;
+            if (unitsOfWork.length == 1) {
+                unitOfWorkAspectMap = Collections.singletonMap(unitsOfWork[0], newAspect(sessionFactories));
+            } else {
+                unitOfWorkAspectMap = new HashMap<>();
+                Arrays
+                    .stream(unitsOfWork)
+                    .collect(Collectors.toMap(UnitOfWork::value, Function.identity(), (first, second) -> second))
+                    .values()
+                    .forEach(unitOfWork -> unitOfWorkAspectMap.put(unitOfWork, newAspect(sessionFactories)));
+            }
+            try {
+                unitOfWorkAspectMap.forEach((unitOfWork, unitOfWorkAspect) -> unitOfWorkAspect.beforeStart(unitOfWork));
+                Object result = proxy.call();
+                unitOfWorkAspectMap.values().forEach(UnitOfWorkAspect::afterEnd);
+                return result;
+            } catch (InvocationTargetException e) {
+                unitOfWorkAspectMap.values().forEach(UnitOfWorkAspect::onError);
+                throw e.getCause();
+            } catch (Exception e) {
+                unitOfWorkAspectMap.values().forEach(UnitOfWorkAspect::onError);
+                throw e;
+            } finally {
+                unitOfWorkAspectMap.values().forEach(UnitOfWorkAspect::onFinish);
+            }
+        }
     }
 }
