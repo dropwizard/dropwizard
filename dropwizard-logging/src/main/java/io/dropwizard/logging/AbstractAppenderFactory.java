@@ -156,6 +156,8 @@ public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware>
     }
 
     /**
+     * Returns the duration required between logged messages. Messages logged more frequently than this will be dropped.
+     * A {@code null} value means there is no rate limit.
      * @since 2.0
      */
     @JsonProperty
@@ -165,6 +167,8 @@ public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware>
     }
 
     /**
+     * Sets the time period required between logged messages. Messages logged more frequently than this will be dropped.
+     * A {@code null} value disables the rate limit.
      * @since 2.0
      */
     @JsonProperty
