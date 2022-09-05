@@ -12,6 +12,10 @@
     <artifactId>dropwizard-forms</artifactId>
     <name>Dropwizard Multipart Form Support</name>
 
+    <properties>
+        <module.name>io.dropwizard.forms</module.name>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>io.dropwizard</groupId>

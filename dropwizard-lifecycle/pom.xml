@@ -12,6 +12,10 @@
     <artifactId>dropwizard-lifecycle</artifactId>
     <name>Dropwizard Lifecycle Support</name>
 
+    <properties>
+        <module.name>io.dropwizard.lifecycle</module.name>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.slf4j</groupId>

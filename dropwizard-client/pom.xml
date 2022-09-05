@@ -12,6 +12,10 @@
     <artifactId>dropwizard-client</artifactId>
     <name>Dropwizard HTTP Client</name>
 
+    <properties>
+        <module.name>io.dropwizard.client</module.name>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>io.dropwizard</groupId>
