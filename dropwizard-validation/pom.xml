@@ -12,6 +12,10 @@
     <artifactId>dropwizard-validation</artifactId>
     <name>Dropwizard Validation Support</name>
 
+    <properties>
+        <module.name>io.dropwizard.validation</module.name>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>io.dropwizard</groupId>

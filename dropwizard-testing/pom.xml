@@ -12,6 +12,10 @@
     <artifactId>dropwizard-testing</artifactId>
     <name>Dropwizard Test Helpers</name>
 
+    <properties>
+        <module.name>io.dropwizard.testing</module.name>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>io.dropwizard</groupId>
