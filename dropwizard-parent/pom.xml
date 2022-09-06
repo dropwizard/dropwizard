@@ -197,6 +197,8 @@
                                         <exclude>javax.activation:javax.activation-api</exclude>
                                         <!-- Replaced with jakarta.servlet:jakarta.servlet-api -->
                                         <exclude>javax.servlet:javax.servlet-api</exclude>
+                                        <!-- Replaced with jakarta.servlet:jakarta.servlet-api -->
+                                        <exclude>org.eclipse.jetty.toolchain:jetty-servlet-api</exclude>
                                         <!-- Replaced with jakarta.validation:jakarta.validation-api -->
                                         <exclude>javax.validation:validation-api</exclude>
                                         <!-- Replaced with jakarta.xml.bind:jakarta.xml.bind-api -->
