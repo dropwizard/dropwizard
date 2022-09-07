@@ -4,10 +4,51 @@
 Upgrade Notes for Dropwizard 3.0.x
 ##################################
 
+Java version changes
+====================
+As already mentioned in the `Upgrade notes for 2.1.x <https://www.dropwizard.io/en/latest/manual/upgrade-notes/upgrade-notes-2_1_x.html>`_, Dropwizard 3.0.0 drops support for Java versions less than 11.
+
+Jetty 10
+========
+The main change introduced in Dropwizard 3.0.0 is the upgrade to Jetty 10.0.x. Jetty 10.0.x is built for Java 11, therefore the Java version change was necessary.
+
+This change comes with some migration cost. For detailed information regarding the changes introduced in Jetty 10.0.x, refer to the `Jetty migration guide <https://www.eclipse.org/jetty/documentation/jetty-10/programming-guide/index.html#pg-migration-94-to-10>`_.
+
+The main changes for Dropwizard are the following:
+
+ - the ``addLifeCycleListener(...)`` method was replaced by the ``addEventListener(...)`` method
+ - the ``SecureRequestCustomizer`` was changed (see :ref:`SNI host checking <upgrade-notes-dropwizard-3_0_x-sni>`)
+ - the option to exclude specific user agents got removed from the ``GzipHandlerFactory``
+
+.. _upgrade-notes-dropwizard-3_0_x-sni:
+
+SNI host checking
+-----------------
+Jetty 10.0.x introduces stricter SNI host checking. Therefore you may encounter problems when making requests over HTTPS.
+
+To solve this issue, the ``HttpsConnectorFactory`` got the ``disableSniHostCheck`` configuration option, which defaults to ``false`` to enable strict security for an application.
+When setting it to ``true``, the SNI host check gets disabled.
+
+Apache HttpClient 5
+===================
+The Apache HttpClient was updated to version 5.x. This version moves several classes to other packages, moves classes between HttpClient and HttpCore and changes all namespace names.
+The new prefixes are ``org.apache.hc.client5`` for the client classes and ``org.apache.hc.core5`` for the core classes.
+
+The most functions from Dropwizard are provided as before, but some changes have to be made:
+
+ - the ``normalizeUri`` setting is removed
+ - the ``CredentialsProvider`` is replaced by the ``CredentialsStore``
+ - the ``ServiceUnavailableRetryStrategy`` is removed
+ - the ``HttpRequestRetryHandler`` is replaced by the ``HttpRequestRetryStrategy``
+
+For more information refer to the `Apache HttpClient 5.0 migration guide <https://hc.apache.org/httpcomponents-client-5.1.x/migration-guide/migration-to-classic.html>`_.
+
 Dropwizard Package Structure and JPMS
 =====================================
 
 In order to properly support the Java Platform Module System (JPMS), the Java packages in modules must not overlap, or put differently, the packages may not be split into multiple modules.
+
+Dropwizard 3.0.0 won't enable full support for the JPMS. Instead, as a transition step, automatic modules are introduced.
 
 See also: `Java 9 Migration Guide: Split Packages <https://nipafx.dev/java-9-migration-guide/#split-packages>`_
 
@@ -30,3 +71,9 @@ JUnit 4.x support
 =================
 
 Support for testing with JUnit 4.x has been moved from `dropwizard-testing` to `dropwizard-testing-junit4 <https://github.com/dropwizard/dropwizard-testing-junit4>`_.
+
+Removal of classes from `dropwizard-util`
+=========================================
+Many classes from the ``dropwizard-util`` module are now obsolete, since the Java standard library provides replacements for them.
+
+For example the ``Sets`` class provided helper methods for creating ``Set`` instances. Starting from Java 9, this can be done by using ``Set.of(...)``.
