@@ -122,8 +122,8 @@ public class DefaultLoggingFactory implements LoggingFactory {
     public void configure(MetricRegistry metricRegistry, String name) {
         LoggingUtil.hijackJDKLogging();
 
-        CHANGE_LOGGER_CONTEXT_LOCK.lock();
         final Logger root;
+        CHANGE_LOGGER_CONTEXT_LOCK.lock();
         try {
             root = configureLoggers(name);
         } finally {

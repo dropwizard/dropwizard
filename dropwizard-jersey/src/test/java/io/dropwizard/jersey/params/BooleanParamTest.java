@@ -42,10 +42,9 @@ class BooleanParamTest {
     }
 
     private void booleanParamNegativeTest(@Nullable String input) {
-        final ErrorMessage expected = new ErrorMessage(400, "Parameter must be \"true\" or \"false\".");
         assertThatExceptionOfType(WebApplicationException.class)
             .isThrownBy(() -> new BooleanParam(input))
             .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(400))
-            .satisfies(e -> assertThat(e.getResponse().getEntity()).isEqualTo(expected));
+            .satisfies(e -> assertThat(e.getMessage()).isEqualTo("Parameter must be \"true\" or \"false\"."));
     }
 }
