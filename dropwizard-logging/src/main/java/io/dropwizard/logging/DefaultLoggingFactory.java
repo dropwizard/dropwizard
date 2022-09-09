@@ -145,22 +145,7 @@ public class DefaultLoggingFactory implements LoggingFactory {
             StatusPrinter.setPrintStream(System.out);
         }
 
-        final MBeanServer server = ManagementFactory.getPlatformMBeanServer();
-        MBEAN_REGISTRATION_LOCK.lock();
-        try {
-            final ObjectName objectName = new ObjectName("io.dropwizard:type=Logging");
-            if (!server.isRegistered(objectName)) {
-                server.registerMBean(new JMXConfigurator(loggerContext,
-                                server,
-                                objectName),
-                        objectName);
-            }
-        } catch (MalformedObjectNameException | InstanceAlreadyExistsException |
-                NotCompliantMBeanException | MBeanRegistrationException e) {
-            throw new RuntimeException(e);
-        } finally {
-            MBEAN_REGISTRATION_LOCK.unlock();
-        }
+        configureJMX();
 
         configureInstrumentation(root, metricRegistry);
     }
@@ -239,6 +224,30 @@ public class DefaultLoggingFactory implements LoggingFactory {
         appender.setContext(loggerContext);
         appender.start();
         root.addAppender(appender);
+    }
+
+    private void configureJMX() {
+        try {
+            Class.forName("ch.qos.logback.classic.jmx.JMXConfigurator");
+        } catch (ClassNotFoundException e) {
+            return;
+        }
+        final MBeanServer server = ManagementFactory.getPlatformMBeanServer();
+        MBEAN_REGISTRATION_LOCK.lock();
+        try {
+            final ObjectName objectName = new ObjectName("io.dropwizard:type=Logging");
+            if (!server.isRegistered(objectName)) {
+                server.registerMBean(new JMXConfigurator(loggerContext,
+                        server,
+                        objectName),
+                    objectName);
+            }
+        } catch (MalformedObjectNameException | InstanceAlreadyExistsException |
+                 NotCompliantMBeanException | MBeanRegistrationException e) {
+            throw new RuntimeException(e);
+        } finally {
+            MBEAN_REGISTRATION_LOCK.unlock();
+        }
     }
 
     private Logger configureLoggers(String name) {
