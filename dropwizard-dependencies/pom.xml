@@ -20,7 +20,7 @@
         <!-- External dependencies -->
         <activation-api.version>1.2.2</activation-api.version>
         <argparse4j.version>0.9.0</argparse4j.version>
-        <byte-buddy.version>1.12.14</byte-buddy.version>
+        <byte-buddy.version>1.12.16</byte-buddy.version>
         <caffeine.version>2.9.3</caffeine.version>
         <checker-qual.version>3.25.0</checker-qual.version>
         <classmate.version>1.5.1</classmate.version>
@@ -47,7 +47,7 @@
         <javax.persistence-api.version>2.2</javax.persistence-api.version>
         <jaxb-api.version>2.3.3</jaxb-api.version>
         <jdbi3.version>3.32.0</jdbi3.version>
-        <jersey.version>2.36</jersey.version>
+        <jersey.version>2.37</jersey.version>
         <jetty-setuid-java.version>1.0.4</jetty-setuid-java.version>
         <jetty.version>9.4.48.v20220622</jetty.version>
         <joda-time.version>2.11.1</joda-time.version>
@@ -70,7 +70,7 @@
         <h2.version>2.1.214</h2.version>
         <junit.version>4.13.2</junit.version>
         <junit5.version>5.9.0</junit5.version>
-        <mockito.version>4.7.0</mockito.version>
+        <mockito.version>4.8.0</mockito.version>
 
         <!-- Plugin versions -->
         <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
