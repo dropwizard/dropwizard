@@ -1,14 +1,12 @@
 package io.dropwizard.jersey.validation;
 
-import io.dropwizard.jersey.errors.ErrorMessage;
 import io.dropwizard.util.Enums;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ParamConverter;
 import javax.ws.rs.ext.Provider;
 import java.lang.reflect.InvocationTargetException;
@@ -61,16 +59,18 @@ public class FuzzyEnumParamConverter<T> implements ParamConverter<T> {
                     return returnValue;
                 }
                 final String errMsg = String.format("%s is not a valid %s", parameterName, rawType.getSimpleName());
-                throw new WebApplicationException(getErrorResponse(errMsg));
+                throw new BadRequestException(errMsg);
             } catch (IllegalAccessException e) {
                 LOGGER.debug("Not permitted to call fromString on {}", rawType.getSimpleName(), e);
-                throw new WebApplicationException(getErrorResponse("Not permitted to call fromString on %s" + rawType.getSimpleName()));
+                throw new BadRequestException(
+                    "Not permitted to call fromString on " + rawType.getSimpleName());
             } catch (InvocationTargetException e) {
                 if (e.getCause() instanceof WebApplicationException) {
                     throw (WebApplicationException) e.getCause();
                 }
                 LOGGER.debug("Failed to convert {} to {}", parameterName, rawType.getSimpleName(), e);
-                throw new WebApplicationException(getErrorResponse("Failed to convert " + parameterName + " to " + rawType.getSimpleName()));
+                throw new BadRequestException(
+                    "Failed to convert " + parameterName + " to " + rawType.getSimpleName());
             }
         }
 
@@ -86,19 +86,11 @@ public class FuzzyEnumParamConverter<T> implements ParamConverter<T> {
                 .map(Enum::toString)
                 .collect(Collectors.joining(", "));
         final String errMsg = String.format("%s must be one of [%s]", parameterName, constantsList);
-        throw new WebApplicationException(getErrorResponse(errMsg));
+        throw new BadRequestException(errMsg);
     }
 
     @Override
     public String toString(T value) {
         return value.toString();
-    }
-
-    private Response getErrorResponse(String message) {
-        return Response
-                .status(400)
-                .entity(new ErrorMessage(400, message))
-                .type(MediaType.APPLICATION_JSON_TYPE)
-                .build();
     }
 }

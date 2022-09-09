@@ -2,9 +2,12 @@ package io.dropwizard.jersey.validation;
 
 import io.dropwizard.jersey.AbstractJerseyTest;
 import io.dropwizard.jersey.DropwizardResourceConfig;
+import io.dropwizard.jersey.errors.LoggingExceptionMapper;
 import io.dropwizard.jersey.jackson.JacksonMessageBodyProviderTest.Example;
 import io.dropwizard.jersey.jackson.JacksonMessageBodyProviderTest.ListExample;
 import io.dropwizard.jersey.jackson.JacksonMessageBodyProviderTest.PartialExample;
+
+import org.glassfish.jersey.internal.inject.AbstractBinder;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -15,6 +18,8 @@ import javax.ws.rs.core.Form;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.ext.ExceptionMapper;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
@@ -24,6 +29,13 @@ import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
+    private static class LoggingExceptionMapperBinder extends AbstractBinder {
+        protected void configure() {
+            this.bind(new LoggingExceptionMapper<Throwable>() {
+            }).to(ExceptionMapper.class);
+        }
+    }
+
     private static final Locale DEFAULT_LOCALE = Locale.getDefault();
 
     @Override
@@ -31,6 +43,7 @@ class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
         return DropwizardResourceConfig.forTesting()
                 .packages("io.dropwizard.jersey.validation")
                 .register(new ValidatingResource2())
+                .register(new LoggingExceptionMapperBinder())
                 .register(new HibernateValidationBinder(Validators.newValidator()));
     }
 
@@ -1271,7 +1284,8 @@ class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
                 .get();
 
         assertThat(response.getStatus()).isEqualTo(404);
-        assertThat(response.hasEntity()).isFalse();
+        assertThat(response.readEntity(String.class))
+            .isEqualTo("{\"code\":404,\"message\":\"HTTP 404 Not Found\"}");
     }
 
     @Test
@@ -1327,7 +1341,8 @@ class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
                 .get();
 
         assertThat(response.getStatus()).isEqualTo(404);
-        assertThat(response.hasEntity()).isFalse();
+        assertThat(response.readEntity(String.class))
+            .isEqualTo("{\"code\":404,\"message\":\"HTTP 404 Not Found\"}");
     }
 
     @Test
