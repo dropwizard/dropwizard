@@ -9,7 +9,6 @@ import io.dropwizard.jersey.caching.CacheControlledResponseFeature;
 import io.dropwizard.jersey.params.AbstractParamConverterProvider;
 import io.dropwizard.jersey.sessions.SessionFactoryProvider;
 import io.dropwizard.jersey.validation.FuzzyEnumParamConverterProvider;
-import io.dropwizard.util.JavaVersion;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.LoaderClassPath;
@@ -163,12 +162,7 @@ public class DropwizardResourceConfig extends ResourceConfig {
                 pool.insertClassPath(new LoaderClassPath(this.getClass().getClassLoader()));
                 final CtClass cc = pool.makeClass(SpecificBinder.class.getName() + UUID.randomUUID());
                 cc.setSuperclass(pool.get(SpecificBinder.class.getName()));
-                final Object binderProxy;
-                if (JavaVersion.isJava8()) {
-                    binderProxy = cc.toClass().getConstructor(Object.class, Class.class).newInstance(object, clazz);
-                } else {
-                    binderProxy = cc.toClass(SpecificBinder.class).getConstructor(Object.class, Class.class).newInstance(object, clazz);
-                }
+                final Object binderProxy = cc.toClass(SpecificBinder.class).getConstructor(Object.class, Class.class).newInstance(object, clazz);
                 super.register(binderProxy);
                 return super.register(clazz);
             } catch (Exception e) {
