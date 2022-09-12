@@ -18,6 +18,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.logback.AsyncAppenderBaseProxy;
 import io.dropwizard.logging.async.AsyncAppenderFactory;
@@ -266,6 +267,8 @@ public class DefaultLoggingFactory implements LoggingFactory {
         final AsyncAppenderFactory<ILoggingEvent> asyncAppenderFactory = new AsyncLoggingEventAppenderFactory();
         final LayoutFactory<ILoggingEvent> layoutFactory = new DropwizardLayoutFactory();
 
+        final ObjectMapper objectMapper = Jackson.newObjectMapper();
+
         for (Map.Entry<String, JsonNode> entry : loggers.entrySet()) {
             final Logger logger = loggerContext.getLogger(entry.getKey());
             final JsonNode jsonNode = entry.getValue();
@@ -276,7 +279,7 @@ public class DefaultLoggingFactory implements LoggingFactory {
                 // A level and an appender
                 final LoggerConfiguration configuration;
                 try {
-                    configuration = Jackson.newObjectMapper().treeToValue(jsonNode, LoggerConfiguration.class);
+                    configuration = objectMapper.treeToValue(jsonNode, LoggerConfiguration.class);
                 } catch (JsonProcessingException e) {
                     throw new IllegalArgumentException("Wrong format of logger '" + entry.getKey() + "'", e);
                 }
