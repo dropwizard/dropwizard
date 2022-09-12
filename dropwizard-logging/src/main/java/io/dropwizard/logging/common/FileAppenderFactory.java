@@ -208,6 +208,8 @@ public class FileAppenderFactory<E extends DeferredProcessingAware> extends Abst
     }
 
     /**
+     * Returns the total size threshold at which archived log files will be
+     * removed. A zero value means there is limit.
      * @since 2.0
      */
     @JsonProperty
@@ -217,6 +219,8 @@ public class FileAppenderFactory<E extends DeferredProcessingAware> extends Abst
     }
 
     /**
+     * Sets the total size threshold at which archived log files will be
+     * removed. A zero value means there is limit.
      * @since 2.0
      */
     @JsonProperty
@@ -244,6 +248,8 @@ public class FileAppenderFactory<E extends DeferredProcessingAware> extends Abst
     }
 
     /**
+     * Returns a boolean indicating whether the {@code totalSizeCap} property
+     * will be used.
      * @since 2.0
      */
     @JsonIgnore
