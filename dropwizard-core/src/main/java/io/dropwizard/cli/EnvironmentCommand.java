@@ -16,6 +16,7 @@ import javax.annotation.Nullable;
  */
 public abstract class EnvironmentCommand<T extends Configuration> extends ConfiguredCommand<T> {
     private final Application<T> application;
+
     @Nullable
     private Environment environment;
 
@@ -57,7 +58,7 @@ public abstract class EnvironmentCommand<T extends Configuration> extends Config
         configuration.getServerFactory().configure(environment);
         configuration.getHealthFactory().ifPresent(health -> health.configure(
                 environment.lifecycle(),
-                environment.servlets(),
+                health.isOnAdminServlet() ? environment.admin() : environment.servlets(),
                 environment.jersey(),
                 environment.health(),
                 environment.getObjectMapper(),

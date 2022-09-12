@@ -1293,6 +1293,7 @@ Health
         type: json
       responder:
         type: servlet
+      onAdminServlet: false
 
 
 ============================== =======================  ====================================================================================================
@@ -1306,6 +1307,7 @@ healthChecks                   []                       A list of configured hea
 initialOverallState            true                     Flag indicating whether the overall health state of the application should start as healthy or unhealthy. A value of ``true`` indicates an initial state of healthy while a value of ``false`` indicates an initial state of unhealthy.
 responseProvider               json                     The health response provider that is used to respond to generate responses to return to health check requests. This can be implemented using Jersey, Jetty, or other technologies if desired. See the :ref:`detailed JSON health response provider section <man-configuration-health-responseprovider>` for more details.
 responder                      servlet                  The health responder that is used to respond to health check requests. This can be implemented using Jersey, Jetty, or other technologies if desired. See the :ref:`servlet health responder section <man-configuration-health-responder>` for more details.
+onAdminServlet                 false                    Flag indicating whether to run the health check endpoint on the admin servlet instead of the default application servlet.
 ============================== =======================  ====================================================================================================
 
 
