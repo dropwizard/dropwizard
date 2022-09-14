@@ -6,19 +6,16 @@ import jakarta.persistence.PersistenceUnitUtil;
 import jakarta.persistence.Query;
 import jakarta.persistence.SynchronizationType;
 import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.metamodel.Metamodel;
 import org.hibernate.Cache;
 import org.hibernate.HibernateException;
-import org.hibernate.Metamodel;
 import org.hibernate.Session;
 import org.hibernate.SessionBuilder;
 import org.hibernate.SessionFactory;
 import org.hibernate.StatelessSession;
 import org.hibernate.StatelessSessionBuilder;
-import org.hibernate.TypeHelper;
 import org.hibernate.boot.spi.SessionFactoryOptions;
 import org.hibernate.engine.spi.FilterDefinition;
-import org.hibernate.metadata.ClassMetadata;
-import org.hibernate.metadata.CollectionMetadata;
 import org.hibernate.stat.Statistics;
 
 import javax.naming.NamingException;
@@ -27,6 +24,8 @@ import java.sql.Connection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 /** Represents a wrapper/decorator class for a Hibernate session factory that can manage
  *  both a primary session factory and a read-only session factory.
@@ -35,7 +34,7 @@ import java.util.Set;
  *
  */
 
-@SuppressWarnings({"deprecation", "rawtypes"})
+@SuppressWarnings({"rawtypes"})
 public class DualSessionFactory implements SessionFactory {
 
     private static final long serialVersionUID = 1L;
@@ -80,6 +79,11 @@ public class DualSessionFactory implements SessionFactory {
     public CriteriaBuilder getCriteriaBuilder() { return current().getCriteriaBuilder(); }
 
     @Override
+    public Metamodel getMetamodel() {
+        return current().getMetamodel();
+    }
+
+    @Override
     public boolean isOpen() { return current().isOpen(); }
 
     @Override
@@ -99,9 +103,6 @@ public class DualSessionFactory implements SessionFactory {
 
     @Override
     public <T> List<EntityGraph<? super T>> findEntityGraphsByType(Class<T> entityClass) { return current().findEntityGraphsByType(entityClass); }
-
-    @Override
-    public Metamodel getMetamodel() { return current().getMetamodel(); }
 
     @Override
     public Reference getReference() throws NamingException { return current().getReference(); }
@@ -128,6 +129,26 @@ public class DualSessionFactory implements SessionFactory {
     public StatelessSession openStatelessSession(Connection connection) { return current().openStatelessSession(connection); }
 
     @Override
+    public void inSession(Consumer<Session> action) {
+        current().inSession(action);
+    }
+
+    @Override
+    public void inTransaction(Consumer<Session> action) {
+        current().inTransaction(action);
+    }
+
+    @Override
+    public <R> R fromSession(Function<Session, R> action) {
+        return current().fromSession(action);
+    }
+
+    @Override
+    public <R> R fromTransaction(Function<Session, R> action) {
+        return current().fromTransaction(action);
+    }
+
+    @Override
     public Statistics getStatistics() { return current().getStatistics(); }
 
     @Override
@@ -147,22 +168,4 @@ public class DualSessionFactory implements SessionFactory {
 
     @Override
     public boolean containsFetchProfileDefinition(String name) { return current().containsFetchProfileDefinition(name); }
-
-    @Override
-    public TypeHelper getTypeHelper() { return current().getTypeHelper(); }
-
-    @Override
-    public ClassMetadata getClassMetadata(Class entityClass) { return current().getClassMetadata(entityClass); }
-
-    @Override
-    public ClassMetadata getClassMetadata(String entityName) { return current().getClassMetadata(entityName); }
-
-    @Override
-    public CollectionMetadata getCollectionMetadata(String roleName) { return current().getCollectionMetadata(roleName); }
-
-    @Override
-    public Map<String, ClassMetadata> getAllClassMetadata() { return current().getAllClassMetadata(); }
-
-    @Override
-    public Map getAllCollectionMetadata() { return current().getAllCollectionMetadata(); }
 }
