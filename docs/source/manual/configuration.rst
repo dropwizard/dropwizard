@@ -1746,7 +1746,7 @@ To use this capability for your own configuration classes, create a top-level co
 implements ``Discoverable`` and add the name of that class to ``META-INF/services/io.dropwizard.jackson.Discoverable``.
 Make sure to use `Jackson polymorphic deserialization`_ annotations appropriately.
 
-.. _Jackson polymorphic deserialization: http://wiki.fasterxml.com/JacksonPolymorphicDeserialization
+.. _Jackson polymorphic deserialization: https://github.com/FasterXML/jackson-docs/wiki/JacksonPolymorphicDeserialization
 
 .. code-block:: java
 
