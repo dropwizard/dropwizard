@@ -2,15 +2,14 @@ package io.dropwizard.hibernate;
 
 import io.dropwizard.util.Generics;
 import jakarta.persistence.criteria.CriteriaQuery;
-import org.hibernate.Criteria;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
+import org.hibernate.NonUniqueResultException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
-import org.hibernate.query.internal.AbstractProducedQuery;
 
-import java.io.Serializable;
 import java.util.List;
 
 import static java.util.Objects.requireNonNull;
@@ -41,18 +40,6 @@ public class AbstractDAO<E> {
      */
     protected Session currentSession() {
         return sessionFactory.getCurrentSession();
-    }
-
-    /**
-     * Creates a new {@link Criteria} query for {@code <E>}.
-     *
-     * @return a new {@link Criteria} query
-     * @see Session#createCriteria(Class)
-     * @deprecated Use {@link AbstractDAO#criteriaQuery()} instead.
-     */
-    @Deprecated
-    protected Criteria criteria() {
-        return currentSession().createCriteria(entityClass);
     }
 
     /**
@@ -115,26 +102,23 @@ public class AbstractDAO<E> {
      * @return the single result or {@code null}
      * @throws HibernateException if there is more than one matching result
      */
-    protected E uniqueResult(CriteriaQuery<E> criteriaQuery) throws HibernateException {
-        return AbstractProducedQuery.uniqueElement(
+    protected @Nullable E uniqueResult(CriteriaQuery<E> criteriaQuery) throws HibernateException {
+        return uniqueElement(
             currentSession()
                 .createQuery(requireNonNull(criteriaQuery))
                 .getResultList()
         );
     }
 
-    /**
-     * Convenience method to return a single instance that matches the criteria, or null if the
-     * criteria returns no results.
-     *
-     * @param criteria the {@link Criteria} query to run
-     * @return the single result or {@code null}
-     * @throws HibernateException if there is more than one matching result
-     * @see Criteria#uniqueResult()
-     */
-    @SuppressWarnings("unchecked")
-    protected E uniqueResult(Criteria criteria) throws HibernateException {
-        return (E) requireNonNull(criteria).uniqueResult();
+    private static <T> @Nullable T uniqueElement(List<T> list) throws NonUniqueResultException {
+        if (list.isEmpty()) {
+            return null;
+        }
+        final T head = list.get(0);
+        if (list.stream().anyMatch(element -> element != head)) {
+            throw new NonUniqueResultException(list.size());
+        }
+        return head;
     }
 
     /**
@@ -148,18 +132,6 @@ public class AbstractDAO<E> {
      */
     protected E uniqueResult(Query<E> query) throws HibernateException {
         return requireNonNull(query).uniqueResult();
-    }
-
-    /**
-     * Get the results of a {@link Criteria} query.
-     *
-     * @param criteria the {@link Criteria} query to run
-     * @return the list of matched query results
-     * @see Criteria#list()
-     */
-    @SuppressWarnings("unchecked")
-    protected List<E> list(Criteria criteria) throws HibernateException {
-        return requireNonNull(criteria).list();
     }
 
     /**
@@ -191,10 +163,10 @@ public class AbstractDAO<E> {
      * @param id an identifier
      * @return a persistent instance or {@code null}
      * @throws HibernateException
-     * @see Session#get(Class, Serializable)
+     * @see Session#get(Class, Object)
      */
     @SuppressWarnings("unchecked")
-    protected E get(Serializable id) {
+    protected E get(Object id) {
         return (E) currentSession().get(entityClass, requireNonNull(id));
     }
 
