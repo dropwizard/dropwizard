@@ -7,6 +7,8 @@ import java.net.URL;
 import java.nio.charset.Charset;
 
 /**
+ * Provides helper methods to work with resources.
+ *
  * @since 2.0
  */
 public final class Resources {
@@ -23,6 +25,8 @@ public final class Resources {
      * <p>In the unusual case where the context class loader is null, the class loader that loaded
      * this class ({@code Resources}) will be used instead.
      *
+     * @param resourceName the name of the resource
+     * @return the {@link URL} of the resource
      * @throws IllegalArgumentException if the resource is not found
      */
     public static URL getResource(String resourceName) {

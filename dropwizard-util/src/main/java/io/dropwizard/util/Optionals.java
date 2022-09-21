@@ -3,6 +3,8 @@ package io.dropwizard.util;
 import java.util.Optional;
 
 /**
+ * Helper methods to convert between {@code java.util.Optional} and {@code com.google.common.base.Optional} instances.
+ *
  * @deprecated prefer using {@link java.util.Optional} directly
  */
 @Deprecated
@@ -12,6 +14,7 @@ public abstract class Optionals {
      *
      * @param guavaOptional The Guava {@link com.google.common.base.Optional}
      * @return An equivalent {@link Optional}
+     * @param <T> the value type of the optional
      */
     public static <T> Optional<T> fromGuavaOptional(final com.google.common.base.Optional<T> guavaOptional) {
         return Optional.ofNullable(guavaOptional.orNull());
@@ -22,6 +25,7 @@ public abstract class Optionals {
      *
      * @param optional The {@link Optional}
      * @return An equivalent Guava {@link com.google.common.base.Optional}
+     * @param <T> the value type of the optional
      */
     public static <T> com.google.common.base.Optional<T> toGuavaOptional(final Optional<T> optional) {
         return com.google.common.base.Optional.fromNullable(optional.orElse(null));

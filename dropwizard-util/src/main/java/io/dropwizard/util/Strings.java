@@ -5,9 +5,11 @@ import javax.annotation.Nullable;
 import static java.util.Objects.requireNonNull;
 
 /**
+ * Provides helper methods to work with {@link String} objects.
+ *
  * @since 2.0
  *
- * @deprecated 
+ * @deprecated The class was intended for internal use only. If you need those methods, simply copy them into your project.
  */
 @Deprecated
 public final class Strings {

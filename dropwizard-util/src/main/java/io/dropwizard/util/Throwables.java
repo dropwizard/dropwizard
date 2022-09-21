@@ -7,6 +7,8 @@ import java.util.Set;
 import java.util.function.Predicate;
 
 /**
+ * Provides helper methods to work with {@link Throwable} objects.
+ *
  * @since 2.0
  */
 public final class Throwables {
@@ -21,6 +23,8 @@ public final class Throwables {
      * assertEquals("Unable to assign a customer id", Throwables.getRootCause(e).getMessage());
      * </pre>
      *
+     * @param throwable the throwable to obtain the root cause from
+     * @return the root cause
      * @throws IllegalArgumentException if there is a loop in the causal chain
      * @deprecated consider using Apache commons-lang3 ExceptionUtils instead
      */

@@ -43,6 +43,9 @@ public abstract class BaseConfigurationFactory<T> implements ConfigurationFactor
 
     private final Class<T> klass;
     private final String propertyPrefix;
+    /**
+     * The object mapper to use for mapping configuration files to objects.
+     */
     protected final ObjectMapper mapper;
     private final ConfigurationMetadata configurationMetadata;
 
@@ -59,6 +62,7 @@ public abstract class BaseConfigurationFactory<T> implements ConfigurationFactor
      * @param formatName     the name of the format parsed by this factory (used in exceptions)
      * @param klass          the configuration class
      * @param validator      the validator to use
+     * @param objectMapper   the object mapper to use
      * @param propertyPrefix the system property name prefix used by overrides
      */
     public BaseConfigurationFactory(JsonFactory parserFactory,
@@ -98,6 +102,13 @@ public abstract class BaseConfigurationFactory<T> implements ConfigurationFactor
         }
     }
 
+    /**
+     * Constructs a {@link JsonParser} to parse the contents of the provided {@link InputStream}.
+     *
+     * @param input the input to parse
+     * @return the JSON parser for the given input
+     * @throws IOException if the parser creation fails due to an I/O error
+     */
     protected JsonParser createParser(InputStream input) throws IOException {
         return parserFactory.createParser(input);
     }
@@ -115,6 +126,15 @@ public abstract class BaseConfigurationFactory<T> implements ConfigurationFactor
         }
     }
 
+    /**
+     * Loads, parses, binds, and validates a configuration object for a given {@link JsonNode}.
+     *
+     * @param node the json node to parse the configuration from
+     * @param path the path of the configuration file
+     * @return a validated configuration object
+     * @throws IOException if there is an error reading the file
+     * @throws ConfigurationException if there is an error parsing or validating the file
+     */
     protected T build(JsonNode node, String path) throws IOException, ConfigurationException {
         for (Map.Entry<Object, Object> pref : System.getProperties().entrySet()) {
             final String prefName = (String) pref.getKey();
@@ -158,6 +178,13 @@ public abstract class BaseConfigurationFactory<T> implements ConfigurationFactor
         }
     }
 
+    /**
+     * Applies an override to a given {@link JsonNode}.
+     *
+     * @param root the node to apply the override to
+     * @param name the key of the override
+     * @param value the new value
+     */
     protected void addOverride(JsonNode root, String name, String value) {
         JsonNode node = root;
         final List<String> parts = Arrays.stream(ESCAPED_DOT_SPLIT_PATTERN.split(name))
