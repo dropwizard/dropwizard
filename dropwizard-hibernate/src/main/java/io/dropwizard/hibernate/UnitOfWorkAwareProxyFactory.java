@@ -108,7 +108,7 @@ public class UnitOfWorkAwareProxyFactory {
         return new UnitOfWorkAspect(sessionFactories);
     }
 
-    class MethodInterceptor {
+    public class MethodInterceptor {
 
         private final Map<String, SessionFactory> sessionFactories;
 
@@ -117,7 +117,7 @@ public class UnitOfWorkAwareProxyFactory {
         }
 
         @RuntimeType
-        Object invoke(@Origin Method overridden, @SuperCall Callable<Object> proxy) throws Throwable {
+        public Object invoke(@Origin Method overridden, @SuperCall Callable<Object> proxy) throws Throwable {
             final UnitOfWork[] unitsOfWork = overridden.getAnnotationsByType(UnitOfWork.class);
             if (unitsOfWork.length == 0) {
                 return proxy.call();
