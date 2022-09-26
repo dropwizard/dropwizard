@@ -77,3 +77,12 @@ Removal of classes from `dropwizard-util`
 Many classes from the ``dropwizard-util`` module are now obsolete, since the Java standard library provides replacements for them.
 
 For example the ``Sets`` class provided helper methods for creating ``Set`` instances. Starting from Java 9, this can be done by using ``Set.of(...)``.
+
+Jadira Usertype Core library
+============================
+Dropwizard previously registered the types from the Jadira Usertype Core library automatically.
+In order to align the versions 3.0.x and 4.0.x we will drop support for this library in Dropwizard 3
+because the current version of the Jadira Usertype Core library doesn't support Hibernate 6.x, which will be used in Dropwizard 4.0.x.
+
+If you want to continue using this library, you have to set the property ``jadira.usertype.autoRegisterUserTypes`` to ``true`` in your application's database configuration
+and add a dependency on the current version of the Usertype Core library.
