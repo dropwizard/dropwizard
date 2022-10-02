@@ -23,13 +23,13 @@ jobs:
       with:
         fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
     - name: Set up JDK
-      uses: actions/setup-java@d854b6da19cdadd9a010605529e522c2393ebd38 # tag=v3
+      uses: actions/setup-java@a18c333f3f14249953dab3e186e5e21bf3390f1d # tag=v3
       with:
         distribution: 'temurin'
         java-version: ${{ matrix.java_version }}
     - name: Cache SonarCloud packages
-      uses: actions/cache@fd5de65bc895cf536527842281bea11763fefd77 # tag=v3.0.8
-      if: ${{ env.SONAR_TOKEN != null && env.SONAR_TOKEN != '' && matrix.java_version == '11' && matrix.os == 'ubuntu-latest' }}
+      uses: actions/cache@ac8075791e805656e71b4ba23325ace9e3421120 # tag=v3.0.9
+      if: ${{ env.SONAR_TOKEN != null && env.SONAR_TOKEN != '' && matrix.java_version == '11'  && matrix.os == 'ubuntu-latest' }}
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       with:
