@@ -63,7 +63,7 @@
             <exclusions>
                 <exclusion>
                     <groupId>javax.transaction</groupId>
-                    <artifactId>jta</artifactId>
+                    <artifactId>javax.transaction-api</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
