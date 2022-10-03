@@ -59,7 +59,6 @@
         <nullaway.version>0.10.2</nullaway.version>
         <slf4j.version>2.0.3</slf4j.version>
         <tomcat-jdbc.version>10.1.0</tomcat-jdbc.version>
-        <usertype.core.version>7.0.0.CR1</usertype.core.version>
 
         <!-- Test dependencies -->
         <assertj.version>3.23.1</assertj.version>
@@ -209,25 +208,6 @@
                 <groupId>com.h2database</groupId>
                 <artifactId>h2</artifactId>
                 <version>${h2.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jadira.usertype</groupId>
-                <artifactId>usertype.core</artifactId>
-                <version>${usertype.core.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.slf4j</groupId>
-                        <artifactId>slf4j-api</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.joda</groupId>
-                        <artifactId>joda-money</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.apache.geronimo.specs</groupId>
-                        <artifactId>geronimo-jta_1.1_spec</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.hibernate</groupId>
