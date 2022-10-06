@@ -31,7 +31,7 @@
         <error_prone.version>2.15.0</error_prone.version>
         <freemarker.version>2.3.31</freemarker.version>
         <guava.version>31.1-jre</guava.version>
-        <hibernate-core.version>6.1.3.Final</hibernate-core.version>
+        <hibernate-core.version>6.1.4.Final</hibernate-core.version>
         <hibernate-validator.version>7.0.5.Final</hibernate-validator.version>
         <hk2.version>3.0.3</hk2.version>
         <httpclient.version>5.1.3</httpclient.version>
