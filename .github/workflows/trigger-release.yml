@@ -1,6 +1,8 @@
 name: Trigger Release
 on:
   workflow_dispatch:
+    branches:
+    - release/*
     inputs:
       releaseVersion:
         description: 'Version of the next release'
