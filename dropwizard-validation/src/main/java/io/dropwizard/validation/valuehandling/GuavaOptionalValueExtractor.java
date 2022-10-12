@@ -14,6 +14,9 @@ import javax.validation.valueextraction.ValueExtractor;
  * @since 2.0
  */
 public class GuavaOptionalValueExtractor implements ValueExtractor<Optional<@ExtractedValue ?>> {
+    /**
+     * A singleton {@link ValueExtractorDescriptor} for the {@link GuavaOptionalValueExtractor}.
+     */
     public static final ValueExtractorDescriptor DESCRIPTOR = new ValueExtractorDescriptor(new GuavaOptionalValueExtractor());
 
     private GuavaOptionalValueExtractor() {

@@ -22,24 +22,45 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Documented
 @Constraint(validatedBy = OneOfValidator.class)
 public @interface OneOf {
+    /**
+     * The validation message for this constraint.
+     *
+     * @return the message
+     */
     String message() default "must be one of {value}";
 
+    /**
+     * The groups the constraint belongs to.
+     *
+     * @return an array of classes representing the groups
+     */
     Class<?>[] groups() default {};
 
+    /**
+     * The payloads of this constraint.
+     *
+     * @return the array of payload classes
+     */
     @SuppressWarnings("UnusedDeclaration") Class<? extends Payload>[] payload() default {};
 
     /**
      * The set of valid values.
+     *
+     * @return an array containing the valid string values
      */
     String[] value();
 
     /**
      * Whether or not to ignore case.
+     *
+     * @return if the case should be ignored
      */
     boolean ignoreCase() default false;
 
     /**
      * Whether or not to ignore leading and trailing whitespace.
+     *
+     * @return if leading and trailing whitespaces should be ignored
      */
     boolean ignoreWhitespace() default false;
 }

@@ -26,7 +26,7 @@ import java.util.Set;
  *     &#064;NotNull
  *     private String name;
  *
- *     private List&lt;String&gt names = Collections.emptyList();
+ *     private List&lt;String&gt; names = Collections.emptyList();
  *
  *     &#064;JsonProperty
  *     public String getName() {

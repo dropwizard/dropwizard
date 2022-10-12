@@ -11,15 +11,28 @@ import java.util.Optional;
 public class JarLocation {
     private final Class<?> klass;
 
+    /**
+     * Constructs a new {@link JarLocation} object which gets access to the code source with the provided parameter.
+     *
+     * @param klass the class to access the code source from
+     */
     public JarLocation(Class<?> klass) {
         this.klass = klass;
     }
 
+    /**
+     * Returns the version of the current jar holding the provided {@code klass}.
+     *
+     * @return the version representation
+     */
     public Optional<String> getVersion() {
         return Optional.ofNullable(klass.getPackage())
             .map(Package::getImplementationVersion);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         final URL location = klass.getProtectionDomain().getCodeSource().getLocation();

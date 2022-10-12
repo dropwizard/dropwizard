@@ -16,6 +16,9 @@ import com.fasterxml.jackson.databind.introspect.AnnotatedParameter;
 public class AnnotationSensitivePropertyNamingStrategy extends PropertyNamingStrategy {
     private static final long serialVersionUID = -1372862028366311230L;
 
+    /**
+     * The snake case naming strategy to use, if a class is annotated with {@link JsonSnakeCase}.
+     */
     private final PropertyNamingStrategy snakeCase = new PropertyNamingStrategies.SnakeCaseStrategy();
 
     @Override

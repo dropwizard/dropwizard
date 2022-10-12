@@ -16,13 +16,18 @@ public class ViolationCollector {
     private final ConstraintValidatorContext constraintValidatorContext;
     private boolean violationOccurred = false;
 
+    /**
+     * Constructs a new {@link ViolationCollector} with the given {@link ConstraintValidatorContext}.
+     *
+     * @param constraintValidatorContext the wrapped {@link ConstraintValidatorContext}
+     */
     public ViolationCollector(ConstraintValidatorContext constraintValidatorContext) {
         this.constraintValidatorContext = constraintValidatorContext;
     }
 
     /**
      * Adds a new violation to this collector. This also sets {@code violationOccurred} to {@code true}.
-     * <p>
+     * <br/>
      * Prefer the method with explicit message parameters if you want to interpolate the message.
      *
      * @param message the message of the violation
@@ -48,7 +53,7 @@ public class ViolationCollector {
 
     /**
      * Adds a new violation to this collector. This also sets {@code violationOccurred} to {@code true}.
-     * <p>
+     * <br/>
      * Prefer the method with explicit message parameters if you want to interpolate the message.
      *
      * @param propertyName the name of the property
@@ -138,6 +143,12 @@ public class ViolationCollector {
                 .addConstraintViolation();
     }
 
+    /**
+     * Returns a {@link HibernateConstraintValidatorContext} updated with the given message parameters.
+     *
+     * @param messageParameters the message parameters to set to the context
+     * @return the {@link HibernateConstraintValidatorContext}
+     */
     private HibernateConstraintValidatorContext getContextWithMessageParameters(Map<String, Object> messageParameters) {
         final HibernateConstraintValidatorContext context =
                 constraintValidatorContext.unwrap(HibernateConstraintValidatorContext.class);
@@ -160,6 +171,8 @@ public class ViolationCollector {
     }
 
     /**
+     * Returns, if a violation has previously occurred.
+     *
      * @return if any violation was collected
      */
     public boolean hasViolationOccurred() {
