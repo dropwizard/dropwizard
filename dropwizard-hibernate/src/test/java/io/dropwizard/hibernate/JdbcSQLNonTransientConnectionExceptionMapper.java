@@ -1,16 +1,16 @@
 package io.dropwizard.hibernate;
 
+import jakarta.ws.rs.core.MultivaluedHashMap;
+import jakarta.ws.rs.core.MultivaluedMap;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.ext.ExceptionMapper;
 import org.h2.jdbc.JdbcSQLNonTransientConnectionException;
 
-import javax.ws.rs.core.MultivaluedHashMap;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.ext.ExceptionMapper;
 import java.util.Arrays;
 
 /**
  * Mapper for {@link JdbcSQLNonTransientConnectionException} instances.
- * Outputs a status {@link javax.ws.rs.core.Response.Status#SERVICE_UNAVAILABLE} and the mapped stack trace elements of the exception.
+ * Outputs a status {@link Response.Status#SERVICE_UNAVAILABLE} and the mapped stack trace elements of the exception.
  */
 public class JdbcSQLNonTransientConnectionExceptionMapper implements ExceptionMapper<JdbcSQLNonTransientConnectionException> {
     @Override

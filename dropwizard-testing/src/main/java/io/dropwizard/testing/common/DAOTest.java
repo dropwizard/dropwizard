@@ -116,7 +116,6 @@ public class DAOTest {
             config.setProperty(AvailableSettings.USE_REFLECTION_OPTIMIZER, "true");
             config.setProperty(AvailableSettings.ORDER_UPDATES, "true");
             config.setProperty(AvailableSettings.ORDER_INSERTS, "true");
-            config.setProperty(AvailableSettings.USE_NEW_ID_GENERATOR_MAPPINGS, "true");
 
             entityClasses.forEach(config::addAnnotatedClass);
             properties.forEach(config::setProperty);
