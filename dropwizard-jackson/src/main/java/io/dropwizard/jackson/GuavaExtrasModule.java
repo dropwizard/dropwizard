@@ -19,6 +19,9 @@ import com.google.common.cache.CacheBuilderSpec;
 
 import java.io.IOException;
 
+/**
+ * A Jackson module that can (de)serialize {@link CacheBuilderSpec CacheBuilderSpecs}.
+ */
 public class GuavaExtrasModule extends Module {
     private static class CacheBuilderSpecDeserializer extends JsonDeserializer<CacheBuilderSpec> {
         @Override

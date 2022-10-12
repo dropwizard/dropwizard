@@ -12,6 +12,10 @@
     <artifactId>dropwizard-lifecycle</artifactId>
     <name>Dropwizard Lifecycle Support</name>
 
+    <properties>
+        <module.name>io.dropwizard.lifecycle</module.name>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -22,8 +26,8 @@
             <artifactId>jetty-server</artifactId>
             <exclusions>
                 <exclusion>
-                    <groupId>javax.servlet</groupId>
-                    <artifactId>javax.servlet-api</artifactId>
+                    <groupId>org.eclipse.jetty.toolchain</groupId>
+                    <artifactId>jetty-servlet-api</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>

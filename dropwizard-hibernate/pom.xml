@@ -12,6 +12,10 @@
     <artifactId>dropwizard-hibernate</artifactId>
     <name>Dropwizard Hibernate Support</name>
 
+    <properties>
+        <module.name>io.dropwizard.hibernate</module.name>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>io.dropwizard</groupId>
@@ -108,8 +112,8 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>org.javassist</groupId>
-            <artifactId>javassist</artifactId>
+            <groupId>net.bytebuddy</groupId>
+            <artifactId>byte-buddy</artifactId>
         </dependency>
         <dependency>
             <groupId>org.hibernate.orm</groupId>

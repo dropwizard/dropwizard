@@ -12,6 +12,10 @@
     <artifactId>dropwizard-metrics</artifactId>
     <name>Dropwizard Metrics Support</name>
 
+    <properties>
+        <module.name>io.dropwizard.metrics</module.name>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>io.dropwizard</groupId>

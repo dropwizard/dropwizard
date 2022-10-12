@@ -3,6 +3,9 @@ package io.dropwizard.validation;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
+/**
+ * Check that the string representation of an object is in a given set of valid values.
+ */
 public class OneOfValidator implements ConstraintValidator<OneOf, Object> {
     private String[] values = new String[]{};
     private boolean caseInsensitive;

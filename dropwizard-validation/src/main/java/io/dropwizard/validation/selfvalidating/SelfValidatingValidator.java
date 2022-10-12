@@ -26,6 +26,9 @@ import java.util.stream.Collectors;
 public class SelfValidatingValidator implements ConstraintValidator<SelfValidating, Object> {
     private final Logger log;
 
+    /**
+     * Constructs a new {@link SelfValidatingValidator} instance with a new logger of this class.
+     */
     public SelfValidatingValidator() {
         this(LoggerFactory.getLogger(SelfValidatingValidator.class));
     }

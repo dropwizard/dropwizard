@@ -12,6 +12,10 @@
     <artifactId>dropwizard-util</artifactId>
     <name>Dropwizard Utility Classes</name>
 
+    <properties>
+        <module.name>io.dropwizard.util</module.name>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>

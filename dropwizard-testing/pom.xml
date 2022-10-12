@@ -12,6 +12,10 @@
     <artifactId>dropwizard-testing</artifactId>
     <name>Dropwizard Test Helpers</name>
 
+    <properties>
+        <module.name>io.dropwizard.testing</module.name>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>io.dropwizard</groupId>
@@ -174,7 +178,11 @@
         </dependency>
         <dependency>
             <groupId>org.glassfish.jersey.connectors</groupId>
-            <artifactId>jersey-grizzly-connector</artifactId>
+            <artifactId>jersey-apache5-connector</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents.client5</groupId>
+            <artifactId>httpclient5</artifactId>
         </dependency>
         <dependency>
             <groupId>org.glassfish.jersey.core</groupId>

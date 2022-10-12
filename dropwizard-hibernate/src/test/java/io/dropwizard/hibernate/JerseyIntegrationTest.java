@@ -25,6 +25,7 @@ import jakarta.ws.rs.core.Response;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.test.JerseyTest;
+import org.h2.jdbc.JdbcConnection;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -35,6 +36,9 @@ import org.junit.jupiter.api.Test;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -145,6 +149,7 @@ class JerseyIntegrationTest extends JerseyTest {
         config.register(new JacksonFeature(Jackson.newObjectMapper()));
         config.register(new DataExceptionMapper());
         config.register(new EmptyOptionalExceptionMapper());
+        config.register(new JdbcSQLNonTransientConnectionExceptionMapper());
 
         return config;
     }
@@ -213,5 +218,22 @@ class JerseyIntegrationTest extends JerseyTest {
         assertThat(response.getStatusInfo()).isEqualTo(Response.Status.BAD_REQUEST);
         assertThat(response.getHeaderString(HttpHeaders.CONTENT_TYPE)).isEqualTo(MediaType.APPLICATION_JSON);
         assertThat(response.readEntity(ErrorMessage.class).getMessage()).isEqualTo("Wrong email");
+    }
+
+    @Test
+    void testBeforeStartExceptionIsMapped() {
+        // closes the H2 Session
+        // then no connections can be established to the db and a JdbcSQLNonTransientConnectionException is thrown
+        try (Session session = Objects.requireNonNull(sessionFactory).openSession()) {
+            session.doWork(connection -> connection.unwrap(JdbcConnection.class).getSession().close());
+        }
+        Response response = target("/people/Coda").request(MediaType.APPLICATION_JSON).get();
+        assertThat(response.getStatus()).isEqualTo(Response.Status.SERVICE_UNAVAILABLE.getStatusCode());
+        Map<String, List<String>> mappedStackTraceElements = response.readEntity(new GenericType<>() {});
+        assertThat(mappedStackTraceElements).isNotNull().isNotEmpty();
+        // ensure, that the exception is thrown by the beforeStart method of the UnitOfWorkAspect class
+        boolean isThrownByBeforeStartMethod = mappedStackTraceElements.containsKey(UnitOfWorkAspect.class.getName())
+            && mappedStackTraceElements.get(UnitOfWorkAspect.class.getName()).contains("beforeStart");
+        assertThat(isThrownByBeforeStartMethod).isTrue();
     }
 }

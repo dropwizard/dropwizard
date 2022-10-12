@@ -12,6 +12,10 @@
     <artifactId>dropwizard-jdbi3</artifactId>
     <name>Dropwizard JDBI3 Support</name>
 
+    <properties>
+        <module.name>io.dropwizard.jdbi3</module.name>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>io.dropwizard</groupId>

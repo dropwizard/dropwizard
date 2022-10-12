@@ -12,12 +12,14 @@ import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.DropwizardTestSupport;
 import jakarta.ws.rs.client.Client;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.glassfish.jersey.apache5.connector.Apache5ConnectorProvider;
+import org.glassfish.jersey.apache5.connector.Apache5HttpClientBuilderConfigurator;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.client.JerseyClientBuilder;
 import org.glassfish.jersey.client.RequestEntityProcessing;
-import org.glassfish.jersey.grizzly.connector.GrizzlyConnectorProvider;
 
 import jakarta.ws.rs.client.Client;
 import java.util.Optional;
@@ -257,8 +259,11 @@ public class DropwizardAppExtension<C extends Configuration> implements Dropwiza
 
     protected JerseyClientBuilder clientBuilder() {
         ClientConfig clientConfig = new ClientConfig();
-        clientConfig.connectorProvider(new GrizzlyConnectorProvider())
+        Apache5HttpClientBuilderConfigurator contentCompressionConfigurator =
+            HttpClientBuilder::disableContentCompression;
+        clientConfig.connectorProvider(new Apache5ConnectorProvider())
             .register(new JacksonFeature(getObjectMapper()))
+            .register(contentCompressionConfigurator)
             .property(ClientProperties.CONNECT_TIMEOUT, DEFAULT_CONNECT_TIMEOUT_MS)
             .property(ClientProperties.READ_TIMEOUT, DEFAULT_READ_TIMEOUT_MS)
             .property(ClientProperties.REQUEST_ENTITY_PROCESSING, RequestEntityProcessing.BUFFERED);

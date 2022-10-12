@@ -8,6 +8,8 @@ import java.util.Set;
 import java.util.function.Predicate;
 
 /**
+ * Provides helper methods to work with {@link Throwable} objects.
+ *
  * @since 2.0
  */
 public final class Throwables {
