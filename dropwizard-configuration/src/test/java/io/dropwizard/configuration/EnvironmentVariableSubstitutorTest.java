@@ -68,4 +68,10 @@ class EnvironmentVariableSubstitutorTest {
         assertThat(substitutor.replace("${TEST${TEST_SUFFIX}3:-abc}")).isEqualTo("abc");
         assertThat(substitutor.replace("${TEST${TEST_SUFFIX133:-2}:-abc}")).isEqualTo(System.getenv("TEST2"));
     }
+    
+    @Test
+    void shouldNotBeVulnerableToCVE_2022_42889() {
+        EnvironmentVariableSubstitutor substitutor = new EnvironmentVariableSubstitutor(false, false);
+        assertThat(substitutor.replace("${script:javascript:3 + 4}")).isEqualTo(System.getenv("${script:javascript:3 + 4}"));
+    }
 }
