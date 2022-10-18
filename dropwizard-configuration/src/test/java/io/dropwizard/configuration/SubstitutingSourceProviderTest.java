@@ -44,6 +44,14 @@ class SubstitutingSourceProviderTest {
         assertThat(provider.open("foo: ${bar:-default}")).hasSameContentAs(new ByteArrayInputStream("foo: default".getBytes(StandardCharsets.UTF_8)));
     }
 
+    @Test
+    void shouldNotBeVulnerableToCVE_2022_42889() throws IOException {
+        StringLookup dummyLookup = (x) -> null;
+        SubstitutingSourceProvider provider = new SubstitutingSourceProvider(new DummySourceProvider(), new StringSubstitutor(dummyLookup));
+
+        assertThat(provider.open("foo: ${script:javascript:3 + 4}")).hasSameContentAs(new ByteArrayInputStream("foo: ${script:javascript:3 + 4}".getBytes(StandardCharsets.UTF_8)));
+    }
+
     private static class DummySourceProvider implements ConfigurationSourceProvider {
         InputStream lastStream = new ByteArrayInputStream(new byte[0]);
 
