@@ -25,6 +25,7 @@ import java.util.Optional;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.mock;
@@ -61,7 +62,7 @@ class JsonHealthResponseProviderTest {
         // then
         assertThat(response.isHealthy()).isTrue();
         assertThat(response.getContentType()).isEqualTo(MediaType.APPLICATION_JSON);
-        assertThat(response.getMessage()).isEqualToIgnoringWhitespace(fixture("/json/single-healthy-response.json"));
+        assertEquals(mapper.readTree(response.getMessage()), mapper.readTree(fixture("/json/single-healthy-response.json")));
     }
 
     @Test
@@ -87,7 +88,7 @@ class JsonHealthResponseProviderTest {
         // then
         assertThat(response.isHealthy()).isTrue();
         assertThat(response.getContentType()).isEqualTo(MediaType.APPLICATION_JSON);
-        assertThat(response.getMessage()).isEqualToIgnoringWhitespace(fixture("/json/multiple-healthy-responses.json"));
+        assertEquals(mapper.readTree(response.getMessage()), mapper.readTree(fixture("/json/multiple-healthy-responses.json")));
     }
 
     @Test
