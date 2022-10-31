@@ -50,7 +50,7 @@
         <jersey.version>2.37</jersey.version>
         <jetty-setuid-java.version>1.0.4</jetty-setuid-java.version>
         <jetty.version>9.4.49.v20220914</jetty.version>
-        <joda-time.version>2.12.0</joda-time.version>
+        <joda-time.version>2.12.1</joda-time.version>
         <jsr305.version>3.0.2</jsr305.version>
         <liquibase-core.version>4.17.1</liquibase-core.version>
         <liquibase-slf4j.version>4.1.0</liquibase-slf4j.version>
@@ -58,7 +58,7 @@
         <logback.version>1.2.11</logback.version>
         <metrics4.version>4.2.12</metrics4.version>
         <mustache-compiler.version>0.9.10</mustache-compiler.version>
-        <nullaway.version>0.10.2</nullaway.version>
+        <nullaway.version>0.10.3</nullaway.version>
         <slf4j.version>1.7.36</slf4j.version>
         <tomcat-jdbc.version>9.0.68</tomcat-jdbc.version>
         <usertype.core.version>7.0.0.CR1</usertype.core.version>
