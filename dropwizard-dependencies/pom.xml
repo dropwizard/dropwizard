@@ -22,7 +22,7 @@
         <argparse4j.version>0.9.0</argparse4j.version>
         <byte-buddy.version>1.12.18</byte-buddy.version>
         <caffeine.version>2.9.3</caffeine.version>
-        <checker-qual.version>3.26.0</checker-qual.version>
+        <checker-qual.version>3.27.0</checker-qual.version>
         <classmate.version>1.5.1</classmate.version>
         <commons-codec.version>1.15</commons-codec.version>
         <commons-lang3.version>3.12.0</commons-lang3.version>
@@ -31,7 +31,7 @@
         <error_prone.version>2.10.0</error_prone.version>
         <freemarker.version>2.3.31</freemarker.version>
         <guava.version>31.1-jre</guava.version>
-        <hibernate-core.version>5.6.12.Final</hibernate-core.version>
+        <hibernate-core.version>5.6.13.Final</hibernate-core.version>
         <hibernate-validator.version>6.2.5.Final</hibernate-validator.version>
         <hk2.version>2.6.1</hk2.version>
         <httpclient.version>4.5.13</httpclient.version>
@@ -52,13 +52,13 @@
         <jetty.version>9.4.49.v20220914</jetty.version>
         <joda-time.version>2.12.1</joda-time.version>
         <jsr305.version>3.0.2</jsr305.version>
-        <liquibase-core.version>4.17.1</liquibase-core.version>
+        <liquibase-core.version>4.17.2</liquibase-core.version>
         <liquibase-slf4j.version>4.1.0</liquibase-slf4j.version>
         <logback-throttling-appender.version>1.1.9</logback-throttling-appender.version>
         <logback.version>1.2.11</logback.version>
         <metrics4.version>4.2.12</metrics4.version>
         <mustache-compiler.version>0.9.10</mustache-compiler.version>
-        <nullaway.version>0.10.3</nullaway.version>
+        <nullaway.version>0.10.4</nullaway.version>
         <slf4j.version>1.7.36</slf4j.version>
         <tomcat-jdbc.version>9.0.68</tomcat-jdbc.version>
         <usertype.core.version>7.0.0.CR1</usertype.core.version>
