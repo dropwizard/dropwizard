@@ -2,7 +2,6 @@ package io.dropwizard.migrations;
 
 import io.dropwizard.util.Maps;
 import liquibase.change.CheckSum;
-import net.jcip.annotations.NotThreadSafe;
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.junit.jupiter.api.Test;
 
@@ -14,7 +13,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@NotThreadSafe
 public class DbCalculateChecksumCommandTest extends AbstractMigrationTest {
 
     private DbCalculateChecksumCommand<TestMigrationConfiguration> migrateCommand = new DbCalculateChecksumCommand<>(

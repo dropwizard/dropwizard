@@ -1,7 +1,6 @@
 package io.dropwizard.migrations;
 
 import liquibase.Liquibase;
-import net.jcip.annotations.NotThreadSafe;
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -13,7 +12,6 @@ import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@NotThreadSafe
 public class DbGenerateDocsCommandTest extends AbstractMigrationTest {
 
     private DbGenerateDocsCommand<TestMigrationConfiguration> generateDocsCommand = new DbGenerateDocsCommand<>(

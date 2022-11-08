@@ -1,7 +1,6 @@
 package io.dropwizard.migrations;
 
 import io.dropwizard.util.Resources;
-import net.jcip.annotations.NotThreadSafe;
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,7 +14,6 @@ import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@NotThreadSafe
 public class DbStatusCommandTest extends AbstractMigrationTest {
 
     private final DbStatusCommand<TestMigrationConfiguration> statusCommand =

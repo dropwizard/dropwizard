@@ -1,6 +1,5 @@
 package io.dropwizard.migrations;
 
-import net.jcip.annotations.NotThreadSafe;
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.junit.jupiter.api.Test;
 
@@ -11,7 +10,6 @@ import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@NotThreadSafe
 public class DbTagCommandTest extends AbstractMigrationTest {
 
     private final String migrationsFileName = "migrations-ddl.xml";

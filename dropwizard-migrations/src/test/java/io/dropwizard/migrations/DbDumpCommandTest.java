@@ -1,7 +1,6 @@
 package io.dropwizard.migrations;
 
 import io.dropwizard.util.Resources;
-import net.jcip.annotations.NotThreadSafe;
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -30,7 +29,6 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@NotThreadSafe
 public class DbDumpCommandTest extends AbstractMigrationTest {
 
     private static final List<String> ATTRIBUTE_NAMES = Arrays.asList("columns", "foreign-keys", "indexes",

@@ -1,6 +1,5 @@
 package io.dropwizard.migrations;
 
-import net.jcip.annotations.NotThreadSafe;
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.jdbi.v3.core.Handle;
 import org.jdbi.v3.core.Jdbi;
@@ -13,7 +12,6 @@ import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@NotThreadSafe
 class DbDropAllCommandTest extends AbstractMigrationTest {
 
     private DbDropAllCommand<TestMigrationConfiguration> dropAllCommand = new DbDropAllCommand<>(

@@ -3,14 +3,12 @@ package io.dropwizard.migrations;
 import com.codahale.metrics.MetricRegistry;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.db.ManagedPooledDataSource;
-import net.jcip.annotations.NotThreadSafe;
 import org.apache.tomcat.jdbc.pool.ConnectionPool;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@NotThreadSafe
 public class CloseableLiquibaseTest {
 
     CloseableLiquibase liquibase;
