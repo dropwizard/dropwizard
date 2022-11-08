@@ -1,7 +1,6 @@
 package io.dropwizard.migrations;
 
 import io.dropwizard.util.Maps;
-import net.jcip.annotations.NotThreadSafe;
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.jdbi.v3.core.Jdbi;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,7 +15,6 @@ import java.util.Date;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@NotThreadSafe
 class DbRollbackCommandTest extends AbstractMigrationTest {
 
     private final String migrationsFileName = "migrations-ddl.xml";

@@ -1,7 +1,6 @@
 package io.dropwizard.migrations;
 
 import io.dropwizard.util.Maps;
-import net.jcip.annotations.NotThreadSafe;
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
@@ -20,7 +19,6 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@NotThreadSafe
 class DbMigrateCommandTest extends AbstractMigrationTest {
 
     private DbMigrateCommand<TestMigrationConfiguration> migrateCommand = new DbMigrateCommand<>(

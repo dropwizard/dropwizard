@@ -1,7 +1,6 @@
 package io.dropwizard.migrations;
 
 import io.dropwizard.util.Resources;
-import net.jcip.annotations.NotThreadSafe;
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.jdbi.v3.core.Handle;
 import org.jdbi.v3.core.Jdbi;
@@ -16,7 +15,6 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@NotThreadSafe
 class DbMigrateDifferentFileCommandTest extends AbstractMigrationTest {
 
     private DbMigrateCommand<TestMigrationConfiguration> migrateCommand = new DbMigrateCommand<>(
