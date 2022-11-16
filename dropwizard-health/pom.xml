@@ -12,6 +12,10 @@
     <artifactId>dropwizard-health</artifactId>
     <name>Dropwizard Health Checking Support</name>
 
+    <properties>
+        <module.name>io.dropwizard.health</module.name>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>io.dropwizard</groupId>
@@ -64,6 +68,12 @@
         <dependency>
             <groupId>org.glassfish.jersey.core</groupId>
             <artifactId>jersey-client</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.glassfish.hk2.external</groupId>
+                    <artifactId>jakarta.inject</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.checkerframework</groupId>

@@ -12,6 +12,10 @@
     <artifactId>dropwizard-views-freemarker</artifactId>
     <name>Dropwizard Freemarker Views</name>
 
+    <properties>
+        <module.name>io.dropwizard.views.freemarker</module.name>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>io.dropwizard</groupId>
@@ -68,6 +72,12 @@
             <groupId>org.glassfish.jersey.core</groupId>
             <artifactId>jersey-server</artifactId>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.glassfish.hk2.external</groupId>
+                    <artifactId>jakarta.inject</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -88,6 +98,12 @@
             <groupId>org.glassfish.jersey.test-framework</groupId>
             <artifactId>jersey-test-framework-core</artifactId>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.glassfish.hk2.external</groupId>
+                    <artifactId>jakarta.inject</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.glassfish.jersey.test-framework.providers</groupId>

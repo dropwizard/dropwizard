@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 public class SessionFactoryFactory {
     private static final Logger LOGGER = LoggerFactory.getLogger(SessionFactoryFactory.class);
@@ -62,7 +63,8 @@ public class SessionFactoryFactory {
                                                        Map<String, String> properties) {
         final DatasourceConnectionProviderImpl connectionProvider = new DatasourceConnectionProviderImpl();
         connectionProvider.setDataSource(dataSource);
-        connectionProvider.configure(properties);
+        Map<String, Object> newProperties = properties.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        connectionProvider.configure(newProperties);
         return connectionProvider;
     }
 
@@ -83,8 +85,7 @@ public class SessionFactoryFactory {
         configuration.setProperty(AvailableSettings.USE_REFLECTION_OPTIMIZER, "true");
         configuration.setProperty(AvailableSettings.ORDER_UPDATES, "true");
         configuration.setProperty(AvailableSettings.ORDER_INSERTS, "true");
-        configuration.setProperty(AvailableSettings.USE_NEW_ID_GENERATOR_MAPPINGS, "true");
-        configuration.setProperty("jadira.usertype.autoRegisterUserTypes", "true");
+
         for (Map.Entry<String, String> property : properties.entrySet()) {
             configuration.setProperty(property.getKey(), property.getValue());
         }

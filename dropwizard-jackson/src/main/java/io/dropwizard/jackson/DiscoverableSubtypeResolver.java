@@ -23,12 +23,23 @@ public class DiscoverableSubtypeResolver extends StdSubtypeResolver {
     private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = LoggerFactory.getLogger(DiscoverableSubtypeResolver.class);
 
+    /**
+     * The list of discovered subtypes.
+     */
     private final List<Class<?>> discoveredSubtypes;
 
+    /**
+     * Constructs a subtype resolver which scans for subtypes of {@link Discoverable}.
+     */
     public DiscoverableSubtypeResolver() {
         this(Discoverable.class);
     }
 
+    /**
+     * Constructs a subtype resolver which scans for subtypes of the provided class.
+     *
+     * @param rootKlass the class to choose the correct {@code META-INF/services} file from
+     */
     public DiscoverableSubtypeResolver(Class<?> rootKlass) {
         final List<Class<?>> subtypes = new ArrayList<>();
         for (Class<?> klass : discoverServices(rootKlass)) {
@@ -40,14 +51,30 @@ public class DiscoverableSubtypeResolver extends StdSubtypeResolver {
         this.discoveredSubtypes = subtypes;
     }
 
+    /**
+     * Returns the subtypes discovered from the {@code META-INF} configuration file.
+     *
+     * @return a list of {@link Class} objects representing the subtypes
+     */
     public List<Class<?>> getDiscoveredSubtypes() {
         return discoveredSubtypes;
     }
 
+    /**
+     * Returns a {@link ClassLoader} from the current class.
+     *
+     * @return the current {@link ClassLoader}
+     */
     protected ClassLoader getClassLoader() {
         return this.getClass().getClassLoader();
     }
 
+    /**
+     * Discovers the services in the {@code META-INF/services} folder for the provided class.
+     *
+     * @param klass the class to lookup services
+     * @return the discovered services
+     */
     protected List<Class<?>> discoverServices(Class<?> klass) {
         final List<Class<?>> serviceClasses = new ArrayList<>();
         try {
@@ -77,6 +104,13 @@ public class DiscoverableSubtypeResolver extends StdSubtypeResolver {
         return serviceClasses;
     }
 
+    /**
+     * Loads a class discovered from a service file without throwing a {@link ClassNotFoundException},
+     * if the class' implementation isn't found.
+     *
+     * @param line the string line with the class name
+     * @return the {@link Class} instance or {@code null}, if the class was not found
+     */
     @Nullable
     private Class<?> loadClass(String line) {
         try {

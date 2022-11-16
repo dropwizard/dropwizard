@@ -14,9 +14,7 @@ class UUIDParamTest {
         assertThatExceptionOfType(WebApplicationException.class)
             .isThrownBy(() -> new UUIDParam(input))
             .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(400))
-            .satisfies(e -> assertThat(e.getResponse().getEntity()).isEqualTo(
-                new ErrorMessage(400, "Parameter is not a UUID.")
-            ));
+            .satisfies(e -> assertThat(e.getMessage()).isEqualTo("Parameter is not a UUID."));
     }
 
     @Test

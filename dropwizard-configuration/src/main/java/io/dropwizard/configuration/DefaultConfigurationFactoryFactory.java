@@ -4,6 +4,11 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Validator;
 
+/**
+ * The default implementation for the {@link ConfigurationFactoryFactory} interface. An instance of this class constructs a new {@link YamlConfigurationFactory}.
+ *
+ * @param <T> the type of the configuration objects to produce
+ */
 public class DefaultConfigurationFactoryFactory<T> implements ConfigurationFactoryFactory<T> {
     @Override
     public ConfigurationFactory<T> create(

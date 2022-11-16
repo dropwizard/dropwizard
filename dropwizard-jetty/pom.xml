@@ -12,6 +12,10 @@
     <artifactId>dropwizard-jetty</artifactId>
     <name>Dropwizard Jetty Support</name>
 
+    <properties>
+        <module.name>io.dropwizard.jetty</module.name>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>io.dropwizard</groupId>

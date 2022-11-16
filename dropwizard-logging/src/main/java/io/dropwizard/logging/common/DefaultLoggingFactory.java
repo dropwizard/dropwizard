@@ -3,7 +3,6 @@ package io.dropwizard.logging.common;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.classic.jmx.JMXConfigurator;
 import ch.qos.logback.classic.jul.LevelChangePropagator;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
@@ -18,6 +17,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.logback.AsyncAppenderBaseProxy;
 import io.dropwizard.logging.common.async.AsyncAppenderFactory;
@@ -30,14 +30,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-import javax.management.InstanceAlreadyExistsException;
-import javax.management.MBeanRegistrationException;
-import javax.management.MBeanServer;
-import javax.management.MalformedObjectNameException;
-import javax.management.NotCompliantMBeanException;
-import javax.management.ObjectName;
 import java.io.PrintStream;
-import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -51,7 +44,6 @@ import static java.util.Objects.requireNonNull;
 
 @JsonTypeName("default")
 public class DefaultLoggingFactory implements LoggingFactory {
-    private static final ReentrantLock MBEAN_REGISTRATION_LOCK = new ReentrantLock();
     private static final ReentrantLock CHANGE_LOGGER_CONTEXT_LOCK = new ReentrantLock();
 
     @NotNull
@@ -122,8 +114,8 @@ public class DefaultLoggingFactory implements LoggingFactory {
     public void configure(MetricRegistry metricRegistry, String name) {
         LoggingUtil.hijackJDKLogging();
 
-        CHANGE_LOGGER_CONTEXT_LOCK.lock();
         final Logger root;
+        CHANGE_LOGGER_CONTEXT_LOCK.lock();
         try {
             root = configureLoggers(name);
         } finally {
@@ -143,23 +135,6 @@ public class DefaultLoggingFactory implements LoggingFactory {
             StatusPrinter.printIfErrorsOccured(loggerContext);
         } finally {
             StatusPrinter.setPrintStream(System.out);
-        }
-
-        final MBeanServer server = ManagementFactory.getPlatformMBeanServer();
-        MBEAN_REGISTRATION_LOCK.lock();
-        try {
-            final ObjectName objectName = new ObjectName("io.dropwizard:type=Logging");
-            if (!server.isRegistered(objectName)) {
-                server.registerMBean(new JMXConfigurator(loggerContext,
-                                server,
-                                objectName),
-                        objectName);
-            }
-        } catch (MalformedObjectNameException | InstanceAlreadyExistsException |
-                NotCompliantMBeanException | MBeanRegistrationException e) {
-            throw new RuntimeException(e);
-        } finally {
-            MBEAN_REGISTRATION_LOCK.unlock();
         }
 
         configureInstrumentation(root, metricRegistry);
@@ -257,6 +232,8 @@ public class DefaultLoggingFactory implements LoggingFactory {
         final AsyncAppenderFactory<ILoggingEvent> asyncAppenderFactory = new AsyncLoggingEventAppenderFactory();
         final LayoutFactory<ILoggingEvent> layoutFactory = new DropwizardLayoutFactory();
 
+        final ObjectMapper objectMapper = Jackson.newObjectMapper();
+
         for (Map.Entry<String, JsonNode> entry : loggers.entrySet()) {
             final Logger logger = loggerContext.getLogger(entry.getKey());
             final JsonNode jsonNode = entry.getValue();
@@ -267,7 +244,7 @@ public class DefaultLoggingFactory implements LoggingFactory {
                 // A level and an appender
                 final LoggerConfiguration configuration;
                 try {
-                    configuration = Jackson.newObjectMapper().treeToValue(jsonNode, LoggerConfiguration.class);
+                    configuration = objectMapper.treeToValue(jsonNode, LoggerConfiguration.class);
                 } catch (JsonProcessingException e) {
                     throw new IllegalArgumentException("Wrong format of logger '" + entry.getKey() + "'", e);
                 }

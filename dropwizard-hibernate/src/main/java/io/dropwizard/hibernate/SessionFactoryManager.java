@@ -13,7 +13,7 @@ public class SessionFactoryManager implements Managed {
         this.dataSource = dataSource;
     }
 
-    ManagedDataSource getDataSource() {
+    public ManagedDataSource getDataSource() {
         return dataSource;
     }
 

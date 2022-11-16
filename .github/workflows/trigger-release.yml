@@ -1,0 +1,46 @@
+name: Trigger Release
+on:
+  workflow_dispatch:
+    branches:
+    - release/*
+    inputs:
+      releaseVersion:
+        description: 'Version of the next release'
+        required: true
+      developmentVersion:
+        description: 'Version of the next development cycle (must end in "-SNAPSHOT")'
+        required: true
+jobs:
+  trigger-release:
+    runs-on: 'ubuntu-latest'
+    env:
+      JAVA_OPTS: "-XX:+TieredCompilation -XX:TieredStopAtLevel=1"
+      CI_DEPLOY_USERNAME: ${{ secrets.CI_DEPLOY_USERNAME }}
+      CI_DEPLOY_PASSWORD: ${{ secrets.CI_DEPLOY_PASSWORD }}
+      GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+    steps:
+    - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # tag=v3.1.0
+    - name: Set up JDK
+      uses: actions/setup-java@de1bb2b0c5634f0fc4438d7aa9944e68f9bf86cc # tag=v3
+      with:
+        distribution: 'temurin'
+        java-version: '11'
+        cache: 'maven'
+        server-id: ossrh
+        server-username: CI_DEPLOY_USERNAME
+        server-password: CI_DEPLOY_PASSWORD
+        gpg-passphrase: GPG_PASSPHRASE
+        gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+    - name: Set up Git
+      run: |
+        git config --global committer.email "noreply@github.com"
+        git config --global committer.name "GitHub Release"
+        git config --global author.email "${GITHUB_ACTOR}@users.noreply.github.com"
+        git config --global author.name "${GITHUB_ACTOR}"
+    - name: Prepare release
+      run: ./mvnw -V -B -ntp -Prelease -DreleaseVersion=${{ github.event.inputs.releaseVersion }} -DdevelopmentVersion=${{ github.event.inputs.developmentVersion }} release:prepare
+    - name: Rollback on failure
+      if: ${{ failure() }}
+      run: |
+        ./mvnw -B release:rollback -Prelease -Dgpg.passphrase=${{secrets.GPG_PASSPHRASE}}
+        echo "You may need to manually delete the GitHub tag, if it was created."

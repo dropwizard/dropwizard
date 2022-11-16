@@ -23,7 +23,7 @@
         <maven.site.deploy.skip>true</maven.site.deploy.skip>
         <skipNexusStagingDeployMojo>true</skipNexusStagingDeployMojo>
 
-        <junit5.version>5.8.2</junit5.version>
+        <junit5.version>5.9.1</junit5.version>
     </properties>
 
     <dependencyManagement>
@@ -38,7 +38,7 @@
             <dependency>
                 <groupId>org.testcontainers</groupId>
                 <artifactId>testcontainers-bom</artifactId>
-                <version>1.17.3</version>
+                <version>1.17.5</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -127,7 +127,7 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.30</version>
+            <version>8.0.31</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -213,12 +213,12 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
-                    <version>3.2.2</version>
+                    <version>3.3.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-shade-plugin</artifactId>
-                    <version>3.3.0</version>
+                    <version>3.4.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -228,7 +228,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-site-plugin</artifactId>
-                    <version>3.12.0</version>
+                    <version>3.12.1</version>
                 </plugin>
             </plugins>
         </pluginManagement>

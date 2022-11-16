@@ -12,6 +12,10 @@
     <artifactId>dropwizard-jackson</artifactId>
     <name>Dropwizard Jackson Support</name>
 
+    <properties>
+        <module.name>io.dropwizard.jackson</module.name>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>com.google.guava</groupId>

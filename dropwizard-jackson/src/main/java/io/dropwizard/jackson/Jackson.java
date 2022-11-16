@@ -22,7 +22,9 @@ public class Jackson {
 
     /**
      * Creates a new {@link ObjectMapper} with Guava and Logback support, as well as support for
-	  * {@link JsonSnakeCase}. Also includes all {@link Discoverable} interface implementations.
+     * {@link JsonSnakeCase}. Also includes all {@link Discoverable} interface implementations.
+     *
+     * @return the configured {@link ObjectMapper}
      */
     public static ObjectMapper newObjectMapper() {
         final ObjectMapper mapper = new ObjectMapper();
@@ -37,6 +39,7 @@ public class Jackson {
      *
      * @param jsonFactory instance of {@link com.fasterxml.jackson.core.JsonFactory} to use
      *                    for the created {@link com.fasterxml.jackson.databind.ObjectMapper} instance.
+     * @return the configured {@link ObjectMapper}
      */
     public static ObjectMapper newObjectMapper(@Nullable JsonFactory jsonFactory) {
         final ObjectMapper mapper = new ObjectMapper(jsonFactory);
@@ -48,6 +51,8 @@ public class Jackson {
      * Creates a new minimal {@link ObjectMapper} that will work with Dropwizard out of box.
      * <p><b>NOTE:</b> Use it, if the default Dropwizard's {@link ObjectMapper}, created in
      * {@link #newObjectMapper()}, is too aggressive for you.</p>
+     *
+     * @return the configured {@link ObjectMapper}
      */
     public static ObjectMapper newMinimalObjectMapper() {
         return new ObjectMapper()
@@ -56,6 +61,12 @@ public class Jackson {
                 .disable(FAIL_ON_UNKNOWN_PROPERTIES);
     }
 
+    /**
+     * Configures an {@link ObjectMapper} with a set of common modules and properties.
+     *
+     * @param mapper the {@link ObjectMapper} to configure
+     * @return the configured {@link ObjectMapper}
+     */
     private static ObjectMapper configure(ObjectMapper mapper) {
         final List<Module> modules = ObjectMapper.findModules();
 

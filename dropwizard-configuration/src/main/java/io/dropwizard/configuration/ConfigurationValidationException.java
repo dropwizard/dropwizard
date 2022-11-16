@@ -11,6 +11,9 @@ import java.util.Set;
 public class ConfigurationValidationException extends ConfigurationException {
     private static final long serialVersionUID = 5325162099634227047L;
 
+    /**
+     * The constraint violation occurred during configuration validation.
+     */
     private final Set<ConstraintViolation<?>> constraintViolations;
 
     /**
@@ -18,6 +21,7 @@ public class ConfigurationValidationException extends ConfigurationException {
      *
      * @param path      the bad configuration path
      * @param errors    the errors in the path
+     * @param <T> the type of the root bean of a constraint violation
      */
     public <T> ConfigurationValidationException(String path, Set<ConstraintViolation<T>> errors) {
         super(path, ConstraintViolations.format(errors));
