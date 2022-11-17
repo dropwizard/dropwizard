@@ -846,6 +846,12 @@ A few items of note:
   Instead, `\t` is used (this is the default value of the `SyslogAppender` that comes with Logback). This can be
   configured with the `stackTracePrefix` option when defining your appender.
 
+To apply the prefixing with the `!` symbol Dropwizard introduces several new `Logback conversion words <https://logback.qos.ch/manual/layouts.html#conversionWord>`_.
+These are ``dwEx``, ``dwException``, ``dwThrowable``, ``dwXEx``, ``dwXException``, ``dwXThrowable``, ``dwREx`` and ``dwRootException``.
+These conversion words work like the ones from Logback, except that the first tab of a stack trace is replaced by a `!`.
+
+The default Dropwizard logging layout uses the Dropwizard specific conversion words.
+
 Configuration
 -------------
 
