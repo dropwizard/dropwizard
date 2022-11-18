@@ -18,7 +18,7 @@
 
     <properties>
         <!-- External dependencies -->
-        <activation-api.version>2.1.0</activation-api.version>
+        <activation-api.version>2.0.1</activation-api.version>
         <argparse4j.version>0.9.0</argparse4j.version>
         <byte-buddy.version>1.12.18</byte-buddy.version>
         <caffeine.version>3.1.1</caffeine.version>
@@ -37,15 +37,15 @@
         <httpclient.version>5.2</httpclient.version>
         <httpcore.version>5.2</httpcore.version>
         <jackson.version>2.14.0</jackson.version>
-        <jakarta.annotation-api.version>2.1.1</jakarta.annotation-api.version>
+        <jakarta.annotation-api.version>2.0.0</jakarta.annotation-api.version>
         <jakarta.el.version>4.0.2</jakarta.el.version>
         <jakarta.inject-api.version>2.0.1</jakarta.inject-api.version>
-        <jakarta.persistence-api.version>3.1.0</jakarta.persistence-api.version>
+        <jakarta.persistence-api.version>3.0.0</jakarta.persistence-api.version>
         <jakarta.servlet-api.version>5.0.0</jakarta.servlet-api.version>
         <jakarta.validation-api.version>3.0.2</jakarta.validation-api.version>
         <jakarta.ws.rs-api.version>3.0.0</jakarta.ws.rs-api.version>
         <javassist.version>3.29.2-GA</javassist.version>
-        <jaxb-api.version>4.0.0</jaxb-api.version>
+        <jaxb-api.version>3.0.1</jaxb-api.version>
         <jdbi3.version>3.34.0</jdbi3.version>
         <jersey.version>3.0.8</jersey.version>
         <jetty-setuid-java.version>1.0.4</jetty-setuid-java.version>
