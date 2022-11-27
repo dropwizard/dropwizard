@@ -57,7 +57,7 @@
         <metrics4.version>4.2.13</metrics4.version>
         <mustache-compiler.version>0.9.10</mustache-compiler.version>
         <nullaway.version>0.10.5</nullaway.version>
-        <slf4j.version>2.0.4</slf4j.version>
+        <slf4j.version>2.0.5</slf4j.version>
         <tomcat-jdbc.version>10.1.2</tomcat-jdbc.version>
 
         <!-- Test dependencies -->
