@@ -1,7 +1,12 @@
 {
   "extends": [
     "config:base",
-     "helpers:pinGitHubActionDigests"
+    "helpers:pinGitHubActionDigests",
+    ":automergePatch",
+    ":automergePr",
+    ":automergeRequireAllStatusChecks",
+    ":prConcurrentLimitNone",
+    ":separatePatchReleases"
   ],
   "baseBranches": ["release/2.0.x", "release/2.1.x", "release/3.0.x", "release/4.0.x"],
   "dependencyDashboard": true,
@@ -12,8 +17,8 @@
       "allowedVersions": "<4.3.0"
     }
   ],
+  "platformAutomerge": true,
   "reviewers": ["team:committers"],
-  "separateMinorPatch": true,
   "schedule": [
     "before 2am"
   ],
