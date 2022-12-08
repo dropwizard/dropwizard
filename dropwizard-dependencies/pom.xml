@@ -22,7 +22,7 @@
         <argparse4j.version>0.9.0</argparse4j.version>
         <byte-buddy.version>1.12.19</byte-buddy.version>
         <caffeine.version>2.9.3</caffeine.version>
-        <checker-qual.version>3.27.0</checker-qual.version>
+        <checker-qual.version>3.28.0</checker-qual.version>
         <classmate.version>1.5.1</classmate.version>
         <commons-codec.version>1.15</commons-codec.version>
         <commons-lang3.version>3.12.0</commons-lang3.version>
@@ -34,8 +34,8 @@
         <hibernate-core.version>5.6.14.Final</hibernate-core.version>
         <hibernate-validator.version>6.2.5.Final</hibernate-validator.version>
         <hk2.version>2.6.1</hk2.version>
-        <httpclient.version>4.5.13</httpclient.version>
-        <httpcore.version>4.4.15</httpcore.version>
+        <httpclient.version>4.5.14</httpclient.version>
+        <httpcore.version>4.4.16</httpcore.version>
         <jackson.version>2.13.4.20221013</jackson.version>
         <jakarta.annotation-api.version>1.3.5</jakarta.annotation-api.version>
         <jakarta.el.version>3.0.4</jakarta.el.version>
@@ -46,13 +46,13 @@
         <javassist.version>3.29.2-GA</javassist.version>
         <javax.persistence-api.version>2.2</javax.persistence-api.version>
         <jaxb-api.version>2.3.3</jaxb-api.version>
-        <jdbi3.version>3.34.0</jdbi3.version>
+        <jdbi3.version>3.35.0</jdbi3.version>
         <jersey.version>2.37</jersey.version>
         <jetty-setuid-java.version>1.0.4</jetty-setuid-java.version>
-        <jetty.version>9.4.49.v20220914</jetty.version>
-        <joda-time.version>2.12.1</joda-time.version>
+        <jetty.version>9.4.50.v20221201</jetty.version>
+        <joda-time.version>2.12.2</joda-time.version>
         <jsr305.version>3.0.2</jsr305.version>
-        <liquibase-core.version>4.17.2</liquibase-core.version>
+        <liquibase-core.version>4.18.0</liquibase-core.version>
         <liquibase-slf4j.version>4.1.0</liquibase-slf4j.version>
         <logback-throttling-appender.version>1.1.9</logback-throttling-appender.version>
         <logback.version>1.2.11</logback.version>
@@ -60,7 +60,7 @@
         <mustache-compiler.version>0.9.10</mustache-compiler.version>
         <nullaway.version>0.10.5</nullaway.version>
         <slf4j.version>1.7.36</slf4j.version>
-        <tomcat-jdbc.version>9.0.69</tomcat-jdbc.version>
+        <tomcat-jdbc.version>9.0.70</tomcat-jdbc.version>
         <usertype.core.version>7.0.0.CR1</usertype.core.version>
 
         <!-- Test dependencies -->
