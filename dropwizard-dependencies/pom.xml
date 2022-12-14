@@ -49,7 +49,7 @@
         <jdbi3.version>3.35.0</jdbi3.version>
         <jersey.version>3.0.8</jersey.version>
         <jetty-setuid-java.version>1.0.4</jetty-setuid-java.version>
-        <jetty.version>11.0.12</jetty.version>
+        <jetty.version>11.0.13</jetty.version>
         <liquibase-core.version>4.18.0</liquibase-core.version>
         <liquibase-slf4j.version>4.1.0</liquibase-slf4j.version>
         <logback-throttling-appender.version>1.1.9</logback-throttling-appender.version>
@@ -57,8 +57,8 @@
         <metrics4.version>4.2.13</metrics4.version>
         <mustache-compiler.version>0.9.10</mustache-compiler.version>
         <nullaway.version>0.10.5</nullaway.version>
-        <slf4j.version>2.0.5</slf4j.version>
-        <tomcat-jdbc.version>10.1.2</tomcat-jdbc.version>
+        <slf4j.version>2.0.6</slf4j.version>
+        <tomcat-jdbc.version>10.1.4</tomcat-jdbc.version>
 
         <!-- Test dependencies -->
         <assertj.version>3.23.1</assertj.version>
