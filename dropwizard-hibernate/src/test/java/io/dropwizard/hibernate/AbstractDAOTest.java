@@ -20,6 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.same;
+import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -207,6 +208,7 @@ class AbstractDAOTest {
         final LazyInitializer initializer = mock(LazyInitializer.class);
         when(initializer.isUninitialized()).thenReturn(true);
         final HibernateProxy proxy = mock(HibernateProxy.class);
+        doCallRealMethod().when(proxy).asHibernateProxy();
         when(proxy.getHibernateLazyInitializer()).thenReturn(initializer);
 
         dao.initialize(proxy);
