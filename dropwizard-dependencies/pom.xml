@@ -46,6 +46,7 @@
         <jakarta.ws.rs-api.version>3.0.0</jakarta.ws.rs-api.version>
         <javassist.version>3.29.2-GA</javassist.version>
         <jaxb-api.version>3.0.1</jaxb-api.version>
+        <jboss-logging.version>3.5.0.Final</jboss-logging.version>
         <jdbi3.version>3.36.0</jdbi3.version>
         <jersey.version>3.0.9</jersey.version>
         <jetty-setuid-java.version>1.0.4</jetty-setuid-java.version>
@@ -210,15 +211,14 @@
                 <version>${h2.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.jboss.logging</groupId>
+                <artifactId>jboss-logging</artifactId>
+                <version>${jboss-logging.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.hibernate.orm</groupId>
                 <artifactId>hibernate-core</artifactId>
                 <version>${hibernate-core.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.jboss.logging</groupId>
-                        <artifactId>jboss-logging</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.javassist</groupId>
