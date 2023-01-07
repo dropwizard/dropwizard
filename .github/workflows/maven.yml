@@ -51,7 +51,7 @@ jobs:
       # If the CI run is not initiated from the primary repository, it is highly likely that this is a PR from a user who doesn't have commit rights.
       # Hence, skip this step to avoid permission failures.
       if: github.event.pull_request.head.repo.full_name == 'dropwizard/dropwizard'
-      uses: actions/upload-artifact@83fd05a356d7e2593de66fc9913b3002723633cb # tag=v3
+      uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3
       with:
         name: test-reports-${{ matrix.os }}-java${{ matrix.java_version }}
         path: '**/*-reports'
