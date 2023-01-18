@@ -21,7 +21,7 @@
         <activation-api.version>1.2.2</activation-api.version>
         <argparse4j.version>0.8.1</argparse4j.version>
         <byte-buddy.version>1.12.22</byte-buddy.version>
-        <caffeine.version>2.9.3</caffeine.version>
+        <caffeine.version>3.1.2</caffeine.version>
         <checker-qual.version>3.29.0</checker-qual.version>
         <classmate.version>1.5.1</classmate.version>
         <commons-codec.version>1.15</commons-codec.version>
