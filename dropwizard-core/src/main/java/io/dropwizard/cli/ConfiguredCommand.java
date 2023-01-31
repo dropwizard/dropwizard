@@ -78,6 +78,19 @@ public abstract class ConfiguredCommand<T extends Configuration> extends Command
                         .help("application configuration file");
     }
 
+
+    /**
+     * Adds the required configuration file argument for the configured command.
+     * @param subparser The subparser to register the argument on
+     * @return the register argument
+     */
+    protected Argument addRequiredFileArgument(Subparser subparser) {
+        return subparser.addArgument("file")
+                        .nargs(1)
+                        .help("application configuration file");
+    }
+
+
     @Override
     @SuppressWarnings("unchecked")
     public void run(Bootstrap<?> wildcardBootstrap, Namespace namespace) throws Exception {
