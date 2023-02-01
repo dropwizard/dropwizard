@@ -86,7 +86,6 @@ public abstract class ConfiguredCommand<T extends Configuration> extends Command
      */
     protected Argument addRequiredFileArgument(Subparser subparser) {
         return subparser.addArgument("file")
-                        .nargs(1)
                         .help("application configuration file");
     }
 
