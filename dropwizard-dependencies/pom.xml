@@ -22,7 +22,7 @@
         <argparse4j.version>0.9.0</argparse4j.version>
         <byte-buddy.version>1.12.22</byte-buddy.version>
         <caffeine.version>2.9.3</caffeine.version>
-        <checker-qual.version>3.29.0</checker-qual.version>
+        <checker-qual.version>3.30.0</checker-qual.version>
         <classmate.version>1.5.1</classmate.version>
         <commons-codec.version>1.15</commons-codec.version>
         <commons-lang3.version>3.12.0</commons-lang3.version>
