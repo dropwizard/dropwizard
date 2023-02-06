@@ -1,7 +1,7 @@
 package io.dropwizard.logging.json.layout;
 
 import javax.annotation.Nullable;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -31,7 +31,8 @@ public class MapBuilder {
         this.timestampFormatter = timestampFormatter;
         this.customFieldNames = requireNonNull(customFieldNames);
         this.additionalFields = requireNonNull(additionalFields);
-        this.map = new HashMap<>(expectedSize);
+        this.map = new LinkedHashMap<>(expectedSize);
+        this.map.put(getFieldName("timestamp"), null); // Insert a null timestamp at first and fix it at build time
     }
 
     /**
@@ -131,6 +132,7 @@ public class MapBuilder {
 
     public Map<String, Object> build() {
         map.putAll(additionalFields);
+        map.remove(getFieldName("timestamp"), null); // drop the "timestamp" field if never assigned a real value
         return map;
     }
 
