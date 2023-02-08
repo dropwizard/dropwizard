@@ -153,6 +153,7 @@ class LayoutIntegrationTests {
             await().atMost(1, TimeUnit.SECONDS).until(() -> !redirectedStream.toString().isEmpty());
 
             JsonNode jsonNode = objectMapper.readTree(redirectedStream.toString());
+            assertThat(jsonNode.fieldNames().next()).isEqualTo("timestamp");
             assertThat(jsonNode.get("timestamp").isTextual()).isTrue();
             assertThat(jsonNode.get("level").asText()).isEqualTo("INFO");
             assertThat(jsonNode.get("logger").asText()).isEqualTo("com.example.app");
@@ -212,6 +213,7 @@ class LayoutIntegrationTests {
             await().atMost(1, TimeUnit.SECONDS).until(() -> !redirectedStream.toString().isEmpty());
 
             JsonNode jsonNode = objectMapper.readTree(redirectedStream.toString());
+            assertThat(jsonNode.fieldNames().next()).isEqualTo("timestamp");
             assertThat(jsonNode.get("timestamp").isNumber()).isTrue();
             assertThat(jsonNode.get("requestTime").isNumber()).isTrue();
             assertThat(jsonNode.get("remoteAddress").asText()).isEqualTo("10.0.0.1");
