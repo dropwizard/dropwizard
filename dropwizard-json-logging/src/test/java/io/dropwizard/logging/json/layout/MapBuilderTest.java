@@ -118,4 +118,28 @@ class MapBuilderTest {
     void testAddMapSupplierNotInvoked() {
         assertThat(mapBuilder.addMap("status", false, () -> {throw new RuntimeException();}).build()).isEmpty();
     }
+
+    @Test
+    void testTimestampIsAlwaysFirst() {
+        mapBuilder.add("status", true, "200");
+        mapBuilder.addTimestamp("timestamp", true, 1514906361000L);
+        mapBuilder.addNumber("code", true, 123);
+        mapBuilder.addTimestamp("timestamp2", true, 1514906361000L);
+
+        assertThat(mapBuilder.build().keySet())
+            .containsExactly("timestamp", "status", "code", "timestamp2");
+    }
+    @Test
+    void testTimestampIsAlwaysFirstWhenRenamed() {
+        final MapBuilder mapBuilder = new MapBuilder(timestampFormatter,
+            Collections.singletonMap("timestamp", "renamed-timestamp"), Collections.emptyMap(), size);
+
+        mapBuilder.add("status", true, "200");
+        mapBuilder.addNumber("code", true, 123);
+        mapBuilder.addTimestamp("timestamp2", true, 1514906361000L);
+        mapBuilder.addTimestamp("timestamp", true, 1514906361000L);
+
+        assertThat(mapBuilder.build().keySet())
+            .containsExactly("renamed-timestamp", "status", "code", "timestamp2");
+    }
 }
