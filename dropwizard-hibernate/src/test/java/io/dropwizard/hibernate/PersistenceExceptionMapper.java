@@ -29,19 +29,21 @@ public class PersistenceExceptionMapper implements ExtendedExceptionMapper<Persi
         LOGGER.error("Hibernate error", e);
 
         Throwable t = e.getCause();
+        Class<? extends Throwable> exceptionClass = t == null ? Exception.class : t.getClass();
 
         // PersistenceException wraps the real exception, so we look for the real exception mapper for it
         // Cast is necessary since the return type is ExceptionMapper<? extends Throwable> and Java
         // does not allow calling toResponse on the method with a Throwable
         @SuppressWarnings("unchecked")
         final ExceptionMapper<Throwable> exceptionMapper = (ExceptionMapper<Throwable>)
-            requireNonNull(providers).getExceptionMapper(t.getClass());
+            requireNonNull(providers).getExceptionMapper(exceptionClass);
 
         return exceptionMapper.toResponse(t);
     }
 
     @Override
     public boolean isMappable(PersistenceException e) {
-        return requireNonNull(providers).getExceptionMapper(e.getCause().getClass()) != null;
+        Throwable cause = e.getCause();
+        return cause != null && requireNonNull(providers).getExceptionMapper(cause.getClass()) != null;
     }
 }

@@ -43,7 +43,7 @@ public final class Throwables {
                 throw new IllegalArgumentException("Loop in causal chain detected.", throwable);
             }
             if (advanceSlowPointer) {
-                slowPointer = slowPointer.getCause();
+                slowPointer = slowPointer == null ? null : slowPointer.getCause();
             }
             advanceSlowPointer = !advanceSlowPointer; // only advance every other iteration
         }
