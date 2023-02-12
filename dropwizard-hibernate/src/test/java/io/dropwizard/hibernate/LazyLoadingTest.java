@@ -184,8 +184,11 @@ class LazyLoadingTest {
     public static class ConstraintViolationExceptionMapper implements ExceptionMapper<ConstraintViolationException> {
         @Override
         public Response toResponse(ConstraintViolationException e) {
+            String message = Optional.ofNullable(e.getCause())
+                .map(Throwable::getMessage)
+                .orElse("");
             return Response.status(Response.Status.BAD_REQUEST)
-                .entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(), Optional.ofNullable(e.getCause().getMessage()).orElse("")))
+                .entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(), message))
                 .build();
         }
     }

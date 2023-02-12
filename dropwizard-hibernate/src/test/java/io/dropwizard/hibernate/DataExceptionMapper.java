@@ -13,7 +13,9 @@ public class DataExceptionMapper implements ExceptionMapper<DataException> {
 
     @Override
     public Response toResponse(DataException e) {
-        final String causeMessage = Optional.ofNullable(e.getCause().getMessage()).orElse("");
+        final String causeMessage = Optional.ofNullable(e.getCause())
+            .map(Throwable::getMessage)
+            .orElse("");
         final String message = causeMessage.contains("EMAIL") ? "Wrong email" : "Wrong input";
 
         return Response.status(Response.Status.BAD_REQUEST)
