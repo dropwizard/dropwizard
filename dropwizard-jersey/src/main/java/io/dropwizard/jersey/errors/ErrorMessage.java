@@ -10,21 +10,23 @@ import java.util.Objects;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ErrorMessage {
     private final int code;
+    @Nullable
     private final String message;
 
     @Nullable
     private final String details;
 
-    public ErrorMessage(String message) {
+    public ErrorMessage(@Nullable String message) {
         this(500, message);
     }
 
-    public ErrorMessage(int code, String message) {
+    public ErrorMessage(int code, @Nullable String message) {
         this(code, message, null);
     }
 
     @JsonCreator
-    public ErrorMessage(@JsonProperty("code") int code, @JsonProperty("message") String message,
+    public ErrorMessage(@JsonProperty("code") int code,
+                        @Nullable @JsonProperty("message") String message,
                         @Nullable @JsonProperty("details") String details) {
         this.code = code;
         this.message = message;
@@ -37,6 +39,7 @@ public class ErrorMessage {
     }
 
     @JsonProperty("message")
+    @Nullable
     public String getMessage() {
         return message;
     }
