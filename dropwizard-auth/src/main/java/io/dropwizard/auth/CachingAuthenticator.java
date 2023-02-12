@@ -124,6 +124,9 @@ public class CachingAuthenticator<C, P extends Principal> implements Authenticat
             if (cause instanceof AuthenticationException) {
                 throw (AuthenticationException) cause;
             }
+            if (cause == null) {
+                throw new AuthenticationException(e);
+            }
             throw new AuthenticationException(cause);
         }
     }
