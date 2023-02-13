@@ -42,7 +42,7 @@ jobs:
       # If the CI run is not initiated from the primary repository, it is highly likely that this is a PR from a user who doesn't have commit rights.
       # Hence, skip this step to avoid permission failures.
       if: github.event.pull_request.head.repo.full_name == 'dropwizard/dropwizard'
-      uses: scacap/action-surefire-report@be8172cc301d1805659f46260815db3e9ad574b2 # v1
+      uses: scacap/action-surefire-report@86765bf9ff940dab6025bbc2f6fdb58c31c897ff # v1
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         check_name: Test Report (${{ matrix.os }} - Java ${{ matrix.java_version }})
