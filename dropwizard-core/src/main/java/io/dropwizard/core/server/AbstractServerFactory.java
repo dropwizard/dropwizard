@@ -1,6 +1,7 @@
 package io.dropwizard.core.server;
 
 import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.annotation.ResponseMeteredLevel;
 import com.codahale.metrics.health.HealthCheckRegistry;
 import com.codahale.metrics.servlets.AdminServlet;
 import com.codahale.metrics.servlets.HealthCheckServlet;
@@ -56,6 +57,8 @@ import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.stream.Collectors;
 
+import static com.codahale.metrics.annotation.ResponseMeteredLevel.COARSE;
+
 /**
  * A base class for {@link ServerFactory} implementations.
  * <p/>
@@ -80,6 +83,16 @@ import java.util.stream.Collectors;
  *         <td>{@code serverPush}</td>
  *         <td></td>
  *         <td>The {@link ServerPushFilterFactory} configuration.</td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code responseMeteredLevel}</td>
+ *         <td>COARSE</td>
+ *         <td>The response metered level to decide what response code meters are included.</td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code metricPrefix}</td>
+ *         <td></td>
+ *         <td>The metricPrefix to use in the metric name for jetty metrics.</td>
  *     </tr>
  *     <tr>
  *         <td>{@code maxThreads}</td>
@@ -238,6 +251,13 @@ public abstract class AbstractServerFactory implements ServerFactory {
     @NotNull
     private ServerPushFilterFactory serverPush = new ServerPushFilterFactory();
 
+    @Valid
+    @NotNull
+    private ResponseMeteredLevel responseMeteredLevel = COARSE;
+
+    @Nullable
+    private String metricPrefix = null;
+
     @Min(4)
     private int maxThreads = 1024;
 
@@ -330,6 +350,17 @@ public abstract class AbstractServerFactory implements ServerFactory {
     @JsonProperty("serverPush")
     public void setServerPush(ServerPushFilterFactory serverPush) {
         this.serverPush = serverPush;
+    }
+
+    @JsonProperty("responseMeteredLevel")
+    public ResponseMeteredLevel getResponseMeteredLevel() {
+        return responseMeteredLevel;
+    }
+
+    @JsonProperty("metricPrefix")
+    @Nullable
+    public String getMetricPrefix() {
+        return metricPrefix;
     }
 
     @JsonProperty
@@ -601,7 +632,8 @@ public abstract class AbstractServerFactory implements ServerFactory {
             }
             handler.addServlet(new ServletHolder("jersey", jerseyContainer), jersey.getUrlPattern());
         }
-        final InstrumentedHandler instrumented = new InstrumentedHandler(metricRegistry);
+        @SuppressWarnings("NullAway")
+        final InstrumentedHandler instrumented = new InstrumentedHandler(metricRegistry, metricPrefix, responseMeteredLevel);
         instrumented.setServer(server);
         instrumented.setHandler(handler);
         return instrumented;
