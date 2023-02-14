@@ -5,6 +5,8 @@ requestLog:
       currentLogFilename: ./logs/requests.log
       archivedLogFilenamePattern: ./logs/requests-%d.log.gz
       archivedFileCount: 5
+responseMeteredLevel: ALL
+metricPrefix: jetty
 gzip:
   enabled: false
 serverPush:
