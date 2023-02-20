@@ -62,7 +62,7 @@ class JsonHealthResponseProviderTest {
         // then
         assertThat(response.isHealthy()).isTrue();
         assertThat(response.getContentType()).isEqualTo(MediaType.APPLICATION_JSON);
-        assertThat(response.getMessage()).isEqualToIgnoringWhitespace(fixture("/json/single-healthy-response.json"));
+        assertThat(mapper.readTree(response.getMessage())).isEqualTo(mapper.readTree(fixture("/json/single-healthy-response.json")));
     }
 
     @Test
@@ -88,7 +88,7 @@ class JsonHealthResponseProviderTest {
         // then
         assertThat(response.isHealthy()).isTrue();
         assertThat(response.getContentType()).isEqualTo(MediaType.APPLICATION_JSON);
-        assertThat(response.getMessage()).isEqualToIgnoringWhitespace(fixture("/json/multiple-healthy-responses.json"));
+        assertThat(mapper.readTree(response.getMessage())).isEqualTo(mapper.readTree(fixture("/json/multiple-healthy-responses.json")));
     }
 
     @Test

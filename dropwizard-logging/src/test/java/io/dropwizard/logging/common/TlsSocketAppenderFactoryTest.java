@@ -72,6 +72,7 @@ class TlsSocketAppenderFactoryTest {
             Logger logger = LoggerFactory.getLogger("com.example.app");
             List<String> loggedMessages = generateLogs(logger);
 
+            loggingFactory.stop();
             loggingFactory.reset();
 
             assertThat(receivedMessages.get(1, TimeUnit.MINUTES))
