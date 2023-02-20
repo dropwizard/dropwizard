@@ -1,8 +1,6 @@
 name: Trigger Release
 on:
   workflow_dispatch:
-    branches:
-    - release/*
     inputs:
       releaseVersion:
         description: 'Version of the next release'
@@ -38,9 +36,9 @@ jobs:
         git config --global author.email "${GITHUB_ACTOR}@users.noreply.github.com"
         git config --global author.name "${GITHUB_ACTOR}"
     - name: Prepare release
-      run: ./mvnw -V -B -ntp -Prelease -DreleaseVersion=${{ github.event.inputs.releaseVersion }} -DdevelopmentVersion=${{ github.event.inputs.developmentVersion }} release:prepare
+      run: ./mvnw -V -B -ntp -Prelease -DreleaseVersion=${{ inputs.releaseVersion }} -DdevelopmentVersion=${{ inputs.developmentVersion }} release:prepare
     - name: Rollback on failure
-      if: ${{ failure() }}
+      if: failure()
       run: |
-        ./mvnw -B release:rollback -Prelease -Dgpg.passphrase=${{secrets.GPG_PASSPHRASE}}
+        ./mvnw -B release:rollback -Prelease
         echo "You may need to manually delete the GitHub tag, if it was created."
