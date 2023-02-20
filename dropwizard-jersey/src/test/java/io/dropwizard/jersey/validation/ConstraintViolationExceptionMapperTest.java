@@ -1147,13 +1147,14 @@ class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
     }
 
     @Test
-    void optionalInt_fails_with_empty_string() {
+    void optionalInt_succeeds_with_empty_string() {
         final Response response = target("/valid/optionalInt")
                 .queryParam("num", "")
                 .request()
                 .get();
 
-        assertThat(response.getStatus()).isEqualTo(404);
+        assertThat(response.getStatus()).isEqualTo(200);
+        assertThat(response.readEntity(Integer.class)).isEqualTo(42);
     }
 
     @Test
@@ -1207,7 +1208,8 @@ class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
                 .request()
                 .get();
 
-        assertThat(response.getStatus()).isEqualTo(404);
+        assertThat(response.getStatus()).isEqualTo(200);
+        assertThat(response.readEntity(Integer.class)).isEqualTo(42);
     }
 
     @Test

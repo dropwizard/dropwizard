@@ -37,11 +37,12 @@ class OptionalFormParamResourceTest extends AbstractJerseyTest {
     }
 
     @Test
-    void shouldReturnMessageWhenMessageBlank() {
+    void shouldReturnDefaultMessageWhenMessageBlank() {
+        String defaultMessage = "Default Message";
         final Form form = new Form("message", "");
         final Response response = target("/optional/message").request().post(Entity.form(form));
 
-        assertThat(response.readEntity(String.class)).isEmpty();
+        assertThat(response.readEntity(String.class)).isEqualTo(defaultMessage);
     }
 
     @Test
