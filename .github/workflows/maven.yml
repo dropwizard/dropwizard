@@ -37,7 +37,7 @@ jobs:
         key: ${{ runner.os }}-sonar
         restore-keys: ${{ runner.os }}-sonar
     - name: Build
-      run: ./mvnw --no-transfer-progress -V -B -ff -s .github/settings.xml -e "-DtrimStackTrace=false" "-Dmaven.test.failure.ignore=true" "-Dsurefire.rerunFailingTestsCount=1" install
+      run: ./mvnw --no-transfer-progress -V -B -fae -s .github/settings.xml -e "-DtrimStackTrace=false" "-Dsurefire.rerunFailingTestsCount=1" install
     - name: Upload Test Reports
       if: always()
       uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3
@@ -45,9 +45,7 @@ jobs:
         name: test-reports-${{ matrix.os }}-java${{ matrix.java_version }}
         path: '**/*-reports'
     - name: Publish Test Results
-      # If the CI run is not initiated from the primary repository, it is highly likely that this is a PR from a user who doesn't have commit rights.
-      # Hence, skip this step to avoid permission failures.
-      if: github.event.pull_request.head.repo.full_name == 'dropwizard/dropwizard'
+      if: always()
       uses: scacap/action-surefire-report@4cbb611f23a9b5a030c73c2b32190a80983956ed # v1
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
