@@ -38,23 +38,21 @@ jobs:
         restore-keys: ${{ runner.os }}-sonar
     - name: Build
       run: ./mvnw --no-transfer-progress -V -B -ff -s .github/settings.xml -e "-DtrimStackTrace=false" "-Dmaven.test.failure.ignore=true" "-Dsurefire.rerunFailingTestsCount=1" install
-    - name: Publish Test Results
-      # If the CI run is not initiated from the primary repository, it is highly likely that this is a PR from a user who doesn't have commit rights.
-      # Hence, skip this step to avoid permission failures.
-      if: github.event.pull_request.head.repo.full_name == 'dropwizard/dropwizard'
-      uses: scacap/action-surefire-report@be8172cc301d1805659f46260815db3e9ad574b2 # v1
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        check_name: Test Report (${{ matrix.os }} - Java ${{ matrix.java_version }})
-        report_paths: '**/*-reports/TEST-*.xml'
     - name: Upload Test Reports
-      # If the CI run is not initiated from the primary repository, it is highly likely that this is a PR from a user who doesn't have commit rights.
-      # Hence, skip this step to avoid permission failures.
-      if: github.event.pull_request.head.repo.full_name == 'dropwizard/dropwizard'
+      if: always()
       uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3
       with:
         name: test-reports-${{ matrix.os }}-java${{ matrix.java_version }}
         path: '**/*-reports'
+    - name: Publish Test Results
+      # If the CI run is not initiated from the primary repository, it is highly likely that this is a PR from a user who doesn't have commit rights.
+      # Hence, skip this step to avoid permission failures.
+      if: github.event.pull_request.head.repo.full_name == 'dropwizard/dropwizard'
+      uses: scacap/action-surefire-report@4cbb611f23a9b5a030c73c2b32190a80983956ed # v1
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        check_name: Test Report (${{ matrix.os }} - Java ${{ matrix.java_version }})
+        report_paths: '**/*-reports/TEST-*.xml'
     - name: Analyze with SonarCloud
       if: ${{ env.SONAR_TOKEN != null && env.SONAR_TOKEN != '' && matrix.java_version == '11' && matrix.os == 'ubuntu-latest' }}
       env:
