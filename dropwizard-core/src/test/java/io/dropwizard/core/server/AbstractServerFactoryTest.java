@@ -1,5 +1,6 @@
 package io.dropwizard.core.server;
 
+import com.codahale.metrics.annotation.ResponseMeteredLevel;
 import io.dropwizard.core.Application;
 import io.dropwizard.core.Configuration;
 import io.dropwizard.core.setup.Environment;
@@ -67,6 +68,16 @@ class AbstractServerFactoryTest {
         serverFactory.build(environment);
 
         assertThat(jerseyEnvironment.getUrlPattern()).isEqualTo(DEFAULT_PATTERN);
+    }
+
+    @Test
+    void usesDefaultResponseMeteredLevelWhenNotSet() {
+        assertThat(serverFactory.getResponseMeteredLevel()).isEqualTo(ResponseMeteredLevel.COARSE);
+    }
+
+    @Test
+    void usesDefaultMetricPrefixWhenNotSet() {
+        assertThat(serverFactory.getMetricPrefix()).isNull();
     }
 
     /**

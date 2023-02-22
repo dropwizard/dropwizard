@@ -38,6 +38,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import static com.codahale.metrics.annotation.ResponseMeteredLevel.ALL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -84,6 +85,18 @@ class DefaultServerFactoryTest {
     void hasAMinimumNumberOfThreads() {
         assertThat(http.getMinThreads())
                 .isEqualTo(89);
+    }
+
+    @Test
+    void hasResponseMeteredLevel() {
+        assertThat(http.getResponseMeteredLevel())
+            .isEqualTo(ALL);
+    }
+
+    @Test
+    void hasMetricPrefix() {
+        assertThat(http.getMetricPrefix())
+            .isEqualTo("jetty");
     }
 
     @Test

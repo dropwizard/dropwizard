@@ -36,6 +36,8 @@ maxThreads                          1024                                        
 minThreads                          8                                                The minimum number of threads to keep alive in the thread pool. Note that each Jetty connector consumes threads from the pool. See :ref:`HTTP connector <man-configuration-http>` how the thread counts are calculated.
 maxQueuedRequests                   1024                                             The maximum number of requests to queue before blocking
                                                                                      the acceptors.
+responseMeteredLevel                COARSE                                           The response metered level to decide what response code meters are included
+metricPrefix                        (none)                                           The metricPrefix to use in the metric name for jetty metrics
 idleThreadTimeout                   1 minute                                         The amount of time a worker thread can be idle before
                                                                                      being stopped.
 nofileSoftLimit                     (none)                                           The number of open file descriptors before a soft error is issued.
