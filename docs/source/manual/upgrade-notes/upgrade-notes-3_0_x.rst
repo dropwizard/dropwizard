@@ -86,3 +86,20 @@ because the current version of the Jadira Usertype Core library doesn't support 
 
 If you want to continue using this library, you have to set the property ``jadira.usertype.autoRegisterUserTypes`` to ``true`` in your application's database configuration
 and add a dependency on the current version of the Usertype Core library.
+
+Logback layout conversion words
+===============================
+Logback allows to use specific `conversion words <https://logback.qos.ch/manual/layouts.html#conversionWord>`_ in its ``PatternLayout`` to insert information obtained by an instance of a specific ``Converter``.
+
+Previously, Dropwizard has overridden the abbreviated conversion words for exceptions (``ex``, ``xEx`` and ``rEx``) to apply stack trace prefixing with a `!` rather than a tab.
+
+In Dropwizard 3.x these overrides are removed and all exception conversion words work as documented in the Logback manual.
+To apply the stack trace prefixing, new conversion words are introduced with a prefix ``dw``. Therefore the following new conversion words can be used:
+
+ - ``dwEx``, ``dwException`` and ``dwThrowable`` instead of ``ex``, ``exception`` and ``throwable``
+ - ``dwXEx``, ``dwXException`` and ``dwXThrowable`` instead of ``xEx``, ``xException`` and ``xThrowable``
+ - ``dwREx`` and ``dwRootException`` instead of ``rEx`` and ``rootException``
+
+Those newly introduced conversion words work like the Logback ones, except that the first tab is replaced by a `!`.
+
+To simplify the upgrade to Dropwizard 3.x for most users, the default Dropwizard logging layout is modified to use the new Dropwizard specific conversion words.

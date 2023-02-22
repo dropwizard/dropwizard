@@ -16,13 +16,13 @@ class DropwizardLayoutTest {
     @Test
     void prefixesThrowables() throws Exception {
         assertThat(layout.getDefaultConverterMap())
-                .containsEntry("ex", PrefixedThrowableProxyConverter.class.getName());
+                .containsEntry("dwEx", PrefixedThrowableProxyConverter.class.getName());
     }
 
     @Test
     void prefixesExtendedThrowables() throws Exception {
         assertThat(layout.getDefaultConverterMap())
-                .containsEntry("xEx", PrefixedExtendedThrowableProxyConverter.class.getName());
+                .containsEntry("dwXEx", PrefixedExtendedThrowableProxyConverter.class.getName());
     }
 
     @Test
@@ -34,6 +34,6 @@ class DropwizardLayoutTest {
     @Test
     void hasAPatternWithATimeZoneAndExtendedThrowables() throws Exception {
         assertThat(layout.getPattern())
-                .isEqualTo("%-5p [%d{ISO8601,UTC}] %c: %m%n%rEx");
+                .isEqualTo("%-5p [%d{ISO8601,UTC}] %c: %m%n%dwREx");
     }
 }
