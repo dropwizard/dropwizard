@@ -4,7 +4,7 @@
     <parent>
         <groupId>io.dropwizard</groupId>
         <artifactId>dropwizard-dependencies</artifactId>
-        <version>3.0.0-SNAPSHOT</version>
+        <version>3.0.0-beta.5</version>
         <relativePath>../dropwizard-dependencies</relativePath>
     </parent>
 
@@ -146,7 +146,7 @@
             <dependency>
                 <groupId>io.dropwizard</groupId>
                 <artifactId>dropwizard-dependencies</artifactId>
-                <version>3.0.0-SNAPSHOT</version>
+                <version>3.0.0-beta.5</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
