@@ -56,7 +56,7 @@
         <liquibase-slf4j.version>4.1.0</liquibase-slf4j.version>
         <logback-throttling-appender.version>1.1.9</logback-throttling-appender.version>
         <logback.version>1.2.11</logback.version>
-        <metrics4.version>4.2.16</metrics4.version>
+        <metrics4.version>4.2.17</metrics4.version>
         <mustache-compiler.version>0.9.10</mustache-compiler.version>
         <nullaway.version>0.10.9</nullaway.version>
         <slf4j.version>1.7.36</slf4j.version>
