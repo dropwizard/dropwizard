@@ -58,7 +58,7 @@
         <mustache-compiler.version>0.9.10</mustache-compiler.version>
         <nullaway.version>0.10.9</nullaway.version>
         <slf4j.version>2.0.6</slf4j.version>
-        <tomcat-jdbc.version>10.1.5</tomcat-jdbc.version>
+        <tomcat-jdbc.version>10.1.6</tomcat-jdbc.version>
 
         <!-- Test dependencies -->
         <assertj.version>3.24.2</assertj.version>
