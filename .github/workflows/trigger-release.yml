@@ -11,6 +11,8 @@ on:
 jobs:
   trigger-release:
     runs-on: 'ubuntu-latest'
+    permissions:
+      contents: write
     env:
       JAVA_OPTS: "-XX:+TieredCompilation -XX:TieredStopAtLevel=1"
       CI_DEPLOY_USERNAME: ${{ secrets.CI_DEPLOY_USERNAME }}
