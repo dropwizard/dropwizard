@@ -681,7 +681,7 @@ Console
           discardingThreshold: 0
           timeZone: UTC
           target: stdout
-          logFormat: "%-5p [%d{ISO8601,UTC}] %c: %m%n%rEx"
+          logFormat: "%-5p [%d{ISO8601,UTC}] %c: %m%n%dwREx"
           filterFactories:
             - type: URI
 
@@ -702,7 +702,7 @@ timeZone               UTC                                      The time zone to
                                                                 To use the system/default time zone, set it to ``system``.
 target                 stdout                                   The name of the standard stream to which events will be written.
                                                                 Can be ``stdout`` or ``stderr``.
-logFormat              %-5p [%d{ISO8601,UTC}] %c: %m%n%rEx      The Logback pattern with which events will be formatted. See
+logFormat              %-5p [%d{ISO8601,UTC}] %c: %m%n%dwREx    The Logback pattern with which events will be formatted. See
                                                                 the Logback_ documentation for details.
                                                                 The default log pattern is ```%h %l %u [%t{dd/MMM/yyyy:HH:mm:ss Z,UTC}] "%r" %s %b "%i{Referer}" "%i{User-Agent}" %D```.
                                                                 Use the placeholder ``%dwTimeZone`` to include the value of
@@ -735,7 +735,7 @@ File
           archivedLogFilenamePattern: /var/log/myapplication-%d.log
           archivedFileCount: 5
           timeZone: UTC
-          logFormat: "%-5p [%d{ISO8601,UTC}] %c: %m%n%rEx"
+          logFormat: "%-5p [%d{ISO8601,UTC}] %c: %m%n%dwREx"
           bufferSize: 8KiB
           immediateFlush: true
           filterFactories:
@@ -772,7 +772,7 @@ maxFileSize                  (unlimited)                                The maxi
 totalSizeCap                 (unlimited)                                Controls the total size of all files.
                                                                         Oldest archives are deleted asynchronously when the total size cap is exceeded.
 timeZone                     UTC                                        The time zone to which event timestamps will be converted.
-logFormat                    %-5p [%d{ISO8601,UTC}] %c: %m%n%rEx        The Logback pattern with which events will be formatted. See
+logFormat                    %-5p [%d{ISO8601,UTC}] %c: %m%n%dwREx      The Logback pattern with which events will be formatted. See
                                                                         the Logback_ documentation for details.
                                                                         The default log pattern is ```%h %l %u [%t{dd/MMM/yyyy:HH:mm:ss Z,UTC}] "%r" %s %b "%i{Referer}" "%i{User-Agent}" %D```.
                                                                         Use the placeholder ``%dwTimeZone`` to include the value of
@@ -804,7 +804,7 @@ Syslog
           facility: local0
           threshold: ALL
           stackTracePrefix: \t
-          logFormat: "%-5p [%d{ISO8601,UTC}] %c: %m%n%rEx"
+          logFormat: "%-5p [%d{ISO8601,UTC}] %c: %m%n%dwREx"
           filterFactories:
             - type: URI
 
@@ -820,7 +820,7 @@ facility                     local0                                 The syslog f
                                                                     ``local1``, ``local2``, ``local3``, ``local4``, ``local5``,
                                                                     ``local6``, or ``local7``.
 threshold                    ALL                                    The lowest level of events to write to the file.
-logFormat                    %-5p [%d{ISO8601,UTC}] %c: %m%n%rEx    The Logback pattern with which events will be formatted. See
+logFormat                    %-5p [%d{ISO8601,UTC}] %c: %m%n%dwREx  The Logback pattern with which events will be formatted. See
                                                                     the Logback_ documentation for details.
                                                                     The default log pattern is ```%h %l %u [%t{dd/MMM/yyyy:HH:mm:ss Z,UTC}] "%r" %s %b "%i{Referer}" "%i{User-Agent}" %D```.
 stackTracePrefix             \t                                     The prefix to use when writing stack trace lines (these are sent

@@ -256,7 +256,7 @@ public abstract class AbstractServerFactory implements ServerFactory {
     private ResponseMeteredLevel responseMeteredLevel = COARSE;
 
     @Nullable
-    private String metricPrefix;
+    private String metricPrefix = null;
 
     @Min(4)
     private int maxThreads = 1024;
