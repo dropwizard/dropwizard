@@ -43,7 +43,7 @@
         <jakarta.persistence-api.version>3.0.0</jakarta.persistence-api.version>
         <jakarta.servlet-api.version>5.0.0</jakarta.servlet-api.version>
         <jakarta.validation-api.version>3.0.2</jakarta.validation-api.version>
-        <jakarta.ws.rs-api.version>3.0.0</jakarta.ws.rs-api.version>
+        <jakarta.ws.rs-api.version>3.1.0</jakarta.ws.rs-api.version>
         <javassist.version>3.29.2-GA</javassist.version>
         <jaxb-api.version>3.0.1</jaxb-api.version>
         <jboss-logging.version>3.5.0.Final</jboss-logging.version>
