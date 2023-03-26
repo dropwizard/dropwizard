@@ -140,6 +140,33 @@ class HealthCheckManagerTest {
     }
 
     @Test
+    void shouldReportHealthyWhenInitialOverallStateIsFalseAndReadyCheckIsHealthy() {
+        final HealthCheckConfiguration config = new HealthCheckConfiguration();
+        config.setName(NAME);
+        config.setType(HealthCheckType.READY);
+        config.setCritical(false);
+        config.setInitialState(false);
+        config.setSchedule(new Schedule());
+        final HealthCheckManager manager = new HealthCheckManager(singletonList(config), scheduler,
+            new MetricRegistry(), SHUTDOWN_WAIT, false, Collections.emptyList());
+        manager.initializeAppHealth();
+        final HealthCheck check = mock(HealthCheck.class);
+
+        manager.onHealthCheckAdded(NAME, check);
+        assertThat(manager)
+            .satisfies(m -> assertThat(m.isHealthy()).isFalse())
+            .satisfies(m -> assertThat(m.isHealthy("alive")).isTrue());
+
+        manager.onStateChanged(NAME, true);
+        assertThat(manager)
+            .satisfies(m -> assertThat(m.isHealthy()).isTrue())
+            .satisfies(m -> assertThat(m.isHealthy("alive")).isTrue())
+            .satisfies(m -> assertThat(m.isHealthy("ready")).isTrue());
+
+        verifyCheckWasScheduled(scheduler, false);
+    }
+
+    @Test
     void shouldMarkServerUnhealthyWhenCriticalHealthCheckFails() {
         final HealthCheckConfiguration config = new HealthCheckConfiguration();
         config.setName(NAME);
@@ -243,18 +270,22 @@ class HealthCheckManagerTest {
         nonCriticalConfig.setName(NAME);
         nonCriticalConfig.setCritical(false);
         nonCriticalConfig.setSchedule(new Schedule());
+        nonCriticalConfig.setInitialState(false);
         configs.add(nonCriticalConfig);
         final HealthCheckConfiguration criticalConfig = new HealthCheckConfiguration();
         criticalConfig.setName(NAME_2);
         criticalConfig.setCritical(true);
         criticalConfig.setSchedule(new Schedule());
+        criticalConfig.setInitialState(false);
         configs.add(criticalConfig);
         final HealthCheckManager manager = new HealthCheckManager(unmodifiableList(configs), scheduler, new MetricRegistry(),
             SHUTDOWN_WAIT, true, Collections.emptyList());
-        final HealthCheck check = mock(HealthCheck.class);
+        final HealthCheck nonCriticalCheck = mock(HealthCheck.class);
+        final HealthCheck criticalCheck = mock(HealthCheck.class);
 
-        manager.onHealthCheckAdded(NAME, check);
-        manager.onHealthCheckAdded(NAME_2, check);
+        manager.onHealthCheckAdded(NAME, nonCriticalCheck);
+        manager.onHealthCheckAdded(NAME_2, criticalCheck);
+
         manager.onStateChanged(NAME, false);
         manager.onStateChanged(NAME_2, false);
         assertThat(manager.isHealthy()).isFalse();
