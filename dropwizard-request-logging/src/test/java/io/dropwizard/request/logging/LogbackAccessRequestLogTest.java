@@ -2,6 +2,8 @@ package io.dropwizard.request.logging;
 
 import ch.qos.logback.access.spi.IAccessEvent;
 import ch.qos.logback.core.Appender;
+import org.eclipse.jetty.http.MetaData;
+import org.eclipse.jetty.server.HttpChannel;
 import org.eclipse.jetty.server.HttpChannelState;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Response;
@@ -39,8 +41,15 @@ class LogbackAccessRequestLogTest {
         when(request.getProtocol()).thenReturn("HTTP/1.1");
         when(request.getHttpChannelState()).thenReturn(channelState);
 
-        when(response.getStatus()).thenReturn(200);
-        when(response.getContentCount()).thenReturn(8290L);
+        MetaData.Response metaData = mock(MetaData.Response.class);
+        when(metaData.getStatus()).thenReturn(200);
+
+        when(response.getCommittedMetaData()).thenReturn(metaData);
+
+        HttpChannel channel = mock(HttpChannel.class);
+        when(channel.getBytesWritten()).thenReturn(8290L);
+
+        when(response.getHttpChannel()).thenReturn(channel);
 
         requestLog.addAppender(appender);
 
