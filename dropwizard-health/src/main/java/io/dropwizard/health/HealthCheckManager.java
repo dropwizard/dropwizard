@@ -99,7 +99,7 @@ class HealthCheckManager implements HealthCheckRegistryListener, HealthStatusChe
 
         // handle initial state of 'false' to ensure counts line up
         if (!initialState && critical) {
-            handleCriticalHealthChange(name, type, false);
+            handleCriticalHealthChange(check, false);
         }
 
         scheduler.scheduleInitial(check);
@@ -121,9 +121,9 @@ class HealthCheckManager implements HealthCheckRegistryListener, HealthStatusChe
         }
 
         if (check.isCritical()) {
-            handleCriticalHealthChange(check.getName(), check.getType(), isNowHealthy);
+            handleCriticalHealthChange(check, isNowHealthy);
         } else {
-            handleNonCriticalHealthChange(check.getName(), check.getType(), isNowHealthy);
+            handleNonCriticalHealthChange(check, isNowHealthy);
         }
 
         scheduler.schedule(check, isNowHealthy);
@@ -158,10 +158,11 @@ class HealthCheckManager implements HealthCheckRegistryListener, HealthStatusChe
             .count();
     }
 
-    private void handleCriticalHealthChange(final String name, final HealthCheckType type, final boolean isNowHealthy) {
+    private void handleCriticalHealthChange(final ScheduledHealthCheck healthCheck, final boolean isNowHealthy) {
         if (isNowHealthy) {
-            LOGGER.info("A critical dependency is now healthy: name={}, type={}", name, type);
-            switch (type) {
+            LOGGER.info("A critical dependency is now healthy: name={}, type={}",
+                healthCheck.getName(), healthCheck.getType());
+            switch (healthCheck.getType()) {
                 case ALIVE:
                     updateCriticalStatus(isAppAlive, unhealthyCriticalAliveChecks.decrementAndGet());
                     return;
@@ -169,20 +170,22 @@ class HealthCheckManager implements HealthCheckRegistryListener, HealthStatusChe
                     if (!shuttingDown) {
                         updateCriticalStatus(isAppHealthy, unhealthyCriticalHealthChecks.decrementAndGet());
                     } else {
-                        LOGGER.info("Status change is ignored during shutdown: name={}, type={}", name, type);
+                        LOGGER.info("Status change is ignored during shutdown: name={}, type={}",
+                            healthCheck.getName(), healthCheck.getType());
                     }
                     return;
             }
         } else {
-            ScheduledHealthCheck healthCheck = checks.get(name);
-            HealthCheckConfiguration healthCheckConfiguration = configs.get(name);
-            if (healthCheck != null && healthCheckConfiguration != null
+            HealthCheckConfiguration healthCheckConfiguration = configs.get(healthCheck.getName());
+            if (healthCheckConfiguration != null
                 && !healthCheckConfiguration.isInitialState() && !healthCheck.isPreviouslyRecovered()) {
-                LOGGER.warn("A critical unhealthy initialized dependency has not yet recovered: name={}, type={}", name, type);
+                LOGGER.warn("A critical unhealthy initialized dependency has not yet recovered: name={}, type={}",
+                    healthCheck.getName(), healthCheck.getType());
             } else {
-                LOGGER.error("A critical dependency is now unhealthy: name={}, type={}", name, type);
+                LOGGER.error("A critical dependency is now unhealthy: name={}, type={}",
+                    healthCheck.getName(), healthCheck.getType());
             }
-            switch (type) {
+            switch (healthCheck.getType()) {
                 case ALIVE:
                     updateCriticalStatus(isAppAlive, unhealthyCriticalAliveChecks.incrementAndGet());
                     return;
@@ -191,7 +194,7 @@ class HealthCheckManager implements HealthCheckRegistryListener, HealthStatusChe
                     return;
             }
         }
-        LOGGER.warn("Unexpected health check type: type={}", type);
+        LOGGER.warn("Unexpected health check type: type={}", healthCheck.getType());
     }
 
     private void updateCriticalStatus(final AtomicBoolean status, final int count) {
@@ -199,17 +202,23 @@ class HealthCheckManager implements HealthCheckRegistryListener, HealthStatusChe
         LOGGER.debug("current status: unhealthy-critical={}", count);
     }
 
-    private void handleNonCriticalHealthChange(final String name, final HealthCheckType type, final boolean isNowHealthy) {
+    private void handleNonCriticalHealthChange(final ScheduledHealthCheck healthCheck, final boolean isNowHealthy) {
         if (isNowHealthy) {
-            LOGGER.info("A non-critical dependency is now healthy: name={}, type={}", name, type);
+            LOGGER.info("A non-critical dependency is now healthy: name={}, type={}",
+                healthCheck.getName(), healthCheck.getType());
+
+            if (!isHealthy() && checks.values().stream().filter(ScheduledHealthCheck::isCritical).allMatch(ScheduledHealthCheck::isHealthy)) {
+                isAppHealthy.compareAndSet(false, true);
+            }
         } else {
-            ScheduledHealthCheck healthCheck = checks.get(name);
-            HealthCheckConfiguration healthCheckConfiguration = configs.get(name);
-            if (healthCheck != null && healthCheckConfiguration != null
+            HealthCheckConfiguration healthCheckConfiguration = configs.get(healthCheck.getName());
+            if (healthCheckConfiguration != null
                 && !healthCheckConfiguration.isInitialState() && !healthCheck.isPreviouslyRecovered()) {
-                LOGGER.info("A non-critical unhealthy initialized dependency has not yet recovered: name={}, type={}", name, type);
+                LOGGER.info("A non-critical unhealthy initialized dependency has not yet recovered: name={}, type={}",
+                    healthCheck.getName(), healthCheck.getType());
             } else {
-                LOGGER.warn("A non-critical dependency is now unhealthy: name={}, type={}", name, type);
+                LOGGER.warn("A non-critical dependency is now unhealthy: name={}, type={}",
+                    healthCheck.getName(), healthCheck.getType());
             }
         }
     }
