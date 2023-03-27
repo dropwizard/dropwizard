@@ -16,6 +16,8 @@ import io.dropwizard.logging.DefaultLoggingFactory;
 import io.dropwizard.request.logging.LogbackAccessRequestLogFactory;
 import io.dropwizard.validation.BaseValidator;
 import org.eclipse.jetty.http.HttpFields;
+import org.eclipse.jetty.http.MetaData;
+import org.eclipse.jetty.server.HttpChannel;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.RequestLog;
 import org.eclipse.jetty.server.Response;
@@ -192,8 +194,12 @@ class LayoutIntegrationTests {
             when(request.getHeader("User-Agent")).thenReturn("Mozilla/5.0");
 
             Response response = mock(Response.class);
-            when(response.getStatus()).thenReturn(200);
-            when(response.getContentCount()).thenReturn(8290L);
+            MetaData.Response metaData = mock(MetaData.Response.class);
+            when(metaData.getStatus()).thenReturn(200);
+            when(response.getCommittedMetaData()).thenReturn(metaData);
+            HttpChannel channel = mock(HttpChannel.class);
+            when(channel.getBytesWritten()).thenReturn(8290L);
+            when(response.getHttpChannel()).thenReturn(channel);
             HttpFields httpFields = new HttpFields();
             httpFields.add("Date", "Mon, 16 Nov 2012 05:00:48 GMT");
             httpFields.add("Server", "Apache/2.4.12");
