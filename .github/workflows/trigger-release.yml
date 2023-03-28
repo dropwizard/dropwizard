@@ -35,7 +35,7 @@ jobs:
         gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
     - name: Set up Git
       run: |
-        git config --global committer.email "dropwizard.committers@gmail.com"
+        git config --global committer.email "48418865+dropwizard-committers@users.noreply.github.com"
         git config --global committer.name "Dropwizard Release Action"
         git config --global author.email "${GITHUB_ACTOR}@users.noreply.github.com"
         git config --global author.name "${GITHUB_ACTOR}"
