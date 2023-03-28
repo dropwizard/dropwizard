@@ -15,11 +15,10 @@ jobs:
       contents: write
     env:
       JAVA_OPTS: "-XX:+TieredCompilation -XX:TieredStopAtLevel=1"
-      CI_DEPLOY_USERNAME: ${{ secrets.CI_DEPLOY_USERNAME }}
-      CI_DEPLOY_PASSWORD: ${{ secrets.CI_DEPLOY_PASSWORD }}
-      GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
     steps:
     - uses: actions/checkout@8f4b7f84864484a7bf31766abe9204da3cbe65b3 # v3.5.0
+      with:
+        ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
     - name: Set up JDK
       uses: actions/setup-java@5ffc13f4174014e2d4d4572b3d74c3fa61aeb2c2 # v3
       with:
@@ -27,16 +26,18 @@ jobs:
         java-version: '11'
         cache: 'maven'
         server-id: ossrh
-        server-username: CI_DEPLOY_USERNAME
-        server-password: CI_DEPLOY_PASSWORD
-        gpg-passphrase: GPG_PASSPHRASE
+        server-username: ${{ secrets.CI_DEPLOY_USERNAME }}
+        server-password: ${{ secrets.CI_DEPLOY_PASSWORD }}
+        gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}
         gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
     - name: Set up Git
       run: |
-        git config --global committer.email "noreply@github.com"
-        git config --global committer.name "GitHub Release"
+        git config --global committer.email "dropwizard.committers@gmail.com"
+        git config --global committer.name "Dropwizard Release Action"
         git config --global author.email "${GITHUB_ACTOR}@users.noreply.github.com"
         git config --global author.name "${GITHUB_ACTOR}"
+        git config --global user.signingkey "EDA86E9FB607B5FC9223FB767D4868B53E31E7AD"
+        git config --global commit.gpgsign true
     - name: Prepare release
       run: ./mvnw -V -B -ntp -Prelease -DreleaseVersion=${{ inputs.releaseVersion }} -DdevelopmentVersion=${{ inputs.developmentVersion }} release:prepare
     - name: Rollback on failure
