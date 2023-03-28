@@ -39,8 +39,6 @@ jobs:
         git config --global committer.name "Dropwizard Release Action"
         git config --global author.email "${GITHUB_ACTOR}@users.noreply.github.com"
         git config --global author.name "${GITHUB_ACTOR}"
-        git config --global user.signingkey "EDA86E9FB607B5FC9223FB767D4868B53E31E7AD"
-        git config --global commit.gpgsign true
     - name: Prepare release
       run: ./mvnw -V -B -ntp -Prelease -DreleaseVersion=${{ inputs.releaseVersion }} -DdevelopmentVersion=${{ inputs.developmentVersion }} release:prepare
     - name: Rollback on failure
