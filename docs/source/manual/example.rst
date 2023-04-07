@@ -11,7 +11,7 @@ Dropwizard Example, Step by Step
 * Preconditions
 
   * Make sure you have Maven_ installed
-  * Make sure ``JAVA_HOME`` points at JDK 8
+  * Make sure ``JAVA_HOME`` points at JDK 11
   * Make sure you have ``curl``
 
 .. _Maven: https://maven.apache.org/
