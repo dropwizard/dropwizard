@@ -355,9 +355,9 @@ public class HttpClientBuilder {
             final InstrumentedHttpClientConnectionManager manager,
             final String name) {
         final String cookiePolicy = configuration.isCookiesEnabled() ? StandardCookieSpec.RELAXED : StandardCookieSpec.IGNORE;
-        final Integer timeout = (int) configuration.getTimeout().toMilliseconds();
-        final Integer connectionTimeout = (int) configuration.getConnectionTimeout().toMilliseconds();
-        final Integer connectionRequestTimeout = (int) configuration.getConnectionRequestTimeout().toMilliseconds();
+        final int timeout = (int) configuration.getTimeout().toMilliseconds();
+        final int connectionTimeout = (int) configuration.getConnectionTimeout().toMilliseconds();
+        final int connectionRequestTimeout = (int) configuration.getConnectionRequestTimeout().toMilliseconds();
         final long keepAlive = configuration.getKeepAlive().toMilliseconds();
         final ConnectionReuseStrategy reuseStrategy = keepAlive == 0
                 ? ((request, response, context) -> false)
@@ -371,6 +371,7 @@ public class HttpClientBuilder {
                 = RequestConfig.custom().setCookieSpec(cookiePolicy)
                 .setResponseTimeout(timeout, TimeUnit.MILLISECONDS)
                 .setConnectTimeout(connectionTimeout, TimeUnit.MILLISECONDS)
+                .setConnectionKeepAlive(keepAlive > 0 ? TimeValue.ofMilliseconds(keepAlive) : null)
                 .setConnectionRequestTimeout(connectionRequestTimeout, TimeUnit.MILLISECONDS)
                 .build();
         final SocketConfig socketConfig = SocketConfig.custom()
@@ -388,15 +389,8 @@ public class HttpClientBuilder {
             .setUserAgent(createUserAgent(name));
 
         if (keepAlive != 0) {
-            // either keep alive based on response header Keep-Alive,
-            // or if the server can keep a persistent connection (-1), then override based on client's configuration
-            builder.setKeepAliveStrategy(new DefaultConnectionKeepAliveStrategy() {
-                @Override
-                public TimeValue getKeepAliveDuration(HttpResponse response, HttpContext context) {
-                    final TimeValue duration = super.getKeepAliveDuration(response, context);
-                    return (duration.getDuration() == -1) ? TimeValue.ofMilliseconds(keepAlive) : duration;
-                }
-            });
+            // either keep alive based on response header Keep-Alive, or use connectionKeepAlive value from requestConfig
+            builder.setKeepAliveStrategy(DefaultConnectionKeepAliveStrategy.INSTANCE);
         }
 
         // create a tunnel through a proxy host if it's specified in the config
