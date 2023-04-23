@@ -1,4 +1,5 @@
 ---
+# yamllint disable rule:line-length
 ## Learn more about this file at 'https://www.gitpod.io/docs/references/gitpod-yml'
 ##
 ## This '.gitpod.yml' file when placed at the root of a project instructs
@@ -33,9 +34,9 @@
 ##
 ## Learn more about images at 'https://www.gitpod.io/docs/config-docker'
 
-#image: node:buster                        # use 'https://hub.docker.com/_/node'
+# image: node:buster                        # use 'https://hub.docker.com/_/node'
 #
-#image:                                    # leave image undefined if using a Dockerfile
+# image:                                   # leave image undefined if using a Dockerfile
 #  file: .gitpod.Dockerfile                # relative path to the Dockerfile from the
 #                                          # root of the project
 
@@ -50,7 +51,7 @@
 ##
 ## Learn more about these tasks at 'https://www.gitpod.io/docs/config-start-tasks'
 
-#tasks:
+# tasks:
 #  - before: |
 #      # commands to execute...
 #
@@ -89,7 +90,7 @@ tasks:
 ##
 ## Learn more about ports at 'https://www.gitpod.io/docs/config-ports'
 
-#ports:
+# ports:
 #  - port: 8080 # alternatively configure entire ranges via '8080-8090'
 #    visibility: private # either 'public' or 'private' (default)
 #    onOpen: open-browser # either 'open-browser', 'open-preview' or 'ignore'
