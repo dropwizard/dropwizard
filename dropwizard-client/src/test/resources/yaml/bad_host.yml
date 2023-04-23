@@ -1,5 +1,5 @@
 ---
 proxy:
-  host : ''
+  host: ""
   port: 8080
-  scheme : 'http'
+  scheme: http

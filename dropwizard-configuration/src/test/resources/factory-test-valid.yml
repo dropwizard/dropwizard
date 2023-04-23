@@ -1,8 +1,8 @@
 ---
 name: Coda Hale
 type:
-    - coder
-    - wizard
+  - coder
+  - wizard
 properties:
   debug: true
   settings.enabled: false

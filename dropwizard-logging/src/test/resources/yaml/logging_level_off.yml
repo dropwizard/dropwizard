@@ -1,12 +1,12 @@
 ---
 level: OFF
 loggers:
-  "com.example.app": OFF
-  "com.example.newApp":
+  com.example.app: OFF
+  com.example.newApp:
     level: OFF
     appenders:
       - type: console
-  "com.example.legacyApp":
+  com.example.legacyApp:
     level: OFF
 appenders:
   - type: console

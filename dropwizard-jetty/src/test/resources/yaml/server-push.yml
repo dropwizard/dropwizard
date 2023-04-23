@@ -1,6 +1,10 @@
 ---
 enabled: true
-associatePeriod: '5 seconds'
+associatePeriod: 5 seconds
 maxAssociations: 8
-refererHosts: ['dropwizard.io', 'dropwizard.github.io']
-refererPorts: [8444, 8445]
+refererHosts:
+  - dropwizard.io
+  - dropwizard.github.io
+refererPorts:
+  - 8444
+  - 8445

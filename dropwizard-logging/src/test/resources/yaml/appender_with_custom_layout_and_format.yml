@@ -2,4 +2,4 @@
 type: console
 layout:
   type: test-pattern
-logFormat: "custom pattern"
+logFormat: custom pattern

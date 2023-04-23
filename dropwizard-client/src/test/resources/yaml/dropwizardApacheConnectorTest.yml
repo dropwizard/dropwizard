@@ -2,8 +2,8 @@
 # this is needed to start the application in the DropwizardApacheConnectorTest
 server:
   applicationConnectors:
-      - type: http
-        port: 0
+    - type: http
+      port: 0
   adminConnectors:
-      - type: http
-        port: 0
+    - type: http
+      port: 0

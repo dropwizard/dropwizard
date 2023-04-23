@@ -1,6 +1,6 @@
 ---
-message: "Yes, it's here"
-extra: "Something extra"
+message: Yes, it's here
+extra: Something extra
 server:
   gzip:
     enabled: true

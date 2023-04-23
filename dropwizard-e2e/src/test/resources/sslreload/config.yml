@@ -1,13 +1,13 @@
 ---
 server:
-    applicationConnectors:
-        - type: https
-          port: 0
-          keyStorePath: keystore.jks
-          keyStorePassword: password
-    adminConnectors:
-        - type: https
-          port: 0
-          keyStorePath: keystore.jks
-          keyStorePassword: password
-          disableSniHostCheck: true
+  applicationConnectors:
+    - type: https
+      port: 0
+      keyStorePath: keystore.jks
+      keyStorePassword: password
+  adminConnectors:
+    - type: https
+      port: 0
+      keyStorePath: keystore.jks
+      keyStorePassword: password
+      disableSniHostCheck: true

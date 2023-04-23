@@ -31,7 +31,6 @@ health:
   responder:
     type: servlet
     cacheControlEnabled: true
-
 server:
   type: simple
   applicationContextPath: /

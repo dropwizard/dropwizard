@@ -1,47 +1,50 @@
 ---
 server:
   applicationConnectors:
-      - type: https
-        port: 0
-        keyStoreType: PKCS12
-        keyStorePassword: password
-        trustStoreType: PKCS12
-        supportedProtocols: ["TLSv1.2"]
-      - type: https
-        port: 0
-        keyStoreType: PKCS12
-        keyStorePassword: password
-        trustStoreType: PKCS12
-      - type: https
-        port: 0
-        keyStoreType: PKCS12
-        keyStorePassword: password
-        supportedProtocols: ["TLSv1.2"]
-      - type: https
-        port: 0
-        keyStoreType: PKCS12
-        keyStorePassword: password
-        trustStoreType: PKCS12
-        supportedProtocols: ["TLSv1.2"]
-        disableSniHostCheck: true
-      - type: https
-        port: 0
-        keyStoreType: PKCS12
-        keyStorePassword: password
-        trustStoreType: PKCS12
-        supportedProtocols: ["TLSv1.2"]
-      - type: https
-        port: 0
-        keyStoreType: PKCS12
-        keyStorePassword: password
-        trustStoreType: PKCS12
-        supportedProtocols: ["TLSv1.2"]
-        disableSniHostCheck: true
+    - type: https
+      port: 0
+      keyStoreType: PKCS12
+      keyStorePassword: password
+      trustStoreType: PKCS12
+      supportedProtocols:
+        - TLSv1.2
+    - type: https
+      port: 0
+      keyStoreType: PKCS12
+      keyStorePassword: password
+      trustStoreType: PKCS12
+    - type: https
+      port: 0
+      keyStoreType: PKCS12
+      keyStorePassword: password
+      supportedProtocols:
+        - TLSv1.2
+    - type: https
+      port: 0
+      keyStoreType: PKCS12
+      keyStorePassword: password
+      trustStoreType: PKCS12
+      supportedProtocols:
+        - TLSv1.2
+      disableSniHostCheck: true
+    - type: https
+      port: 0
+      keyStoreType: PKCS12
+      keyStorePassword: password
+      trustStoreType: PKCS12
+      supportedProtocols:
+        - TLSv1.2
+    - type: https
+      port: 0
+      keyStoreType: PKCS12
+      keyStorePassword: password
+      trustStoreType: PKCS12
+      supportedProtocols:
+        - TLSv1.2
+      disableSniHostCheck: true
   adminConnectors:
-      - type: http
-        port: 0
-
-
+    - type: http
+      port: 0
 logging:
   level: INFO
   appenders:
