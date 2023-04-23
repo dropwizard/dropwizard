@@ -1,3 +1,4 @@
+---
 type: file
 threshold: ALL
 currentLogFilename: ./logs/example.log

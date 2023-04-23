@@ -1,3 +1,4 @@
+---
 level: OFF
 loggers:
   "com.example.app": OFF

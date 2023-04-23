@@ -1,3 +1,4 @@
+---
 logging:
     level: INFO
     appenders:

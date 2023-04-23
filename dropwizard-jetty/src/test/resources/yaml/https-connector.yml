@@ -1,3 +1,4 @@
+---
 type: https
 port: 8443
 keyStorePath: '/path/to/ks_file'

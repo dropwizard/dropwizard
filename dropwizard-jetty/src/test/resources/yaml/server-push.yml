@@ -1,3 +1,4 @@
+---
 enabled: true
 associatePeriod: '5 seconds'
 maxAssociations: 8

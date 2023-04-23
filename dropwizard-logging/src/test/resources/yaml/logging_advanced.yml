@@ -1,3 +1,4 @@
+---
 level: INFO
 loggers:
   "com.example.app": INFO

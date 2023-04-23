@@ -1,3 +1,4 @@
+---
 type: console
 timeZone: UTC
 logFormat: "custom format with %dwTimeZone"
