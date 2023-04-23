@@ -1,5 +1,6 @@
 ---
 name: Pull Request Docs Check
+# yamllint disable-line rule:truthy
 on:
   push:
     branches:
