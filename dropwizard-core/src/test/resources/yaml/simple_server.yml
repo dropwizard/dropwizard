@@ -1,3 +1,4 @@
+---
 type: simple
 connector:
   type: http

@@ -1,3 +1,4 @@
+---
 health:
   enabled: true
   delayedShutdownHandlerEnabled: false
@@ -30,7 +31,6 @@ health:
   responder:
     type: servlet
     cacheControlEnabled: true
-
 server:
   type: simple
   applicationContextPath: /

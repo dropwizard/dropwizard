@@ -1,3 +1,4 @@
+---
 driverClass: org.postgresql.Driver
 user: pg-user
 password: iAMs00perSecrEET
@@ -7,22 +8,17 @@ properties:
 maxWaitForConnection: 1s
 maxConnectionAge: 1h
 minIdleTime: 1 minute
-
-validationQuery: "/* MyService Health Check */ SELECT 1"
-initializationQuery: "insert into connections_log(ts) values (now())"
+validationQuery: /* MyService Health Check */ SELECT 1
+initializationQuery: insert into connections_log(ts) values (now())
 validationQueryTimeout: 3s
-
 minSize: 8
 maxSize: 32
 initialSize: 15
-
 evictionInterval: 10s
 validationInterval: 1m
-
 readOnlyByDefault: false
 # deprecated in favour readOnlyByDefault
 defaultReadOnly: false
-
 autoCommentsEnabled: false
 abandonWhenPercentageFull: 75
 alternateUsernamesAllowed: true
@@ -35,14 +31,11 @@ removeAbandoned: true
 removeAbandonedTimeout: 15s
 useFairQueue: false
 ignoreExceptionOnPreLoad: true
-
 logAbandonedConnections: true
 logValidationErrors: true
-
 checkConnectionWhileIdle: false
 checkConnectionOnBorrow: true
 checkConnectionOnConnect: false
 checkConnectionOnReturn: true
-
 validatorClassName: io.dropwizard.db.CustomConnectionValidator
-jdbcInterceptors: "StatementFinalizer;SlowQueryReport"
+jdbcInterceptors: StatementFinalizer;SlowQueryReport

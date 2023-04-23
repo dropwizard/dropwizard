@@ -1,48 +1,51 @@
+---
+# yamllint disable rule:comments rule:line-length
 name: Trigger Release
+# yamllint disable-line rule:truthy
 on:
   workflow_dispatch:
     inputs:
       releaseVersion:
-        description: 'Version of the next release'
+        description: Version of the next release
         required: true
       developmentVersion:
-        description: 'Version of the next development cycle (must end in "-SNAPSHOT")'
+        description: Version of the next development cycle (must end in "-SNAPSHOT")
         required: true
 jobs:
   trigger-release:
-    runs-on: 'ubuntu-latest'
+    runs-on: ubuntu-latest
     permissions:
       contents: write
     env:
-      JAVA_OPTS: "-XX:+TieredCompilation -XX:TieredStopAtLevel=1"
+      JAVA_OPTS: -XX:+TieredCompilation -XX:TieredStopAtLevel=1
     steps:
-    - uses: webfactory/ssh-agent@d4b9b8ff72958532804b70bbe600ad43b36d5f2e # v0.8.0
-      with:
-        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-    - uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
-      with:
-        ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
-    - name: Set up JDK
-      uses: actions/setup-java@5ffc13f4174014e2d4d4572b3d74c3fa61aeb2c2 # v3
-      with:
-        distribution: 'temurin'
-        java-version: '11'
-        cache: 'maven'
-        server-id: ossrh
-        server-username: ${{ secrets.CI_DEPLOY_USERNAME }}
-        server-password: ${{ secrets.CI_DEPLOY_PASSWORD }}
-        gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}
-        gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
-    - name: Set up Git
-      run: |
-        git config --global committer.email "48418865+dropwizard-committers@users.noreply.github.com"
-        git config --global committer.name "Dropwizard Release Action"
-        git config --global author.email "${GITHUB_ACTOR}@users.noreply.github.com"
-        git config --global author.name "${GITHUB_ACTOR}"
-    - name: Prepare release
-      run: ./mvnw -V -B -ntp -Prelease -DreleaseVersion=${{ inputs.releaseVersion }} -DdevelopmentVersion=${{ inputs.developmentVersion }} release:prepare
-    - name: Rollback on failure
-      if: failure()
-      run: |
-        ./mvnw -B release:rollback -Prelease
-        echo "You may need to manually delete the GitHub tag, if it was created."
+      - uses: webfactory/ssh-agent@d4b9b8ff72958532804b70bbe600ad43b36d5f2e # v0.8.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+      - uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
+        with:
+          ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
+      - name: Set up JDK
+        uses: actions/setup-java@5ffc13f4174014e2d4d4572b3d74c3fa61aeb2c2 # v3
+        with:
+          distribution: temurin
+          java-version: "11"
+          cache: maven
+          server-id: ossrh
+          server-username: ${{ secrets.CI_DEPLOY_USERNAME }}
+          server-password: ${{ secrets.CI_DEPLOY_PASSWORD }}
+          gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}
+          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+      - name: Set up Git
+        run: |
+          git config --global committer.email "48418865+dropwizard-committers@users.noreply.github.com"
+          git config --global committer.name "Dropwizard Release Action"
+          git config --global author.email "${GITHUB_ACTOR}@users.noreply.github.com"
+          git config --global author.name "${GITHUB_ACTOR}"
+      - name: Prepare release
+        run: ./mvnw -V -B -ntp -Prelease -DreleaseVersion=${{ inputs.releaseVersion }} -DdevelopmentVersion=${{ inputs.developmentVersion }} release:prepare
+      - name: Rollback on failure
+        if: failure()
+        run: |
+          ./mvnw -B release:rollback -Prelease
+          echo "You may need to manually delete the GitHub tag, if it was created."

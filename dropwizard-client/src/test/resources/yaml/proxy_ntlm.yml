@@ -1,16 +1,17 @@
+---
 proxy:
-  host: '192.168.52.11'
+  host: 192.168.52.11
   port: 8080
-  scheme : 'https'
+  scheme: https
   auth:
-    username: 'secret'
-    password: 'stuff'
-    authScheme: 'NTLM'
-    realm: 'realm'
-    hostname: 'workstation'
-    domain: 'HYPERCOMPUGLOBALMEGANET'
-    credentialType: 'NT'
+    username: secret
+    password: stuff
+    authScheme: NTLM
+    realm: realm
+    hostname: workstation
+    domain: HYPERCOMPUGLOBALMEGANET
+    credentialType: NT
   nonProxyHosts:
-    - 'localhost'
-    - '192.168.52.*'
+    - localhost
+    - 192.168.52.*
     - '*.example.com'

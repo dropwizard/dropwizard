@@ -1,6 +1,7 @@
+---
 name: Migty Wizard
 type:
-    - wizard
+  - wizard
 propertis:
   admin: true
 servers:

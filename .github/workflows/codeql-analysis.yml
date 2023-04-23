@@ -1,13 +1,17 @@
-name: "Code Scanning - Action"
-
+---
+# yamllint disable rule:comments rule:line-length
+name: Code Scanning - Action
+# yamllint disable-line rule:truthy
 on:
   push:
-    branches: [ master, release/* ]
+    branches:
+      - master
+      - release/*
   pull_request:
-    branches: [ master ]
+    branches:
+      - master
   schedule:
-    - cron: '0 0 * * 0'
-
+    - cron: 0 0 * * 0
 jobs:
   analyze:
     name: Analyze
@@ -21,18 +25,15 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
-
       # Initializes the CodeQL tools for scanning.
       - name: Initialize CodeQL
         uses: github/codeql-action/init@b2c19fb9a2a485599ccf4ed5d65527d94bc57226 # v2
         with:
           languages: java
-
       # Autobuild attempts to build any compiled languages (C/C++, C#, or Java).
       # If this step fails, then you should remove it and run the build manually (see below).
       - name: Autobuild
         uses: github/codeql-action/autobuild@b2c19fb9a2a485599ccf4ed5d65527d94bc57226 # v2
-
       # ℹ️ Command-line programs to run using the OS shell.
       # 📚 https://git.io/JvXDl
 
@@ -43,6 +44,5 @@ jobs:
       #- run: |
       #   make bootstrap
       #   make release
-
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@b2c19fb9a2a485599ccf4ed5d65527d94bc57226 # v2
