@@ -1,4 +1,5 @@
 ---
+# yamllint disable rule:comments
 name: Release
 # yamllint disable-line rule:truthy
 on:
