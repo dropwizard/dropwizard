@@ -1,3 +1,4 @@
+---
 server:
   type: simple
   connector:

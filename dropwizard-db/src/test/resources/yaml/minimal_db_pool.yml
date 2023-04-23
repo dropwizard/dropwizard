@@ -1,3 +1,4 @@
+---
 driverClass: org.postgresql.Driver
 user: pg-user
 password: iAMs00perSecrEET

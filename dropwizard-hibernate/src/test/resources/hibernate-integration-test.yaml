@@ -1,3 +1,4 @@
+---
 server:
   applicationConnectors:
     - type: http
@@ -10,6 +11,6 @@ server:
 logging:
   appenders: []
 dataSource:
-  user: "sa"
-  driverClass: "org.h2.Driver"
-  validationQuery: "SELECT 1"
+  user: sa
+  driverClass: org.h2.Driver
+  validationQuery: SELECT 1

@@ -1,9 +1,10 @@
-message: "Yes, it's here"
-extra: "Something extra"
+---
+message: Yes, it's here
+extra: Something extra
 server:
   gzip:
     enabled: true
-    minimumEntitySize: 0B # Always compress regardless of size
+    minimumEntitySize: 0B  # Always compress regardless of size
   applicationConnectors:
     - type: http
       port: 0

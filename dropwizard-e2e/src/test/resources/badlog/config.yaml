@@ -1,7 +1,8 @@
+---
 logging:
-    level: INFO
-    appenders:
-      - type: file
-        threshold: INFO
-        archive: false
-        currentLogFilename: ./logs/example.log
+  level: INFO
+  appenders:
+    - type: file
+      threshold: INFO
+      archive: false
+      currentLogFilename: ./logs/example.log

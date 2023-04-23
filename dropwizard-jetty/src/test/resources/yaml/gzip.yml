@@ -1,5 +1,9 @@
+---
 enabled: false
 minimumEntitySize: 12KiB
 bufferSize: 32KiB
-compressedMimeTypes: ["text/plain"]
-includedMethods: ["GET", "POST"]
+compressedMimeTypes:
+  - text/plain
+includedMethods:
+  - GET
+  - POST

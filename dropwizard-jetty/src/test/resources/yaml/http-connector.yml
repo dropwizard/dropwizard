@@ -1,3 +1,4 @@
+---
 type: http
 port: 9090
 bindHost: 127.0.0.1
@@ -11,8 +12,8 @@ idleTimeout: 10 seconds
 minBufferPoolSize: 128B
 bufferPoolIncrement: 500B
 maxBufferPoolSize: 32KiB
-minRequestDataPerSecond: '42 bytes'
-minResponseDataPerSecond: '200 bytes'
+minRequestDataPerSecond: 42 bytes
+minResponseDataPerSecond: 200 bytes
 acceptorThreads: 1
 selectorThreads: 4
 acceptQueueSize: 1024

@@ -1,3 +1,4 @@
+---
 user: pg-user
 password: iAMs00perSecrEET
 url: jdbc:postgresql://db.example.com/db-prod

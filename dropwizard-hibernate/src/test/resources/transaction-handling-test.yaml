@@ -1,3 +1,4 @@
+---
 server:
   applicationConnectors:
     - type: http
@@ -6,6 +7,6 @@ server:
     - type: http
       port: 0
 dataSource:
-  user: "sa"
-  driverClass: "org.h2.Driver"
-  validationQuery: "SELECT 1"
+  user: sa
+  driverClass: org.h2.Driver
+  validationQuery: SELECT 1

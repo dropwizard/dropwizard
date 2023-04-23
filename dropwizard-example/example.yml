@@ -1,32 +1,25 @@
+---
 template: Hello, %s!
-
 defaultName: ${DW_DEFAULT_NAME:-Stranger}
-
 # Database settings.
 database:
-
   # the name of your JDBC driver
   driverClass: org.h2.Driver
-
   # the username
   user: sa
-
   # the password
   password: sa
-
   # the JDBC URL
   url: jdbc:h2:./target/example
-
 # use the simple server factory if you only want to run on a single port
-#server:
-#  type: simple
-#  connector:
-#    type: http
-#    port: 8080
-
+# server:
+#   type: simple
+#   connector:
+#     type: http
+#     port: 8080
 server:
-#  softNofileLimit: 1000
-#  hardNofileLimit: 1000
+  # softNofileLimit: 1000
+  # hardNofileLimit: 1000
   applicationConnectors:
     - type: http
       port: 8080
@@ -34,11 +27,11 @@ server:
       port: 8443
       keyStorePath: example.keystore
       keyStorePassword: example
-    #this requires the alpn-boot library on the JVM's boot classpath
-    #- type: h2
-    #  port: 8445
-    #  keyStorePath: example.keystore
-    #  keyStorePassword: example
+      # This requires the alpn-boot library on the JVM's boot classpath
+      # - type: h2
+      #   port: 8445
+      #   keyStorePath: example.keystore
+      #   keyStorePassword: example
   adminConnectors:
     - type: http
       port: 8081
@@ -46,44 +39,40 @@ server:
       port: 8444
       keyStorePath: example.keystore
       keyStorePassword: example
-
 # Logging settings.
 logging:
-
-  # The default level of all loggers. Can be OFF, ERROR, WARN, INFO, DEBUG, TRACE, or ALL.
+  # The default level of all loggers.
+  # Can be OFF, ERROR, WARN, INFO, DEBUG, TRACE, or ALL.
   level: INFO
-
   # Logger-specific levels.
   loggers:
-
     # Sets the level for 'com.example.app' to DEBUG.
     com.example.app: DEBUG
-
     # Redirects SQL logs to a separate file
     org.hibernate.SQL:
       level: DEBUG
-
-# Logback's Time Based Rolling Policy - archivedLogFilenamePattern: /tmp/application-%d{yyyy-MM-dd}.log.gz
-# Logback's Size and Time Based Rolling Policy -  archivedLogFilenamePattern: /tmp/application-%d{yyyy-MM-dd}-%i.log.gz
-# Logback's Fixed Window Rolling Policy -  archivedLogFilenamePattern: /tmp/application-%i.log.gz
-
+      # Logback's Time Based Rolling Policy
+      # - archivedLogFilenamePattern: /tmp/application-%d{yyyy-MM-dd}.log.gz
+      # Logback's Size and Time Based Rolling Policy
+      # -  archivedLogFilenamePattern: /tmp/application-%d{yyyy-MM-dd}-%i.log.gz
+      # Logback's Fixed Window Rolling Policy
+      # -  archivedLogFilenamePattern: /tmp/application-%i.log.gz
   appenders:
     - type: console
     - type: file
       threshold: INFO
-      logFormat: "%-6level [%d{HH:mm:ss.SSS}] [%t] %logger{5} - %X{code} %msg %n"
+      logFormat: '%-6level [%d{HH:mm:ss.SSS}] [%t] %logger{5} - %X{code} %msg%n'
       currentLogFilename: /tmp/application.log
       archivedLogFilenamePattern: /tmp/application-%d{yyyy-MM-dd}-%i.log.gz
       archivedFileCount: 7
       timeZone: UTC
       maxFileSize: 10MiB
-
-# the key needs to match the configuration key of the renderer (ViewRenderer::getConfigurationKey)
+# The key needs to match the configuration key of the renderer,
+# see ViewRenderer::getConfigurationKey.
 viewRendererConfiguration:
-    freemarker:
-        strict_syntax: yes
-        whitespace_stripping: yes
-
+  freemarker:
+    strict_syntax: true
+    whitespace_stripping: true
 metrics:
   reporters:
     - type: graphite

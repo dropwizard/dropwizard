@@ -1,3 +1,4 @@
+---
 level: INFO
 appenders:
   - type: tcp
