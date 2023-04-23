@@ -66,7 +66,7 @@
         <bcprov-jdk15on.version>1.70</bcprov-jdk15on.version>
         <h2.version>2.1.214</h2.version>
         <junit5.version>5.9.2</junit5.version>
-        <mockito.version>5.3.0</mockito.version>
+        <mockito.version>5.3.1</mockito.version>
 
         <!-- Plugin versions -->
         <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
