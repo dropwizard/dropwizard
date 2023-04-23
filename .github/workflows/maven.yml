@@ -9,6 +9,16 @@ on:
     - master
     - release/*
 jobs:
+  yamllint:
+    name: 🧹 yamllint
+    runs-on: ubuntu-latest
+    steps:
+    - name: ⤵️ Check out configuration from GitHub
+      uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
+    - name: 🔎 Add yamllint annotator
+      uses: pr-annotators/yamllint-pr-annotator@v1.0.0
+    - name: 🚀 Run yamllint
+      uses: frenck/action-yamllint@v1.4.0
   build:
     runs-on: ${{ matrix.os }}
     strategy:
