@@ -17,9 +17,7 @@ jobs:
     steps:
       - name: ⤵️ Check out configuration from GitHub
         uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
-      - name: "\U0001F50E Add yamllint annotator"
-        uses: pr-annotators/yamllint-pr-annotator@v1.0.0
-      - name: "\U0001F680 Run yamllint"
+      - name: 🧹 Run yamllint
         uses: frenck/action-yamllint@v1.4.0
   build:
     runs-on: ${{ matrix.os }}
