@@ -66,8 +66,8 @@ logging:
 # the key needs to match the configuration key of the renderer (ViewRenderer::getConfigurationKey)
 viewRendererConfiguration:
   freemarker:
-    strict_syntax: yes
-    whitespace_stripping: yes
+    strict_syntax: true
+    whitespace_stripping: true
 metrics:
   reporters:
     - type: graphite
