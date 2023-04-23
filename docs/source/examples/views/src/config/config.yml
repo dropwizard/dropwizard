@@ -3,6 +3,6 @@
 views:
   mustache:
     cache: false
-# views: config->mustache
+    # views: config->mustache
   freemarker:
     strict_syntax: true

@@ -1,34 +1,34 @@
 ---
 level: INFO
 loggers:
-  "com.example.app": INFO
-  "com.example.newApp":
+  com.example.app: INFO
+  com.example.newApp:
     level: DEBUG
     appenders:
       - type: file
         filterFactories:
           - type: test-filter-factory
           - type: second-test-filter-factory
-        currentLogFilename: '${new_app}.log'
-        archivedLogFilenamePattern: '${new_app}-%d.log.gz'
-        logFormat: "%-5level %logger: %msg%n"
+        currentLogFilename: ${new_app}.log
+        archivedLogFilenamePattern: ${new_app}-%d.log.gz
+        logFormat: '%-5level %logger: %msg%n'
         archivedFileCount: 5
         bufferSize: 256KiB
-  "com.example.legacyApp":
+  com.example.legacyApp:
     level: DEBUG
-  "com.example.notAdditive":
+  com.example.notAdditive:
     level: DEBUG
     additive: false
     appenders:
       - type: file
-        currentLogFilename: '${new_app_not_additive}.log'
-        archivedLogFilenamePattern: '${new_app_not_additive}-%d.log.gz'
-        logFormat: "%-5level %logger: %msg%n"
+        currentLogFilename: ${new_app_not_additive}.log
+        archivedLogFilenamePattern: ${new_app_not_additive}-%d.log.gz
+        logFormat: '%-5level %logger: %msg%n'
         archivedFileCount: 5
 appenders:
   - type: console
   - type: file
-    currentLogFilename: '${default}.log'
-    archivedLogFilenamePattern: '${default}-%d.log.gz'
-    logFormat: "%-5level %logger: %msg%n"
+    currentLogFilename: ${default}.log
+    archivedLogFilenamePattern: ${default}-%d.log.gz
+    logFormat: '%-5level %logger: %msg%n'
     archivedFileCount: 5

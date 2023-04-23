@@ -6,4 +6,3 @@ server:
     port: 0
   applicationContextPath: /api
   adminContextPath: /admin
-

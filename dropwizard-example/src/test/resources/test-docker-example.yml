@@ -1,7 +1,6 @@
 ---
 template: Hello, %s!
 defaultName: Stranger
-
 database:
   driverClass: com.mysql.cj.jdbc.Driver
   properties:
@@ -17,19 +16,17 @@ server:
   adminConnectors:
     - type: http
       port: 0
-
 # Logging settings.
 logging:
   level: INFO
   appenders:
     - type: console
     - type: file
-      currentLogFilename: './logs/application.log'
-      archivedLogFilenamePattern: './logs/application-%d-%i.log.gz'
+      currentLogFilename: ./logs/application.log
+      archivedLogFilenamePattern: ./logs/application-%d-%i.log.gz
       archive: true
       archivedFileCount: 7
-      maxFileSize: '1MiB'
-
+      maxFileSize: 1MiB
 # Health settings
 health:
   delayedShutdownHandlerEnabled: true

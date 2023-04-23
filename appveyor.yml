@@ -7,19 +7,19 @@ branches:
   except:
     - gh-pages
 image:
-- 'Visual Studio 2022'
+  - Visual Studio 2022
 environment:
-  JAVA_OPTS: '-Xms512m -Xmx2g -XX:+TieredCompilation -XX:TieredStopAtLevel=1'
+  JAVA_OPTS: -Xms512m -Xmx2g -XX:+TieredCompilation -XX:TieredStopAtLevel=1
   matrix:
-  - JAVA_HOME: 'C:\Program Files\Java\jdk17'
-    PATH: '%JAVA_HOME%\bin;%PATH%'
+    - JAVA_HOME: C:\Program Files\Java\jdk17
+      PATH: '%JAVA_HOME%\bin;%PATH%'
 cache:
-- '%USERPROFILE%\.m2\repository'
+  - '%USERPROFILE%\.m2\repository'
 install:
-- cmd: 'java -version'
+  - cmd: java -version
 build_script:
-- mvnw.cmd --no-transfer-progress -V -B -ff install -DskipTests=true -Dmaven.javadoc.skip=true -Dmaven.source.skip=true -Dmaven.deploy.skip=true
+  - mvnw.cmd --no-transfer-progress -V -B -ff install -DskipTests=true -Dmaven.javadoc.skip=true -Dmaven.source.skip=true -Dmaven.deploy.skip=true
 test_script:
-- mvnw.cmd --no-transfer-progress -V -B -ff verify -Dmaven.javadoc.skip=true -Dmaven.source.skip=true -Dmaven.deploy.skip=true
+  - mvnw.cmd --no-transfer-progress -V -B -ff verify -Dmaven.javadoc.skip=true -Dmaven.source.skip=true -Dmaven.deploy.skip=true
 matrix:
   fast_finish: true

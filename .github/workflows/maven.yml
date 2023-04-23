@@ -3,68 +3,72 @@ name: Java CI
 on:
   push:
     branches:
-    - master
-    - release/*
+      - master
+      - release/*
   pull_request:
     branches:
-    - master
-    - release/*
+      - master
+      - release/*
 jobs:
   yamllint:
-    name: 🧹 yamllint
+    name: "\U0001F9F9 yamllint"
     runs-on: ubuntu-latest
     steps:
-    - name: ⤵️ Check out configuration from GitHub
-      uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
-    - name: 🔎 Add yamllint annotator
-      uses: pr-annotators/yamllint-pr-annotator@v1.0.0
-    - name: 🚀 Run yamllint
-      uses: frenck/action-yamllint@v1.4.0
+      - name: ⤵️ Check out configuration from GitHub
+        uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
+      - name: "\U0001F50E Add yamllint annotator"
+        uses: pr-annotators/yamllint-pr-annotator@v1.0.0
+      - name: "\U0001F680 Run yamllint"
+        uses: frenck/action-yamllint@v1.4.0
   build:
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        java_version: ['11', '17']
-        os: ['ubuntu-latest', 'windows-latest']
+        java_version:
+          - "11"
+          - "17"
+        os:
+          - ubuntu-latest
+          - windows-latest
     env:
-      JAVA_OPTS: "-XX:+TieredCompilation -XX:TieredStopAtLevel=1"
+      JAVA_OPTS: -XX:+TieredCompilation -XX:TieredStopAtLevel=1
     steps:
-    - uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
-      with:
-        fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
-    - name: Set up JDK
-      uses: actions/setup-java@5ffc13f4174014e2d4d4572b3d74c3fa61aeb2c2 # v3
-      with:
-        distribution: 'temurin'
-        java-version: ${{ matrix.java_version }}
-    - name: Cache SonarCloud packages
-      uses: actions/cache@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8 # v3.3.1
-      if: ${{ env.SONAR_TOKEN != null && env.SONAR_TOKEN != '' && matrix.java_version == '11'  && matrix.os == 'ubuntu-latest' }}
-      env:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      with:
-        path: ~/.sonar/cache
-        key: ${{ runner.os }}-sonar
-        restore-keys: ${{ runner.os }}-sonar
-    - name: Build
-      run: ./mvnw --no-transfer-progress -V -B -fae -s .github/settings.xml -e "-DtrimStackTrace=false" "-Dsurefire.rerunFailingTestsCount=1" install
-    - name: Upload Test Reports
-      if: always()
-      uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3
-      with:
-        name: test-reports-${{ matrix.os }}-java${{ matrix.java_version }}
-        path: '**/*-reports'
-    - name: Publish Test Results
-      if: always()
-      uses: scacap/action-surefire-report@48452168d92461c5ded1ca1afe210e4a99f32d33 # v1
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        check_name: Test Report (${{ matrix.os }} - Java ${{ matrix.java_version }})
-        report_paths: '**/*-reports/TEST-*.xml'
-    - name: Analyze with SonarCloud
-      if: ${{ env.SONAR_TOKEN != null && env.SONAR_TOKEN != '' && matrix.java_version == '11' && matrix.os == 'ubuntu-latest' }}
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      run: ./mvnw --no-transfer-progress -V -B -ff -s .github/settings.xml "-Dsonar.projectKey=dropwizard_dropwizard" "-Dsonar.organization=dropwizard" "-Dsonar.host.url=https://sonarcloud.io" org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
+      - uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
+        with:
+          fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
+      - name: Set up JDK
+        uses: actions/setup-java@5ffc13f4174014e2d4d4572b3d74c3fa61aeb2c2 # v3
+        with:
+          distribution: temurin
+          java-version: ${{ matrix.java_version }}
+      - name: Cache SonarCloud packages
+        uses: actions/cache@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8 # v3.3.1
+        if: ${{ env.SONAR_TOKEN != null && env.SONAR_TOKEN != '' && matrix.java_version == '11'  && matrix.os == 'ubuntu-latest' }}
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+      - name: Build
+        run: ./mvnw --no-transfer-progress -V -B -fae -s .github/settings.xml -e "-DtrimStackTrace=false" "-Dsurefire.rerunFailingTestsCount=1" install
+      - name: Upload Test Reports
+        if: always()
+        uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3
+        with:
+          name: test-reports-${{ matrix.os }}-java${{ matrix.java_version }}
+          path: '**/*-reports'
+      - name: Publish Test Results
+        if: always()
+        uses: scacap/action-surefire-report@48452168d92461c5ded1ca1afe210e4a99f32d33 # v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          check_name: Test Report (${{ matrix.os }} - Java ${{ matrix.java_version }})
+          report_paths: '**/*-reports/TEST-*.xml'
+      - name: Analyze with SonarCloud
+        if: ${{ env.SONAR_TOKEN != null && env.SONAR_TOKEN != '' && matrix.java_version == '11' && matrix.os == 'ubuntu-latest' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: ./mvnw --no-transfer-progress -V -B -ff -s .github/settings.xml "-Dsonar.projectKey=dropwizard_dropwizard" "-Dsonar.organization=dropwizard" "-Dsonar.host.url=https://sonarcloud.io" org.sonarsource.scanner.maven:sonar-maven-plugin:sonar

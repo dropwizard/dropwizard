@@ -83,7 +83,6 @@
 
 tasks:
   - init: ./mvnw package -DskipTests
-
 ## The 'ports' section defines various ports your may listen on are
 ## configured in Gitpod on an authenticated URL. By default, all ports
 ## are in private visibility state.
@@ -94,7 +93,6 @@ tasks:
 #  - port: 8080 # alternatively configure entire ranges via '8080-8090'
 #    visibility: private # either 'public' or 'private' (default)
 #    onOpen: open-browser # either 'open-browser', 'open-preview' or 'ignore'
-
 
 ## The 'vscode' section defines a list of Visual Studio Code extensions from
 ## the OpenVSX.org registry to be installed upon workspace startup. OpenVSX
@@ -107,20 +105,17 @@ tasks:
 ## For example: 'vscodevim.vim'
 ##
 ## Learn more at 'https://www.gitpod.io/docs/ides-and-editors/vscode'
-
 vscode:
   extensions:
     - redhat.java
     - vscjava.vscode-java-pack
     - lextudio.restructuredtext
-
 ## The 'github' section defines configuration of continuous prebuilds
 ## for GitHub repositories when the GitHub application
 ## 'https://github.com/apps/gitpod-io' is installed in GitHub and granted
 ## permissions to access the repository.
 ##
 ## Learn more at 'https://www.gitpod.io/docs/prebuilds'
-
 github:
   prebuilds:
     # enable for the default branch
