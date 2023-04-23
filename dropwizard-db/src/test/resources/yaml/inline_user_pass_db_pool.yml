@@ -1,2 +1,3 @@
+---
 driverClass: org.postgresql.Driver
 url: jdbc:postgresql://db.example.com/db-prod?user=scott&password=tiger

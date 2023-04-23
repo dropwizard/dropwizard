@@ -1,3 +1,4 @@
+---
 template: Hello, %s!
 defaultName: Stranger
 

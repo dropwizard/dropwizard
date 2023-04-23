@@ -1,3 +1,4 @@
+---
 name: "Pull Request Docs Check"
 on:
   push:

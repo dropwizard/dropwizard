@@ -1,3 +1,4 @@
+---
 appenders:
   - type: file
     currentLogFilename: "/var/log/dingo/dingo.log"

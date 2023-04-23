@@ -1,3 +1,4 @@
+---
 engines:
   pmd:
     enabled: true

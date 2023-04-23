@@ -1,3 +1,4 @@
+---
 minThreads: 8
 maxThreads: 64
 gzipEnabled: false

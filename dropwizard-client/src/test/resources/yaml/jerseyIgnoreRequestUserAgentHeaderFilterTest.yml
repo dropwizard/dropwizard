@@ -1,3 +1,4 @@
+---
 # this is needed to start the application in the JerseyIgnoreRequestUserAgentHeaderFilterTest
 server:
   applicationConnectors:

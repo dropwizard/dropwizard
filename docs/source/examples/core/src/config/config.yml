@@ -1,3 +1,4 @@
+---
 # core: config->messageQueue
 messageQueue:
   host: mq.example.com
