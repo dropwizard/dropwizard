@@ -11,7 +11,8 @@ jobs:
       - checkout
       - restore_cache:
           key: dropwizard-{{ checksum "pom.xml" }}
-      - run: ./mvnw --no-transfer-progress -V -B -ff -Dsurefire.rerunFailingTestsCount=1 install
+      - run: ./mvnw --no-transfer-progress -V -B -ff \
+          -Dsurefire.rerunFailingTestsCount=1 install
       - save_cache:
           paths:
             - ~/.m2

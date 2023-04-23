@@ -1,4 +1,4 @@
-# yamllint disable
 ---
+# yamllint disable
 name: Mighty Wizard
 type: [ coder,wizard
