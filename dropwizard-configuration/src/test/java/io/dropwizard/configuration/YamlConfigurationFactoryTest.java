@@ -17,7 +17,7 @@ public class YamlConfigurationFactoryTest extends BaseConfigurationFactoryTest {
         this.validNoTypeFile = "factory-test-valid-no-type.yml";
         this.typoFile = "factory-test-typo.yml";
         this.wrongTypeFile = "factory-test-wrong-type.yml";
-        this.malformedAdvancedFile = "factory-test-malformed-advanced.yml";
+        this.malformedAdvancedFile = "factory-test-malformed-advanced.txt";
         this.malformedAdvancedFileError = String.format("%s has an error:%n" +
             "  * Malformed YAML at line: 4, column: 22; while parsing a flow sequence\n" +
             " in 'reader'", malformedAdvancedFile);
