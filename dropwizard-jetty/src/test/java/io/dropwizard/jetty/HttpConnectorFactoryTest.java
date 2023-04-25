@@ -16,6 +16,7 @@ import io.dropwizard.validation.BaseValidator;
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.eclipse.jetty.http.CookieCompliance;
 import org.eclipse.jetty.http.HttpCompliance;
+import org.eclipse.jetty.http.UriCompliance;
 import org.eclipse.jetty.server.ForwardedRequestCustomizer;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
@@ -80,6 +81,7 @@ class HttpConnectorFactoryTest {
         assertThat(http.isUseDateHeader()).isTrue();
         assertThat(http.isUseForwardedHeaders()).isFalse();
         assertThat(http.getHttpCompliance()).isEqualTo(HttpCompliance.RFC7230);
+        assertThat(http.getUriCompliance()).isEqualTo(UriCompliance.DEFAULT);
         assertThat(http.getRequestCookieCompliance()).isEqualTo(CookieCompliance.RFC6265);
         assertThat(http.getResponseCookieCompliance()).isEqualTo(CookieCompliance.RFC6265);
     }
@@ -114,6 +116,7 @@ class HttpConnectorFactoryTest {
         HttpConfiguration httpConfiguration = http.buildHttpConfiguration();
         assertThat(httpConfiguration.getCustomizers()).hasAtLeastOneElementOfType(ForwardedRequestCustomizer.class);
         assertThat(http.getHttpCompliance()).isEqualTo(HttpCompliance.RFC2616);
+        assertThat(http.getUriCompliance()).isEqualTo(UriCompliance.UNSAFE);
         assertThat(http.getRequestCookieCompliance()).isEqualTo(CookieCompliance.RFC2965);
         assertThat(http.getResponseCookieCompliance()).isEqualTo(CookieCompliance.RFC6265);
     }

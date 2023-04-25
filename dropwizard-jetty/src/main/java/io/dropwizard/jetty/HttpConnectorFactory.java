@@ -22,6 +22,7 @@ import io.dropwizard.validation.PortRange;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.eclipse.jetty.http.CookieCompliance;
 import org.eclipse.jetty.http.HttpCompliance;
+import org.eclipse.jetty.http.UriCompliance;
 import org.eclipse.jetty.io.ArrayByteBufferPool;
 import org.eclipse.jetty.io.ByteBufferPool;
 import org.eclipse.jetty.server.ConnectionFactory;
@@ -226,6 +227,16 @@ import static com.codahale.metrics.MetricRegistry.name;
  *         </td>
  *     </tr>
  *     <tr>
+ *         <td>{@code uriCompliance}</td>
+ *         <td>RFC7230</td>
+ *         <td>
+ *             This sets the uri compliance level used by Jetty when parsing http, this can be useful when
+ *             attempting to avoid breaking changes with Jetty 10 and onward;
+ *
+ *             Possible values are set forth in the org.eclipse.jetty.http.UriCompliance enum.
+ *         </td>
+ *     </tr> *
+ *     <tr>
  *         <td>{@code requestCookieCompliance}</td>
  *         <td>RFC6265</td>
  *         <td>
@@ -344,6 +355,10 @@ public class HttpConnectorFactory implements ConnectorFactory {
     @JsonSerialize(using = HttpComplianceSerializer.class)
     @JsonDeserialize(using = HttpComplianceDeserializer.class)
     private HttpCompliance httpCompliance = HttpCompliance.RFC7230;
+    @JsonSerialize(using = UriComplianceSerializer.class)
+    @JsonDeserialize(using = UriComplianceDeserializer.class)
+    private UriCompliance uriCompliance = UriCompliance.DEFAULT;
+
     @JsonSerialize(using = CookieComplianceSerializer.class)
     @JsonDeserialize(using = CookieComplianceDeserializer.class)
     private CookieCompliance requestCookieCompliance = CookieCompliance.RFC6265;
@@ -589,6 +604,16 @@ public class HttpConnectorFactory implements ConnectorFactory {
         this.httpCompliance = httpCompliance;
     }
 
+    @JsonProperty
+    public UriCompliance getUriCompliance() {
+        return uriCompliance;
+    }
+
+    @JsonProperty
+    public void setUriCompliance(UriCompliance uriCompliance) {
+        this.uriCompliance = uriCompliance;
+    }
+
     /**
      * @since 2.0
      */
@@ -653,6 +678,43 @@ public class HttpConnectorFactory implements ConnectorFactory {
         public @Nullable HttpCompliance deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
             if (jsonParser.getText() != null && !jsonParser.getText().isEmpty()) {
                 return HttpCompliance.valueOf(jsonParser.getText());
+            }
+            return null;
+        }
+    }
+
+    private static class UriComplianceSerializer extends StdSerializer<UriCompliance> {
+        public UriComplianceSerializer() {
+            this(null);
+        }
+
+        protected UriComplianceSerializer(@Nullable Class<UriCompliance> t) {
+            super(t);
+        }
+
+        @Override
+        public void serialize(UriCompliance httpCompliance, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
+            if (httpCompliance == null) {
+                jsonGenerator.writeNull();
+            } else {
+                jsonGenerator.writeString(httpCompliance.getName());
+            }
+        }
+    }
+
+    private static class UriComplianceDeserializer extends StdDeserializer<UriCompliance> {
+        public UriComplianceDeserializer() {
+            this(null);
+        }
+
+        protected UriComplianceDeserializer(@Nullable Class<?> vc) {
+            super(vc);
+        }
+
+        @Override
+        public @Nullable UriCompliance deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
+            if (jsonParser.getText() != null && !jsonParser.getText().isEmpty()) {
+                return UriCompliance.valueOf(jsonParser.getText());
             }
             return null;
         }
@@ -758,6 +820,7 @@ public class HttpConnectorFactory implements ConnectorFactory {
     protected HttpConnectionFactory buildHttpConnectionFactory(HttpConfiguration httpConfig) {
         HttpConfiguration clonedConfiguration = new HttpConfiguration(httpConfig);
         clonedConfiguration.setHttpCompliance(httpCompliance);
+        clonedConfiguration.setUriCompliance(uriCompliance);
         final HttpConnectionFactory httpConnectionFactory = new HttpConnectionFactory(clonedConfiguration);
         httpConnectionFactory.setInputBufferSize((int) inputBufferSize.toBytes());
         return httpConnectionFactory;
