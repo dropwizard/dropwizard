@@ -18,15 +18,15 @@ cache:
 install:
   - cmd: java -version
 build_script:
-  - mvnw.cmd --no-transfer-progress -V -B -ff install \
-      -DskipTests=true \
-      -Dmaven.javadoc.skip=true \
-      -Dmaven.source.skip=true \
+  - mvnw.cmd --no-transfer-progress -V -B -ff install
+      -DskipTests=true
+      -Dmaven.javadoc.skip=true
+      -Dmaven.source.skip=true
       -Dmaven.deploy.skip=true
 test_script:
-  - mvnw.cmd --no-transfer-progress -V -B -ff verify \
-      -Dmaven.javadoc.skip=true \
-      -Dmaven.source.skip=true \
+  - mvnw.cmd --no-transfer-progress -V -B -ff verify
+      -Dmaven.javadoc.skip=true
+      -Dmaven.source.skip=true
       -Dmaven.deploy.skip=true
 matrix:
   fast_finish: true
