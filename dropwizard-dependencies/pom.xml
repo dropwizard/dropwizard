@@ -22,7 +22,7 @@
         <argparse4j.version>0.9.0</argparse4j.version>
         <byte-buddy.version>1.14.4</byte-buddy.version>
         <caffeine.version>3.1.6</caffeine.version>
-        <checker-qual.version>3.33.0</checker-qual.version>
+        <checker-qual.version>3.34.0</checker-qual.version>
         <classmate.version>1.5.1</classmate.version>
         <commons-codec.version>1.15</commons-codec.version>
         <commons-lang3.version>3.12.0</commons-lang3.version>
@@ -46,7 +46,7 @@
         <javassist.version>3.29.2-GA</javassist.version>
         <javax.persistence-api.version>2.2</javax.persistence-api.version>
         <jaxb-api.version>2.3.3</jaxb-api.version>
-        <jdbi3.version>3.38.0</jdbi3.version>
+        <jdbi3.version>3.38.1</jdbi3.version>
         <jersey.version>2.39.1</jersey.version>
         <jetty-setuid-java.version>1.0.4</jetty-setuid-java.version>
         <jetty.version>10.0.15</jetty.version>
