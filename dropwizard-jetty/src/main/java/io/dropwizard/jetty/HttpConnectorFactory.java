@@ -697,7 +697,7 @@ public class HttpConnectorFactory implements ConnectorFactory {
             if (uriCompliance == null) {
                 jsonGenerator.writeNull();
             } else {
-                jsonGenerator.writeString(httpCompliance.getName());
+                jsonGenerator.writeString(uriCompliance.getName());
             }
         }
     }
