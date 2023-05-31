@@ -693,8 +693,8 @@ public class HttpConnectorFactory implements ConnectorFactory {
         }
 
         @Override
-        public void serialize(UriCompliance httpCompliance, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
-            if (httpCompliance == null) {
+        public void serialize(UriCompliance uriCompliance, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
+            if (uriCompliance == null) {
                 jsonGenerator.writeNull();
             } else {
                 jsonGenerator.writeString(httpCompliance.getName());
