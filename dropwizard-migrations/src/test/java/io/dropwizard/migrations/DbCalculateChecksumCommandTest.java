@@ -26,7 +26,7 @@ class DbCalculateChecksumCommandTest {
     void testRun() throws Exception {
         final AtomicBoolean checkSumVerified = new AtomicBoolean();
         migrateCommand.setCheckSumConsumer(checkSum -> {
-            assertThat(checkSum).isEqualTo(CheckSum.parse("8:0f3683b37321ccfb1694a044986de4d9"));
+            assertThat(checkSum).isEqualTo(CheckSum.parse("9:6e43b880df9a2b41d436026d8a09c457"));
             checkSumVerified.set(true);
         });
         migrateCommand.run(null, new Namespace(Maps.of(
