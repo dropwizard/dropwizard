@@ -228,14 +228,19 @@ import static com.codahale.metrics.MetricRegistry.name;
  *     </tr>
  *     <tr>
  *         <td>{@code uriCompliance}</td>
- *         <td>RFC7230</td>
+ *         <td>DEFAULT</td>
  *         <td>
  *             This sets the uri compliance level used by Jetty when parsing http, this can be useful when
  *             attempting to avoid breaking changes with Jetty 10 and onward;
  *
- *             Possible values are set forth in the org.eclipse.jetty.http.UriCompliance enum.
+ *             Possible values are set forth in the org.eclipse.jetty.http.UriCompliance enum and include:
+ *             <ul>
+ *                 <li>DEFAULT: The default compliance mode that extends RFC3986 compliance with additional violations to avoid most ambiguous URIs.</li>
+ *                 <li>LEGACY: Compliance mode that models Jetty-9.4 behavior.</li>
+ *                 <li>RFC3986: Compliance mode that exactly follows RFC3986, including allowing all additional ambiguous URI Violations.</li>
+ *             </ul>
  *         </td>
- *     </tr> *
+ *     </tr>
  *     <tr>
  *         <td>{@code requestCookieCompliance}</td>
  *         <td>RFC6265</td>
