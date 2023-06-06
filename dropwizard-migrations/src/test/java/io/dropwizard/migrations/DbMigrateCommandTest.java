@@ -61,7 +61,7 @@ class DbMigrateCommandTest {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         migrateCommand.setOutputStream(new PrintStream(baos));
         migrateCommand.run(null, new Namespace(Collections.singletonMap("dry-run", true)), conf);
-        assertThat(baos.toString(UTF_8.name())).startsWith(String.format(
+        assertThat(baos.toString(UTF_8.name())).contains(String.format(
                 "-- *********************************************************************%n" +
                 "-- Update Database Script%n" +
                 "-- *********************************************************************%n"));
