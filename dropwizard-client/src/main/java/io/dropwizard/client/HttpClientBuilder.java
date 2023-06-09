@@ -371,7 +371,7 @@ public class HttpClientBuilder {
                 = RequestConfig.custom().setCookieSpec(cookiePolicy)
                 .setResponseTimeout(timeout, TimeUnit.MILLISECONDS)
                 .setConnectTimeout(connectionTimeout, TimeUnit.MILLISECONDS)
-                .setConnectionKeepAlive(keepAlive > 0 ? TimeValue.of(-1, TimeUnit.MILLISECONDS) : null)
+                .setConnectionKeepAlive(TimeValue.of(-1, TimeUnit.MILLISECONDS))
                 .setConnectionRequestTimeout(connectionRequestTimeout, TimeUnit.MILLISECONDS)
                 .build();
         final SocketConfig socketConfig = SocketConfig.custom()
