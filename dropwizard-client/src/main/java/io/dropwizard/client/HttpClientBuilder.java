@@ -371,7 +371,7 @@ public class HttpClientBuilder {
                 = RequestConfig.custom().setCookieSpec(cookiePolicy)
                 .setResponseTimeout(timeout, TimeUnit.MILLISECONDS)
                 .setConnectTimeout(connectionTimeout, TimeUnit.MILLISECONDS)
-                .setConnectionKeepAlive(keepAlive > 0 ? TimeValue.ofMilliseconds(keepAlive) : null)
+                .setConnectionKeepAlive(keepAlive > 0 ? TimeValue.of(-1, TimeUnit.MILLISECONDS) : null)
                 .setConnectionRequestTimeout(connectionRequestTimeout, TimeUnit.MILLISECONDS)
                 .build();
         final SocketConfig socketConfig = SocketConfig.custom()
@@ -389,8 +389,15 @@ public class HttpClientBuilder {
             .setUserAgent(createUserAgent(name));
 
         if (keepAlive != 0) {
-            // either keep alive based on response header Keep-Alive, or use connectionKeepAlive value from requestConfig
-            builder.setKeepAliveStrategy(DefaultConnectionKeepAliveStrategy.INSTANCE);
+            // either keep alive based on response header Keep-Alive,
+            // or if the server can keep a persistent connection (-1), then override based on client's configuration
+            builder.setKeepAliveStrategy(new DefaultConnectionKeepAliveStrategy() {
+                @Override
+                public TimeValue getKeepAliveDuration(HttpResponse response, HttpContext context) {
+                    final TimeValue duration = super.getKeepAliveDuration(response, context);
+                    return (duration.getDuration() == -1) ? TimeValue.ofMilliseconds(keepAlive) : duration;
+                }
+            });
         }
 
         // create a tunnel through a proxy host if it's specified in the config
