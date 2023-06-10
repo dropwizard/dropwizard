@@ -30,7 +30,7 @@
         <conscrypt-openjdk-uber.version>2.5.2</conscrypt-openjdk-uber.version>
         <error_prone.version>2.19.1</error_prone.version>
         <freemarker.version>2.3.32</freemarker.version>
-        <guava.version>32.0.0-jre</guava.version>
+        <guava.version>32.0.1-jre</guava.version>
         <hibernate-core.version>6.1.7.Final</hibernate-core.version>
         <hibernate-validator.version>7.0.5.Final</hibernate-validator.version>
         <hk2.version>3.0.4</hk2.version>
