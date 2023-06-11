@@ -3,11 +3,11 @@ GEM
   specs:
     addressable (2.8.4)
       public_suffix (>= 2.0.2, < 6.0)
-    faraday (2.7.4)
+    faraday (2.7.6)
       faraday-net_http (>= 2.0, < 3.1)
       ruby2_keywords (>= 0.0.4)
     faraday-net_http (3.0.2)
-    octokit (4.25.1)
+    octokit (6.1.1)
       faraday (>= 1, < 3)
       sawyer (~> 0.9)
     public_suffix (5.0.1)
@@ -23,4 +23,4 @@ DEPENDENCIES
   octokit
 
 BUNDLED WITH
-   1.17.2
+   2.4.10
