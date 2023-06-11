@@ -5,7 +5,7 @@ jobs:
     environment:
       JAVA_OPTS: -Xms512m -Xmx2g -XX:+TieredCompilation -XX:TieredStopAtLevel=1
     docker:
-      - image: circleci/openjdk:11-jdk-buster
+      - image: cimg/openjdk:17.0
     steps:
       - checkout
       - restore_cache:
