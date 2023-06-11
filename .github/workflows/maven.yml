@@ -57,6 +57,14 @@ jobs:
           path: ~/.sonar/cache
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
+      - name: Maven build cache
+        uses: actions/cache@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8 # v3.3.1
+        with:
+          path: ~/.m2/build-cache
+          key: m2-build-cache-${{ matrix.java_version }}
+          restore-keys: |
+              m2-build-cache-${{ matrix.java_version }}
+              m2-build-cache-
       - name: Build
         run: ./mvnw --no-transfer-progress -V -B -fae -s .github/settings.xml -e "-DtrimStackTrace=false" "-Dsurefire.rerunFailingTestsCount=1" install
       - name: Upload Test Reports
