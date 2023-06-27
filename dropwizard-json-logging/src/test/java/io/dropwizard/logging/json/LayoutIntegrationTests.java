@@ -5,8 +5,11 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.spi.DeferredProcessingAware;
 import com.codahale.metrics.MetricRegistry;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.dropwizard.configuration.ConfigurationValidationException;
 import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
@@ -27,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
+import jakarta.validation.constraints.Min;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.Arrays;
@@ -34,6 +38,7 @@ import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.entry;
 import static org.awaitility.Awaitility.await;
 import static org.mockito.Mockito.mock;
@@ -227,5 +232,20 @@ class LayoutIntegrationTests {
             System.setErr(old);
         }
 
+    }
+
+    @Test
+    void invalidJsonLogLayoutField() {
+        assertThatExceptionOfType(ConfigurationValidationException.class)
+            .isThrownBy(() -> getAppenderFactory("yaml/custom-json-log-invalid.yml"))
+            .withMessageContaining("messageSize must be greater than or equal to 1");
+    }
+
+    @JsonTypeName("custom-json")
+    public static class CustomJsonLayoutBaseFactory extends EventJsonLayoutBaseFactory {
+
+        @JsonProperty
+        @Min(1)
+        private int messageSize = 8000;
     }
 }
