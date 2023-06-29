@@ -4,7 +4,7 @@
 
     <groupId>io.dropwizard</groupId>
     <artifactId>dropwizard-project</artifactId>
-    <version>4.0.1-SNAPSHOT</version>
+    <version>4.0.2-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Dropwizard Project</name>
@@ -56,7 +56,7 @@
     <properties>
         <dropwizard.url>http://www.dropwizard.io/${project.version}</dropwizard.url>
 
-        <project.build.outputTimestamp>2023-03-28T22:24:41Z</project.build.outputTimestamp>
+        <project.build.outputTimestamp>2023-06-19T22:04:34Z</project.build.outputTimestamp>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
@@ -74,10 +74,10 @@
         <maven-gpg-plugin.version>3.1.0</maven-gpg-plugin.version>
         <maven-help-plugin.version>3.4.0</maven-help-plugin.version>
         <maven-install-plugin.version>3.1.1</maven-install-plugin.version>
-        <maven-invoker-plugin.version>3.5.1</maven-invoker-plugin.version>
+        <maven-invoker-plugin.version>3.6.0</maven-invoker-plugin.version>
         <maven-jar-plugin.version>3.3.0</maven-jar-plugin.version>
         <maven-javadoc-plugin.version>3.5.0</maven-javadoc-plugin.version>
-        <maven-project-info-reports-plugin.version>3.4.4</maven-project-info-reports-plugin.version>
+        <maven-project-info-reports-plugin.version>3.4.5</maven-project-info-reports-plugin.version>
         <maven-release-plugin.version>3.0.1</maven-release-plugin.version>
         <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
         <maven-site-plugin.version>3.12.1</maven-site-plugin.version>
