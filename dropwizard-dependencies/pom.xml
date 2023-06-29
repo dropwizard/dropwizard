@@ -35,7 +35,7 @@
         <hibernate-validator.version>6.2.5.Final</hibernate-validator.version>
         <hk2.version>2.6.1</hk2.version>
         <httpclient.version>5.2.1</httpclient.version>
-        <httpcore.version>5.2.1</httpcore.version>
+        <httpcore.version>5.2.2</httpcore.version>
         <jackson.version>2.15.2</jackson.version>
         <jakarta.annotation-api.version>1.3.5</jakarta.annotation-api.version>
         <jakarta.el.version>3.0.4</jakarta.el.version>
