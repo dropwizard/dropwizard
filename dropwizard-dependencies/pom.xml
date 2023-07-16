@@ -76,6 +76,7 @@
         <lifecycle-mapping.version>1.0.0</lifecycle-mapping.version>
         <pgpverify-maven-plugin.version>1.17.0</pgpverify-maven-plugin.version>
         <error_prone.javac.version>9+181-r4173-1</error_prone.javac.version>
+        <exec-maven-plugin.version>3.1.0</exec-maven-plugin.version>
     </properties>
 
     <dependencyManagement>
@@ -456,6 +457,11 @@
                     <groupId>org.simplify4u.plugins</groupId>
                     <artifactId>pgpverify-maven-plugin</artifactId>
                     <version>${pgpverify-maven-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>exec-maven-plugin</artifactId>
+                    <version>${exec-maven-plugin.version}</version>
                 </plugin>
             </plugins>
         </pluginManagement>
