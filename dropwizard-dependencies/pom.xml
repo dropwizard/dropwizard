@@ -22,20 +22,20 @@
         <argparse4j.version>0.9.0</argparse4j.version>
         <byte-buddy.version>1.14.5</byte-buddy.version>
         <caffeine.version>3.1.6</caffeine.version>
-        <checker-qual.version>3.35.0</checker-qual.version>
+        <checker-qual.version>3.36.0</checker-qual.version>
         <classmate.version>1.5.1</classmate.version>
-        <commons-codec.version>1.15</commons-codec.version>
+        <commons-codec.version>1.16.0</commons-codec.version>
         <commons-lang3.version>3.12.0</commons-lang3.version>
         <commons-text.version>1.10.0</commons-text.version>
         <conscrypt-openjdk-uber.version>2.5.2</conscrypt-openjdk-uber.version>
         <error_prone.version>2.20.0</error_prone.version>
         <freemarker.version>2.3.32</freemarker.version>
-        <guava.version>32.0.1-jre</guava.version>
+        <guava.version>32.1.1-jre</guava.version>
         <hibernate-core.version>6.1.7.Final</hibernate-core.version>
         <hibernate-validator.version>7.0.5.Final</hibernate-validator.version>
         <hk2.version>3.0.4</hk2.version>
         <httpclient.version>5.2.1</httpclient.version>
-        <httpcore.version>5.2.1</httpcore.version>
+        <httpcore.version>5.2.2</httpcore.version>
         <jackson.version>2.15.2</jackson.version>
         <jakarta.annotation-api.version>2.0.0</jakarta.annotation-api.version>
         <jakarta.el.version>4.0.2</jakarta.el.version>
@@ -46,12 +46,12 @@
         <jakarta.ws.rs-api.version>3.0.0</jakarta.ws.rs-api.version>
         <javassist.version>3.29.2-GA</javassist.version>
         <jaxb-api.version>3.0.1</jaxb-api.version>
-        <jboss-logging.version>3.5.1.Final</jboss-logging.version>
+        <jboss-logging.version>3.5.3.Final</jboss-logging.version>
         <jdbi3.version>3.39.1</jdbi3.version>
-        <jersey.version>3.0.10</jersey.version>
+        <jersey.version>3.0.11</jersey.version>
         <jetty-setuid-java.version>1.0.4</jetty-setuid-java.version>
         <jetty.version>11.0.15</jetty.version>
-        <liquibase-core.version>4.22.0</liquibase-core.version>
+        <liquibase-core.version>4.23.0</liquibase-core.version>
         <liquibase-slf4j.version>5.0.0</liquibase-slf4j.version>
         <logback-throttling-appender.version>1.4.0</logback-throttling-appender.version>
         <logback.version>1.4.8</logback.version>
@@ -59,7 +59,7 @@
         <mustache-compiler.version>0.9.10</mustache-compiler.version>
         <nullaway.version>0.10.11</nullaway.version>
         <slf4j.version>2.0.7</slf4j.version>
-        <tomcat-jdbc.version>10.1.10</tomcat-jdbc.version>
+        <tomcat-jdbc.version>10.1.11</tomcat-jdbc.version>
 
         <!-- Test dependencies -->
         <assertj.version>3.24.2</assertj.version>
