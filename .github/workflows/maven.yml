@@ -61,7 +61,7 @@ jobs:
           path: '**/*-reports'
       - name: Publish Test Results
         if: always()
-        uses: scacap/action-surefire-report@901f7f3fb7062a237c988a88f10c2b85bc1be38d # v1
+        uses: scacap/action-surefire-report@6efd3d10b5c1996a0724dd4c4915a073f685fefa # v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           check_name: Test Report (${{ matrix.os }} - Java ${{ matrix.java_version }})
