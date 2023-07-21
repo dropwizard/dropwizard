@@ -22,6 +22,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -112,6 +113,7 @@ public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware>
     protected String logFormat;
 
     @Nullable
+    @Valid
     protected DiscoverableLayoutFactory<E> layout;
 
     @NotNull
