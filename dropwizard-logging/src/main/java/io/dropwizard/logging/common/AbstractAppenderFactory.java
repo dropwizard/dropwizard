@@ -18,6 +18,7 @@ import io.dropwizard.logging.common.layout.LayoutFactory;
 import io.dropwizard.util.Duration;
 import io.dropwizard.validation.MaxDuration;
 import io.dropwizard.validation.MinDuration;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -112,6 +113,7 @@ public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware>
     protected String logFormat;
 
     @Nullable
+    @Valid
     protected DiscoverableLayoutFactory<E> layout;
 
     @NotNull
