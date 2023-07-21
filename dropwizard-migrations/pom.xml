@@ -104,4 +104,41 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <configuration>
+                    <includePluginDependencies>true</includePluginDependencies>
+                    <mainClass>org.h2.tools.RunScript</mainClass>
+                    <arguments>
+                        <argument>-user</argument>
+                        <argument>sa</argument>
+                        <argument>-url</argument>
+                        <argument>jdbc:h2:file:${project.basedir}/src/test/resources/test-db</argument>
+                        <argument>-script</argument>
+                        <argument>${project.basedir}/src/test/resources/test-db-backup.sql</argument>
+                    </arguments>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>test-db-creation</id>
+                        <phase>generate-test-resources</phase>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.h2database</groupId>
+                        <artifactId>h2</artifactId>
+                        <version>${h2.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+        </plugins>
+    </build>
 </project>
