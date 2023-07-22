@@ -65,7 +65,7 @@
         <assertj.version>3.24.2</assertj.version>
         <awaitility.version>4.2.0</awaitility.version>
         <bcprov-jdk15on.version>1.70</bcprov-jdk15on.version>
-        <h2.version>2.1.214</h2.version>
+        <h2.version>2.2.220</h2.version>
         <junit5.version>5.9.3</junit5.version>
         <mockito.version>5.4.0</mockito.version>
 
@@ -76,6 +76,7 @@
         <lifecycle-mapping.version>1.0.0</lifecycle-mapping.version>
         <pgpverify-maven-plugin.version>1.17.0</pgpverify-maven-plugin.version>
         <error_prone.javac.version>9+181-r4173-1</error_prone.javac.version>
+        <exec-maven-plugin.version>3.1.0</exec-maven-plugin.version>
     </properties>
 
     <dependencyManagement>
@@ -456,6 +457,11 @@
                     <groupId>org.simplify4u.plugins</groupId>
                     <artifactId>pgpverify-maven-plugin</artifactId>
                     <version>${pgpverify-maven-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>exec-maven-plugin</artifactId>
+                    <version>${exec-maven-plugin.version}</version>
                 </plugin>
             </plugins>
         </pluginManagement>
