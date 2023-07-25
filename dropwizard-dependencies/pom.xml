@@ -65,7 +65,7 @@
         <awaitility.version>4.2.0</awaitility.version>
         <bcprov-jdk15on.version>1.70</bcprov-jdk15on.version>
         <h2.version>2.2.220</h2.version>
-        <junit5.version>5.9.3</junit5.version>
+        <junit5.version>5.10.0</junit5.version>
         <mockito.version>5.4.0</mockito.version>
 
         <!-- Plugin versions -->
