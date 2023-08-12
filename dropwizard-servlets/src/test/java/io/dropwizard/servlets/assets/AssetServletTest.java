@@ -1,11 +1,11 @@
 package io.dropwizard.servlets.assets;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.eclipse.jetty.ee10.servlet.ServletTester;
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpTester;
 import org.eclipse.jetty.http.HttpVersion;
 import org.eclipse.jetty.http.MimeTypes;
-import org.eclipse.jetty.servlet.ServletTester;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -402,16 +402,16 @@ public class AssetServletTest {
         response = HttpTester.parseResponse(SERVLET_TESTER.getResponses(request.generate()));
         final long lastModifiedTime = response.getDateField(HttpHeader.LAST_MODIFIED.asString());
 
-        request.putDateField(HttpHeader.IF_MODIFIED_SINCE, lastModifiedTime);
+        request.putDate(HttpHeader.IF_MODIFIED_SINCE, lastModifiedTime);
         response = HttpTester.parseResponse(SERVLET_TESTER.getResponses(request.generate()));
         final int statusWithMatchingLastModifiedTime = response.getStatus();
 
-        request.putDateField(HttpHeader.IF_MODIFIED_SINCE,
+        request.putDate(HttpHeader.IF_MODIFIED_SINCE,
                 lastModifiedTime - 100);
         response = HttpTester.parseResponse(SERVLET_TESTER.getResponses(request.generate()));
         final int statusWithStaleLastModifiedTime = response.getStatus();
 
-        request.putDateField(HttpHeader.IF_MODIFIED_SINCE,
+        request.putDate(HttpHeader.IF_MODIFIED_SINCE,
                 lastModifiedTime + 100);
         response = HttpTester.parseResponse(SERVLET_TESTER.getResponses(request.generate()));
         final int statusWithRecentLastModifiedTime = response.getStatus();

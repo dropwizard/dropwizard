@@ -1,9 +1,10 @@
 package io.dropwizard.jetty;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import org.eclipse.jetty.http.HttpURI;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Request;
+import org.eclipse.jetty.server.Response;
+import org.eclipse.jetty.util.Callback;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,6 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Map;
 
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -19,11 +21,11 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class ContextRoutingHandlerTest {
     @Mock
-    private Request baseRequest;
+    private Request request;
     @Mock
-    private HttpServletRequest request;
+    private Response response;
     @Mock
-    private HttpServletResponse response;
+    private Callback callback;
 
     @Mock
     private Handler handler1;
@@ -42,32 +44,38 @@ class ContextRoutingHandlerTest {
 
     @Test
     void routesToTheBestPrefixMatch() throws Exception {
-        when(baseRequest.getRequestURI()).thenReturn("/hello-world");
+        HttpURI httpURI = mock(HttpURI.class);
+        when(httpURI.getPath()).thenReturn("/hello-world");
+        when(request.getHttpURI()).thenReturn(httpURI);
 
-        handler.handle("/hello-world", baseRequest, request, response);
+        handler.handle(request, response, callback);
 
-        verify(handler1).handle("/hello-world", baseRequest, request, response);
-        verify(handler2, never()).handle("/hello-world", baseRequest, request, response);
+        verify(handler1).handle(request, response, callback);
+        verify(handler2, never()).handle(request, response, callback);
     }
 
     @Test
     void routesToTheLongestPrefixMatch() throws Exception {
-        when(baseRequest.getRequestURI()).thenReturn("/admin/woo");
+        HttpURI httpURI = mock(HttpURI.class);
+        when(httpURI.getPath()).thenReturn("/admin/woo");
+        when(request.getHttpURI()).thenReturn(httpURI);
 
-        handler.handle("/admin/woo", baseRequest, request, response);
+        handler.handle(request, response, callback);
 
-        verify(handler1, never()).handle("/admin/woo", baseRequest, request, response);
-        verify(handler2).handle("/admin/woo", baseRequest, request, response);
+        verify(handler1, never()).handle(request, response, callback);
+        verify(handler2).handle(request, response, callback);
     }
 
     @Test
     void passesHandlingNonMatchingRequests() throws Exception {
-        when(baseRequest.getRequestURI()).thenReturn("WAT");
+        HttpURI httpURI = mock(HttpURI.class);
+        when(httpURI.getPath()).thenReturn("WAT");
+        when(request.getHttpURI()).thenReturn(httpURI);
 
-        handler.handle("WAT", baseRequest, request, response);
+        handler.handle(request, response, callback);
 
-        verify(handler1, never()).handle("WAT", baseRequest, request, response);
-        verify(handler2, never()).handle("WAT", baseRequest, request, response);
+        verify(handler1, never()).handle(request, response, callback);
+        verify(handler2, never()).handle(request, response, callback);
     }
 
     @Test

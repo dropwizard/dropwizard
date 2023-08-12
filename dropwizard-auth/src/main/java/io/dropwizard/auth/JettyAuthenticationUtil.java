@@ -4,17 +4,17 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.SecurityContext;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.eclipse.jetty.security.AbstractUserAuthentication;
-import org.eclipse.jetty.server.Authentication;
+import org.eclipse.jetty.ee10.servlet.ServletApiRequest;
+import org.eclipse.jetty.security.AuthenticationState;
+import org.eclipse.jetty.security.UserIdentity;
+import org.eclipse.jetty.security.authentication.LoginAuthenticator;
 import org.eclipse.jetty.server.Request;
-import org.eclipse.jetty.server.UserIdentity;
 import org.glassfish.jersey.internal.inject.InjectionManager;
 import org.glassfish.jersey.internal.util.collection.Ref;
 
 import javax.security.auth.Subject;
 import java.lang.reflect.Type;
 import java.security.Principal;
-import java.util.Optional;
 import java.util.Set;
 
 class JettyAuthenticationUtil {
@@ -29,19 +29,13 @@ class JettyAuthenticationUtil {
             return;
         }
         HttpServletRequest request = requestRef.get();
-        if (!(request instanceof Request)) {
+        if (!(request instanceof ServletApiRequest servletApiRequest)) {
             return;
         }
-        Request jettyRequest = (Request) request;
 
-        Authentication authentication = new DropwizardJettyAuthentication(securityContext);
-        jettyRequest.setAuthentication(authentication);
-    }
-
-    private static class DropwizardJettyAuthentication extends AbstractUserAuthentication {
-        public DropwizardJettyAuthentication(SecurityContext securityContext) {
-            super(securityContext.getAuthenticationScheme(), new DropwizardJettyUserIdentity(securityContext));
-        }
+        AuthenticationState.Succeeded authentication = new LoginAuthenticator.UserAuthenticationSucceeded(
+            securityContext.getAuthenticationScheme(), new DropwizardJettyUserIdentity(securityContext));
+        Request.setAuthenticationState(servletApiRequest.getRequest(), authentication);
     }
 
     private static class DropwizardJettyUserIdentity implements UserIdentity {
@@ -64,19 +58,8 @@ class JettyAuthenticationUtil {
         }
 
         @Override
-        public boolean isUserInRole(String role, Scope scope) {
-            // Servlet spec forbids the role name "*", so return false in that case
-            if ("*".equals(role)) {
-                return false;
-            }
-
-            // get the scope-mapped role, if present
-            // else use the original role
-            String resolvedRole = Optional.ofNullable(scope)
-                .map(Scope::getRoleRefMap)
-                .map(roleMap -> roleMap.get(role))
-                .orElse(role);
-            return securityContext.isUserInRole(resolvedRole);
+        public boolean isUserInRole(String role) {
+            return securityContext.isUserInRole(role);
         }
     }
 }

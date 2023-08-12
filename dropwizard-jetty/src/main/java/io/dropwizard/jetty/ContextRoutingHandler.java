@@ -1,21 +1,18 @@
 package io.dropwizard.jetty;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Request;
-import org.eclipse.jetty.server.handler.AbstractHandlerContainer;
+import org.eclipse.jetty.server.Response;
+import org.eclipse.jetty.util.Callback;
 import org.eclipse.jetty.util.Index;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
 /**
  * A Jetty router which routes requests based on context path.
  */
-public class ContextRoutingHandler extends AbstractHandlerContainer {
+public class ContextRoutingHandler extends Handler.AbstractContainer {
     private final Index<Handler> handlers;
 
     public ContextRoutingHandler(Map<String, ? extends Handler> handlers) {
@@ -28,14 +25,12 @@ public class ContextRoutingHandler extends AbstractHandlerContainer {
     }
 
     @Override
-    public void handle(String target,
-                       Request baseRequest,
-                       HttpServletRequest request,
-                       HttpServletResponse response) throws IOException, ServletException {
-        final Handler handler = handlers.getBest(baseRequest.getRequestURI());
+    public boolean handle(Request request, Response response, Callback callback) throws Exception {
+        final Handler handler = handlers.getBest(request.getHttpURI().getPath());
         if (handler != null) {
-            handler.handle(target, baseRequest, request, response);
+            return handler.handle(request, response, callback);
         }
+        return false;
     }
 
     @Override
@@ -55,18 +50,7 @@ public class ContextRoutingHandler extends AbstractHandlerContainer {
     }
 
     @Override
-    public Handler[] getHandlers() {
-        return handlers.keySet().stream().map(handlers::get).toArray(Handler[]::new);
-    }
-
-    @Override
-    protected void expandChildren(List<Handler> list, Class<?> byClass)
-    {
-        Handler[] handlerArray = getHandlers();
-        if (handlerArray != null) {
-            for (Handler h : handlerArray) {
-                expandHandler(h, list, byClass);
-            }
-        }
+    public List<Handler> getHandlers() {
+        return handlers.keySet().stream().map(handlers::get).toList();
     }
 }

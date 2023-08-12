@@ -15,6 +15,7 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriBuilder;
 import org.assertj.core.api.AbstractListAssert;
 import org.assertj.core.api.ObjectAssert;
+import org.glassfish.jersey.client.ClientProperties;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -43,7 +44,7 @@ public class BeanValidatorTest {
             .scheme("http")
             .host("localhost")
             .port(APP.getLocalPort());
-        target = APP.client().target(uriBuilder);
+        target = APP.client().property(ClientProperties.CONNECT_TIMEOUT, 0).target(uriBuilder);
     }
 
     @Test

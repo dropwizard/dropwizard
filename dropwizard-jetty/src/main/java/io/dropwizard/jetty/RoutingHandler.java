@@ -1,31 +1,24 @@
 package io.dropwizard.jetty;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Request;
-import org.eclipse.jetty.server.handler.HandlerCollection;
+import org.eclipse.jetty.server.Response;
+import org.eclipse.jetty.util.Callback;
 
-import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
-public class RoutingHandler extends HandlerCollection {
+public class RoutingHandler extends Handler.AbstractContainer {
+
     /**
      * We use an array of entries instead of a map here for performance reasons. We're only ever
      * comparing connectors by reference, not by equality, so avoiding the overhead of a map is
      * a lot faster. See RoutingHandlerBenchmark for details, but tested against an
      * ImmutableMap-backed implementation it was ~54us vs. ~4500us for 1,000,000 iterations.
      */
-    private static class Entry {
-        private final Connector connector;
-        private final Handler handler;
-
-        private Entry(Connector connector, Handler handler) {
-            this.connector = connector;
-            this.handler = handler;
-        }
+    private record Entry(Connector connector, Handler handler) {
     }
 
     private final Entry[] entries;
@@ -37,22 +30,25 @@ public class RoutingHandler extends HandlerCollection {
             this.entries[i++] = new Entry(entry.getKey(), entry.getValue());
             addBean(entry.getValue());
         }
-        setHandlers(handlers.values().toArray(new Handler[0]));
     }
 
     @Override
-    public void handle(String target,
-                       Request baseRequest,
-                       HttpServletRequest request,
-                       HttpServletResponse response) throws IOException, ServletException {
-        final Connector connector = baseRequest.getHttpChannel().getConnector();
+    public boolean handle(Request request, Response response, Callback callback) throws Exception {
+        final Connector connector = request.getConnectionMetaData().getConnector();
         for (Entry entry : entries) {
             // reference equality works fine — none of the connectors implement #equals(Object)
             if (entry.connector == connector) {
-                entry.handler.handle(target, baseRequest, request, response);
-                return;
+                if (entry.handler.handle(request, response, callback)) {
+                    return true;
+                }
             }
         }
+        return false;
+    }
+
+    @Override
+    public List<Handler> getHandlers() {
+        return Arrays.stream(entries).map(Entry::handler).toList();
     }
 }
 

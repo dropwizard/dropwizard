@@ -7,7 +7,7 @@ import io.dropwizard.core.setup.Environment;
 import io.dropwizard.jetty.ConnectorFactory;
 import io.dropwizard.jetty.HttpConnectorFactory;
 import io.dropwizard.jetty.RoutingHandler;
-import io.dropwizard.metrics.jetty11.InstrumentedQueuedThreadPool;
+import io.dropwizard.metrics.jetty12.InstrumentedQueuedThreadPool;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
@@ -192,7 +192,8 @@ public class DefaultServerFactory extends AbstractServerFactory {
                                                                   applicationHandler,
                                                                   adminHandler);
         final Handler gzipHandler = buildGzipHandler(routingHandler);
-        server.setHandler(addStatsHandler(addRequestLog(server, gzipHandler, environment.getName())));
+        server.setHandler(gzipHandler);
+        addRequestLog(server, environment.getName(), environment.getApplicationContext());
         return server;
     }
 

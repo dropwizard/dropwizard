@@ -6,21 +6,24 @@ import jakarta.servlet.FilterRegistration;
 import jakarta.servlet.Servlet;
 import jakarta.servlet.ServletContextListener;
 import jakarta.servlet.ServletRegistration;
-import org.eclipse.jetty.security.ConstraintSecurityHandler;
+import jakarta.servlet.http.HttpServletRequest;
+import org.eclipse.jetty.ee10.servlet.DebugListener;
+import org.eclipse.jetty.ee10.servlet.FilterHolder;
+import org.eclipse.jetty.ee10.servlet.ServletHandler;
+import org.eclipse.jetty.ee10.servlet.ServletHolder;
+import org.eclipse.jetty.ee10.servlet.SessionHandler;
+import org.eclipse.jetty.ee10.servlet.security.ConstraintSecurityHandler;
+import org.eclipse.jetty.ee10.servlets.DoSFilter;
+import org.eclipse.jetty.ee10.servlets.EventSource;
+import org.eclipse.jetty.ee10.servlets.EventSourceServlet;
 import org.eclipse.jetty.security.SecurityHandler;
-import org.eclipse.jetty.server.DebugListener;
-import org.eclipse.jetty.server.session.SessionHandler;
-import org.eclipse.jetty.servlet.FilterHolder;
-import org.eclipse.jetty.servlet.ServletHandler;
-import org.eclipse.jetty.servlet.ServletHolder;
-import org.eclipse.jetty.servlets.ConcatServlet;
-import org.eclipse.jetty.servlets.WelcomeFilter;
+import org.eclipse.jetty.util.resource.CombinedResource;
 import org.eclipse.jetty.util.resource.Resource;
-import org.eclipse.jetty.util.resource.ResourceCollection;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -41,66 +44,74 @@ class ServletEnvironmentTest {
 
     @Test
     void addsServletInstances() throws Exception {
-        final Servlet servlet = new ConcatServlet();
+        final Servlet servlet = new TestEventSourceServlet();
         final ServletRegistration.Dynamic builder = environment.addServlet("servlet", servlet);
         assertThat(builder).isNotNull();
 
         try {
+            handler.start();
             servletHandler.start();
 
             final ServletHolder servletHolder = servletHandler.getServlet("servlet");
             assertThat(servletHolder.getServlet()).isEqualTo(servlet);
         } finally {
             servletHandler.stop();
+            handler.stop();
         }
     }
 
     @Test
     void addsServletClasses() throws Exception {
-        final Class<ConcatServlet> servletClass = ConcatServlet.class;
+        final Class<TestEventSourceServlet> servletClass = TestEventSourceServlet.class;
         final ServletRegistration.Dynamic builder = environment.addServlet("servlet", servletClass);
         assertThat(builder).isNotNull();
 
         try {
+            handler.start();
             servletHandler.start();
 
             final ServletHolder servletHolder = servletHandler.getServlet("servlet");
             assertThat(servletHolder.getServlet()).isExactlyInstanceOf(servletClass);
         } finally {
             servletHandler.stop();
+            handler.stop();
         }
     }
 
     @Test
     void addsFilterInstances() throws Exception {
-        final Filter filter = new WelcomeFilter();
+        final Filter filter = new DoSFilter();
 
         final FilterRegistration.Dynamic builder = environment.addFilter("filter", filter);
         assertThat(builder).isNotNull();
 
         try {
+            handler.start();
             servletHandler.start();
 
             final FilterHolder filterHolder = servletHandler.getFilter("filter");
             assertThat(filterHolder.getFilter()).isEqualTo(filter);
         } finally {
             servletHandler.stop();
+            handler.stop();
         }
     }
 
     @Test
     void addsFilterClasses() throws Exception {
-        final Class<WelcomeFilter> filterClass = WelcomeFilter.class;
+        final Class<DoSFilter> filterClass = DoSFilter.class;
         final FilterRegistration.Dynamic builder = environment.addFilter("filter", filterClass);
         assertThat(builder).isNotNull();
 
         try {
+            handler.start();
             servletHandler.start();
 
             final FilterHolder filterHolder = servletHandler.getFilter("filter");
             assertThat(filterHolder.getFilter()).isExactlyInstanceOf(filterClass);
         } finally {
             servletHandler.stop();
+            handler.stop();
         }
     }
 
@@ -121,7 +132,7 @@ class ServletEnvironmentTest {
 
     @Test
     void setsBaseResource(@TempDir Path tempDir) throws Exception {
-        final Resource testResource = Resource.newResource(tempDir.resolve("dir").toUri());
+        final Resource testResource = handler.newResource(tempDir.resolve("dir").toUri());
         environment.setBaseResource(testResource);
 
         assertThat(handler.getBaseResource()).isEqualTo(testResource);
@@ -129,21 +140,21 @@ class ServletEnvironmentTest {
 
     @Test
     void setsBaseResourceList(@TempDir Path tempDir) throws Exception {
-        Resource wooResource = Resource.newResource(Files.createDirectory(tempDir.resolve("dir-1")));
-        Resource fooResource = Resource.newResource(Files.createDirectory(tempDir.resolve("dir-2")));
+        Resource wooResource = handler.newResource(Files.createDirectory(tempDir.resolve("dir-1")).toUri());
+        Resource fooResource = handler.newResource(Files.createDirectory(tempDir.resolve("dir-2")).toUri());
 
         final Resource[] testResources = new Resource[]{wooResource, fooResource};
         environment.setBaseResource(testResources);
 
-        assertThat(handler.getBaseResource()).isExactlyInstanceOf(ResourceCollection.class);
-        assertThat(((ResourceCollection) handler.getBaseResource()).getResources()).contains(wooResource, fooResource);
+        assertThat(handler.getBaseResource()).isExactlyInstanceOf(CombinedResource.class);
+        assertThat(((CombinedResource) handler.getBaseResource()).getResources()).contains(wooResource, fooResource);
     }
 
     @Test
     void setsResourceBase() throws Exception {
         environment.setResourceBase("/woo");
 
-        assertThat(handler.getResourceBase()).isEqualTo(handler.newResource("/woo").toString());
+        assertThat(handler.getBaseResource()).isEqualTo(handler.newResource("/woo"));
     }
 
     @Test
@@ -154,9 +165,9 @@ class ServletEnvironmentTest {
         final String[] testResources = new String[]{wooResource, fooResource};
         environment.setBaseResource(testResources);
 
-        assertThat(handler.getBaseResource()).isExactlyInstanceOf(ResourceCollection.class);
-        assertThat(((ResourceCollection) handler.getBaseResource()).getResources())
-            .contains(Resource.newResource(wooResource), Resource.newResource(fooResource));
+        assertThat(handler.getBaseResource()).isExactlyInstanceOf(CombinedResource.class);
+        assertThat(((CombinedResource) handler.getBaseResource()).getResources())
+            .contains(handler.newResource(wooResource), handler.newResource(fooResource));
     }
 
     @Test
@@ -190,5 +201,20 @@ class ServletEnvironmentTest {
         environment.addMimeMapping("foo", "example/foo");
 
         assertThat(handler.getMimeTypes().getMimeMap()).containsEntry("foo", "example/foo");
+    }
+
+    public static final class TestEventSourceServlet extends EventSourceServlet {
+        @Override
+        protected EventSource newEventSource(HttpServletRequest httpServletRequest) {
+            return new EventSource() {
+                @Override
+                public void onOpen(Emitter emitter) throws IOException {
+                }
+
+                @Override
+                public void onClose() {
+                }
+            };
+        }
     }
 }

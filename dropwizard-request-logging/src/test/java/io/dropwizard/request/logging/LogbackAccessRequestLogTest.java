@@ -2,20 +2,27 @@ package io.dropwizard.request.logging;
 
 import ch.qos.logback.access.spi.IAccessEvent;
 import ch.qos.logback.core.Appender;
-import org.eclipse.jetty.http.MetaData;
-import org.eclipse.jetty.server.HttpChannel;
-import org.eclipse.jetty.server.HttpChannelState;
+import org.eclipse.jetty.ee10.servlet.ServletChannel;
+import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
+import org.eclipse.jetty.ee10.servlet.ServletContextRequest;
+import org.eclipse.jetty.http.HttpFields;
+import org.eclipse.jetty.http.HttpURI;
+import org.eclipse.jetty.server.ConnectionMetaData;
+import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Response;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.MockedStatic;
 
 import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -26,30 +33,41 @@ class LogbackAccessRequestLogTest {
     private final Appender<IAccessEvent> appender = mock(Appender.class);
     private final LogbackAccessRequestLog requestLog = new LogbackAccessRequestLog();
 
+    private final ServletContextHandler servletContextHandler = new ServletContextHandler();
     private final Request request = mock(Request.class);
+    private MockedStatic<Request> staticRequest;
     private final Response response = mock(Response.class);
-    private final HttpChannelState channelState = mock(HttpChannelState.class);
+    private MockedStatic<Response> staticResponse;
+    private ServletContextRequest servletContextRequest;
 
     @BeforeEach
     void setUp() throws Exception {
-        when(channelState.isInitial()).thenReturn(true);
+        ConnectionMetaData connectionMetaData = mock(ConnectionMetaData.class);
+        when(response.getHeaders()).thenReturn(HttpFields.build());
+        when(connectionMetaData.getHttpConfiguration()).thenReturn(new HttpConfiguration());
+        when(request.getConnectionMetaData()).thenReturn(connectionMetaData);
 
-        when(request.getRemoteAddr()).thenReturn("10.0.0.1");
-        when(request.getTimeStamp()).thenReturn(TimeUnit.SECONDS.toMillis(1353042047));
         when(request.getMethod()).thenReturn("GET");
-        when(request.getRequestURI()).thenReturn("/test/things?yay");
-        when(request.getProtocol()).thenReturn("HTTP/1.1");
-        when(request.getHttpChannelState()).thenReturn(channelState);
+        HttpURI httpURI = mock(HttpURI.class);
+        when(httpURI.getPath()).thenReturn("/test/things?yay");
+        when(request.getHttpURI()).thenReturn(httpURI);
+        when(connectionMetaData.getProtocol()).thenReturn("HTTP/1.1");
+        when(request.getConnectionMetaData()).thenReturn(connectionMetaData);
+        when(request.getHeaders()).thenReturn(HttpFields.build());
 
-        MetaData.Response metaData = mock(MetaData.Response.class);
-        when(metaData.getStatus()).thenReturn(200);
+        ServletChannel servletChannel = new ServletChannel(servletContextHandler, connectionMetaData);
+        servletContextRequest = new TestServletContextRequest(servletChannel);
+        servletChannel.associate(servletContextRequest);
 
-        when(response.getCommittedMetaData()).thenReturn(metaData);
+        staticRequest = mockStatic(Request.class);
+        staticResponse = mockStatic(Response.class);
 
-        HttpChannel channel = mock(HttpChannel.class);
-        when(channel.getBytesWritten()).thenReturn(8290L);
+        staticRequest.when(() -> Request.getRemoteAddr(servletContextRequest)).thenReturn("10.0.0.1");
+        staticRequest.when(() -> Request.getTimeStamp(request)).thenReturn(TimeUnit.SECONDS.toMillis(1353042047));
+        staticRequest.when(() -> Request.as(any(), any())).thenCallRealMethod();
 
-        when(response.getHttpChannel()).thenReturn(channel);
+        staticResponse.when(() -> Response.getContentBytesWritten(response)).thenReturn(8290L);
+        when(response.getStatus()).thenReturn(200);
 
         requestLog.addAppender(appender);
 
@@ -59,6 +77,8 @@ class LogbackAccessRequestLogTest {
     @AfterEach
     void tearDown() throws Exception {
         requestLog.stop();
+        staticRequest.close();
+        staticResponse.close();
     }
 
     @Test
@@ -75,11 +95,19 @@ class LogbackAccessRequestLogTest {
     }
 
     private IAccessEvent logAndCapture() {
-        requestLog.log(request, response);
+        requestLog.log(servletContextRequest, response);
 
         final ArgumentCaptor<IAccessEvent> captor = ArgumentCaptor.forClass(IAccessEvent.class);
         verify(appender, timeout(1000)).doAppend(captor.capture());
 
         return captor.getValue();
+    }
+
+    public class TestServletContextRequest extends ServletContextRequest {
+
+        public TestServletContextRequest(ServletChannel servletChannel) {
+            super(servletContextHandler.newServletContextApi(), servletChannel, request, response,
+                null, null, null);
+        }
     }
 }

@@ -16,11 +16,13 @@ import io.dropwizard.jetty.GzipHandlerFactory;
 import io.dropwizard.jetty.MutableServletContextHandler;
 import io.dropwizard.jetty.ServerPushFilterFactory;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
-import io.dropwizard.metrics.jetty11.InstrumentedHandler;
-import io.dropwizard.metrics.jetty11.InstrumentedQueuedThreadPool;
+import io.dropwizard.metrics.jetty12.InstrumentedQueuedThreadPool;
+import io.dropwizard.metrics.jetty12.ee10.InstrumentedEE10Handler;
 import io.dropwizard.metrics.servlets.AdminServlet;
 import io.dropwizard.metrics.servlets.HealthCheckServlet;
 import io.dropwizard.metrics.servlets.MetricsServlet;
+import io.dropwizard.request.logging.LogbackAccessRequestLog;
+import io.dropwizard.request.logging.LogbackAccessRequestLogAwareHandler;
 import io.dropwizard.request.logging.LogbackAccessRequestLogFactory;
 import io.dropwizard.request.logging.RequestLogFactory;
 import io.dropwizard.servlets.ThreadNameFilter;
@@ -34,12 +36,11 @@ import jakarta.validation.Validator;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.eclipse.jetty.ee10.servlet.ServletHolder;
 import org.eclipse.jetty.server.Handler;
+import org.eclipse.jetty.server.RequestLog;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ErrorHandler;
-import org.eclipse.jetty.server.handler.RequestLogHandler;
-import org.eclipse.jetty.server.handler.StatisticsHandler;
-import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.setuid.RLimit;
 import org.eclipse.jetty.setuid.SetUIDListener;
 import org.eclipse.jetty.util.BlockingArrayQueue;
@@ -656,7 +657,7 @@ public abstract class AbstractServerFactory implements ServerFactory {
             handler.addServlet(new ServletHolder("jersey", jerseyContainer), jersey.getUrlPattern());
         }
         @SuppressWarnings("NullAway")
-        final InstrumentedHandler instrumented = new InstrumentedHandler(metricRegistry, metricPrefix, responseMeteredLevel);
+        final InstrumentedEE10Handler instrumented = new InstrumentedEE10Handler(metricRegistry, metricPrefix, responseMeteredLevel);
         instrumented.setServer(server);
         instrumented.setHandler(handler);
         return instrumented;
@@ -698,9 +699,8 @@ public abstract class AbstractServerFactory implements ServerFactory {
         server.addEventListener(buildSetUIDListener());
         lifecycle.attach(server);
         final ErrorHandler errorHandler = new ErrorHandler();
-        errorHandler.setServer(server);
         errorHandler.setShowStacks(false);
-        server.addBean(errorHandler);
+        server.setErrorHandler(errorHandler);
         server.setStopAtShutdown(true);
         server.setStopTimeout(shutdownGracePeriod.toMilliseconds());
         server.setDumpAfterStart(dumpAfterStart);
@@ -751,26 +751,14 @@ public abstract class AbstractServerFactory implements ServerFactory {
         return listener;
     }
 
-    protected Handler addRequestLog(Server server, Handler handler, String name) {
+    protected void addRequestLog(Server server, String name, MutableServletContextHandler servletContextHandler) {
         if (getRequestLogFactory().isEnabled()) {
-            final RequestLogHandler requestLogHandler = new RequestLogHandler();
-            requestLogHandler.setRequestLog(getRequestLogFactory().build(name));
-            // server should own the request log's lifecycle since it's already started,
-            // the handler might not become managed in case of an error which would leave
-            // the request log stranded
-            server.addBean(requestLogHandler.getRequestLog(), true);
-            requestLogHandler.setHandler(handler);
-            return requestLogHandler;
+            RequestLog log = getRequestLogFactory().build(name);
+            if (log instanceof LogbackAccessRequestLog) {
+                servletContextHandler.insertHandler(new LogbackAccessRequestLogAwareHandler());
+            }
+            server.setRequestLog(log);
         }
-        return handler;
-    }
-
-    protected Handler addStatsHandler(Handler handler) {
-        // Graceful shutdown is implemented via the statistics handler,
-        // see https://bugs.eclipse.org/bugs/show_bug.cgi?id=420142
-        final StatisticsHandler statisticsHandler = new StatisticsHandler();
-        statisticsHandler.setHandler(handler);
-        return statisticsHandler;
     }
 
     protected Handler buildGzipHandler(Handler handler) {

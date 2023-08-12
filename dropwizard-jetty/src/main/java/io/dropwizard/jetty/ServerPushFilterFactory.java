@@ -6,8 +6,8 @@ import io.dropwizard.validation.MinDuration;
 import jakarta.servlet.DispatcherType;
 import jakarta.validation.constraints.Min;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.eclipse.jetty.servlets.PushCacheFilter;
+import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
+import org.eclipse.jetty.ee10.servlets.PushCacheFilter;
 
 import java.util.EnumSet;
 import java.util.List;
