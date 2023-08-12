@@ -10,14 +10,14 @@ import io.dropwizard.jersey.setup.JerseyEnvironment;
 import io.dropwizard.jersey.validation.Validators;
 import io.dropwizard.jetty.setup.ServletEnvironment;
 import jakarta.servlet.ServletRegistration;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Validator;
 import jakarta.ws.rs.core.MediaType;
+import org.eclipse.jetty.ee10.servlet.ServletHolder;
+import org.eclipse.jetty.ee10.servlet.ServletTester;
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpMethod;
 import org.eclipse.jetty.http.HttpTester;
-import org.eclipse.jetty.server.Response;
-import org.eclipse.jetty.servlet.ServletHolder;
-import org.eclipse.jetty.servlet.ServletTester;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,9 +39,9 @@ class ServletHealthResponderFactoryTest {
     private static final String NAME = "tests";
     private static final String HEALTH_CHECK_URI = "/health-check";
     private static final HealthResponse SUCCESS = new HealthResponse(true, "healthy", MediaType.TEXT_PLAIN,
-        Response.SC_OK);
+        HttpServletResponse.SC_OK);
     private static final HealthResponse FAIL = new HealthResponse(false, "unhealthy", MediaType.TEXT_PLAIN,
-        Response.SC_SERVICE_UNAVAILABLE);
+        HttpServletResponse.SC_SERVICE_UNAVAILABLE);
 
     private final ObjectMapper mapper = Jackson.newObjectMapper();
     private final Validator validator = Validators.newValidator();
@@ -107,8 +107,8 @@ class ServletHealthResponderFactoryTest {
         HttpTester.Response unhealthyResponse = executeRequest(request);
 
         // then
-        assertThat(healthyResponse.getStatus()).isEqualTo(Response.SC_OK);
-        assertThat(unhealthyResponse.getStatus()).isEqualTo(Response.SC_SERVICE_UNAVAILABLE);
+        assertThat(healthyResponse.getStatus()).isEqualTo(HttpServletResponse.SC_OK);
+        assertThat(unhealthyResponse.getStatus()).isEqualTo(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
     }
 
     @Test
@@ -128,9 +128,9 @@ class ServletHealthResponderFactoryTest {
         HttpTester.Response unhealthyResponse = executeRequest(request);
 
         // then
-        assertThat(healthyResponse.getStatus()).isEqualTo(Response.SC_OK);
+        assertThat(healthyResponse.getStatus()).isEqualTo(HttpServletResponse.SC_OK);
         assertThat(healthyResponse.get(HttpHeader.CACHE_CONTROL)).isNull();
-        assertThat(unhealthyResponse.getStatus()).isEqualTo(Response.SC_SERVICE_UNAVAILABLE);
+        assertThat(unhealthyResponse.getStatus()).isEqualTo(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
         assertThat(unhealthyResponse.get(HttpHeader.CACHE_CONTROL)).isNull();
     }
 

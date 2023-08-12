@@ -1,18 +1,17 @@
 package io.dropwizard.jetty;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
+import org.eclipse.jetty.ee10.servlet.SessionHandler;
+import org.eclipse.jetty.server.ConnectionMetaData;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
-import org.eclipse.jetty.server.HttpChannel;
 import org.eclipse.jetty.server.Request;
+import org.eclipse.jetty.server.Response;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ContextHandler;
-import org.eclipse.jetty.server.session.SessionHandler;
-import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.util.Callback;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -57,18 +56,17 @@ class RoutingHandlerTest {
 
     @Test
     void routesRequestsToTheConnectorSpecificHandler() throws Exception {
-        final HttpChannel channel = mock(HttpChannel.class);
-        when(channel.getConnector()).thenReturn(connector1);
+        final ConnectionMetaData connectionMetaData = mock(ConnectionMetaData.class);
+        when(connectionMetaData.getConnector()).thenReturn(connector1);
 
-        final Request baseRequest = mock(Request.class);
-        when(baseRequest.getHttpChannel()).thenReturn(channel);
+        final Request request = mock(Request.class);
+        when(request.getConnectionMetaData()).thenReturn(connectionMetaData);
+        final Response response = mock(Response.class);
+        final Callback callback = mock(Callback.class);
 
-        final HttpServletRequest request = mock(HttpServletRequest.class);
-        final HttpServletResponse response = mock(HttpServletResponse.class);
+        handler.handle(request, response, callback);
 
-        handler.handle("target", baseRequest, request, response);
-
-        verify(handler1).handle("target", baseRequest, request, response);
+        verify(handler1).handle(request, response, callback);
     }
 
     @Test
@@ -78,13 +76,16 @@ class RoutingHandlerTest {
         final SessionHandler childHandler1 = new SessionHandler();
         handler2.setSessionHandler(childHandler1);
         final RoutingHandler handler = new RoutingHandler(Map.of(connector1, handler1, connector2, handler2));
-        new Server().setHandler(handler);
+        Server server = new Server();
+        server.setHandler(handler);
 
+        server.start();
         handler.start();
         try {
             assertThat(getSessionHandlers(handler)).containsOnly(childHandler1);
         } finally {
             handler.stop();
+            server.stop();
         }
     }
 
@@ -101,8 +102,8 @@ class RoutingHandlerTest {
     }
 
     private Set<SessionHandler> getSessionHandlers(final RoutingHandler routingHandler) {
-        return Arrays.stream(routingHandler.getServer().getChildHandlersByClass(ContextHandler.class))
-                .map(handler -> ((ContextHandler) handler).getChildHandlerByClass(SessionHandler.class))
+        return routingHandler.getServer().getDescendants(ContextHandler.class).stream()
+                .map(handler -> handler.getDescendant(SessionHandler.class))
                 .filter(Objects::nonNull).collect(Collectors.toSet());
     }
 

@@ -1,6 +1,6 @@
 package io.dropwizard.jetty;
 
-import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
 
 public class MutableServletContextHandler extends ServletContextHandler {
     public boolean isSecurityEnabled() {

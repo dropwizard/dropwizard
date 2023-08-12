@@ -3,7 +3,7 @@ package com.example.httpsessions;
 import io.dropwizard.core.Application;
 import io.dropwizard.core.Configuration;
 import io.dropwizard.core.setup.Environment;
-import org.eclipse.jetty.server.session.SessionHandler;
+import org.eclipse.jetty.ee10.servlet.SessionHandler;
 
 public class HttpSessionsApp extends Application<Configuration> {
     @Override

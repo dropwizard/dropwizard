@@ -5,10 +5,15 @@ import ch.qos.logback.access.spi.AccessEvent;
 import ch.qos.logback.access.spi.IAccessEvent;
 import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.spi.FilterReply;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.eclipse.jetty.ee10.servlet.ServletApiRequest;
+import org.eclipse.jetty.ee10.servlet.ServletApiResponse;
+import org.eclipse.jetty.ee10.servlet.ServletContextRequest;
+import org.eclipse.jetty.ee10.servlet.ServletContextResponse;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Response;
 
-import java.util.EventListener;
 import java.util.Iterator;
 
 /**
@@ -24,7 +29,13 @@ public class LogbackAccessRequestLog extends RequestLogImpl {
     @Override
     public void log(Request jettyRequest, Response jettyResponse) {
         DropwizardJettyServerAdapter adapter = new DropwizardJettyServerAdapter(jettyRequest, jettyResponse);
-        IAccessEvent accessEvent = new AccessEvent(this, jettyRequest, jettyResponse, adapter);
+        ServletContextRequest servletContextRequest = Request.as(jettyRequest, ServletContextRequest.class);
+        if (servletContextRequest == null) {
+            throw new IllegalStateException("Expecting request to be an instance of ServletContextRequest");
+        }
+        HttpServletRequest httpServletRequest = new DropwizardServletApiRequest(servletContextRequest);
+        HttpServletResponse httpServletResponse = new DropwizardServletApiResponse(servletContextRequest.getServletContextResponse());
+        IAccessEvent accessEvent = new AccessEvent(this, httpServletRequest, httpServletResponse, adapter);
         if (getFilterChainDecision(accessEvent) == FilterReply.DENY) {
             return;
         }
@@ -38,21 +49,33 @@ public class LogbackAccessRequestLog extends RequestLogImpl {
         }
     }
 
-    @Override
-    public boolean addEventListener(EventListener eventListener) {
-        if (eventListener instanceof Listener) {
-            addLifeCycleListener((Listener) eventListener);
-            return true;
+    private static class DropwizardServletApiRequest extends ServletApiRequest {
+
+        private final ServletContextRequest servletContextRequest;
+
+        public DropwizardServletApiRequest(ServletContextRequest servletContextRequest) {
+            super(servletContextRequest);
+            this.servletContextRequest = servletContextRequest;
         }
-        return false;
+
+        @Override
+        public Request getRequest() {
+            return servletContextRequest;
+        }
     }
 
-    @Override
-    public boolean removeEventListener(EventListener eventListener) {
-        if (eventListener instanceof Listener) {
-            removeLifeCycleListener((Listener) eventListener);
-            return true;
+    private static class DropwizardServletApiResponse extends ServletApiResponse {
+
+        private final ServletContextResponse servletContextResponse;
+
+        public DropwizardServletApiResponse(ServletContextResponse servletContextResponse) {
+            super(servletContextResponse);
+            this.servletContextResponse = servletContextResponse;
         }
-        return false;
+
+        @Override
+        public Response getResponse() {
+            return servletContextResponse;
+        }
     }
 }

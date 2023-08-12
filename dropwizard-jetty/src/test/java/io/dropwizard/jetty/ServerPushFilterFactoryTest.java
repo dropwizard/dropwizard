@@ -6,8 +6,8 @@ import io.dropwizard.jackson.Jackson;
 import io.dropwizard.util.Duration;
 import io.dropwizard.validation.BaseValidator;
 import jakarta.servlet.DispatcherType;
-import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.eclipse.jetty.servlets.PushCacheFilter;
+import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
+import org.eclipse.jetty.ee10.servlets.PushCacheFilter;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;

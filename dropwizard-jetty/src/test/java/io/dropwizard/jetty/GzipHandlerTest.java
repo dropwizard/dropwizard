@@ -4,10 +4,10 @@ import io.dropwizard.util.DataSize;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.eclipse.jetty.ee10.servlet.ServletTester;
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpTester;
 import org.eclipse.jetty.server.handler.gzip.GzipHandler;
-import org.eclipse.jetty.servlet.ServletTester;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -44,7 +44,7 @@ class GzipHandlerTest {
 
         gzipHandler.addIncludedMethods("POST");
         servletTester.addServlet(BannerServlet.class, "/banner");
-        servletTester.getContext().setGzipHandler(gzipHandler);
+        servletTester.getContext().insertHandler(gzipHandler);
         servletTester.start();
     }
 

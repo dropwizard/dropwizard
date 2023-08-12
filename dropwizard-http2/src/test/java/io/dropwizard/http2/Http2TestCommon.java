@@ -1,15 +1,17 @@
 package io.dropwizard.http2;
 
 import io.dropwizard.logging.common.BootstrapLogging;
+import org.eclipse.jetty.client.BufferingResponseListener;
+import org.eclipse.jetty.client.ContentResponse;
 import org.eclipse.jetty.client.HttpClient;
-import org.eclipse.jetty.client.api.ContentResponse;
-import org.eclipse.jetty.client.api.Result;
-import org.eclipse.jetty.client.http.HttpClientTransportOverHTTP;
-import org.eclipse.jetty.client.util.BufferingResponseListener;
+import org.eclipse.jetty.client.Result;
+import org.eclipse.jetty.client.transport.HttpClientTransportOverHTTP;
 import org.eclipse.jetty.http.HttpVersion;
 import org.eclipse.jetty.http2.client.HTTP2Client;
-import org.eclipse.jetty.http2.client.http.HttpClientTransportOverHTTP2;
+import org.eclipse.jetty.http2.client.transport.HttpClientTransportOverHTTP2;
 import org.eclipse.jetty.io.ClientConnector;
+import org.eclipse.jetty.util.resource.PathResourceFactory;
+import org.eclipse.jetty.util.resource.ResourceFactory;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,7 +21,6 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.eclipse.jetty.util.resource.Resource.newResource;
 
 /**
  * Common code for HTTP/2 connector tests
@@ -36,7 +37,8 @@ class Http2TestCommon {
 
     @BeforeEach
     void setUp() throws Exception {
-        sslContextFactory.setTrustStoreResource(newResource(getClass().getResource("/stores/http2_client.jts")));
+        ResourceFactory resourceFactory = new PathResourceFactory();
+        sslContextFactory.setTrustStoreResource(resourceFactory.newResource(getClass().getResource("/stores/http2_client.jts")));
         sslContextFactory.setTrustStorePassword("http2_client");
         sslContextFactory.start();
 

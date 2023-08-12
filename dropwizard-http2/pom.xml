@@ -108,7 +108,7 @@
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty.http2</groupId>
-            <artifactId>http2-server</artifactId>
+            <artifactId>jetty-http2-server</artifactId>
             <exclusions>
                 <exclusion>
                     <groupId>org.eclipse.jetty.toolchain</groupId>
@@ -151,7 +151,7 @@
 
         <dependency>
             <groupId>org.eclipse.jetty.http2</groupId>
-            <artifactId>http2-client</artifactId>
+            <artifactId>jetty-http2-client</artifactId>
             <scope>test</scope>
         </dependency>
 
@@ -163,7 +163,7 @@
 
         <dependency>
             <groupId>org.eclipse.jetty.http2</groupId>
-            <artifactId>http2-http-client-transport</artifactId>
+            <artifactId>jetty-http2-client-transport</artifactId>
             <scope>test</scope>
         </dependency>
 

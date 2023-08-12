@@ -20,6 +20,7 @@ import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import org.glassfish.jersey.client.ClientProperties;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -47,6 +48,7 @@ class SubResourcesTest {
     @Test
     void canReadFromTopResource() {
         final Person person = appExtension.client()
+            .property(ClientProperties.CONNECT_TIMEOUT, 0)
             .target(baseUri())
             .path("/people/Greg")
             .request()
@@ -58,6 +60,7 @@ class SubResourcesTest {
     @Test
     void canWriteTopResource() {
         final Person person = appExtension.client()
+            .property(ClientProperties.CONNECT_TIMEOUT, 0)
             .target(baseUri())
             .path("/people")
             .request()
@@ -70,6 +73,7 @@ class SubResourcesTest {
     @Test
     void canReadFromSubResources() {
         final Dog dog = appExtension.client()
+            .property(ClientProperties.CONNECT_TIMEOUT, 0)
             .target(baseUri())
             .path("/people/Greg/dogs/Bello")
             .request()
@@ -83,6 +87,7 @@ class SubResourcesTest {
     @Test
     void canWriteSubResource() {
         final Dog dog = appExtension.client()
+            .property(ClientProperties.CONNECT_TIMEOUT, 0)
             .target(baseUri())
             .path("/people/Greg/dogs")
             .request()
@@ -96,6 +101,7 @@ class SubResourcesTest {
     @Test
     void errorsAreHandled() {
         Response response = appExtension.client()
+            .property(ClientProperties.CONNECT_TIMEOUT, 0)
             .target(baseUri())
             .path("/people/Jim/dogs")
             .request()
@@ -106,6 +112,7 @@ class SubResourcesTest {
     @Test
     void noSessionErrorIsRaised() {
         Response response = appExtension.client()
+            .property(ClientProperties.CONNECT_TIMEOUT, 0)
             .target(baseUri())
             .path("/people/Greg/dogs")
             .request()

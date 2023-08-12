@@ -7,7 +7,7 @@ import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.http.HttpVersion;
 import org.eclipse.jetty.http2.client.HTTP2Client;
-import org.eclipse.jetty.http2.client.http.HttpClientTransportOverHTTP2;
+import org.eclipse.jetty.http2.client.transport.HttpClientTransportOverHTTP2;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

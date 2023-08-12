@@ -18,14 +18,19 @@ import io.dropwizard.logging.common.ConsoleAppenderFactory;
 import io.dropwizard.logging.common.DefaultLoggingFactory;
 import io.dropwizard.request.logging.LogbackAccessRequestLogFactory;
 import io.dropwizard.validation.BaseValidator;
+import org.eclipse.jetty.ee10.servlet.ServletChannel;
+import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
+import org.eclipse.jetty.ee10.servlet.ServletContextRequest;
 import org.eclipse.jetty.http.HttpFields;
-import org.eclipse.jetty.http.MetaData;
-import org.eclipse.jetty.server.HttpChannel;
+import org.eclipse.jetty.http.HttpURI;
+import org.eclipse.jetty.server.ConnectionMetaData;
+import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.RequestLog;
 import org.eclipse.jetty.server.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
@@ -33,15 +38,17 @@ import org.slf4j.MarkerFactory;
 import jakarta.validation.constraints.Min;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.util.Arrays;
 import java.util.Collections;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.entry;
 import static org.awaitility.Awaitility.await;
+import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
 
 class LayoutIntegrationTests {
@@ -185,37 +192,48 @@ class LayoutIntegrationTests {
             RequestLog requestLog = requestLogHandler.build("json-access-log-test");
 
             Request request = mock(Request.class);
-            when(request.getRemoteAddr()).thenReturn("10.0.0.1");
-            when(request.getTimeStamp()).thenReturn(TimeUnit.SECONDS.toMillis(1353042047));
-            when(request.getMethod()).thenReturn("GET");
-            when(request.getRequestURI()).thenReturn("/test/users");
-            when(request.getProtocol()).thenReturn("HTTP/1.1");
-            when(request.getParameterNames()).thenReturn(Collections.enumeration(Arrays.asList("age", "city")));
-            when(request.getParameterValues("age")).thenReturn(new String[]{"22"});
-            when(request.getParameterValues("city")).thenReturn(new String[]{"LA"});
-            when(request.getAttributeNames()).thenReturn(Collections.enumeration(Collections.emptyList()));
-            when(request.getHeaderNames()).thenReturn(Collections.enumeration(Arrays.asList("Connection", "User-Agent")));
-            when(request.getHeader("Connection")).thenReturn("keep-alive");
-            when(request.getHeader("User-Agent")).thenReturn("Mozilla/5.0");
-
             Response response = mock(Response.class);
-            MetaData.Response metaData = mock(MetaData.Response.class);
-            when(metaData.getStatus()).thenReturn(200);
-            when(response.getCommittedMetaData()).thenReturn(metaData);
-            HttpChannel channel = mock(HttpChannel.class);
-            when(channel.getBytesWritten()).thenReturn(8290L);
-            when(response.getHttpChannel()).thenReturn(channel);
-            HttpFields.Mutable httpFields = HttpFields.build();
-            httpFields.add("Date", "Mon, 16 Nov 2012 05:00:48 GMT");
-            httpFields.add("Server", "Apache/2.4.12");
-            when(response.getHttpFields()).thenReturn(httpFields);
-            when(response.getHeaderNames()).thenReturn(Arrays.asList("Date", "Server"));
-            when(response.getHeader("Date")).thenReturn("Mon, 16 Nov 2012 05:00:48 GMT");
-            when(response.getHeader("Server")).thenReturn("Apache/2.4.12");
+            ConnectionMetaData connectionMetaData = mock(ConnectionMetaData.class);
+            HttpURI httpURI = mock(HttpURI.class);
 
-            requestLog.log(request, response);
-            // Need to wait, because the logger is async
-            await().atMost(1, TimeUnit.SECONDS).until(() -> !redirectedStream.toString().isEmpty());
+            when(response.getHeaders()).thenReturn(HttpFields.build());
+            when(request.getConnectionMetaData()).thenReturn(connectionMetaData);
+
+            when(httpURI.getPath()).thenReturn("/test/users");
+            when(httpURI.getQuery()).thenReturn("age=22&city=LA");
+            when(httpURI.getAuthority()).thenReturn("10.0.0.1");
+            when(request.getHttpURI()).thenReturn(httpURI);
+
+            when(connectionMetaData.getHttpConfiguration()).thenReturn(new HttpConfiguration());
+            when(connectionMetaData.getProtocol()).thenReturn("HTTP/1.1");
+
+            HttpFields requestHeaders = HttpFields.build()
+                .add("Connection", "keep-alive")
+                .add("User-Agent", "Mozilla/5.0");
+            when(request.getHeaders()).thenReturn(requestHeaders);
+            when(request.getAttributeNameSet()).thenReturn(Set.of());
+            when(request.getMethod()).thenReturn("GET");
+
+            HttpFields.Mutable responseHeaders = HttpFields.build()
+                .add("Date", "Mon, 16 Nov 2012 05:00:48 GMT")
+                .add("Server", "Apache/2.4.12");
+            when(response.getHeaders()).thenReturn(responseHeaders);
+            when(response.getStatus()).thenReturn(200);
+
+            final ServletContextHandler servletContextHandler = new ServletContextHandler();
+            final ServletChannel servletChannel = new ServletChannel(servletContextHandler, connectionMetaData);
+            ServletContextRequest servletContextRequest = new TestServletContextRequest(servletContextHandler, servletChannel, request, response);
+            servletChannel.associate(servletContextRequest);
+
+            try (MockedStatic<Request> staticRequest = mockStatic(Request.class, CALLS_REAL_METHODS); MockedStatic<Response> staticResponse = mockStatic(Response.class)) {
+                staticRequest.when(() -> Request.getRemoteAddr(servletContextRequest)).thenReturn("10.0.0.1");
+                staticRequest.when(() -> Request.getTimeStamp(servletContextRequest)).thenReturn(TimeUnit.SECONDS.toMillis(1353042047));
+                staticResponse.when(() -> Response.getContentBytesWritten(response)).thenReturn(8290L);
+
+                requestLog.log(servletContextRequest, response);
+                // Need to wait, because the logger is async
+                await().atMost(1, TimeUnit.SECONDS).until(() -> !redirectedStream.toString().isEmpty());
+            }
 
             JsonNode jsonNode = objectMapper.readTree(redirectedStream.toString());
             assertThat(jsonNode.fieldNames().next()).isEqualTo("timestamp");
@@ -247,5 +265,18 @@ class LayoutIntegrationTests {
         @JsonProperty
         @Min(1)
         private int messageSize = 8000;
+    }
+
+    public static class TestServletContextRequest extends ServletContextRequest {
+
+        public TestServletContextRequest(ServletContextHandler servletContextHandler, ServletChannel servletChannel, Request request, Response response) {
+            super(servletContextHandler.newServletContextApi(), servletChannel, request, response,
+                null, null, null);
+        }
+
+        @Override
+        public Set<String> getAttributeNameSet() {
+            return Set.of();
+        }
     }
 }
