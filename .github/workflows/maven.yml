@@ -29,7 +29,7 @@ jobs:
         java-version: ${{ matrix.java_version }}
     - name: Cache SonarCloud packages
       uses: actions/cache@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8 # v3.3.1
-      if: ${{ env.SONAR_TOKEN != null && env.SONAR_TOKEN != '' && matrix.java_version == '11'  && matrix.os == 'ubuntu-latest' }}
+      if: ${{ env.SONAR_TOKEN != null && env.SONAR_TOKEN != '' && matrix.java_version == '17'  && matrix.os == 'ubuntu-latest' }}
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       with:
@@ -52,7 +52,7 @@ jobs:
         check_name: Test Report (${{ matrix.os }} - Java ${{ matrix.java_version }})
         report_paths: '**/*-reports/TEST-*.xml'
     - name: Analyze with SonarCloud
-      if: ${{ env.SONAR_TOKEN != null && env.SONAR_TOKEN != '' && matrix.java_version == '11' && matrix.os == 'ubuntu-latest' }}
+      if: ${{ env.SONAR_TOKEN != null && env.SONAR_TOKEN != '' && matrix.java_version == '17' && matrix.os == 'ubuntu-latest' }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
