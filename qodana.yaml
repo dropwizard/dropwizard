@@ -1,0 +1,7 @@
+---
+# https://www.jetbrains.com/help/qodana/qodana-yaml.html
+version: "1.0"
+profile:
+  name: qodana.starter
+projectJDK: 17
+linter: jetbrains/qodana-jvm-community:2023.2
