@@ -333,8 +333,8 @@ epub_copyright = u'2013, Coda Hale'
 
 # -- Options for sphinx.ext.extlinks -------------------------------------------
 extlinks = {
-  'issue': ('https://github.com/dropwizard/dropwizard/issues/%s', 'issue #'),
-  'pr': ('https://github.com/dropwizard/dropwizard/pull/%s', 'PR #'),
-  'javadoc': ("https://javadoc.io/doc/io.dropwizard/%%s/%s" % release, ''),
-  'ghuser': ('https://github.com/%s', '')
+  'issue': ('https://github.com/dropwizard/dropwizard/issues/%s', 'issue #%s'),
+  'pr': ('https://github.com/dropwizard/dropwizard/pull/%s', 'PR #%s'),
+  'javadoc': ("https://javadoc.io/doc/io.dropwizard/%%s/%s" % release, None),
+  'ghuser': ('https://github.com/%s', None)
 }
