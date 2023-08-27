@@ -67,6 +67,7 @@ registerDefaultExceptionMappers     true                                        
 enableThreadNameFilter              true                                             Whether or not to apply the ``ThreadNameFilter`` that adjusts thread names to include the request method and request URI.
 dumpAfterStart                      false                                            Whether or not to dump `Jetty Diagnostics`_ after start.
 dumpBeforeStop                      false                                            Whether or not to dump `Jetty Diagnostics`_ before stop.
+enableVirtualThreads                false                                            Whether to enable virtual threads for Jetty's thread pool.
 =================================== ===============================================  =============================================================================
 
 .. _Jetty Diagnostics: https://www.eclipse.org/jetty/documentation/9.4.x/jetty-dump-tool.html

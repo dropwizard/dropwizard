@@ -43,6 +43,7 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.setuid.RLimit;
 import org.eclipse.jetty.setuid.SetUIDListener;
 import org.eclipse.jetty.util.BlockingArrayQueue;
+import org.eclipse.jetty.util.VirtualThreads;
 import org.eclipse.jetty.util.thread.ThreadPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,6 +56,8 @@ import java.util.EnumSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 import java.util.stream.Collectors;
 
 import static com.codahale.metrics.annotation.ResponseMeteredLevel.COARSE;
@@ -231,6 +234,13 @@ import static com.codahale.metrics.annotation.ResponseMeteredLevel.COARSE;
  *           Whether or not to dump jetty diagnostics before stop.
  *         </td>
  *     </tr>
+ *     <tr>
+ *         <td>{@code enableVirtualThreads}</td>
+ *         <td>false</td>
+ *         <td>
+ *             Whether to use virtual threads for Jetty's thread pool.
+ *         </td>
+ *     </tr>
  * </table>
  *
  * @see DefaultServerFactory
@@ -311,6 +321,8 @@ public abstract class AbstractServerFactory implements ServerFactory {
     private boolean dumpAfterStart = false;
 
     private boolean dumpBeforeStop = false;
+
+    private boolean enableVirtualThreads = false;
 
     @JsonIgnore
     @ValidationMethod(message = "must have a smaller minThreads than maxThreads")
@@ -581,6 +593,16 @@ public abstract class AbstractServerFactory implements ServerFactory {
         this.dumpBeforeStop = dumpBeforeStop;
     }
 
+    @JsonProperty
+    public boolean isEnableVirtualThreads() {
+        return enableVirtualThreads;
+    }
+
+    @JsonProperty
+    public void setEnableVirtualThreads(boolean enableVirtualThreads) {
+        this.enableVirtualThreads = enableVirtualThreads;
+    }
+
     protected Handler createAdminServlet(Server server,
                                          MutableServletContextHandler handler,
                                          MetricRegistry metrics,
@@ -641,11 +663,32 @@ public abstract class AbstractServerFactory implements ServerFactory {
 
     protected ThreadPool createThreadPool(MetricRegistry metricRegistry) {
         final BlockingQueue<Runnable> queue = new BlockingArrayQueue<>(minThreads, maxThreads, maxQueuedRequests);
+        final ThreadFactory threadFactory = getThreadFactory();
         final InstrumentedQueuedThreadPool threadPool =
                 new InstrumentedQueuedThreadPool(metricRegistry, maxThreads, minThreads,
-                                                 (int) idleThreadTimeout.toMilliseconds(), queue);
+                    (int) idleThreadTimeout.toMilliseconds(), queue, threadFactory);
         threadPool.setName("dw");
         return threadPool;
+    }
+
+    protected ThreadFactory getThreadFactory() {
+        if (!enableVirtualThreads) {
+            return Executors.defaultThreadFactory();
+        }
+
+        if (!VirtualThreads.areSupported()) {
+            LOGGER.warn("Virtual threads are requested but not supported on the current runtime. Using platform threads instead");
+            return Executors.defaultThreadFactory();
+        }
+
+        try {
+            Class<?> threadBuilderClass = Class.forName("java.lang.Thread$Builder");
+            Object virtualThreadBuilder = threadBuilderClass.cast(Thread.class.getDeclaredMethod("ofVirtual").invoke(null));
+            return (ThreadFactory) threadBuilderClass.getDeclaredMethod("factory").invoke(virtualThreadBuilder);
+        } catch (Exception ignored) {
+            LOGGER.error("Error while enabling virtual threads. Using platform threads instead");
+            return Executors.defaultThreadFactory();
+        }
     }
 
     protected Server buildServer(LifecycleEnvironment lifecycle,
