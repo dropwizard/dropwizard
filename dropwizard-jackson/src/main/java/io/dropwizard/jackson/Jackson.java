@@ -62,12 +62,12 @@ public class Jackson {
     }
 
     /**
-     * Configures an {@link ObjectMapper} with a set of common modules and properties.
+     * Configures an {@link ObjectMapper} with the default set of common modules and properties.
      *
      * @param mapper the {@link ObjectMapper} to configure
      * @return the configured {@link ObjectMapper}
      */
-    private static ObjectMapper configure(ObjectMapper mapper) {
+    public static ObjectMapper configure(ObjectMapper mapper) {
         final List<Module> modules = ObjectMapper.findModules();
 
         mapper.registerModule(new GuavaModule());
