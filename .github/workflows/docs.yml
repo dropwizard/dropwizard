@@ -12,7 +12,7 @@ jobs:
   docs:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3
+    - uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4
     - uses: ammaraskar/sphinx-action@8b4f60114d7fd1faeba1a712269168508d4750d2 # tag=0.4
       with:
         docs-folder: "docs/"
