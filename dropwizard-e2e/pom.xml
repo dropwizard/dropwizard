@@ -177,6 +177,11 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <dependency>
+            <groupId>io.dropwizard</groupId>
+            <artifactId>dropwizard-auth</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>

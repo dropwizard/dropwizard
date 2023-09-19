@@ -1,6 +1,12 @@
 package com.example.request_log;
 
 import com.codahale.metrics.health.HealthCheck;
+import io.dropwizard.auth.Auth;
+import io.dropwizard.auth.AuthDynamicFeature;
+import io.dropwizard.auth.AuthFilter;
+import io.dropwizard.auth.AuthValueFactoryProvider;
+import io.dropwizard.auth.PrincipalImpl;
+import io.dropwizard.auth.basic.BasicCredentialAuthFilter;
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.client.JerseyClientConfiguration;
 import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
@@ -13,6 +19,7 @@ import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import io.dropwizard.util.Duration;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.InternalServerErrorException;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.client.Client;
@@ -24,6 +31,7 @@ import org.junit.jupiter.api.io.TempDir;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @ExtendWith(DropwizardExtensionsSupport.class)
 public abstract class AbstractRequestLogPatternIntegrationTest {
@@ -36,6 +44,12 @@ public abstract class AbstractRequestLogPatternIntegrationTest {
         @Override
         public void run(Configuration configuration, Environment environment) {
             environment.jersey().register(TestResource.class);
+            AuthFilter<?, ?> basicAuthFilter = new BasicCredentialAuthFilter.Builder<PrincipalImpl>()
+                .setAuthenticator(credentials -> Optional.of(new PrincipalImpl(credentials.getUsername())))
+                .setAuthorizer((principal, role, requestContext) -> true)
+                .buildAuthFilter();
+            environment.jersey().register(new AuthDynamicFeature(basicAuthFilter));
+            environment.jersey().register(new AuthValueFactoryProvider.Binder<>(PrincipalImpl.class));
             environment.healthChecks().register("dummy", new HealthCheck() {
                 @Override
                 protected Result check() {
@@ -50,6 +64,15 @@ public abstract class AbstractRequestLogPatternIntegrationTest {
         @GET
         public String get(@QueryParam("name") String name, @Context HttpServletRequest httpRequest) {
             return String.format("Hello, %s!", name);
+        }
+
+        @GET
+        @Path("/authenticated")
+        public String getAuthenticatedUser(@Auth PrincipalImpl principal, @Context HttpServletRequest httpServletRequest) {
+            if (!principal.getName().equals(httpServletRequest.getRemoteUser())) {
+                throw new InternalServerErrorException("Expecting Jetty and Jersey principals to match");
+            }
+            return httpServletRequest.getRemoteUser();
         }
     }
 

@@ -1,10 +1,12 @@
 package com.example.request_log;
 
+import jakarta.ws.rs.core.HttpHeaders;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
 import java.nio.file.Files;
+import java.util.Base64;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -31,5 +33,18 @@ class RequestLogPatternIntegrationTest extends AbstractRequestLogPatternIntegrat
 
         List<String> logs = Files.readAllLines(requestLogFile, UTF_8);
         assertThat(logs).hasSize(100).allMatch(s -> REQUEST_LOG_PATTERN.matcher(s).matches());
+    }
+
+    @Test
+    void testRemoteUserIsSetCorrectly() {
+        final String username = "admin";
+        final String password = "";
+        final String basicAuth = String.format("%s:%s", username, password);
+        final String basicAuthHeader = "Basic " + Base64.getEncoder().encodeToString(basicAuth.getBytes(UTF_8));
+
+        String url = String.format("http://localhost:%d/greet/authenticated", dropwizardAppRule.getLocalPort());
+        String remoteUser = client.target(url).request().header(HttpHeaders.AUTHORIZATION, basicAuthHeader).get(String.class);
+
+        assertThat(remoteUser).isEqualTo(username);
     }
 }
