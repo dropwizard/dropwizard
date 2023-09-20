@@ -25,8 +25,8 @@ jobs:
     - name: Set up JDK
       uses: actions/setup-java@cd89f46ac9d01407894225f350157564c9c7cee2 # v3
       with:
-        distribution: 'temurin'
-        java-version: '11'
+        distribution: 'zulu'
+        java-version: '17'
         cache: 'maven'
         server-id: ossrh
         server-username: ${{ secrets.CI_DEPLOY_USERNAME }}

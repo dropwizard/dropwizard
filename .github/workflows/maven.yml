@@ -14,7 +14,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        java_version: ['8', '11', '17']
+        java_version: ['8', '11', '17', '21']
         os: ['ubuntu-latest', 'windows-latest']
     env:
       JAVA_OPTS: "-XX:+TieredCompilation -XX:TieredStopAtLevel=1"
@@ -25,7 +25,7 @@ jobs:
     - name: Set up JDK
       uses: actions/setup-java@cd89f46ac9d01407894225f350157564c9c7cee2 # v3
       with:
-        distribution: 'temurin'
+        distribution: 'zulu'
         java-version: ${{ matrix.java_version }}
     - name: Cache SonarCloud packages
       uses: actions/cache@704facf57e6136b1bc63b828d79edcd491f0ee84 # v3.3.2
