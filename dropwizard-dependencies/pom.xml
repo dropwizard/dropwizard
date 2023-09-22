@@ -46,7 +46,7 @@
         <javassist.version>3.29.2-GA</javassist.version>
         <javax.persistence-api.version>2.2</javax.persistence-api.version>
         <jaxb-api.version>2.3.3</jaxb-api.version>
-        <jdbi3.version>3.41.1</jdbi3.version>
+        <jdbi3.version>3.41.2</jdbi3.version>
         <jersey.version>2.40</jersey.version>
         <jetty-setuid-java.version>1.0.4</jetty-setuid-java.version>
         <jetty.version>10.0.16</jetty.version>
