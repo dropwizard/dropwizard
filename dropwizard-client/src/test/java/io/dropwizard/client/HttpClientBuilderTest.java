@@ -27,6 +27,7 @@ import org.apache.hc.client5.http.impl.DefaultConnectionKeepAliveStrategy;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.routing.DefaultRoutePlanner;
 import org.apache.hc.client5.http.impl.routing.SystemDefaultRoutePlanner;
+import org.apache.hc.client5.http.protocol.HttpClientContext;
 import org.apache.hc.client5.http.protocol.RedirectStrategy;
 import org.apache.hc.client5.http.routing.HttpRoutePlanner;
 import org.apache.hc.client5.http.socket.ConnectionSocketFactory;
@@ -287,16 +288,18 @@ class HttpClientBuilderTest {
     @Test
     void usesKeepAliveForPersistentConnections() {
         configuration.setKeepAlive(Duration.seconds(1));
-        assertThat(builder.using(configuration).createClient(apacheBuilder, connectionManager, "test")).isNotNull();
+        final ConfiguredCloseableHttpClient client = builder.using(configuration).createClient(apacheBuilder, connectionManager, "test");
+        assertThat(client).isNotNull();
 
-        final HttpContext context = mock(HttpContext.class);
+        final HttpClientContext context = mock(HttpClientContext.class);
         final HttpResponse response = mock(HttpResponse.class);
+        when(context.getRequestConfig()).thenReturn(client.getDefaultRequestConfig());
         when(response.headerIterator()).thenReturn(Collections.emptyIterator());
         when(response.headerIterator(any())).thenReturn(Collections.emptyIterator());
 
         assertThat(apacheBuilder).extracting("keepAliveStrategy")
                 .isInstanceOfSatisfying(DefaultConnectionKeepAliveStrategy.class,
-                        strategy -> assertThat(strategy.getKeepAliveDuration(response, context)).isEqualByComparingTo(TimeValue.ofMinutes(3)));
+                        strategy -> assertThat(strategy.getKeepAliveDuration(response, context)).isEqualByComparingTo(TimeValue.ofSeconds(1)));
     }
 
     @Test
