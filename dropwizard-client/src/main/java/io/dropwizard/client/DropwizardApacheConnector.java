@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Optional;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.List;
 
 /**
  * Dropwizard Apache Connector.
@@ -219,7 +220,7 @@ public class DropwizardApacheConnector implements Connector {
         private JerseyRequestHttpEntity(ClientRequest clientRequest) {
             super(
                 clientRequest.getMediaType().toString(),
-                clientRequest.getRequestHeader(HttpHeaders.CONTENT_ENCODING).stream().findFirst().orElse(null),
+                getEncoding(clientRequest),
                 true
             );
             this.clientRequest = clientRequest;
@@ -295,7 +296,7 @@ public class DropwizardApacheConnector implements Connector {
         private BufferedJerseyRequestHttpEntity(ClientRequest clientRequest) {
             super(
                 clientRequest.getMediaType().toString(),
-                clientRequest.getRequestHeader(HttpHeaders.CONTENT_ENCODING).stream().findFirst().orElse(null),
+                getEncoding(clientRequest),
                 false
             );
             final ByteArrayOutputStream stream = new ByteArrayOutputStream(BUFFER_INITIAL_SIZE);
@@ -360,6 +361,15 @@ public class DropwizardApacheConnector implements Connector {
         @Override
         public void close() throws IOException {
         }
+    }
+
+    @Nullable
+    private static String getEncoding(ClientRequest clientRequest) {
+        List<String> contentEncoding = clientRequest.getRequestHeader(HttpHeaders.CONTENT_ENCODING);
+        if (contentEncoding == null) {
+            return null;
+        }
+        return contentEncoding.stream().findFirst().orElse(null);
     }
 }
 
