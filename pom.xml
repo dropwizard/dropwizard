@@ -48,7 +48,6 @@
         <module>dropwizard-json-logging</module>
         <module>dropwizard-health</module>
 
-        <module>dropwizard-archetypes</module>
         <module>dropwizard-example</module>
         <module>docs/source/examples</module>
     </modules>
