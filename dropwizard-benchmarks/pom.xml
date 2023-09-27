@@ -5,14 +5,14 @@
     <parent>
         <artifactId>dropwizard-parent</artifactId>
         <groupId>io.dropwizard</groupId>
-        <version>3.0.1-SNAPSHOT</version>
+        <version>3.0.3-SNAPSHOT</version>
         <relativePath>../dropwizard-parent</relativePath>
     </parent>
 
     <properties>
         <!-- see https://issues.apache.org/jira/browse/MCOMPILER-235 -->
         <maven.compiler.useIncrementalCompilation>false</maven.compiler.useIncrementalCompilation>
-        <jmh.version>1.36</jmh.version>
+        <jmh.version>1.37</jmh.version>
         <cyclonedx.skip>true</cyclonedx.skip>
         <maven.source.skip>true</maven.source.skip>
         <maven.javadoc.skip>true</maven.javadoc.skip>

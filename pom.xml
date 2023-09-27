@@ -4,7 +4,7 @@
 
     <groupId>io.dropwizard</groupId>
     <artifactId>dropwizard-project</artifactId>
-    <version>3.0.1-SNAPSHOT</version>
+    <version>3.0.3-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Dropwizard Project</name>
@@ -48,7 +48,6 @@
         <module>dropwizard-json-logging</module>
         <module>dropwizard-health</module>
 
-        <module>dropwizard-archetypes</module>
         <module>dropwizard-example</module>
         <module>docs/source/examples</module>
     </modules>
@@ -56,7 +55,7 @@
     <properties>
         <dropwizard.url>http://www.dropwizard.io/${project.version}</dropwizard.url>
 
-        <project.build.outputTimestamp>2023-03-28T22:23:50Z</project.build.outputTimestamp>
+        <project.build.outputTimestamp>2023-09-24T22:34:08Z</project.build.outputTimestamp>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
@@ -66,24 +65,24 @@
         <coveralls-maven-plugin.version>4.3.0</coveralls-maven-plugin.version>
         <cyclonedx-maven-plugin.version>2.7.9</cyclonedx-maven-plugin.version>
         <maven-archetype-plugin.version>3.2.1</maven-archetype-plugin.version>
-        <maven-clean-plugin.version>3.2.0</maven-clean-plugin.version>
+        <maven-clean-plugin.version>3.3.1</maven-clean-plugin.version>
         <maven-dependency-plugin.version>3.1.2</maven-dependency-plugin.version>
         <maven-deploy-plugin.version>3.1.1</maven-deploy-plugin.version>
-        <maven-enforcer-plugin.version>3.3.0</maven-enforcer-plugin.version>
+        <maven-enforcer-plugin.version>3.4.1</maven-enforcer-plugin.version>
         <maven-filtering.version>3.3.1</maven-filtering.version>
         <maven-gpg-plugin.version>3.1.0</maven-gpg-plugin.version>
         <maven-help-plugin.version>3.4.0</maven-help-plugin.version>
         <maven-install-plugin.version>3.1.1</maven-install-plugin.version>
-        <maven-invoker-plugin.version>3.5.1</maven-invoker-plugin.version>
+        <maven-invoker-plugin.version>3.6.0</maven-invoker-plugin.version>
         <maven-jar-plugin.version>3.3.0</maven-jar-plugin.version>
-        <maven-javadoc-plugin.version>3.5.0</maven-javadoc-plugin.version>
-        <maven-project-info-reports-plugin.version>3.4.4</maven-project-info-reports-plugin.version>
+        <maven-javadoc-plugin.version>3.6.0</maven-javadoc-plugin.version>
+        <maven-project-info-reports-plugin.version>3.4.5</maven-project-info-reports-plugin.version>
         <maven-release-plugin.version>3.0.1</maven-release-plugin.version>
         <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
         <maven-site-plugin.version>3.12.1</maven-site-plugin.version>
         <maven-source-plugin.version>3.3.0</maven-source-plugin.version>
         <nexus-staging-maven-plugin.version>1.6.13</nexus-staging-maven-plugin.version>
-        <sonar-maven-plugin.version>3.9.1.2184</sonar-maven-plugin.version>
+        <sonar-maven-plugin.version>3.10.0.2594</sonar-maven-plugin.version>
 
         <sonar.moduleKey>${project.groupId}:${project.artifactId}</sonar.moduleKey>
     </properties>
