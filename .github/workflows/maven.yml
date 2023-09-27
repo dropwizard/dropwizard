@@ -25,7 +25,7 @@ jobs:
     permissions:
       checks: write
       contents: read
-      issues: read
+      issues: write
       pull-requests: write
     strategy:
       fail-fast: false
