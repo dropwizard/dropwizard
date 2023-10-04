@@ -47,7 +47,7 @@
         <javassist.version>3.29.2-GA</javassist.version>
         <jaxb-api.version>3.0.1</jaxb-api.version>
         <jboss-logging.version>3.5.3.Final</jboss-logging.version>
-        <jdbi3.version>3.41.2</jdbi3.version>
+        <jdbi3.version>3.41.3</jdbi3.version>
         <jersey.version>3.0.11</jersey.version>
         <jetty-setuid-java.version>1.0.4</jetty-setuid-java.version>
         <jetty.version>11.0.16</jetty.version>
