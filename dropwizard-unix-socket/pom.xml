@@ -15,7 +15,7 @@
     <name>Dropwizard Unix Socket Support</name>
 
     <properties>
-        <module.name>io.dropwizard.dropwizard-unix-socket</module.name>
+        <module.name>io.dropwizard.dropwizard.unixsocket</module.name>
         <maven.compiler.release>16</maven.compiler.release>
     </properties>
 
