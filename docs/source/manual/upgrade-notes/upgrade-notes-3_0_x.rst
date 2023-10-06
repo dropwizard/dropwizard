@@ -41,7 +41,7 @@ The most functions from Dropwizard are provided as before, but some changes have
  - the ``ServiceUnavailableRetryStrategy`` is removed
  - the ``HttpRequestRetryHandler`` is replaced by the ``HttpRequestRetryStrategy``
 
-For more information refer to the `Apache HttpClient 5.0 migration guide <https://hc.apache.org/httpcomponents-client-5.1.x/migration-guide/migration-to-classic.html>`_.
+For more information refer to the `Apache HttpClient 5.X migration guide <https://hc.apache.org/httpcomponents-client-5.2.x/migration-guide/migration-to-classic.html>`_.
 
 Dropwizard Package Structure and JPMS
 =====================================
