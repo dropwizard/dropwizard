@@ -26,7 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 
 @ExtendWith(DropwizardExtensionsSupport.class)
-public class UnixSocketConnectorFactoryTest {
+class UnixSocketConnectorFactoryTest {
     private static final String httpRequest = "GET /app/hello HTTP/1.1\r\n" +
         "Host: dropwizard-unixsock\r\n" +
         "\r\n";
@@ -45,7 +45,7 @@ public class UnixSocketConnectorFactoryTest {
     }
 
     @Test
-    public void testClient() throws Exception {
+    void testClient() throws Exception {
         try (SocketChannel channel = SocketChannel.open(StandardProtocolFamily.UNIX)) {
             channel.connect(socketAddress);
             OutputStream os = Channels.newOutputStream(channel);
@@ -64,7 +64,7 @@ public class UnixSocketConnectorFactoryTest {
     }
 
     @Test
-    public void testManyCalls() throws Exception {
+    void testManyCalls() throws Exception {
         try (SocketChannel channel = SocketChannel.open(StandardProtocolFamily.UNIX)) {
             channel.connect(socketAddress);
             OutputStream os = Channels.newOutputStream(channel);
