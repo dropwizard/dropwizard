@@ -39,13 +39,13 @@ jobs:
     - name: Build
       run: ./mvnw --no-transfer-progress -V -B -fae -s .github/settings.xml -e "-DtrimStackTrace=false" "-Dsurefire.rerunFailingTestsCount=1" install
     - name: Upload Test Reports
-      if: github.event.pull_request.head.repo.full_name == 'dropwizard/dropwizard'
+      if: always()
       uses: actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32 # v3
       with:
         name: test-reports-${{ matrix.os }}-java${{ matrix.java_version }}
         path: '**/*-reports'
     - name: Publish Test Results
-      if: always()
+      if: github.event.pull_request.head.repo.full_name == 'dropwizard/dropwizard'
       uses: scacap/action-surefire-report@6efd3d10b5c1996a0724dd4c4915a073f685fefa # v1
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
