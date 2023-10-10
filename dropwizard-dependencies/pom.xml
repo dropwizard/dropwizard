@@ -71,7 +71,7 @@
         <!-- Plugin versions -->
         <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
         <maven-surefire-plugin.version>3.1.2</maven-surefire-plugin.version>
-        <jacoco-maven-plugin.version>0.8.8</jacoco-maven-plugin.version>
+        <jacoco-maven-plugin.version>0.8.10</jacoco-maven-plugin.version>
         <lifecycle-mapping.version>1.0.0</lifecycle-mapping.version>
         <pgpverify-maven-plugin.version>1.17.0</pgpverify-maven-plugin.version>
         <error_prone.javac.version>9+181-r4173-1</error_prone.javac.version>
