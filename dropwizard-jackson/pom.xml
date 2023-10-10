@@ -96,6 +96,19 @@
         </dependency>
     </dependencies>
 
+    <profiles>
+        <profile>
+            <id>java9+</id>
+            <activation>
+                <jdk>[9,)</jdk>
+            </activation>
+            <properties>
+                <!-- https://github.com/FasterXML/jackson-modules-base/issues/37#issuecomment-389581245 -->
+                <argLine>${surefire.argLine} --illegal-access=deny --add-opens java.base/java.net=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED</argLine>
+            </properties>
+        </profile>
+    </profiles>
+
     <build>
         <plugins>
             <plugin>
