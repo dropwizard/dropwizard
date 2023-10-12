@@ -142,13 +142,10 @@ class HealthCheckConfigValidatorTest {
             assertThat(logEvent.getLevel())
                 .isEqualTo(Level.ERROR);
             assertThat(logEvent.getFormattedMessage())
-                .doesNotContain("  * check-1");
-            assertThat(logEvent.getFormattedMessage())
-                .contains("  * check-3");
-            assertThat(logEvent.getFormattedMessage())
-                .contains("  * check-3");
+                .doesNotContain("  * check-1")
+                .contains("  * check-2\n  * check-3");
             assertThat(e.getMessage())
-                .contains("[check-3, check-2]");
+                .contains("[check-2, check-3]");
         }
     }
 }
