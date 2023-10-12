@@ -148,8 +148,7 @@ class HealthCheckConfigValidatorTest {
             assertThat(logEvent.getFormattedMessage())
                 .contains("  * check-3");
             assertThat(e.getMessage())
-                .contains("check-2")
-                .contains("check-3");
+                .contains("[check-3, check-2]");
         }
     }
 }
