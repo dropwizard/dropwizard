@@ -1,0 +1,33 @@
+{
+	"name": "Java",
+	"image": "mcr.microsoft.com/devcontainers/java:1-21-bullseye",
+	"features": {
+		"ghcr.io/devcontainers/features/java:1": {
+			"version": "21",
+			"jdkDistro": "tem"
+		},
+		"ghcr.io/devcontainers/features/docker-in-docker:2": {
+			"moby": true,
+			"azureDnsAutoDetection": true,
+			"installDockerBuildx": true,
+			"version": "latest",
+			"dockerDashComposeVersion": "v2"
+		},
+		"ghcr.io/devcontainers/features/python:1": {
+			"version": "os-provided"
+		}
+	},
+	"postCreateCommand": "./mvnw install -T1C -DskipTests",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"lextudio.restructuredtext",
+				"ms-azuretools.vscode-docker",
+				"ms-python.python",
+				"streetsidesoftware.code-spell-checker",
+				"vscjava.vscode-java-pack",
+                "github.vscode-github-actions"
+			]
+		}
+	}
+}
