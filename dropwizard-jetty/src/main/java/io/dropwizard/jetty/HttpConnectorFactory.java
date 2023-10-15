@@ -18,6 +18,7 @@ import jakarta.validation.valueextraction.Unwrapping;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.eclipse.jetty.http.CookieCompliance;
 import org.eclipse.jetty.http.HttpCompliance;
+import org.eclipse.jetty.http.UriCompliance;
 import org.eclipse.jetty.io.ArrayByteBufferPool;
 import org.eclipse.jetty.io.ByteBufferPool;
 import org.eclipse.jetty.server.ConnectionFactory;
@@ -218,6 +219,21 @@ import static com.codahale.metrics.MetricRegistry.name;
  *         </td>
  *     </tr>
  *     <tr>
+ *         <td>{@code uriCompliance}</td>
+ *         <td>DEFAULT</td>
+ *         <td>
+ *             This sets the uri compliance level used by Jetty when parsing http, this can be useful when
+ *             attempting to avoid breaking changes with Jetty 10 and onward;
+ *
+ *             Possible values are set forth in the org.eclipse.jetty.http.UriCompliance enum and include:
+ *             <ul>
+ *                 <li>DEFAULT: The default compliance mode that extends RFC3986 compliance with additional violations to avoid most ambiguous URIs.</li>
+ *                 <li>LEGACY: Compliance mode that models Jetty-9.4 behavior.</li>
+ *                 <li>RFC3986: Compliance mode that exactly follows RFC3986, including allowing all additional ambiguous URI Violations.</li>
+ *             </ul>
+ *         </td>
+ *     </tr>
+ *     <tr>
  *         <td>{@code requestCookieCompliance}</td>
  *         <td>RFC6265</td>
  *         <td>
@@ -336,6 +352,9 @@ public class HttpConnectorFactory implements ConnectorFactory {
     @JsonSerialize(using = HttpComplianceSerializer.class)
     @JsonDeserialize(using = HttpComplianceDeserializer.class)
     private HttpCompliance httpCompliance = HttpCompliance.RFC7230;
+    @JsonSerialize(using = UriComplianceSerializer.class)
+    @JsonDeserialize(using = UriComplianceDeserializer.class)
+    private UriCompliance uriCompliance = UriCompliance.DEFAULT;
     @JsonSerialize(using = CookieComplianceSerializer.class)
     @JsonDeserialize(using = CookieComplianceDeserializer.class)
     private CookieCompliance requestCookieCompliance = CookieCompliance.RFC6265;
@@ -581,6 +600,16 @@ public class HttpConnectorFactory implements ConnectorFactory {
         this.httpCompliance = httpCompliance;
     }
 
+    @JsonProperty
+    public UriCompliance getUriCompliance() {
+        return uriCompliance;
+    }
+
+    @JsonProperty
+    public void setUriCompliance(UriCompliance uriCompliance) {
+        this.uriCompliance = uriCompliance;
+    }
+
     /**
      * @since 2.0
      */
@@ -634,6 +663,18 @@ public class HttpConnectorFactory implements ConnectorFactory {
     private static class CookieComplianceDeserializer extends StringMethodDeserializer<CookieCompliance> {
         public CookieComplianceDeserializer() {
             super(CookieCompliance.class, CookieCompliance::valueOf);
+        }
+    }
+
+    private static class UriComplianceSerializer extends StringMethodSerializer<UriCompliance> {
+        public UriComplianceSerializer() {
+            super(UriCompliance.class, UriCompliance::getName);
+        }
+    }
+
+    private static class UriComplianceDeserializer extends StringMethodDeserializer<UriCompliance> {
+        public UriComplianceDeserializer() {
+            super(UriCompliance.class, UriCompliance::valueOf);
         }
     }
 
@@ -700,6 +741,7 @@ public class HttpConnectorFactory implements ConnectorFactory {
     protected HttpConnectionFactory buildHttpConnectionFactory(HttpConfiguration httpConfig) {
         HttpConfiguration clonedConfiguration = new HttpConfiguration(httpConfig);
         clonedConfiguration.setHttpCompliance(httpCompliance);
+        clonedConfiguration.setUriCompliance(uriCompliance);
         final HttpConnectionFactory httpConnectionFactory = new HttpConnectionFactory(clonedConfiguration);
         httpConnectionFactory.setInputBufferSize((int) inputBufferSize.toBytes());
         return httpConnectionFactory;
