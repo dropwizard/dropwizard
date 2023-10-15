@@ -1,0 +1,10 @@
+<cache xmlns="http://maven.apache.org/BUILD-CACHE-CONFIG/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://maven.apache.org/BUILD-CACHE-CONFIG/1.0.0 https://maven.apache.org/xsd/build-cache-config-1.0.0.xsd">
+    <input>
+        <global>
+            <excludes>
+                <exclude>dropwizard-migrations/src/test/resources/test-db.mv.db</exclude>
+            </excludes>
+        </global>
+    </input>
+</cache>

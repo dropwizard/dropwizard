@@ -26,3 +26,5 @@ atlassian-ide-plugin.xml
 logs
 
 .DS_Store
+
+test-db.mv.db
