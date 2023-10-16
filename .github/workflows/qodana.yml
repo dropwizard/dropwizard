@@ -1,5 +1,7 @@
 ---
+# yamllint disable rule:comments
 name: "Qodana"
+# yamllint disable-line rule:truthy
 on:
   workflow_dispatch:
   pull_request:
