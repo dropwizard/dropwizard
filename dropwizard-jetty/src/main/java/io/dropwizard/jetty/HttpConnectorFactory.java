@@ -3,15 +3,8 @@ package io.dropwizard.jetty;
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import com.fasterxml.jackson.core.JacksonException;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import io.dropwizard.metrics.jetty10.InstrumentedConnectionFactory;
 import io.dropwizard.util.DataSize;
 import io.dropwizard.util.DataSizeUnit;
@@ -22,6 +15,7 @@ import io.dropwizard.validation.PortRange;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.eclipse.jetty.http.CookieCompliance;
 import org.eclipse.jetty.http.HttpCompliance;
+import org.eclipse.jetty.http.UriCompliance;
 import org.eclipse.jetty.io.ArrayByteBufferPool;
 import org.eclipse.jetty.io.ByteBufferPool;
 import org.eclipse.jetty.server.ConnectionFactory;
@@ -226,6 +220,21 @@ import static com.codahale.metrics.MetricRegistry.name;
  *         </td>
  *     </tr>
  *     <tr>
+ *         <td>{@code uriCompliance}</td>
+ *         <td>DEFAULT</td>
+ *         <td>
+ *             This sets the uri compliance level used by Jetty when parsing http, this can be useful when
+ *             attempting to avoid breaking changes with Jetty 10 and onward;
+ *
+ *             Possible values are set forth in the org.eclipse.jetty.http.UriCompliance enum and include:
+ *             <ul>
+ *                 <li>DEFAULT: The default compliance mode that extends RFC3986 compliance with additional violations to avoid most ambiguous URIs.</li>
+ *                 <li>LEGACY: Compliance mode that models Jetty-9.4 behavior.</li>
+ *                 <li>RFC3986: Compliance mode that exactly follows RFC3986, including allowing all additional ambiguous URI Violations.</li>
+ *             </ul>
+ *         </td>
+ *     </tr>
+ *     <tr>
  *         <td>{@code requestCookieCompliance}</td>
  *         <td>RFC6265</td>
  *         <td>
@@ -344,6 +353,9 @@ public class HttpConnectorFactory implements ConnectorFactory {
     @JsonSerialize(using = HttpComplianceSerializer.class)
     @JsonDeserialize(using = HttpComplianceDeserializer.class)
     private HttpCompliance httpCompliance = HttpCompliance.RFC7230;
+    @JsonSerialize(using = UriComplianceSerializer.class)
+    @JsonDeserialize(using = UriComplianceDeserializer.class)
+    private UriCompliance uriCompliance = UriCompliance.DEFAULT;
     @JsonSerialize(using = CookieComplianceSerializer.class)
     @JsonDeserialize(using = CookieComplianceDeserializer.class)
     private CookieCompliance requestCookieCompliance = CookieCompliance.RFC6265;
@@ -589,6 +601,16 @@ public class HttpConnectorFactory implements ConnectorFactory {
         this.httpCompliance = httpCompliance;
     }
 
+    @JsonProperty
+    public UriCompliance getUriCompliance() {
+        return uriCompliance;
+    }
+
+    @JsonProperty
+    public void setUriCompliance(UriCompliance uriCompliance) {
+        this.uriCompliance = uriCompliance;
+    }
+
     /**
      * @since 2.0
      */
@@ -621,77 +643,39 @@ public class HttpConnectorFactory implements ConnectorFactory {
         this.responseCookieCompliance = responseCookieCompliance;
     }
 
-    private static class HttpComplianceSerializer extends StdSerializer<HttpCompliance> {
+    private static class HttpComplianceSerializer extends StringMethodSerializer<HttpCompliance> {
         public HttpComplianceSerializer() {
-            this(null);
-        }
-
-        protected HttpComplianceSerializer(@Nullable Class<HttpCompliance> t) {
-            super(t);
-        }
-
-        @Override
-        public void serialize(HttpCompliance httpCompliance, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
-            if (httpCompliance == null) {
-                jsonGenerator.writeNull();
-            } else {
-                jsonGenerator.writeString(httpCompliance.getName());
-            }
+            super(HttpCompliance.class, HttpCompliance::getName);
         }
     }
 
-    private static class HttpComplianceDeserializer extends StdDeserializer<HttpCompliance> {
+    private static class HttpComplianceDeserializer extends StringMethodDeserializer<HttpCompliance> {
         public HttpComplianceDeserializer() {
-            this(null);
-        }
-
-        protected HttpComplianceDeserializer(@Nullable Class<?> vc) {
-            super(vc);
-        }
-
-        @Override
-        public @Nullable HttpCompliance deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
-            if (jsonParser.getText() != null && !jsonParser.getText().isEmpty()) {
-                return HttpCompliance.valueOf(jsonParser.getText());
-            }
-            return null;
+            super(HttpCompliance.class, HttpCompliance::valueOf);
         }
     }
 
-    private static class CookieComplianceSerializer extends StdSerializer<CookieCompliance> {
+    private static class CookieComplianceSerializer extends StringMethodSerializer<CookieCompliance> {
         public CookieComplianceSerializer() {
-            this(null);
-        }
-
-        protected CookieComplianceSerializer(@Nullable Class<CookieCompliance> t) {
-            super(t);
-        }
-
-        @Override
-        public void serialize(CookieCompliance cookieCompliance, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
-            if (cookieCompliance == null) {
-                jsonGenerator.writeNull();
-            } else {
-                jsonGenerator.writeString(cookieCompliance.getName());
-            }
+            super(CookieCompliance.class, CookieCompliance::getName);
         }
     }
 
-    private static class CookieComplianceDeserializer extends StdDeserializer<CookieCompliance> {
+    private static class CookieComplianceDeserializer extends StringMethodDeserializer<CookieCompliance> {
         public CookieComplianceDeserializer() {
-            this(null);
+            super(CookieCompliance.class, CookieCompliance::valueOf);
         }
+    }
 
-        protected CookieComplianceDeserializer(@Nullable Class<?> vc) {
-            super(vc);
+    private static class UriComplianceSerializer extends StringMethodSerializer<UriCompliance> {
+        public UriComplianceSerializer() {
+            super(UriCompliance.class, UriCompliance::getName);
         }
+    }
 
-        @Override
-        public @Nullable CookieCompliance deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException, JacksonException {
-            if (jsonParser.getText() != null && !jsonParser.getText().isEmpty()) {
-                return CookieCompliance.valueOf(jsonParser.getText());
-            }
-            return null;
+    private static class UriComplianceDeserializer extends StringMethodDeserializer<UriCompliance> {
+        public UriComplianceDeserializer() {
+            super(UriCompliance.class, UriCompliance::valueOf);
         }
     }
 
@@ -758,6 +742,7 @@ public class HttpConnectorFactory implements ConnectorFactory {
     protected HttpConnectionFactory buildHttpConnectionFactory(HttpConfiguration httpConfig) {
         HttpConfiguration clonedConfiguration = new HttpConfiguration(httpConfig);
         clonedConfiguration.setHttpCompliance(httpCompliance);
+        clonedConfiguration.setUriCompliance(uriCompliance);
         final HttpConnectionFactory httpConnectionFactory = new HttpConnectionFactory(clonedConfiguration);
         httpConnectionFactory.setInputBufferSize((int) inputBufferSize.toBytes());
         return httpConnectionFactory;

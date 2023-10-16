@@ -318,6 +318,7 @@ HTTP
           useForwardedHeaders: false
           useProxyProtocol: false
           httpCompliance: RFC7230
+          uriCompliance: DEFAULT
 
 
 ======================== ==================  ======================================================================================
@@ -373,6 +374,16 @@ httpCompliance           RFC7230             This sets the http compliance level
 
                                              * RFC7230: Disallow header folding.
                                              * RFC2616: Allow header folding.
+uriCompliance            DEFAULT             This sets the uri compliance level used by Jetty when parsing http, this can be useful when
+                                             attempting to avoid breaking changes with Jetty 10 and onward;
+                                             Possible values are set forth in the ``org.eclipse.jetty.http.UriCompliance``
+                                             enum and include:
+
+                                             * DEFAULT: The default compliance mode that extends RFC3986 compliance with
+                                               additional violations to avoid most ambiguous URIs.
+                                             * LEGACY: Compliance mode that models Jetty-9.4 behavior.
+                                             * RFC3986: Compliance mode that exactly follows RFC3986, including allowing
+                                               all additional ambiguous URI Violations.
 requestCookieCompliance  RFC6265             This sets the cookie compliance level used by Jetty when parsing request ``Cookie``
                                              headers, this can be useful when needing to support Version=1 cookies defined in
                                              RFC2109 (and continued in RFC2965) which allows for special/reserved characters
