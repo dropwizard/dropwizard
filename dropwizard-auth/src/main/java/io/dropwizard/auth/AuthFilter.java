@@ -1,12 +1,14 @@
 package io.dropwizard.auth;
 
 import jakarta.annotation.Priority;
+import jakarta.inject.Inject;
 import jakarta.ws.rs.InternalServerErrorException;
 import jakarta.ws.rs.Priorities;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerRequestFilter;
 import jakarta.ws.rs.core.SecurityContext;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.glassfish.jersey.internal.inject.InjectionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,6 +27,10 @@ public abstract class AuthFilter<C, P extends Principal> implements ContainerReq
     protected Authenticator<C, P> authenticator = credentials -> Optional.empty();
     protected Authorizer<P> authorizer = new PermitAllAuthorizer<>();
     protected UnauthorizedHandler unauthorizedHandler = new DefaultUnauthorizedHandler();
+
+    @Nullable
+    @Inject
+    private InjectionManager injectionManager;
 
     /**
      * Abstract builder for auth filters.
@@ -144,7 +150,7 @@ public abstract class AuthFilter<C, P extends Principal> implements ContainerReq
             final SecurityContext securityContext = requestContext.getSecurityContext();
             final boolean secure = securityContext != null && securityContext.isSecure();
 
-            requestContext.setSecurityContext(new SecurityContext() {
+            SecurityContext dropwizardAuthenticatedSecurityContext = new SecurityContext() {
                 @Override
                 public Principal getUserPrincipal() {
                     return prince;
@@ -164,7 +170,9 @@ public abstract class AuthFilter<C, P extends Principal> implements ContainerReq
                 public String getAuthenticationScheme() {
                     return scheme;
                 }
-            });
+            };
+            requestContext.setSecurityContext(dropwizardAuthenticatedSecurityContext);
+            JettyAuthenticationUtil.setJettyAuthenticationIfPossible(dropwizardAuthenticatedSecurityContext, injectionManager);
             return true;
         } catch (AuthenticationException e) {
             logger.warn("Error authenticating credentials", e);
