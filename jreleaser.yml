@@ -36,3 +36,7 @@ announce:
   twitter:
     active: RELEASE
     statusTemplate: .jreleaser/twitter.tpl
+  mastodon:
+    active: RELEASE
+    statusTemplate: .jreleaser/twitter.tpl
+    host: https://jvm.social
