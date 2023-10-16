@@ -1,6 +1,8 @@
+---
 project:
   name: dropwizard
-  description: A damn simple library for building production-ready RESTful web services.
+  description: |
+      A damn simple library for building production-ready RESTful web services.
   links:
     homepage: https://www.dropwizard.io
   license: Apache-2.0
