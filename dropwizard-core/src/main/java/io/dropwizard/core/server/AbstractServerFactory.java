@@ -664,7 +664,7 @@ public abstract class AbstractServerFactory implements ServerFactory {
 
     protected ThreadPool createThreadPool(MetricRegistry metricRegistry) {
         final BlockingQueue<Runnable> queue = new BlockingArrayQueue<>(minThreads, maxThreads, maxQueuedRequests);
-        final ThreadFactory threadFactory = getThreadFactory();
+        final ThreadFactory threadFactory = getThreadFactory(enableVirtualThreads);
         final InstrumentedQueuedThreadPool threadPool =
                 new InstrumentedQueuedThreadPool(metricRegistry, maxThreads, minThreads,
                     (int) idleThreadTimeout.toMilliseconds(), queue, threadFactory);
@@ -672,8 +672,8 @@ public abstract class AbstractServerFactory implements ServerFactory {
         return threadPool;
     }
 
-    protected ThreadFactory getThreadFactory() {
-        if (!enableVirtualThreads) {
+    protected ThreadFactory getThreadFactory(boolean virtualThreadsRequested) {
+        if (!virtualThreadsRequested) {
             return Executors.defaultThreadFactory();
         }
 
