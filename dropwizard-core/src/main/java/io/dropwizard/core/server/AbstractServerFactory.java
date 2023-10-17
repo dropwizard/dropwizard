@@ -52,6 +52,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.InvocationTargetException;
 import java.util.EnumSet;
 import java.util.Optional;
 import java.util.Set;
@@ -677,17 +678,17 @@ public abstract class AbstractServerFactory implements ServerFactory {
         }
 
         if (!VirtualThreads.areSupported()) {
-            LOGGER.warn("Virtual threads are requested but not supported on the current runtime. Using platform threads instead");
-            return Executors.defaultThreadFactory();
+            throw new UnsupportedOperationException("Virtual threads are requested but no supported on the current runtime");
         }
 
         try {
             Class<?> threadBuilderClass = Class.forName("java.lang.Thread$Builder");
             Object virtualThreadBuilder = threadBuilderClass.cast(Thread.class.getDeclaredMethod("ofVirtual").invoke(null));
             return (ThreadFactory) threadBuilderClass.getDeclaredMethod("factory").invoke(virtualThreadBuilder);
-        } catch (Exception ignored) {
-            LOGGER.error("Error while enabling virtual threads. Using platform threads instead");
-            return Executors.defaultThreadFactory();
+        } catch (InvocationTargetException invocationTargetException) {
+            throw new IllegalStateException("Error while enabling virtual threads", invocationTargetException.getCause());
+        } catch (Exception exception) {
+            throw new IllegalStateException("Error while enabling virtual threads", exception);
         }
     }
 
