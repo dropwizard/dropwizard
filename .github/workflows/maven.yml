@@ -22,6 +22,11 @@ jobs:
         uses: frenck/action-yamllint@9f9442422961e9f3436836f1082d327f482f402b # v1.4.1
   build:
     runs-on: ${{ matrix.os }}
+    permissions:
+      checks: write
+      contents: read
+      issues: write
+      pull-requests: write
     strategy:
       fail-fast: false
       matrix:
