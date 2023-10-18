@@ -11,6 +11,11 @@ on:
       developmentVersion:
         description: Version of the next development cycle (must end in "-SNAPSHOT")
         required: true
+      jreleaser:
+        description: If this release should automatically be published and announced
+        required: false
+        type: boolean
+        default: true
 jobs:
   trigger-release:
     runs-on: ubuntu-latest
@@ -43,9 +48,33 @@ jobs:
           git config --global author.email "${GITHUB_ACTOR}@users.noreply.github.com"
           git config --global author.name "${GITHUB_ACTOR}"
       - name: Prepare release
+        id: prepare
         run: ./mvnw -V -B -ntp -Prelease -DreleaseVersion=${{ inputs.releaseVersion }} -DdevelopmentVersion=${{ inputs.developmentVersion }} release:prepare
       - name: Rollback on failure
         if: failure()
         run: |
           ./mvnw -B release:rollback -Prelease
           echo "You may need to manually delete the GitHub tag, if it was created."
+      - name: JReleaser
+        if: ${{ steps.prepare.conclusion == 'success' && inputs.jreleaser == 'true' }}
+        id: jreleaser
+        uses: jreleaser/release-action@v2
+        with:
+          arguments: full-release
+        env:
+          JRELEASER_PROJECT_VERSION: ${{ inputs.releaseVersion }}
+          JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          JRELEASER_GITHUB_USERNAME: ${{ GITHUB_ACTOR }}
+          JRELEASER_TWITTER_CONSUMER_KEY: ${{ secrets.TWITTER_CONSUMER_KEY }}
+          JRELEASER_TWITTER_CONSUMER_SECRET: ${{ secrets.TWITTER_CONSUMER_SECRET }}
+          JRELEASER_TWITTER_ACCESS_TOKEN: ${{ secrets.TWITTER_ACCESS_TOKEN }}
+          JRELEASER_TWITTER_ACCESS_TOKEN_SECRET: ${{ secrets.TWITTER_ACCESS_TOKEN_SECRET }}
+          JRELEASER_MASTODON_ACCESS_TOKEN: ${{ secrets.MASTODON_ACCESS_TOKEN }}
+      - name: JReleaser release output
+        if: ${{ always() && steps.jreleaser.conclusion != 'skipped' }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: jreleaser-release
+          path: |
+            out/jreleaser/trace.log
+            out/jreleaser/output.properties
