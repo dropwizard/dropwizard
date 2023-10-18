@@ -67,6 +67,7 @@ registerDefaultExceptionMappers     true                                        
 enableThreadNameFilter              true                                             Whether or not to apply the ``ThreadNameFilter`` that adjusts thread names to include the request method and request URI.
 dumpAfterStart                      false                                            Whether or not to dump `Jetty Diagnostics`_ after start.
 dumpBeforeStop                      false                                            Whether or not to dump `Jetty Diagnostics`_ before stop.
+enableVirtualThreads                false                                            Whether to enable virtual threads for Jetty's thread pool.
 =================================== ===============================================  =============================================================================
 
 .. _Jetty Diagnostics: https://www.eclipse.org/jetty/documentation/9.4.x/jetty-dump-tool.html
@@ -242,6 +243,7 @@ Extends the attributes that are available to :ref:`all servers <man-configuratio
     server:
       adminMinThreads: 1
       adminMaxThreads: 64
+      enableAdminVirtualThreads: false
       adminContextPath: /
       applicationContextPath: /
       applicationConnectors:
@@ -262,19 +264,20 @@ Extends the attributes that are available to :ref:`all servers <man-configuratio
           validateCerts: false
 
 
-========================  =======================   =====================================================================
-Name                      Default                   Description
-========================  =======================   =====================================================================
-applicationConnectors     An `HTTP connector`_      A set of :ref:`connectors <man-configuration-connectors>` which will
-                          listening on port 8080.   handle application requests.
-adminConnectors           An `HTTP connector`_      An `HTTP connector`_ listening on port 8081.
-                          listening on port 8081.   A set of :ref:`connectors <man-configuration-connectors>` which will
-                                                    handle admin requests.
-adminMinThreads           1                         The minimum number of threads to use for admin requests.
-adminMaxThreads           64                        The maximum number of threads to use for admin requests.
-adminContextPath          /                         The context path of the admin servlets, including metrics and tasks.
-applicationContextPath    /                         The context path of the application servlets, including Jersey.
-========================  =======================   =====================================================================
+=========================  =======================   =====================================================================
+Name                       Default                   Description
+=========================  =======================   =====================================================================
+applicationConnectors      An `HTTP connector`_      A set of :ref:`connectors <man-configuration-connectors>` which will
+                           listening on port 8080.   handle application requests.
+adminConnectors            An `HTTP connector`_      An `HTTP connector`_ listening on port 8081.
+                           listening on port 8081.   A set of :ref:`connectors <man-configuration-connectors>` which will
+                                                     handle admin requests.
+adminMinThreads            1                         The minimum number of threads to use for admin requests.
+adminMaxThreads            64                        The maximum number of threads to use for admin requests.
+enableAdminVirtualThreads  false                     Whether to use virtual threads for the admin connectors.
+adminContextPath           /                         The context path of the admin servlets, including metrics and tasks.
+applicationContextPath     /                         The context path of the application servlets, including Jersey.
+=========================  =======================   =====================================================================
 
 .. _`HTTP connector`:  https://github.com/dropwizard/dropwizard/blob/master/dropwizard-jetty/src/main/java/io/dropwizard/jetty/HttpConnectorFactory.java
 

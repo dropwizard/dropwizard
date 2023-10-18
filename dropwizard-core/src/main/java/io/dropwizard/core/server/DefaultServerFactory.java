@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ThreadFactory;
 
 /**
  * The default implementation of {@link ServerFactory}, which allows for multiple sets of
@@ -59,6 +60,11 @@ import java.util.Map;
  *         <td>1</td>
  *         <td>The minimum number of threads to use for admin requests.</td>
  *     </tr>
+ *     <tr>
+ *         <td>{@code enableAdminVirtualThreads}</td>
+ *         <td>false</td>
+ *         <td>Whether to use virtual threads for the admin connectors</td>
+ *     </tr>
  * </table>
  * <p/>
  * For more configuration parameters, see {@link AbstractServerFactory}.
@@ -83,6 +89,8 @@ public class DefaultServerFactory extends AbstractServerFactory {
 
     @Min(1)
     private int adminMinThreads = 1;
+
+    private boolean enableAdminVirtualThreads;
 
     @NotEmpty
     private String applicationContextPath = "/";
@@ -128,6 +136,16 @@ public class DefaultServerFactory extends AbstractServerFactory {
     @JsonProperty
     public void setAdminMinThreads(int adminMinThreads) {
         this.adminMinThreads = adminMinThreads;
+    }
+
+    @JsonProperty
+    public boolean isEnableAdminVirtualThreads() {
+        return enableAdminVirtualThreads;
+    }
+
+    @JsonProperty
+    public void setEnableAdminVirtualThreads(boolean enableAdminVirtualThreads) {
+        this.enableAdminVirtualThreads = enableAdminVirtualThreads;
     }
 
     @JsonProperty
@@ -211,9 +229,17 @@ public class DefaultServerFactory extends AbstractServerFactory {
     }
 
     private List<Connector> buildAdminConnectors(MetricRegistry metricRegistry, Server server) {
+        final ThreadFactory threadFactory = getThreadFactory(enableAdminVirtualThreads);
         // threadpool is shared between all the connectors, so it should be managed by the server instead of the
         // individual connectors
-        final QueuedThreadPool threadPool = new InstrumentedQueuedThreadPool(metricRegistry, adminMaxThreads, adminMinThreads);
+        @SuppressWarnings("NullAway")
+        final QueuedThreadPool threadPool = new InstrumentedQueuedThreadPool(
+            metricRegistry,
+            adminMaxThreads,
+            adminMinThreads,
+            60000, // overload default
+            null, // overload default
+            threadFactory);
         threadPool.setName("dw-admin");
         server.addBean(threadPool);
 
