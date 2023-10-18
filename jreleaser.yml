@@ -1,0 +1,42 @@
+---
+project:
+  name: dropwizard
+  description: |
+      A damn simple library for building production-ready RESTful web services.
+  links:
+    homepage: https://www.dropwizard.io
+  license: Apache-2.0
+  copyright: 2010-2013 Coda Hale and Yammer, Inc., 2014-2020 Dropwizard Team
+  authors:
+    - arteam
+    - carlo-rtr
+    - evnm
+    - joschi
+    - jplock
+    - natalie-zamani
+    - ryankennedy
+    - skamille
+    - zUniQueX
+  java:
+    groupId: io.dropwizard
+    version: 11
+
+release:
+  github:
+    overwrite: true
+    discussionCategoryName: Announcements
+    owner: dropwizard
+    commitAuthor:
+      name: 'Dropwizard Release Action'
+      email: '48418865+dropwizard-committers@users.noreply.github.com'
+    releaseNotes:
+      enabled: true
+
+announce:
+  twitter:
+    active: RELEASE
+    statusTemplate: .jreleaser/announcement.tpl
+  mastodon:
+    active: RELEASE
+    statusTemplate: .jreleaser/announcement.tpl
+    host: https://jvm.social
