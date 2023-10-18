@@ -678,7 +678,7 @@ public abstract class AbstractServerFactory implements ServerFactory {
         }
 
         if (!VirtualThreads.areSupported()) {
-            throw new UnsupportedOperationException("Virtual threads are requested but no supported on the current runtime");
+            throw new UnsupportedOperationException("Virtual threads are requested but not supported on the current runtime");
         }
 
         try {
