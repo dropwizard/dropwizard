@@ -1,5 +1,5 @@
 ---
-# yamllint disable rule:comments
+# yamllint disable rule:comments rule:line-length
 name: Release
 # yamllint disable-line rule:truthy
 on:
