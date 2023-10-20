@@ -30,13 +30,18 @@ jobs:
           CI_DEPLOY_USERNAME: ${{ secrets.CI_DEPLOY_USERNAME }}
           CI_DEPLOY_PASSWORD: ${{ secrets.CI_DEPLOY_PASSWORD }}
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+      - name: Project version
+        id: maven-version
+        run: |
+          VERSION=$(./mvnw help:evaluate -q -B -ntp -Dexpression=project.version -DforceStdout=true)
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
       - name: JReleaser
         id: jreleaser
         uses: jreleaser/release-action@v2
         with:
           arguments: full-release
         env:
-          JRELEASER_PROJECT_VERSION: ${{ inputs.releaseVersion }}
+          JRELEASER_PROJECT_VERSION: ${{ steps.maven-version.outputs.VERSION }}
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           JRELEASER_GITHUB_USERNAME: ${{ github.actor }}
           JRELEASER_TWITTER_CONSUMER_KEY: ${{ secrets.TWITTER_CONSUMER_KEY }}
