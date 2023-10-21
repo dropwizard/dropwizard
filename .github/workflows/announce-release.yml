@@ -1,11 +1,13 @@
 ---
 # yamllint disable rule:comments rule:line-length
-name: Release
+name: Announce Release
 # yamllint disable-line rule:truthy
 on:
-  push:
-    tags:
-      - v*
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Git tag of the release
+        required: true
 jobs:
   release:
     runs-on: ubuntu-latest
@@ -15,6 +17,7 @@ jobs:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
         with:
           fetch-depth: 0
+          ref: ${{ inputs.tag }}
       - name: Set up JDK
         uses: actions/setup-java@0ab4596768b603586c0de567f2430c30f5b0d2b0 # v3
         with:
@@ -26,12 +29,6 @@ jobs:
           server-password: CI_DEPLOY_PASSWORD
           gpg-passphrase: GPG_PASSPHRASE
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
-      - name: Build and Deploy
-        run: ./mvnw -B -V -ntp -DperformRelease=true deploy
-        env:
-          CI_DEPLOY_USERNAME: ${{ secrets.CI_DEPLOY_USERNAME }}
-          CI_DEPLOY_PASSWORD: ${{ secrets.CI_DEPLOY_PASSWORD }}
-          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
       - name: Project version
         id: maven-version
         run: |
@@ -46,6 +43,7 @@ jobs:
           JRELEASER_PROJECT_VERSION: ${{ steps.maven-version.outputs.VERSION }}
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           JRELEASER_GITHUB_USERNAME: ${{ github.actor }}
+          JRELEASER_TAG_NAME: ${{ inputs.tag }}
           JRELEASER_TWITTER_CONSUMER_KEY: ${{ secrets.TWITTER_CONSUMER_KEY }}
           JRELEASER_TWITTER_CONSUMER_SECRET: ${{ secrets.TWITTER_CONSUMER_SECRET }}
           JRELEASER_TWITTER_ACCESS_TOKEN: ${{ secrets.TWITTER_ACCESS_TOKEN }}
