@@ -16,7 +16,7 @@ import io.dropwizard.logging.common.layout.LayoutFactory;
  * <ol>
  * <li>Create a class which implements {@link AppenderFactory}.</li>
  * <li>Annotate it with {@code @JsonTypeName} and give it a unique type name.</li>
- * <li>add a {@code META-INF/services/io.dropwizard.logging.AppenderFactory} file with your
+ * <li>add a {@code META-INF/services/io.dropwizard.logging.common.AppenderFactory} file with your
  * implementation's full class name to the class path.</li>
  * </ol>
  *
