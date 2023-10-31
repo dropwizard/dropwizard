@@ -49,7 +49,7 @@
         <jdbi3.version>3.41.3</jdbi3.version>
         <jersey.version>2.41</jersey.version>
         <jetty-setuid-java.version>1.0.4</jetty-setuid-java.version>
-        <jetty.version>10.0.17</jetty.version>
+        <jetty.version>10.0.18</jetty.version>
         <liquibase-core.version>4.24.0</liquibase-core.version>
         <liquibase-slf4j.version>5.0.0</liquibase-slf4j.version>
         <logback-throttling-appender.version>1.3.0</logback-throttling-appender.version>
