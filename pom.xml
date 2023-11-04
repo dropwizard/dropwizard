@@ -214,8 +214,8 @@
     </issueManagement>
 
     <ciManagement>
-        <system>Travis CI</system>
-        <url>https://travis-ci.org/dropwizard/dropwizard</url>
+        <system>GitHub Actions</system>
+        <url>https://github.com/dropwizard/dropwizard/actions</url>
     </ciManagement>
 
     <mailingLists>
