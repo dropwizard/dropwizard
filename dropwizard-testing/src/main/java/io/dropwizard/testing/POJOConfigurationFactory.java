@@ -8,7 +8,8 @@ import io.dropwizard.jackson.Jackson;
 
 import java.io.File;
 
-public class POJOConfigurationFactory<C extends Configuration>
+public class
+POJOConfigurationFactory<C extends Configuration>
     extends YamlConfigurationFactory<C> {
     protected final C configuration;
 
