@@ -50,3 +50,9 @@ announce:
 
       Release Notes: {{releaseNotesUrl}}
     host: https://jvm.social
+  bluesky:
+    active: RELEASE
+    status: |
+      🚀 {{projectNameCapitalized}} {{projectVersion}} has been released! #Java #Dropwizard
+
+      Release Notes: {{releaseNotesUrl}}
