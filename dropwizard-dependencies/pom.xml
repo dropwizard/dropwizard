@@ -69,7 +69,7 @@
         <bcprov-jdk18on.version>1.76</bcprov-jdk18on.version>
         <h2.version>2.2.224</h2.version>
         <junit.version>4.13.2</junit.version>
-        <junit5.version>5.10.0</junit5.version>
+        <junit5.version>5.10.1</junit5.version>
         <mockito.version>4.11.0</mockito.version>
 
         <!-- Plugin versions -->
