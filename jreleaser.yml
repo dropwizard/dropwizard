@@ -1,4 +1,5 @@
 ---
+# yamllint disable rule:line-length
 project:
   name: dropwizard
   description: |
@@ -31,12 +32,28 @@ release:
       email: '48418865+dropwizard-committers@users.noreply.github.com'
     releaseNotes:
       enabled: true
+    releaseName: "{{tagName}}"
+    skipTag: true
+    skipRelease: true
 
 announce:
   twitter:
     active: RELEASE
-    statusTemplate: .jreleaser/announcement.tpl
+    status: |
+      🚀 {{projectNameCapitalized}} {{projectVersion}} has been released! #Java #Dropwizard
+
+      Release Notes: {{releaseNotesUrl}}
   mastodon:
     active: RELEASE
-    statusTemplate: .jreleaser/announcement.tpl
+    status: |
+      🚀 {{projectNameCapitalized}} {{projectVersion}} has been released! #Java #Dropwizard
+
+      Release Notes: {{releaseNotesUrl}}
     host: https://jvm.social
+  bluesky:
+    active: RELEASE
+    status: |
+      🚀 {{projectNameCapitalized}} {{projectVersion}} has been released! #Java #Dropwizard
+
+      Release Notes: {{releaseNotesUrl}}
+

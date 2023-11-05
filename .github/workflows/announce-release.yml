@@ -1,0 +1,66 @@
+---
+# yamllint disable rule:comments rule:line-length
+name: Announce Release
+# yamllint disable-line rule:truthy
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Git tag of the release
+        required: true
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    env:
+      JAVA_OPTS: -XX:+TieredCompilation -XX:TieredStopAtLevel=1
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        with:
+          fetch-depth: 0
+          ref: ${{ inputs.tag }}
+      - name: Set up JDK
+        uses: actions/setup-java@0ab4596768b603586c0de567f2430c30f5b0d2b0 # v3
+        with:
+          distribution: temurin
+          java-version: "11"
+          cache: maven
+          server-id: ossrh
+          server-username: CI_DEPLOY_USERNAME
+          server-password: CI_DEPLOY_PASSWORD
+          gpg-passphrase: GPG_PASSPHRASE
+          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+      - name: Project version
+        id: project-version
+        env:
+          CURRENT_TAG: ${{ inputs.tag }}
+        run: |
+          VERSION=$(./mvnw help:evaluate -q -B -ntp -Dexpression=project.version -DforceStdout=true)
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          PREV_TAG=$(git tag | sort --version-sort | grep -B1 "${CURRENT_TAG}" | head -n1)
+          echo "tag=${PREV_TAG}" >> "$GITHUB_OUTPUT"
+          echo "ref_name=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
+      - name: JReleaser
+        id: jreleaser
+        uses: jreleaser/release-action@v2
+        with:
+          arguments: full-release
+        env:
+          JRELEASER_PROJECT_VERSION: ${{ steps.project-version.outputs.version }}
+          JRELEASER_BRANCH: ${{ steps.project-version.outputs.ref_name }}
+          JRELEASER_TAG_NAME: ${{ inputs.tag }}
+          JRELEASER_PREVIOUS_TAG_NAME: ${{ steps.project-version.outputs.tag }}
+          JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          JRELEASER_GITHUB_USERNAME: ${{ github.actor }}
+          JRELEASER_TWITTER_CONSUMER_KEY: ${{ secrets.TWITTER_CONSUMER_KEY }}
+          JRELEASER_TWITTER_CONSUMER_SECRET: ${{ secrets.TWITTER_CONSUMER_SECRET }}
+          JRELEASER_TWITTER_ACCESS_TOKEN: ${{ secrets.TWITTER_ACCESS_TOKEN }}
+          JRELEASER_TWITTER_ACCESS_TOKEN_SECRET: ${{ secrets.TWITTER_ACCESS_TOKEN_SECRET }}
+          JRELEASER_MASTODON_ACCESS_TOKEN: ${{ secrets.MASTODON_ACCESS_TOKEN }}
+      - name: JReleaser release output
+        if: ${{ always() && steps.jreleaser.conclusion != 'skipped' }}
+        uses: actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32 # v3
+        with:
+          name: jreleaser-release
+          path: |
+            out/jreleaser/trace.log
+            out/jreleaser/output.properties
