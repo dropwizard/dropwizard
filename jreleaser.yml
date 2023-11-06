@@ -56,3 +56,4 @@ announce:
       🚀 {{projectNameCapitalized}} {{projectVersion}} has been released! #Java #Dropwizard
 
       Release Notes: {{releaseNotesUrl}}
+    host: https://bsky.social
