@@ -35,9 +35,10 @@ jobs:
           CURRENT_TAG: ${{ inputs.tag }}
         run: |
           VERSION=$(./mvnw help:evaluate -q -B -ntp -Dexpression=project.version -DforceStdout=true)
-          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
           PREV_TAG=$(git tag | sort --version-sort | grep -B1 "${CURRENT_TAG}" | head -n1)
-          echo "tag=${PREV_TAG}" >> "$GITHUB_OUTPUT"
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "current_tag=${CURRENT_TAG}" >> "$GITHUB_OUTPUT"
+          echo "previous_tag=${PREV_TAG}" >> "$GITHUB_OUTPUT"
           echo "ref_name=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
       - name: JReleaser
         id: jreleaser
@@ -47,8 +48,8 @@ jobs:
         env:
           JRELEASER_PROJECT_VERSION: ${{ steps.project-version.outputs.version }}
           JRELEASER_BRANCH: ${{ steps.project-version.outputs.ref_name }}
-          JRELEASER_TAG_NAME: ${{ inputs.tag }}
-          JRELEASER_PREVIOUS_TAG_NAME: ${{ steps.project-version.outputs.tag }}
+          JRELEASER_TAG_NAME: ${{ steps.project-version.outputs.current_tag }}
+          JRELEASER_PREVIOUS_TAG_NAME: ${{ steps.project-version.outputs.previous_tag }}
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           JRELEASER_GITHUB_USERNAME: ${{ github.actor }}
           JRELEASER_TWITTER_CONSUMER_KEY: ${{ secrets.TWITTER_CONSUMER_KEY }}
