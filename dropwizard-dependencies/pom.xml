@@ -64,7 +64,7 @@
         <!-- Test dependencies -->
         <assertj.version>3.24.2</assertj.version>
         <awaitility.version>4.2.0</awaitility.version>
-        <bcprov-jdk18on.version>1.76</bcprov-jdk18on.version>
+        <bcprov-jdk18on.version>1.77</bcprov-jdk18on.version>
         <h2.version>2.2.224</h2.version>
         <junit5.version>5.10.1</junit5.version>
         <mockito.version>5.7.0</mockito.version>
