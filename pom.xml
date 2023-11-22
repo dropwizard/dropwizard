@@ -4,7 +4,7 @@
 
     <groupId>io.dropwizard</groupId>
     <artifactId>dropwizard-project</artifactId>
-    <version>4.0.4-SNAPSHOT</version>
+    <version>4.0.5-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Dropwizard Project</name>
@@ -55,7 +55,7 @@
     <properties>
         <dropwizard.url>http://www.dropwizard.io/${project.version}</dropwizard.url>
 
-        <project.build.outputTimestamp>2023-10-20T13:53:33Z</project.build.outputTimestamp>
+        <project.build.outputTimestamp>2023-11-06T17:09:21Z</project.build.outputTimestamp>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
@@ -63,9 +63,9 @@
 
         <!-- Plugin versions, see also dropwizard-dependencies -->
         <coveralls-maven-plugin.version>4.3.0</coveralls-maven-plugin.version>
-        <cyclonedx-maven-plugin.version>2.7.9</cyclonedx-maven-plugin.version>
+        <cyclonedx-maven-plugin.version>2.7.10</cyclonedx-maven-plugin.version>
         <maven-archetype-plugin.version>3.2.1</maven-archetype-plugin.version>
-        <maven-clean-plugin.version>3.3.1</maven-clean-plugin.version>
+        <maven-clean-plugin.version>3.3.2</maven-clean-plugin.version>
         <maven-dependency-plugin.version>3.1.2</maven-dependency-plugin.version>
         <maven-deploy-plugin.version>3.1.1</maven-deploy-plugin.version>
         <maven-enforcer-plugin.version>3.4.1</maven-enforcer-plugin.version>
@@ -75,7 +75,7 @@
         <maven-install-plugin.version>3.1.1</maven-install-plugin.version>
         <maven-invoker-plugin.version>3.6.0</maven-invoker-plugin.version>
         <maven-jar-plugin.version>3.3.0</maven-jar-plugin.version>
-        <maven-javadoc-plugin.version>3.6.0</maven-javadoc-plugin.version>
+        <maven-javadoc-plugin.version>3.6.2</maven-javadoc-plugin.version>
         <maven-project-info-reports-plugin.version>3.4.5</maven-project-info-reports-plugin.version>
         <maven-release-plugin.version>3.0.1</maven-release-plugin.version>
         <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
@@ -206,7 +206,7 @@
         <connection>scm:git:https://github.com/dropwizard/dropwizard</connection>
         <developerConnection>scm:git:git@github.com:dropwizard/dropwizard.git</developerConnection>
         <url>https://github.com/dropwizard/dropwizard</url>
-    <tag>HEAD</tag>
+      <tag>HEAD</tag>
   </scm>
 
     <issueManagement>
@@ -215,8 +215,8 @@
     </issueManagement>
 
     <ciManagement>
-        <system>Travis CI</system>
-        <url>https://travis-ci.org/dropwizard/dropwizard</url>
+        <system>GitHub Actions</system>
+        <url>https://github.com/dropwizard/dropwizard/actions</url>
     </ciManagement>
 
     <mailingLists>
