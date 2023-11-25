@@ -14,7 +14,6 @@ import io.dropwizard.jersey.setup.JerseyEnvironment;
 import io.dropwizard.jersey.validation.HibernateValidationBinder;
 import io.dropwizard.jetty.GzipHandlerFactory;
 import io.dropwizard.jetty.MutableServletContextHandler;
-import io.dropwizard.jetty.ServerPushFilterFactory;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import io.dropwizard.metrics.jetty12.InstrumentedQueuedThreadPool;
 import io.dropwizard.metrics.jetty12.ee10.InstrumentedEE10Handler;
@@ -83,11 +82,6 @@ import static com.codahale.metrics.annotation.ResponseMeteredLevel.COARSE;
  *         <td>{@code gzip}</td>
  *         <td></td>
  *         <td>The {@link GzipHandlerFactory GZIP} configuration.</td>
- *     </tr>
- *     <tr>
- *         <td>{@code serverPush}</td>
- *         <td></td>
- *         <td>The {@link ServerPushFilterFactory} configuration.</td>
  *     </tr>
  *     <tr>
  *         <td>{@code responseMeteredLevel}</td>
@@ -261,10 +255,6 @@ public abstract class AbstractServerFactory implements ServerFactory {
 
     @Valid
     @NotNull
-    private ServerPushFilterFactory serverPush = new ServerPushFilterFactory();
-
-    @Valid
-    @NotNull
     private ResponseMeteredLevel responseMeteredLevel = COARSE;
 
     @Nullable
@@ -354,16 +344,6 @@ public abstract class AbstractServerFactory implements ServerFactory {
     @JsonProperty("gzip")
     public void setGzipFilterFactory(GzipHandlerFactory gzip) {
         this.gzip = gzip;
-    }
-
-    @JsonProperty("serverPush")
-    public ServerPushFilterFactory getServerPush() {
-        return serverPush;
-    }
-
-    @JsonProperty("serverPush")
-    public void setServerPush(ServerPushFilterFactory serverPush) {
-        this.serverPush = serverPush;
     }
 
     @JsonProperty("responseMeteredLevel")
@@ -646,7 +626,6 @@ public abstract class AbstractServerFactory implements ServerFactory {
         if (enableThreadNameFilter) {
             handler.addFilter(ThreadNameFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST));
         }
-        serverPush.addFilter(handler);
         if (jerseyContainer != null) {
             jerseyRootPath.ifPresent(jersey::setUrlPattern);
             jersey.register(new JacksonFeature(objectMapper));

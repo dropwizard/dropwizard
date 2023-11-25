@@ -10,12 +10,6 @@ responseMeteredLevel: ALL
 metricPrefix: jetty
 gzip:
   enabled: false
-serverPush:
-  enabled: true
-  refererHosts:
-    - dropwizard.io
-  refererPorts:
-    - 8445
 applicationConnectors:
   - type: http
     port: 0
