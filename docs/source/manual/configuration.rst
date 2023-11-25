@@ -162,45 +162,6 @@ appenders              console appender The set of AppenderFactory appenders to 
                                         See :ref:`logging <man-configuration-logging>` for more info.
 ====================== ================ ======================================================================
 
-.. _man-configuration-server-push:
-
-Server Push
-...........
-
-Server push technology allows a server to send additional resources to a client along with the requested resource.
-It works only for HTTP/2 connections.
-
-.. code-block:: yaml
-
-    server:
-      serverPush:
-        enabled: true
-        associatePeriod: '4 seconds'
-        maxAssociations: 16
-        refererHosts: ['dropwizard.io', 'dropwizard.github.io']
-        refererPorts: [8444, 8445]
-
-
-+-----------------+------------+------------------------------------------------------------------------------------------------------+
-|     Name        | Default    | Description                                                                                          |
-+=================+============+======================================================================================================+
-| enabled         | false      | If true, the filter will organize resources as primary resources (those referenced by the            |
-|                 |            | ``Referer`` header) and secondary resources (those that have the ``Referer`` header). Secondary      |
-|                 |            | resources that have been requested within a time window from the request of the primary resource     |
-|                 |            | will be associated with it. The next time a client requests the primary resource, the server will    |
-|                 |            | send to the client the secondary resources along with the primary in a single response.              |
-+-----------------+------------+------------------------------------------------------------------------------------------------------+
-| associatePeriod | 4 seconds  | The time window within which a request for a secondary resource will be associated to a              |
-|                 |            | primary resource.                                                                                    |
-+-----------------+------------+------------------------------------------------------------------------------------------------------+
-| maxAssociations | 16         | The maximum number of secondary resources that may be associated to a primary resource.              |
-+-----------------+------------+------------------------------------------------------------------------------------------------------+
-| refererHosts    | All hosts  | The list of referrer hosts for which the server push technology is supported.                        |
-+-----------------+------------+------------------------------------------------------------------------------------------------------+
-| refererPorts    | All ports  | The list of referrer ports for which the server push technology is supported.                        |
-+-----------------+------------+------------------------------------------------------------------------------------------------------+
-
-
 .. _man-configuration-simple:
 
 Simple
