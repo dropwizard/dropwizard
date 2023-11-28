@@ -146,31 +146,11 @@ public abstract class AuthFilter<C, P extends Principal> implements ContainerReq
                 return false;
             }
 
-            final P prince = principal.get();
+            final P getPrincipal = principal.get();
             final SecurityContext securityContext = requestContext.getSecurityContext();
             final boolean secure = securityContext != null && securityContext.isSecure();
 
-            SecurityContext dropwizardAuthenticatedSecurityContext = new SecurityContext() {
-                @Override
-                public Principal getUserPrincipal() {
-                    return prince;
-                }
-
-                @Override
-                public boolean isUserInRole(String role) {
-                    return authorizer.authorize(prince, role, requestContext);
-                }
-
-                @Override
-                public boolean isSecure() {
-                    return secure;
-                }
-
-                @Override
-                public String getAuthenticationScheme() {
-                    return scheme;
-                }
-            };
+            SecurityContext dropwizardAuthenticatedSecurityContext = createDropwizardAuthenticatedSecurityContext(getPrincipal, requestContext, secure, scheme);
             requestContext.setSecurityContext(dropwizardAuthenticatedSecurityContext);
             JettyAuthenticationUtil.setJettyAuthenticationIfPossible(dropwizardAuthenticatedSecurityContext, injectionManager);
             return true;
@@ -178,5 +158,29 @@ public abstract class AuthFilter<C, P extends Principal> implements ContainerReq
             logger.warn("Error authenticating credentials", e);
             throw new InternalServerErrorException();
         }
+    }
+
+    private SecurityContext createDropwizardAuthenticatedSecurityContext(P getPrincipal, ContainerRequestContext requestContext, boolean secure, String scheme) {
+        return new SecurityContext() {
+            @Override
+            public Principal getUserPrincipal() {
+                return getPrincipal;
+            }
+
+            @Override
+            public boolean isUserInRole(String role) {
+                return authorizer.authorize(getPrincipal, role, requestContext);
+            }
+
+            @Override
+            public boolean isSecure() {
+                return secure;
+            }
+
+            @Override
+            public String getAuthenticationScheme() {
+                return scheme;
+            }
+        };
     }
 }
