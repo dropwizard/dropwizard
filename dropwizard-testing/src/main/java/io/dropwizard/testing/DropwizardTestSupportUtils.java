@@ -1,13 +1,18 @@
 package io.dropwizard.testing;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.slf4j.Logger;
+import io.dropwizard.core.Configuration;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class DropwizardTestSupportUtils {
-    protected List<DropwizardTestSupport.ServiceListener<C>> listeners = new ArrayList<>();
-    private void stopIfRequired(DropwizardTestSupport<?> support) {
+public class DropwizardTestSupportUtils<C extends Configuration> {
+    protected static List<DropwizardTestSupport.ServiceListener<C>> listeners = new ArrayList<>();
+
+    @Nullable
+    protected C configuration;
+    static void stopIfRequired(DropwizardTestSupport<?> support) {
         if (support.jettyServer != null) {
             for (DropwizardTestSupport.ServiceListener<C> listener : listeners) {
                 try {

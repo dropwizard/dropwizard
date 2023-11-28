@@ -215,38 +215,38 @@ public class DropwizardTestSupport<C extends Configuration> {
 
     public void after() {
         try {
-            stopIfRequired();
+            DropwizardTestSupportUtils.stopIfRequired(this);
         } finally {
             resetConfigOverrides();
         }
     }
 
-    private void stopIfRequired() {
-        if (jettyServer != null) {
-            for (ServiceListener<C> listener : listeners) {
-                try {
-                    listener.onStop(this);
-                } catch (Exception ignored) {
-                }
-            }
-            try {
-                jettyServer.stop();
-            } catch (RuntimeException e) {
-                throw e;
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            } finally {
-                jettyServer = null;
-            }
-        }
-
-        // Don't leak logging appenders into other test cases
-        if (configuration != null) {
-            configuration.getLoggingFactory().reset();
-        } else {
-            LoggingUtil.getLoggerContext().getLogger(Logger.ROOT_LOGGER_NAME).detachAndStopAllAppenders();
-        }
-    }
+//    private void stopIfRequired() {
+//        if (jettyServer != null) {
+//            for (ServiceListener<C> listener : listeners) {
+//                try {
+//                    listener.onStop(this);
+//                } catch (Exception ignored) {
+//                }
+//            }
+//            try {
+//                jettyServer.stop();
+//            } catch (RuntimeException e) {
+//                throw e;
+//            } catch (Exception e) {
+//                throw new RuntimeException(e);
+//            } finally {
+//                jettyServer = null;
+//            }
+//        }
+//
+//        // Don't leak logging appenders into other test cases
+//        if (configuration != null) {
+//            configuration.getLoggingFactory().reset();
+//        } else {
+//            LoggingUtil.getLoggerContext().getLogger(Logger.ROOT_LOGGER_NAME).detachAndStopAllAppenders();
+//        }
+//    }
 
     private void applyConfigOverrides() {
         configOverrides.forEach(ConfigOverride::addToSystemProperties);
