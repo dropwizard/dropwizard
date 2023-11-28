@@ -1,0 +1,249 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > DAOTestExtension</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">io.dropwizard.testing.junit5</a>
+</div>
+
+<h1>Coverage Summary for Class: DAOTestExtension (io.dropwizard.testing.junit5)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">DAOTestExtension</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (9/9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    84.6%
+  </span>
+  <span class="absValue">
+    (11/13)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">DAOTestExtension$Builder</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/2)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (11/11)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    86.7%
+  </span>
+  <span class="absValue">
+    (13/15)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package io.dropwizard.testing.junit5;
+&nbsp;
+&nbsp;import io.dropwizard.testing.common.DAOTest;
+&nbsp;import org.hibernate.HibernateException;
+&nbsp;import org.hibernate.SessionFactory;
+&nbsp;import org.junit.jupiter.api.extension.AfterAllCallback;
+&nbsp;import org.junit.jupiter.api.extension.BeforeAllCallback;
+&nbsp;import org.junit.jupiter.api.extension.ExtensionContext;
+&nbsp;
+&nbsp;import java.util.concurrent.Callable;
+&nbsp;
+&nbsp;//@formatter:off
+&nbsp;/**
+&nbsp; * An extension for testing DAOs and Hibernate entities. It allows to quickly
+&nbsp; * test the database access code without starting the Dropwizard infrastructure.
+&nbsp; * &lt;p&gt;
+&nbsp; * Example:
+&nbsp; * &lt;pre&gt;&lt;code&gt;
+&nbsp;    public DAOTestExtension daoTestExtension = DAOTestExtension.newBuilder()
+&nbsp;          .addEntityClass(Person.class)
+&nbsp;          .build();
+&nbsp;
+&nbsp;    private PersonDAO personDAO;
+&nbsp;
+&nbsp;   {@literal @}BeforeEach
+&nbsp;    public void setUp() throws Exception {
+&nbsp;        personDAO = new PersonDAO(daoTestRule.getSessionFactory());
+&nbsp;    }
+&nbsp;
+&nbsp;   {@literal @}Test
+&nbsp;    public void createPerson() {
+&nbsp;        Person wizard = daoTestExtension.inTransaction(() -&gt; personDAO.create(new Person(&quot;Merlin&quot;, &quot;The chief wizard&quot;)));
+&nbsp;        assertThat(wizard.getId()).isGreaterThan(0);
+&nbsp;        assertThat(wizard.getFullName()).isEqualTo(&quot;Merlin&quot;);
+&nbsp;        assertThat(wizard.getJobTitle()).isEqualTo(&quot;The chief wizard&quot;);
+&nbsp;    }
+&nbsp; * &lt;/code&gt;&lt;/pre&gt;
+&nbsp; * &lt;/p&gt;
+&nbsp; */
+&nbsp;//@formatter:on
+&nbsp;public class DAOTestExtension implements DropwizardExtension, BeforeAllCallback, AfterAllCallback {
+&nbsp;    private final DAOTest daoTest;
+&nbsp;
+<b class="fc">&nbsp;    public static class Builder extends DAOTest.Builder&lt;Builder&gt; {</b>
+&nbsp;        public DAOTestExtension build() {
+<b class="fc">&nbsp;            return new DAOTestExtension(buildDAOTest());</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Creates a new builder for {@link DAOTestExtension}, which allows to customize a {@link SessionFactory}
+&nbsp;     * by different parameters. By default uses the H2 database in the memory mode.
+&nbsp;     *
+&nbsp;     * @return a new {@link DAOTestExtension.Builder}
+&nbsp;     */
+&nbsp;    public static Builder newBuilder() {
+<b class="fc">&nbsp;        return new Builder();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Use {@link DAOTestExtension#newBuilder()}
+&nbsp;     */
+<b class="fc">&nbsp;    private DAOTestExtension(DAOTest daoTest) {</b>
+<b class="fc">&nbsp;        this.daoTest = daoTest;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void before() throws Throwable {
+<b class="fc">&nbsp;        daoTest.before();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void after() {
+<b class="fc">&nbsp;        daoTest.after();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void beforeAll(ExtensionContext extensionContext) throws Exception {
+&nbsp;        try {
+<b class="fc">&nbsp;            before();</b>
+<b class="nc">&nbsp;        } catch (Throwable e) {</b>
+<b class="nc">&nbsp;            throw new HibernateException(e);</b>
+<b class="fc">&nbsp;        }</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void afterAll(ExtensionContext extensionContext) {
+<b class="fc">&nbsp;        after();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the current active session factory for injecting to DAOs.
+&nbsp;     *
+&nbsp;     * @return {@link SessionFactory} with an open session.
+&nbsp;     */
+&nbsp;    public SessionFactory getSessionFactory() {
+<b class="fc">&nbsp;        return daoTest.getSessionFactory();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Performs a call in a transaction
+&nbsp;     *
+&nbsp;     * @param call the call
+&nbsp;     * @param &lt;T&gt;  the type of the returned result
+&nbsp;     * @return the result of the call
+&nbsp;     */
+&nbsp;    public &lt;T&gt; T inTransaction(Callable&lt;T&gt; call) {
+<b class="fc">&nbsp;        return daoTest.inTransaction(call);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Performs an action in a transaction
+&nbsp;     *
+&nbsp;     * @param action the action
+&nbsp;     */
+&nbsp;    public void inTransaction(Runnable action) {
+<b class="fc">&nbsp;        daoTest.inTransaction(action);</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-11-03 20:18</div>
+</div>
+</body>
+</html>

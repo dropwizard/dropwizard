@@ -72,11 +72,13 @@ public abstract class AuthBaseTest<T extends DropwizardResourceConfig> extends J
     @Test
     void respondsToMissingCredentialsWith401() {
         Invocation.Builder request = target("/test/admin").request();
+        String authorizationHeaderValue = getPrefix() + " " + getOrdinaryGuyValidToken();
+
         assertThatExceptionOfType(WebApplicationException.class)
             .isThrownBy(() -> request.get(String.class))
             .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(401))
             .satisfies(e -> assertThat(e.getResponse().getHeaders().get(HttpHeaders.WWW_AUTHENTICATE))
-                .containsOnly(getPrefix() + " realm=\"realm\""));
+                .containsOnly(authorizationHeaderValue + " realm=\"realm\""));
     }
 
     @Test

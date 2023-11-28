@@ -1,0 +1,533 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > DropwizardTestSupport</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">io.dropwizard.testing</a>
+</div>
+
+<h1>Coverage Summary for Class: DropwizardTestSupport (io.dropwizard.testing)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">DropwizardTestSupport</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (26/26)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    91.7%
+  </span>
+  <span class="absValue">
+    (88/96)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">DropwizardTestSupport$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/2)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">DropwizardTestSupport$2</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    77.8%
+  </span>
+  <span class="absValue">
+    (7/9)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">DropwizardTestSupport$ServiceListener</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (3/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (3/3)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (33/33)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    90.9%
+  </span>
+  <span class="absValue">
+    (100/110)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package io.dropwizard.testing;
+&nbsp;
+&nbsp;import com.fasterxml.jackson.databind.ObjectMapper;
+&nbsp;import io.dropwizard.configuration.ConfigurationSourceProvider;
+&nbsp;import io.dropwizard.configuration.YamlConfigurationFactory;
+&nbsp;import io.dropwizard.core.Application;
+&nbsp;import io.dropwizard.core.Configuration;
+&nbsp;import io.dropwizard.core.cli.Command;
+&nbsp;import io.dropwizard.core.cli.ConfiguredCommand;
+&nbsp;import io.dropwizard.core.cli.EnvironmentCommand;
+&nbsp;import io.dropwizard.core.cli.ServerCommand;
+&nbsp;import io.dropwizard.core.setup.Bootstrap;
+&nbsp;import io.dropwizard.core.setup.Environment;
+&nbsp;import io.dropwizard.lifecycle.Managed;
+&nbsp;import io.dropwizard.logging.common.LoggingUtil;
+&nbsp;import jakarta.validation.constraints.NotNull;
+&nbsp;import net.sourceforge.argparse4j.inf.Namespace;
+&nbsp;import org.checkerframework.checker.nullness.qual.Nullable;
+&nbsp;import org.eclipse.jetty.server.Connector;
+&nbsp;import org.eclipse.jetty.server.Server;
+&nbsp;import org.eclipse.jetty.server.ServerConnector;
+&nbsp;import org.slf4j.Logger;
+&nbsp;
+&nbsp;import java.lang.reflect.InvocationTargetException;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.Collections;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Map;
+&nbsp;import java.util.Optional;
+&nbsp;import java.util.Set;
+&nbsp;import java.util.function.Function;
+&nbsp;
+&nbsp;import static java.util.Objects.requireNonNull;
+&nbsp;
+&nbsp;/**
+&nbsp; * A test support class for starting and stopping your application at the start and end of a test class.
+&nbsp; * &lt;p&gt;
+&nbsp; * By default, the {@link Application} will be constructed using reflection to invoke the nullary
+&nbsp; * constructor. If your application does not provide a public nullary constructor, you will need to
+&nbsp; * override the {@link #newApplication()} method to provide your application instance(s).
+&nbsp; * &lt;/p&gt;
+&nbsp; *
+&nbsp; * @param &lt;C&gt; the configuration type
+&nbsp; */
+&nbsp;public class DropwizardTestSupport&lt;C extends Configuration&gt; {
+&nbsp;    protected final Class&lt;? extends Application&lt;C&gt;&gt; applicationClass;
+&nbsp;
+&nbsp;    @Nullable
+&nbsp;    protected final String configPath;
+&nbsp;    @Nullable
+&nbsp;    protected final ConfigurationSourceProvider configSourceProvider;
+&nbsp;    protected final Set&lt;ConfigOverride&gt; configOverrides;
+&nbsp;    @Nullable
+&nbsp;    protected final String customPropertyPrefix;
+&nbsp;    protected final Function&lt;Application&lt;C&gt;, Command&gt; commandInstantiator;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Flag that indicates whether instance was constructed with an explicit
+&nbsp;     * Configuration object or not; handling of the two cases differ.
+&nbsp;     * Needed because state of {@link #configuration} changes during lifecycle.
+&nbsp;     */
+&nbsp;    protected final boolean explicitConfig;
+&nbsp;
+&nbsp;    @Nullable
+&nbsp;    protected C configuration;
+&nbsp;
+&nbsp;    @Nullable
+&nbsp;    protected Application&lt;C&gt; application;
+&nbsp;
+&nbsp;    @Nullable
+&nbsp;    protected Environment environment;
+&nbsp;
+&nbsp;    @Nullable
+&nbsp;    protected Server jettyServer;
+<b class="fc">&nbsp;    protected List&lt;ServiceListener&lt;C&gt;&gt; listeners = new ArrayList&lt;&gt;();</b>
+&nbsp;
+&nbsp;    public DropwizardTestSupport(Class&lt;? extends Application&lt;C&gt;&gt; applicationClass,
+&nbsp;                                 @Nullable String configPath,
+&nbsp;                                 ConfigOverride... configOverrides) {
+<b class="fc">&nbsp;        this(applicationClass, configPath, (String) null, configOverrides);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * @since 2.0
+&nbsp;     */
+&nbsp;    public DropwizardTestSupport(Class&lt;? extends Application&lt;C&gt;&gt; applicationClass,
+&nbsp;                                 @Nullable String configPath,
+&nbsp;                                 @Nullable ConfigurationSourceProvider configSourceProvider,
+&nbsp;                                 ConfigOverride... configOverrides) {
+<b class="fc">&nbsp;        this(applicationClass, configPath, configSourceProvider, null, configOverrides);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * @since 2.0
+&nbsp;     */
+&nbsp;    public DropwizardTestSupport(Class&lt;? extends Application&lt;C&gt;&gt; applicationClass,
+&nbsp;                                 @Nullable String configPath,
+&nbsp;                                 @Nullable ConfigurationSourceProvider configSourceProvider,
+&nbsp;                                 @Nullable String customPropertyPrefix,
+&nbsp;                                 ConfigOverride... configOverrides) {
+<b class="fc">&nbsp;        this(applicationClass, configPath, configSourceProvider, customPropertyPrefix, ServerCommand::new, configOverrides);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * @since 2.0
+&nbsp;     */
+&nbsp;    public DropwizardTestSupport(Class&lt;? extends Application&lt;C&gt;&gt; applicationClass,
+&nbsp;                                 @Nullable String configPath,
+&nbsp;                                 @Nullable String customPropertyPrefix,
+&nbsp;                                 ConfigOverride... configOverrides) {
+<b class="fc">&nbsp;        this(applicationClass, configPath, customPropertyPrefix, ServerCommand::new, configOverrides);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * @since 2.0
+&nbsp;     */
+&nbsp;    public DropwizardTestSupport(Class&lt;? extends Application&lt;C&gt;&gt; applicationClass,
+&nbsp;                                 @Nullable String configPath,
+&nbsp;                                 @Nullable String customPropertyPrefix,
+&nbsp;                                 Function&lt;Application&lt;C&gt;, Command&gt; commandInstantiator,
+&nbsp;                                 ConfigOverride... configOverrides) {
+<b class="fc">&nbsp;        this(applicationClass, configPath, null, customPropertyPrefix, commandInstantiator, configOverrides);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * @since 2.0
+&nbsp;     */
+&nbsp;    public DropwizardTestSupport(Class&lt;? extends Application&lt;C&gt;&gt; applicationClass,
+&nbsp;                                 @Nullable String configPath,
+&nbsp;                                 @Nullable ConfigurationSourceProvider configSourceProvider,
+&nbsp;                                 @Nullable String customPropertyPrefix,
+&nbsp;                                 Function&lt;Application&lt;C&gt;, Command&gt; commandInstantiator,
+<b class="fc">&nbsp;                                 ConfigOverride... configOverrides) {</b>
+<b class="fc">&nbsp;        this.applicationClass = applicationClass;</b>
+<b class="fc">&nbsp;        this.configPath = configPath;</b>
+<b class="fc">&nbsp;        this.configSourceProvider = configSourceProvider;</b>
+<b class="fc">&nbsp;        this.configOverrides = Optional.ofNullable(configOverrides)</b>
+<b class="fc">&nbsp;            .map(Set::of)</b>
+<b class="fc">&nbsp;            .orElse(Set.of());</b>
+<b class="fc">&nbsp;        this.customPropertyPrefix = customPropertyPrefix;</b>
+<b class="fc">&nbsp;        this.explicitConfig = false;</b>
+<b class="fc">&nbsp;        this.commandInstantiator = commandInstantiator;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Alternative constructor that may be used to directly provide Configuration
+&nbsp;     * to use, instead of specifying resource path for locating data to create
+&nbsp;     * Configuration.
+&nbsp;     *
+&nbsp;     * @since 0.9
+&nbsp;     *
+&nbsp;     * @param applicationClass Type of Application to create
+&nbsp;     * @param configuration Pre-constructed configuration object caller provides; will not
+&nbsp;     *   be manipulated in any way, no overriding
+&nbsp;     */
+&nbsp;    public DropwizardTestSupport(Class&lt;? extends Application&lt;C&gt;&gt; applicationClass,
+&nbsp;                                 C configuration) {
+<b class="fc">&nbsp;        this(applicationClass, configuration, ServerCommand::new);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Alternate constructor that allows specifying the command the Dropwizard application is started with.
+&nbsp;     * @since 1.1.0
+&nbsp;     * @param applicationClass Type of Application to create
+&nbsp;     * @param configuration Pre-constructed configuration object caller provides; will not
+&nbsp;     *   be manipulated in any way, no overriding
+&nbsp;     * @param commandInstantiator The {@link Function} used to instantiate the {@link Command} used to
+&nbsp;     *   start the Application
+&nbsp;     */
+&nbsp;    public DropwizardTestSupport(Class&lt;? extends Application&lt;C&gt;&gt; applicationClass,
+&nbsp;                                 @Nullable C configuration,
+<b class="fc">&nbsp;                                 Function&lt;Application&lt;C&gt;, Command&gt; commandInstantiator) {</b>
+<b class="fc">&nbsp;        if (configuration == null) {</b>
+<b class="nc">&nbsp;            throw new IllegalArgumentException(&quot;Can not pass null configuration for explicitly configured instance&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        this.applicationClass = applicationClass;</b>
+<b class="fc">&nbsp;        this.configPath = &quot;&quot;;</b>
+<b class="fc">&nbsp;        this.configSourceProvider = null;</b>
+<b class="fc">&nbsp;        this.configOverrides = Collections.emptySet();</b>
+<b class="fc">&nbsp;        this.customPropertyPrefix = null;</b>
+<b class="fc">&nbsp;        this.configuration = configuration;</b>
+<b class="fc">&nbsp;        this.explicitConfig = true;</b>
+<b class="fc">&nbsp;        this.commandInstantiator = commandInstantiator;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public DropwizardTestSupport&lt;C&gt; addListener(ServiceListener&lt;C&gt; listener) {
+<b class="fc">&nbsp;        this.listeners.add(listener);</b>
+<b class="fc">&nbsp;        return this;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public DropwizardTestSupport&lt;C&gt; manage(final Managed managed) {
+<b class="fc">&nbsp;        return addListener(new ServiceListener&lt;C&gt;() {</b>
+&nbsp;            @Override
+&nbsp;            public void onRun(C configuration, Environment environment, DropwizardTestSupport&lt;C&gt; rule) throws Exception {
+<b class="fc">&nbsp;                environment.lifecycle().manage(managed);</b>
+&nbsp;            }
+&nbsp;        });
+&nbsp;    }
+&nbsp;
+&nbsp;    public void before() throws Exception {
+<b class="fc">&nbsp;        applyConfigOverrides();</b>
+&nbsp;        try {
+<b class="fc">&nbsp;            startIfRequired();</b>
+<b class="fc">&nbsp;        } catch (Exception e) {</b>
+&nbsp;
+&nbsp;            // If there&#39;s an exception when setting up the server / application,
+&nbsp;            // manually call after as junit does not call the after method if
+&nbsp;            // the `before` method throws.
+<b class="fc">&nbsp;            after();</b>
+&nbsp;
+<b class="fc">&nbsp;            throw e;</b>
+<b class="fc">&nbsp;        }</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void after() {
+&nbsp;        try {
+<b class="fc">&nbsp;            stopIfRequired();</b>
+&nbsp;        } finally {
+<b class="fc">&nbsp;            resetConfigOverrides();</b>
+<b class="fc">&nbsp;        }</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private void stopIfRequired() {
+<b class="fc">&nbsp;        if (jettyServer != null) {</b>
+<b class="fc">&nbsp;            for (ServiceListener&lt;C&gt; listener : listeners) {</b>
+&nbsp;                try {
+<b class="fc">&nbsp;                    listener.onStop(this);</b>
+<b class="nc">&nbsp;                } catch (Exception ignored) {</b>
+<b class="fc">&nbsp;                }</b>
+<b class="fc">&nbsp;            }</b>
+&nbsp;            try {
+<b class="fc">&nbsp;                jettyServer.stop();</b>
+<b class="nc">&nbsp;            } catch (RuntimeException e) {</b>
+<b class="nc">&nbsp;                throw e;</b>
+<b class="nc">&nbsp;            } catch (Exception e) {</b>
+<b class="nc">&nbsp;                throw new RuntimeException(e);</b>
+&nbsp;            } finally {
+<b class="fc">&nbsp;                jettyServer = null;</b>
+<b class="fc">&nbsp;            }</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // Don&#39;t leak logging appenders into other test cases
+<b class="fc">&nbsp;        if (configuration != null) {</b>
+<b class="fc">&nbsp;            configuration.getLoggingFactory().reset();</b>
+&nbsp;        } else {
+<b class="fc">&nbsp;            LoggingUtil.getLoggerContext().getLogger(Logger.ROOT_LOGGER_NAME).detachAndStopAllAppenders();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    private void applyConfigOverrides() {
+<b class="fc">&nbsp;        configOverrides.forEach(ConfigOverride::addToSystemProperties);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private void resetConfigOverrides() {
+<b class="fc">&nbsp;        configOverrides.forEach(ConfigOverride::removeFromSystemProperties);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private void startIfRequired() throws Exception {
+<b class="fc">&nbsp;        if (jettyServer != null) {</b>
+&nbsp;            return;
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        application = newApplication();</b>
+&nbsp;
+<b class="fc">&nbsp;        final Bootstrap&lt;C&gt; bootstrap = new Bootstrap&lt;C&gt;(getApplication()) {</b>
+&nbsp;            @Override
+&nbsp;            public void run(C configuration, Environment environment) throws Exception {
+<b class="fc">&nbsp;                environment.lifecycle().addServerLifecycleListener(server -&gt; jettyServer = server);</b>
+<b class="fc">&nbsp;                super.run(configuration, environment);</b>
+<b class="fc">&nbsp;                for (ServiceListener&lt;C&gt; listener : listeners) {</b>
+&nbsp;                    try {
+<b class="fc">&nbsp;                        listener.onRun(configuration, environment, DropwizardTestSupport.this);</b>
+<b class="nc">&nbsp;                    } catch (Exception ex) {</b>
+<b class="nc">&nbsp;                        throw new RuntimeException(&quot;Error running app rule start listener&quot;, ex);</b>
+<b class="fc">&nbsp;                    }</b>
+<b class="fc">&nbsp;                }</b>
+&nbsp;            }
+&nbsp;        };
+&nbsp;
+<b class="fc">&nbsp;        getApplication().initialize(bootstrap);</b>
+<b class="fc">&nbsp;        if (configSourceProvider != null) {</b>
+<b class="fc">&nbsp;            bootstrap.setConfigurationSourceProvider(configSourceProvider);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        if (explicitConfig) {</b>
+<b class="fc">&nbsp;            bootstrap.setConfigurationFactoryFactory((klass, validator, objectMapper, propertyPrefix) -&gt;</b>
+<b class="fc">&nbsp;                new POJOConfigurationFactory&lt;&gt;(getConfiguration()));</b>
+<b class="fc">&nbsp;        } else if (customPropertyPrefix != null) {</b>
+&nbsp;            @NotNull
+<b class="fc">&nbsp;            final String prefix = customPropertyPrefix;</b>
+<b class="fc">&nbsp;            bootstrap.setConfigurationFactoryFactory((klass, validator, objectMapper, propertyPrefix) -&gt;</b>
+<b class="fc">&nbsp;                new YamlConfigurationFactory&lt;&gt;(klass, validator, objectMapper, prefix));</b>
+&nbsp;        }
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;        final Map&lt;String, Object&gt; namespaceAttributes = Optional.ofNullable(configPath)</b>
+<b class="fc">&nbsp;            .filter(path -&gt; !path.isEmpty())</b>
+<b class="fc">&nbsp;            .map(path -&gt; Collections.singletonMap(&quot;file&quot;, (Object)path))</b>
+<b class="fc">&nbsp;            .orElse(Collections.emptyMap());</b>
+&nbsp;
+<b class="fc">&nbsp;        final Namespace namespace = new Namespace(namespaceAttributes);</b>
+<b class="fc">&nbsp;        final Command command = commandInstantiator.apply(application);</b>
+<b class="fc">&nbsp;        command.run(bootstrap, namespace);</b>
+&nbsp;
+<b class="fc">&nbsp;        if (command instanceof EnvironmentCommand) {</b>
+&nbsp;            @SuppressWarnings(&quot;unchecked&quot;)
+<b class="fc">&nbsp;            EnvironmentCommand&lt;C&gt; environmentCommand = (EnvironmentCommand&lt;C&gt;) command;</b>
+<b class="fc">&nbsp;            this.configuration = environmentCommand.getConfiguration();</b>
+<b class="fc">&nbsp;            this.environment = environmentCommand.getEnvironment();</b>
+<b class="fc">&nbsp;        } else if (command instanceof ConfiguredCommand) {</b>
+&nbsp;            @SuppressWarnings(&quot;unchecked&quot;)
+<b class="fc">&nbsp;            ConfiguredCommand&lt;C&gt; configuredCommand = (ConfiguredCommand&lt;C&gt;) command;</b>
+<b class="fc">&nbsp;            this.configuration = configuredCommand.getConfiguration();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    public C getConfiguration() {
+<b class="fc">&nbsp;        return requireNonNull(configuration, &quot;configuration&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public int getLocalPort() {
+<b class="fc">&nbsp;        return getPort(0);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public int getAdminPort() {
+<b class="fc">&nbsp;        final Connector[] connectors = requireNonNull(jettyServer, &quot;jettyServer&quot;).getConnectors();</b>
+<b class="fc">&nbsp;        return ((ServerConnector) connectors[connectors.length - 1]).getLocalPort();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public int getPort(int connectorIndex) {
+<b class="fc">&nbsp;        return ((ServerConnector) requireNonNull(jettyServer, &quot;jettyServer&quot;).getConnectors()[connectorIndex]).getLocalPort();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Application&lt;C&gt; newApplication() {
+&nbsp;        try {
+<b class="fc">&nbsp;            return applicationClass.getConstructor().newInstance();</b>
+<b class="nc">&nbsp;        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {</b>
+<b class="nc">&nbsp;            throw new RuntimeException(e);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @SuppressWarnings({&quot;unchecked&quot;, &quot;TypeParameterUnusedInFormals&quot;})
+&nbsp;    public &lt;A extends Application&lt;C&gt;&gt; A getApplication() {
+<b class="fc">&nbsp;        return (A) requireNonNull(application, &quot;application&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Environment getEnvironment() {
+<b class="fc">&nbsp;        return requireNonNull(environment, &quot;environment&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public ObjectMapper getObjectMapper() {
+<b class="fc">&nbsp;        return getEnvironment().getObjectMapper();</b>
+&nbsp;    }
+&nbsp;
+<b class="fc">&nbsp;    public abstract static class ServiceListener&lt;T extends Configuration&gt; {</b>
+&nbsp;        public void onRun(T configuration, Environment environment, DropwizardTestSupport&lt;T&gt; rule) throws Exception {
+&nbsp;            // Default NOP
+<b class="fc">&nbsp;        }</b>
+&nbsp;
+&nbsp;        public void onStop(DropwizardTestSupport&lt;T&gt; rule) throws Exception {
+&nbsp;            // Default NOP
+<b class="fc">&nbsp;        }</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-11-03 20:18</div>
+</div>
+</body>
+</html>

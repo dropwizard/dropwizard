@@ -1,0 +1,242 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > DropwizardClient</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">io.dropwizard.testing.common</a>
+</div>
+
+<h1>Coverage Summary for Class: DropwizardClient (io.dropwizard.testing.common)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">DropwizardClient</td>
+<td class="coverageStat">
+  <span class="percent">
+    66.7%
+  </span>
+  <span class="absValue">
+    (4/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    75%
+  </span>
+  <span class="absValue">
+    (6/8)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">DropwizardClient$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/2)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">DropwizardClient$DummyHealthCheck</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (1/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (1/2)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">DropwizardClient$FakeApplication</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (10/10)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    75%
+  </span>
+  <span class="absValue">
+    (9/12)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    86.4%
+  </span>
+  <span class="absValue">
+    (19/22)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package io.dropwizard.testing.common;
+&nbsp;
+&nbsp;import com.codahale.metrics.health.HealthCheck;
+&nbsp;import com.fasterxml.jackson.databind.ObjectMapper;
+&nbsp;import io.dropwizard.core.Application;
+&nbsp;import io.dropwizard.core.Configuration;
+&nbsp;import io.dropwizard.core.server.SimpleServerFactory;
+&nbsp;import io.dropwizard.core.setup.Environment;
+&nbsp;import io.dropwizard.jetty.HttpConnectorFactory;
+&nbsp;import io.dropwizard.testing.DropwizardTestSupport;
+&nbsp;
+&nbsp;import java.net.URI;
+&nbsp;
+&nbsp;public class DropwizardClient {
+&nbsp;    private final Object[] resources;
+&nbsp;    private final DropwizardTestSupport&lt;Configuration&gt; testSupport;
+&nbsp;
+<b class="fc">&nbsp;    public DropwizardClient(Object... resources) {</b>
+<b class="fc">&nbsp;        testSupport = new DropwizardTestSupport&lt;Configuration&gt;(FakeApplication.class, &quot;&quot;) {</b>
+&nbsp;            @Override
+&nbsp;            public Application&lt;Configuration&gt; newApplication() {
+<b class="fc">&nbsp;                return new FakeApplication();</b>
+&nbsp;            }
+&nbsp;        };
+<b class="fc">&nbsp;        this.resources = resources;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public URI baseUri() {
+<b class="fc">&nbsp;        return URI.create(&quot;http://localhost:&quot; + testSupport.getLocalPort() + &quot;/application&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public ObjectMapper getObjectMapper() {
+<b class="nc">&nbsp;        return testSupport.getObjectMapper();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Environment getEnvironment() {
+<b class="nc">&nbsp;        return testSupport.getEnvironment();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void before() throws Throwable {
+<b class="fc">&nbsp;        testSupport.before();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void after() {
+<b class="fc">&nbsp;        testSupport.after();</b>
+&nbsp;    }
+&nbsp;
+<b class="fc">&nbsp;    private static class DummyHealthCheck extends HealthCheck {</b>
+&nbsp;        @Override
+&nbsp;        protected Result check() {
+<b class="nc">&nbsp;            return Result.healthy();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+<b class="fc">&nbsp;    private class FakeApplication extends Application&lt;Configuration&gt; {</b>
+&nbsp;        @Override
+&nbsp;        public void run(Configuration configuration, Environment environment) {
+<b class="fc">&nbsp;            final SimpleServerFactory serverConfig = new SimpleServerFactory();</b>
+<b class="fc">&nbsp;            configuration.setServerFactory(serverConfig);</b>
+<b class="fc">&nbsp;            final HttpConnectorFactory connectorConfig = (HttpConnectorFactory) serverConfig.getConnector();</b>
+<b class="fc">&nbsp;            connectorConfig.setPort(0);</b>
+&nbsp;
+<b class="fc">&nbsp;            environment.healthChecks().register(&quot;dummy&quot;, new DummyHealthCheck());</b>
+&nbsp;
+<b class="fc">&nbsp;            for (Object resource : resources) {</b>
+<b class="fc">&nbsp;                if (resource instanceof Class&lt;?&gt;) {</b>
+<b class="fc">&nbsp;                    environment.jersey().register((Class&lt;?&gt;) resource);</b>
+&nbsp;                } else {
+<b class="fc">&nbsp;                    environment.jersey().register(resource);</b>
+&nbsp;                }
+&nbsp;            }
+&nbsp;        }
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-11-03 20:18</div>
+</div>
+</body>
+</html>

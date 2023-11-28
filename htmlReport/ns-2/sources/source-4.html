@@ -1,0 +1,380 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > Resource</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">io.dropwizard.testing.common</a>
+</div>
+
+<h1>Coverage Summary for Class: Resource (io.dropwizard.testing.common)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Resource</td>
+<td class="coverageStat">
+  <span class="percent">
+    60%
+  </span>
+  <span class="absValue">
+    (6/10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    71.4%
+  </span>
+  <span class="absValue">
+    (10/14)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">Resource$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (4/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (12/12)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">Resource$Builder</td>
+<td class="coverageStat">
+  <span class="percent">
+    70.6%
+  </span>
+  <span class="absValue">
+    (12/17)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    76.2%
+  </span>
+  <span class="absValue">
+    (32/42)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    71%
+  </span>
+  <span class="absValue">
+    (22/31)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    79.4%
+  </span>
+  <span class="absValue">
+    (54/68)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package io.dropwizard.testing.common;
+&nbsp;
+&nbsp;import com.codahale.metrics.MetricRegistry;
+&nbsp;import com.fasterxml.jackson.databind.ObjectMapper;
+&nbsp;import com.fasterxml.jackson.jakarta.rs.json.JacksonXmlBindJsonProvider;
+&nbsp;import io.dropwizard.jackson.Jackson;
+&nbsp;import io.dropwizard.jersey.validation.Validators;
+&nbsp;import io.dropwizard.logging.common.BootstrapLogging;
+&nbsp;import io.dropwizard.testing.junit5.ResourceExtension;
+&nbsp;import jakarta.validation.Validator;
+&nbsp;import jakarta.ws.rs.client.Client;
+&nbsp;import jakarta.ws.rs.client.WebTarget;
+&nbsp;import org.checkerframework.checker.nullness.qual.Nullable;
+&nbsp;import org.glassfish.jersey.client.ClientConfig;
+&nbsp;import org.glassfish.jersey.client.HttpUrlConnectorProvider;
+&nbsp;import org.glassfish.jersey.servlet.ServletProperties;
+&nbsp;import org.glassfish.jersey.test.DeploymentContext;
+&nbsp;import org.glassfish.jersey.test.JerseyTest;
+&nbsp;import org.glassfish.jersey.test.ServletDeploymentContext;
+&nbsp;import org.glassfish.jersey.test.TestProperties;
+&nbsp;import org.glassfish.jersey.test.inmemory.InMemoryTestContainerFactory;
+&nbsp;import org.glassfish.jersey.test.spi.TestContainerFactory;
+&nbsp;
+&nbsp;import java.net.URI;
+&nbsp;import java.util.HashMap;
+&nbsp;import java.util.HashSet;
+&nbsp;import java.util.Map;
+&nbsp;import java.util.Set;
+&nbsp;import java.util.function.Consumer;
+&nbsp;import java.util.function.Supplier;
+&nbsp;
+&nbsp;import static java.util.Objects.requireNonNull;
+&nbsp;
+&nbsp;public class Resource {
+&nbsp;
+&nbsp;    /**
+&nbsp;     * A {@link Resource} builder which enables configuration of a Jersey testing environment.
+&nbsp;     */
+&nbsp;    @SuppressWarnings(&quot;unchecked&quot;)
+<b class="fc">&nbsp;    public static class Builder&lt;B extends Builder&lt;B&gt;&gt; {</b>
+&nbsp;
+<b class="fc">&nbsp;        private final Set&lt;Supplier&lt;?&gt;&gt; singletons = new HashSet&lt;&gt;();</b>
+<b class="fc">&nbsp;        private final Set&lt;Class&lt;?&gt;&gt; providers = new HashSet&lt;&gt;();</b>
+<b class="fc">&nbsp;        private final Map&lt;String, Object&gt; properties = new HashMap&lt;&gt;();</b>
+<b class="fc">&nbsp;        private MetricRegistry metricRegistry = new MetricRegistry();</b>
+<b class="fc">&nbsp;        private ObjectMapper mapper = Jackson.newObjectMapper();</b>
+<b class="fc">&nbsp;        private Validator validator = Validators.newValidator();</b>
+<b class="fc">&nbsp;        private Consumer&lt;ClientConfig&gt; clientConfigurator = c -&gt; {</b>
+<b class="fc">&nbsp;        };</b>
+<b class="fc">&nbsp;        private TestContainerFactory testContainerFactory = new InMemoryTestContainerFactory();</b>
+<b class="fc">&nbsp;        private boolean registerDefaultExceptionMappers = true;</b>
+<b class="fc">&nbsp;        private boolean bootstrapLogging = true;</b>
+&nbsp;
+&nbsp;        public B setMapper(ObjectMapper mapper) {
+<b class="fc">&nbsp;            this.mapper = mapper;</b>
+<b class="fc">&nbsp;            return (B) this;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        public B setMetricRegistry(MetricRegistry metricRegistry) {
+<b class="nc">&nbsp;            this.metricRegistry = metricRegistry;</b>
+<b class="nc">&nbsp;            return (B) this;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        public B setValidator(Validator validator) {
+<b class="nc">&nbsp;            this.validator = validator;</b>
+<b class="nc">&nbsp;            return (B) this;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        public B setClientConfigurator(Consumer&lt;ClientConfig&gt; clientConfigurator) {
+<b class="fc">&nbsp;            this.clientConfigurator = clientConfigurator;</b>
+<b class="fc">&nbsp;            return (B) this;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        public B addResource(Object resource) {
+<b class="fc">&nbsp;            return addResource(() -&gt; resource);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        public B addResource(Supplier&lt;Object&gt; resourceSupplier) {
+<b class="fc">&nbsp;            singletons.add(resourceSupplier);</b>
+<b class="fc">&nbsp;            return (B) this;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        public B addProvider(Class&lt;?&gt; klass) {
+<b class="nc">&nbsp;            providers.add(klass);</b>
+<b class="nc">&nbsp;            return (B) this;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        public B addProvider(Supplier&lt;Object&gt; providerSupplier) {
+<b class="fc">&nbsp;            singletons.add(providerSupplier);</b>
+<b class="fc">&nbsp;            return (B) this;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        public B addProvider(Object provider) {
+<b class="fc">&nbsp;            return addProvider(() -&gt; provider);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        public B addProperty(String property, Object value) {
+<b class="nc">&nbsp;            properties.put(property, value);</b>
+<b class="nc">&nbsp;            return (B) this;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        public B setTestContainerFactory(TestContainerFactory factory) {
+<b class="fc">&nbsp;            this.testContainerFactory = factory;</b>
+<b class="fc">&nbsp;            return (B) this;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        public B setRegisterDefaultExceptionMappers(boolean value) {
+<b class="fc">&nbsp;            registerDefaultExceptionMappers = value;</b>
+<b class="fc">&nbsp;            return (B) this;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        public B bootstrapLogging(boolean value) {
+<b class="nc">&nbsp;            bootstrapLogging = value;</b>
+<b class="nc">&nbsp;            return (B) this;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        /**
+&nbsp;         * Builds a {@link Resource} with a configured Jersey testing environment.
+&nbsp;         *
+&nbsp;         * @return a new {@link Resource}
+&nbsp;         */
+&nbsp;        protected Resource buildResource() {
+<b class="fc">&nbsp;            if (bootstrapLogging) {</b>
+<b class="fc">&nbsp;                BootstrapLogging.bootstrap();</b>
+&nbsp;            }
+<b class="fc">&nbsp;            Consumer&lt;ClientConfig&gt; extendedConfigurator = config -&gt; {</b>
+<b class="fc">&nbsp;                clientConfigurator.accept(config);</b>
+<b class="fc">&nbsp;                config.property(HttpUrlConnectorProvider.SET_METHOD_WORKAROUND, true);</b>
+&nbsp;            };
+<b class="fc">&nbsp;            return new Resource(new ResourceTestJerseyConfiguration(</b>
+&nbsp;                    singletons, providers, properties, mapper, metricRegistry, validator,
+&nbsp;                    extendedConfigurator, testContainerFactory, registerDefaultExceptionMappers));
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Creates a new Jersey testing environment builder for {@link ResourceExtension}
+&nbsp;     *
+&nbsp;     * @return a new {@link ResourceExtension.Builder}
+&nbsp;     */
+&nbsp;    public static ResourceExtension.Builder builder() {
+<b class="nc">&nbsp;        return new ResourceExtension.Builder();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private ResourceTestJerseyConfiguration configuration;
+&nbsp;
+&nbsp;    @Nullable
+&nbsp;    private JerseyTest test;
+&nbsp;
+<b class="fc">&nbsp;    private Resource(ResourceTestJerseyConfiguration configuration) {</b>
+<b class="fc">&nbsp;        this.configuration = configuration;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Validator getValidator() {
+<b class="nc">&nbsp;        return configuration.validator;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public ObjectMapper getObjectMapper() {
+<b class="nc">&nbsp;        return configuration.mapper;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Consumer&lt;ClientConfig&gt; getClientConfigurator() {
+<b class="nc">&nbsp;        return configuration.clientConfigurator;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Creates a web target to be sent to the resource under testing.
+&nbsp;     *
+&nbsp;     * @param path relative path (from tested application base URI) this web target should point to.
+&nbsp;     * @return the created JAX-RS web target.
+&nbsp;     */
+&nbsp;    public WebTarget target(String path) {
+<b class="fc">&nbsp;        return getJerseyTest().target(path);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the pre-configured {@link Client} for this test. For sending
+&nbsp;     * requests prefer {@link #target(String)}
+&nbsp;     *
+&nbsp;     * @return the {@link JerseyTest} configured {@link Client}
+&nbsp;     */
+&nbsp;    public Client client() {
+<b class="fc">&nbsp;        return getJerseyTest().client();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the underlying {@link JerseyTest}. For sending requests prefer
+&nbsp;     * {@link #target(String)}.
+&nbsp;     *
+&nbsp;     * @return the underlying {@link JerseyTest}
+&nbsp;     */
+&nbsp;    public JerseyTest getJerseyTest() {
+<b class="fc">&nbsp;        return requireNonNull(test);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void before() throws Throwable {
+<b class="fc">&nbsp;        DropwizardTestResourceConfig.CONFIGURATION_REGISTRY.put(configuration.getId(), configuration);</b>
+&nbsp;
+<b class="fc">&nbsp;        test = new JerseyTest(configuration.testContainerFactory) {</b>
+&nbsp;            @Override
+&nbsp;            protected URI getBaseUri() {
+<b class="fc">&nbsp;                forceSet(TestProperties.CONTAINER_PORT, &quot;0&quot;);</b>
+&nbsp;
+<b class="fc">&nbsp;                return super.getBaseUri();</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            @Override
+&nbsp;            protected DeploymentContext configureDeployment() {
+<b class="fc">&nbsp;                return ServletDeploymentContext.builder(new DropwizardTestResourceConfig(configuration))</b>
+<b class="fc">&nbsp;                        .initParam(ServletProperties.JAXRS_APPLICATION_CLASS,</b>
+<b class="fc">&nbsp;                                DropwizardTestResourceConfig.class.getName())</b>
+<b class="fc">&nbsp;                        .initParam(DropwizardTestResourceConfig.CONFIGURATION_ID, configuration.getId())</b>
+<b class="fc">&nbsp;                        .build();</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            @Override
+&nbsp;            protected void configureClient(ClientConfig clientConfig) {
+<b class="fc">&nbsp;                final JacksonXmlBindJsonProvider jsonProvider = new JacksonXmlBindJsonProvider();</b>
+<b class="fc">&nbsp;                jsonProvider.setMapper(configuration.mapper);</b>
+<b class="fc">&nbsp;                configuration.clientConfigurator.accept(clientConfig);</b>
+<b class="fc">&nbsp;                clientConfig.register(jsonProvider);</b>
+&nbsp;            }
+&nbsp;        };
+<b class="fc">&nbsp;        test.setUp();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void after() throws Throwable {
+<b class="fc">&nbsp;        DropwizardTestResourceConfig.CONFIGURATION_REGISTRY.remove(configuration.getId());</b>
+<b class="fc">&nbsp;        requireNonNull(test).tearDown();</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-11-03 20:18</div>
+</div>
+</body>
+</html>

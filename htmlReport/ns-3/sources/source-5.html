@@ -1,0 +1,227 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > ResourceExtension</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">io.dropwizard.testing.junit5</a>
+</div>
+
+<h1>Coverage Summary for Class: ResourceExtension (io.dropwizard.testing.junit5)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ResourceExtension</td>
+<td class="coverageStat">
+  <span class="percent">
+    60%
+  </span>
+  <span class="absValue">
+    (6/10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    63.6%
+  </span>
+  <span class="absValue">
+    (7/11)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">ResourceExtension$Builder</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/2)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    66.7%
+  </span>
+  <span class="absValue">
+    (8/12)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    69.2%
+  </span>
+  <span class="absValue">
+    (9/13)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package io.dropwizard.testing.junit5;
+&nbsp;
+&nbsp;import com.fasterxml.jackson.databind.ObjectMapper;
+&nbsp;import io.dropwizard.testing.common.Resource;
+&nbsp;import jakarta.validation.Validator;
+&nbsp;import jakarta.ws.rs.client.Client;
+&nbsp;import jakarta.ws.rs.client.WebTarget;
+&nbsp;import org.glassfish.jersey.client.ClientConfig;
+&nbsp;import org.glassfish.jersey.test.JerseyTest;
+&nbsp;
+&nbsp;import java.util.function.Consumer;
+&nbsp;
+&nbsp;/**
+&nbsp; * An extension for testing Jersey resources.
+&nbsp; */
+&nbsp;public class ResourceExtension implements DropwizardExtension {
+&nbsp;    /**
+&nbsp;     * A {@link ResourceExtension} builder which enables configuration of a Jersey testing environment.
+&nbsp;     */
+<b class="fc">&nbsp;    public static class Builder extends Resource.Builder&lt;Builder&gt; {</b>
+&nbsp;        /**
+&nbsp;         * Builds a {@link ResourceExtension} with a configured Jersey testing environment.
+&nbsp;         *
+&nbsp;         * @return a new {@link ResourceExtension}
+&nbsp;         */
+&nbsp;        public ResourceExtension build() {
+<b class="fc">&nbsp;            return new ResourceExtension(buildResource());</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Creates a new Jersey testing environment builder for {@link ResourceExtension}
+&nbsp;     *
+&nbsp;     * @return a new {@link Builder}
+&nbsp;     */
+&nbsp;    public static Builder builder() {
+<b class="fc">&nbsp;        return new Builder();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private final Resource resource;
+&nbsp;
+<b class="fc">&nbsp;    private ResourceExtension(Resource resource) {</b>
+<b class="fc">&nbsp;        this.resource = resource;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Validator getValidator() {
+<b class="nc">&nbsp;        return resource.getValidator();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public ObjectMapper getObjectMapper() {
+<b class="nc">&nbsp;        return resource.getObjectMapper();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Consumer&lt;ClientConfig&gt; getClientConfigurator() {
+<b class="nc">&nbsp;        return resource.getClientConfigurator();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Creates a web target to be sent to the resource under testing.
+&nbsp;     *
+&nbsp;     * @param path relative path (from tested application base URI) this web target should point to.
+&nbsp;     * @return the created JAX-RS web target.
+&nbsp;     */
+&nbsp;    public WebTarget target(String path) {
+<b class="fc">&nbsp;        return resource.target(path);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the pre-configured {@link Client} for this test. For sending
+&nbsp;     * requests prefer {@link #target(String)}
+&nbsp;     *
+&nbsp;     * @return the {@link JerseyTest} configured {@link Client}
+&nbsp;     */
+&nbsp;    public Client client() {
+<b class="fc">&nbsp;        return resource.client();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the underlying {@link JerseyTest}. For sending requests prefer
+&nbsp;     * {@link #target(String)}.
+&nbsp;     *
+&nbsp;     * @return the underlying {@link JerseyTest}
+&nbsp;     */
+&nbsp;    public JerseyTest getJerseyTest() {
+<b class="nc">&nbsp;        return resource.getJerseyTest();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void before() throws Throwable {
+<b class="fc">&nbsp;        resource.before();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void after() throws Throwable {
+<b class="fc">&nbsp;        resource.after();</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-11-03 20:18</div>
+</div>
+</body>
+</html>

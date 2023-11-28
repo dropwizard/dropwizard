@@ -1,0 +1,332 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > DAOTest</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">io.dropwizard.testing.common</a>
+</div>
+
+<h1>Coverage Summary for Class: DAOTest (io.dropwizard.testing.common)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">DAOTest</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (7/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    91.7%
+  </span>
+  <span class="absValue">
+    (22/24)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">DAOTest$Builder</td>
+<td class="coverageStat">
+  <span class="percent">
+    73.3%
+  </span>
+  <span class="absValue">
+    (11/15)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    86%
+  </span>
+  <span class="absValue">
+    (49/57)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    81.8%
+  </span>
+  <span class="absValue">
+    (18/22)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    87.7%
+  </span>
+  <span class="absValue">
+    (71/81)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package io.dropwizard.testing.common;
+&nbsp;
+&nbsp;import io.dropwizard.logging.common.BootstrapLogging;
+&nbsp;import org.hibernate.Session;
+&nbsp;import org.hibernate.SessionFactory;
+&nbsp;import org.hibernate.Transaction;
+&nbsp;import org.hibernate.cfg.AvailableSettings;
+&nbsp;import org.hibernate.cfg.Configuration;
+&nbsp;import org.hibernate.context.internal.ManagedSessionContext;
+&nbsp;
+&nbsp;import java.util.HashMap;
+&nbsp;import java.util.LinkedHashSet;
+&nbsp;import java.util.Map;
+&nbsp;import java.util.Set;
+&nbsp;import java.util.UUID;
+&nbsp;import java.util.concurrent.Callable;
+&nbsp;import java.util.function.Consumer;
+&nbsp;
+&nbsp;public class DAOTest {
+&nbsp;    @SuppressWarnings(&quot;unchecked&quot;)
+<b class="fc">&nbsp;    public abstract static class Builder&lt;B extends Builder&lt;B&gt;&gt; {</b>
+<b class="fc">&nbsp;        private String url = &quot;jdbc:h2:mem:&quot; + UUID.randomUUID();</b>
+<b class="fc">&nbsp;        private String username = &quot;sa&quot;;</b>
+<b class="fc">&nbsp;        private String password = &quot;&quot;;</b>
+<b class="fc">&nbsp;        private String driver = &quot;org.h2.Driver&quot;;</b>
+<b class="fc">&nbsp;        private String hbm2ddlAuto = &quot;create&quot;;</b>
+<b class="fc">&nbsp;        private boolean showSql = false;</b>
+<b class="fc">&nbsp;        private boolean useSqlComments = false;</b>
+<b class="fc">&nbsp;        private boolean bootstrapLogging = true;</b>
+<b class="fc">&nbsp;        private final Set&lt;Class&lt;?&gt;&gt; entityClasses = new LinkedHashSet&lt;&gt;();</b>
+<b class="fc">&nbsp;        private final Map&lt;String, String&gt; properties = new HashMap&lt;&gt;();</b>
+<b class="fc">&nbsp;        private Consumer&lt;Configuration&gt; configurationCustomizer = c -&gt; {</b>
+<b class="fc">&nbsp;        };</b>
+&nbsp;
+&nbsp;        public B setUrl(String url) {
+<b class="fc">&nbsp;            this.url = url;</b>
+<b class="fc">&nbsp;            return (B) this;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        public B setUsername(String username) {
+<b class="fc">&nbsp;            this.username = username;</b>
+<b class="fc">&nbsp;            return (B) this;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        public B setPassword(String password) {
+<b class="nc">&nbsp;            this.password = password;</b>
+<b class="nc">&nbsp;            return (B) this;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        public B setDriver(Class&lt;? extends java.sql.Driver&gt; driver) {
+<b class="fc">&nbsp;            this.driver = driver.getName();</b>
+<b class="fc">&nbsp;            return (B) this;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        public B setDriver(String driver) {
+<b class="nc">&nbsp;            this.driver = driver;</b>
+<b class="nc">&nbsp;            return (B) this;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        public B setHbm2DdlAuto(String hbm2ddlAuto) {
+<b class="fc">&nbsp;            this.hbm2ddlAuto = hbm2ddlAuto;</b>
+<b class="fc">&nbsp;            return (B) this;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        public B setShowSql(boolean showSql) {
+<b class="fc">&nbsp;            this.showSql = showSql;</b>
+<b class="fc">&nbsp;            return (B) this;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        public B useSqlComments(boolean useSqlComments) {
+<b class="fc">&nbsp;            this.useSqlComments = useSqlComments;</b>
+<b class="fc">&nbsp;            return (B) this;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        /**
+&nbsp;         * @since 2.0
+&nbsp;         */
+&nbsp;        public B bootstrapLogging(boolean value){
+<b class="nc">&nbsp;            bootstrapLogging = value;</b>
+<b class="nc">&nbsp;            return (B) this;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        public B addEntityClass(Class&lt;?&gt; entityClass) {
+<b class="fc">&nbsp;            this.entityClasses.add(entityClass);</b>
+<b class="fc">&nbsp;            return (B) this;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        public B setProperty(String key, String value) {
+<b class="fc">&nbsp;            this.properties.put(key, value);</b>
+<b class="fc">&nbsp;            return (B) this;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        public B customizeConfiguration(Consumer&lt;Configuration&gt; configurationCustomizer) {
+<b class="nc">&nbsp;            this.configurationCustomizer = configurationCustomizer;</b>
+<b class="nc">&nbsp;            return (B) this;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        protected DAOTest buildDAOTest() {
+<b class="fc">&nbsp;            if (bootstrapLogging) {</b>
+<b class="fc">&nbsp;                BootstrapLogging.bootstrap();</b>
+&nbsp;            }
+&nbsp;
+<b class="fc">&nbsp;            final Configuration config = new Configuration();</b>
+<b class="fc">&nbsp;            config.setProperty(AvailableSettings.URL, url);</b>
+<b class="fc">&nbsp;            config.setProperty(AvailableSettings.USER, username);</b>
+<b class="fc">&nbsp;            config.setProperty(AvailableSettings.PASS, password);</b>
+<b class="fc">&nbsp;            config.setProperty(AvailableSettings.DRIVER, driver);</b>
+<b class="fc">&nbsp;            config.setProperty(AvailableSettings.HBM2DDL_AUTO, hbm2ddlAuto);</b>
+<b class="fc">&nbsp;            config.setProperty(AvailableSettings.SHOW_SQL, String.valueOf(showSql));</b>
+<b class="fc">&nbsp;            config.setProperty(AvailableSettings.USE_SQL_COMMENTS, String.valueOf(useSqlComments));</b>
+&nbsp;            // Use the same configuration as in the Hibernate bundle to reduce differences between
+&nbsp;            // testing and production environments.
+<b class="fc">&nbsp;            config.setProperty(AvailableSettings.CURRENT_SESSION_CONTEXT_CLASS, &quot;managed&quot;);</b>
+<b class="fc">&nbsp;            config.setProperty(AvailableSettings.USE_GET_GENERATED_KEYS, &quot;true&quot;);</b>
+<b class="fc">&nbsp;            config.setProperty(AvailableSettings.GENERATE_STATISTICS, &quot;true&quot;);</b>
+<b class="fc">&nbsp;            config.setProperty(AvailableSettings.USE_REFLECTION_OPTIMIZER, &quot;true&quot;);</b>
+<b class="fc">&nbsp;            config.setProperty(AvailableSettings.ORDER_UPDATES, &quot;true&quot;);</b>
+<b class="fc">&nbsp;            config.setProperty(AvailableSettings.ORDER_INSERTS, &quot;true&quot;);</b>
+&nbsp;
+<b class="fc">&nbsp;            entityClasses.forEach(config::addAnnotatedClass);</b>
+<b class="fc">&nbsp;            properties.forEach(config::setProperty);</b>
+&nbsp;
+<b class="fc">&nbsp;            configurationCustomizer.accept(config);</b>
+&nbsp;
+<b class="fc">&nbsp;            return new DAOTest(config.buildSessionFactory());</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    private final SessionFactory sessionFactory;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Use {@link io.dropwizard.testing.junit5.DAOTestExtension#newBuilder()}
+&nbsp;     */
+<b class="fc">&nbsp;    private DAOTest(SessionFactory sessionFactory) {</b>
+<b class="fc">&nbsp;        this.sessionFactory = sessionFactory;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void before() throws Throwable {
+<b class="fc">&nbsp;        if (ManagedSessionContext.hasBind(sessionFactory)) {</b>
+&nbsp;            return;
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        final Session session = sessionFactory.openSession();</b>
+<b class="fc">&nbsp;        ManagedSessionContext.bind(session);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void after() {
+<b class="fc">&nbsp;        if (!ManagedSessionContext.hasBind(sessionFactory)) {</b>
+&nbsp;            return;
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        final Session currentSession = sessionFactory.getCurrentSession();</b>
+<b class="fc">&nbsp;        if (currentSession.isOpen()) {</b>
+<b class="fc">&nbsp;            currentSession.close();</b>
+&nbsp;        }
+<b class="fc">&nbsp;        ManagedSessionContext.unbind(sessionFactory);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the current active session factory for injecting to DAOs.
+&nbsp;     *`
+&nbsp;     * @return {@link SessionFactory} with an open session.
+&nbsp;     */
+&nbsp;    public SessionFactory getSessionFactory() {
+<b class="fc">&nbsp;        return sessionFactory;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Performs a call in a transaction
+&nbsp;     *
+&nbsp;     * @param call the call
+&nbsp;     * @param &lt;T&gt;  the type of the returned result
+&nbsp;     * @return the result of the call
+&nbsp;     */
+&nbsp;    public &lt;T&gt; T inTransaction(Callable&lt;T&gt; call) {
+<b class="fc">&nbsp;        final Session session = sessionFactory.getCurrentSession();</b>
+<b class="fc">&nbsp;        final Transaction transaction = session.beginTransaction();</b>
+&nbsp;        try {
+<b class="fc">&nbsp;            final T result = call.call();</b>
+<b class="fc">&nbsp;            transaction.commit();</b>
+<b class="fc">&nbsp;            return result;</b>
+<b class="fc">&nbsp;        } catch (final Exception e) {</b>
+<b class="fc">&nbsp;            transaction.rollback();</b>
+<b class="fc">&nbsp;            if (e instanceof RuntimeException) {</b>
+<b class="fc">&nbsp;              throw (RuntimeException) e;</b>
+&nbsp;            }
+<b class="nc">&nbsp;            throw new RuntimeException(e);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Performs an action in a transaction
+&nbsp;     *
+&nbsp;     * @param action the action
+&nbsp;     */
+&nbsp;    public void inTransaction(Runnable action) {
+<b class="fc">&nbsp;        inTransaction(() -&gt; {</b>
+<b class="fc">&nbsp;            action.run();</b>
+<b class="nc">&nbsp;            return true;</b>
+&nbsp;        });
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-11-03 20:18</div>
+</div>
+</body>
+</html>

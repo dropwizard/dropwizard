@@ -1,0 +1,440 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > DropwizardAppExtension</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">io.dropwizard.testing.junit5</a>
+</div>
+
+<h1>Coverage Summary for Class: DropwizardAppExtension (io.dropwizard.testing.junit5)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">DropwizardAppExtension</td>
+<td class="coverageStat">
+  <span class="percent">
+    74.1%
+  </span>
+  <span class="absValue">
+    (20/27)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    81.6%
+  </span>
+  <span class="absValue">
+    (40/49)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">DropwizardAppExtension$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/3)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">DropwizardAppExtension$2</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/2)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">DropwizardAppExtension$ServiceListener</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/3)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    57.1%
+  </span>
+  <span class="absValue">
+    (20/35)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    70.2%
+  </span>
+  <span class="absValue">
+    (40/57)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package io.dropwizard.testing.junit5;
+&nbsp;
+&nbsp;import com.fasterxml.jackson.databind.ObjectMapper;
+&nbsp;import io.dropwizard.configuration.ConfigurationSourceProvider;
+&nbsp;import io.dropwizard.core.Application;
+&nbsp;import io.dropwizard.core.Configuration;
+&nbsp;import io.dropwizard.core.cli.Command;
+&nbsp;import io.dropwizard.core.cli.ServerCommand;
+&nbsp;import io.dropwizard.core.setup.Environment;
+&nbsp;import io.dropwizard.jersey.jackson.JacksonFeature;
+&nbsp;import io.dropwizard.lifecycle.Managed;
+&nbsp;import io.dropwizard.testing.ConfigOverride;
+&nbsp;import io.dropwizard.testing.DropwizardTestSupport;
+&nbsp;import jakarta.ws.rs.client.Client;
+&nbsp;import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
+&nbsp;import org.checkerframework.checker.nullness.qual.Nullable;
+&nbsp;import org.glassfish.jersey.apache5.connector.Apache5ConnectorProvider;
+&nbsp;import org.glassfish.jersey.apache5.connector.Apache5HttpClientBuilderConfigurator;
+&nbsp;import org.glassfish.jersey.client.ClientConfig;
+&nbsp;import org.glassfish.jersey.client.ClientProperties;
+&nbsp;import org.glassfish.jersey.client.JerseyClientBuilder;
+&nbsp;import org.glassfish.jersey.client.RequestEntityProcessing;
+&nbsp;
+&nbsp;import jakarta.ws.rs.client.Client;
+&nbsp;import java.util.Optional;
+&nbsp;import java.util.concurrent.atomic.AtomicInteger;
+&nbsp;import java.util.function.Function;
+&nbsp;
+&nbsp;import org.junit.jupiter.api.extension.AfterAllCallback;
+&nbsp;import org.junit.jupiter.api.extension.BeforeAllCallback;
+&nbsp;import org.junit.jupiter.api.extension.ExtensionContext;
+&nbsp;
+&nbsp;//@formatter:off
+&nbsp;/**
+&nbsp; * An extension for starting and stopping your application at the start and end of a test class.
+&nbsp; * &lt;p&gt;
+&nbsp; * By default, the {@link Application} will be constructed using reflection to invoke the nullary
+&nbsp; * constructor. If your application does not provide a public nullary constructor, you will need to
+&nbsp; * override the {@link #newApplication()} method to provide your application instance(s).
+&nbsp; * &lt;/p&gt;
+&nbsp; *
+&nbsp; * @param &lt;C&gt; the configuration type
+&nbsp; */
+&nbsp;//@formatter:on
+&nbsp;public class DropwizardAppExtension&lt;C extends Configuration&gt; implements DropwizardExtension,
+&nbsp;    BeforeAllCallback, AfterAllCallback {
+&nbsp;
+&nbsp;    private static final int DEFAULT_CONNECT_TIMEOUT_MS = 1000;
+&nbsp;    private static final int DEFAULT_READ_TIMEOUT_MS = 5000;
+&nbsp;
+&nbsp;    private final DropwizardTestSupport&lt;C&gt; testSupport;
+&nbsp;
+<b class="fc">&nbsp;    private final AtomicInteger recursiveCallCount = new AtomicInteger(0);</b>
+&nbsp;
+&nbsp;    @Nullable
+&nbsp;    private Client client;
+&nbsp;
+&nbsp;    public DropwizardAppExtension(Class&lt;? extends Application&lt;C&gt;&gt; applicationClass) {
+<b class="nc">&nbsp;        this(applicationClass, (String) null);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public DropwizardAppExtension(Class&lt;? extends Application&lt;C&gt;&gt; applicationClass,
+&nbsp;                                  @Nullable String configPath,
+&nbsp;                                  ConfigOverride... configOverrides) {
+<b class="fc">&nbsp;        this(applicationClass, configPath, (String) null, configOverrides);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * @since 2.0
+&nbsp;     */
+&nbsp;    public DropwizardAppExtension(Class&lt;? extends Application&lt;C&gt;&gt; applicationClass,
+&nbsp;                                  @Nullable String configPath,
+&nbsp;                                  ConfigurationSourceProvider configSourceProvider,
+&nbsp;                                  ConfigOverride... configOverrides) {
+<b class="fc">&nbsp;        this(applicationClass, configPath, configSourceProvider, null, configOverrides);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * @since 2.0
+&nbsp;     */
+&nbsp;    public DropwizardAppExtension(Class&lt;? extends Application&lt;C&gt;&gt; applicationClass,
+&nbsp;                                  @Nullable String configPath,
+&nbsp;                                  @Nullable String customPropertyPrefix,
+&nbsp;                                  ConfigOverride... configOverrides) {
+<b class="fc">&nbsp;        this(applicationClass, configPath, customPropertyPrefix, ServerCommand::new, configOverrides);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * @since 2.0
+&nbsp;     */
+&nbsp;    public DropwizardAppExtension(Class&lt;? extends Application&lt;C&gt;&gt; applicationClass,
+&nbsp;                                  @Nullable String configPath,
+&nbsp;                                  ConfigurationSourceProvider configSourceProvider,
+&nbsp;                                  @Nullable String customPropertyPrefix,
+&nbsp;                                  ConfigOverride... configOverrides) {
+<b class="fc">&nbsp;        this(applicationClass, configPath, configSourceProvider, customPropertyPrefix, ServerCommand::new, configOverrides);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public DropwizardAppExtension(Class&lt;? extends Application&lt;C&gt;&gt; applicationClass,
+&nbsp;                                  @Nullable String configPath,
+&nbsp;                                  @Nullable String customPropertyPrefix,
+&nbsp;                                  Function&lt;Application&lt;C&gt;, Command&gt; commandInstantiator,
+&nbsp;                                  ConfigOverride... configOverrides) {
+<b class="fc">&nbsp;        this(new DropwizardTestSupport&lt;&gt;(applicationClass, configPath, customPropertyPrefix, commandInstantiator, configOverrides));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public DropwizardAppExtension(Class&lt;? extends Application&lt;C&gt;&gt; applicationClass,
+&nbsp;                                  @Nullable String configPath,
+&nbsp;                                  ConfigurationSourceProvider configSourceProvider,
+&nbsp;                                  @Nullable String customPropertyPrefix,
+&nbsp;                                  Function&lt;Application&lt;C&gt;, Command&gt; commandInstantiator,
+&nbsp;                                  ConfigOverride... configOverrides) {
+<b class="fc">&nbsp;        this(new DropwizardTestSupport&lt;&gt;(applicationClass, configPath, configSourceProvider, customPropertyPrefix, commandInstantiator, configOverrides));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Alternate constructor that allows specifying exact Configuration object to
+&nbsp;     * use, instead of reading a resource and binding it as Configuration object.
+&nbsp;     *
+&nbsp;     * @since 0.9
+&nbsp;     */
+&nbsp;    public DropwizardAppExtension(Class&lt;? extends Application&lt;C&gt;&gt; applicationClass,
+&nbsp;                                  C configuration) {
+<b class="fc">&nbsp;        this(new DropwizardTestSupport&lt;&gt;(applicationClass, configuration));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Alternate constructor that allows specifying the command the Dropwizard application is started with.
+&nbsp;     *
+&nbsp;     * @since 1.1.0
+&nbsp;     */
+&nbsp;    public DropwizardAppExtension(Class&lt;? extends Application&lt;C&gt;&gt; applicationClass,
+&nbsp;                                  C configuration, Function&lt;Application&lt;C&gt;, Command&gt; commandInstantiator) {
+<b class="nc">&nbsp;        this(new DropwizardTestSupport&lt;&gt;(applicationClass, configuration, commandInstantiator));</b>
+&nbsp;    }
+&nbsp;
+<b class="fc">&nbsp;    public DropwizardAppExtension(DropwizardTestSupport&lt;C&gt; testSupport) {</b>
+<b class="fc">&nbsp;        this.testSupport = testSupport;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public DropwizardAppExtension&lt;C&gt; addListener(final ServiceListener&lt;C&gt; listener) {
+<b class="nc">&nbsp;        this.testSupport.addListener(new DropwizardTestSupport.ServiceListener&lt;C&gt;() {</b>
+&nbsp;            @Override
+&nbsp;            public void onRun(C configuration, Environment environment, DropwizardTestSupport&lt;C&gt; rule) throws Exception {
+<b class="nc">&nbsp;                listener.onRun(configuration, environment, DropwizardAppExtension.this);</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            @Override
+&nbsp;            public void onStop(DropwizardTestSupport&lt;C&gt; rule) throws Exception {
+<b class="nc">&nbsp;                listener.onStop(DropwizardAppExtension.this);</b>
+&nbsp;            }
+&nbsp;        });
+<b class="nc">&nbsp;        return this;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public DropwizardAppExtension&lt;C&gt; manage(final Managed managed) {
+<b class="nc">&nbsp;        return addListener(new ServiceListener&lt;C&gt;() {</b>
+&nbsp;            @Override
+&nbsp;            public void onRun(C configuration, Environment environment, DropwizardAppExtension&lt;C&gt; rule) throws Exception {
+<b class="nc">&nbsp;                environment.lifecycle().manage(managed);</b>
+&nbsp;            }
+&nbsp;        });
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void beforeAll(ExtensionContext extensionContext) throws Exception {
+<b class="fc">&nbsp;        this.before();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void afterAll(ExtensionContext extensionContext) {
+<b class="fc">&nbsp;        this.after();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void before() throws Exception {
+<b class="fc">&nbsp;        if (recursiveCallCount.getAndIncrement() == 0) {</b>
+<b class="fc">&nbsp;            testSupport.before();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void after() {
+<b class="fc">&nbsp;        if (recursiveCallCount.decrementAndGet() == 0) {</b>
+<b class="fc">&nbsp;            testSupport.after();</b>
+<b class="fc">&nbsp;            synchronized (this) {</b>
+<b class="fc">&nbsp;                if (client != null) {</b>
+<b class="fc">&nbsp;                    client.close();</b>
+<b class="fc">&nbsp;                    client = null;</b>
+&nbsp;                }
+<b class="fc">&nbsp;            }</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    public C getConfiguration() {
+<b class="fc">&nbsp;        return testSupport.getConfiguration();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public int getLocalPort() {
+<b class="fc">&nbsp;        return testSupport.getLocalPort();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public int getPort(int connectorIndex) {
+<b class="nc">&nbsp;        return testSupport.getPort(connectorIndex);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public int getAdminPort() {
+<b class="fc">&nbsp;        return testSupport.getAdminPort();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Application&lt;C&gt; newApplication() {
+<b class="nc">&nbsp;        return testSupport.newApplication();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @SuppressWarnings({&quot;TypeParameterUnusedInFormals&quot;})
+&nbsp;    public &lt;A extends Application&lt;C&gt;&gt; A getApplication() {
+<b class="fc">&nbsp;        return testSupport.getApplication();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Environment getEnvironment() {
+<b class="fc">&nbsp;        return testSupport.getEnvironment();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public ObjectMapper getObjectMapper() {
+<b class="fc">&nbsp;        return testSupport.getObjectMapper();</b>
+&nbsp;    }
+&nbsp;
+<b class="nc">&nbsp;    public abstract static class ServiceListener&lt;T extends Configuration&gt; {</b>
+&nbsp;
+&nbsp;        public void onRun(T configuration, Environment environment, DropwizardAppExtension&lt;T&gt; rule) throws Exception {
+&nbsp;            // Default NOP
+<b class="nc">&nbsp;        }</b>
+&nbsp;
+&nbsp;        public void onStop(DropwizardAppExtension&lt;T&gt; rule) throws Exception {
+&nbsp;            // Default NOP
+<b class="nc">&nbsp;        }</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public DropwizardTestSupport&lt;C&gt; getTestSupport() {
+<b class="nc">&nbsp;        return testSupport;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a new HTTP Jersey {@link Client} for performing HTTP requests against the tested
+&nbsp;     * Dropwizard server. The client can be reused across different tests and automatically
+&nbsp;     * closed along with the server. The client can be augmented by overriding the
+&nbsp;     * {@link #clientBuilder()} method.
+&nbsp;     *
+&nbsp;     * @return a new {@link Client} managed by the extension.
+&nbsp;     */
+&nbsp;    public Client client() {
+<b class="fc">&nbsp;        synchronized (this) {</b>
+<b class="fc">&nbsp;            if (client == null) {</b>
+<b class="fc">&nbsp;                client = clientBuilder().build();</b>
+&nbsp;            }
+<b class="fc">&nbsp;            return client;</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    protected JerseyClientBuilder clientBuilder() {
+<b class="fc">&nbsp;        ClientConfig clientConfig = new ClientConfig();</b>
+<b class="fc">&nbsp;        Apache5HttpClientBuilderConfigurator contentCompressionConfigurator =</b>
+&nbsp;            HttpClientBuilder::disableContentCompression;
+<b class="fc">&nbsp;        clientConfig.connectorProvider(new Apache5ConnectorProvider())</b>
+<b class="fc">&nbsp;            .register(new JacksonFeature(getObjectMapper()))</b>
+<b class="fc">&nbsp;            .register(contentCompressionConfigurator)</b>
+<b class="fc">&nbsp;            .property(ClientProperties.CONNECT_TIMEOUT, DEFAULT_CONNECT_TIMEOUT_MS)</b>
+<b class="fc">&nbsp;            .property(ClientProperties.READ_TIMEOUT, DEFAULT_READ_TIMEOUT_MS)</b>
+<b class="fc">&nbsp;            .property(ClientProperties.REQUEST_ENTITY_PROCESSING, RequestEntityProcessing.BUFFERED);</b>
+<b class="fc">&nbsp;        return new JerseyClientBuilder().withConfig(clientConfig);</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-11-03 20:18</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,182 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > DropwizardClientExtension</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">io.dropwizard.testing.junit5</a>
+</div>
+
+<h1>Coverage Summary for Class: DropwizardClientExtension (io.dropwizard.testing.junit5)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">DropwizardClientExtension</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    66.7%
+  </span>
+  <span class="absValue">
+    (4/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    71.4%
+  </span>
+  <span class="absValue">
+    (5/7)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package io.dropwizard.testing.junit5;
+&nbsp;
+&nbsp;import com.fasterxml.jackson.databind.ObjectMapper;
+&nbsp;import io.dropwizard.core.setup.Environment;
+&nbsp;import io.dropwizard.testing.common.DropwizardClient;
+&nbsp;
+&nbsp;import java.net.URI;
+&nbsp;import java.net.URL;
+&nbsp;
+&nbsp;//@formatter:off
+&nbsp;/**
+&nbsp; * Test your HTTP client code by writing a JAX-RS test double class and let this extension start and stop a
+&nbsp; * Dropwizard application containing your doubles.
+&nbsp; * &lt;p&gt;
+&nbsp; * Example:
+&nbsp; * &lt;pre&gt;&lt;code&gt;
+&nbsp;    {@literal @}Path(&quot;/ping&quot;)
+&nbsp;    public static class PingResource {
+&nbsp;        {@literal @}GET
+&nbsp;        public String ping() {
+&nbsp;            return &quot;pong&quot;;
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    public static DropwizardClientExtension dropwizard = new DropwizardClientExtension(new PingResource());
+&nbsp;
+&nbsp;    {@literal @}Test
+&nbsp;    public void shouldPing() throws IOException {
+&nbsp;        URL url = new URL(dropwizard.baseUri() + &quot;/ping&quot;);
+&nbsp;        String response = new BufferedReader(new InputStreamReader(url.openStream())).readLine();
+&nbsp;        assertEquals(&quot;pong&quot;, response);
+&nbsp;    }
+&nbsp;&lt;/code&gt;&lt;/pre&gt;
+&nbsp; * Of course, you&#39;d use your http client, not {@link URL#openStream()}.
+&nbsp; * &lt;/p&gt;
+&nbsp; * &lt;p&gt;
+&nbsp; * The {@link DropwizardClientExtension} takes care of:
+&nbsp; * &lt;ul&gt;
+&nbsp; * &lt;li&gt;Creating a simple default configuration.&lt;/li&gt;
+&nbsp; * &lt;li&gt;Creating a simplistic application.&lt;/li&gt;
+&nbsp; * &lt;li&gt;Adding a dummy health check to the application to suppress the startup warning.&lt;/li&gt;
+&nbsp; * &lt;li&gt;Adding your resources to the application.&lt;/li&gt;
+&nbsp; * &lt;li&gt;Choosing a free random port number.&lt;/li&gt;
+&nbsp; * &lt;li&gt;Starting the application.&lt;/li&gt;
+&nbsp; * &lt;li&gt;Stopping the application.&lt;/li&gt;
+&nbsp; * &lt;/ul&gt;
+&nbsp; * &lt;/p&gt;
+&nbsp; */
+&nbsp;//@formatter:off
+&nbsp;public class DropwizardClientExtension implements DropwizardExtension {
+&nbsp;    private final DropwizardClient client;
+&nbsp;
+<b class="fc">&nbsp;    public DropwizardClientExtension(Object... resources) {</b>
+<b class="fc">&nbsp;        this.client = new DropwizardClient(resources);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public URI baseUri() {
+<b class="fc">&nbsp;        return client.baseUri();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public ObjectMapper getObjectMapper() {
+<b class="nc">&nbsp;        return client.getObjectMapper();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Environment getEnvironment() {
+<b class="nc">&nbsp;        return client.getEnvironment();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void before() throws Throwable {
+<b class="fc">&nbsp;        client.before();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void after() {
+<b class="fc">&nbsp;        client.after();</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-11-03 20:18</div>
+</div>
+</body>
+</html>
