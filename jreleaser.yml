@@ -20,7 +20,7 @@ project:
     - zUniQueX
   java:
     groupId: io.dropwizard
-    version: 11
+    version: 17
 
 release:
   github:
