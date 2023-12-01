@@ -31,7 +31,6 @@ jobs:
       fail-fast: false
       matrix:
         java_version:
-          - "11"
           - "17"
           - "21"
         os:
