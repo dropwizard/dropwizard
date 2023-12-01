@@ -66,7 +66,10 @@ import java.util.stream.Collectors;
  *         </td>
  *     </tr>
  * </table>
+ *
+ * @deprecated Jetty 12.0.3 removes the {@link PushCacheFilter} without replacement
  */
+@Deprecated
 public class ServerPushFilterFactory {
 
     private boolean enabled = false;
