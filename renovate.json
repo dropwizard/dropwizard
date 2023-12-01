@@ -8,7 +8,7 @@
     ":prConcurrentLimitNone",
     ":separatePatchReleases"
   ],
-  "baseBranches": ["release/2.1.x", "release/3.0.x", "release/4.0.x"],
+  "baseBranches": ["release/2.1.x", "release/3.0.x", "release/4.0.x", "release/5.0.x"],
   "dependencyDashboard": true,
   "labels": ["dependencies"],
   "packageRules": [
