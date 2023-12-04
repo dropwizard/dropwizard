@@ -34,6 +34,12 @@ class DropwizardJettyServerAdapter implements ServerAdapter {
 
     @Override
     public Map<String, String> buildResponseHeaderMap() {
-        return response.getHttpFields().stream().collect(Collectors.toMap(HttpField::getName, HttpField::getValue));
+        return response.getHttpFields()
+            .stream()
+            .collect(
+                Collectors.groupingBy(HttpField::getName,
+                    Collectors.mapping(HttpField::getValue,
+                        Collectors.joining(",")))
+            );
     }
 }
