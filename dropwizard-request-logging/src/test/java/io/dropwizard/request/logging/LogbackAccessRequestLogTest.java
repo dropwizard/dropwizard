@@ -2,6 +2,7 @@ package io.dropwizard.request.logging;
 
 import ch.qos.logback.access.spi.IAccessEvent;
 import ch.qos.logback.core.Appender;
+import org.eclipse.jetty.http.HttpFields;
 import org.eclipse.jetty.http.MetaData;
 import org.eclipse.jetty.server.HttpChannel;
 import org.eclipse.jetty.server.HttpChannelState;
@@ -51,6 +52,11 @@ class LogbackAccessRequestLogTest {
 
         when(response.getHttpChannel()).thenReturn(channel);
 
+        HttpFields.Mutable responseFields = HttpFields.build();
+        responseFields.add("Testheader", "Testvalue1");
+        responseFields.add("Testheader", "Testvalue2");
+        when(response.getHttpFields()).thenReturn(responseFields);
+
         requestLog.addAppender(appender);
 
         requestLog.start();
@@ -72,6 +78,13 @@ class LogbackAccessRequestLogTest {
 
         assertThat(event.getStatusCode()).isEqualTo(200);
         assertThat(event.getContentLength()).isEqualTo(8290L);
+    }
+
+    @Test
+    void combinesHeaders() {
+        final IAccessEvent event = logAndCapture();
+
+        assertThat(event.getResponseHeaderMap()).containsEntry("Testheader", "Testvalue1,Testvalue2");
     }
 
     private IAccessEvent logAndCapture() {
