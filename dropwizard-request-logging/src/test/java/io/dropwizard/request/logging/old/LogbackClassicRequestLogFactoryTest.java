@@ -17,7 +17,7 @@ import org.eclipse.jetty.server.CustomRequestLog;
 import org.eclipse.jetty.server.HttpChannelState;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Response;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
@@ -38,14 +38,14 @@ class LogbackClassicRequestLogFactoryTest {
         BootstrapLogging.bootstrap();
     }
 
-    private RequestLogFactory<?> requestLog;
+    private static RequestLogFactory<?> requestLog;
 
-    @BeforeEach
-    void setUp() throws Exception {
+    @BeforeAll
+    static void setUp() throws Exception {
         final ObjectMapper objectMapper = Jackson.newObjectMapper();
         objectMapper.getSubtypeResolver().registerSubtypes(ConsoleAppenderFactory.class, FileAppenderFactory.class,
             SyslogAppenderFactory.class);
-        this.requestLog = new YamlConfigurationFactory<>(RequestLogFactory.class,
+        requestLog = new YamlConfigurationFactory<>(RequestLogFactory.class,
             BaseValidator.newValidator(), objectMapper, "dw")
             .build(new ResourceConfigurationSourceProvider(), "yaml/logbackClassicRequestLog.yml");
     }
