@@ -26,7 +26,7 @@
         <pgpverify.verifyPomFiles>false</pgpverify.verifyPomFiles>
 
         <surefire.argLine>-Duser.language=en -Duser.region=US -Duser.timezone=UTC</surefire.argLine>
-        <argLine>${surefire.argLine} --illegal-access=deny --add-opens java.base/java.net=ALL-UNNAMED</argLine>
+        <argLine>${surefire.argLine} --add-opens java.base/java.net=ALL-UNNAMED</argLine>
     </properties>
 
     <profiles>
