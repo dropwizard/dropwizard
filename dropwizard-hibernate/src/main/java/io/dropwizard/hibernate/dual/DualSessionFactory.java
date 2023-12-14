@@ -5,7 +5,6 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceUnitUtil;
 import jakarta.persistence.Query;
 import jakarta.persistence.SynchronizationType;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.metamodel.Metamodel;
 import org.hibernate.Cache;
 import org.hibernate.HibernateException;
@@ -16,6 +15,9 @@ import org.hibernate.StatelessSession;
 import org.hibernate.StatelessSessionBuilder;
 import org.hibernate.boot.spi.SessionFactoryOptions;
 import org.hibernate.engine.spi.FilterDefinition;
+import org.hibernate.graph.RootGraph;
+import org.hibernate.query.criteria.HibernateCriteriaBuilder;
+import org.hibernate.relational.SchemaManager;
 import org.hibernate.stat.Statistics;
 
 import javax.naming.NamingException;
@@ -76,7 +78,9 @@ public class DualSessionFactory implements SessionFactory {
     public EntityManager createEntityManager(final SynchronizationType synchronizationType, final Map map) { return current().createEntityManager(synchronizationType, map); }
 
     @Override
-    public CriteriaBuilder getCriteriaBuilder() { return current().getCriteriaBuilder(); }
+    public HibernateCriteriaBuilder getCriteriaBuilder() {
+        return current().getCriteriaBuilder();
+    }
 
     @Override
     public Metamodel getMetamodel() {
@@ -168,4 +172,19 @@ public class DualSessionFactory implements SessionFactory {
 
     @Override
     public boolean containsFetchProfileDefinition(String name) { return current().containsFetchProfileDefinition(name); }
+
+    @Override
+    public SchemaManager getSchemaManager() {
+        return current().getSchemaManager();
+    }
+
+    @Override
+    public RootGraph<?> findEntityGraphByName(String s) {
+        return current().findEntityGraphByName(s);
+    }
+
+    @Override
+    public Set<String> getDefinedFetchProfileNames() {
+        return current().getDefinedFetchProfileNames();
+    }
 }

@@ -54,13 +54,6 @@ class JacksonTest {
             .hasFileName("objectMapperIgnoresUnknownProperties.log");
     }
 
-    @Test
-    void objectMapperRegistersAfterburnerButNotBlackbird() {
-        assertThat(Jackson.newObjectMapper().getRegisteredModuleIds())
-                .contains("com.fasterxml.jackson.module.afterburner.AfterburnerModule")
-                .doesNotContain("com.fasterxml.jackson.module.blackbird.BlackbirdModule");
-    }
-
     static class LogMetadata {
 
         @Nullable

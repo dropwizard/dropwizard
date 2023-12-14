@@ -5,16 +5,17 @@ import jakarta.servlet.Filter;
 import jakarta.servlet.FilterRegistration;
 import jakarta.servlet.Servlet;
 import jakarta.servlet.ServletRegistration;
+import org.eclipse.jetty.ee10.servlet.FilterHolder;
+import org.eclipse.jetty.ee10.servlet.ServletHandler;
+import org.eclipse.jetty.ee10.servlet.ServletHolder;
+import org.eclipse.jetty.ee10.servlet.SessionHandler;
 import org.eclipse.jetty.security.SecurityHandler;
-import org.eclipse.jetty.server.session.SessionHandler;
-import org.eclipse.jetty.servlet.FilterHolder;
-import org.eclipse.jetty.servlet.ServletHandler;
-import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.resource.Resource;
-import org.eclipse.jetty.util.resource.ResourceCollection;
+import org.eclipse.jetty.util.resource.ResourceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.EventListener;
 import java.util.HashSet;
@@ -144,7 +145,7 @@ public class ServletEnvironment {
      *                      content of this context.
      */
     public void setBaseResource(Resource... baseResources) {
-        handler.setBaseResource(new ResourceCollection(baseResources));
+        handler.setBaseResource(ResourceFactory.combine(baseResources));
     }
 
     /**
@@ -155,7 +156,17 @@ public class ServletEnvironment {
      *                  may be passed and the call is equivalent to {@link #setBaseResource(Resource...)}}
      */
     public void setBaseResource(String... resources) {
-        handler.setBaseResource(new ResourceCollection(resources));
+        handler.setBaseResource(
+            ResourceFactory.combine(
+                Arrays.stream(resources).map(resource -> {
+                    try {
+                        return handler.newResource(resource);
+                    } catch (IOException ioException) {
+                        throw new RuntimeException(ioException);
+                    }
+                }).toList()
+            )
+        );
     }
 
     /**
@@ -164,8 +175,8 @@ public class ServletEnvironment {
      *                     string accepted by Resource.newResource(String) may be passed
      *                     and the call is equivalent to {@link #setBaseResource(Resource)}}
      */
-    public void setResourceBase(String resourceBase) {
-        handler.setResourceBase(resourceBase);
+    public void setResourceBase(String resourceBase) throws IOException {
+        handler.setBaseResource(handler.newResource(resourceBase));
     }
 
     /**

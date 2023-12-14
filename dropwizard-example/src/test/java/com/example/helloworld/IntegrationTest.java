@@ -10,6 +10,7 @@ import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.eclipse.jetty.http.HttpStatus;
+import org.glassfish.jersey.client.ClientProperties;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -110,6 +111,7 @@ class IntegrationTest {
 
     private Person postPerson(Person person) {
         return APP.client().target("http://localhost:" + APP.getLocalPort() + "/people")
+                .property(ClientProperties.CONNECT_TIMEOUT, 0)
                 .request()
                 .post(Entity.entity(person, MediaType.APPLICATION_JSON_TYPE))
                 .readEntity(Person.class);

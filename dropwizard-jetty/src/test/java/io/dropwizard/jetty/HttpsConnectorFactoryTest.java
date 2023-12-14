@@ -5,7 +5,7 @@ import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.DiscoverableSubtypeResolver;
 import io.dropwizard.jackson.Jackson;
-import io.dropwizard.metrics.jetty11.InstrumentedConnectionFactory;
+import io.dropwizard.metrics.jetty12.InstrumentedConnectionFactory;
 import io.dropwizard.validation.BaseValidator;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
@@ -18,6 +18,7 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.SslConnectionFactory;
 import org.eclipse.jetty.util.resource.Resource;
+import org.eclipse.jetty.util.resource.ResourceFactory;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.util.thread.ScheduledExecutorScheduler;
@@ -27,8 +28,6 @@ import org.junit.jupiter.api.condition.DisabledForJreRange;
 import org.junit.jupiter.api.condition.JRE;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.net.URI;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -285,15 +284,22 @@ class HttpsConnectorFactoryTest {
 
     @Test
     void testBuild() throws Exception {
+        final File keyStoreFile = File.createTempFile("server", ".ks");
+        keyStoreFile.deleteOnExit();
+        final String keyStorePath = keyStoreFile.getPath();
+        final File trustStoreFile = File.createTempFile("server", ".ts");
+        trustStoreFile.deleteOnExit();
+        final String trustStorePath = trustStoreFile.getPath();
+
         final HttpsConnectorFactory https = new HttpsConnectorFactory();
         https.setBindHost("127.0.0.1");
         https.setPort(8443);
 
-        https.setKeyStorePath("/etc/app/server.ks");
+        https.setKeyStorePath(keyStorePath);
         https.setKeyStoreType("JKS");
         https.setKeyStorePassword("correct_horse");
         https.setKeyStoreProvider("BC");
-        https.setTrustStorePath("/etc/app/server.ts");
+        https.setTrustStorePath(trustStorePath);
         https.setTrustStoreType("JKS");
         https.setTrustStorePassword("battery_staple");
         https.setTrustStoreProvider("BC");
@@ -336,13 +342,13 @@ class HttpsConnectorFactoryTest {
                     .extracting(SslConnectionFactory::getSslContextFactory)
                     .satisfies(sslContextFactory -> {
                         assertThat(sslContextFactory.getKeyStoreResource())
-                                .isEqualTo(newResource("/etc/app/server.ks"));
+                                .isEqualTo(newResource(keyStorePath, server));
                         assertThat(sslContextFactory.getKeyStoreType()).isEqualTo("JKS");
                         assertThat(sslContextFactory).extracting("_keyStorePassword")
                                 .isEqualTo("correct_horse");
                         assertThat(sslContextFactory.getKeyStoreProvider()).isEqualTo("BC");
                         assertThat(sslContextFactory.getTrustStoreResource())
-                                .isEqualTo(newResource("/etc/app/server.ts"));
+                                .isEqualTo(newResource(trustStorePath, server));
                         assertThat(sslContextFactory.getKeyStoreType()).isEqualTo("JKS");
                         assertThat(sslContextFactory).extracting("_trustStorePassword")
                                 .isEqualTo("battery_staple");
@@ -441,11 +447,7 @@ class HttpsConnectorFactoryTest {
                 .collect(Collectors.toSet());
     }
 
-    private static Resource newResource(String resource) {
-        try {
-            return Resource.newResource(resource);
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
+    private static Resource newResource(String resource, Server server) {
+        return ResourceFactory.of(server).newResource(resource);
     }
 }

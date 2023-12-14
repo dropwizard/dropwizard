@@ -11,7 +11,6 @@ import io.dropwizard.core.setup.ExceptionMapperBinder;
 import io.dropwizard.jackson.DiscoverableSubtypeResolver;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jetty.HttpConnectorFactory;
-import io.dropwizard.jetty.ServerPushFilterFactory;
 import io.dropwizard.logging.common.ConsoleAppenderFactory;
 import io.dropwizard.logging.common.FileAppenderFactory;
 import io.dropwizard.logging.common.SyslogAppenderFactory;
@@ -65,14 +64,6 @@ class DefaultServerFactoryTest {
     void loadsGzipConfig() {
         assertThat(http.getGzipFilterFactory().isEnabled())
                 .isFalse();
-    }
-
-    @Test
-    void loadsServerPushConfig() {
-        final ServerPushFilterFactory serverPush = http.getServerPush();
-        assertThat(serverPush.isEnabled()).isTrue();
-        assertThat(serverPush.getRefererHosts()).contains("dropwizard.io");
-        assertThat(serverPush.getRefererPorts()).contains(8445);
     }
 
     @Test

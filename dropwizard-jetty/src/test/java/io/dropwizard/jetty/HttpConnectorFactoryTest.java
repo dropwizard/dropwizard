@@ -9,7 +9,7 @@ import io.dropwizard.jackson.Jackson;
 import io.dropwizard.logging.common.ConsoleAppenderFactory;
 import io.dropwizard.logging.common.FileAppenderFactory;
 import io.dropwizard.logging.common.SyslogAppenderFactory;
-import io.dropwizard.metrics.jetty11.InstrumentedConnectionFactory;
+import io.dropwizard.metrics.jetty12.InstrumentedConnectionFactory;
 import io.dropwizard.util.DataSize;
 import io.dropwizard.util.Duration;
 import io.dropwizard.validation.BaseValidator;

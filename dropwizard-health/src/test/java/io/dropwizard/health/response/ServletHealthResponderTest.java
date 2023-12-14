@@ -1,12 +1,12 @@
 package io.dropwizard.health.response;
 
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.ws.rs.core.MediaType;
+import org.eclipse.jetty.ee10.servlet.ServletHolder;
+import org.eclipse.jetty.ee10.servlet.ServletTester;
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpMethod;
 import org.eclipse.jetty.http.HttpTester;
-import org.eclipse.jetty.server.Response;
-import org.eclipse.jetty.servlet.ServletHolder;
-import org.eclipse.jetty.servlet.ServletTester;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,9 +30,9 @@ class ServletHealthResponderTest {
     private static final String NO_STORE = "no-store";
     private static final String HEALTH_CHECK_URI = "/health-check";
     private static final HealthResponse SUCCESS = new HealthResponse(true, "healthy", MediaType.TEXT_PLAIN,
-        Response.SC_OK);
+        HttpServletResponse.SC_OK);
     private static final HealthResponse FAIL = new HealthResponse(false, "unhealthy", MediaType.TEXT_PLAIN,
-        Response.SC_SERVICE_UNAVAILABLE);
+        HttpServletResponse.SC_SERVICE_UNAVAILABLE);
 
     private final HttpTester.Request request = new HttpTester.Request();
 
@@ -68,7 +68,7 @@ class ServletHealthResponderTest {
         final HttpTester.Response response = executeRequest(request);
 
         // then
-        assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
+        assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_OK);
         assertThat(response.get(HttpHeader.CACHE_CONTROL)).isNull();
     }
 
@@ -85,7 +85,7 @@ class ServletHealthResponderTest {
         final HttpTester.Response response = executeRequest(request);
 
         // then
-        assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
+        assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_OK);
         assertThat(response.get(HttpHeader.CACHE_CONTROL))
             .isNotNull()
             .isEqualTo(NO_STORE);
@@ -104,7 +104,7 @@ class ServletHealthResponderTest {
         final HttpTester.Response response = executeRequest(request);
 
         // then
-        assertThat(response.getStatus()).isEqualTo(Response.SC_SERVICE_UNAVAILABLE);
+        assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
         assertThat(response.get(HttpHeader.CACHE_CONTROL))
             .isNotNull()
             .isEqualTo(NO_STORE);
@@ -137,7 +137,7 @@ class ServletHealthResponderTest {
         final HttpTester.Response response = executeRequest(request);
 
         // then
-        assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
+        assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_OK);
         assertThat(response.getContent()).isEqualTo(SUCCESS.getMessage());
         assertThat(response.get(HttpHeader.CONTENT_TYPE)).startsWith(SUCCESS.getContentType());
         assertThat(response.get(HttpHeader.CACHE_CONTROL))

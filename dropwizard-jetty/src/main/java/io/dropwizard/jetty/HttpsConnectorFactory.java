@@ -3,7 +3,7 @@ package io.dropwizard.jetty;
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import io.dropwizard.metrics.jetty11.InstrumentedConnectionFactory;
+import io.dropwizard.metrics.jetty12.InstrumentedConnectionFactory;
 import io.dropwizard.validation.ValidationMethod;
 import jakarta.validation.constraints.NotEmpty;
 import org.checkerframework.checker.nullness.qual.Nullable;

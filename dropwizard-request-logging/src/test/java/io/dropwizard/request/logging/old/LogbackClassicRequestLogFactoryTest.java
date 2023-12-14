@@ -13,13 +13,17 @@ import io.dropwizard.logging.common.FileAppenderFactory;
 import io.dropwizard.logging.common.SyslogAppenderFactory;
 import io.dropwizard.request.logging.RequestLogFactory;
 import io.dropwizard.validation.BaseValidator;
+import org.eclipse.jetty.http.HttpFields;
+import org.eclipse.jetty.http.HttpURI;
+import org.eclipse.jetty.server.ConnectionMetaData;
 import org.eclipse.jetty.server.CustomRequestLog;
-import org.eclipse.jetty.server.HttpChannelState;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Response;
+import org.eclipse.jetty.server.internal.HttpChannelState;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.MockedStatic;
 
 import java.util.Collections;
 import java.util.TimeZone;
@@ -28,6 +32,7 @@ import java.util.concurrent.TimeUnit;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -76,20 +81,23 @@ class LogbackClassicRequestLogFactoryTest {
         factory.setTimeZone(TimeZone.getTimeZone(tz));
 
         CustomRequestLog logger = null;
-        try {
-            when(channelState.isInitial()).thenReturn(true);
-            when(request.getRemoteHost()).thenReturn("10.0.0.1");
+        try (MockedStatic<Request> staticRequest = mockStatic(Request.class);
+             MockedStatic<Response> staticResponse = mockStatic(Response.class)) {
+            staticRequest.when(() -> Request.getRemoteAddr(request)).thenReturn("10.0.0.1");
 
             // Jetty log format compares against System.currentTimeMillis, so there
             // isn't a way for us to set our own clock
-            when(request.getTimeStamp()).thenReturn(System.currentTimeMillis());
+            when(request.getHeadersNanoTime()).thenReturn(0L);
             when(request.getMethod()).thenReturn("GET");
-            when(request.getRequestURI()).thenReturn("/test/things");
-            when(request.getProtocol()).thenReturn("HTTP/1.1");
-            when(request.getHttpChannelState()).thenReturn(channelState);
+            HttpURI httpURI = mock(HttpURI.class);
+            when(httpURI.getPath()).thenReturn("/test/things");
+            when(request.getHttpURI()).thenReturn(httpURI);
+            ConnectionMetaData connectionMetaData = mock(ConnectionMetaData.class);
+            when(connectionMetaData.getProtocol()).thenReturn("HTTP/1.1");
+            when(request.getConnectionMetaData()).thenReturn(connectionMetaData);
+            when(request.getHeaders()).thenReturn(HttpFields.build());
 
-            when(response.getCommittedMetaData().getStatus()).thenReturn(200);
-            when(response.getHttpChannel().getBytesWritten()).thenReturn(8290L);
+            staticResponse.when(() -> Response.getContentBytesWritten(response)).thenReturn(8290L);
 
             final ArgumentCaptor<ILoggingEvent> captor = ArgumentCaptor.forClass(ILoggingEvent.class);
 

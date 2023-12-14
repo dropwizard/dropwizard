@@ -19,14 +19,14 @@
 
     <properties>
         <module.name>io.dropwizard.parent</module.name>
-        <maven.compiler.release>11</maven.compiler.release>
+        <maven.compiler.release>17</maven.compiler.release>
         <maven.compiler.showWarnings>true</maven.compiler.showWarnings>
         <maven.compiler.showDeprecation>true</maven.compiler.showDeprecation>
 
         <pgpverify.verifyPomFiles>false</pgpverify.verifyPomFiles>
 
         <surefire.argLine>-Duser.language=en -Duser.region=US -Duser.timezone=UTC</surefire.argLine>
-        <argLine>${surefire.argLine} --illegal-access=deny --add-opens java.base/java.net=ALL-UNNAMED</argLine>
+        <argLine>${surefire.argLine} --add-opens java.base/java.net=ALL-UNNAMED</argLine>
     </properties>
 
     <profiles>

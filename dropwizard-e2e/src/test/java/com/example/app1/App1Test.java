@@ -13,6 +13,7 @@ import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.Response;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -64,6 +65,7 @@ public class App1Test {
     }
 
     @Test
+    @Disabled("EOF is handled by Jetty since Jetty 12")
     void earlyEofTest() throws IOException {
         // Only eof test so we ensure it's false before test
         ((App1)RULE.getApplication()).wasEofExceptionHit = false;

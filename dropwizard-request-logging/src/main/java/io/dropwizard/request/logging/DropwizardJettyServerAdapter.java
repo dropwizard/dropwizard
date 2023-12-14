@@ -19,22 +19,22 @@ class DropwizardJettyServerAdapter implements ServerAdapter {
 
     @Override
     public long getRequestTimestamp() {
-        return request.getTimeStamp();
+        return Request.getTimeStamp(request);
     }
 
     @Override
     public long getContentLength() {
-        return response.getHttpChannel().getBytesWritten();
+        return Response.getContentBytesWritten(response);
     }
 
     @Override
     public int getStatusCode() {
-        return response.getCommittedMetaData().getStatus();
+        return response.getStatus();
     }
 
     @Override
     public Map<String, String> buildResponseHeaderMap() {
-        return response.getHttpFields()
+        return response.getHeaders()
             .stream()
             .collect(
                 Collectors.groupingBy(HttpField::getName,
