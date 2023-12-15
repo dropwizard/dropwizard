@@ -5,7 +5,7 @@ import com.mysql.cj.conf.PropertyKey;
 import io.dropwizard.testing.junit5.DAOTestExtension;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import org.hibernate.cfg.AvailableSettings;
-import org.hibernate.dialect.MySQL57Dialect;
+import org.hibernate.dialect.MySQLDialect;
 import org.hibernate.exception.ConstraintViolationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,7 +31,7 @@ class PersonDAOIntegrationTest {
     private static final MySQLContainer<?> MY_SQL_CONTAINER = new MySQLContainer<>(DockerImageName.parse("mysql:8.0.24"));
 
     public DAOTestExtension daoTestRule = DAOTestExtension.newBuilder()
-            .customizeConfiguration(c -> c.setProperty(AvailableSettings.DIALECT, MySQL57Dialect.class.getName()))
+            .customizeConfiguration(c -> c.setProperty(AvailableSettings.DIALECT, MySQLDialect.class.getName()))
             .setDriver(MY_SQL_CONTAINER.getDriverClassName())
             .setUrl(MY_SQL_CONTAINER.getJdbcUrl())
             .setUsername(MY_SQL_CONTAINER.getUsername())

@@ -4,7 +4,7 @@ defaultName: Stranger
 database:
   driverClass: com.mysql.cj.jdbc.Driver
   properties:
-    hibernate.dialect: org.hibernate.dialect.MySQL57Dialect
+    hibernate.dialect: org.hibernate.dialect.MySQLDialect
 #  user: sa
 #  password: sa
 #  url: jdbc:h2:./target/test-example
