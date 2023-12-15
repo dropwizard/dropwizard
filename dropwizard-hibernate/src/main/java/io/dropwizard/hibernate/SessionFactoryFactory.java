@@ -82,7 +82,6 @@ public class SessionFactoryFactory {
         configuration.setProperty(AvailableSettings.USE_SQL_COMMENTS, Boolean.toString(dbConfig.isAutoCommentsEnabled()));
         configuration.setProperty(AvailableSettings.USE_GET_GENERATED_KEYS, "true");
         configuration.setProperty(AvailableSettings.GENERATE_STATISTICS, "true");
-        configuration.setProperty(AvailableSettings.USE_REFLECTION_OPTIMIZER, "true");
         configuration.setProperty(AvailableSettings.ORDER_UPDATES, "true");
         configuration.setProperty(AvailableSettings.ORDER_INSERTS, "true");
 
