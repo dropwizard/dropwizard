@@ -113,7 +113,6 @@ public class DAOTest {
             config.setProperty(AvailableSettings.CURRENT_SESSION_CONTEXT_CLASS, "managed");
             config.setProperty(AvailableSettings.USE_GET_GENERATED_KEYS, "true");
             config.setProperty(AvailableSettings.GENERATE_STATISTICS, "true");
-            config.setProperty(AvailableSettings.USE_REFLECTION_OPTIMIZER, "true");
             config.setProperty(AvailableSettings.ORDER_UPDATES, "true");
             config.setProperty(AvailableSettings.ORDER_INSERTS, "true");
 

@@ -2,6 +2,7 @@ package io.dropwizard.testing.junit5;
 
 import io.dropwizard.testing.app.TestEntity;
 import org.hibernate.Session;
+import org.hibernate.cfg.AvailableSettings;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -17,7 +18,7 @@ class DAOTestExtensionConfigTest {
         .setHbm2DdlAuto("create")
         .setShowSql(true)
         .addEntityClass(TestEntity.class)
-        .setProperty("hibernate.format_sql", "true")
+        .setProperty(AvailableSettings.FORMAT_SQL, "true")
         .build();
 
     @Test
@@ -28,6 +29,6 @@ class DAOTestExtensionConfigTest {
         final Session currentSession = database.getSessionFactory().getCurrentSession();
 
         // an instance of an entity contained in the package can be saved
-        currentSession.saveOrUpdate(new TestEntity("foo"));
+        currentSession.persist(new TestEntity("foo"));
     }
 }
