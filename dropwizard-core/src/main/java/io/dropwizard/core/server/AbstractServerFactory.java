@@ -40,6 +40,7 @@ import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.RequestLog;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ErrorHandler;
+import org.eclipse.jetty.server.handler.GracefulHandler;
 import org.eclipse.jetty.setuid.RLimit;
 import org.eclipse.jetty.setuid.SetUIDListener;
 import org.eclipse.jetty.util.BlockingArrayQueue;
@@ -738,6 +739,12 @@ public abstract class AbstractServerFactory implements ServerFactory {
             }
             server.setRequestLog(log);
         }
+    }
+
+    protected Handler addGracefulHandler(Handler handler) {
+        final GracefulHandler gracefulHandler = new GracefulHandler();
+        gracefulHandler.setHandler(handler);
+        return gracefulHandler;
     }
 
     protected Handler buildGzipHandler(Handler handler) {
