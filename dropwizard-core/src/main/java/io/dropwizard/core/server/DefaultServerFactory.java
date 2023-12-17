@@ -192,7 +192,7 @@ public class DefaultServerFactory extends AbstractServerFactory {
                                                                   applicationHandler,
                                                                   adminHandler);
         final Handler gzipHandler = buildGzipHandler(routingHandler);
-        server.setHandler(addGracefulHandler(gzipHandler));
+        server.setHandler(customizeHandlerChain(addGracefulHandler(gzipHandler)));
         addRequestLog(server, environment.getName(), environment.getApplicationContext());
         return server;
     }

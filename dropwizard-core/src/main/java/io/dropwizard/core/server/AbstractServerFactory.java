@@ -56,6 +56,7 @@ import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 import java.util.EnumSet;
 import java.util.Optional;
+import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executors;
@@ -767,5 +768,15 @@ public abstract class AbstractServerFactory implements ServerFactory {
         } catch (IllegalArgumentException | IOException ignored) {
         }
         LOGGER.info(msg);
+    }
+
+    protected final Handler customizeHandlerChain(Handler first) {
+
+        ServiceLoader<ServerCustomizer> serverCustomizers = ServiceLoader.load(ServerCustomizer.class);
+        Handler result = first;
+        for (ServerCustomizer serverCustomizer : serverCustomizers) {
+            result = serverCustomizer.customizeHandlerChain(result);
+        }
+        return result;
     }
 }
