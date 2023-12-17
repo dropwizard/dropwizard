@@ -751,6 +751,12 @@ public abstract class AbstractServerFactory implements ServerFactory {
         return listener;
     }
 
+    /**
+     * @deprecated Jetty 12 removes the {@link RequestLogHandler}. Therefore, the signature of this method will be
+     * changed to
+     * {@code void addRequestLog(Server server, String name, MutableServletContextHandler servletContextHandler)}.
+     */
+    @Deprecated
     protected Handler addRequestLog(Server server, Handler handler, String name) {
         if (getRequestLogFactory().isEnabled()) {
             final RequestLogHandler requestLogHandler = new RequestLogHandler();
@@ -765,6 +771,12 @@ public abstract class AbstractServerFactory implements ServerFactory {
         return handler;
     }
 
+    /**
+     * @deprecated Graceful shutdown isn't performed with the {@link StatisticsHandler} in Jetty 12 anymore and metrics
+     * are collected with {@link InstrumentedHandler InstrumentedHandlers}. Will be replaced by a method with signature
+     * {@code Handler addGracefulHandler(Handler handler)}
+     */
+    @Deprecated
     protected Handler addStatsHandler(Handler handler) {
         // Graceful shutdown is implemented via the statistics handler,
         // see https://bugs.eclipse.org/bugs/show_bug.cgi?id=420142
