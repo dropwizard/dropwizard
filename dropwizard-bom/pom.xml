@@ -160,7 +160,7 @@
             <dependency>
                 <groupId>io.dropwizard</groupId>
                 <artifactId>dropwizard-unix-socket</artifactId>
-                <version>4.0.3-SNAPSHOT</version>
+                <version>5.0.0-SNAPSHOT</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
