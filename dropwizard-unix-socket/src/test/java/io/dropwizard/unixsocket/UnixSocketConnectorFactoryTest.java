@@ -1,6 +1,5 @@
 package io.dropwizard.unixsocket;
 
-import com.codahale.metrics.health.HealthCheck;
 import io.dropwizard.core.Application;
 import io.dropwizard.core.Configuration;
 import io.dropwizard.core.setup.Environment;
@@ -111,12 +110,6 @@ class UnixSocketConnectorFactoryTest {
         @Override
         public void run(Configuration configuration, Environment environment) {
             environment.jersey().register(new FakeResource());
-            environment.healthChecks().register("hello-check", new HealthCheck() {
-                @Override
-                protected Result check() {
-                    return Result.healthy();
-                }
-            });
         }
 
         @Path("/hello")
