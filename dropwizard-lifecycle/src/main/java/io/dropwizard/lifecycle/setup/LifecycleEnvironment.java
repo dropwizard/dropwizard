@@ -1,17 +1,23 @@
 package io.dropwizard.lifecycle.setup;
 
+import com.codahale.metrics.InstrumentedThreadFactory;
 import com.codahale.metrics.MetricRegistry;
+import io.dropwizard.lifecycle.ExecutorServiceManager;
 import io.dropwizard.lifecycle.JettyManaged;
 import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.lifecycle.ServerLifecycleListener;
+import io.dropwizard.util.Duration;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.component.ContainerLifeCycle;
 import org.eclipse.jetty.util.component.LifeCycle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 
 import static java.util.Objects.requireNonNull;
@@ -59,6 +65,25 @@ public class LifecycleEnvironment {
 
     public ExecutorServiceBuilder executorService(String nameFormat, ThreadFactory factory) {
         return new ExecutorServiceBuilder(this, nameFormat, factory);
+    }
+
+    public ExecutorService virtualExecutorService(String nameFormat) {
+        try {
+            Object virtualThreadBuilder = Thread.class.getDeclaredMethod("ofVirtual").invoke(null);
+            Object virtualThreadFactory = Class.forName("java.lang.Thread$Builder")
+                .getDeclaredMethod("factory")
+                .invoke(virtualThreadBuilder);
+            InstrumentedThreadFactory factory = new InstrumentedThreadFactory((ThreadFactory) virtualThreadFactory, getMetricRegistry(), nameFormat);
+            ExecutorService virtualThreadExecutor = (ExecutorService) Executors.class
+                .getDeclaredMethod("newThreadPerTaskExecutor", ThreadFactory.class)
+                .invoke(null, factory);
+            manage(new ExecutorServiceManager(virtualThreadExecutor, Duration.seconds(5), nameFormat));
+            return virtualThreadExecutor;
+        } catch (InvocationTargetException invocationTargetException) {
+            throw new IllegalStateException("Error while creating virtual executor service", invocationTargetException.getCause());
+        } catch (Exception exception) {
+            throw new IllegalStateException("Error while creating virtual executor service", exception);
+        }
     }
 
     public ScheduledExecutorServiceBuilder scheduledExecutorService(String nameFormat) {
