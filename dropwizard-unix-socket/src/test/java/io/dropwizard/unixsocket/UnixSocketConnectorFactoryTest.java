@@ -12,6 +12,8 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.io.BufferedReader;
@@ -31,6 +33,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 
+@DisabledOnOs(OS.WINDOWS) // Windows has Unix Socket support but not on all versions.
 @ExtendWith(DropwizardExtensionsSupport.class)
 class UnixSocketConnectorFactoryTest {
     private static final String httpRequest = "GET /app/hello HTTP/1.1\r\n" +
