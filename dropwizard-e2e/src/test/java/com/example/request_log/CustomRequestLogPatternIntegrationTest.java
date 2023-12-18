@@ -20,6 +20,7 @@ class CustomRequestLogPatternIntegrationTest extends AbstractRequestLogPatternIn
     protected List<ConfigOverride> configOverrides() {
         final List<ConfigOverride> configOverrides = new ArrayList<>(super.configOverrides());
         configOverrides.add(ConfigOverride.config("server.requestLog.appenders[0].logFormat", LOG_FORMAT));
+        configOverrides.add(ConfigOverride.config("server.requestLog.type", "logback-access"));
         return configOverrides;
     }
 

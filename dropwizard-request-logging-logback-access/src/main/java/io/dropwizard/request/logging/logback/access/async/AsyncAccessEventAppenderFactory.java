@@ -1,4 +1,4 @@
-package io.dropwizard.request.logging.async;
+package io.dropwizard.request.logging.logback.access.async;
 
 import ch.qos.logback.access.spi.IAccessEvent;
 import ch.qos.logback.core.AsyncAppenderBase;

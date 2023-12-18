@@ -1,3 +1,2 @@
-io.dropwizard.request.logging.LogbackAccessRequestLogFactory
 io.dropwizard.request.logging.old.LogbackClassicRequestLogFactory
 io.dropwizard.request.logging.ExternalRequestLogFactory

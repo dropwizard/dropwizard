@@ -16,7 +16,7 @@ import io.dropwizard.jackson.Jackson;
 import io.dropwizard.logging.common.BootstrapLogging;
 import io.dropwizard.logging.common.ConsoleAppenderFactory;
 import io.dropwizard.logging.common.DefaultLoggingFactory;
-import io.dropwizard.request.logging.LogbackAccessRequestLogFactory;
+import io.dropwizard.request.logging.logback.access.LogbackAccessRequestLogFactory;
 import io.dropwizard.validation.BaseValidator;
 import org.eclipse.jetty.ee10.servlet.ServletChannel;
 import org.eclipse.jetty.ee10.servlet.ServletContextHandler;

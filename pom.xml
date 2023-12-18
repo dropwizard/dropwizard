@@ -50,6 +50,7 @@
 
         <module>dropwizard-example</module>
         <module>docs/source/examples</module>
+        <module>dropwizard-request-logging-logback-access</module>
     </modules>
 
     <properties>

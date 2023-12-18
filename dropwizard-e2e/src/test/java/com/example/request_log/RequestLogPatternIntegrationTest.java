@@ -1,11 +1,13 @@
 package com.example.request_log;
 
+import io.dropwizard.testing.ConfigOverride;
 import jakarta.ws.rs.core.HttpHeaders;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -19,6 +21,13 @@ class RequestLogPatternIntegrationTest extends AbstractRequestLogPatternIntegrat
     private static final Pattern REQUEST_LOG_PATTERN = Pattern.compile(
         "127\\.0\\.0\\.1 - - \\[.+\\] \"GET /greet\\?name=Charley HTTP/1\\.1\" 200 15 \"-\" \"TestApplication \\(test-request-logs\\)\" (-)?\\d+"
     );
+
+    @Override
+    protected List<ConfigOverride> configOverrides() {
+        final List<ConfigOverride> configOverrides = new ArrayList<>(super.configOverrides());
+        configOverrides.add(ConfigOverride.config("server.requestLog.type", "logback-access"));
+        return configOverrides;
+    }
 
     @Test
     void testDefaultPattern() throws Exception {

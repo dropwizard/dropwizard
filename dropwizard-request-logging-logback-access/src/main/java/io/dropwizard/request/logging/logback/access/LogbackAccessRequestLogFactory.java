@@ -1,4 +1,4 @@
-package io.dropwizard.request.logging;
+package io.dropwizard.request.logging.logback.access;
 
 import ch.qos.logback.access.spi.IAccessEvent;
 import ch.qos.logback.classic.Logger;
@@ -12,8 +12,9 @@ import io.dropwizard.logging.common.async.AsyncAppenderFactory;
 import io.dropwizard.logging.common.filter.LevelFilterFactory;
 import io.dropwizard.logging.common.filter.NullLevelFilterFactory;
 import io.dropwizard.logging.common.layout.LayoutFactory;
-import io.dropwizard.request.logging.async.AsyncAccessEventAppenderFactory;
-import io.dropwizard.request.logging.layout.LogbackAccessRequestLayoutFactory;
+import io.dropwizard.request.logging.RequestLogFactory;
+import io.dropwizard.request.logging.logback.access.async.AsyncAccessEventAppenderFactory;
+import io.dropwizard.request.logging.logback.access.layout.LogbackAccessRequestLayoutFactory;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import org.eclipse.jetty.server.RequestLog;

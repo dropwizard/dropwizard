@@ -1,4 +1,4 @@
-package io.dropwizard.request.logging.layout;
+package io.dropwizard.request.logging.logback.access.layout;
 
 import ch.qos.logback.access.spi.AccessEvent;
 import ch.qos.logback.access.spi.ServerAdapter;

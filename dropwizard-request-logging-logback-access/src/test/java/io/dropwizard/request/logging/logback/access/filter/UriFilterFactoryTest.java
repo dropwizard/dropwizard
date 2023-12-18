@@ -1,4 +1,4 @@
-package io.dropwizard.request.logging.filter;
+package io.dropwizard.request.logging.logback.access.filter;
 
 import ch.qos.logback.access.spi.IAccessEvent;
 import ch.qos.logback.core.filter.Filter;

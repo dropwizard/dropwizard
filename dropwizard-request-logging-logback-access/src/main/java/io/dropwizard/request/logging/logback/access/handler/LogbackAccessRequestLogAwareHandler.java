@@ -1,4 +1,4 @@
-package io.dropwizard.request.logging;
+package io.dropwizard.request.logging.logback.access.handler;
 
 import org.eclipse.jetty.ee10.servlet.ServletContextRequest;
 import org.eclipse.jetty.server.Handler;
