@@ -2,6 +2,7 @@ package io.dropwizard.request.logging;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import io.dropwizard.jackson.Discoverable;
+import io.dropwizard.request.logging.old.LogbackClassicRequestLogFactory;
 import org.eclipse.jetty.server.RequestLog;
 
 /**
@@ -9,7 +10,7 @@ import org.eclipse.jetty.server.RequestLog;
  *
  * @param <T> type of a {@link RequestLog} implementation
  */
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", defaultImpl = LogbackAccessRequestLogFactory.class)
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", defaultImpl = LogbackClassicRequestLogFactory.class)
 public interface RequestLogFactory<T extends RequestLog> extends Discoverable {
 
     boolean isEnabled();

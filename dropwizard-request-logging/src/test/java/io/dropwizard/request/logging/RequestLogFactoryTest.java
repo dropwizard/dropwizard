@@ -8,6 +8,7 @@ import io.dropwizard.jackson.Jackson;
 import io.dropwizard.logging.common.ConsoleAppenderFactory;
 import io.dropwizard.logging.common.FileAppenderFactory;
 import io.dropwizard.logging.common.SyslogAppenderFactory;
+import io.dropwizard.request.logging.old.LogbackClassicRequestLogFactory;
 import io.dropwizard.validation.BaseValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,7 +16,7 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class RequestLogFactoryTest {
-    private LogbackAccessRequestLogFactory logbackAccessRequestLogFactory;
+    private LogbackClassicRequestLogFactory logbackClassicRequestLogFactory;
 
     @BeforeEach
     void setUp() throws Exception {
@@ -23,7 +24,7 @@ class RequestLogFactoryTest {
         objectMapper.getSubtypeResolver().registerSubtypes(ConsoleAppenderFactory.class,
                                                            FileAppenderFactory.class,
                                                            SyslogAppenderFactory.class);
-        this.logbackAccessRequestLogFactory = new YamlConfigurationFactory<>(LogbackAccessRequestLogFactory.class,
+        this.logbackClassicRequestLogFactory = new YamlConfigurationFactory<>(LogbackClassicRequestLogFactory.class,
                                                      BaseValidator.newValidator(),
                                                      objectMapper, "dw")
                 .build(new ResourceConfigurationSourceProvider(), "yaml/requestLog.yml");
@@ -31,8 +32,8 @@ class RequestLogFactoryTest {
 
     @Test
     void fileAppenderFactoryIsSet() {
-        assertThat(logbackAccessRequestLogFactory)
-            .extracting(LogbackAccessRequestLogFactory::getAppenders)
+        assertThat(logbackClassicRequestLogFactory)
+            .extracting(LogbackClassicRequestLogFactory::getAppenders)
             .asList()
             .singleElement()
             .isInstanceOf(FileAppenderFactory.class);
@@ -41,6 +42,6 @@ class RequestLogFactoryTest {
     @Test
     void isDiscoverable() {
         assertThat(new DiscoverableSubtypeResolver().getDiscoveredSubtypes())
-            .contains(LogbackAccessRequestLogFactory.class);
+            .contains(LogbackClassicRequestLogFactory.class);
     }
 }
