@@ -1,11 +1,12 @@
-package io.dropwizard.logging.json;
+package io.dropwizard.request.logging.logback.access.json;
 
 import ch.qos.logback.access.spi.IAccessEvent;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.core.LayoutBase;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import io.dropwizard.logging.json.layout.AccessJsonLayout;
+import io.dropwizard.logging.json.AbstractJsonLayoutBaseFactory;
+import io.dropwizard.request.logging.logback.access.json.layout.AccessJsonLayout;
 
 import java.util.Collections;
 import java.util.EnumSet;

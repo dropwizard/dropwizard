@@ -1,10 +1,12 @@
-package io.dropwizard.logging.json.layout;
+package io.dropwizard.request.logging.logback.access.json.layout;
 
 import ch.qos.logback.access.spi.IAccessEvent;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.jackson.Jackson;
-import io.dropwizard.logging.json.AccessAttribute;
+import io.dropwizard.logging.json.layout.JsonFormatter;
+import io.dropwizard.logging.json.layout.TimestampFormatter;
+import io.dropwizard.request.logging.logback.access.json.AccessAttribute;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

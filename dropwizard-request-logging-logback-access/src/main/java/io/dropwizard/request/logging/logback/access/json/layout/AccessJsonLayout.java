@@ -1,7 +1,11 @@
-package io.dropwizard.logging.json.layout;
+package io.dropwizard.request.logging.logback.access.json.layout;
 
 import ch.qos.logback.access.spi.IAccessEvent;
-import io.dropwizard.logging.json.AccessAttribute;
+import io.dropwizard.logging.json.layout.AbstractJsonLayout;
+import io.dropwizard.logging.json.layout.JsonFormatter;
+import io.dropwizard.logging.json.layout.MapBuilder;
+import io.dropwizard.logging.json.layout.TimestampFormatter;
+import io.dropwizard.request.logging.logback.access.json.AccessAttribute;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.Collections;

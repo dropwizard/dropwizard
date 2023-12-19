@@ -1,4 +1,4 @@
-package io.dropwizard.logging.json;
+package io.dropwizard.request.logging.logback.access.json;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
