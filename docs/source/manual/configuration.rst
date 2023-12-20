@@ -463,8 +463,8 @@ needClientAuth                   (none)                           Whether or not
 wantClientAuth                   (none)                           Whether or not client authentication is requested.
 certAlias                        (none)                           The alias of the certificate to use.
 crlPath                          (none)                           The path to the file which contains the Certificate Revocation List.
-enableCRLDP                      false                            Whether or not CRL Distribution Points (CRLDP) support is enabled.
-enableOCSP                       false                            Whether or not On-Line Certificate Status Protocol (OCSP) support is enabled.
+enableCRLDP                      false                            Whether or not CRL Distribution Points (CRLDP) support is enabled. (requires validateCerts or validatePeers)
+enableOCSP                       false                            Whether or not On-Line Certificate Status Protocol (OCSP) support is enabled. (requires validateCerts or validatePeers)
 maxCertPathLength                (unlimited)                      The maximum certification path length.
 ocspResponderUrl                 (none)                           The location of the OCSP responder.
 jceProvider                      (none)                           The name of the JCE provider to use for cryptographic support. See `Oracle documentation <https://docs.oracle.com/javase/8/docs/technotes/guides/security/SunProviders.html>`_ for more information.
