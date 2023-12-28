@@ -1,5 +1,6 @@
 package io.dropwizard.auth.basic;
 
+import com.google.common.testing.EqualsTester;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -18,15 +19,12 @@ class BasicCredentialsTest {
     }
 
     @Test
-    @SuppressWarnings({ "ObjectEqualsNull", "LiteralAsArgToStringEquals" })
     void hasAWorkingEqualsMethod() {
-        assertThat(credentials)
-            .isEqualTo(credentials)
-            .isEqualTo(new BasicCredentials("u", "p"))
-            .isNotEqualTo(null)
-            .isNotEqualTo("string")
-            .isNotEqualTo(new BasicCredentials("u1", "p"))
-            .isNotEqualTo(new BasicCredentials("u", "p1"));
+        new EqualsTester()
+            .addEqualityGroup(credentials, new BasicCredentials("u", "p"))
+            .addEqualityGroup(new BasicCredentials("u1", "p"))
+            .addEqualityGroup(new BasicCredentials("u", "p1"))
+            .testEquals();
     }
 
     @Test
