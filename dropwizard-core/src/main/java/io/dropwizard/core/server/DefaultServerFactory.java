@@ -240,6 +240,9 @@ public class DefaultServerFactory extends AbstractServerFactory {
             60000, // overload default
             null, // overload default
             threadFactory);
+        if (enableAdminVirtualThreads) {
+            threadPool.setVirtualThreadsExecutor(getVirtualThreadsExecutorService());
+        }
         threadPool.setName("dw-admin");
         server.addBean(threadPool);
 
