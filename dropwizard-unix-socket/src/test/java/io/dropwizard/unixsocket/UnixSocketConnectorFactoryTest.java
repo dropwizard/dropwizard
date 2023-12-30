@@ -10,102 +10,55 @@ import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
+import org.eclipse.jetty.client.ContentResponse;
+import org.eclipse.jetty.client.HttpClient;
+import org.eclipse.jetty.client.transport.HttpClientTransportOverHTTP;
+import org.eclipse.jetty.io.ClientConnector;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.net.StandardProtocolFamily;
-import java.net.UnixDomainSocketAddress;
-import java.nio.channels.Channels;
-import java.nio.channels.SocketChannel;
+import java.nio.file.Paths;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
 
 @DisabledOnOs(OS.WINDOWS) // Windows has Unix Socket support but not on all versions.
 @ExtendWith(DropwizardExtensionsSupport.class)
 class UnixSocketConnectorFactoryTest {
-    private static final String httpRequest = "GET /app/hello HTTP/1.1\r\n" +
-        "Host: dropwizard-unixsock\r\n" +
-        "\r\n";
 
     public DropwizardAppExtension<Configuration> ext = new DropwizardAppExtension<>(HelloWorldApplication.class,
         ResourceHelpers.resourceFilePath("yaml/usock-server.yml"));
 
-    private UnixDomainSocketAddress socketAddress;
+    private HttpClient httpClient;
 
     @BeforeEach
-    public void setUp() {
-        final File socket = new File("/tmp/dropwizard.sock");
-        socket.deleteOnExit();
+    void setUp() throws Exception {
+        ClientConnector clientConnector = ClientConnector.forUnixDomain(Paths.get("/tmp", "dropwizard.sock"));
+        httpClient = new HttpClient(new HttpClientTransportOverHTTP(clientConnector));
+        httpClient.start();
+    }
 
-        socketAddress = UnixDomainSocketAddress.of(socket.getPath());
+    @AfterEach
+    void tearDown() throws Exception {
+        httpClient.stop();
     }
 
     @Test
     void testClient() throws Exception {
-        try (SocketChannel channel = SocketChannel.open(StandardProtocolFamily.UNIX)) {
-            channel.connect(socketAddress);
-            OutputStream os = Channels.newOutputStream(channel);
-            try (OutputStreamWriter osw = new OutputStreamWriter(os, UTF_8)) {
-                try (PrintWriter writer = new PrintWriter(osw)) {
-                    InputStream is = Channels.newInputStream(channel);
-                    try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, UTF_8))) {
-                        writer.print(httpRequest);
-                        writer.flush();
-
-                        verifyHelloWorldReceived(reader);
-                    }
-                }
-            }
-        }
+        ContentResponse contentResponse = httpClient.GET("http://localhost:0/app/hello");
+        assertThat(contentResponse).isNotNull().satisfies(response -> {
+            assertThat(response.getContentAsString()).isEqualTo("{\"hello\": \"World\"}");
+        });
     }
 
     @Test
     void testManyCalls() throws Exception {
-        try (SocketChannel channel = SocketChannel.open(StandardProtocolFamily.UNIX)) {
-            channel.connect(socketAddress);
-            OutputStream os = Channels.newOutputStream(channel);
-            try (OutputStreamWriter osw = new OutputStreamWriter(os, UTF_8)) {
-                try (PrintWriter writer = new PrintWriter(osw)) {
-                    InputStream is = Channels.newInputStream(channel);
-                    try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, UTF_8))) {
-                        for (int i = 0; i < 1000; i++) {
-                            writer.print(httpRequest);
-                            writer.flush();
-
-                            verifyHelloWorldReceived(reader);
-                        }
-                    }
-                }
-            }
+        for (int i = 0; i < 1000; i++) {
+            testClient();
         }
-    }
-
-    private static void verifyHelloWorldReceived(BufferedReader reader) throws IOException {
-        for (int i = 0; i < 5; i++) {
-            String line = reader.readLine();
-            if (line.isEmpty()) {
-                // here comes body. Need to be specific otherwise it hangs for a long time.
-                char[] buffer = new char[18];
-                int read = reader.read(buffer, 0, 18);
-                assertThat(read).isEqualTo(18);
-                assertThat(new String(buffer)).isEqualTo("{\"hello\": \"World\"}");
-                return;
-            }
-        }
-        fail("Have not received hello world.");
     }
 
     public static class HelloWorldApplication extends Application<Configuration> {
