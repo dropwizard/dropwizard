@@ -703,7 +703,7 @@ public class HttpConnectorFactory implements ConnectorFactory {
         return name(HttpConnectionFactory.class,  bindHost, Integer.toString(port), "connections");
     }
 
-    protected Connector buildConnector(Server server,
+    protected ServerConnector buildConnector(Server server,
                                              Scheduler scheduler,
                                              ByteBufferPool bufferPool,
                                              String name,

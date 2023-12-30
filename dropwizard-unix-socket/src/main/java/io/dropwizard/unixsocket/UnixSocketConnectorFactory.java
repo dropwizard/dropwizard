@@ -1,15 +1,16 @@
 package io.dropwizard.unixsocket;
 
+import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.dropwizard.jetty.HttpConnectorFactory;
+import io.dropwizard.metrics.jetty11.InstrumentedConnectionFactory;
+import jakarta.validation.constraints.NotEmpty;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.eclipse.jetty.io.ByteBufferPool;
-import org.eclipse.jetty.server.ConnectionFactory;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.unixdomain.server.UnixDomainServerConnector;
-import org.eclipse.jetty.util.thread.Scheduler;
+import org.eclipse.jetty.util.thread.ScheduledExecutorScheduler;
 import org.eclipse.jetty.util.thread.ThreadPool;
 
 import java.nio.file.Paths;
@@ -52,15 +53,24 @@ public class UnixSocketConnectorFactory extends HttpConnectorFactory {
     }
 
     @Override
-    protected Connector buildConnector(Server server, Scheduler scheduler, ByteBufferPool bufferPool, String name, @Nullable ThreadPool threadPool, ConnectionFactory... factories) {
+    public Connector build(Server server,
+                           MetricRegistry metrics,
+                           String name,
+                           @Nullable ThreadPool threadPool) {
+        var scheduler = new ScheduledExecutorScheduler();
+        var bufferPool = buildBufferPool();
+        var httpConfig = buildHttpConfiguration();
+        var httpConnectionFactory = buildHttpConnectionFactory(httpConfig);
+        var instrumentedConnectionFactory = new InstrumentedConnectionFactory(httpConnectionFactory,
+            metrics.timer(httpConnections()));
+
         final UnixDomainServerConnector connector = new UnixDomainServerConnector(server,
             threadPool,
             scheduler,
             bufferPool,
             getAcceptorThreads().orElse(-1),
             getSelectorThreads().orElse(-1),
-            factories);
-
+            instrumentedConnectionFactory);
         if (getAcceptQueueSize() != null) {
             connector.setAcceptQueueSize(getAcceptQueueSize());
         }
