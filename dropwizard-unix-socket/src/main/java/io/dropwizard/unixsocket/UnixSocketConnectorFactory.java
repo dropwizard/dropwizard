@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.dropwizard.jetty.HttpConnectorFactory;
 import io.dropwizard.metrics.jetty11.InstrumentedConnectionFactory;
-import jakarta.validation.constraints.NotEmpty;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
