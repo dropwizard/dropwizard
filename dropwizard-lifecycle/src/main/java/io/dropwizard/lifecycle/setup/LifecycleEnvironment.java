@@ -68,6 +68,10 @@ public class LifecycleEnvironment {
     }
 
     public ExecutorService virtualExecutorService(String nameFormat) {
+        return virtualExecutorService(nameFormat, Duration.seconds(5));
+    }
+
+    public ExecutorService virtualExecutorService(String nameFormat, Duration shutdownTime) {
         try {
             Object virtualThreadBuilder = Thread.class.getDeclaredMethod("ofVirtual").invoke(null);
             Object virtualThreadFactory = Class.forName("java.lang.Thread$Builder")
@@ -77,7 +81,7 @@ public class LifecycleEnvironment {
             ExecutorService virtualThreadExecutor = (ExecutorService) Executors.class
                 .getDeclaredMethod("newThreadPerTaskExecutor", ThreadFactory.class)
                 .invoke(null, factory);
-            manage(new ExecutorServiceManager(virtualThreadExecutor, Duration.seconds(5), nameFormat));
+            manage(new ExecutorServiceManager(virtualThreadExecutor, shutdownTime, nameFormat));
             return virtualThreadExecutor;
         } catch (InvocationTargetException invocationTargetException) {
             throw new IllegalStateException("Error while creating virtual executor service", invocationTargetException.getCause());
