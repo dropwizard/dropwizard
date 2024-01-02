@@ -15,7 +15,7 @@
     <name>Dropwizard Unix Socket Support</name>
 
     <properties>
-        <module.name>io.dropwizard.dropwizard.unixsocket</module.name>
+        <module.name>io.dropwizard.unixsocket</module.name>
     </properties>
 
     <dependencies>
