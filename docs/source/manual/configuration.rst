@@ -473,7 +473,7 @@ disableSniHostCheck              false                            Whether to dis
 .. _man-configuration-unix-socket:
 
 Unix Domain Socket
------
+------------------
 
 Extends the attributes that are available to the :ref:`HTTP connector <man-configuration-http>` but does not require port.
 
