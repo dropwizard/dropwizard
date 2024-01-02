@@ -1,17 +1,23 @@
 package io.dropwizard.lifecycle.setup;
 
 import com.codahale.metrics.MetricRegistry;
+import io.dropwizard.lifecycle.ExecutorServiceManager;
 import io.dropwizard.lifecycle.JettyManaged;
 import io.dropwizard.lifecycle.Managed;
+import io.dropwizard.util.Duration;
+import org.eclipse.jetty.util.VirtualThreads;
 import org.eclipse.jetty.util.component.ContainerLifeCycle;
 import org.eclipse.jetty.util.component.LifeCycle;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledForJreRange;
+import org.junit.jupiter.api.condition.JRE;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
 import static org.assertj.core.api.Assertions.as;
@@ -81,6 +87,33 @@ class LifecycleEnvironmentTest {
         assertThat(executorService.submit(() -> Thread.currentThread().getName()))
             .succeedsWithin(1, TimeUnit.SECONDS, as(STRING))
             .startsWith(expectedName);
+    }
+
+    @Test
+    @EnabledForJreRange(min = JRE.JAVA_21)
+    void virtualExecutorService() throws Exception {
+        final AtomicBoolean isVirtual = new AtomicBoolean(false);
+        final ExecutorService virtualExecutorService = environment.virtualExecutorService("DropWizard Virtual Service");
+
+        virtualExecutorService.submit(() -> isVirtual.set(VirtualThreads.isVirtualThread())).get();
+
+        assertThat(isVirtual).isTrue();
+    }
+
+    @Test
+    @EnabledForJreRange(min = JRE.JAVA_21)
+    void virtualExecutorServiceShutdownTime() {
+        final Duration shutdownPeriod = Duration.seconds(10);
+        environment.virtualExecutorService("DropWizard Virtual Service", shutdownPeriod);
+        final ContainerLifeCycle container = new ContainerLifeCycle();
+        environment.attach(container);
+
+        assertThat(container.getBeans())
+            .filteredOn(bean -> bean instanceof JettyManaged)
+            .singleElement()
+            .isInstanceOfSatisfying(JettyManaged.class, jettyManaged ->
+                assertThat(jettyManaged.getManaged()).isInstanceOfSatisfying(ExecutorServiceManager.class, executorServiceManager ->
+                    assertThat(executorServiceManager.getShutdownPeriod()).isEqualTo(shutdownPeriod)));
     }
 
     @Test
