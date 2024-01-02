@@ -492,8 +492,6 @@ Name                             Default                          Description
 path                             /tmp/dropwizard.sock             The path to the unix domain socket file.
 ================================ ================================ ======================================================================================
 
-.. _sslyze: https://github.com/nabla-c0d3/sslyze
-
 .. _man-configuration-http2:
 
 HTTP/2 over TLS
