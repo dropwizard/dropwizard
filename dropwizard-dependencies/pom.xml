@@ -23,7 +23,7 @@
         <byte-buddy.version>1.14.11</byte-buddy.version>
         <caffeine.version>2.9.3</caffeine.version>
         <checker-qual.version>3.42.0</checker-qual.version>
-        <classmate.version>1.6.0</classmate.version>
+        <classmate.version>1.7.0</classmate.version>
         <commons-codec.version>1.16.0</commons-codec.version>
         <commons-lang3.version>3.14.0</commons-lang3.version>
         <commons-text.version>1.11.0</commons-text.version>
