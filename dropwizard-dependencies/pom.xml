@@ -28,7 +28,7 @@
         <commons-lang3.version>3.14.0</commons-lang3.version>
         <commons-text.version>1.11.0</commons-text.version>
         <conscrypt-openjdk-uber.version>2.5.2</conscrypt-openjdk-uber.version>
-        <error_prone.version>2.24.0</error_prone.version>
+        <error_prone.version>2.24.1</error_prone.version>
         <freemarker.version>2.3.32</freemarker.version>
         <guava.version>33.0.0-jre</guava.version>
         <hibernate-core.version>6.4.1.Final</hibernate-core.version>
