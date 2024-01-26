@@ -58,6 +58,7 @@ import java.util.EnumSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.stream.Collectors;
@@ -649,8 +650,23 @@ public abstract class AbstractServerFactory implements ServerFactory {
         final InstrumentedQueuedThreadPool threadPool =
                 new InstrumentedQueuedThreadPool(metricRegistry, maxThreads, minThreads,
                     (int) idleThreadTimeout.toMilliseconds(), queue, threadFactory);
+        if (enableVirtualThreads) {
+            threadPool.setVirtualThreadsExecutor(getVirtualThreadsExecutorService());
+        }
         threadPool.setName("dw");
         return threadPool;
+    }
+
+    protected ExecutorService getVirtualThreadsExecutorService() {
+        try {
+            return (ExecutorService) Executors.class
+                .getDeclaredMethod("newVirtualThreadPerTaskExecutor")
+                .invoke(null);
+        } catch (InvocationTargetException invocationTargetException) {
+            throw new IllegalStateException("Error while obtaining a virtual thread executor", invocationTargetException.getCause());
+        } catch (Exception exception) {
+            throw new IllegalStateException("Error while obtaining a virtual thread executor", exception);
+        }
     }
 
     protected ThreadFactory getThreadFactory(boolean virtualThreadsRequested) {
