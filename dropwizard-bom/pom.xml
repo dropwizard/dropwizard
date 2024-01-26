@@ -157,6 +157,11 @@
                 <artifactId>dropwizard-health</artifactId>
                 <version>3.0.6-SNAPSHOT</version>
             </dependency>
+            <dependency>
+                <groupId>io.dropwizard</groupId>
+                <artifactId>dropwizard-unix-socket</artifactId>
+                <version>3.0.6-SNAPSHOT</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 </project>
