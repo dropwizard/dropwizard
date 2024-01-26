@@ -509,6 +509,28 @@ disableSniHostCheck              false                            Whether to dis
 
 .. _sslyze: https://github.com/nabla-c0d3/sslyze
 
+.. _man-configuration-unix-socket:
+
+Unix Domain Socket
+------------------
+
+Extends the attributes that are available to the :ref:`HTTP connector <man-configuration-http>` but does not require port.
+
+.. code-block:: yaml
+
+    # Extending from the default server configuration
+    server:
+      applicationConnectors:
+        - type: unix-socket
+          ...
+          path: /path/to/file
+
+================================ ================================ ======================================================================================
+Name                             Default                          Description
+================================ ================================ ======================================================================================
+path                             /tmp/dropwizard.sock             The path to the unix domain socket file.
+================================ ================================ ======================================================================================
+
 .. _man-configuration-http2:
 
 HTTP/2 over TLS
