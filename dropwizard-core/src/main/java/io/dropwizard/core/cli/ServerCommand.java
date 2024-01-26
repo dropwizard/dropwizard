@@ -50,6 +50,13 @@ public class ServerCommand<T extends Configuration> extends EnvironmentCommand<T
             server.addEventListener(new LifeCycleListener());
             cleanupAsynchronously();
             server.start();
+            new Thread(() -> {
+                try {
+                    server.join();
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }, "dw-awaiter").start();
         } catch (Exception e) {
             LOGGER.error("Unable to start server, shutting down", e);
             try {
