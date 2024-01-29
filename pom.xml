@@ -4,7 +4,7 @@
 
     <groupId>io.dropwizard</groupId>
     <artifactId>dropwizard-project</artifactId>
-    <version>3.0.6</version>
+    <version>3.0.7-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Dropwizard Project</name>
@@ -56,7 +56,7 @@
     <properties>
         <dropwizard.url>http://www.dropwizard.io/${project.version}</dropwizard.url>
 
-        <project.build.outputTimestamp>2024-01-29T21:55:18Z</project.build.outputTimestamp>
+        <project.build.outputTimestamp>2024-01-29T22:04:48Z</project.build.outputTimestamp>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
@@ -207,7 +207,7 @@
         <connection>scm:git:https://github.com/dropwizard/dropwizard</connection>
         <developerConnection>scm:git:git@github.com:dropwizard/dropwizard.git</developerConnection>
         <url>https://github.com/dropwizard/dropwizard</url>
-      <tag>v3.0.6</tag>
+      <tag>HEAD</tag>
   </scm>
 
     <issueManagement>
