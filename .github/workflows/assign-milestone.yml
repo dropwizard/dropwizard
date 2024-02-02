@@ -20,7 +20,7 @@ jobs:
           cache: 'maven'
       - run: |
           echo "version=$(./mvnw -ntp -B -fae -q org.apache.maven.plugins:maven-help-plugin:3.4.0:evaluate -Dexpression=project.version -DforceStdout | sed -e 's/-SNAPSHOT//')" >> $GITHUB_ENV
-      - uses: zoispag/action-assign-milestone@v2
+      - uses: zoispag/action-assign-milestone@1f7abbbd14e2d95194633ead05cd332e140ec12d # v2
         with:
           repo-token: "${{ secrets.GITHUB_TOKEN }}"
           milestone: "${{ env.version }}"
