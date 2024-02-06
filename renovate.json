@@ -15,6 +15,26 @@
     {
       "matchPackagePrefixes": ["io.dropwizard.metrics"],
       "allowedVersions": "<4.3.0"
+    },
+    {
+      "matchManagers": ["bundler"],
+      "addLabels": ["ruby"]
+    },
+    {
+      "matchManagers": ["docker-compose", "dockerfile"],
+      "addLabels": ["docker"]
+    },
+    {
+      "matchManagers": ["maven", "maven-wrapper"],
+      "addLabels": ["java"]
+    },
+    {
+      "matchManagers": ["github-actions"],
+      "addLabels": ["github_actions"]
+    },
+    {
+      "matchManagers": ["pip_requirements"],
+      "addLabels": ["python"]
     }
   ],
   "platformAutomerge": true,
