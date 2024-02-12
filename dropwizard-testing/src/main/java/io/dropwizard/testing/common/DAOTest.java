@@ -180,8 +180,8 @@ public class DAOTest {
             return result;
         } catch (final Exception e) {
             transaction.rollback();
-            if (e instanceof RuntimeException) {
-              throw (RuntimeException) e;
+            if (e instanceof RuntimeException runtimeException) {
+              throw runtimeException;
             }
             throw new RuntimeException(e);
         }

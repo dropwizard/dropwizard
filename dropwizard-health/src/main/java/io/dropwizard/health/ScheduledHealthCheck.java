@@ -97,8 +97,7 @@ class ScheduledHealthCheck implements Runnable {
     @Override
     public boolean equals(final Object o) {
         if (this == o) return true;
-        if (!(o instanceof ScheduledHealthCheck)) return false;
-        final ScheduledHealthCheck that = (ScheduledHealthCheck) o;
+        if (!(o instanceof ScheduledHealthCheck that)) return false;
         return critical == that.critical &&
             Objects.equals(name, that.name) &&
             Objects.equals(healthCheck, that.healthCheck) &&

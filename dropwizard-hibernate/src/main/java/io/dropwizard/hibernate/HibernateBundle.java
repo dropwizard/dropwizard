@@ -83,8 +83,8 @@ public abstract class HibernateBundle<T> implements ConfiguredBundle<T>, Databas
 
     protected UnitOfWorkApplicationListener registerUnitOfWorkListenerIfAbsent(Environment environment) {
         for (Object singleton : environment.jersey().getResourceConfig().getSingletons()) {
-            if (singleton instanceof UnitOfWorkApplicationListener) {
-                return (UnitOfWorkApplicationListener) singleton;
+            if (singleton instanceof UnitOfWorkApplicationListener listener) {
+                return listener;
             }
         }
         final UnitOfWorkApplicationListener listener = new UnitOfWorkApplicationListener();

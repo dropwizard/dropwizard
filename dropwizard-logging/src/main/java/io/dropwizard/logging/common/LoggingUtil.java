@@ -39,8 +39,8 @@ public class LoggingUtil {
         final long startTime = System.nanoTime();
         while (true) {
             final ILoggerFactory iLoggerFactory = LoggerFactory.getILoggerFactory();
-            if (iLoggerFactory instanceof LoggerContext) {
-                return (LoggerContext) iLoggerFactory;
+            if (iLoggerFactory instanceof LoggerContext loggerContext) {
+                return loggerContext;
             }
             if ((System.nanoTime() - startTime) > LOGGER_CONTEXT_AWAITING_TIMEOUT.toNanoseconds()) {
                 throw new IllegalStateException("Unable to acquire the logger context");

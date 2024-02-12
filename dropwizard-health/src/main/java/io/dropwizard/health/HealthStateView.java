@@ -63,8 +63,7 @@ public final class HealthStateView implements Comparable<HealthStateView> {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof HealthStateView)) return false;
-        HealthStateView that = (HealthStateView) o;
+        if (!(o instanceof HealthStateView that)) return false;
         return healthy == that.healthy && critical == that.critical && Objects.equals(name, that.name) && type == that.type;
     }
 

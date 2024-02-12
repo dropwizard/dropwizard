@@ -65,8 +65,8 @@ public class FuzzyEnumParamConverter<T> implements ParamConverter<T> {
                 throw new BadRequestException(
                     "Not permitted to call fromString on " + rawType.getSimpleName());
             } catch (InvocationTargetException e) {
-                if (e.getCause() instanceof WebApplicationException) {
-                    throw (WebApplicationException) e.getCause();
+                if (e.getCause() instanceof WebApplicationException webApplicationException) {
+                    throw webApplicationException;
                 }
                 LOGGER.debug("Failed to convert {} to {}", parameterName, rawType.getSimpleName(), e);
                 throw new BadRequestException(

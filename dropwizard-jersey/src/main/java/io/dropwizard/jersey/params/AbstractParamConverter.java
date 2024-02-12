@@ -43,8 +43,8 @@ public class AbstractParamConverter<T> implements ParamConverter<T> {
             return constructor.newInstance(defaultedValue, parameterName);
         } catch (InvocationTargetException ex) {
             final Throwable cause = ex.getCause();
-            if (cause instanceof WebApplicationException) {
-                throw (WebApplicationException) cause;
+            if (cause instanceof WebApplicationException webApplicationException) {
+                throw webApplicationException;
             } else {
                 throw new ExtractorException(cause);
             }

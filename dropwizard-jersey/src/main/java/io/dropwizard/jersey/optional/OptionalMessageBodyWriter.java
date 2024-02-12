@@ -50,8 +50,8 @@ public class OptionalMessageBodyWriter implements MessageBodyWriter<Optional<?>>
             throws IOException {
         final Object entityObj = entity.orElseThrow(() -> EmptyOptionalException.INSTANCE);
 
-        final Type innerGenericType = (genericType instanceof ParameterizedType) ?
-            ((ParameterizedType) genericType).getActualTypeArguments()[0] : entityObj.getClass();
+        final Type innerGenericType = (genericType instanceof ParameterizedType parameterizedType) ?
+            parameterizedType.getActualTypeArguments()[0] : entityObj.getClass();
 
         final MessageBodyWriter writer = requireNonNull(mbw).get().getMessageBodyWriter(entityObj.getClass(),
             innerGenericType, annotations, mediaType);

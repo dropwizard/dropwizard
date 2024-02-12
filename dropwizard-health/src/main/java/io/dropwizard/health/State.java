@@ -81,8 +81,7 @@ class State {
     @Override
     public boolean equals(final Object o) {
         if (this == o) return true;
-        if (!(o instanceof State)) return false;
-        final State state = (State) o;
+        if (!(o instanceof State state)) return false;
         return successAttempts == state.successAttempts &&
                 failureAttempts == state.failureAttempts &&
                 Objects.equals(name, state.name) &&

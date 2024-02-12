@@ -15,8 +15,7 @@ class AuthInjectionHelper {
         injectionManager.inject(filter);
 
         // if instance is AuthFilter, inject Authenticator and Authorizer instances as well
-        if (filter instanceof AuthFilter) {
-            AuthFilter<?, ?> authFilter = (AuthFilter<?, ?>) filter;
+        if (filter instanceof AuthFilter<?, ?> authFilter) {
             if (authFilter.authenticator != null) {
                 injectionManager.inject(authFilter.authenticator);
             }

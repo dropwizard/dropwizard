@@ -20,8 +20,7 @@ public class CacheBustingFilter implements Filter {
     public void doFilter(ServletRequest request,
                          ServletResponse response,
                          FilterChain chain) throws IOException, ServletException {
-        if (response instanceof HttpServletResponse) {
-            final HttpServletResponse resp = (HttpServletResponse) response;
+        if (response instanceof HttpServletResponse resp) {
             resp.setHeader("Cache-Control", CACHE_SETTINGS);
         }
         chain.doFilter(request, response);

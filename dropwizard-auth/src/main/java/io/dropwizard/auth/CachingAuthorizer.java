@@ -109,11 +109,11 @@ public class CachingAuthorizer<P extends Principal> implements Authorizer<P> {
             return Boolean.TRUE.equals(cache.get(cacheKey));
         } catch (CompletionException e) {
             Throwable cause = e.getCause();
-            if (cause instanceof RuntimeException) {
-                throw (RuntimeException) cause;
+            if (cause instanceof RuntimeException runtimeException) {
+                throw runtimeException;
             }
-            if (cause instanceof Error) {
-                throw (Error) cause;
+            if (cause instanceof Error error) {
+                throw error;
             }
             throw e;
         }

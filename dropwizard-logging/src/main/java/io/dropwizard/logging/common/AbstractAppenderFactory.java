@@ -256,8 +256,8 @@ public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware>
 
     protected Appender<E> wrapAsync(Appender<E> appender, AsyncAppenderFactory<E> asyncAppenderFactory, Context context) {
         final AsyncAppenderBase<E> asyncAppender = asyncAppenderFactory.build();
-        if (asyncAppender instanceof AsyncAppender) {
-            ((AsyncAppender) asyncAppender).setIncludeCallerData(includeCallerData);
+        if (asyncAppender instanceof AsyncAppender a) {
+            a.setIncludeCallerData(includeCallerData);
         }
         asyncAppender.setQueueSize(queueSize);
         asyncAppender.setDiscardingThreshold(discardingThreshold);
@@ -281,10 +281,10 @@ public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware>
             layoutBase = layout.build(context, timeZone);
         }
         if (!(logFormat == null || logFormat.isEmpty())) {
-            if (layoutBase instanceof PatternLayoutBase) {
+            if (layoutBase instanceof PatternLayoutBase<E> patternLayoutBase) {
                 @SuppressWarnings("NullAway")
                 String logFormatWithTimeZone = logFormat.replace("%dwTimeZone", timeZone.getID());
-                ((PatternLayoutBase<E>)layoutBase).setPattern(logFormatWithTimeZone);
+                patternLayoutBase.setPattern(logFormatWithTimeZone);
             } else {
                 LOGGER.warn("Ignoring 'logFormat', because 'layout' does not extend PatternLayoutBase");
             }

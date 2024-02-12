@@ -141,8 +141,8 @@ public class LifecycleEnvironment {
 
         @Override
         public void lifeCycleStarted(LifeCycle event) {
-            if (event instanceof Server) {
-                listener.serverStarted((Server) event);
+            if (event instanceof Server server) {
+                listener.serverStarted(server);
             }
         }
     }

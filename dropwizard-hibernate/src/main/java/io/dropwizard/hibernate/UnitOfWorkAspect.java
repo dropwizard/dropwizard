@@ -75,8 +75,8 @@ public class UnitOfWorkAspect {
             }
         }
 
-        if (sessionFactory instanceof DualSessionFactory) {
-            ((DualSessionFactory) sessionFactory).prepare(unitOfWork.readOnly());
+        if (sessionFactory instanceof DualSessionFactory dualSessionFactory) {
+            dualSessionFactory.prepare(unitOfWork.readOnly());
         }
 
         Session existingSession = null;
