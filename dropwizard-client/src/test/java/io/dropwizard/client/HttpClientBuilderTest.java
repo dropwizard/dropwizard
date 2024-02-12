@@ -672,9 +672,11 @@ class HttpClientBuilderTest {
                 builder.using(httpProcessor)
                         .createClient(apacheBuilder, connectionManager, "test");
         assertThat(client).isNotNull();
-        assertThat(apacheBuilder).extracting("requestInterceptors").asList()
+        assertThat(apacheBuilder).extracting("requestInterceptors")
+                .asInstanceOf(InstanceOfAssertFactories.LIST)
                 .satisfies(requestInterceptors -> assertThat(requestInterceptors).hasSize(1));
-        assertThat(apacheBuilder).extracting("responseInterceptors").asList()
+        assertThat(apacheBuilder).extracting("responseInterceptors")
+                .asInstanceOf(InstanceOfAssertFactories.LIST)
                 .satisfies(responseInterceptors -> assertThat(responseInterceptors).hasSize(1));
     }
 

@@ -7,6 +7,7 @@ import io.dropwizard.jersey.jackson.JacksonMessageBodyProviderTest.Example;
 import io.dropwizard.jersey.jackson.JacksonMessageBodyProviderTest.ListExample;
 import io.dropwizard.jersey.jackson.JacksonMessageBodyProviderTest.PartialExample;
 
+import org.assertj.core.api.InstanceOfAssertFactories;
 import org.glassfish.jersey.internal.inject.AbstractBinder;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -548,7 +549,8 @@ class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
         assertThat(response.readEntity(new GenericType<List<ListExample>>() {
         }))
             .singleElement()
-            .extracting("examples").asList()
+            .extracting("examples")
+            .asInstanceOf(InstanceOfAssertFactories.LIST)
             .singleElement()
             .extracting("id")
             .isEqualTo(1);

@@ -17,6 +17,7 @@ import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.validation.BaseValidator;
 import org.apache.commons.text.StringSubstitutor;
+import org.assertj.core.api.InstanceOfAssertFactories;
 import org.assertj.core.data.MapEntry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -96,7 +97,8 @@ class DefaultLoggingFactoryTest {
                     .satisfies(f -> assertThat(f.getArchivedLogFilenamePattern()).isEqualTo("${new_app}-%d.log.gz"))
                     .satisfies(f -> assertThat(f.getArchivedFileCount()).isEqualTo(5))
                     .satisfies(f -> assertThat(f.getBufferSize().toKibibytes()).isEqualTo(256))
-                    .extracting(FileAppenderFactory::getFilterFactories).asList()
+                    .extracting(FileAppenderFactory::getFilterFactories)
+                    .asInstanceOf(InstanceOfAssertFactories.LIST)
                     .hasSize(2)
                     .satisfies(factories -> assertThat(factories).element(0).isExactlyInstanceOf(TestFilterFactory.class))
                     .satisfies(factories -> assertThat(factories).element(1).isExactlyInstanceOf(SecondTestFilterFactory.class)));
