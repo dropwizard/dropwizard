@@ -1,6 +1,5 @@
 package io.dropwizard.jersey.validation;
 
-import io.dropwizard.jersey.errors.ErrorMessage;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ParamConverter;
