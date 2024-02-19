@@ -19,7 +19,7 @@ jobs:
       - name: ⤵️ Check out configuration from GitHub
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
       - name: 🧹 Run yamllint
-        uses: frenck/action-yamllint@4eff2494c5af06cb3d5a2a02505e288978e86d3a # v1.4.2
+        uses: frenck/action-yamllint@34b4bbcaeabedcfefad6adea8c5bbc42af0e2d47 # v1.5.0
   build:
     runs-on: ${{ matrix.os }}
     permissions:
