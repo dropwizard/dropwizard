@@ -67,7 +67,7 @@ public final class ByteRange {
         }
 
         final ByteRange other = (ByteRange) obj;
-        return Objects.equals(start, other.start) && Objects.equals(end, other.end);
+        return start == other.start && end == other.end;
     }
 
     @Override
