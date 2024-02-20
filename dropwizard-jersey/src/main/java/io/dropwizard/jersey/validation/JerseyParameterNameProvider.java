@@ -43,20 +43,20 @@ public class JerseyParameterNameProvider extends ReflectionParameterNameProvider
      */
     public static Optional<String> getParameterNameFromAnnotations(Annotation[] memberAnnotations) {
         for (Annotation a : memberAnnotations) {
-            if (a instanceof QueryParam) {
-                return Optional.of("query param " + ((QueryParam) a).value());
-            } else if (a instanceof PathParam) {
-                return Optional.of("path param " + ((PathParam) a).value());
-            } else if (a instanceof HeaderParam) {
-                return Optional.of("header " + ((HeaderParam) a).value());
-            } else if (a instanceof CookieParam) {
-                return Optional.of("cookie " + ((CookieParam) a).value());
-            } else if (a instanceof FormParam) {
-                return Optional.of("form field " + ((FormParam) a).value());
+            if (a instanceof QueryParam queryParam) {
+                return Optional.of("query param " + queryParam.value());
+            } else if (a instanceof PathParam pathParam) {
+                return Optional.of("path param " + pathParam.value());
+            } else if (a instanceof HeaderParam headerParam) {
+                return Optional.of("header " + headerParam.value());
+            } else if (a instanceof CookieParam cookieParam) {
+                return Optional.of("cookie " + cookieParam.value());
+            } else if (a instanceof FormParam formParam) {
+                return Optional.of("form field " + formParam.value());
             } else if (a instanceof Context) {
                 return Optional.of("context");
-            } else if (a instanceof MatrixParam) {
-                return Optional.of("matrix param " + ((MatrixParam) a).value());
+            } else if (a instanceof MatrixParam matrixParam) {
+                return Optional.of("matrix param " + matrixParam.value());
             }
         }
 

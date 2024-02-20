@@ -216,8 +216,7 @@ public class TaskServlet extends HttpServlet {
         }
 
         public void executeTask(Map<String, List<String>> params, String body, PrintWriter output) throws Exception {
-            if (task instanceof PostBodyTask) {
-                PostBodyTask postBodyTask = (PostBodyTask) task;
+            if (task instanceof PostBodyTask postBodyTask) {
                 postBodyTask.execute(params, body, output);
             } else {
                 task.execute(params, output);

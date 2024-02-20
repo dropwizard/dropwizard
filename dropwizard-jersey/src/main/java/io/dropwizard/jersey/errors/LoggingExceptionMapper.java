@@ -35,8 +35,8 @@ public abstract class LoggingExceptionMapper<E extends Throwable> implements Exc
     public Response toResponse(E exception) {
         // If we're dealing with a web exception, we can service certain types of request (like
         // redirection or server errors) better and also propagate properties of the inner response.
-        if (exception instanceof WebApplicationException) {
-            final Response response = ((WebApplicationException) exception).getResponse();
+        if (exception instanceof WebApplicationException webApplicationException) {
+            final Response response = webApplicationException.getResponse();
             Response.Status.Family family = response.getStatusInfo().getFamily();
             if (family.equals(Response.Status.Family.REDIRECTION)) {
                 return response;

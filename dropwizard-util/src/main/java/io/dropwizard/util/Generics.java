@@ -35,24 +35,24 @@ public class Generics {
      */
     public static <T> Class<T> getTypeParameter(Class<?> klass, Class<? super T> bound) {
         Type t = requireNonNull(klass);
-        while (t instanceof Class<?>) {
-            t = ((Class<?>) t).getGenericSuperclass();
+        while (t instanceof Class<?> classObj) {
+            t = classObj.getGenericSuperclass();
         }
         /* This is not guaranteed to work for all cases with convoluted piping
          * of type parameters: but it can at least resolve straight-forward
          * extension with single type parameter (as per [Issue-89]).
          * And when it fails to do that, will indicate with specific exception.
          */
-        if (t instanceof ParameterizedType) {
+        if (t instanceof ParameterizedType parameterizedType) {
             // should typically have one of type parameters (first one) that matches:
-            for (Type param : ((ParameterizedType) t).getActualTypeArguments()) {
+            for (Type param : parameterizedType.getActualTypeArguments()) {
                 if (param instanceof Class<?>) {
                     final Class<T> cls = determineClass(bound, param);
                     if (cls != null) {
                         return cls;
                     }
-                } else if (param instanceof TypeVariable) {
-                    for (Type paramBound : ((TypeVariable<?>) param).getBounds()) {
+                } else if (param instanceof TypeVariable<?> typeVariable) {
+                    for (Type paramBound : typeVariable.getBounds()) {
                         if (paramBound instanceof Class<?>) {
                             final Class<T> cls = determineClass(bound, paramBound);
                             if (cls != null) {
@@ -60,8 +60,8 @@ public class Generics {
                             }
                         }
                     }
-                } else if (param instanceof ParameterizedType) {
-                    final Type rawType = ((ParameterizedType) param).getRawType();
+                } else if (param instanceof ParameterizedType parameterizedTypeParam) {
+                    final Type rawType = parameterizedTypeParam.getRawType();
                     if (rawType instanceof Class<?>) {
                         final Class<T> cls = determineClass(bound, rawType);
                         if (cls != null) {
@@ -77,8 +77,7 @@ public class Generics {
     @SuppressWarnings("unchecked")
     @Nullable
     private static <T> Class<T> determineClass(Class<? super T> bound, Type candidate) {
-        if (candidate instanceof Class<?>) {
-            final Class<?> cls = (Class<?>) candidate;
+        if (candidate instanceof Class<?> cls) {
             if (bound.isAssignableFrom(cls)) {
                 return (Class<T>) cls;
             }

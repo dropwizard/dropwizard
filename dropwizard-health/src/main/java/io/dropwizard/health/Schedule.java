@@ -74,8 +74,7 @@ public class Schedule {
     @Override
     public boolean equals(final Object o) {
         if (this == o) return true;
-        if (!(o instanceof Schedule)) return false;
-        final Schedule schedule = (Schedule) o;
+        if (!(o instanceof Schedule schedule)) return false;
         return failureAttempts == schedule.failureAttempts &&
             successAttempts == schedule.successAttempts &&
             Objects.equals(initialDelay, schedule.initialDelay) &&

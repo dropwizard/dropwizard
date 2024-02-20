@@ -194,10 +194,9 @@ public abstract class BaseConfigurationFactory<T> implements ConfigurationFactor
         for (int i = 0; i < parts.size(); i++) {
             final String key = parts.get(i);
 
-            if (!(node instanceof ObjectNode)) {
+            if (!(node instanceof ObjectNode obj)) {
                 throw new IllegalArgumentException("Unable to override " + name + "; it's not a valid path.");
             }
-            final ObjectNode obj = (ObjectNode) node;
 
             final String remainingPath = String.join(".", parts.subList(i, parts.size()));
             if (obj.has(remainingPath) && !remainingPath.equals(key)

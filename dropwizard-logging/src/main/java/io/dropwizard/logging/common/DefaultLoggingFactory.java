@@ -153,10 +153,10 @@ public class DefaultLoggingFactory implements LoggingFactory {
             final Iterator<Appender<ILoggingEvent>> appenderIterator = logger.iteratorForAppenders();
             while (appenderIterator.hasNext()) {
                 final Appender<ILoggingEvent> appender = appenderIterator.next();
-                if (appender instanceof AsyncAppenderBase) {
-                    flushAppender((AsyncAppenderBase<?>) appender);
-                } else if (appender instanceof AsyncAppenderBaseProxy) {
-                    flushAppender(((AsyncAppenderBaseProxy<?>) appender).getAppender());
+                if (appender instanceof AsyncAppenderBase<?> asyncAppenderBase) {
+                    flushAppender(asyncAppenderBase);
+                } else if (appender instanceof AsyncAppenderBaseProxy<?> asyncAppenderBaseProxy) {
+                    flushAppender(asyncAppenderBaseProxy.getAppender());
                 }
             }
         } catch (InterruptedException ignored) {

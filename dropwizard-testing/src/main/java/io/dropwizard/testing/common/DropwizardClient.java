@@ -63,8 +63,8 @@ public class DropwizardClient {
             environment.healthChecks().register("dummy", new DummyHealthCheck());
 
             for (Object resource : resources) {
-                if (resource instanceof Class<?>) {
-                    environment.jersey().register((Class<?>) resource);
+                if (resource instanceof Class<?> classObj) {
+                    environment.jersey().register(classObj);
                 } else {
                     environment.jersey().register(resource);
                 }

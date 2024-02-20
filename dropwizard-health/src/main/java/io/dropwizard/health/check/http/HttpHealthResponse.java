@@ -28,10 +28,9 @@ public class HttpHealthResponse {
         if (this == other) {
             return true;
         }
-        if (!(other instanceof HttpHealthResponse)) {
+        if (!(other instanceof HttpHealthResponse that)) {
             return false;
         }
-        final HttpHealthResponse that = (HttpHealthResponse) other;
         return status == that.status
             && Objects.equals(body, that.body);
     }

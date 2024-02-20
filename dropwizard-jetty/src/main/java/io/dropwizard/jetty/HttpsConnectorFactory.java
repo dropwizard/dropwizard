@@ -731,10 +731,9 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
     }
 
     protected SslContextFactory.Server configureSslContextFactory(SslContextFactory sslContextFactory) {
-        if (!(sslContextFactory instanceof SslContextFactory.Server)) {
+        if (!(sslContextFactory instanceof SslContextFactory.Server factory)) {
             throw new IllegalArgumentException("SslContextFactory must be of type SslContextFactory.Server");
         }
-        SslContextFactory.Server factory = (SslContextFactory.Server) sslContextFactory;
         if (keyStorePath != null) {
             factory.setKeyStorePath(keyStorePath);
         }

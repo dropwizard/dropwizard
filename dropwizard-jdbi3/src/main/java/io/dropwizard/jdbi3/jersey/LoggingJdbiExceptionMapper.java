@@ -31,8 +31,8 @@ public class LoggingJdbiExceptionMapper extends LoggingExceptionMapper<JdbiExcep
     @SuppressWarnings("Slf4jFormatShouldBeConst")
     protected void logException(long id, JdbiException exception) {
         final Throwable cause = exception.getCause();
-        if (cause instanceof SQLException) {
-            for (Throwable throwable : (SQLException) cause) {
+        if (cause instanceof SQLException sqlException) {
+            for (Throwable throwable : sqlException) {
                 logger.error(formatLogMessage(id, throwable), throwable);
             }
         } else {
