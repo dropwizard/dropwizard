@@ -20,10 +20,8 @@ import io.dropwizard.metrics.jetty12.ee10.InstrumentedEE10Handler;
 import io.dropwizard.metrics.servlets.AdminServlet;
 import io.dropwizard.metrics.servlets.HealthCheckServlet;
 import io.dropwizard.metrics.servlets.MetricsServlet;
-import io.dropwizard.request.logging.LogbackAccessRequestLog;
-import io.dropwizard.request.logging.LogbackAccessRequestLogAwareHandler;
-import io.dropwizard.request.logging.LogbackAccessRequestLogFactory;
 import io.dropwizard.request.logging.RequestLogFactory;
+import io.dropwizard.request.logging.old.LogbackClassicRequestLogFactory;
 import io.dropwizard.servlets.ThreadNameFilter;
 import io.dropwizard.util.Duration;
 import io.dropwizard.validation.MinDuration;
@@ -56,6 +54,7 @@ import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 import java.util.EnumSet;
 import java.util.Optional;
+import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
@@ -328,7 +327,7 @@ public abstract class AbstractServerFactory implements ServerFactory {
     public synchronized RequestLogFactory<?> getRequestLogFactory() {
         if (requestLog == null) {
             // Lazy init to avoid a hard dependency to logback
-            requestLog = new LogbackAccessRequestLogFactory();
+            requestLog = new LogbackClassicRequestLogFactory();
         }
         return requestLog;
     }
@@ -750,9 +749,6 @@ public abstract class AbstractServerFactory implements ServerFactory {
     protected void addRequestLog(Server server, String name, MutableServletContextHandler servletContextHandler) {
         if (getRequestLogFactory().isEnabled()) {
             RequestLog log = getRequestLogFactory().build(name);
-            if (log instanceof LogbackAccessRequestLog) {
-                servletContextHandler.insertHandler(new LogbackAccessRequestLogAwareHandler());
-            }
             server.setRequestLog(log);
         }
     }
@@ -783,5 +779,15 @@ public abstract class AbstractServerFactory implements ServerFactory {
         } catch (IllegalArgumentException | IOException ignored) {
         }
         LOGGER.info(msg);
+    }
+
+    protected final Handler customizeHandlerChain(Handler first) {
+
+        ServiceLoader<ServerCustomizer> serverCustomizers = ServiceLoader.load(ServerCustomizer.class);
+        Handler result = first;
+        for (ServerCustomizer serverCustomizer : serverCustomizers) {
+            result = serverCustomizer.customizeHandlerChain(result);
+        }
+        return result;
     }
 }

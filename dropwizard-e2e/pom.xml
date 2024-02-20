@@ -180,6 +180,11 @@
             <artifactId>dropwizard-client</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>io.dropwizard</groupId>
+            <artifactId>dropwizard-request-logging-logback-access</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>

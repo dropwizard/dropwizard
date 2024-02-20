@@ -132,7 +132,7 @@ public class SimpleServerFactory extends AbstractServerFactory {
                 adminContextPath, adminHandler);
         final ContextRoutingHandler routingHandler = new ContextRoutingHandler(handlers);
         final Handler gzipHandler = buildGzipHandler(routingHandler);
-        server.setHandler(addGracefulHandler(gzipHandler));
+        server.setHandler(customizeHandlerChain(addGracefulHandler(gzipHandler)));
         addRequestLog(server, environment.getName(), environment.getApplicationContext());
 
         return server;

@@ -1,2 +1,1 @@
-io.dropwizard.logging.json.AccessJsonLayoutBaseFactory
 io.dropwizard.logging.json.EventJsonLayoutBaseFactory

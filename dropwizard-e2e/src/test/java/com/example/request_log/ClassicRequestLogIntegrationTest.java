@@ -20,13 +20,6 @@ class ClassicRequestLogIntegrationTest extends AbstractRequestLogPatternIntegrat
             "127\\.0\\.0\\.1 - - \\[.+\\] \"GET /greet HTTP/1\\.1\" 200 15 \"-\" \"TestApplication \\(test-request-logs\\)\" \\d+"
     );
 
-    @Override
-    protected List<ConfigOverride> configOverrides() {
-        final List<ConfigOverride> configOverrides = new ArrayList<>(super.configOverrides());
-        configOverrides.add(ConfigOverride.config("server.requestLog.type", "classic"));
-        return configOverrides;
-    }
-
     @Test
     void testDefaultPattern() throws Exception {
         String url = String.format("http://localhost:%d/greet?name=Charley", dropwizardAppRule.getLocalPort());
