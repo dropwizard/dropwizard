@@ -9,6 +9,7 @@ import io.dropwizard.logging.common.ConsoleAppenderFactory;
 import io.dropwizard.logging.common.FileAppenderFactory;
 import io.dropwizard.logging.common.SyslogAppenderFactory;
 import io.dropwizard.validation.BaseValidator;
+import org.assertj.core.api.InstanceOfAssertFactories;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -33,7 +34,7 @@ class RequestLogFactoryTest {
     void fileAppenderFactoryIsSet() {
         assertThat(logbackAccessRequestLogFactory)
             .extracting(LogbackAccessRequestLogFactory::getAppenders)
-            .asList()
+            .asInstanceOf(InstanceOfAssertFactories.LIST)
             .singleElement()
             .isInstanceOf(FileAppenderFactory.class);
     }
