@@ -11,7 +11,11 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.unixdomain.server.UnixDomainServerConnector;
 import org.eclipse.jetty.util.thread.ScheduledExecutorScheduler;
 import org.eclipse.jetty.util.thread.ThreadPool;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import static com.codahale.metrics.MetricRegistry.name;
@@ -38,6 +42,8 @@ import static com.codahale.metrics.MetricRegistry.name;
  */
 @JsonTypeName("unix-socket")
 public class UnixSocketConnectorFactory extends HttpConnectorFactory {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(UnixSocketConnectorFactory.class);
 
     private String path = "/tmp/dropwizard.sock";
 
@@ -73,9 +79,18 @@ public class UnixSocketConnectorFactory extends HttpConnectorFactory {
         if (getAcceptQueueSize() != null) {
             connector.setAcceptQueueSize(getAcceptQueueSize());
         }
-        connector.setUnixDomainPath(Paths.get(path));
+
+        var unixDomainPath = Paths.get(path);
+        connector.setUnixDomainPath(unixDomainPath);
         connector.setIdleTimeout(getIdleTimeout().toMilliseconds());
         connector.setName(name);
+
+        // in case there is a leftover domain socket due to ungraceful stop, try to delete it first.
+        try {
+            Files.deleteIfExists(unixDomainPath);
+        } catch (IOException e) {
+            LOGGER.warn("Failed to delete existing unix domain socket file at {}.", path);
+        }
         return connector;
     }
 
