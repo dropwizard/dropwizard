@@ -90,4 +90,12 @@ class CacheControlledResponseFeatureTest extends AbstractJerseyTest {
         assertThat(response.getHeaders().get(HttpHeaders.CACHE_CONTROL))
                 .containsOnly("no-transform, s-maxage=46800");
     }
+
+    @Test
+    void staleWhileRevalidateResponsesHaveCacheControlHeaders() throws Exception {
+        final Response response = target("/caching/stale-while-revalidate").request().get();
+
+        assertThat(response.getHeaders().get(HttpHeaders.CACHE_CONTROL))
+                .containsOnly("no-transform, stale-while-revalidate=46800");
+    }
 }
