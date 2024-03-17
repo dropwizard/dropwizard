@@ -34,8 +34,6 @@ jobs:
           server-id: ossrh
           server-username: ${{ secrets.CI_DEPLOY_USERNAME }}
           server-password: ${{ secrets.CI_DEPLOY_PASSWORD }}
-          gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}
-          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
       - name: Set up Git
         run: |
           git config --global committer.email "48418865+dropwizard-committers@users.noreply.github.com"
@@ -44,6 +42,9 @@ jobs:
           git config --global author.name "${GITHUB_ACTOR}"
       - name: Prepare release
         run: ./mvnw -V -B -ntp -Prelease -DreleaseVersion=${{ inputs.releaseVersion }} -DdevelopmentVersion=${{ inputs.developmentVersion }} release:prepare
+        env:
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+          MAVEN_GPG_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
       - name: Rollback on failure
         if: failure()
         run: |
