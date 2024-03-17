@@ -292,9 +292,6 @@
                     <value>true</value>
                 </property>
             </activation>
-            <properties>
-                <gpg.keyname>EDA86E9FB607B5FC9223FB767D4868B53E31E7AD</gpg.keyname>
-            </properties>
             <build>
                 <plugins>
                     <plugin>
@@ -330,6 +327,10 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
+                        <configuration>
+                            <signer>bc</signer>
+                            <bestPractices>true</bestPractices>
+                        </configuration>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
