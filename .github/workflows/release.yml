@@ -25,7 +25,7 @@ jobs:
           server-username: CI_DEPLOY_USERNAME
           server-password: CI_DEPLOY_PASSWORD
       - name: Build and Deploy
-        run: ./mvnw -B -V -ntp -Dgpg.signer=bc -DperformRelease=true deploy
+        run: ./mvnw -B -V -ntp -DperformRelease=true deploy
         env:
           CI_DEPLOY_USERNAME: ${{ secrets.CI_DEPLOY_USERNAME }}
           CI_DEPLOY_PASSWORD: ${{ secrets.CI_DEPLOY_PASSWORD }}
