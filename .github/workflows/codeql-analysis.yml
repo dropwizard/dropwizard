@@ -39,7 +39,7 @@ jobs:
 
       # Initializes the CodeQL tools for scanning.
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@05963f47d870e2cb19a537396c1f668a348c7d8f # v3
+        uses: github/codeql-action/init@1b1aada464948af03b950897e5eb522f92603cc2 # v3
         with:
           languages: ${{ matrix.language }}
           queries: security-and-quality
@@ -52,6 +52,6 @@ jobs:
         run: ./mvnw --no-transfer-progress -V -B -fae -s .github/settings.xml -e "-DtrimStackTrace=false" "-Dsurefire.rerunFailingTestsCount=1" install
 
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@05963f47d870e2cb19a537396c1f668a348c7d8f # v3
+        uses: github/codeql-action/analyze@1b1aada464948af03b950897e5eb522f92603cc2 # v3
         with:
           category: "/language:${{matrix.language}}"
