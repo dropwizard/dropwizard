@@ -27,11 +27,21 @@ import java.io.IOException;
 public class CaffeineModule extends Module {
     private static class CaffeineSpecDeserializer extends JsonDeserializer<CaffeineSpec> {
         @Override
-        public CaffeineSpec deserialize(JsonParser jp,
-                                        DeserializationContext ctxt) throws IOException {
+        public CaffeineSpec deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
             final String text = jp.getText();
-            final boolean disabled = "off".equalsIgnoreCase(text) || "disabled".equalsIgnoreCase(text);
-            return CaffeineSpec.parse(disabled ? "initialCapacity=0,maximumSize=0" : text);
+            return CaffeineSpec.parse(parseSpec(text));
+        }
+
+        private String parseSpec(final String text) {
+            if (isSpecDisabled(text)) {
+                return "initialCapacity=0,maximumSize=0";
+            } else {
+                return text;
+            }
+        }
+
+        private boolean isSpecDisabled(final String text) {
+            return "off".equalsIgnoreCase(text) || "disabled".equalsIgnoreCase(text);
         }
     }
 
