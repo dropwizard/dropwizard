@@ -24,23 +24,9 @@ public class SslReloadBundle implements ConfiguredBundle<Configuration> {
 
     @Override
     public void run(Configuration configuration, Environment environment) {
-        environment.getApplicationContext().addEventListener(new LifeCycle.Listener() {
-            @Override
-            public void lifeCycleStarted(LifeCycle event) {
-                final Set<SslReload> reloaders = new HashSet<>();
-                reloaders.addAll(getReloaders(environment.getApplicationContext()));
-                reloaders.addAll(getReloaders(environment.getAdminContext()));
-
-                LOGGER.info("{} ssl reloaders registered", reloaders.size());
-                reloadTask.setReloaders(reloaders);
-            }
-        });
+        reloadTask.configureReloaders(environment); // Configuring reloaders through the new method
 
         environment.admin().addTask(reloadTask);
-    }
-
-    private Collection<SslReload> getReloaders(MutableServletContextHandler handler) {
-        return handler.getServer().getBeans(SslReload.class);
     }
 }
 
