@@ -13,9 +13,8 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.atomic.AtomicLong;
 
-public class ScheduledExecutorServiceBuilder {
+public class ScheduledExecutorServiceBuilder extends ExecutorBuilderBase {
 
-    private static final AtomicLong COUNT = new AtomicLong(0);
     private final LifecycleEnvironment environment;
     private final String nameFormat;
     private int poolSize;
