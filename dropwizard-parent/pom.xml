@@ -179,7 +179,7 @@
                         <path>
                             <groupId>jp.skypencil.errorprone.slf4j</groupId>
                             <artifactId>errorprone-slf4j</artifactId>
-                            <version>0.1.22</version>
+                            <version>0.1.23</version>
                         </path>
                     </annotationProcessorPaths>
                 </configuration>
