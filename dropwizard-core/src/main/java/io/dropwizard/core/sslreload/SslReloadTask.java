@@ -1,5 +1,7 @@
 package io.dropwizard.core.sslreload;
 
+import io.dropwizard.core.Configuration;
+import io.dropwizard.core.ConfiguredBundle;
 import io.dropwizard.jetty.MutableServletContextHandler;
 import io.dropwizard.jetty.SslReload;
 import io.dropwizard.servlets.tasks.Task;
@@ -13,14 +15,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 /** A task that will refresh all ssl factories with up to date certificate information */
-public class SslReloadTask extends Task {
+public class SslReloadTask extends Task implements ConfiguredBundle<Configuration> {
     private Collection<SslReload> reloader = Collections.emptySet();
 
-    protected SslReloadTask() {
+    public SslReloadTask() {
         super("reload-ssl");
     }
 
-    // New method to encapsulate setting reloaders based on the environment
     public void configureReloaders(Environment environment) {
         final Set<SslReload> reloaders = new HashSet<>();
         reloaders.addAll(getReloaders(environment.getApplicationContext()));
