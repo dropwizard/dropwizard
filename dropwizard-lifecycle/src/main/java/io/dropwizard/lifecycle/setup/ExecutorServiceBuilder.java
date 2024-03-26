@@ -18,10 +18,9 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.atomic.AtomicLong;
 
-public class ExecutorServiceBuilder {
+public class ExecutorServiceBuilder extends ExecutorBuilderBase{
     private static Logger log = LoggerFactory.getLogger(ExecutorServiceBuilder.class);
 
-    private static final AtomicLong COUNT = new AtomicLong(0);
     private final LifecycleEnvironment environment;
     @NonNull
     private final String nameFormat;

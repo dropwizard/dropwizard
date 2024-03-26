@@ -5,11 +5,12 @@ import io.dropwizard.core.Configuration;
 import io.dropwizard.core.setup.Bootstrap;
 import io.dropwizard.core.setup.Environment;
 import io.dropwizard.core.sslreload.SslReloadBundle;
+import io.dropwizard.core.sslreload.SslReloadTask;
 
 public class SslReloadApp extends Application<Configuration> {
     @Override
     public void initialize(Bootstrap<Configuration> bootstrap) {
-        bootstrap.addBundle(new SslReloadBundle());
+        bootstrap.addBundle(new SslReloadTask());
     }
 
     @Override

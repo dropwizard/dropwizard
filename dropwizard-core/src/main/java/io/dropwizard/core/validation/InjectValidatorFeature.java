@@ -26,7 +26,9 @@ public class InjectValidatorFeature implements Feature {
     @Override
     public boolean configure(FeatureContext context) {
         ConstraintValidatorFactory constraintValidatorFactory = validatorFactory.getConstraintValidatorFactory();
-        if (constraintValidatorFactory instanceof MutableValidatorFactory) {
+        boolean isMutableValidatorFactory = constraintValidatorFactory instanceof MutableValidatorFactory;
+
+        if (isMutableValidatorFactory) {
             MutableValidatorFactory mutableValidatorFactory = (MutableValidatorFactory) constraintValidatorFactory;
             ConstraintValidatorFactory resourceContextValidatorFactory =
                 resourceContext.getResource(InjectingConstraintValidatorFactory.class);

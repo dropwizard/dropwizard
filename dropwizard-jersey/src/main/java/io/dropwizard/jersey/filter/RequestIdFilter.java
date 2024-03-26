@@ -35,17 +35,22 @@ public class RequestIdFilter implements ContainerResponseFilter {
     }
 
     @Override
-    public void filter(final ContainerRequestContext request,
-            final ContainerResponseContext response) throws IOException {
+    public void filter(final ContainerRequestContext request, final ContainerResponseContext response) throws IOException {
+        String id = resolveRequestId(request);
+        logRequest(request, response, id);
+        response.getHeaders().putSingle(REQUEST_ID, id);
+    }
 
-        String id = Optional.ofNullable(request.getHeaderString(REQUEST_ID))
+    private String resolveRequestId(final ContainerRequestContext request) {
+        return Optional.ofNullable(request.getHeaderString(REQUEST_ID))
             .filter(header -> !header.isEmpty())
             .orElseGet(() -> generateRandomUuid().toString());
+    }
 
+    private void logRequest(final ContainerRequestContext request, final ContainerResponseContext response, String id) {
         logger.trace("method={} path={} request_id={} status={} length={}",
-                request.getMethod(), request.getUriInfo().getPath(), id,
-                response.getStatus(), response.getLength());
-        response.getHeaders().putSingle(REQUEST_ID, id);
+            request.getMethod(), request.getUriInfo().getPath(), id,
+            response.getStatus(), response.getLength());
     }
 
     /**
