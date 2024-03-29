@@ -71,7 +71,7 @@
         <maven-deploy-plugin.version>3.1.1</maven-deploy-plugin.version>
         <maven-enforcer-plugin.version>3.4.1</maven-enforcer-plugin.version>
         <maven-filtering.version>3.3.2</maven-filtering.version>
-        <maven-gpg-plugin.version>3.2.1</maven-gpg-plugin.version>
+        <maven-gpg-plugin.version>3.2.2</maven-gpg-plugin.version>
         <maven-help-plugin.version>3.4.0</maven-help-plugin.version>
         <maven-install-plugin.version>3.1.1</maven-install-plugin.version>
         <maven-invoker-plugin.version>3.6.0</maven-invoker-plugin.version>
