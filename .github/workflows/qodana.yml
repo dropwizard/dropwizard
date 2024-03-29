@@ -24,7 +24,7 @@ jobs:
           fetch-depth: 0
       - name: 'Qodana Scan'
         # yamllint disable-line rule:line-length
-        uses: JetBrains/qodana-action@e42ff2d2727091337983f607598abbbce4e25f1f # v2023.3.1
+        uses: JetBrains/qodana-action@a040a784cc28cb9cabdf884c4e8c32d0aa3fcdb3 # v2023.3.2
         env:
           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
       # yamllint disable-line rule:line-length
