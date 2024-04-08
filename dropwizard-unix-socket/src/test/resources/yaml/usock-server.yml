@@ -3,6 +3,7 @@ server:
     type: simple
     connector:
         type: unix-socket
+        deleteSocketFileOnStartup: false
         useDateHeader: false
     applicationContextPath: /app
     adminContextPath: /admin

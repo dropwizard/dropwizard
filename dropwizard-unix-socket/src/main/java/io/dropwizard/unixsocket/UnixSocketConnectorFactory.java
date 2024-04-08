@@ -46,6 +46,7 @@ public class UnixSocketConnectorFactory extends HttpConnectorFactory {
     private static final Logger LOGGER = LoggerFactory.getLogger(UnixSocketConnectorFactory.class);
 
     private String path = "/tmp/dropwizard.sock";
+    private boolean deleteSocketFileOnStartup;
 
     @JsonProperty
     public String getPath() {
@@ -55,6 +56,16 @@ public class UnixSocketConnectorFactory extends HttpConnectorFactory {
     @JsonProperty
     public void setPath(String path) {
         this.path = path;
+    }
+
+    @JsonProperty
+    public boolean isDeleteSocketFileOnStartup() {
+        return deleteSocketFileOnStartup;
+    }
+
+    @JsonProperty
+    public void setDeleteSocketFileOnStartup(boolean deleteSocketFileOnStartup) {
+        this.deleteSocketFileOnStartup = deleteSocketFileOnStartup;
     }
 
     @Override
@@ -85,11 +96,13 @@ public class UnixSocketConnectorFactory extends HttpConnectorFactory {
         connector.setIdleTimeout(getIdleTimeout().toMilliseconds());
         connector.setName(name);
 
-        // in case there is a leftover domain socket due to ungraceful stop, try to delete it first.
-        try {
-            Files.deleteIfExists(unixDomainPath);
-        } catch (IOException e) {
-            LOGGER.warn("Failed to delete existing unix domain socket file at {}.", path);
+        if (deleteSocketFileOnStartup) {
+            // in case there is a leftover domain socket due to ungraceful stop, try to delete it first.
+            try {
+                Files.deleteIfExists(unixDomainPath);
+            } catch (IOException e) {
+                LOGGER.warn("Failed to delete existing unix domain socket file at {}.", path);
+            }
         }
         return connector;
     }
