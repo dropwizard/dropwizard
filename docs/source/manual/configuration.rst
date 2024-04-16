@@ -485,11 +485,14 @@ Extends the attributes that are available to the :ref:`HTTP connector <man-confi
         - type: unix-socket
           ...
           path: /path/to/file
+          deleteSocketFileOnStartup: false
 
 ================================ ================================ ======================================================================================
 Name                             Default                          Description
 ================================ ================================ ======================================================================================
 path                             /tmp/dropwizard.sock             The path to the unix domain socket file.
+deleteSocketFileOnStartup        false                            Whether to delete socket file on path (if it exists) on startup
+                                                                  instead of failing to start.
 ================================ ================================ ======================================================================================
 
 .. _man-configuration-http2:
