@@ -28,6 +28,6 @@ jobs:
         env:
           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
       # yamllint disable-line rule:line-length
-      - uses: github/codeql-action/upload-sarif@4355270be187e1b672a7a1c7c7bae5afdc1ab94a # v3
+      - uses: github/codeql-action/upload-sarif@c7f9125735019aa87cfc361530512d50ea439c71 # v3
         with:
           sarif_file: ${{ runner.temp }}/qodana/results/qodana.sarif.json
