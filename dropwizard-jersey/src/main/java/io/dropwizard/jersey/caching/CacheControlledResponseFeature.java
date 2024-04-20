@@ -16,6 +16,8 @@ import java.util.concurrent.TimeUnit;
 @Provider
 public class CacheControlledResponseFeature implements DynamicFeature {
 
+    private static final String STALE_WHILE_REVALIDATE = "stale-while-revalidate";
+
     @Override
     public void configure(final ResourceInfo resourceInfo, final FeatureContext configuration) {
         final AnnotatedMethod am = new AnnotatedMethod(resourceInfo.getResourceMethod());
@@ -44,6 +46,15 @@ public class CacheControlledResponseFeature implements DynamicFeature {
                                                  .toSeconds(control.sharedMaxAge()));
             if (control.immutable()) {
                 cacheControl.setMaxAge(ONE_YEAR_IN_SECONDS);
+            }
+
+            if (control.staleWhileRevalidate() > -1) {
+                cacheControl.getCacheExtension().put(
+                    STALE_WHILE_REVALIDATE,
+                    Long.toString(
+                        control.staleWhileRevalidateUnit().toSeconds(control.staleWhileRevalidate())
+                    )
+                );
             }
 
             cacheResponseHeader = cacheControl.toString();
