@@ -56,7 +56,7 @@
         <logback-throttling-appender.version>1.4.2</logback-throttling-appender.version>
         <logback.version>1.4.14</logback.version>
         <metrics4.version>4.2.25</metrics4.version>
-        <mustache-compiler.version>0.9.11</mustache-compiler.version>
+        <mustache-compiler.version>0.9.13</mustache-compiler.version>
         <nullaway.version>0.10.25</nullaway.version>
         <slf4j.version>2.0.13</slf4j.version>
         <tomcat-jdbc.version>10.1.23</tomcat-jdbc.version>
