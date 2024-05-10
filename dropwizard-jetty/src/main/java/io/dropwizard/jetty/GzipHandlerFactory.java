@@ -42,7 +42,7 @@ import static java.util.Objects.requireNonNull;
  *     <tr>
  *         <td>{@code bufferSize}</td>
  *         <td>8KiB</td>
- *         <td>The DataSize of the buffer to use when compressing.</td>
+ *         <td>The DataSize of the buffer to use when decompressing.</td>
  *     </tr>
  *     <tr>
  *         <td>{@code compressedMimeTypes}</td>
