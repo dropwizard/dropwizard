@@ -71,4 +71,11 @@ public class CachingResource {
     public String showSharedMaxAge() {
         return "shared-max-age";
     }
+
+    @GET
+    @Path("/stale-while-revalidate")
+    @CacheControl(staleWhileRevalidate = 13, staleWhileRevalidateUnit = TimeUnit.HOURS)
+    public String showStaleWhileRevalidate() {
+        return "stale-while-revalidate";
+    }
 }
