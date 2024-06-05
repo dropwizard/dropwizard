@@ -61,7 +61,7 @@
         <tomcat-jdbc.version>10.1.24</tomcat-jdbc.version>
 
         <!-- Test dependencies -->
-        <assertj.version>3.25.3</assertj.version>
+        <assertj.version>3.26.0</assertj.version>
         <awaitility.version>4.2.1</awaitility.version>
         <bcprov-jdk18on.version>1.78.1</bcprov-jdk18on.version>
         <h2.version>2.2.224</h2.version>
