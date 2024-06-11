@@ -9,7 +9,7 @@ GEM
       net-http
     net-http (0.4.1)
       uri
-    octokit (9.0.0)
+    octokit (9.1.0)
       faraday (>= 1, < 3)
       sawyer (~> 0.9)
     public_suffix (5.0.5)
