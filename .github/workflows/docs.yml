@@ -15,7 +15,7 @@ jobs:
   docs:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
       # yamllint disable-line rule:line-length
       - uses: ammaraskar/sphinx-action@8b4f60114d7fd1faeba1a712269168508d4750d2 # tag=0.4
         with:
