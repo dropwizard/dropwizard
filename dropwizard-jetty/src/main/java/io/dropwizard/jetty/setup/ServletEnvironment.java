@@ -15,7 +15,6 @@ import org.eclipse.jetty.util.resource.ResourceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.EventListener;
 import java.util.HashSet;
@@ -169,7 +168,7 @@ public class ServletEnvironment {
      *                     string accepted by Resource.newResource(String) may be passed
      *                     and the call is equivalent to {@link #setBaseResource(Resource)}}
      */
-    public void setResourceBase(String resourceBase) throws IOException {
+    public void setResourceBase(String resourceBase) {
         handler.setBaseResource(handler.newResource(resourceBase));
     }
 
