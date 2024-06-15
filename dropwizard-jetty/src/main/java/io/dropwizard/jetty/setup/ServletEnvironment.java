@@ -158,13 +158,7 @@ public class ServletEnvironment {
     public void setBaseResource(String... resources) {
         handler.setBaseResource(
             ResourceFactory.combine(
-                Arrays.stream(resources).map(resource -> {
-                    try {
-                        return handler.newResource(resource);
-                    } catch (IOException ioException) {
-                        throw new RuntimeException(ioException);
-                    }
-                }).toList()
+                Arrays.stream(resources).map(handler::newResource).toList()
             )
         );
     }
