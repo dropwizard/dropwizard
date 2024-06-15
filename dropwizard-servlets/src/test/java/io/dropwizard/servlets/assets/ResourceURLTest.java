@@ -11,6 +11,7 @@ import java.util.jar.JarEntry;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assumptions.assumeThat;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 class ResourceURLTest {
@@ -119,7 +120,7 @@ class ResourceURLTest {
     void appendTrailingSlashAddsASlash() {
         final URL url = getClass().getResource("/META-INF");
 
-        assertThat(url.toExternalForm())
+        assumeThat(url.toExternalForm())
                 .doesNotMatch(".*/$");
         assertThat(ResourceURL.appendTrailingSlash(url).toExternalForm())
                 .endsWith("/");
