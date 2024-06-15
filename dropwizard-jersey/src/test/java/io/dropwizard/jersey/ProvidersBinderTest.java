@@ -12,14 +12,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 class ProvidersBinderTest {
 
     @Test
-    void demonstrateThatHk2BinderIsNotPickedUpAsProvider() {
+    void demonstrateThatHk2BinderIsPickedUpAsProvider() {
         org.glassfish.hk2.utilities.Binder binder = new org.glassfish.hk2.utilities.binding.AbstractBinder() {
             @Override
             protected void configure() {
 
             }
         };
-        assertThat(Providers.isProvider(binder.getClass())).isFalse();
+        assertThat(Providers.isProvider(binder.getClass())).isTrue();
     }
 
     @Test
