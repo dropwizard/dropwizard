@@ -1,6 +1,7 @@
 package io.dropwizard.jetty;
 
 import io.dropwizard.util.DataSize;
+import jakarta.servlet.DispatcherType;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -16,12 +17,13 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.EnumSet;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class GzipHandlerTest {
+class GzipServletHandlerTest {
 
     private static final String PLAIN_TEXT_UTF_8 = "text/plain;charset=UTF-8";
 
@@ -30,7 +32,7 @@ class GzipHandlerTest {
     private final ServletTester servletTester = new ServletTester();
     private final HttpTester.Request request = HttpTester.newRequest();
 
-    GzipHandlerTest() {
+    GzipServletHandlerTest() {
         final GzipHandlerFactory gzipHandlerFactory = new GzipHandlerFactory();
         gzipHandlerFactory.setMinimumEntitySize(DataSize.bytes(0L));
         gzipHandler = gzipHandlerFactory.build(null);
@@ -43,6 +45,7 @@ class GzipHandlerTest {
         request.setURI("/banner");
 
         gzipHandler.addIncludedMethods("POST");
+        servletTester.addFilter(ZipExceptionHandlingServletFilter.class, "/*", EnumSet.allOf(DispatcherType.class));
         servletTester.addServlet(BannerServlet.class, "/banner");
         servletTester.getContext().insertHandler(gzipHandler);
         servletTester.start();
