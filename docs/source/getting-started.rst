@@ -259,7 +259,7 @@ Our YAML file will then look like the below, full `example yml here`_:
     template: Hello, %s!
     defaultName: Stranger
 
-Dropwizard has *many* more configuration parameters than that, but they all have sane defaults so
+Dropwizard has *many* more configuration parameters than that, but they all have same defaults so
 you can keep your configuration files small and focused.
 
 So save that YAML file in the directory you plan to run the fat jar from (see below) as ``hello-world.yml``, because
