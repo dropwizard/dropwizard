@@ -29,7 +29,7 @@ class JsonConfigurationFactoryTest extends BaseConfigurationFactoryTest {
         this.wrongTypeFile = "factory-test-wrong-type.json";
         this.malformedAdvancedFile = "factory-test-malformed-advanced.json";
         this.malformedAdvancedFileError = String.format("%s has an error:%n" +
-                "  * Malformed JSON at line: 7, column: 2; Unexpected close marker '}': expected ']'", malformedAdvancedFile);
+                "  * Malformed JSON at line: 6, column: 1; Unexpected close marker '}': expected ']'", malformedAdvancedFile);
     }
 
     @Test
@@ -37,7 +37,7 @@ class JsonConfigurationFactoryTest extends BaseConfigurationFactoryTest {
         assertThatThrownBy(() -> factory.build(configurationSourceProvider, commentFile))
                 .hasMessageContaining(String.format(
                         "%s has an error:%n" +
-                        "  * Malformed JSON at line: 4, column: 3; Unexpected character ('/' (code 47)): maybe a (non-standard) comment? (not recognized as one since Feature 'ALLOW_COMMENTS' not enabled for parser)",
+                        "  * Malformed JSON at line: 3, column: 2; Unexpected character ('/' (code 47)): maybe a (non-standard) comment? (not recognized as one since Feature 'ALLOW_COMMENTS' not enabled for parser)",
                     commentFile));
     }
 
