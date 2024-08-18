@@ -246,8 +246,8 @@ public class ConfigurationParsingException extends ConfigurationException {
             if (hasFieldPath()) {
                 sb.append(" at: ").append(buildPath(getFieldPath()));
             } else if (hasLocation()) {
-                sb.append(" at line: ").append(getLine() + 1)
-                        .append(", column: ").append(getColumn() + 1);
+                sb.append(" at line: ").append(getLine())
+                        .append(", column: ").append(getColumn());
             }
 
             if (hasDetail()) {
