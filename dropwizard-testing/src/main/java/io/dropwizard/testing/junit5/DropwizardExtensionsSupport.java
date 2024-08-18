@@ -6,7 +6,7 @@ import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
-import org.junit.platform.commons.util.ReflectionUtils;
+import org.junit.platform.commons.support.ReflectionSupport;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -145,7 +145,9 @@ public class DropwizardExtensionsSupport implements BeforeAllCallback, BeforeEac
         return null;
     }
 
-    private DropwizardExtension getDropwizardExtension(Field member, @Nullable Object o) throws IllegalAccessException {
-        return (DropwizardExtension) ReflectionUtils.makeAccessible(member).get(o);
+    private DropwizardExtension getDropwizardExtension(Field member, @Nullable Object o) {
+        return ReflectionSupport.tryToReadFieldValue(member, o)
+            .andThenTry(DropwizardExtension.class::cast)
+            .getOrThrow(e -> new IllegalStateException("Failed to read " + DropwizardExtension.class.getSimpleName() + " field: " + member, e));
     }
 }
