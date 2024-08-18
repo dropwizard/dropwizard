@@ -59,7 +59,7 @@ Affected packages:
 ======================  =========================  ================================
 Maven module            Old package                New package
 ======================  =========================  ================================
-``dropwizard-core``     ``io.dropwizard``          ``io.drowizard.core``
+``dropwizard-core``     ``io.dropwizard``          ``io.dropwizard.core``
 ``dropwizard-logging``  ``io.dropwizard.logging``  ``io.dropwizard.logging.common``
 ``dropwizard-metrics``  ``io.dropwizard.metrics``  ``io.dropwizard.metrics.common``
 ``dropwizard-views``    ``io.dropwizard.views``    ``io.dropwizard.views.common``
