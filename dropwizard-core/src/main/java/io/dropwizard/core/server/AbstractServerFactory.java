@@ -14,6 +14,7 @@ import io.dropwizard.jersey.setup.JerseyEnvironment;
 import io.dropwizard.jersey.validation.HibernateValidationBinder;
 import io.dropwizard.jetty.GzipHandlerFactory;
 import io.dropwizard.jetty.MutableServletContextHandler;
+import io.dropwizard.jetty.ZipExceptionHandlingServletFilter;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import io.dropwizard.metrics.jetty12.InstrumentedQueuedThreadPool;
 import io.dropwizard.metrics.jetty12.ee10.InstrumentedEE10Handler;
@@ -625,6 +626,7 @@ public abstract class AbstractServerFactory implements ServerFactory {
         final String allowedMethodsParam = String.join(",", allowedMethods);
         handler.addFilter(AllowedMethodsFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST))
                 .setInitParameter(AllowedMethodsFilter.ALLOWED_METHODS_PARAM, allowedMethodsParam);
+        handler.addFilter(ZipExceptionHandlingServletFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST));
         if (enableThreadNameFilter) {
             handler.addFilter(ThreadNameFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST));
         }

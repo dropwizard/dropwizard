@@ -1,6 +1,5 @@
 package io.dropwizard.jetty;
 
-import org.eclipse.jetty.http.BadMessageException;
 import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Response;
@@ -8,36 +7,41 @@ import org.eclipse.jetty.server.handler.gzip.GzipHandler;
 import org.eclipse.jetty.util.Callback;
 
 import java.io.EOFException;
-import java.util.Optional;
 import java.util.zip.ZipException;
-
-import static io.dropwizard.util.Throwables.findThrowableInChain;
 
 /**
  * This customization of Jetty's {@link GzipHandler} catches {@link ZipException}s and {@link EOFException}s to properly return an
- * HTTP status code 400 instead of 500.
+ * HTTP status code 400 instead of 500 for malformed GZIP input.
  */
 class ZipExceptionHandlingGzipHandler extends GzipHandler {
     @Override
     public boolean handle(Request request, Response response, Callback callback) throws Exception {
-        return super.handle(new ZipExceptionHandlingRequestWrapper(request), response, callback);
+        ZipExceptionHandlingRequestWrapper requestWrapper = new ZipExceptionHandlingRequestWrapper(request, response);
+
+        boolean handled = super.handle(requestWrapper, response, callback);
+        // if already committed, we cannot modify the status code anymore
+        if (handled && response.isCommitted()) {
+            return true;
+        }
+
+        // if the response isn't committed by Jetty, detect if the status code should be changed
+        if (handleGzipExceptionIfNecessary(requestWrapper, response, callback)) {
+            return true;
+        }
+
+        return handled;
     }
 
-    public static class ZipExceptionHandlingRequestWrapper extends Request.Wrapper {
-        public ZipExceptionHandlingRequestWrapper(Request wrapped) {
-            super(wrapped);
+    // ensures the ZipException/EofException is thrown while processing GZIP input
+    private boolean handleGzipExceptionIfNecessary(ZipExceptionHandlingRequestWrapper request, Response response, Callback callback) {
+
+        if (request.getGzipException() == null) {
+            return false;
         }
 
-        @Override
-        public void fail(Throwable failure) {
-            Optional<BadMessageException> badMessageException = findThrowableInChain(t -> t.getCause() == null && (t instanceof ZipException || t instanceof EOFException), failure)
-                .map(e -> new BadMessageException(HttpStatus.BAD_REQUEST_400, e.getMessage(), e));
+        Throwable throwable = request.getGzipException();
+        Response.writeError(request, response, callback, HttpStatus.BAD_REQUEST_400, throwable.getMessage(), throwable);
 
-            if (badMessageException.isPresent()) {
-                failure = badMessageException.get();
-            }
-
-            super.fail(failure);
-        }
+        return true;
     }
 }
