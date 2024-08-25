@@ -31,7 +31,7 @@ jobs:
         uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
       - name: Set up JDK
-        uses: actions/setup-java@99b8673ff64fbf99d8d325f52d9a5bdedb8483e9 # v4
+        uses: actions/setup-java@6a0805fcefea3d4657a47ac4c165951e33482018 # v4.2.2
         with:
           distribution: 'zulu'
           java-version: 17
@@ -39,7 +39,7 @@ jobs:
 
       # Initializes the CodeQL tools for scanning.
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@afb54ba388a7dca6ecae48f608c4ff05ff4cc77a # v3.25.15
+        uses: github/codeql-action/init@2c779ab0d087cd7fe7b826087247c2c81f27bfa6 # v3.26.5
         with:
           languages: ${{ matrix.language }}
           queries: security-and-quality
@@ -48,6 +48,6 @@ jobs:
         run: ./mvnw --no-transfer-progress -V -B -fae -s .github/settings.xml -e "-DtrimStackTrace=false" "-Dsurefire.rerunFailingTestsCount=1" install
 
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@afb54ba388a7dca6ecae48f608c4ff05ff4cc77a # v3.25.15
+        uses: github/codeql-action/analyze@2c779ab0d087cd7fe7b826087247c2c81f27bfa6 # v3.26.5
         with:
           category: "/language:${{matrix.language}}"
