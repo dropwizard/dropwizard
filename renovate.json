@@ -35,6 +35,11 @@
     {
       "matchManagers": ["pip_requirements"],
       "addLabels": ["python"]
+    },
+    {
+      "groupName": "Maven plugins",
+      "groupSlug": "maven-plugins",
+      "matchPackagePrefixes": ["org.apache.maven.plugins"]
     }
   ],
   "platformAutomerge": true,
