@@ -33,6 +33,11 @@
       "addLabels": ["github_actions"]
     },
     {
+      "matchManagers": ["github-actions"],
+      "groupName": "GitHub Actions",
+      "groupSlug": "github-actions",
+    },
+    {
       "matchManagers": ["pip_requirements"],
       "addLabels": ["python"]
     },
