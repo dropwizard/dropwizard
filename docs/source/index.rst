@@ -65,5 +65,4 @@ team to ship a *production-quality* web service in the shortest time possible.
    :caption: About
 
    about/contributors
-   about/sponsors
    about/docs-index.rst
