@@ -47,7 +47,7 @@
         <javax.persistence-api.version>2.2</javax.persistence-api.version>
         <jaxb-api.version>2.3.3</jaxb-api.version>
         <jdbi3.version>3.45.4</jdbi3.version>
-        <jersey.version>2.44</jersey.version>
+        <jersey.version>2.45</jersey.version>
         <jetty-setuid-java.version>1.0.4</jetty-setuid-java.version>
         <jetty.version>10.0.23</jetty.version>
         <liquibase-core.version>4.29.1</liquibase-core.version>
