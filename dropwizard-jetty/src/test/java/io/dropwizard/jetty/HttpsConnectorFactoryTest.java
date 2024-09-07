@@ -19,6 +19,7 @@ import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.SslConnectionFactory;
 import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.util.resource.ResourceFactory;
+import org.eclipse.jetty.util.security.Credential;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.util.thread.ScheduledExecutorScheduler;
@@ -344,17 +345,20 @@ class HttpsConnectorFactoryTest {
                         assertThat(sslContextFactory.getKeyStoreResource())
                                 .isEqualTo(newResource(keyStorePath, server));
                         assertThat(sslContextFactory.getKeyStoreType()).isEqualTo("JKS");
-                        assertThat(sslContextFactory).extracting("_keyStorePassword")
-                                .isEqualTo("correct_horse");
+                        assertThat(sslContextFactory).extracting("_keyStoreCredential")
+                            .isInstanceOfSatisfying(Credential.class,
+                                credential -> assertThat(credential.check("correct_horse")).isTrue());
                         assertThat(sslContextFactory.getKeyStoreProvider()).isEqualTo("BC");
                         assertThat(sslContextFactory.getTrustStoreResource())
                                 .isEqualTo(newResource(trustStorePath, server));
                         assertThat(sslContextFactory.getKeyStoreType()).isEqualTo("JKS");
-                        assertThat(sslContextFactory).extracting("_trustStorePassword")
-                                .isEqualTo("battery_staple");
+                        assertThat(sslContextFactory).extracting("_trustStoreCredential")
+                            .isInstanceOfSatisfying(Credential.class,
+                                credential -> assertThat(credential.check("battery_staple")).isTrue());
                         assertThat(sslContextFactory.getKeyStoreProvider()).isEqualTo("BC");
-                        assertThat(sslContextFactory).extracting("_keyManagerPassword")
-                                .isEqualTo("new_overlords");
+                        assertThat(sslContextFactory).extracting("_keyManagerCredential")
+                            .isInstanceOfSatisfying(Credential.class,
+                                credential -> assertThat(credential.check("new_overlords")).isTrue());
                         assertThat(sslContextFactory.getNeedClientAuth()).isTrue();
                         assertThat(sslContextFactory.getWantClientAuth()).isTrue();
                         assertThat(sslContextFactory.getCertAlias()).isEqualTo("alt_server");
