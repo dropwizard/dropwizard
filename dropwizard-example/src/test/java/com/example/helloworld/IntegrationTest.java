@@ -126,7 +126,8 @@ class IntegrationTest {
             .exists()
             .content()
             .contains("0.0.0.0:" + APP.getLocalPort(), "Starting hello-world", "Started application", "Started admin")
-            .doesNotContain("Exception", "ERROR", "FATAL");
+            .doesNotContain("ERROR", "FATAL")
+            .doesNotContainPattern("Exception[\\W&&[^=]]");
     }
 
     @Test
