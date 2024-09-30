@@ -294,6 +294,7 @@ class HttpClientBuilderTest {
         final HttpClientContext context = mock(HttpClientContext.class);
         final HttpResponse response = mock(HttpResponse.class);
         when(context.getRequestConfig()).thenReturn(client.getDefaultRequestConfig());
+        when(context.getRequestConfigOrDefault()).thenCallRealMethod();
         when(response.headerIterator()).thenReturn(Collections.emptyIterator());
         when(response.headerIterator(any())).thenReturn(Collections.emptyIterator());
 
