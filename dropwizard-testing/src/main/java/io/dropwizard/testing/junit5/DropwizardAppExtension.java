@@ -12,7 +12,15 @@ import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.DropwizardTestSupport;
 import jakarta.ws.rs.client.Client;
-import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.EntityDetails;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.HttpEntityContainer;
+import org.apache.hc.core5.http.HttpException;
+import org.apache.hc.core5.http.HttpResponse;
+import org.apache.hc.core5.http.HttpResponseInterceptor;
+import org.apache.hc.core5.http.io.entity.ByteArrayEntity;
+import org.apache.hc.core5.http.protocol.HttpContext;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.glassfish.jersey.apache5.connector.Apache5ConnectorProvider;
 import org.glassfish.jersey.apache5.connector.Apache5HttpClientBuilderConfigurator;
@@ -21,6 +29,8 @@ import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.client.JerseyClientBuilder;
 import org.glassfish.jersey.client.RequestEntityProcessing;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
@@ -257,8 +267,10 @@ public class DropwizardAppExtension<C extends Configuration> implements Dropwiza
 
     protected JerseyClientBuilder clientBuilder() {
         ClientConfig clientConfig = new ClientConfig();
-        Apache5HttpClientBuilderConfigurator contentCompressionConfigurator =
-            HttpClientBuilder::disableContentCompression;
+        Apache5HttpClientBuilderConfigurator contentCompressionConfigurator = httpClientBuilder ->
+            httpClientBuilder
+                .disableContentCompression()
+                .addResponseInterceptorLast(new BufferingHttpResponseInterceptor());
         clientConfig.connectorProvider(new Apache5ConnectorProvider())
             .register(new JacksonFeature(getObjectMapper()))
             .register(contentCompressionConfigurator)
@@ -266,5 +278,34 @@ public class DropwizardAppExtension<C extends Configuration> implements Dropwiza
             .property(ClientProperties.READ_TIMEOUT, DEFAULT_READ_TIMEOUT_MS)
             .property(ClientProperties.REQUEST_ENTITY_PROCESSING, RequestEntityProcessing.BUFFERED);
         return new JerseyClientBuilder().withConfig(clientConfig);
+    }
+
+    public static class BufferingHttpResponseInterceptor implements HttpResponseInterceptor {
+
+        @Override
+        public void process(HttpResponse response, EntityDetails entity, HttpContext context) throws HttpException, IOException {
+            if (!(response instanceof HttpEntityContainer)) {
+                return;
+            }
+
+            HttpEntityContainer httpEntityContainer = (HttpEntityContainer) response;
+            HttpEntity httpEntity = httpEntityContainer.getEntity();
+            if (httpEntity == null) {
+                return;
+            }
+
+            int initialSize = httpEntity.getContentLength() > 0 && httpEntity.getContentLength() < Integer.MAX_VALUE
+                ? (int) httpEntity.getContentLength()
+                : 32;
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(initialSize);
+            httpEntity.writeTo(byteArrayOutputStream);
+            httpEntity.getContent().close();
+            HttpEntity newHttpEntity = new ByteArrayEntity(
+                byteArrayOutputStream.toByteArray(),
+                httpEntity.getContentType() != null ? ContentType.parse(httpEntity.getContentType()) : null,
+                httpEntity.getContentEncoding()
+            );
+            httpEntityContainer.setEntity(newHttpEntity);
+        }
     }
 }
