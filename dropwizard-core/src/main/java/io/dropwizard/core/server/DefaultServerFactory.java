@@ -26,7 +26,6 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ThreadFactory;
 
 /**
  * The default implementation of {@link ServerFactory}, which allows for multiple sets of
@@ -229,17 +228,17 @@ public class DefaultServerFactory extends AbstractServerFactory {
     }
 
     private List<Connector> buildAdminConnectors(MetricRegistry metricRegistry, Server server) {
-        final ThreadFactory threadFactory = getThreadFactory(enableAdminVirtualThreads);
         // threadpool is shared between all the connectors, so it should be managed by the server instead of the
         // individual connectors
         @SuppressWarnings("NullAway")
         final QueuedThreadPool threadPool = new InstrumentedQueuedThreadPool(
             metricRegistry,
             adminMaxThreads,
-            adminMinThreads,
-            60000, // overload default
-            null, // overload default
-            threadFactory);
+            adminMinThreads
+        );
+        if (enableAdminVirtualThreads) {
+            threadPool.setVirtualThreadsExecutor(getVirtualThreadsExecutorService());
+        }
         threadPool.setName("dw-admin");
         server.addBean(threadPool);
 
