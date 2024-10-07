@@ -10,13 +10,16 @@ import org.eclipse.jetty.server.AbstractConnector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.util.VirtualThreads;
+import org.eclipse.jetty.util.thread.ExecutionStrategy;
+import org.eclipse.jetty.util.thread.Invocable;
 import org.eclipse.jetty.util.thread.ThreadPool;
+import org.eclipse.jetty.util.thread.strategy.AdaptiveExecutionStrategy;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledForJreRange;
 import org.junit.jupiter.api.condition.JRE;
 
 import java.util.Arrays;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -69,7 +72,7 @@ class VirtualThreadsTest {
 
     private boolean probeVirtualThread(Consumer<DefaultServerFactory> defaultServerFactoryConsumer,
                                        Function<Server, ThreadPool> threadPoolSelector) throws Exception {
-        final AtomicBoolean isVirtualThread = new AtomicBoolean(false);
+        final AtomicReference<Boolean> isVirtualThread = new AtomicReference<>(null);
 
         Environment environment = new Environment("VirtualThreadsTest", Jackson.newMinimalObjectMapper(),
             Validators.newValidatorFactory(), new MetricRegistry(), this.getClass().getClassLoader(),
@@ -78,15 +81,27 @@ class VirtualThreadsTest {
         defaultServerFactoryConsumer.accept(defaultServerFactory);
         Server server = defaultServerFactory.build(environment);
         server.start();
+        ExecutionStrategy.Producer producer = () -> {
+            if (isVirtualThread.get() != null) {
+                return null;
+            }
+            return Invocable.from(Invocable.InvocationType.BLOCKING, () -> isVirtualThread.set(VirtualThreads.isVirtualThread()));
+        };
+        AdaptiveExecutionStrategy adaptiveExecutionStrategy = new AdaptiveExecutionStrategy(producer, threadPoolSelector.apply(server));
+        adaptiveExecutionStrategy.start();
         try {
-            ThreadPool threadPool = threadPoolSelector.apply(server);
-            threadPool.execute(
-                () -> isVirtualThread.set(VirtualThreads.isVirtualThread())
-            );
+            adaptiveExecutionStrategy.dispatch();
+            while (isVirtualThread.get() == null) {
+                Thread.yield();
+            }
         } finally {
+            adaptiveExecutionStrategy.stop();
             server.stop();
         }
 
+        if (isVirtualThread.get() == null) {
+            throw new IllegalStateException("Didn't execute virtual thread probe");
+        }
         return isVirtualThread.get();
     }
 
