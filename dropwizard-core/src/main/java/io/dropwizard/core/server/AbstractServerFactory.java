@@ -37,7 +37,6 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.setuid.RLimit;
 import org.eclipse.jetty.setuid.SetUIDListener;
 import org.eclipse.jetty.util.BlockingArrayQueue;
-import org.eclipse.jetty.util.VirtualThreads;
 import org.eclipse.jetty.util.thread.ThreadPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,8 +56,8 @@ import java.util.EnumSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
 import java.util.stream.Collectors;
 
 import static com.codahale.metrics.annotation.ResponseMeteredLevel.COARSE;
@@ -664,31 +663,25 @@ public abstract class AbstractServerFactory implements ServerFactory {
 
     protected ThreadPool createThreadPool(MetricRegistry metricRegistry) {
         final BlockingQueue<Runnable> queue = new BlockingArrayQueue<>(minThreads, maxThreads, maxQueuedRequests);
-        final ThreadFactory threadFactory = getThreadFactory(enableVirtualThreads);
         final InstrumentedQueuedThreadPool threadPool =
                 new InstrumentedQueuedThreadPool(metricRegistry, maxThreads, minThreads,
-                    (int) idleThreadTimeout.toMilliseconds(), queue, threadFactory);
+                    (int) idleThreadTimeout.toMilliseconds(), queue);
+        if (enableVirtualThreads) {
+            threadPool.setVirtualThreadsExecutor(getVirtualThreadsExecutorService());
+        }
         threadPool.setName("dw");
         return threadPool;
     }
 
-    protected ThreadFactory getThreadFactory(boolean virtualThreadsRequested) {
-        if (!virtualThreadsRequested) {
-            return Executors.defaultThreadFactory();
-        }
-
-        if (!VirtualThreads.areSupported()) {
-            throw new UnsupportedOperationException("Virtual threads are requested but not supported on the current runtime");
-        }
-
+    protected ExecutorService getVirtualThreadsExecutorService() {
         try {
-            Class<?> threadBuilderClass = Class.forName("java.lang.Thread$Builder");
-            Object virtualThreadBuilder = threadBuilderClass.cast(Thread.class.getDeclaredMethod("ofVirtual").invoke(null));
-            return (ThreadFactory) threadBuilderClass.getDeclaredMethod("factory").invoke(virtualThreadBuilder);
+            return (ExecutorService) Executors.class
+                .getDeclaredMethod("newVirtualThreadPerTaskExecutor")
+                .invoke(null);
         } catch (InvocationTargetException invocationTargetException) {
-            throw new IllegalStateException("Error while enabling virtual threads", invocationTargetException.getCause());
+            throw new IllegalStateException("Error while obtaining a virtual thread executor", invocationTargetException.getCause());
         } catch (Exception exception) {
-            throw new IllegalStateException("Error while enabling virtual threads", exception);
+            throw new IllegalStateException("Error while obtaining a virtual thread executor", exception);
         }
     }
 
