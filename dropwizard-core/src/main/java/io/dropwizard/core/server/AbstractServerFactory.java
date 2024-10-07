@@ -648,10 +648,9 @@ public abstract class AbstractServerFactory implements ServerFactory {
 
     protected ThreadPool createThreadPool(MetricRegistry metricRegistry) {
         final BlockingQueue<Runnable> queue = new BlockingArrayQueue<>(minThreads, maxThreads, maxQueuedRequests);
-        final ThreadFactory threadFactory = getThreadFactory(enableVirtualThreads);
         final InstrumentedQueuedThreadPool threadPool =
                 new InstrumentedQueuedThreadPool(metricRegistry, maxThreads, minThreads,
-                    (int) idleThreadTimeout.toMilliseconds(), queue, threadFactory);
+                    (int) idleThreadTimeout.toMilliseconds(), queue);
         if (enableVirtualThreads) {
             threadPool.setVirtualThreadsExecutor(getVirtualThreadsExecutorService());
         }
@@ -668,26 +667,6 @@ public abstract class AbstractServerFactory implements ServerFactory {
             throw new IllegalStateException("Error while obtaining a virtual thread executor", invocationTargetException.getCause());
         } catch (Exception exception) {
             throw new IllegalStateException("Error while obtaining a virtual thread executor", exception);
-        }
-    }
-
-    protected ThreadFactory getThreadFactory(boolean virtualThreadsRequested) {
-        if (!virtualThreadsRequested) {
-            return Executors.defaultThreadFactory();
-        }
-
-        if (!VirtualThreads.areSupported()) {
-            throw new UnsupportedOperationException("Virtual threads are requested but not supported on the current runtime");
-        }
-
-        try {
-            Class<?> threadBuilderClass = Class.forName("java.lang.Thread$Builder");
-            Object virtualThreadBuilder = threadBuilderClass.cast(Thread.class.getDeclaredMethod("ofVirtual").invoke(null));
-            return (ThreadFactory) threadBuilderClass.getDeclaredMethod("factory").invoke(virtualThreadBuilder);
-        } catch (InvocationTargetException invocationTargetException) {
-            throw new IllegalStateException("Error while enabling virtual threads", invocationTargetException.getCause());
-        } catch (Exception exception) {
-            throw new IllegalStateException("Error while enabling virtual threads", exception);
         }
     }
 
