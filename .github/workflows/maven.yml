@@ -12,14 +12,16 @@ on:
       - master
       - release/*
 jobs:
-  yamllint:
-    name: "\U0001F9F9 yamllint"
+  lint:
+    name: "\U0001F9F9 Linters"
     runs-on: ubuntu-latest
     steps:
       - name: ⤵️ Check out configuration from GitHub
         uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # v4.2.1
       - name: 🧹 Run yamllint
         uses: frenck/action-yamllint@34b4bbcaeabedcfefad6adea8c5bbc42af0e2d47 # v1.5.0
+      - name: Validate Renovate configuration
+        uses: suzuki-shunsuke/github-action-renovate-config-validator@36a15b83e37bf3221dc9c02ff5ffdaefb51ca1cf # v1.1.0
   build:
     runs-on: ${{ matrix.os }}
     permissions:
