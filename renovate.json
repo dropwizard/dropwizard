@@ -19,7 +19,7 @@
   "labels": ["dependencies"],
   "packageRules": [
     {
-      "matchPackagePrefixes": ["io.dropwizard.metrics"],
+      "matchPackageNames": ["io.dropwizard.metrics**"],
       "allowedVersions": "<4.3.0"
     },
     {
@@ -50,7 +50,7 @@
     {
       "groupName": "Maven plugins",
       "groupSlug": "maven-plugins",
-      "matchPackagePrefixes": ["org.apache.maven.plugins"]
+      "matchPackageNames": ["org.apache.maven.plugins**"]
     }
   ],
   "platformAutomerge": true,
