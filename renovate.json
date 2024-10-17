@@ -1,12 +1,18 @@
 {
   "extends": [
-    "config:base",
-    "helpers:pinGitHubActionDigests",
+    "config:best-practices",
+    ":automergeDigest",
     ":automergePatch",
     ":automergePr",
     ":automergeRequireAllStatusChecks",
+    ":enableVulnerabilityAlertsWithLabel(security)",
     ":prConcurrentLimitNone",
-    ":separatePatchReleases"
+    ":prHourlyLimitNone",
+    ":separateMultipleMajorReleases",
+    ":separatePatchReleases",
+    "group:recommended",
+    "schedule:automergeWeekly",
+    "schedule:weekly"
   ],
   "baseBranches": ["release/3.0.x", "release/4.0.x", "release/5.0.x"],
   "dependencyDashboard": true,
@@ -48,12 +54,5 @@
     }
   ],
   "platformAutomerge": true,
-  "reviewers": ["team:committers"],
-  "schedule": [
-    "before 2am"
-  ],
-  "vulnerabilityAlerts": {
-    "labels": ["security"],
-    "assignees": ["team:committers"]
-  }
+  "reviewers": ["team:committers"]
 }
