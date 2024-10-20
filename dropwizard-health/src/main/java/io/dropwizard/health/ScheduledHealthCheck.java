@@ -99,7 +99,9 @@ class ScheduledHealthCheck implements Runnable {
         if (this == o) return true;
         if (!(o instanceof ScheduledHealthCheck that)) return false;
         return critical == that.critical &&
+            previouslyRecovered == that.previouslyRecovered &&
             Objects.equals(name, that.name) &&
+            type == that.type &&
             Objects.equals(healthCheck, that.healthCheck) &&
             Objects.equals(schedule, that.schedule) &&
             Objects.equals(state, that.state) &&
@@ -109,22 +111,22 @@ class ScheduledHealthCheck implements Runnable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, critical, healthCheck, schedule, state, healthyCheckCounter, unhealthyCheckCounter);
+        return Objects.hash(name, type, critical, healthCheck, schedule, state, healthyCheckCounter, unhealthyCheckCounter, previouslyRecovered);
     }
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("ScheduledHealthCheck{");
-        sb.append("name='").append(name).append('\'');
-        sb.append(", critical=").append(critical);
-        sb.append(", healthCheck=").append(healthCheck);
-        sb.append(", schedule=").append(schedule);
-        sb.append(", state=").append(state);
-        sb.append(", healthyCheckCounter=").append(getCounterString(healthyCheckCounter));
-        sb.append(", unhealthyCheckCounter=").append(getCounterString(unhealthyCheckCounter));
-        sb.append(", previouslyRecovered=").append(previouslyRecovered);
-        sb.append('}');
-        return sb.toString();
+        return "ScheduledHealthCheck{" +
+            "name='" + name + '\'' +
+            ", type=" + type +
+            ", critical=" + critical +
+            ", healthCheck=" + healthCheck +
+            ", schedule=" + schedule +
+            ", state=" + state +
+            ", healthyCheckCounter=" + healthyCheckCounter +
+            ", unhealthyCheckCounter=" + unhealthyCheckCounter +
+            ", previouslyRecovered=" + previouslyRecovered +
+            '}';
     }
 
     private String getCounterString(Counter counter) {
