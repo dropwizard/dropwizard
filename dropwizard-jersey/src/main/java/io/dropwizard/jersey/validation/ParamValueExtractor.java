@@ -7,7 +7,7 @@ import jakarta.validation.valueextraction.ValueExtractor;
 import org.hibernate.validator.internal.engine.valueextraction.ValueExtractorDescriptor;
 
 /**
- * Let's the validator know that when validating a class that is an {@link AbstractParam} to
+ * Lets the validator know that when validating a class that is an {@link AbstractParam} to
  * validate the underlying value.
  *
  * @since 2.0

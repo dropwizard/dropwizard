@@ -193,7 +193,7 @@ public class AbstractDAO<E> {
      * it is not guaranteed that the elements INSIDE the collection will be initialized/materialized.
      *
      * @param proxy a persistable object, proxy, persistent collection or {@code null}
-     * @throws HibernateException if we can't initialize the proxy at this time, eg. the {@link Session} was closed
+     * @throws HibernateException if we can't initialize the proxy at this time, e.g. the {@link Session} was closed
      */
     protected <T> T initialize(T proxy) throws HibernateException {
         if (!Hibernate.isInitialized(proxy)) {

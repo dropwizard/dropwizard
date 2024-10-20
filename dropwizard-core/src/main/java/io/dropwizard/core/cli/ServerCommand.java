@@ -10,7 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Runs a application as an HTTP server.
+ * Runs an application as an HTTP server.
  *
  * @param <T> the {@link Configuration} subclass which is loaded from the configuration file
  */

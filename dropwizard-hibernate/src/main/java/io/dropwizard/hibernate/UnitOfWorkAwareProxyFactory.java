@@ -79,7 +79,7 @@ public class UnitOfWorkAwareProxyFactory {
     }
 
     /**
-     * Creates a new <b>@UnitOfWork</b> aware proxy of a class with an one-parameter constructor.
+     * Creates a new <b>@UnitOfWork</b> aware proxy of a class with a one-parameter constructor.
      *
      * @param clazz                the specified class definition
      * @param constructorParamType the type of the constructor parameter

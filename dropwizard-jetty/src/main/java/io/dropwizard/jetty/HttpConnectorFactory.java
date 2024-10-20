@@ -725,7 +725,7 @@ public class HttpConnectorFactory implements ConnectorFactory {
         connector.setInheritChannel(inheritChannel);
         // if we do not set the acceptQueueSize, when jetty
         // creates the ServerSocket, it uses the default backlog of 50, and
-        // not the value from the OS.  Therefore we set to the value
+        // not the value from the OS. Therefore we set to the value
         // obtained from NetUtil, which will attempt to read the value from the OS.
         // somaxconn setting
         int actualAcceptQueueSize = Objects.requireNonNullElseGet(acceptQueueSize, NetUtil::getTcpBacklog);
