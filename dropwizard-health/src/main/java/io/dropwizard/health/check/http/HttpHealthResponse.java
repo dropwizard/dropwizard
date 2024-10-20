@@ -43,10 +43,9 @@ public class HttpHealthResponse {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("HttpHealthResponse{");
-        sb.append("status=").append(status);
-        sb.append(", body='").append(body).append('\'');
-        sb.append('}');
-        return sb.toString();
+        return "HttpHealthResponse{" +
+            "status=" + status +
+            ", body='" + body + '\'' +
+            '}';
     }
 }
