@@ -11,7 +11,3 @@ trim_trailing_whitespace = true
 
 [*.properties]
 charset = latin1
-
-[travis.yml]
-indent_size = 2
-indent_style = space
