@@ -71,7 +71,7 @@ public class JdbiFactory {
         // Manage the data source that created this instance.
         environment.lifecycle().manage(dataSource);
 
-        // Setup the required health checks.
+        // Set up the required health checks.
         final Optional<String> validationQuery = configuration.getValidationQuery();
         environment.healthChecks().register(name, new JdbiHealthCheck(
             environment.getHealthCheckExecutorService(),

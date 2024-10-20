@@ -199,8 +199,8 @@ public class JerseyClientBuilder {
 
     /**
      * Use the given {@link ConnectorProvider} instance.
-     * <p/><b>WARNING:</b> Use it with a caution. Most of features will not
-     * work in a custom connection provider.
+     * <p/><b>WARNING:</b> Use it with caution. Most features will not work in
+     * a custom connection provider.
      *
      * @param connectorProvider a {@link ConnectorProvider} instance
      * @return {@code this}

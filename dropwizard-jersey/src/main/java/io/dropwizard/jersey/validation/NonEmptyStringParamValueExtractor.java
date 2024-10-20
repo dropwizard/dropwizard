@@ -8,7 +8,7 @@ import javax.validation.valueextraction.UnwrapByDefault;
 import javax.validation.valueextraction.ValueExtractor;
 
 /**
- * Let's the validator know that when validating a {@link NonEmptyStringParam} to validate the
+ * Lets the validator know that when validating a {@link NonEmptyStringParam} to validate the
  * underlying value. This class is needed, temporarily, while Hibernate is not able to unwrap nested
  * classes <a href="https://hibernate.atlassian.net/browse/HV-904"/>.
  *

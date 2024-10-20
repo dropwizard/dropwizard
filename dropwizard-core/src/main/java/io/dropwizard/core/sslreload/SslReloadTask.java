@@ -9,7 +9,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-/** A task that will refresh all ssl factories with up to date certificate information */
+/** A task that will refresh all ssl factories with up-to-date certificate information */
 public class SslReloadTask extends Task {
     private Collection<SslReload> reloader = Collections.emptySet();
 

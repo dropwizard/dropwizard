@@ -66,7 +66,7 @@ class ExecutorServiceBuilderTest {
     }
 
     /**
-     * There should be no warning about using a Executors.newSingleThreadExecutor() equivalent
+     * There should be no warning about using an Executors.newSingleThreadExecutor() equivalent
      * @see java.util.concurrent.Executors#newSingleThreadExecutor()
      */
     @Test
@@ -83,7 +83,7 @@ class ExecutorServiceBuilderTest {
     }
 
     /**
-     * There should be no warning about using a Executors.newCachedThreadPool() equivalent
+     * There should be no warning about using an Executors.newCachedThreadPool() equivalent
      * @see java.util.concurrent.Executors#newCachedThreadPool()
      */
     @Test
@@ -167,7 +167,7 @@ class ExecutorServiceBuilderTest {
     }
 
     /**
-     * Tries to run 2 tasks that on the executor that rely on each others side-effect to complete. If they fail to
+     * Tries to run 2 tasks that on the executor that rely on each others side effect to complete. If they fail to
      * complete within a short time then we can assume they are not running concurrently
      * @param exe an executor to try to run 2 tasks on
      */

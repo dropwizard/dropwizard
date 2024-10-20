@@ -8,7 +8,7 @@ import javax.validation.valueextraction.UnwrapByDefault;
 import javax.validation.valueextraction.ValueExtractor;
 
 /**
- * Let's the validator know that when validating a class that is an {@link AbstractParam} to
+ * Lets the validator know that when validating a class that is an {@link AbstractParam} to
  * validate the underlying value.
  *
  * @since 2.0

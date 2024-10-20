@@ -11,7 +11,7 @@ import io.dropwizard.validation.PortRange;
 import javax.validation.constraints.NotEmpty;
 
 /**
- * An {@link AppenderFactory} implementation which provides an appender that writes events to an UDP socket.
+ * An {@link AppenderFactory} implementation which provides an appender that writes events to a UDP socket.
  * <p/>
  * <b>Configuration Parameters:</b>
  * <table>

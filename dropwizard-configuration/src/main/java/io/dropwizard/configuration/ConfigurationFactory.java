@@ -13,7 +13,7 @@ public interface ConfigurationFactory<T> {
     /**
      * Loads, parses, binds, and validates a configuration object.
      *
-     * @param provider the provider to to use for reading configuration files
+     * @param provider the provider to use for reading configuration files
      * @param path     the path of the configuration file
      * @return a validated configuration object
      * @throws IOException            if there is an error reading the file

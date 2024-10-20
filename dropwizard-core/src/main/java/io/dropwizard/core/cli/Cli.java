@@ -40,7 +40,7 @@ public class Cli {
     private final ArgumentParser parser;
 
     /**
-     * Create a new CLI interface for a application and its bootstrapped environment.
+     * Create a new CLI interface for an application and its bootstrapped environment.
      *
      * @param location     the location of the application
      * @param bootstrap    the bootstrap for the application
@@ -78,7 +78,7 @@ public class Cli {
                     command.run(bootstrap, namespace);
                 } catch (Throwable e) {
                     // The command failed to run, and the command knows
-                    // best how to cleanup / debug exception
+                    // best how to clean up / debug exception
                     command.onError(this, namespace, e);
                     return Optional.of(e);
                 }
