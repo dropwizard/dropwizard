@@ -17,7 +17,7 @@ import java.lang.reflect.Type;
 import static java.util.Objects.requireNonNull;
 
 /**
- * This class allows producing non-JSON responses for particular entities. For example, register a instance with the
+ * This class allows producing non-JSON responses for particular entities. For example, register an instance with the
  * {@link ErrorMessage} entity and the TEXT_HTML MediaType to produce custom HTML error messages.
  *
  * @param <T> The entity type to handle

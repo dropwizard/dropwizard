@@ -18,7 +18,7 @@ public @interface CacheControl {
     /**
      * If set, adds a {@code Cache-Control} header to the response which indicates the response is
      * immutable and should be kept in cache for as long as possible. (Technically, this corresponds
-     * to a {@code max-age} of one year.
+     * to a {@code max-age} of one year).
      *
      * @see #maxAge()
      * @return {@code true} if the response should be considered immutable and cached indefinitely

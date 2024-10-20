@@ -39,7 +39,7 @@ public class JerseyParameterNameProvider extends ReflectionParameterNameProvider
     }
 
     /**
-     * Derives member's name and type from it's annotations
+     * Derives member name and type from its annotations
      */
     public static Optional<String> getParameterNameFromAnnotations(Annotation[] memberAnnotations) {
         for (Annotation a : memberAnnotations) {

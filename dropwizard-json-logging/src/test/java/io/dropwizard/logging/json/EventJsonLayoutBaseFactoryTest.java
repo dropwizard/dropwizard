@@ -50,7 +50,7 @@ class EventJsonLayoutBaseFactoryTest {
         assertThat(converter.convert(event))
             .hasLineCount(18) // 2 messages and 8 lines of stack per throwable
             .containsSubsequence("wrapp3d", "r00t") // the root is not first
-            .doesNotContain(packageFilter) // does not includes the excluded packages
+            .doesNotContain(packageFilter) // does not include the excluded packages
             .containsPattern("\\[\\d+ skipped\\]"); // and contains no skipped lines
     }
 

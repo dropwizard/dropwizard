@@ -67,7 +67,7 @@ class DbFastForwardCommandTest {
         // Fast-forward all the changes
         fastForwardCommand.run(null, new Namespace(Map.of("all", true, "dry-run", false)), conf);
 
-        // No migrations is performed
+        // No migrations are performed
         new DbMigrateCommand<>(
             TestMigrationConfiguration::getDataSource, TestMigrationConfiguration.class, "migrations.xml")
             .run(null, new Namespace(Map.of()), conf);
