@@ -70,7 +70,7 @@ class BadLogTest {
 
         // Dropwizard test support resets configuration overrides if `before` throws an exception
         // which is fine, as that would normally signal the end of the test, but since we're
-        // testing logging behavior that is setup in the application `run` method, we need
+        // testing logging behavior that is set up in the application `run` method, we need
         // to ensure our log override is still present (it's removed again in `after`)
         logOverride.addToSystemProperties();
 

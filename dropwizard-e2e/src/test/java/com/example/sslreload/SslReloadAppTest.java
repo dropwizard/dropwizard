@@ -125,7 +125,7 @@ public class SslReloadAppTest {
                 assertThat(conn.getErrorStream()).asString(UTF_8).contains(content);
             }
 
-            // The certificates are self signed, so are the only cert in the chain.
+            // The certificates are self-signed, so are the only cert in the chain.
             // Thus, we return the one and only certificate.
             return conn.getServerCertificates()[0].getEncoded();
         } finally {

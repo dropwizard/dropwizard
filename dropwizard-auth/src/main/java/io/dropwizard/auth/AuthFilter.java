@@ -127,7 +127,7 @@ public abstract class AuthFilter<C, P extends Principal> implements ContainerReq
     }
 
     /**
-     * Authenticates a request with user credentials and setup the security context.
+     * Authenticates a request with user credentials and set up the security context.
      *
      * @param requestContext the context of the request
      * @param credentials    the user credentials

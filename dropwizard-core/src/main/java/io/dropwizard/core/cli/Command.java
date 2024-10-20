@@ -50,7 +50,7 @@ public abstract class Command {
     /**
      * Executes when the user runs this specific command.
      *
-     * @param bootstrap the bootstrap bootstrap
+     * @param bootstrap the bootstrap
      * @param namespace the parsed command line namespace
      * @throws Exception if something goes wrong
      */

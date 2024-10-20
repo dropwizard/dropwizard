@@ -33,7 +33,7 @@ import static java.util.Objects.requireNonNull;
 
 /**
  * A servlet which provides access to administrative {@link Task}s. It only responds to {@code POST}
- * requests, since most {@link Task}s aren't side-effect free, and passes along the query string
+ * requests, since most {@link Task}s aren't side effect free, and passes along the query string
  * parameters of the request to the task as a multimap.
  *
  * @see Task

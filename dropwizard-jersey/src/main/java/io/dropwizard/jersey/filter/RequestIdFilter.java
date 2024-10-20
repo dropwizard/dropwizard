@@ -16,7 +16,7 @@ import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * This class adds a "X-Request-Id" HTTP response header and logs the following
+ * This class adds an "X-Request-Id" HTTP response header and logs the following
  * information: request method, request path, request ID, response status,
  * response length (or -1 if not known).
  *

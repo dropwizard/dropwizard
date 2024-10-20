@@ -179,7 +179,7 @@ public class ConfigurationMetadata extends JsonFormatVisitorWrapper.Base {
                     currentPrefix = oldPrefix;
                 }
 
-                // if no new fields are discovered, we assume that we are at an primitive field
+                // if no new fields are discovered, we assume that we are at a primitive field
                 if (oldFieldSize == fields.size()) {
                     fields.put(name, prop.getType());
                 }

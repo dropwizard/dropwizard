@@ -66,7 +66,7 @@ public class ConstraintMessage {
         final Optional<String> entity = isRequestEntity(v, invocable);
         if (entity.isPresent()) {
             // A present entity means that the request body failed validation but
-            // if the request entity is simple (eg. byte[], String, etc), the entity
+            // if the request entity is simple (e.g. byte[], String, etc.), the entity
             // string will be empty, so prepend a message about the request body
             return entity.filter(e -> !e.isEmpty())
                 .orElse("The request body")
@@ -74,7 +74,7 @@ public class ConstraintMessage {
         }
 
         // Check if the violation occurred on a *Param annotation and if so,
-        // return a human friendly error (eg. "Query param xxx may not be null")
+        // return a human friendly error (e.g. "Query param xxx may not be null")
         final Optional<String> memberName = getMemberName(v, invocable);
         return memberName.map(s -> s + " ").orElseGet(() -> v.getPropertyPath() + " ");
 
@@ -82,7 +82,7 @@ public class ConstraintMessage {
 
     /**
      * Determines if constraint violation occurred in the request entity. If it did, return a client
-     * friendly string representation of where the error occurred (eg. "patient.name")
+     * friendly string representation of where the error occurred (e.g. "patient.name")
      */
     public static Optional<String> isRequestEntity(ConstraintViolation<?> violation, Invocable invocable) {
         final Path.Node parent = StreamSupport.stream(violation.getPropertyPath().spliterator(), false)
