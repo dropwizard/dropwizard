@@ -6,7 +6,7 @@ jobs:
     environment:
       JAVA_OPTS: -Xms512m -Xmx2g -XX:+TieredCompilation -XX:TieredStopAtLevel=1
     docker:
-      - image: cimg/openjdk:21.0.4
+      - image: cimg/openjdk:21.0.4@sha256:f774d22aa344f6ce1e5203f8a7918e2ae0bbc0dd9f1f1fcb2eeefe1baf3d002a
     steps:
       - checkout
       - restore_cache:
