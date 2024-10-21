@@ -96,20 +96,10 @@
         <dependency>
             <groupId>com.fasterxml.jackson.jaxrs</groupId>
             <artifactId>jackson-jaxrs-json-provider</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>javax.xml.bind</groupId>
-                    <artifactId>jaxb-api</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.github.spullara.mustache.java</groupId>
             <artifactId>compiler</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>jakarta.annotation</groupId>
-            <artifactId>jakarta.annotation-api</artifactId>
         </dependency>
         <dependency>
             <groupId>jakarta.servlet</groupId>
