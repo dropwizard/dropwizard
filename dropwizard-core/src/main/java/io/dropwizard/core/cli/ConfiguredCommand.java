@@ -118,7 +118,7 @@ public abstract class ConfiguredCommand<T extends Configuration> extends Command
     /**
      * Runs the command with the given {@link Bootstrap} and {@link Configuration}.
      *
-     * @param bootstrap     the bootstrap bootstrap
+     * @param bootstrap     the bootstrap
      * @param namespace     the parsed command line namespace
      * @param configuration the configuration object
      * @throws Exception if something goes wrong

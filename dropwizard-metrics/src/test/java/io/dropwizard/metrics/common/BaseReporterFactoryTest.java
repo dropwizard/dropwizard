@@ -60,7 +60,7 @@ class BaseReporterFactoryTest {
 
                 /*
                  * case4: If include list is NOT empty and exclude list is NOT empty, only things not excluded
-                 * and specifically included should show up. Excludes takes precedence.
+                 * and specifically included should show up. Excludes take precedence.
                  */
                 Arguments.of(INCLUDES, EXCLUDES, "inc", true, true, true, "case4"),
                 Arguments.of(INCLUDES, EXCLUDES, "both", false, false, false, "case4"),

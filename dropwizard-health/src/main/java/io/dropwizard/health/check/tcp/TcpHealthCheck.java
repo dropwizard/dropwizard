@@ -55,7 +55,7 @@ public class TcpHealthCheck extends HealthCheck {
 
     /**
      * Performs a health check via TCP against an external dependency.
-     * By default uses the Java {@link Socket} API, but can be overridden to allow for different behavior.
+     * By default, uses the Java {@link Socket} API, but can be overridden to allow for different behavior.
      *
      * @param host the host to check.
      * @param port the port to check.

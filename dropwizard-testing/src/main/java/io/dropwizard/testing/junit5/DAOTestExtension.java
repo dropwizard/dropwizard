@@ -49,7 +49,7 @@ public class DAOTestExtension implements DropwizardExtension, BeforeAllCallback,
 
     /**
      * Creates a new builder for {@link DAOTestExtension}, which allows to customize a {@link SessionFactory}
-     * by different parameters. By default uses the H2 database in the memory mode.
+     * by different parameters. Uses the H2 database in memory mode by default.
      *
      * @return a new {@link DAOTestExtension.Builder}
      */

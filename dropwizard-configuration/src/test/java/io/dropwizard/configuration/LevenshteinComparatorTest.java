@@ -11,7 +11,7 @@ class LevenshteinComparatorTest {
     private final ConfigurationParsingException.Builder.LevenshteinComparator c = new ConfigurationParsingException.Builder.LevenshteinComparator("base");
 
     /**
-     * An "java.lang.IllegalArgumentException: Comparison method violates its general contract!"
+     * A "java.lang.IllegalArgumentException: Comparison method violates its general contract!"
      * is triggered by this test with a previous version of LevenshteinComparator
      * <p>
      * It is triggered by a certain condition in TimSort that only happens if 32 or more

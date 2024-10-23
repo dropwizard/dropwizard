@@ -52,14 +52,14 @@ public @interface OneOf {
     String[] value();
 
     /**
-     * Whether or not to ignore case.
+     * Whether to ignore case.
      *
      * @return if the case should be ignored
      */
     boolean ignoreCase() default false;
 
     /**
-     * Whether or not to ignore leading and trailing whitespace.
+     * Whether to ignore leading and trailing whitespace.
      *
      * @return if leading and trailing whitespaces should be ignored
      */

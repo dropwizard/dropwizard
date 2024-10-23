@@ -9,7 +9,7 @@ Included with this application is an example of the optional DB API module. The 
 the features available in [Hibernate](http://hibernate.org/), along with demonstrating how these are used from within
 Dropwizard.
 
-This database example is comprised of the following classes:
+This database example comprises of the following classes:
 
 * The `PersonDAO` illustrates using the Data Access Object pattern with assisting of Hibernate.
 
@@ -35,7 +35,7 @@ To test the example application run the following commands.
         ./mvnw package
         cd dropwizard-example
 
-* To setup the h2 database run.
+* To set up the h2 database run.
 
         java -jar target/dropwizard-example-$DW_VERSION.jar db migrate example.yml
 

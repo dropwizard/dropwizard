@@ -7,7 +7,7 @@ import org.eclipse.jetty.server.RequestLog;
 /**
  * A service provider interface for creating a Jetty {@link RequestLog}
  *
- * @param <T> type of a {@link RequestLog} implementation
+ * @param <T> type of {@link RequestLog} implementation
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", defaultImpl = LogbackAccessRequestLogFactory.class)
 public interface RequestLogFactory<T extends RequestLog> extends Discoverable {

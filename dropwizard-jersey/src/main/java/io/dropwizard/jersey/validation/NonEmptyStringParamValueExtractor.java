@@ -7,7 +7,7 @@ import jakarta.validation.valueextraction.ValueExtractor;
 import org.hibernate.validator.internal.engine.valueextraction.ValueExtractorDescriptor;
 
 /**
- * Let's the validator know that when validating a {@link NonEmptyStringParam} to validate the
+ * Lets the validator know that when validating a {@link NonEmptyStringParam} to validate the
  * underlying value. This class is needed, temporarily, while Hibernate is not able to unwrap nested
  * classes <a href="https://hibernate.atlassian.net/browse/HV-904"/>.
  *
