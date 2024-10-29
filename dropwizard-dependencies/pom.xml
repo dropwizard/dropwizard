@@ -151,6 +151,11 @@
                 <version>${jakarta.el.version}</version>
             </dependency>
             <dependency>
+                <groupId>jakarta.el</groupId>
+                <artifactId>jakarta.el-api</artifactId>
+                <version>${jakarta.el.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>jakarta.activation</groupId>
                 <artifactId>jakarta.activation-api</artifactId>
                 <version>${activation-api.version}</version>

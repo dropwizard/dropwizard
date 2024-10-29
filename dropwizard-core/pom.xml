@@ -186,10 +186,6 @@
             <artifactId>jersey-bean-validation</artifactId>
             <exclusions>
                 <exclusion>
-                    <groupId>jakarta.el</groupId>
-                    <artifactId>jakarta.el-api</artifactId>
-                </exclusion>
-                <exclusion>
                     <groupId>org.glassfish.hk2.external</groupId>
                     <artifactId>jakarta.inject</artifactId>
                 </exclusion>
