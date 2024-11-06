@@ -366,6 +366,7 @@ public class HttpClientBuilder {
                 ? NO_RETRIES
                 : (httpRequestRetryStrategy == null ? new DefaultHttpRequestRetryStrategy(configuration.getRetries(),
                 TimeValue.ofSeconds(1L)) : httpRequestRetryStrategy);
+        final boolean protocolUpgradeEnabled = configuration.isProtocolUpgradeEnabled();
 
         final RequestConfig requestConfig
                 = RequestConfig.custom().setCookieSpec(cookiePolicy)
@@ -373,6 +374,7 @@ public class HttpClientBuilder {
                 .setConnectTimeout(connectionTimeout, TimeUnit.MILLISECONDS)
                 .setConnectionKeepAlive(TimeValue.of(-1, TimeUnit.MILLISECONDS))
                 .setConnectionRequestTimeout(connectionRequestTimeout, TimeUnit.MILLISECONDS)
+                .setProtocolUpgradeEnabled(protocolUpgradeEnabled)
                 .build();
         final SocketConfig socketConfig = SocketConfig.custom()
                 .setTcpNoDelay(true)
