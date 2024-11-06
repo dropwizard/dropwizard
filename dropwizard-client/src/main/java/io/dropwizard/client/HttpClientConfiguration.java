@@ -65,6 +65,8 @@ public class HttpClientConfiguration {
     @Nullable
     private TlsConfiguration tlsConfiguration;
 
+    private boolean protocolUpgradeEnabled = true;
+
     @JsonProperty
     public void setKeepAlive(Duration keepAlive) {
         this.keepAlive = keepAlive;
@@ -190,5 +192,15 @@ public class HttpClientConfiguration {
     @JsonProperty("tls")
     public void setTlsConfiguration(TlsConfiguration tlsConfiguration) {
         this.tlsConfiguration = tlsConfiguration;
+    }
+
+    @JsonProperty
+    public boolean isProtocolUpgradeEnabled() {
+        return protocolUpgradeEnabled;
+    }
+
+    @JsonProperty
+    public void setProtocolUpgradeEnabled(boolean protocolUpgradeEnabled) {
+        this.protocolUpgradeEnabled = protocolUpgradeEnabled;
     }
 }
