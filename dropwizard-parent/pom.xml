@@ -118,6 +118,7 @@
                 <configuration>
                     <compilerArgs>
                         <arg>-XDcompilePolicy=simple</arg>
+                        <arg>--should-stop=ifError=FLOW</arg>
                         <!-- When run as plugin all args must be passed together -->
                         <arg>-Xplugin:ErrorProne -XepDisableWarningsInGeneratedCode -Xep:EqualsGetClass:OFF -Xep:NullAway:ERROR -XepOpt:NullAway:AnnotatedPackages=io.dropwizard -XepOpt:NullAway:ExcludedFieldAnnotations=org.mockito.Mock -XepOpt:NullAway:UnannotatedSubPackages=io.dropwizard.benchmarks</arg>
                     </compilerArgs>
