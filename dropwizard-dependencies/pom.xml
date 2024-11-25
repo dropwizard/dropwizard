@@ -52,7 +52,7 @@
         <jetty-setuid-java.version>1.0.4</jetty-setuid-java.version>
         <jetty.version>11.0.24</jetty.version>
         <liquibase-core.version>4.30.0</liquibase-core.version>
-        <liquibase-slf4j.version>5.0.0</liquibase-slf4j.version>
+        <liquibase-slf4j.version>5.1.0</liquibase-slf4j.version>
         <logback-throttling-appender.version>1.4.2</logback-throttling-appender.version>
         <logback.version>1.4.14</logback.version>
         <metrics4.version>4.2.28</metrics4.version>
