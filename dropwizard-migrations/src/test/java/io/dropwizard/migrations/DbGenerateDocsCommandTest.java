@@ -32,9 +32,10 @@ class DbGenerateDocsCommandTest {
     void testHelpPage() throws Exception {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         MigrationTestSupport.createSubparser(generateDocsCommand).printHelp(new PrintWriter(new OutputStreamWriter(baos, UTF_8), true));
-        assertThat(baos.toString(UTF_8.name())).isEqualToNormalizingNewlines(
+        assertThat(baos.toString(UTF_8)).isEqualToNormalizingNewlines(
             "usage: db generate-docs [-h] [--migrations MIGRATIONS-FILE]\n" +
-                "          [--catalog CATALOG] [--schema SCHEMA] [file] output\n" +
+                "          [--catalog CATALOG] [--schema SCHEMA]\n" +
+                "          [--analytics-enabled ANALYTICS-ENABLED] [file] output\n" +
                 "\n" +
                 "Generate documentation about the database state.\n" +
                 "\n" +
@@ -50,6 +51,9 @@ class DbGenerateDocsCommandTest {
                 "  --catalog CATALOG      Specify  the   database   catalog   (use  database\n" +
                 "                         default if omitted)\n" +
                 "  --schema SCHEMA        Specify the database schema  (use database default\n" +
-                "                         if omitted)\n");
+                "                         if omitted)\n" +
+                "  --analytics-enabled ANALYTICS-ENABLED\n" +
+                "                         This turns on analytics  gathering for that single\n" +
+                "                         occurrence of a command.\n");
     }
 }
