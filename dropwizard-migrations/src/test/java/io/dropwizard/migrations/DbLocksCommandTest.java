@@ -64,9 +64,10 @@ class DbLocksCommandTest {
     void testPrintHelp() throws Exception {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         MigrationTestSupport.createSubparser(locksCommand).printHelp(new PrintWriter(new OutputStreamWriter(out, UTF_8), true));
-        assertThat(out.toString(UTF_8.name())).isEqualToNormalizingNewlines(
+        assertThat(out.toString(UTF_8)).isEqualToNormalizingNewlines(
             "usage: db locks [-h] [--migrations MIGRATIONS-FILE] [--catalog CATALOG]\n" +
-                "          [--schema SCHEMA] [-l] [-r] [file]\n" +
+                "          [--schema SCHEMA] [--analytics-enabled ANALYTICS-ENABLED] [-l]\n" +
+                "          [-r] [file]\n" +
                 "\n" +
                 "Manage database migration locks\n" +
                 "\n" +
@@ -82,6 +83,9 @@ class DbLocksCommandTest {
                 "                         default if omitted)\n" +
                 "  --schema SCHEMA        Specify the database schema  (use database default\n" +
                 "                         if omitted)\n" +
+                "  --analytics-enabled ANALYTICS-ENABLED\n" +
+                "                         This turns on analytics  gathering for that single\n" +
+                "                         occurrence of a command.\n" +
                 "  -l, --list             list all open locks\n" +
                 "  -r, --force-release    forcibly release all open locks\n");
     }

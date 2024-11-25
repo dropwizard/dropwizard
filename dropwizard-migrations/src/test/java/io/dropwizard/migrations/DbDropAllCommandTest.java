@@ -49,9 +49,10 @@ class DbDropAllCommandTest {
     void testHelpPage() throws Exception {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         MigrationTestSupport.createSubparser(dropAllCommand).printHelp(new PrintWriter(new OutputStreamWriter(out, UTF_8), true));
-        assertThat(out.toString(UTF_8.name())).isEqualToNormalizingNewlines(
+        assertThat(out.toString(UTF_8)).isEqualToNormalizingNewlines(
             "usage: db drop-all [-h] [--migrations MIGRATIONS-FILE] [--catalog CATALOG]\n" +
-                "          [--schema SCHEMA] --confirm-delete-everything [file]\n" +
+                "          [--schema SCHEMA] [--analytics-enabled ANALYTICS-ENABLED]\n" +
+                "          --confirm-delete-everything [file]\n" +
                 "\n" +
                 "Delete all user-owned objects from the database.\n" +
                 "\n" +
@@ -67,6 +68,9 @@ class DbDropAllCommandTest {
                 "                         default if omitted)\n" +
                 "  --schema SCHEMA        Specify the database schema  (use database default\n" +
                 "                         if omitted)\n" +
+                "  --analytics-enabled ANALYTICS-ENABLED\n" +
+                "                         This turns on analytics  gathering for that single\n" +
+                "                         occurrence of a command.\n" +
                 "  --confirm-delete-everything\n" +
                 "                         indicate you  understand  this  deletes everything\n" +
                 "                         in your database\n");

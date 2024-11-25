@@ -113,9 +113,10 @@ class DbFastForwardCommandTest {
     void testPrintHelp() throws Exception {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         MigrationTestSupport.createSubparser(fastForwardCommand).printHelp(new PrintWriter(new OutputStreamWriter(baos, UTF_8), true));
-        assertThat(baos.toString(UTF_8.name())).isEqualToNormalizingNewlines(
+        assertThat(baos.toString(UTF_8)).isEqualToNormalizingNewlines(
             "usage: db fast-forward [-h] [--migrations MIGRATIONS-FILE]\n" +
-                "          [--catalog CATALOG] [--schema SCHEMA] [-n] [-a] [-i CONTEXTS]\n" +
+                "          [--catalog CATALOG] [--schema SCHEMA]\n" +
+                "          [--analytics-enabled ANALYTICS-ENABLED] [-n] [-a] [-i CONTEXTS]\n" +
                 "          [file]\n" +
                 "\n" +
                 "Mark the next pending change set as applied without running it\n" +
@@ -132,6 +133,9 @@ class DbFastForwardCommandTest {
                 "                         default if omitted)\n" +
                 "  --schema SCHEMA        Specify the database schema  (use database default\n" +
                 "                         if omitted)\n" +
+                "  --analytics-enabled ANALYTICS-ENABLED\n" +
+                "                         This turns on analytics  gathering for that single\n" +
+                "                         occurrence of a command.\n" +
                 "  -n, --dry-run          output the DDL to stdout, don't run it\n" +
                 "  -a, --all              mark all pending change sets as applied\n" +
                 "  -i CONTEXTS, --include CONTEXTS\n" +

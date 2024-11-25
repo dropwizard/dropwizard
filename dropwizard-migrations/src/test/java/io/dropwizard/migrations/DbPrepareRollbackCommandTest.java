@@ -34,7 +34,7 @@ class DbPrepareRollbackCommandTest {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         prepareRollbackCommand.setOutputStream(new PrintStream(baos));
         prepareRollbackCommand.run(null, new Namespace(Collections.emptyMap()), conf);
-        assertThat(baos.toString(UTF_8.name()))
+        assertThat(baos.toString(UTF_8))
             .contains("ALTER TABLE PUBLIC.persons DROP COLUMN email;")
             .contains("DROP TABLE PUBLIC.persons;");
     }
@@ -44,16 +44,17 @@ class DbPrepareRollbackCommandTest {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         prepareRollbackCommand.setOutputStream(new PrintStream(baos));
         prepareRollbackCommand.run(null, new Namespace(Collections.singletonMap("count", 1)), conf);
-        assertThat(baos.toString(UTF_8.name())).contains("DROP TABLE PUBLIC.persons;");
+        assertThat(baos.toString(UTF_8)).contains("DROP TABLE PUBLIC.persons;");
     }
 
     @Test
     void testPrintHelp() throws Exception {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         MigrationTestSupport.createSubparser(prepareRollbackCommand).printHelp(new PrintWriter(new OutputStreamWriter(out, UTF_8), true));
-        assertThat(out.toString(UTF_8.name())).isEqualToNormalizingNewlines(
+        assertThat(out.toString(UTF_8)).isEqualToNormalizingNewlines(
             "usage: db prepare-rollback [-h] [--migrations MIGRATIONS-FILE]\n" +
-                "          [--catalog CATALOG] [--schema SCHEMA] [-c COUNT] [-i CONTEXTS]\n" +
+                "          [--catalog CATALOG] [--schema SCHEMA]\n" +
+                "          [--analytics-enabled ANALYTICS-ENABLED] [-c COUNT] [-i CONTEXTS]\n" +
                 "          [file]\n" +
                 "\n" +
                 "Generate rollback DDL scripts for pending change sets.\n" +
@@ -70,6 +71,9 @@ class DbPrepareRollbackCommandTest {
                 "                         default if omitted)\n" +
                 "  --schema SCHEMA        Specify the database schema  (use database default\n" +
                 "                         if omitted)\n" +
+                "  --analytics-enabled ANALYTICS-ENABLED\n" +
+                "                         This turns on analytics  gathering for that single\n" +
+                "                         occurrence of a command.\n" +
                 "  -c COUNT, --count COUNT\n" +
                 "                         limit script to  the  specified  number of pending\n" +
                 "                         change sets\n" +
