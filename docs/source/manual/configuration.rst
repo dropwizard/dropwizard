@@ -1481,6 +1481,7 @@ See HttpClientConfiguration_  for more options.
       keepAlive: 0ms
       retries: 0
       userAgent: <application name> (<client name>)
+      protocolUpgradeEnabled: true
 
 
 =============================  ======================================  =============================================================================
@@ -1502,6 +1503,8 @@ retries                        0                                       The numbe
 userAgent                      ``applicationName`` (``clientName``)    The User-Agent to send with requests.
 validateAfterInactivityPeriod  0 milliseconds                          The maximum time before a persistent connection is checked to remain active.
                                                                        If set to 0, no inactivity check will be performed.
+protocolUpgradeEnabled         true                                    If set to false, ``connection: Upgrade`` and ``upgrade: TLS/1.2`` are not sent
+                                                                       anymore by the HTTP client. Might be required for Istio/Envoy.
 =============================  ======================================  =============================================================================
 
 
