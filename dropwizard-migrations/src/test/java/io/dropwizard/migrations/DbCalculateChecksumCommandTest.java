@@ -40,9 +40,10 @@ class DbCalculateChecksumCommandTest {
     void testHelpPage() throws Exception {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         MigrationTestSupport.createSubparser(migrateCommand).printHelp(new PrintWriter(new OutputStreamWriter(out, UTF_8), true));
-        assertThat(out.toString(UTF_8.name())).isEqualToNormalizingNewlines(
+        assertThat(out.toString(UTF_8)).isEqualToNormalizingNewlines(
             "usage: db calculate-checksum [-h] [--migrations MIGRATIONS-FILE]\n" +
-                "          [--catalog CATALOG] [--schema SCHEMA] [file] id author\n" +
+                "          [--catalog CATALOG] [--schema SCHEMA]\n" +
+                "          [--analytics-enabled ANALYTICS-ENABLED] [file] id author\n" +
                 "\n" +
                 "Calculates and prints a checksum for a change set\n" +
                 "\n" +
@@ -59,6 +60,9 @@ class DbCalculateChecksumCommandTest {
                 "  --catalog CATALOG      Specify  the   database   catalog   (use  database\n" +
                 "                         default if omitted)\n" +
                 "  --schema SCHEMA        Specify the database schema  (use database default\n" +
-                "                         if omitted)\n");
+                "                         if omitted)\n" +
+                "  --analytics-enabled ANALYTICS-ENABLED\n" +
+                "                         This turns on analytics  gathering for that single\n" +
+                "                         occurrence of a command.\n");
     }
 }

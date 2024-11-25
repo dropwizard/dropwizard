@@ -32,9 +32,10 @@ class DbTestCommandTest {
     void testPrintHelp() throws Exception {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         MigrationTestSupport.createSubparser(dbTestCommand).printHelp(new PrintWriter(new OutputStreamWriter(baos, UTF_8), true));
-        assertThat(baos.toString(UTF_8.name())).isEqualToNormalizingNewlines(
+        assertThat(baos.toString(UTF_8)).isEqualToNormalizingNewlines(
             "usage: db test [-h] [--migrations MIGRATIONS-FILE] [--catalog CATALOG]\n" +
-                "          [--schema SCHEMA] [-i CONTEXTS] [file]\n" +
+                "          [--schema SCHEMA] [--analytics-enabled ANALYTICS-ENABLED]\n" +
+                "          [-i CONTEXTS] [file]\n" +
                 "\n" +
                 "Apply and rollback pending change sets.\n" +
                 "\n" +
@@ -50,6 +51,9 @@ class DbTestCommandTest {
                 "                         default if omitted)\n" +
                 "  --schema SCHEMA        Specify the database schema  (use database default\n" +
                 "                         if omitted)\n" +
+                "  --analytics-enabled ANALYTICS-ENABLED\n" +
+                "                         This turns on analytics  gathering for that single\n" +
+                "                         occurrence of a command.\n" +
                 "  -i CONTEXTS, --include CONTEXTS\n" +
                 "                         include change sets from the given context\n");
     }

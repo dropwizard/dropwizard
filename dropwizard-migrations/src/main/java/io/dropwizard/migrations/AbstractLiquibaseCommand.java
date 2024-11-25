@@ -8,17 +8,26 @@ import io.dropwizard.db.DatabaseConfiguration;
 import io.dropwizard.db.ManagedDataSource;
 import io.dropwizard.db.PooledDataSourceFactory;
 import liquibase.Liquibase;
+import liquibase.Scope;
+import liquibase.analytics.configuration.AnalyticsArgs;
+import liquibase.configuration.ConfigurationDefinition;
+import liquibase.configuration.LiquibaseConfiguration;
 import liquibase.database.Database;
 import liquibase.database.DatabaseConnection;
 import liquibase.database.DatabaseFactory;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.exception.LiquibaseException;
 import liquibase.exception.ValidationFailedException;
+import liquibase.structure.core.Catalog;
+import liquibase.structure.core.Schema;
 import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.sql.SQLException;
+import java.util.Map;
+import java.util.SortedSet;
+import java.util.logging.Level;
 
 public abstract class AbstractLiquibaseCommand<T extends Configuration> extends ConfiguredCommand<T> {
     private final DatabaseConfiguration<T> strategy;
@@ -56,6 +65,11 @@ public abstract class AbstractLiquibaseCommand<T extends Configuration> extends 
         subparser.addArgument("--schema")
                 .dest("schema")
                 .help("Specify the database schema (use database default if omitted)");
+
+        subparser.addArgument("--analytics-enabled")
+                .setDefault(false)
+                .dest("analytics-enabled")
+                .help("This turns on analytics gathering for that single occurrence of a command.");
     }
 
     @Override
@@ -84,6 +98,17 @@ public abstract class AbstractLiquibaseCommand<T extends Configuration> extends 
             liquibase = new CloseableLiquibaseWithFileSystemMigrationsFile(dataSource, database, migrationsFile);
         }
 
+        final Boolean analyticsEnabled = namespace.getBoolean("analytics-enabled");
+        try {
+            Map<String, Object> values = Map.of(
+                "liquibase.analytics.enabled", analyticsEnabled != null && analyticsEnabled,
+                "liquibase.analytics.logLevel", Level.FINEST // OFF is mapped to SLF4J ERROR level...
+            );
+            Scope.enter(values);
+        } catch (Exception e) {
+            throw new LiquibaseException(e);
+        }
+
         return liquibase;
     }
 
@@ -97,11 +122,11 @@ public abstract class AbstractLiquibaseCommand<T extends Configuration> extends 
         final String catalogName = namespace.getString("catalog");
         final String schemaName = namespace.getString("schema");
 
-        if (database.supportsCatalogs() && catalogName != null) {
+        if (database.supports(Catalog.class) && catalogName != null) {
             database.setDefaultCatalogName(catalogName);
             database.setOutputDefaultCatalog(true);
         }
-        if (database.supportsSchemas() && schemaName != null) {
+        if (database.supports(Schema.class) && schemaName != null) {
             database.setDefaultSchemaName(schemaName);
             database.setOutputDefaultSchema(true);
         }

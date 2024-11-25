@@ -61,7 +61,7 @@ class DbMigrateCommandTest {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         migrateCommand.setOutputStream(new PrintStream(baos));
         migrateCommand.run(null, new Namespace(Collections.singletonMap("dry-run", true)), conf);
-        assertThat(baos.toString(UTF_8.name())).contains(String.format(
+        assertThat(baos.toString(UTF_8)).contains(String.format(
                 "-- *********************************************************************%n" +
                 "-- Update Database Script%n" +
                 "-- *********************************************************************%n"));
@@ -79,28 +79,32 @@ class DbMigrateCommandTest {
 
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         subparser.printHelp(new PrintWriter(new OutputStreamWriter(baos, UTF_8), true));
-        assertThat(baos.toString(UTF_8.name())).isEqualToNormalizingNewlines(
+        assertThat(baos.toString(UTF_8)).isEqualToNormalizingNewlines(
                         "usage: db migrate [-h] [--migrations MIGRATIONS-FILE] [--catalog CATALOG]\n" +
-                        "          [--schema SCHEMA] [-n] [-c COUNT] [-i CONTEXTS] [file]\n" +
-                        "\n" +
-                        "Apply all pending change sets.\n" +
-                        "\n" +
-                        "positional arguments:\n" +
-                        "  file                   application configuration file\n" +
-                        "\n" +
-                        "named arguments:\n" +
-                        "  -h, --help             show this help message and exit\n" +
-                        "  --migrations MIGRATIONS-FILE\n" +
-                        "                         the file containing  the  Liquibase migrations for\n" +
-                        "                         the application\n" +
-                        "  --catalog CATALOG      Specify  the   database   catalog   (use  database\n" +
-                        "                         default if omitted)\n" +
-                        "  --schema SCHEMA        Specify the database schema  (use database default\n" +
-                        "                         if omitted)\n" +
-                        "  -n, --dry-run          output the DDL to stdout, don't run it\n" +
-                        "  -c COUNT, --count COUNT\n" +
-                        "                         only apply the next N change sets\n" +
-                        "  -i CONTEXTS, --include CONTEXTS\n" +
-                        "                         include change sets from the given context\n");
+                            "          [--schema SCHEMA] [--analytics-enabled ANALYTICS-ENABLED] [-n]\n" +
+                            "          [-c COUNT] [-i CONTEXTS] [file]\n" +
+                            "\n" +
+                            "Apply all pending change sets.\n" +
+                            "\n" +
+                            "positional arguments:\n" +
+                            "  file                   application configuration file\n" +
+                            "\n" +
+                            "named arguments:\n" +
+                            "  -h, --help             show this help message and exit\n" +
+                            "  --migrations MIGRATIONS-FILE\n" +
+                            "                         the file containing  the  Liquibase migrations for\n" +
+                            "                         the application\n" +
+                            "  --catalog CATALOG      Specify  the   database   catalog   (use  database\n" +
+                            "                         default if omitted)\n" +
+                            "  --schema SCHEMA        Specify the database schema  (use database default\n" +
+                            "                         if omitted)\n" +
+                            "  --analytics-enabled ANALYTICS-ENABLED\n" +
+                            "                         This turns on analytics  gathering for that single\n" +
+                            "                         occurrence of a command.\n" +
+                            "  -n, --dry-run          output the DDL to stdout, don't run it\n" +
+                            "  -c COUNT, --count COUNT\n" +
+                            "                         only apply the next N change sets\n" +
+                            "  -i CONTEXTS, --include CONTEXTS\n" +
+                            "                         include change sets from the given context\n");
     }
 }
