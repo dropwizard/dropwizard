@@ -106,43 +106,43 @@ public class JacksonMessageBodyProviderTest {
 
     @Test
     void readsDeserializableTypes() {
-        assertThat(provider.isReadable(Example.class, null, null, null))
+        assertThat(provider.isReadable(Example.class, null, new Annotation[0], null))
                 .isTrue();
     }
 
     @Test
     void writesSerializableTypes() {
-        assertThat(provider.isWriteable(Example.class, null, null, null))
+        assertThat(provider.isWriteable(Example.class, null, new Annotation[0], null))
                 .isTrue();
     }
 
     @Test
     void doesNotWriteIgnoredTypes() {
-        assertThat(provider.isWriteable(Ignorable.class, null, null, null))
+        assertThat(provider.isWriteable(Ignorable.class, null, new Annotation[0], null))
                 .isFalse();
     }
 
     @Test
     void writesUnIgnoredTypes() {
-        assertThat(provider.isWriteable(NonIgnorable.class, null, null, null))
+        assertThat(provider.isWriteable(NonIgnorable.class, null, new Annotation[0], null))
                 .isTrue();
     }
 
     @Test
     void doesNotReadIgnoredTypes() {
-        assertThat(provider.isReadable(Ignorable.class, null, null, null))
+        assertThat(provider.isReadable(Ignorable.class, null, new Annotation[0], null))
                 .isFalse();
     }
 
     @Test
     void readsUnIgnoredTypes() {
-        assertThat(provider.isReadable(NonIgnorable.class, null, null, null))
+        assertThat(provider.isReadable(NonIgnorable.class, null, new Annotation[0], null))
                 .isTrue();
     }
 
     @Test
     void isChunked() {
-        assertThat(provider.getSize(null, null, null, null, null))
+        assertThat(provider.getSize(null, null, null, new Annotation[0], null))
                 .isEqualTo(-1);
     }
 
