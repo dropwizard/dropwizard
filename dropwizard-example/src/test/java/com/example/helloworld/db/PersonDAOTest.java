@@ -24,7 +24,7 @@ class PersonDAOTest {
     private PersonDAO personDAO;
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() {
         personDAO = new PersonDAO(daoTestRule.getSessionFactory());
     }
 

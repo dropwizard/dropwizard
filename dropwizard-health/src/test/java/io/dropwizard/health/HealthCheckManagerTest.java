@@ -449,7 +449,7 @@ class HealthCheckManagerTest {
         }
 
         @Override
-        protected Result check() throws Exception {
+        protected Result check() {
             counter.inc();
             log.info("count={}", getCount());
             return Result.healthy();

@@ -98,19 +98,19 @@ class AbstractDAOTest {
     }
 
     @Test
-    void getsASessionFromTheSessionFactory() throws Exception {
+    void getsASessionFromTheSessionFactory() {
         assertThat(dao.currentSession())
                 .isSameAs(session);
     }
 
     @Test
-    void hasAnEntityClass() throws Exception {
+    void hasAnEntityClass() {
         assertThat(dao.getEntityClass())
                 .isEqualTo(String.class);
     }
 
     @Test
-    void getsNamedQueries() throws Exception {
+    void getsNamedQueries() {
         assertThat(dao.namedQuery("query-name"))
                 .isEqualTo(query);
 
@@ -118,7 +118,7 @@ class AbstractDAOTest {
     }
 
     @Test
-    void getsNamedTypedQueries() throws Exception {
+    void getsNamedTypedQueries() {
         assertThat(dao.namedTypedQuery("query-name"))
             .isEqualTo(query);
 
@@ -126,7 +126,7 @@ class AbstractDAOTest {
     }
 
     @Test
-    void getsTypedQueries() throws Exception {
+    void getsTypedQueries() {
         assertThat(dao.query("HQL"))
             .isEqualTo(query);
 
@@ -134,7 +134,7 @@ class AbstractDAOTest {
     }
 
     @Test
-    void createsNewCriteriaQueries() throws Exception {
+    void createsNewCriteriaQueries() {
         assertThat(dao.criteriaQuery())
                 .isEqualTo(criteriaQuery);
 
@@ -143,7 +143,7 @@ class AbstractDAOTest {
     }
 
     @Test
-    void returnsUniqueResultsFromJpaCriteriaQueries() throws Exception {
+    void returnsUniqueResultsFromJpaCriteriaQueries() {
         when(session.createQuery(criteriaQuery)).thenReturn(query);
         when(query.getResultList()).thenReturn(Collections.singletonList("woo"));
 
@@ -152,7 +152,7 @@ class AbstractDAOTest {
     }
 
     @Test
-    void throwsOnNonUniqueResultsFromJpaCriteriaQueries() throws Exception {
+    void throwsOnNonUniqueResultsFromJpaCriteriaQueries() {
         when(session.createQuery(criteriaQuery)).thenReturn(query);
         when(query.getResultList()).thenReturn(Arrays.asList("woo", "boo"));
 
@@ -161,7 +161,7 @@ class AbstractDAOTest {
     }
 
     @Test
-    void returnsUniqueResultsFromQueries() throws Exception {
+    void returnsUniqueResultsFromQueries() {
         when(query.uniqueResult()).thenReturn("woo");
 
         assertThat(dao.uniqueResult(query))
@@ -169,7 +169,7 @@ class AbstractDAOTest {
     }
 
     @Test
-    void returnsUniqueListsFromJpaCriteriaQueries() throws Exception {
+    void returnsUniqueListsFromJpaCriteriaQueries() {
         when(session.createQuery(criteriaQuery)).thenReturn(query);
         when(query.getResultList()).thenReturn(Collections.singletonList("woo"));
 
@@ -178,7 +178,7 @@ class AbstractDAOTest {
     }
 
     @Test
-    void returnsUniqueListsFromQueries() throws Exception {
+    void returnsUniqueListsFromQueries() {
         when(query.list()).thenReturn(Collections.singletonList("woo"));
 
         assertThat(dao.list(query))
@@ -186,7 +186,7 @@ class AbstractDAOTest {
     }
 
     @Test
-    void getsEntitiesById() throws Exception {
+    void getsEntitiesById() {
         when(session.get(String.class, 200)).thenReturn("woo!");
 
         assertThat(dao.get(200))
@@ -196,7 +196,7 @@ class AbstractDAOTest {
     }
 
     @Test
-    void persistsEntities() throws Exception {
+    void persistsEntities() {
         assertThat(dao.persist("woo"))
                 .isEqualTo("woo");
 

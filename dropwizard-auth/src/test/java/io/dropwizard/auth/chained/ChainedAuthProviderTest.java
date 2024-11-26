@@ -1,11 +1,6 @@
 package io.dropwizard.auth.chained;
 
-import io.dropwizard.auth.AuthBaseTest;
-import io.dropwizard.auth.AuthDynamicFeature;
-import io.dropwizard.auth.AuthFilter;
-import io.dropwizard.auth.AuthResource;
-import io.dropwizard.auth.AuthValueFactoryProvider;
-import io.dropwizard.auth.Authorizer;
+import io.dropwizard.auth.*;
 import io.dropwizard.auth.basic.BasicCredentialAuthFilter;
 import io.dropwizard.auth.basic.BasicCredentials;
 import io.dropwizard.auth.oauth.OAuthCredentialAuthFilter;
@@ -51,7 +46,7 @@ class ChainedAuthProviderTest extends AuthBaseTest<ChainedAuthProviderTest.Chain
         @SuppressWarnings("rawtypes")
         public List<AuthFilter> buildHandlerList(AuthFilter<BasicCredentials, Principal> basicAuthFilter,
                                                  AuthFilter<String, Principal> oAuthFilter) {
-            return Arrays.asList(basicAuthFilter, oAuthFilter);
+            return List.of(basicAuthFilter, oAuthFilter);
         }
     }
 
