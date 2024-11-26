@@ -68,7 +68,7 @@ class DAOTestExtensionTest {
 
     private TestEntity persist(TestEntity testEntity) {
         final Session currentSession = daoTestExtension.getSessionFactory().getCurrentSession();
-        currentSession.saveOrUpdate(testEntity);
+        currentSession.persist(testEntity);
 
         return testEntity;
     }
