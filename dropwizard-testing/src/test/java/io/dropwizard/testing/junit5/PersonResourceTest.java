@@ -62,7 +62,7 @@ class PersonResourceTest {
     @Test
     void testGetImmutableListOfPersons() {
         assertThat(resources.target("/person/blah/list").request().get(new GenericType<List<Person>>() {
-            })).containsOnly(person);
+        })).containsOnly(person);
     }
 
     @Test
@@ -112,13 +112,13 @@ class PersonResourceTest {
 
     @Test
     void testValidationGroupsException() {
-        final Response resp = resources.target("/person/blah/validation-groups-exception")
+        assertThat(resources.target("/person/blah/validation-groups-exception")
             .request()
-            .post(Entity.json("{}"));
-        assertThat(resp.getStatus()).isEqualTo(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
-        assertThat(resp.readEntity(String.class))
-            .isEqualTo("{\"code\":500,\"message\":\"Parameters must have the same" +
-                " validation groups in validationGroupsException\"}");
+            .post(Entity.json("{}")))
+            .satisfies(response -> assertThat(response.getStatus()).isEqualTo(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode()))
+            .satisfies(response -> assertThat(response.readEntity(String.class))
+                .isEqualTo("{\"code\":500,\"message\":\"Parameters must have the same" +
+                    " validation groups in validationGroupsException\"}"));
     }
 
     @Test

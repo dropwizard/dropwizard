@@ -20,8 +20,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
+import static org.assertj.core.api.Assertions.*;
 
 class MustacheViewRendererTest extends JerseyTest {
     static {
@@ -79,43 +78,37 @@ class MustacheViewRendererTest extends JerseyTest {
     }
 
     @Test
-    void rendersViewsWithAbsoluteTemplatePaths() throws Exception {
-        final String response = target("/test/absolute").request().get(String.class);
-        assertThat(response).isEqualTo("Woop woop. yay\n");
+    void rendersViewsWithAbsoluteTemplatePaths() {
+        assertThat(target("/test/absolute").request().get(String.class))
+            .isEqualTo("Woop woop. yay\n");
     }
 
     @Test
-    void rendersViewsWithRelativeTemplatePaths() throws Exception {
-        final String response = target("/test/relative").request().get(String.class);
-        assertThat(response).isEqualTo("Ok.\n");
+    void rendersViewsWithRelativeTemplatePaths() {
+        assertThat(target("/test/relative").request().get(String.class))
+            .isEqualTo("Ok.\n");
     }
 
     @Test
-    void returnsA500ForViewsWithBadTemplatePaths() throws Exception {
-        try {
-            target("/test/bad").request().get(String.class);
-            failBecauseExceptionWasNotThrown(WebApplicationException.class);
-        } catch (WebApplicationException e) {
-            assertThat(e.getResponse().getStatus())
-                    .isEqualTo(500);
-
-            assertThat(e.getResponse().readEntity(String.class))
-                    .isEqualTo(ViewRenderExceptionMapper.TEMPLATE_ERROR_MSG);
-        }
+    void returnsA500ForViewsWithBadTemplatePaths() {
+        assertThatExceptionOfType(WebApplicationException.class)
+            .isThrownBy(() -> target("/test/bad").request().get(String.class))
+            .extracting(WebApplicationException::getResponse)
+            .satisfies(response -> assertThat(response.getStatus())
+                .isEqualTo(500))
+            .satisfies(response -> assertThat(response.readEntity(String.class))
+                .isEqualTo(ViewRenderExceptionMapper.TEMPLATE_ERROR_MSG));
     }
 
     @Test
-    void returnsA500ForViewsThatCantCompile() throws Exception {
-        try {
-            target("/test/error").request().get(String.class);
-            failBecauseExceptionWasNotThrown(WebApplicationException.class);
-        } catch (WebApplicationException e) {
-            assertThat(e.getResponse().getStatus())
-                    .isEqualTo(500);
-
-            assertThat(e.getResponse().readEntity(String.class))
-                .isEqualTo(ViewRenderExceptionMapper.TEMPLATE_ERROR_MSG);
-        }
+    void returnsA500ForViewsThatCantCompile() {
+        assertThatExceptionOfType(WebApplicationException.class)
+            .isThrownBy(() -> target("/test/error").request().get(String.class))
+            .extracting(WebApplicationException::getResponse)
+            .satisfies(response -> assertThat(response.getStatus())
+                .isEqualTo(500))
+            .satisfies(response -> assertThat(response.readEntity(String.class))
+                .isEqualTo(ViewRenderExceptionMapper.TEMPLATE_ERROR_MSG));
     }
 
     @Test

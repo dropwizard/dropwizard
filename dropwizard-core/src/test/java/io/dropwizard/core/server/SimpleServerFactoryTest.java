@@ -35,7 +35,6 @@ import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SimpleServerFactoryTest {
 
@@ -96,8 +95,8 @@ public class SimpleServerFactoryTest {
     void testConfiguredEnvironment() {
         http.configure(environment);
 
-        assertEquals(http.getAdminContextPath(), environment.getAdminContext().getContextPath());
-        assertEquals(http.getApplicationContextPath(), environment.getApplicationContext().getContextPath());
+        assertThat(environment.getAdminContext().getContextPath()).isEqualTo(http.getAdminContextPath());
+        assertThat(environment.getApplicationContext().getContextPath()).isEqualTo(http.getApplicationContextPath());
     }
 
     @Test

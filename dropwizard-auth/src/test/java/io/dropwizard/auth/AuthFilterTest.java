@@ -11,7 +11,6 @@ import jakarta.ws.rs.core.SecurityContext;
 import jakarta.ws.rs.core.UriInfo;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.security.Principal;
@@ -22,19 +21,19 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class AuthFilterTest {
 
     @Test
-    void isSecureShouldStayTheSame() throws Exception {
+    void isSecureShouldStayTheSame() {
         ContainerRequestContext requestContext = new FakeSecureRequestContext();
 
         new SimpleAuthFilter().filter(requestContext);
 
-        assertTrue(requestContext.getSecurityContext().isSecure());
+        assertThat(requestContext.getSecurityContext().isSecure()).isTrue();
     }
 
     static class SimpleAuthFilter extends AuthFilter<String, Principal> {
@@ -45,7 +44,7 @@ class AuthFilterTest {
         }
 
         @Override
-        public void filter(ContainerRequestContext requestContext) throws IOException {
+        public void filter(ContainerRequestContext requestContext) {
             authenticate(requestContext, "some-password", "SOME_SCHEME");
         }
     }

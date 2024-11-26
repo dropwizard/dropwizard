@@ -9,12 +9,13 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.Collections;
 import java.util.Map;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(DropwizardExtensionsSupport.class)
 class DropwizardAppExtensionWithoutConfigTest {
@@ -28,7 +29,7 @@ class DropwizardAppExtensionWithoutConfigTest {
         Map<?, ?> response = EXTENSION.client().target("http://localhost:" + EXTENSION.getLocalPort() + "/test")
             .request()
             .get(Map.class);
-        Assertions.assertEquals(Collections.singletonMap("color", "orange"), response);
+        assertThat(response).isEqualTo(Collections.singletonMap("color", "orange"));
     }
 
     public static class TestApplication extends Application<Configuration> {

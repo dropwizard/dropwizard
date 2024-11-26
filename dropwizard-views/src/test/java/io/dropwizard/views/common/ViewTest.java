@@ -9,7 +9,7 @@ class ViewTest {
     };
 
     @Test
-    void hasATemplate() throws Exception {
+    void hasATemplate() {
         assertThat(view.getTemplateName())
                 .isEqualTo("/blah.tmp");
     }

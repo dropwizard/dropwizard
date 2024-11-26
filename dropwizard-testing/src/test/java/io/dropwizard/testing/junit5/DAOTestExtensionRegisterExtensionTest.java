@@ -18,7 +18,6 @@ class DAOTestExtensionRegisterExtensionTest {
 
     @Test
     void shouldProvideSession() {
-        final SessionFactory sessionFactory = daoTestExtension.getSessionFactory();
-        assertThat(sessionFactory).isNotNull();
+        assertThat(daoTestExtension.getSessionFactory()).isNotNull();
     }
 }

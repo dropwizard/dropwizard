@@ -74,8 +74,9 @@ public abstract class AuthBaseTest<T extends DropwizardResourceConfig> extends J
         Invocation.Builder request = target("/test/admin").request();
         assertThatExceptionOfType(WebApplicationException.class)
             .isThrownBy(() -> request.get(String.class))
-            .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(401))
-            .satisfies(e -> assertThat(e.getResponse().getHeaders().get(HttpHeaders.WWW_AUTHENTICATE))
+            .extracting(WebApplicationException::getResponse)
+            .satisfies(response -> assertThat(response.getStatus()).isEqualTo(401))
+            .satisfies(response -> assertThat(response.getHeaders().get(HttpHeaders.WWW_AUTHENTICATE))
                 .containsOnly(getPrefix() + " realm=\"realm\""));
     }
 
@@ -91,7 +92,7 @@ public abstract class AuthBaseTest<T extends DropwizardResourceConfig> extends J
         assertThat(target("/test/profile").request()
             .header(HttpHeaders.AUTHORIZATION, getPrefix() + " " + getOrdinaryGuyValidToken())
             .get(String.class))
-            .isEqualTo("'" + ORDINARY_USER + "' has user privileges");
+            .isEqualTo("'%s' has user privileges", ORDINARY_USER);
     }
 
     @Test
@@ -99,8 +100,9 @@ public abstract class AuthBaseTest<T extends DropwizardResourceConfig> extends J
         Invocation.Builder request = target("/test/profile").request();
         assertThatExceptionOfType(WebApplicationException.class)
             .isThrownBy(() -> request.get(String.class))
-            .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(401))
-            .satisfies(e -> assertThat(e.getResponse().getHeaders().get(HttpHeaders.WWW_AUTHENTICATE))
+            .extracting(WebApplicationException::getResponse)
+            .satisfies(response -> assertThat(response.getStatus()).isEqualTo(401))
+            .satisfies(response -> assertThat(response.getHeaders().get(HttpHeaders.WWW_AUTHENTICATE))
                 .containsOnly(getPrefix() + " realm=\"realm\""));
     }
 
@@ -159,7 +161,7 @@ public abstract class AuthBaseTest<T extends DropwizardResourceConfig> extends J
         assertThat(target("/test/admin").request()
             .header(HttpHeaders.AUTHORIZATION, getPrefix() + " " + getGoodGuyValidToken())
             .get(String.class))
-            .isEqualTo("'" + ADMIN_USER + "' has admin privileges");
+            .isEqualTo("'%s' has admin privileges", ADMIN_USER);
     }
 
     @Test
@@ -167,9 +169,8 @@ public abstract class AuthBaseTest<T extends DropwizardResourceConfig> extends J
         assertThat(target("/test/implicit-permitall").request()
             .header(HttpHeaders.AUTHORIZATION, getPrefix() + " " + getGoodGuyValidToken())
             .get(String.class))
-            .isEqualTo("'" + ADMIN_USER + "' has user privileges");
+            .isEqualTo("'%s' has user privileges", ADMIN_USER);
     }
-
 
     @Test
     void respondsToNonBasicCredentialsWith401() {
@@ -177,9 +178,10 @@ public abstract class AuthBaseTest<T extends DropwizardResourceConfig> extends J
             .header(HttpHeaders.AUTHORIZATION, "Derp irrelevant");
         assertThatExceptionOfType(WebApplicationException.class)
             .isThrownBy(() -> request.get(String.class))
-            .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(401))
-                .satisfies(e -> assertThat(e.getResponse().getHeaders().get(HttpHeaders.WWW_AUTHENTICATE))
-                    .containsOnly(getPrefix() + " realm=\"realm\""));
+            .extracting(WebApplicationException::getResponse)
+            .satisfies(response -> assertThat(response.getStatus()).isEqualTo(401))
+            .satisfies(response -> assertThat(response.getHeaders().get(HttpHeaders.WWW_AUTHENTICATE))
+                .containsOnly(getPrefix() + " realm=\"realm\""));
     }
 
     @Test

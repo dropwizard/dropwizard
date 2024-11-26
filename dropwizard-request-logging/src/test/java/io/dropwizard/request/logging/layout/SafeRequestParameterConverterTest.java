@@ -45,12 +45,12 @@ class SafeRequestParameterConverterTest {
         // Jetty recycled the request
         Mockito.reset(httpServletRequest);
 
-        String value = safeRequestParameterConverter.convert(accessEvent);
-        assertThat(value).isEqualTo("Alice");
+        assertThat(safeRequestParameterConverter.convert(accessEvent))
+            .isEqualTo("Alice");
     }
 
     @Test
-    void testConvertSeveralParameters() throws Exception {
+    void testConvertSeveralParameters() {
         Mockito.when(httpServletRequest.getParameterValues("name")).thenReturn(new String[]{"Alice", "Bob"});
         Mockito.when(httpServletRequest.getParameterNames())
                 .thenReturn(Collections.enumeration(Collections.singleton("name")));
@@ -60,7 +60,7 @@ class SafeRequestParameterConverterTest {
         // Jetty recycled the request
         Mockito.reset(httpServletRequest);
 
-        final String value = safeRequestParameterConverter.convert(accessEvent);
-        assertThat(value).isEqualTo("[Alice, Bob]");
+        assertThat(safeRequestParameterConverter.convert(accessEvent))
+            .isEqualTo("[Alice, Bob]");
     }
 }

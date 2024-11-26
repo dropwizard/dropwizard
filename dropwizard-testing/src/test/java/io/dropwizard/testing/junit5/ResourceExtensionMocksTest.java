@@ -31,9 +31,8 @@ class ResourceExtensionMocksTest {
     void accessingMockPersonSucceeds() {
         when(mockPerson.getName()).thenReturn("Person-Name");
 
-        final String resp = resources.target("test/name").request().get(String.class);
-
-        assertThat(resp).isEqualTo("Person-Name");
+        assertThat(resources.target("test/name").request().get(String.class))
+            .isEqualTo("Person-Name");
     }
 
     @Path("/test")

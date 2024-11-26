@@ -14,15 +14,15 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 class PostBodyTaskTest {
     private final PostBodyTask task = new PostBodyTask("test") {
         @Override
-        public void execute(Map<String, List<String>> parameters, String body, PrintWriter output) throws Exception {
+        public void execute(Map<String, List<String>> parameters, String body, PrintWriter output) {
 
         }
     };
 
     @SuppressWarnings("deprecation")
     @Test
-    void throwsExceptionWhenCallingExecuteWithoutThePostBody() throws Exception {
-        assertThatExceptionOfType(UnsupportedOperationException.class).isThrownBy(() ->
-                task.execute(Collections.emptyMap(), new PrintWriter(new OutputStreamWriter(System.out, UTF_8))));
+    void throwsExceptionWhenCallingExecuteWithoutThePostBody() {
+        assertThatExceptionOfType(UnsupportedOperationException.class)
+            .isThrownBy(() -> task.execute(Collections.emptyMap(), new PrintWriter(new OutputStreamWriter(System.out, UTF_8))));
     }
 }

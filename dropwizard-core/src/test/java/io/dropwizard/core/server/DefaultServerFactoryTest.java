@@ -40,7 +40,6 @@ import java.util.concurrent.TimeUnit;
 
 import static com.codahale.metrics.annotation.ResponseMeteredLevel.ALL;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class DefaultServerFactoryTest {
     private final Environment environment = new Environment("test");
@@ -251,8 +250,8 @@ class DefaultServerFactoryTest {
     void testConfiguredEnvironment() {
         http.configure(environment);
 
-        assertEquals(http.getAdminContextPath(), environment.getAdminContext().getContextPath());
-        assertEquals(http.getApplicationContextPath(), environment.getApplicationContext().getContextPath());
+        assertThat(environment.getAdminContext().getContextPath()).isEqualTo(http.getAdminContextPath());
+        assertThat(environment.getApplicationContext().getContextPath()).isEqualTo(http.getApplicationContextPath());
     }
 
     @Test

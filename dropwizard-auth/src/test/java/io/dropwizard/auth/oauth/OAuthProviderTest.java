@@ -33,7 +33,7 @@ class OAuthProviderTest extends AuthBaseTest<OAuthProviderTest.OAuthTestResource
             .queryParam(OAuthCredentialAuthFilter.OAUTH_ACCESS_TOKEN_PARAM, getOrdinaryGuyValidToken())
             .request()
             .get(String.class))
-            .isEqualTo("'" + ORDINARY_USER + "' has user privileges");
+            .isEqualTo("'%s' has user privileges", ORDINARY_USER);
     }
 
     @Override

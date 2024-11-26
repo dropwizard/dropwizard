@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import java.net.InetSocketAddress;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 class HttpHealthCheckTest {
     private static final String SUCCESS_PATH = "/ping";
@@ -75,6 +75,7 @@ class HttpHealthCheckTest {
         final HttpHealthCheck httpHealthCheck = new HttpHealthCheck(BASE_URI +
             httpServer.getAddress().getPort() + TIMEOUT_PATH);
 
-        assertThrows(ProcessingException.class, httpHealthCheck::check);
+        assertThatExceptionOfType(ProcessingException.class)
+            .isThrownBy(httpHealthCheck::check);
     }
 }

@@ -8,7 +8,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 
 @ExtendWith(MockitoExtension.class)
 class HealthEnvironmentTest {
@@ -26,7 +26,8 @@ class HealthEnvironmentTest {
 
     @Test
     void gettingHealthStateAggregatorBeforeSetShouldResultInException() {
-        assertThrows(IllegalStateException.class, () -> healthEnvironment.healthStateAggregator());
+        assertThatIllegalStateException()
+            .isThrownBy(healthEnvironment::healthStateAggregator);
     }
 
     @Test
