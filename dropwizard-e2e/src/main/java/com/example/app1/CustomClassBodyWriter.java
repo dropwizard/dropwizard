@@ -1,5 +1,7 @@
 package com.example.app1;
 
+import javax.annotation.Priority;
+import javax.ws.rs.Priorities;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
@@ -13,6 +15,7 @@ import java.nio.charset.StandardCharsets;
 
 /** Demonstration that one can provider their own message body writers (see issue #1005) */
 @Produces(MediaType.APPLICATION_JSON)
+@Priority(Priorities.ENTITY_CODER)
 public class CustomClassBodyWriter implements MessageBodyWriter<CustomClass> {
     private static final byte[] RESPONSE = "I'm a custom class".getBytes(StandardCharsets.UTF_8);
 
