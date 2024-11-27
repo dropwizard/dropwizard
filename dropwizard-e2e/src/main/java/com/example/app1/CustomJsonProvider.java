@@ -2,7 +2,9 @@ package com.example.app1;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.jakarta.rs.json.JacksonXmlBindJsonProvider;
+import jakarta.annotation.Priority;
 import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.Priorities;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.MediaType;
@@ -19,6 +21,7 @@ import java.util.Objects;
 /** Custom JSON reader and writer that will write a leading HEADER to the JSON output */
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
+@Priority(Priorities.ENTITY_CODER)
 public class CustomJsonProvider extends JacksonXmlBindJsonProvider {
     private static final String HEADER = "/** A Dropwizard specialty */\n";
     private static final byte[] HEADER_BYTES = HEADER.getBytes(StandardCharsets.UTF_8);
