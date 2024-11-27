@@ -21,7 +21,7 @@ jobs:
       - name: 🧹 Run yamllint
         uses: frenck/action-yamllint@34b4bbcaeabedcfefad6adea8c5bbc42af0e2d47 # v1.5.0
       - name: Validate Renovate configuration
-        uses: suzuki-shunsuke/github-action-renovate-config-validator@36a15b83e37bf3221dc9c02ff5ffdaefb51ca1cf # v1.1.0
+        uses: suzuki-shunsuke/github-action-renovate-config-validator@c22827f47f4f4a5364bdba19e1fe36907ef1318e # v1.1.1
   build:
     runs-on: ${{ matrix.os }}
     permissions:
