@@ -20,7 +20,7 @@
         <!-- External dependencies -->
         <activation-api.version>2.1.3</activation-api.version>
         <argparse4j.version>0.9.0</argparse4j.version>
-        <byte-buddy.version>1.15.10</byte-buddy.version>
+        <byte-buddy.version>1.15.11</byte-buddy.version>
         <caffeine.version>3.1.8</caffeine.version>
         <checker-qual.version>3.48.3</checker-qual.version>
         <classmate.version>1.7.0</classmate.version>
