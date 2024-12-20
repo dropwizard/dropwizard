@@ -37,12 +37,6 @@ release:
     skipRelease: true
 
 announce:
-  twitter:
-    active: RELEASE
-    status: |
-      🚀 {{projectNameCapitalized}} {{projectVersion}} has been released! #Java #Dropwizard
-
-      Release Notes: {{releaseNotesUrl}}
   mastodon:
     active: RELEASE
     status: |
