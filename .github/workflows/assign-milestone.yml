@@ -13,7 +13,7 @@ jobs:
         with:
           repository: 'dropwizard/dropwizard'
           ref: ${{ github.base_ref }}
-      - uses: actions/setup-java@8df1039502a15bceb9433410b1a100fbe190c53b # v4.5.0
+      - uses: actions/setup-java@7a6d8a8234af8eb26422e24e3006232cccaa061b # v4.6.0
         with:
           distribution: 'zulu'
           java-version: '21'
