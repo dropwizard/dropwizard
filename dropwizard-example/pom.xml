@@ -22,7 +22,7 @@
         <maven.site.deploy.skip>true</maven.site.deploy.skip>
         <skipNexusStagingDeployMojo>true</skipNexusStagingDeployMojo>
 
-        <junit5.version>5.11.3</junit5.version>
+        <junit5.version>5.11.4</junit5.version>
     </properties>
 
     <dependencyManagement>
