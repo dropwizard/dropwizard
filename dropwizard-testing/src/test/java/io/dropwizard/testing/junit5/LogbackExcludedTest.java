@@ -68,7 +68,7 @@ class LogbackExcludedTest {
             cmType.getConstructor(omType, Class.class).newInstance(omType.newInstance(), confType);
 
             // make sure nothing is emitted to stderr; previously the absence of Logback in the classpath would cause
-            // "class io.dropwizard.configuration.ConfigurationMetadata$1: Type ch.qos.logback.access.spi.IAccessEvent
+            // "class io.dropwizard.configuration.ConfigurationMetadata$1: Type ch.qos.logback.access.common.spi.IAccessEvent
             // not present" to be emitted to stderr
             String err = byteStream.toString();
             assertThat(err).isEmpty();

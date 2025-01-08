@@ -55,7 +55,8 @@
         <liquibase-core.version>4.30.0</liquibase-core.version>
         <liquibase-slf4j.version>5.1.0</liquibase-slf4j.version>
         <logback-throttling-appender.version>1.4.2</logback-throttling-appender.version>
-        <logback.version>1.4.14</logback.version>
+        <logback.version>1.5.16</logback.version>
+        <logback.access.version>2.0.5</logback.access.version>
         <metrics4.version>4.2.29</metrics4.version>
         <mustache-compiler.version>0.9.14</mustache-compiler.version>
         <nullaway.version>0.12.2</nullaway.version>
@@ -368,11 +369,6 @@
             </dependency>
             <dependency>
                 <groupId>ch.qos.logback</groupId>
-                <artifactId>logback-access</artifactId>
-                <version>${logback.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-core</artifactId>
                 <version>${logback.version}</version>
             </dependency>
@@ -386,6 +382,16 @@
                         <artifactId>slf4j-api</artifactId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>ch.qos.logback.access</groupId>
+                <artifactId>logback-access-common</artifactId>
+                <version>${logback.access.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.qos.logback.access</groupId>
+                <artifactId>logback-access-jetty12</artifactId>
+                <version>${logback.access.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.dropwizard.logback</groupId>

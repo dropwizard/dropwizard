@@ -2,7 +2,8 @@ package io.dropwizard.logging.common;
 
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.ILoggingEvent;
-import ch.qos.logback.core.util.StatusPrinter;
+import ch.qos.logback.core.util.StatusPrinter2;
+
 import com.codahale.metrics.MetricRegistry;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -96,10 +97,11 @@ class DefaultLoggingFactoryPrintErrorMessagesTest {
 
     @Test
     void testLogbackStatusPrinterPrintStreamIsRestoredToSystemOut() throws Exception {
-        Field field = StatusPrinter.class.getDeclaredField("ps");
+        StatusPrinter2 statusPrinter2 = new StatusPrinter2();
+        Field field = statusPrinter2.getClass().getDeclaredField("ps");
         field.setAccessible(true);
 
-        assertThat(field.get(null))
+        assertThat(field.get(statusPrinter2))
             .isInstanceOfSatisfying(PrintStream.class, printStream -> assertThat(printStream).isSameAs(System.out));
     }
 }

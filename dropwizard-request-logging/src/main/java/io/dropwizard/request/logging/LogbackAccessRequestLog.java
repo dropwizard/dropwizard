@@ -1,8 +1,8 @@
 package io.dropwizard.request.logging;
 
 import ch.qos.logback.access.jetty.RequestLogImpl;
-import ch.qos.logback.access.spi.AccessEvent;
-import ch.qos.logback.access.spi.IAccessEvent;
+import ch.qos.logback.access.common.spi.AccessEvent;
+import ch.qos.logback.access.common.spi.IAccessEvent;
 import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.spi.FilterReply;
 import jakarta.servlet.http.HttpServletRequest;

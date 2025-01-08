@@ -1,6 +1,6 @@
 package io.dropwizard.request.logging.layout;
 
-import ch.qos.logback.access.PatternLayout;
+import ch.qos.logback.access.common.PatternLayout;
 import ch.qos.logback.core.Context;
 
 import java.util.TimeZone;
@@ -17,8 +17,8 @@ public class LogbackAccessRequestLayout extends PatternLayout {
 
     static  {
         // Replace the buggy default converter which don't work async appenders
-        defaultConverterMap.put("requestParameter", SafeRequestParameterConverter.class.getName());
-        defaultConverterMap.put("reqParameter", SafeRequestParameterConverter.class.getName());
+        ch.qos.logback.classic.PatternLayout.DEFAULT_CONVERTER_MAP.put("requestParameter", SafeRequestParameterConverter.class.getName());
+        ch.qos.logback.classic.PatternLayout.DEFAULT_CONVERTER_MAP.put("reqParameter", SafeRequestParameterConverter.class.getName());
     }
 
     public LogbackAccessRequestLayout(Context context, TimeZone timeZone) {

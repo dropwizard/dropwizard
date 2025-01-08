@@ -1,14 +1,14 @@
 package io.dropwizard.request.logging.layout;
 
-import ch.qos.logback.access.pattern.AccessConverter;
-import ch.qos.logback.access.spi.IAccessEvent;
+import ch.qos.logback.access.common.pattern.AccessConverter;
+import ch.qos.logback.access.common.spi.IAccessEvent;
 import ch.qos.logback.core.util.OptionHelper;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.Arrays;
 
 /**
- * A safe version of {@link ch.qos.logback.access.pattern.RequestParameterConverter} which works
+ * A safe version of {@link ch.qos.logback.access.common.pattern.RequestParameterConverter} which works
  * with async appenders. It loads request parameters from a cached map rather than trying to load
  * request data from the original request which may be closed.
  */

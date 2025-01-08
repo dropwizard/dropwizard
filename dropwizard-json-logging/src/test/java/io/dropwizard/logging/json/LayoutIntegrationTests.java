@@ -1,6 +1,6 @@
 package io.dropwizard.logging.json;
 
-import ch.qos.logback.access.spi.IAccessEvent;
+import ch.qos.logback.access.common.spi.IAccessEvent;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.spi.DeferredProcessingAware;
@@ -24,6 +24,7 @@ import org.eclipse.jetty.ee10.servlet.ServletContextRequest;
 import org.eclipse.jetty.http.HttpFields;
 import org.eclipse.jetty.http.HttpURI;
 import org.eclipse.jetty.server.ConnectionMetaData;
+import org.eclipse.jetty.server.CookieCache;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.RequestLog;
@@ -46,6 +47,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.entry;
 import static org.awaitility.Awaitility.await;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
@@ -192,11 +194,14 @@ class LayoutIntegrationTests {
             RequestLog requestLog = requestLogHandler.build("json-access-log-test");
 
             Request request = mock(Request.class);
+            CookieCache cookieCache = mock(CookieCache.class);
             Response response = mock(Response.class);
             ConnectionMetaData connectionMetaData = mock(ConnectionMetaData.class);
             HttpURI httpURI = mock(HttpURI.class);
 
             when(response.getHeaders()).thenReturn(HttpFields.build());
+            when(request.getAttribute(Request.COOKIE_ATTRIBUTE)).thenReturn(cookieCache);
+
             when(request.getConnectionMetaData()).thenReturn(connectionMetaData);
 
             when(httpURI.getPath()).thenReturn("/test/users");
@@ -236,6 +241,7 @@ class LayoutIntegrationTests {
             }
 
             JsonNode jsonNode = objectMapper.readTree(redirectedStream.toString());
+            System.out.println(jsonNode);
             assertThat(jsonNode.fieldNames().next()).isEqualTo("timestamp");
             assertThat(jsonNode.get("timestamp").isNumber()).isTrue();
             assertThat(jsonNode.get("requestTime").isNumber()).isTrue();

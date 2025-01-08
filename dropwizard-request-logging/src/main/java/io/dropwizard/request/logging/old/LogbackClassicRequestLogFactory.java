@@ -5,6 +5,7 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Context;
 import ch.qos.logback.core.CoreConstants;
+import ch.qos.logback.core.pattern.DynamicConverter;
 import ch.qos.logback.core.pattern.PatternLayoutBase;
 import ch.qos.logback.core.spi.AppenderAttachableImpl;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -28,6 +29,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.function.Supplier;
 
 /**
  * A factory for creating {@link RequestLog} instances using logback-classic.
@@ -65,6 +67,11 @@ public class LogbackClassicRequestLogFactory implements RequestLogFactory<Reques
         @Override
         public String doLayout(ILoggingEvent event) {
             return event.getFormattedMessage() + CoreConstants.LINE_SEPARATOR;
+        }
+
+        @Override
+        protected Map<String,Supplier<DynamicConverter>> getDefaultConverterSupplierMap() {
+            return Collections.emptyMap();
         }
 
         @Override
