@@ -241,7 +241,6 @@ class LayoutIntegrationTests {
             }
 
             JsonNode jsonNode = objectMapper.readTree(redirectedStream.toString());
-            System.out.println(jsonNode);
             assertThat(jsonNode.fieldNames().next()).isEqualTo("timestamp");
             assertThat(jsonNode.get("timestamp").isNumber()).isTrue();
             assertThat(jsonNode.get("requestTime").isNumber()).isTrue();
