@@ -49,7 +49,7 @@
         <jaxb-api.version>4.0.2</jaxb-api.version>
         <jboss-logging.version>3.6.1.Final</jboss-logging.version>
         <jdbi3.version>3.47.0</jdbi3.version>
-        <jersey.version>3.1.9</jersey.version>
+        <jersey.version>3.1.10</jersey.version>
         <jetty-setuid-jna.version>2.0.3</jetty-setuid-jna.version>
         <jetty.version>12.0.16</jetty.version>
         <liquibase-core.version>4.30.0</liquibase-core.version>
