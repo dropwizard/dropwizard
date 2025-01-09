@@ -1,6 +1,6 @@
 package io.dropwizard.request.logging;
 
-import ch.qos.logback.access.spi.ServerAdapter;
+import ch.qos.logback.access.common.spi.ServerAdapter;
 import org.eclipse.jetty.http.HttpField;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Response;

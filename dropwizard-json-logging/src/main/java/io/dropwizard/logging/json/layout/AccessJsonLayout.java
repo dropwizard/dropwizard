@@ -1,6 +1,6 @@
 package io.dropwizard.logging.json.layout;
 
-import ch.qos.logback.access.spi.IAccessEvent;
+import ch.qos.logback.access.common.spi.IAccessEvent;
 import io.dropwizard.logging.json.AccessAttribute;
 import org.checkerframework.checker.nullness.qual.Nullable;
 

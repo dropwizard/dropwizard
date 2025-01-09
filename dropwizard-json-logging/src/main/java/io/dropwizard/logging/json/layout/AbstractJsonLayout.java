@@ -7,7 +7,7 @@ import java.util.Map;
 
 /**
  * Provides the common functionality for building JSON representations
- * of {@link ch.qos.logback.access.spi.IAccessEvent} and {@link ch.qos.logback.classic.spi.ILoggingEvent}
+ * of {@link ch.qos.logback.access.common.spi.IAccessEvent} and {@link ch.qos.logback.classic.spi.ILoggingEvent}
  * events.
  *
  * @param <E> represents the type of the event
