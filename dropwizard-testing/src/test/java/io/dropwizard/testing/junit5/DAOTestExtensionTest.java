@@ -3,8 +3,6 @@ package io.dropwizard.testing.junit5;
 import io.dropwizard.testing.app.TestEntity;
 import jakarta.validation.ConstraintViolationException;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -19,9 +17,8 @@ class DAOTestExtensionTest {
 
     @Test
     void extensionCreatedSessionFactory() {
-        final SessionFactory sessionFactory = daoTestExtension.getSessionFactory();
-
-        assertThat(sessionFactory).isNotNull();
+        assertThat(daoTestExtension.getSessionFactory())
+            .isNotNull();
     }
 
     @Test
@@ -35,16 +32,15 @@ class DAOTestExtensionTest {
     void extensionCanRoundtrip() {
         final Long id = daoTestExtension.inTransaction(() -> persist(new TestEntity("junit 5 description")).getId());
 
-        final TestEntity testEntity = get(id);
-
-        assertThat(testEntity).isNotNull();
-        assertThat(testEntity.getDescription()).isEqualTo("junit 5 description");
+        assertThat(get(id))
+            .extracting(TestEntity::getDescription)
+            .isEqualTo("junit 5 description");
     }
 
     @Test()
     void transactionThrowsExceptionAsExpected() {
-        Throwable throwable = Assertions.assertThrows(ConstraintViolationException.class, () -> daoTestExtension.inTransaction(() -> persist(new TestEntity(null))));
-        Assertions.assertEquals(ConstraintViolationException.class, throwable.getClass());
+        assertThatExceptionOfType(ConstraintViolationException.class)
+            .isThrownBy(() -> daoTestExtension.inTransaction(() -> persist(new TestEntity(null))));
     }
 
     @Test

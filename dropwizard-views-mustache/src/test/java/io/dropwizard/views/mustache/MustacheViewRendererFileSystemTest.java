@@ -88,14 +88,14 @@ class MustacheViewRendererFileSystemTest extends JerseyTest {
 
     @Test
     void rendersViewsWithAbsoluteTemplatePaths() {
-        final String response = target("/test/absolute").request().get(String.class);
-        assertThat(response).isEqualTo("Woop woop. yay\n");
+        assertThat(target("/test/absolute").request().get(String.class))
+            .isEqualTo("Woop woop. yay\n");
     }
 
     @Test
     void rendersViewsWithRelativeTemplatePaths() {
-        final String response = target("/test/relative").request().get(String.class);
-        assertThat(response).isEqualTo("Ok.\n");
+        assertThat(target("/test/relative").request().get(String.class))
+            .isEqualTo("Ok.\n");
     }
 
     @Test
@@ -103,8 +103,10 @@ class MustacheViewRendererFileSystemTest extends JerseyTest {
         Invocation.Builder request = target("/test/bad").request();
         assertThatExceptionOfType(WebApplicationException.class)
             .isThrownBy(() -> request.get(String.class))
-            .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(500))
-            .satisfies(e -> assertThat(e.getResponse().readEntity(String.class))
+            .extracting(WebApplicationException::getResponse)
+            .satisfies(response -> assertThat(response.getStatus())
+                .isEqualTo(500))
+            .satisfies(response -> assertThat(response.readEntity(String.class))
                 .isEqualTo(ViewRenderExceptionMapper.TEMPLATE_ERROR_MSG));
     }
 
@@ -113,9 +115,10 @@ class MustacheViewRendererFileSystemTest extends JerseyTest {
         Invocation.Builder request = target("/test/error").request();
         assertThatExceptionOfType(WebApplicationException.class)
             .isThrownBy(() -> request.get(String.class))
-            .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(500))
-            .satisfies(e -> assertThat(e.getResponse().readEntity(String.class))
+            .extracting(WebApplicationException::getResponse)
+            .satisfies(response -> assertThat(response.getStatus())
+                .isEqualTo(500))
+            .satisfies(response -> assertThat(response.readEntity(String.class))
                 .isEqualTo(ViewRenderExceptionMapper.TEMPLATE_ERROR_MSG));
     }
-
 }

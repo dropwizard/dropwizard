@@ -20,13 +20,13 @@ class LogbackAccessRequestLayoutTest {
     }
 
     @Test
-    void hasAContext() throws Exception {
+    void hasAContext() {
         assertThat(layout.getContext())
             .isEqualTo(context);
     }
 
     @Test
-    void hasAPatternWithATimeZone() throws Exception {
+    void hasAPatternWithATimeZone() {
         assertThat(layout.getPattern())
             .isEqualTo("%h %l %u [%t{dd/MMM/yyyy:HH:mm:ss Z,UTC}] \"%r\" %s %b \"%i{Referer}\" \"%i{User-Agent}\" %D");
     }

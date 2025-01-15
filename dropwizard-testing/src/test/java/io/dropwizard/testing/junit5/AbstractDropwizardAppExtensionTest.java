@@ -6,7 +6,6 @@ import io.dropwizard.testing.app.TestConfiguration;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.MediaType;
 import org.glassfish.jersey.client.JerseyClientBuilder;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
@@ -32,8 +31,8 @@ abstract class AbstractDropwizardAppExtensionTest {
 
     @Test
     void returnsApplication() {
-        final DropwizardTestApplication application = getExtension().getApplication();
-        Assertions.assertNotNull(application);
+        assertThat(getExtension().<DropwizardTestApplication>getApplication())
+            .isNotNull();
     }
 
     @Test

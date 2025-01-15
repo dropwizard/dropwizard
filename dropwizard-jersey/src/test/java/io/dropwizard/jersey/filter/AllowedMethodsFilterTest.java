@@ -25,11 +25,8 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.*;
 
 class AllowedMethodsFilterTest extends AbstractJerseyTest {
 
@@ -77,27 +74,32 @@ class AllowedMethodsFilterTest extends AbstractJerseyTest {
 
     @Test
     void testGetRequestAllowed() {
-        assertEquals(OK_STATUS_CODE, getResponseStatusForRequestMethod("GET", false));
+        assertThat(getResponseStatusForRequestMethod("GET", false))
+            .isEqualTo(OK_STATUS_CODE);
     }
 
     @Test
     void testPostRequestAllowed() {
-        assertEquals(OK_STATUS_CODE, getResponseStatusForRequestMethod("POST", true));
+        assertThat(getResponseStatusForRequestMethod("POST", true))
+            .isEqualTo(OK_STATUS_CODE);
     }
 
     @Test
     void testPutRequestBlocked() {
-        assertEquals(DISALLOWED_STATUS_CODE, getResponseStatusForRequestMethod("PUT", true));
+        assertThat(getResponseStatusForRequestMethod("PUT", true))
+            .isEqualTo(DISALLOWED_STATUS_CODE);
     }
 
     @Test
     void testDeleteRequestBlocked() {
-        assertEquals(DISALLOWED_STATUS_CODE, getResponseStatusForRequestMethod("DELETE", false));
+        assertThat(getResponseStatusForRequestMethod("DELETE", false))
+            .isEqualTo(DISALLOWED_STATUS_CODE);
     }
 
     @Test
     void testTraceRequestBlocked() {
-        assertEquals(DISALLOWED_STATUS_CODE, getResponseStatusForRequestMethod("TRACE", false));
+        assertThat(getResponseStatusForRequestMethod("TRACE", false))
+            .isEqualTo(DISALLOWED_STATUS_CODE);
     }
 
     @Test

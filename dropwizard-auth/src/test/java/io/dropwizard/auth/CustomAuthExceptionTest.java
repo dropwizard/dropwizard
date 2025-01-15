@@ -86,9 +86,8 @@ class CustomAuthExceptionTest extends JerseyTest {
 
     @Test
     void testCustomAuthException() {
-        Response response = target("/custom").request().get();
-        assertThat(response.getStatus()).isEqualTo(401);
-        String entity = response.readEntity(String.class);
-        assertThat(entity).isEqualTo("Authentication failed");
+        assertThat(target("/custom").request().get())
+            .satisfies(response -> assertThat(response.getStatus()).isEqualTo(401))
+            .satisfies(response -> assertThat(response.readEntity(String.class)).isEqualTo("Authentication failed"));
     }
 }

@@ -2,6 +2,7 @@ package io.dropwizard.logging.common;
 
 import ch.qos.logback.classic.AsyncAppender;
 import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.ConsoleAppender;
 import ch.qos.logback.core.encoder.LayoutWrappingEncoder;
@@ -23,7 +24,6 @@ import java.util.TimeZone;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class AppenderFactoryCustomTimeZoneTest {
-
     static {
         BootstrapLogging.bootstrap();
     }
@@ -54,8 +54,9 @@ class AppenderFactoryCustomTimeZoneTest {
     }
 
     @Test
+    @SuppressWarnings({"unchecked"})
     void testBuildAppenderWithTimeZonePlaceholderInLogFormat() throws Exception {
-        Appender appender = factory.build(configurationSourceProvider, "yaml/appender_with_time_zone_placeholder.yml")
+        Appender<ILoggingEvent> appender = factory.build(configurationSourceProvider, "yaml/appender_with_time_zone_placeholder.yml")
             .build(new LoggerContext(), "test-custom-time-zone", new DropwizardLayoutFactory(),
                 new NullLevelFilterFactory<>(), new AsyncLoggingEventAppenderFactory());
 
@@ -66,5 +67,4 @@ class AppenderFactoryCustomTimeZoneTest {
                         .isInstanceOfSatisfying(PatternLayoutBase.class, layout -> assertThat(layout.getPattern())
                             .isEqualTo("custom format with UTC")))));
     }
-
 }

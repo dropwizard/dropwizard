@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ExtendWith(DropwizardExtensionsSupport.class)
 class ResourceExtensionWithGrizzlyTest {
 
-    private ResourceExtension resources = ResourceExtension.builder()
+    private final ResourceExtension resources = ResourceExtension.builder()
         .addResource(ContextInjectionResource::new)
         .setTestContainerFactory(new GrizzlyWebTestContainerFactory())
         .setClientConfigurator(clientConfig -> clientConfig.register(DummyExceptionMapper.class))

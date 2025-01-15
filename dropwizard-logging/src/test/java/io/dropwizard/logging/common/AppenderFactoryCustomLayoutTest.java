@@ -20,9 +20,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SuppressWarnings("unchecked")
 class AppenderFactoryCustomLayoutTest {
-
     static {
         BootstrapLogging.bootstrap();
     }
@@ -33,12 +31,13 @@ class AppenderFactoryCustomLayoutTest {
         ConsoleAppenderFactory.class, BaseValidator.newValidator(), objectMapper, "dw-layout");
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() {
         objectMapper.registerSubtypes(TestLayoutFactory.class);
         objectMapper.registerSubtypes(TestPatternLayoutFactory.class);
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     void testLoadAppenderWithCustomLayout() throws Exception {
         final ConsoleAppenderFactory<ILoggingEvent> appender = factory
             .build(new ResourceConfigurationSourceProvider(), "yaml/appender_with_custom_layout.yml");
@@ -66,6 +65,7 @@ class AppenderFactoryCustomLayoutTest {
                 .isInstanceOfSatisfying(TestPatternLayout.class, layout -> assertThat(layout.getPattern()).isEqualTo("custom pattern")));
     }
 
+    @SuppressWarnings("unchecked")
     private ConsoleAppender<?> buildAppender(String resourceName) throws Exception {
         AsyncAppender appender = (AsyncAppender) factory.build(new ResourceConfigurationSourceProvider(), resourceName)
             .build(new LoggerContext(), "test-custom-layout", new DropwizardLayoutFactory(),

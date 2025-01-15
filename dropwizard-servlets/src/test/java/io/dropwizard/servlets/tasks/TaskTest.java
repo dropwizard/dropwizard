@@ -12,7 +12,7 @@ class TaskTest {
     private final Task task = new Task("test") {
         @Override
         public void execute(Map<String, List<String>> parameters,
-                            PrintWriter output) throws Exception {
+                            PrintWriter output) {
 
         }
     };

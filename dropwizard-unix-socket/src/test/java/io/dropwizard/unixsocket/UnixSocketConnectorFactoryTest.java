@@ -48,10 +48,9 @@ class UnixSocketConnectorFactoryTest {
 
     @Test
     void testClient() throws Exception {
-        ContentResponse contentResponse = httpClient.GET("http://localhost:0/app/hello");
-        assertThat(contentResponse).isNotNull().satisfies(response -> {
-            assertThat(response.getContentAsString()).isEqualTo("{\"hello\": \"World\"}");
-        });
+        assertThat(httpClient.GET("http://localhost:0/app/hello"))
+            .extracting(ContentResponse::getContentAsString)
+            .isEqualTo("{\"hello\": \"World\"}");
     }
 
     @Test

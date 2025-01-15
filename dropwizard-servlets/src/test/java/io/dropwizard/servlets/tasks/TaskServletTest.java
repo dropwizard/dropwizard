@@ -331,7 +331,7 @@ class TaskServletTest {
 
         servlet.service(request, response);
 
-        assertThat(stringWriter.toString().trim()).contains("java.lang.RuntimeException: whoops");
+        assertThat(stringWriter.toString()).contains("java.lang.RuntimeException: whoops");
     }
 
     @Test
@@ -361,7 +361,7 @@ class TaskServletTest {
 
     @SuppressWarnings("InputStreamSlowMultibyteRead")
     private static class TestServletInputStream extends ServletInputStream {
-        private InputStream delegate;
+        private final InputStream delegate;
 
         public TestServletInputStream(InputStream delegate) {
             this.delegate = delegate;

@@ -54,7 +54,6 @@ import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
 
 class LayoutIntegrationTests {
-
     static {
         BootstrapLogging.bootstrap(Level.INFO, new EventJsonLayoutBaseFactory());
     }

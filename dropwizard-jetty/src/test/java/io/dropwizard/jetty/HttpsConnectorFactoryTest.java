@@ -43,7 +43,6 @@ import java.util.stream.Collectors;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 import static org.assertj.core.api.Assertions.entry;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 import static org.junit.jupiter.api.condition.OS.WINDOWS;
@@ -270,7 +269,7 @@ class HttpsConnectorFactoryTest {
         final HttpsConnectorFactory factory = new HttpsConnectorFactory();
         factory.setKeyStoreType(WINDOWS_MY_KEYSTORE_NAME);
 
-        assertNotNull(factory.configureSslContextFactory(new SslContextFactory.Server()));
+        assertThat(factory.configureSslContextFactory(new SslContextFactory.Server())).isNotNull();
     }
 
     @Test

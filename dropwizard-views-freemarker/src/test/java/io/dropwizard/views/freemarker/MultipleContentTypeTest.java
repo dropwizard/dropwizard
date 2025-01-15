@@ -54,9 +54,9 @@ class MultipleContentTypeTest extends JerseyTest {
     protected Application configure() {
         final ViewRenderer renderer = new FreemarkerViewRenderer();
         return DropwizardResourceConfig.forTesting()
-                .register(new ViewMessageBodyWriter(new MetricRegistry(), Collections.singletonList(renderer)))
-                .register(new InfoMessageBodyWriter())
-                .register(new ExampleResource());
+            .register(new ViewMessageBodyWriter(new MetricRegistry(), Collections.singletonList(renderer)))
+            .register(new InfoMessageBodyWriter())
+            .register(new ExampleResource());
     }
 
     @Test
@@ -69,32 +69,29 @@ class MultipleContentTypeTest extends JerseyTest {
 
     @Test
     void testHtmlContentType() {
-        final Response response = target("/").request().accept(MediaType.TEXT_HTML_TYPE).get();
-
-        assertThat(response.getStatus()).isEqualTo(200);
-        assertThat(response.readEntity(String.class))
+        assertThat(target("/").request().accept(MediaType.TEXT_HTML_TYPE).get())
+            .satisfies(response -> assertThat(response.getStatus()).isEqualTo(200))
+            .satisfies(response -> assertThat(response.readEntity(String.class))
                 .contains("Breaking news")
                 .contains("<h1>Title#TEST</h1>")
-                .contains("<p>Content#TEST</p>");
+                .contains("<p>Content#TEST</p>"));
     }
 
     @Test
     void testOnlyJsonContentType() {
-        final Response response = target("/json").request().accept(MediaType.APPLICATION_JSON_TYPE).get();
-
-        assertThat(response.getStatus()).isEqualTo(200);
-        assertThat(response.readEntity(Info.class)).isEqualTo(new Info("Title#TEST", "Content#TEST"));
+        assertThat(target("/json").request().accept(MediaType.APPLICATION_JSON_TYPE).get())
+            .satisfies(response -> assertThat(response.getStatus()).isEqualTo(200))
+            .satisfies(response -> assertThat(response.readEntity(Info.class)).isEqualTo(new Info("Title#TEST", "Content#TEST")));
     }
 
     @Test
     void testOnlyHtmlContentType() {
-        final Response response = target("/html").request().accept(MediaType.TEXT_HTML_TYPE).get();
-
-        assertThat(response.getStatus()).isEqualTo(200);
-        assertThat(response.readEntity(String.class))
+        assertThat(target("/html").request().accept(MediaType.TEXT_HTML_TYPE).get())
+            .satisfies(response -> assertThat(response.getStatus()).isEqualTo(200))
+            .satisfies(response -> assertThat(response.readEntity(String.class))
                 .contains("Breaking news")
                 .contains("<h1>Title#TEST</h1>")
-                .contains("<p>Content#TEST</p>");
+                .contains("<p>Content#TEST</p>"));
     }
 
     @Path("/")
@@ -159,9 +156,9 @@ class MultipleContentTypeTest extends JerseyTest {
         @Override
         public String toString() {
             return new StringJoiner(", ", this.getClass().getSimpleName() + "[", "]")
-                    .add("title = " + title)
-                    .add("content = " + content)
-                    .toString();
+                .add("title = " + title)
+                .add("content = " + content)
+                .toString();
         }
     }
 
@@ -181,7 +178,7 @@ class MultipleContentTypeTest extends JerseyTest {
         @Override
         public void writeTo(Info info, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType,
                             MultivaluedMap<String, Object> httpHeaders, OutputStream entityStream)
-                throws IOException, WebApplicationException {
+            throws IOException, WebApplicationException {
             Jackson.newObjectMapper().writeValue(entityStream, info);
         }
     }

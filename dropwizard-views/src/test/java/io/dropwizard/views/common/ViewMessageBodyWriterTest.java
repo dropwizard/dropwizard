@@ -119,9 +119,9 @@ class ViewMessageBodyWriterTest {
         when(headers.getHeaderString(HttpHeaders.ACCEPT_LANGUAGE)).thenReturn(null);
 
         final ViewMessageBodyWriter writer = new ViewMessageBodyWriter(metricRegistry, Collections.emptyList());
-        final Locale result = writer.detectLocale(headers);
 
-        assertThat(result).isSameAs(Locale.getDefault());
+        assertThat(writer.detectLocale(headers))
+            .isSameAs(Locale.getDefault());
     }
 
     @Test
@@ -130,8 +130,8 @@ class ViewMessageBodyWriterTest {
         when(headers.getAcceptableLanguages()).thenReturn(Collections.singletonList(fakeLocale));
 
         final ViewMessageBodyWriter writer = new ViewMessageBodyWriter(metricRegistry, Collections.emptyList());
-        final Locale result = writer.detectLocale(headers);
 
-        assertThat(result).isSameAs(fakeLocale);
+        assertThat(writer.detectLocale(headers))
+            .isSameAs(fakeLocale);
     }
 }

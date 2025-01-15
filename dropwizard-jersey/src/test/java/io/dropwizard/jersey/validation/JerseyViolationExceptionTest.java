@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Collections;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
 class JerseyViolationExceptionTest {
@@ -22,6 +22,6 @@ class JerseyViolationExceptionTest {
         final Inflector<Request, ?> inf = mock(Inflector.class);
         final Invocable inv = Invocable.create(inf);
         final JerseyViolationException test = new JerseyViolationException(violations, inv);
-        assertSame(inv, test.getInvocable());
+        assertThat(test.getInvocable()).isSameAs(inv);
     }
 }

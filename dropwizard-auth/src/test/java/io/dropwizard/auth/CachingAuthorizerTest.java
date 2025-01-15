@@ -38,14 +38,14 @@ class CachingAuthorizerTest {
     private final AuthorizationContext<Principal> authorizationContext2 = new DefaultAuthorizationContext<>(principal2, role, requestContext);
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() {
         when(underlying.authorize(any(), anyString(), any())).thenReturn(true);
         when(underlying.getAuthorizationContext(eq(principal), anyString(), any())).thenReturn(authorizationContext);
         when(underlying.getAuthorizationContext(eq(principal2), anyString(), any())).thenReturn(authorizationContext2);
     }
 
     @Test
-    void cachesTheFirstReturnedPrincipal() throws Exception {
+    void cachesTheFirstReturnedPrincipal() {
         assertThat(cached.authorize(principal, role, requestContext)).isTrue();
         assertThat(cached.authorize(principal, role, requestContext)).isTrue();
 
@@ -53,7 +53,7 @@ class CachingAuthorizerTest {
     }
 
     @Test
-    void respectsTheCacheConfiguration() throws Exception {
+    void respectsTheCacheConfiguration() {
         cached.authorize(principal, role, requestContext);
         // We need to make sure that background cache invalidation is done before other requests
         cached.cache.cleanUp();
@@ -68,7 +68,7 @@ class CachingAuthorizerTest {
     }
 
     @Test
-    void invalidatesPrincipalAndRole() throws Exception {
+    void invalidatesPrincipalAndRole() {
         cached.authorize(principal, role, requestContext);
         cached.invalidate(principal, role, requestContext);
         cached.authorize(principal, role, requestContext);
@@ -77,7 +77,7 @@ class CachingAuthorizerTest {
     }
 
     @Test
-    void invalidatesSinglePrincipal() throws Exception {
+    void invalidatesSinglePrincipal() {
         cached.authorize(principal, role, requestContext);
         cached.invalidate(principal);
         cached.authorize(principal, role, requestContext);
@@ -86,7 +86,7 @@ class CachingAuthorizerTest {
     }
 
     @Test
-    void invalidatesSetsofPrincipals() throws Exception {
+    void invalidatesSetsofPrincipals() {
         cached.authorize(principal, role, requestContext);
         cached.authorize(principal2, role, requestContext);
         cached.invalidateAll(Set.of(principal, principal2));
@@ -98,7 +98,7 @@ class CachingAuthorizerTest {
     }
 
     @Test
-    void invalidatesPrincipalsMatchingGivenPredicate() throws Exception {
+    void invalidatesPrincipalsMatchingGivenPredicate() {
         cached.authorize(principal, role, requestContext);
         cached.invalidateAll(principal::equals);
         cached.authorize(principal, role, requestContext);
@@ -107,7 +107,7 @@ class CachingAuthorizerTest {
     }
 
     @Test
-    void invalidatesAllPrincipals() throws Exception {
+    void invalidatesAllPrincipals() {
         cached.authorize(principal, role, requestContext);
         cached.authorize(principal2, role, requestContext);
         cached.invalidateAll();
@@ -119,7 +119,7 @@ class CachingAuthorizerTest {
     }
 
     @Test
-    void calculatesTheSizeOfTheCache() throws Exception {
+    void calculatesTheSizeOfTheCache() {
         assertThat(cached.size()).isZero();
         cached.authorize(principal, role, requestContext);
         assertThat(cached.size()).isEqualTo(1);
@@ -128,7 +128,7 @@ class CachingAuthorizerTest {
     }
 
     @Test
-    void calculatesCacheStats() throws Exception {
+    void calculatesCacheStats() {
         assertThat(cached.stats().loadCount()).isZero();
         cached.authorize(principal, role, requestContext);
         assertThat(cached.stats().loadCount()).isEqualTo(1);

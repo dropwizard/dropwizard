@@ -19,14 +19,10 @@ import org.slf4j.MDC;
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
-import static java.util.Collections.unmodifiableList;
+import static java.util.Collections.*;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.fail;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
+import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class HealthCheckConfigValidatorTest {
@@ -114,7 +110,7 @@ class HealthCheckConfigValidatorTest {
     }
 
     @Test
-    void startValidationsShouldFailIfAHealthCheckConfiguredButNotRegistered() throws Exception {
+    void startValidationsShouldFailIfAHealthCheckConfiguredButNotRegistered() {
         // given
         ArgumentCaptor<LoggingEvent> captor = ArgumentCaptor.forClass(LoggingEvent.class);
         List<HealthCheckConfiguration> configs = new ArrayList<>();
@@ -130,22 +126,17 @@ class HealthCheckConfigValidatorTest {
         HealthCheckRegistry registry = new HealthCheckRegistry();
         registry.register("check-1", mock(HealthCheck.class));
 
-        // when
-        try {
-            HealthCheckConfigValidator validator = new HealthCheckConfigValidator(unmodifiableList(configs), registry);
-            validator.start();
-            fail("configured health checks that aren't registered should fail");
-        } catch (IllegalStateException e) {
-            // then
-            verify(mockLogAppender).doAppend(captor.capture());
-            LoggingEvent logEvent = captor.getValue();
-            assertThat(logEvent.getLevel())
-                .isEqualTo(Level.ERROR);
-            assertThat(logEvent.getFormattedMessage())
-                .doesNotContain("  * check-1")
-                .contains("  * check-2\n  * check-3");
-            assertThat(e.getMessage())
-                .contains("[check-2, check-3]");
-        }
+        HealthCheckConfigValidator validator = new HealthCheckConfigValidator(unmodifiableList(configs), registry);
+        assertThatIllegalStateException()
+            .isThrownBy(validator::start)
+            .withMessageContaining("[check-2, check-3]");
+
+        verify(mockLogAppender).doAppend(captor.capture());
+        LoggingEvent logEvent = captor.getValue();
+        assertThat(logEvent.getLevel())
+            .isEqualTo(Level.ERROR);
+        assertThat(logEvent.getFormattedMessage())
+            .doesNotContain("  * check-1")
+            .contains("  * check-2\n  * check-3");
     }
 }

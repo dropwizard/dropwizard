@@ -27,13 +27,13 @@ class DropwizardAppExtensionRandomPortsConfigOverrideTest {
         DefaultServerFactory serverFactory = (DefaultServerFactory) EXTENSION.getConfiguration()
             .getServerFactory();
 
-        assertThat(
-            serverFactory.getApplicationConnectors().stream().map(HttpConnectorFactory.class::cast))
-            .extracting(
-                HttpConnectorFactory::getPort).containsExactly(0);
-        assertThat(
-            serverFactory.getAdminConnectors().stream().map(HttpConnectorFactory.class::cast))
-            .extracting(
-                HttpConnectorFactory::getPort).containsExactly(0);
+        assertThat(serverFactory.getApplicationConnectors())
+            .map(HttpConnectorFactory.class::cast)
+            .extracting(HttpConnectorFactory::getPort)
+            .containsExactly(0);
+        assertThat(serverFactory.getAdminConnectors())
+            .map(HttpConnectorFactory.class::cast)
+            .extracting(HttpConnectorFactory::getPort)
+            .containsExactly(0);
     }
 }

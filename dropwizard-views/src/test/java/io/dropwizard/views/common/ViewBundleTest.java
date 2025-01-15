@@ -41,7 +41,7 @@ class ViewBundleTest {
     }
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() {
         when(environment.jersey()).thenReturn(jerseyEnvironment);
     }
 

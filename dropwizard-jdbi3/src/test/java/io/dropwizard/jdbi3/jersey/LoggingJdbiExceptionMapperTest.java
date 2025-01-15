@@ -39,7 +39,7 @@ class LoggingJdbiExceptionMapperTest {
     }
 
     @Test
-    void testPlainJdbiException() throws Exception {
+    void testPlainJdbiException() {
         JdbiException jdbiException = new TransactionException("Transaction failed for unknown reason");
 
         jdbiExceptionMapper.logException(9812, jdbiException);

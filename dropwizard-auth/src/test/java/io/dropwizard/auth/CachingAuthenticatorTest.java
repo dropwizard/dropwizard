@@ -12,12 +12,8 @@ import java.security.Principal;
 import java.util.Collections;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.mockito.Mockito.anyString;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class CachingAuthenticatorTest {
@@ -115,7 +111,7 @@ class CachingAuthenticatorTest {
         final RuntimeException e = new NullPointerException();
         when(underlying.authenticate(anyString())).thenThrow(e);
 
-        assertThatExceptionOfType(RuntimeException.class)
+        assertThatRuntimeException()
                 .isThrownBy(() -> cached.authenticate("credentials"))
                 .isEqualTo(e);
     }
