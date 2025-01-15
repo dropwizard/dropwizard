@@ -22,7 +22,7 @@ import liquibase.structure.core.Catalog;
 import liquibase.structure.core.Schema;
 import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.sql.SQLException;
 import java.util.Map;

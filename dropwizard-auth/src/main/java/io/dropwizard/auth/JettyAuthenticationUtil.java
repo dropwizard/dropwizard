@@ -3,7 +3,7 @@ package io.dropwizard.auth;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.SecurityContext;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.eclipse.jetty.ee10.servlet.ServletApiRequest;
 import org.eclipse.jetty.security.AuthenticationState;
 import org.eclipse.jetty.security.UserIdentity;

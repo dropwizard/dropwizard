@@ -3,7 +3,7 @@ package io.dropwizard.logging.json.layout;
 import ch.qos.logback.classic.pattern.ThrowableHandlingConverter;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import io.dropwizard.logging.json.EventAttribute;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.EnumSet;
 import java.util.HashMap;

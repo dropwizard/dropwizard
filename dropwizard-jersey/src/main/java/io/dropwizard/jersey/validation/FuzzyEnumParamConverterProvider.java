@@ -3,7 +3,7 @@ package io.dropwizard.jersey.validation;
 import jakarta.ws.rs.ext.ParamConverter;
 import jakarta.ws.rs.ext.ParamConverterProvider;
 import jakarta.ws.rs.ext.Provider;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.glassfish.jersey.internal.util.ReflectionHelper;
 
 import java.lang.annotation.Annotation;

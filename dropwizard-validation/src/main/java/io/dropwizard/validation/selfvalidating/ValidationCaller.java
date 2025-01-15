@@ -1,6 +1,6 @@
 package io.dropwizard.validation.selfvalidating;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This class represents a wrapper for calling validation methods annotated with <code>@SelfValidation</code>.

@@ -8,7 +8,7 @@ import io.dropwizard.core.setup.Environment;
 import io.dropwizard.db.DatabaseConfiguration;
 import io.dropwizard.db.PooledDataSourceFactory;
 import io.dropwizard.util.Duration;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.hibernate.SessionFactory;
 
 import java.util.ArrayList;

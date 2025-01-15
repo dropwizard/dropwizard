@@ -2,7 +2,7 @@ package io.dropwizard.db;
 
 import com.codahale.metrics.MetricRegistry;
 import io.dropwizard.util.Duration;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Map;
 import java.util.Optional;

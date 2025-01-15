@@ -11,7 +11,7 @@ import freemarker.template.Version;
 import io.dropwizard.views.common.View;
 import io.dropwizard.views.common.ViewRenderException;
 import io.dropwizard.views.common.ViewRenderer;
-import org.checkerframework.checker.nullness.qual.NonNull;
+import org.jspecify.annotations.NonNull;
 
 import java.io.IOException;
 import java.io.OutputStream;

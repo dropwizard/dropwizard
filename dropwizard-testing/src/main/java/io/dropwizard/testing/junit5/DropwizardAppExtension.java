@@ -13,7 +13,7 @@ import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.DropwizardTestSupport;
 import jakarta.ws.rs.client.Client;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.glassfish.jersey.apache5.connector.Apache5ConnectorProvider;
 import org.glassfish.jersey.apache5.connector.Apache5HttpClientBuilderConfigurator;
 import org.glassfish.jersey.client.ClientConfig;

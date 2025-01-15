@@ -2,7 +2,7 @@ package io.dropwizard.testing;
 
 import io.dropwizard.core.Configuration;
 import io.dropwizard.core.server.DefaultServerFactory;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Override port configuration setting for application and admin connectors and choose a random port.

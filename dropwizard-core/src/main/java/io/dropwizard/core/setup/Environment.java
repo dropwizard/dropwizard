@@ -20,7 +20,7 @@ import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import jakarta.servlet.Servlet;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutorService;

@@ -1,6 +1,6 @@
 package io.dropwizard.jersey.params;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A parameter encapsulating integer values. All non-decimal values will return a

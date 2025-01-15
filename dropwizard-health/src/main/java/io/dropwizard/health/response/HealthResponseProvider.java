@@ -1,6 +1,6 @@
 package io.dropwizard.health.response;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Collection;
 import java.util.Map;

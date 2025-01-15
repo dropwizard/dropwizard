@@ -1,7 +1,7 @@
 package io.dropwizard.jersey;
 
 import jakarta.ws.rs.DefaultValue;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.lang.annotation.Annotation;
 

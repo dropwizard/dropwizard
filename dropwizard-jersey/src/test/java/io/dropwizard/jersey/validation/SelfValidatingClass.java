@@ -6,7 +6,7 @@ import io.dropwizard.validation.selfvalidating.SelfValidation;
 import io.dropwizard.validation.selfvalidating.ViolationCollector;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.QueryParam;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 
 @SelfValidating
 public class SelfValidatingClass {

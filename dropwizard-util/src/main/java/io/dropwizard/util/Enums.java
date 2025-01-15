@@ -1,6 +1,6 @@
 package io.dropwizard.util;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Helper methods for enum types.

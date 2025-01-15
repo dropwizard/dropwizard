@@ -15,7 +15,7 @@ import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.logging.common.LoggingUtil;
 import jakarta.validation.constraints.NotNull;
 import net.sourceforge.argparse4j.inf.Namespace;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;

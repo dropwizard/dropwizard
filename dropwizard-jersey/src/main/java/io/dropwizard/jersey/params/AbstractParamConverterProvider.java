@@ -4,7 +4,7 @@ import io.dropwizard.jersey.DefaultValueUtils;
 import io.dropwizard.jersey.validation.JerseyParameterNameProvider;
 import jakarta.ws.rs.ext.ParamConverter;
 import jakarta.ws.rs.ext.ParamConverterProvider;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;

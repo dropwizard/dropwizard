@@ -1,6 +1,6 @@
 package io.dropwizard.logging.json.layout;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.time.Instant;
 import java.time.ZoneId;

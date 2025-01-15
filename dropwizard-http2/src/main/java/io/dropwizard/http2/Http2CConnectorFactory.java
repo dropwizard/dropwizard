@@ -8,7 +8,7 @@ import io.dropwizard.jetty.HttpsConnectorFactory;
 import io.dropwizard.metrics.jetty11.InstrumentedConnectionFactory;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.eclipse.jetty.http2.server.HTTP2CServerConnectionFactory;
 import org.eclipse.jetty.http2.server.HTTP2ServerConnectionFactory;
 import org.eclipse.jetty.server.Connector;

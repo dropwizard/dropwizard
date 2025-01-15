@@ -3,7 +3,7 @@ package io.dropwizard.health.check.http;
 import com.codahale.metrics.health.HealthCheck;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.core.Response;
-import org.checkerframework.checker.nullness.qual.NonNull;
+import org.jspecify.annotations.NonNull;
 import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.client.JerseyClientBuilder;
 import org.slf4j.Logger;

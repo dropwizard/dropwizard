@@ -1,6 +1,6 @@
 package io.dropwizard.logging.common;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import javax.net.SocketFactory;
 import java.io.BufferedOutputStream;

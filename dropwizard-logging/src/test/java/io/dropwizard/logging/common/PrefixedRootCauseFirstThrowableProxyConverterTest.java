@@ -1,7 +1,7 @@
 package io.dropwizard.logging.common;
 
 import ch.qos.logback.classic.spi.ThrowableProxy;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

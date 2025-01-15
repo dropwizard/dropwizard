@@ -28,7 +28,7 @@ import io.dropwizard.logging.common.layout.DropwizardLayoutFactory;
 import io.dropwizard.logging.common.layout.LayoutFactory;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.io.PrintStream;
 import java.util.ArrayList;

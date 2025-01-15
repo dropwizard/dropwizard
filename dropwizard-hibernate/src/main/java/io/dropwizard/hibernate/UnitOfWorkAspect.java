@@ -1,7 +1,7 @@
 package io.dropwizard.hibernate;
 
 import io.dropwizard.hibernate.dual.DualSessionFactory;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;

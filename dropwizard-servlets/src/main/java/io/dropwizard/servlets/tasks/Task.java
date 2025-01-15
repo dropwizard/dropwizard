@@ -1,6 +1,6 @@
 package io.dropwizard.servlets.tasks;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.io.PrintWriter;
 import java.util.List;

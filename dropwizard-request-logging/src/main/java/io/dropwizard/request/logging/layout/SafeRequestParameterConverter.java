@@ -3,7 +3,7 @@ package io.dropwizard.request.logging.layout;
 import ch.qos.logback.access.common.pattern.AccessConverter;
 import ch.qos.logback.access.common.spi.IAccessEvent;
 import ch.qos.logback.core.util.OptionHelper;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Arrays;
 

@@ -1,6 +1,6 @@
 package io.dropwizard.testing;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.function.Supplier;
 

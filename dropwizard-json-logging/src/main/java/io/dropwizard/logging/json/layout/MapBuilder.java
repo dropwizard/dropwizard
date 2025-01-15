@@ -1,6 +1,6 @@
 package io.dropwizard.logging.json.layout;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
