@@ -26,7 +26,7 @@ public class JacksonMessageBodyProvider extends JacksonXmlBindJsonProvider {
     @Override
     public boolean isReadable(Class<?> type,
                               @Nullable Type genericType,
-                              @Nullable Annotation[] annotations,
+                              @Nullable Annotation @Nullable [] annotations,
                               @Nullable MediaType mediaType) {
         return isProvidable(type) && super.isReadable(type, genericType, annotations, mediaType);
     }
@@ -34,7 +34,7 @@ public class JacksonMessageBodyProvider extends JacksonXmlBindJsonProvider {
     @Override
     public boolean isWriteable(Class<?> type,
                                @Nullable Type genericType,
-                               @Nullable Annotation[] annotations,
+                               @Nullable Annotation @Nullable [] annotations,
                                @Nullable MediaType mediaType) {
         return isProvidable(type) && super.isWriteable(type, genericType, annotations, mediaType);
     }
