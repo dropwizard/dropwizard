@@ -62,7 +62,7 @@ public class JacksonMessageBodyProviderTest {
                 return false;
             }
             final Example other = (Example) obj;
-            return Objects.equals(this.id, other.id);
+            return this.id == other.id;
         }
     }
 
@@ -79,6 +79,7 @@ public class JacksonMessageBodyProviderTest {
     public interface Partial2 extends Default {
     }
 
+    @SuppressWarnings("MultipleNullnessAnnotations")
     public static class PartialExample {
         @Min(value = 0, groups = Partial1.class)
         @JsonProperty
@@ -284,7 +285,7 @@ public class JacksonMessageBodyProviderTest {
         assertThat((Iterable<Example>) obj).extracting(item -> item.id).contains(1 , 2);
     }
 
-    private static boolean isDefaultLocaleEnglish() {
+    static boolean isDefaultLocaleEnglish() {
         return "en".equals(Locale.getDefault().getLanguage());
     }
 }
