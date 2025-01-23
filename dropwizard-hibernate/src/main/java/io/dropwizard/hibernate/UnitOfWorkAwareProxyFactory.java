@@ -61,7 +61,7 @@ public class UnitOfWorkAwareProxyFactory {
     private LoadingCache<Class<?>, Class<?>> buildCache(Caffeine<Object, Object> proxyCacheBuilder) {
         return proxyCacheBuilder.build(new CacheLoader<Class<?>, Class<?>>() {
             @Override
-            public @Nullable Class<?> load(@NonNull Class<?> key) {
+            public Class<?> load(@NonNull Class<?> key) {
                 return createProxyClass(key);
             }
         });
