@@ -20,6 +20,8 @@ import java.util.Set;
 class JettyAuthenticationUtil {
     private static final Type HTTP_SERVLET_REQUEST_REF_TYPE = (new GenericType<Ref<HttpServletRequest>>() {}).getType();
 
+    private JettyAuthenticationUtil() {}
+
     static void setJettyAuthenticationIfPossible(SecurityContext securityContext, @Nullable InjectionManager injectionManager) {
         if (injectionManager == null) {
             return;
