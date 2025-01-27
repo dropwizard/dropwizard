@@ -16,7 +16,7 @@ import static java.util.Objects.requireNonNull;
 
 @Provider
 public class PersistenceExceptionMapper implements ExtendedExceptionMapper<PersistenceException> {
-
+    @SuppressWarnings("Slf4jIllegalPassedClass")
     private static final Logger LOGGER = LoggerFactory.getLogger(DataException.class);
 
     @Context
