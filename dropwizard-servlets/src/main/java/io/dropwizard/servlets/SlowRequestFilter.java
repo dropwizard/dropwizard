@@ -26,6 +26,7 @@ public class SlowRequestFilter implements Filter {
     private final long threshold;
 
     private Supplier<Long> currentTimeProvider = System::nanoTime;
+    @SuppressWarnings("Slf4jLoggerShouldBeFinal") // Non-final to enable injecting a mock in tests
     private Logger logger = LoggerFactory.getLogger(SlowRequestFilter.class);
 
     /**

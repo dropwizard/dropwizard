@@ -15,6 +15,7 @@ import static java.util.Objects.requireNonNull;
 
 @Provider
 public abstract class LoggingExceptionMapper<E extends Throwable> implements ExceptionMapper<E> {
+    @SuppressWarnings("Slf4jLoggerShouldBePrivate")
     protected final Logger logger;
 
     /**
