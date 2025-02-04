@@ -1,7 +1,6 @@
 package io.dropwizard.hibernate.dual;
 
 import com.codahale.metrics.health.HealthCheckRegistry;
-import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
 import io.dropwizard.core.Configuration;
@@ -17,7 +16,6 @@ import io.dropwizard.jersey.setup.JerseyEnvironment;
 import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 
 import java.util.Collections;
 import java.util.List;
@@ -27,6 +25,7 @@ import static io.dropwizard.hibernate.HibernateBundle.DEFAULT_NAME;
 import static io.dropwizard.hibernate.dual.HibernateBundle.PRIMARY;
 import static io.dropwizard.hibernate.dual.HibernateBundle.READER;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.assertArg;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyList;
 import static org.mockito.Mockito.eq;
@@ -65,20 +64,20 @@ public class HibernateBundleTest {
         when(jerseyEnvironment.getResourceConfig()).thenReturn(new DropwizardResourceConfig());
 
         when(factory.build(eq(bundle),
-                           any(Environment.class),
-                           any(DataSourceFactory.class),
-                           anyList(),
-                           eq(PREFIX + PRIMARY))).thenReturn(sessionFactory);
+            any(Environment.class),
+            any(DataSourceFactory.class),
+            anyList(),
+            eq(PREFIX + PRIMARY))).thenReturn(sessionFactory);
 
         when(factory.build(eq(bundle),
-                           any(Environment.class),
-                           any(DataSourceFactory.class),
-                           anyList(),
-                           eq(PREFIX + READER))).thenReturn(readFactory);
+            any(Environment.class),
+            any(DataSourceFactory.class),
+            anyList(),
+            eq(PREFIX + READER))).thenReturn(readFactory);
     }
 
     @Test
-    public void addsHibernateSupportToJackson() throws Exception {
+    public void addsHibernateSupportToJackson() {
         final ObjectMapper objectMapperFactory = mock(ObjectMapper.class);
 
         final Bootstrap<?> bootstrap = mock(Bootstrap.class);
@@ -86,10 +85,8 @@ public class HibernateBundleTest {
 
         bundle.initialize(bootstrap);
 
-        final ArgumentCaptor<Module> captor = ArgumentCaptor.forClass(Module.class);
-        verify(objectMapperFactory).registerModule(captor.capture());
-
-        assertThat(captor.getValue()).isInstanceOf(Hibernate5Module.class);
+        verify(objectMapperFactory).registerModule(assertArg(module ->
+            assertThat(module).isInstanceOf(Hibernate5Module.class)));
     }
 
     @Test
@@ -103,9 +100,7 @@ public class HibernateBundleTest {
     public void registersATransactionalListener() throws Exception {
         bundle.run(configuration, environment);
 
-        final ArgumentCaptor<UnitOfWorkApplicationListener> captor =
-                ArgumentCaptor.forClass(UnitOfWorkApplicationListener.class);
-        verify(jerseyEnvironment).register(captor.capture());
+        verify(jerseyEnvironment).register(any(UnitOfWorkApplicationListener.class));
     }
 
     @Test
@@ -114,15 +109,15 @@ public class HibernateBundleTest {
 
         bundle.run(configuration, environment);
 
-        final ArgumentCaptor<SessionFactoryHealthCheck> captor =
-                ArgumentCaptor.forClass(SessionFactoryHealthCheck.class);
-        verify(healthChecks).register(eq(PREFIX + PRIMARY), captor.capture());
-        assertThat(captor.getValue().getSessionFactory()).isInstanceOf(SessionFactory.class);
-        assertThat(captor.getValue().getValidationQuery()).isEqualTo(Optional.of("SELECT something"));
+        verify(healthChecks).register(eq(PREFIX + PRIMARY), assertArg(healthCheck ->
+            assertThat(healthCheck).isInstanceOfSatisfying(SessionFactoryHealthCheck.class, sfhc -> assertThat(sfhc)
+                .satisfies(check -> assertThat(check.getSessionFactory()).isInstanceOf(SessionFactory.class))
+                .satisfies(check -> assertThat(check.getValidationQuery()).isEqualTo(Optional.of("SELECT something"))))));
 
-        verify(healthChecks).register(eq(PREFIX + READER), captor.capture());
-        assertThat(captor.getValue().getSessionFactory()).isInstanceOf(SessionFactory.class);
-        assertThat(captor.getValue().getValidationQuery()).isEqualTo(Optional.of("/* Health Check */ SELECT 1"));
+        verify(healthChecks).register(eq(PREFIX + READER), assertArg(healthCheck ->
+            assertThat(healthCheck).isInstanceOfSatisfying(SessionFactoryHealthCheck.class, sfhc -> assertThat(sfhc)
+                .satisfies(check -> assertThat(check.getSessionFactory()).isInstanceOf(SessionFactory.class))
+                .satisfies(check -> assertThat(check.getValidationQuery()).isEqualTo(Optional.of("/* Health Check */ SELECT 1"))))));
     }
 
     @Test
@@ -146,21 +141,19 @@ public class HibernateBundleTest {
             }
         };
         when(factory.build(eq(customBundle),
-                any(Environment.class),
-                any(DataSourceFactory.class),
-                anyList(),
-                eq(name + PRIMARY))).thenReturn(sessionFactory);
+            any(Environment.class),
+            any(DataSourceFactory.class),
+            anyList(),
+            eq(name + PRIMARY))).thenReturn(sessionFactory);
         when(factory.build(eq(customBundle),
-                any(Environment.class),
-                any(DataSourceFactory.class),
-                anyList(),
-                eq(name + READER))).thenReturn(readFactory);
+            any(Environment.class),
+            any(DataSourceFactory.class),
+            anyList(),
+            eq(name + READER))).thenReturn(readFactory);
 
         customBundle.run(configuration, environment);
 
-        final ArgumentCaptor<SessionFactoryHealthCheck> captor =
-                ArgumentCaptor.forClass(SessionFactoryHealthCheck.class);
-        verify(healthChecks).register(eq(name + READER), captor.capture());
+        verify(healthChecks).register(eq(name + READER), any(SessionFactoryHealthCheck.class));
     }
 
     @Test

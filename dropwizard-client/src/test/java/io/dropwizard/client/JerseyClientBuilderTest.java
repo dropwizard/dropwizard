@@ -37,7 +37,6 @@ import org.glassfish.jersey.client.spi.ConnectorProvider;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
@@ -69,6 +68,8 @@ import java.util.concurrent.Executors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.assertArg;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
@@ -79,14 +80,14 @@ class JerseyClientBuilderTest {
     private final MetricRegistry metricRegistry = new MetricRegistry();
     private final JerseyClientBuilder builder = new JerseyClientBuilder(metricRegistry);
     private final LifecycleEnvironment lifecycleEnvironment = spy(new LifecycleEnvironment(metricRegistry));
-    private final Environment environment = mock(Environment.class);
+    private final Environment environment = mock();
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
-    private final ObjectMapper objectMapper = mock(ObjectMapper.class);
+    private final ObjectMapper objectMapper = mock();
     private final Validator validator = Validators.newValidator();
-    private final HttpClientBuilder apacheHttpClientBuilder = mock(HttpClientBuilder.class);
+    private final HttpClientBuilder apacheHttpClientBuilder = mock();
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() {
         when(environment.lifecycle()).thenReturn(lifecycleEnvironment);
         when(environment.getObjectMapper()).thenReturn(objectMapper);
         when(environment.getValidator()).thenReturn(validator);
@@ -237,28 +238,27 @@ class JerseyClientBuilderTest {
     }
 
     @Test
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings("unchecked")
     void usesAnExecutorServiceFromTheEnvironment() {
         final JerseyClientConfiguration configuration = new JerseyClientConfiguration();
         configuration.setMinThreads(7);
         configuration.setMaxThreads(532);
         configuration.setWorkQueueSize(16);
 
-        final ExecutorServiceBuilder executorServiceBuilderMock = mock(ExecutorServiceBuilder.class);
+        final ExecutorServiceBuilder executorServiceBuilderMock = mock();
         when(lifecycleEnvironment.executorService("jersey-client-test-%d")).thenReturn(executorServiceBuilderMock);
 
         when(executorServiceBuilderMock.minThreads(7)).thenReturn(executorServiceBuilderMock);
         when(executorServiceBuilderMock.maxThreads(532)).thenReturn(executorServiceBuilderMock);
 
-        final ArgumentCaptor<ArrayBlockingQueue> arrayBlockingQueueCaptor =
-                ArgumentCaptor.forClass(ArrayBlockingQueue.class);
-        when(executorServiceBuilderMock.workQueue(arrayBlockingQueueCaptor.capture()))
+        when(executorServiceBuilderMock.workQueue(any(ArrayBlockingQueue.class)))
                 .thenReturn(executorServiceBuilderMock);
-        when(executorServiceBuilderMock.build()).thenReturn(mock(ExecutorService.class));
+        when(executorServiceBuilderMock.build()).thenReturn(mock());
 
         builder.using(configuration).using(environment).build("test");
 
-        assertThat(arrayBlockingQueueCaptor.getValue().remainingCapacity()).isEqualTo(16);
+        verify(executorServiceBuilderMock).workQueue(assertArg(queue ->
+            assertThat(queue.remainingCapacity()).isEqualTo(16)));
     }
 
     @Test
