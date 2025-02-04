@@ -154,9 +154,9 @@ class LayoutIntegrationTests {
             Marker marker = MarkerFactory.getMarker("marker");
             LoggerFactory.getLogger("com.example.app").info(marker, "Application log");
             // Need to wait, because the logger is async
-            await().atMost(1, TimeUnit.SECONDS).until(() -> !redirectedStream.toString().isEmpty());
+            await().atMost(1, TimeUnit.SECONDS).until(redirectedStream::size, size -> size != 0);
 
-            JsonNode jsonNode = objectMapper.readTree(redirectedStream.toString());
+            JsonNode jsonNode = objectMapper.readTree(redirectedStream.toByteArray());
             assertThat(jsonNode.fieldNames().next()).isEqualTo("timestamp");
             assertThat(jsonNode.get("timestamp").isTextual()).isTrue();
             assertThat(jsonNode.get("level").asText()).isEqualTo("INFO");
@@ -214,9 +214,9 @@ class LayoutIntegrationTests {
 
             requestLog.log(request, response);
             // Need to wait, because the logger is async
-            await().atMost(1, TimeUnit.SECONDS).until(() -> !redirectedStream.toString().isEmpty());
+            await().atMost(1, TimeUnit.SECONDS).until(redirectedStream::size, size -> size != 0);
 
-            JsonNode jsonNode = objectMapper.readTree(redirectedStream.toString());
+            JsonNode jsonNode = objectMapper.readTree(redirectedStream.toByteArray());
             assertThat(jsonNode.fieldNames().next()).isEqualTo("timestamp");
             assertThat(jsonNode.get("timestamp").isNumber()).isTrue();
             assertThat(jsonNode.get("requestTime").isNumber()).isTrue();
@@ -241,8 +241,8 @@ class LayoutIntegrationTests {
     }
 
     @JsonTypeName("custom-json")
+    @SuppressWarnings("unused")
     public static class CustomJsonLayoutBaseFactory extends EventJsonLayoutBaseFactory {
-
         @JsonProperty
         @Min(1)
         private int messageSize = 8000;
