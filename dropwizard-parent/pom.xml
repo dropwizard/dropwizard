@@ -220,6 +220,7 @@
                 <artifactId>pgpverify-maven-plugin</artifactId>
                 <configuration>
                     <quiet>true</quiet>
+                    <pgpKeyServer>hkps://pgpkeys.eu, hkps://keyserver.ubuntu.com, hkps://keys.openpgp.org</pgpKeyServer>
                 </configuration>
                 <executions>
                     <execution>
