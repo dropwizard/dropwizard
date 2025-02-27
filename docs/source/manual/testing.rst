@@ -89,6 +89,7 @@ Next, write a test for serializing a ``Person`` instance to JSON:
 
 .. code-block:: java
 
+    import com.fasterxml.jackson.databind.JsonNode;
     import com.fasterxml.jackson.databind.ObjectMapper;
     import org.junit.jupiter.api.Test;
 
@@ -104,7 +105,7 @@ Next, write a test for serializing a ``Person`` instance to JSON:
             final Person person = new Person("Luther Blissett", "lb@example.com");
 
             final String expected = MAPPER.writeValueAsString(
-                    MAPPER.readValue(getClass().getResource("/fixtures/person.json"), Person.class));
+                    MAPPER.readValue(getClass().getResource("/fixtures/person.json"), JsonNode.class));
 
             assertThat(MAPPER.writeValueAsString(person)).isEqualTo(expected);
         }
