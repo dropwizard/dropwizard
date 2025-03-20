@@ -51,7 +51,7 @@ jobs:
           distribution: 'zulu'
           java-version: ${{ matrix.java_version }}
       - name: Cache SonarCloud packages
-        uses: actions/cache@d4323d4df104b026a6aa633fdb11d772146be0bf # v4.2.2
+        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
         if: ${{ env.SONAR_TOKEN != null && env.SONAR_TOKEN != '' && matrix.java_version == '17'  && matrix.os == 'ubuntu-latest' }}
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -63,7 +63,7 @@ jobs:
         run: ./mvnw --no-transfer-progress -V -B -fae -s .github/settings.xml -e "-DtrimStackTrace=false" "-Dsurefire.rerunFailingTestsCount=1" install
       - name: Upload Test Reports
         if: always()
-        uses: actions/upload-artifact@4cec3d8aa04e39d1a68397de0c4cd6fb9dce8ec1 # v4.6.1
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: test-reports-${{ matrix.os }}-java${{ matrix.java_version }}
           path: '**/*-reports'
