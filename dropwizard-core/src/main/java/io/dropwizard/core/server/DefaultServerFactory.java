@@ -18,6 +18,7 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.component.ContainerLifeCycle;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.util.thread.ThreadPool;
+import org.eclipse.jetty.util.thread.VirtualThreadPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -239,7 +240,7 @@ public class DefaultServerFactory extends AbstractServerFactory {
             adminMinThreads
         );
         if (enableAdminVirtualThreads) {
-            threadPool.setVirtualThreadsExecutor(getVirtualThreadsExecutorService());
+            threadPool.setVirtualThreadsExecutor(new VirtualThreadPool(adminMaxThreads));
         }
         threadPool.setName("dw-admin");
         server.addBean(threadPool);

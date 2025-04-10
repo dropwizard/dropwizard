@@ -35,6 +35,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.Validator;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import org.eclipse.jetty.util.thread.VirtualThreadPool;
 import org.jspecify.annotations.Nullable;
 import org.eclipse.jetty.ee10.servlet.ServletHolder;
 import org.eclipse.jetty.server.Handler;
@@ -652,22 +653,10 @@ public abstract class AbstractServerFactory implements ServerFactory {
                 new InstrumentedQueuedThreadPool(metricRegistry, maxThreads, minThreads,
                     (int) idleThreadTimeout.toMilliseconds(), queue);
         if (enableVirtualThreads) {
-            threadPool.setVirtualThreadsExecutor(getVirtualThreadsExecutorService());
+            threadPool.setVirtualThreadsExecutor(new VirtualThreadPool(maxThreads));
         }
         threadPool.setName("dw");
         return threadPool;
-    }
-
-    protected ExecutorService getVirtualThreadsExecutorService() {
-        try {
-            return (ExecutorService) Executors.class
-                .getDeclaredMethod("newVirtualThreadPerTaskExecutor")
-                .invoke(null);
-        } catch (InvocationTargetException invocationTargetException) {
-            throw new IllegalStateException("Error while obtaining a virtual thread executor", invocationTargetException.getCause());
-        } catch (Exception exception) {
-            throw new IllegalStateException("Error while obtaining a virtual thread executor", exception);
-        }
     }
 
     protected Server buildServer(LifecycleEnvironment lifecycle,
