@@ -221,9 +221,6 @@
                 <configuration>
                     <quiet>true</quiet>
                     <pgpKeyServer>hkps://keyserver.ubuntu.com, hkps://keys.openpgp.org</pgpKeyServer>
-                    <keysMapLocations>
-                        <keysMapLocation>${maven.multiModuleProjectDirectory}/keysmap.list</keysMapLocation>
-                    </keysMapLocations>
                 </configuration>
                 <executions>
                     <execution>
