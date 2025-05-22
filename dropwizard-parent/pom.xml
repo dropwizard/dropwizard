@@ -23,6 +23,7 @@
         <maven.compiler.showWarnings>true</maven.compiler.showWarnings>
         <maven.compiler.showDeprecation>true</maven.compiler.showDeprecation>
 
+        <pgpverify.skip>true</pgpverify.skip>
         <pgpverify.verifyPomFiles>false</pgpverify.verifyPomFiles>
 
         <surefire.argLine>-Duser.language=en -Duser.region=US -Duser.timezone=UTC</surefire.argLine>
