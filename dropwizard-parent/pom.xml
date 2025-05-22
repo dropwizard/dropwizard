@@ -220,7 +220,10 @@
                 <artifactId>pgpverify-maven-plugin</artifactId>
                 <configuration>
                     <quiet>true</quiet>
-                    <pgpKeyServer>hkps://pgpkeys.eu, hkps://keyserver.ubuntu.com, hkps://keys.openpgp.org</pgpKeyServer>
+                    <pgpKeyServer>hkps://keyserver.ubuntu.com, hkps://keys.openpgp.org</pgpKeyServer>
+                    <keysMapLocations>
+                        <keysMapLocation>${maven.multiModuleProjectDirectory}/keysmap.list</keysMapLocation>
+                    </keysMapLocations>
                 </configuration>
                 <executions>
                     <execution>
@@ -229,6 +232,13 @@
                         </goals>
                     </execution>
                 </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.simplify4u</groupId>
+                        <artifactId>pgp-keys-map</artifactId>
+                        <version>2025.03.15</version>
+                    </dependency>
+                </dependencies>
             </plugin>
         </plugins>
     </build>
