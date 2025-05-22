@@ -26,7 +26,8 @@
         <pgpverify.verifyPomFiles>false</pgpverify.verifyPomFiles>
 
         <surefire.argLine>-Duser.language=en -Duser.region=US -Duser.timezone=UTC</surefire.argLine>
-        <argLine>${surefire.argLine} --illegal-access=deny --add-opens java.base/java.net=ALL-UNNAMED</argLine>
+        <agents.argLine>-javaagent:${settings.localRepository}/net/bytebuddy/byte-buddy-agent/${byte-buddy.version}/byte-buddy-agent-${byte-buddy.version}.jar</agents.argLine>
+        <argLine>${surefire.argLine} --illegal-access=deny --add-opens java.base/java.net=ALL-UNNAMED ${agents.argLine}</argLine>
     </properties>
 
     <profiles>
@@ -227,6 +228,24 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>download-byte-buddy-agent-jar</id>
+                        <goals>
+                            <goal>get</goal>
+                        </goals>
+                        <phase>initialize</phase>
+                    </execution>
+                </executions>
+                <configuration>
+                    <groupId>net.bytebuddy</groupId>
+                    <artifactId>byte-buddy-agent</artifactId>
+                    <version>${byte-buddy.version}</version>
+                </configuration>
             </plugin>
         </plugins>
     </build>
