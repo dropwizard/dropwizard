@@ -23,6 +23,7 @@
         <maven.compiler.showWarnings>true</maven.compiler.showWarnings>
         <maven.compiler.showDeprecation>true</maven.compiler.showDeprecation>
 
+        <pgpverify.skip>true</pgpverify.skip>
         <pgpverify.verifyPomFiles>false</pgpverify.verifyPomFiles>
 
         <surefire.argLine>-Duser.language=en -Duser.region=US -Duser.timezone=UTC</surefire.argLine>
@@ -220,7 +221,7 @@
                 <artifactId>pgpverify-maven-plugin</artifactId>
                 <configuration>
                     <quiet>true</quiet>
-                    <pgpKeyServer>hkps://pgpkeys.eu, hkps://keyserver.ubuntu.com, hkps://keys.openpgp.org</pgpKeyServer>
+                    <pgpKeyServer>hkps://keyserver.ubuntu.com, hkps://keys.openpgp.org</pgpKeyServer>
                 </configuration>
                 <executions>
                     <execution>
@@ -229,6 +230,13 @@
                         </goals>
                     </execution>
                 </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.simplify4u</groupId>
+                        <artifactId>pgp-keys-map</artifactId>
+                        <version>2025.03.15</version>
+                    </dependency>
+                </dependencies>
             </plugin>
         </plugins>
     </build>
