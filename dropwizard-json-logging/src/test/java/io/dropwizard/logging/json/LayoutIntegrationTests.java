@@ -29,6 +29,7 @@ import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.RequestLog;
 import org.eclipse.jetty.server.Response;
+import org.eclipse.jetty.server.internal.HttpChannelState;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
@@ -193,6 +194,7 @@ class LayoutIntegrationTests {
             RequestLog requestLog = requestLogHandler.build("json-access-log-test");
 
             Request request = mock(Request.class);
+            HttpChannelState httpChannelState = mock(HttpChannelState.class);
             CookieCache cookieCache = mock(CookieCache.class);
             Response response = mock(Response.class);
             ConnectionMetaData connectionMetaData = mock(ConnectionMetaData.class);
@@ -200,7 +202,6 @@ class LayoutIntegrationTests {
 
             when(response.getHeaders()).thenReturn(HttpFields.build());
             when(request.getAttribute(Request.COOKIE_ATTRIBUTE)).thenReturn(cookieCache);
-
             when(request.getConnectionMetaData()).thenReturn(connectionMetaData);
 
             when(httpURI.getPath()).thenReturn("/test/users");
@@ -210,6 +211,7 @@ class LayoutIntegrationTests {
 
             when(connectionMetaData.getHttpConfiguration()).thenReturn(new HttpConfiguration());
             when(connectionMetaData.getProtocol()).thenReturn("HTTP/1.1");
+            when(request.getComponents()).thenReturn(httpChannelState);
 
             HttpFields requestHeaders = HttpFields.build()
                 .add("Connection", "keep-alive")

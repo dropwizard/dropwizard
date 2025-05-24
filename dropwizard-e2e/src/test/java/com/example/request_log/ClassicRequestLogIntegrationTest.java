@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class ClassicRequestLogIntegrationTest extends AbstractRequestLogPatternIntegrationTest {
 
     private static final Pattern REQUEST_LOG_PATTERN = Pattern.compile(
-            "127\\.0\\.0\\.1 - - \\[.+\\] \"GET /greet HTTP/1\\.1\" 200 15 \"-\" \"TestApplication \\(test-request-logs\\)\" \\d+"
+            "127\\.0\\.0\\.1 - - \\[.+\\] \"GET /greet HTTP/1\\.1\" 200 15 \"\" \"TestApplication \\(test-request-logs\\)\" \\d+"
     );
 
     @Override

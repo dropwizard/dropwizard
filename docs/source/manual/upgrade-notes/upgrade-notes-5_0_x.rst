@@ -66,6 +66,13 @@ Jetty previously deprecated the ``PushCacheFilter`` because it was used for a de
 Jetty 12 finally removed the server push functionality.
 Therefore Dropwizard 5.0.x removes the configuration classes for this feature.
 
+Removal of ``server.maxQueuedRequests``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The configuration setting ``server.maxQueuedRequests`` has been removed without replacement.
+
+See `Jetty Threading Architecture <https://jetty.org/docs/jetty/12/programming-guide/arch/threads.html#thread-pool>`_ for details.
+
 Jersey 3.1.x update
 -------------------
 Jersey now treats HK2 binders as providers. This changes the semantics of binders in Jersey and HK2.
