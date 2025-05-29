@@ -23,9 +23,6 @@
         <maven.compiler.showWarnings>true</maven.compiler.showWarnings>
         <maven.compiler.showDeprecation>true</maven.compiler.showDeprecation>
 
-        <pgpverify.skip>true</pgpverify.skip>
-        <pgpverify.verifyPomFiles>false</pgpverify.verifyPomFiles>
-
         <surefire.argLine>-Duser.language=en -Duser.region=US -Duser.timezone=UTC</surefire.argLine>
         <agents.argLine>-javaagent:${settings.localRepository}/net/bytebuddy/byte-buddy-agent/${byte-buddy.version}/byte-buddy-agent-${byte-buddy.version}.jar</agents.argLine>
         <argLine>${surefire.argLine} --illegal-access=deny --add-opens java.base/java.net=ALL-UNNAMED ${agents.argLine}</argLine>
@@ -221,8 +218,21 @@
                 <groupId>org.simplify4u.plugins</groupId>
                 <artifactId>pgpverify-maven-plugin</artifactId>
                 <configuration>
+                    <skip>false</skip>
                     <quiet>true</quiet>
                     <pgpKeyServer>hkps://keyserver.ubuntu.com, hkps://keys.openpgp.org</pgpKeyServer>
+                    <pgpKeyServerLoadBalance>true</pgpKeyServerLoadBalance>
+                    <verifyPomFiles>false</verifyPomFiles>
+                    <keysMapLocations>
+                        <keysMapLocation>
+                            <!-- file provided by the org.simplify4u:pgp-keys-map dependency -->
+                            <location>/pgp-keys-map.list</location>
+                        </keysMapLocation>
+                        <keysMapLocation>
+                            <!-- file containing Dropwizard project overrides for keys mapping -->
+                            <location>${project.baseUri}/../.mvn/pgpverify/custom-keys-map.list</location>
+                        </keysMapLocation>
+                    </keysMapLocations>
                 </configuration>
                 <executions>
                     <execution>

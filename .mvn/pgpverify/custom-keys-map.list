@@ -1,0 +1,10 @@
+# Defines a custom keys map file for use by pgpverify-maven-plugin
+# This fills in the gaps for https://github.com/s4u/pgp-keys-map
+
+# io.smallrye:jandex:jar:3.2.0 PGP key has been revoked and public key is not available
+io.smallrye:jandex:3.2.0    = !0x94976E17E18DD3201447286954963C3E875A56AE
+
+# pgp-keys-map has 'org.hibernate.* = noSig', but 'org.hibernate.validator' has a key that matches the one
+# for 'org.hibernate.orm'
+# https://hibernate.org/community/keys/
+org.hibernate.orm           = 0x1452F35849B50750F6A3BBB4B54011358B352F85
