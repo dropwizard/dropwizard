@@ -13,7 +13,7 @@ Once Dropwizard 4.2.x has been released, Dropwizard 4.0.x will be unsupported an
 | 5.0.x   | :hammer_and_wrench: | -           |
 | 4.0.x   | :white_check_mark:  | -           |
 | 3.0.x   | :white_check_mark:  | -           |
-| 2.1.x   | :white_check_mark:  | 2024-01-31  |
+| 2.1.x   | :x:                 | 2024-01-31  |
 | 2.0.x   | :x:                 | 2023-01-31  |
 | < 2.0   | :x:                 | <2023-01-31 |
 
