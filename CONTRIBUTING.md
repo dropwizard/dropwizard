@@ -50,14 +50,10 @@ it sits in the queue for a long time, or cannot be accepted at all.**
 
 Developer List
 ===
-The Google Group [dropwizard-dev](https://groups.google.com/forum/#!forum/dropwizard-dev)
-is the place to discuss everything to do with the development of the framework itself,
-including docs, process and community management.
+If you have questions, feel free to open an issue or [a Github
+Discussion][discussion] on the project.
 
-
-Feel free to post questions about internals, ideas for new features or refactorings,
-different strategies, requests for comment/review etc. This is the forum for everyone
-who wants to actively contribute to the project itself.
+[discussion]: https://github.com/dropwizard/dropwizard/discussions
 
 Committers
 ===
