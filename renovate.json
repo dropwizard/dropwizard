@@ -14,45 +14,81 @@
     "schedule:automergeWeekly",
     "schedule:weekly"
   ],
-  "baseBranches": ["release/3.0.x", "release/4.0.x", "release/5.0.x"],
+  "baseBranchPatterns": [
+    "release/3.0.x",
+    "release/4.0.x",
+    "release/5.0.x"
+  ],
   "dependencyDashboard": true,
-  "labels": ["dependencies"],
+  "labels": [
+    "dependencies"
+  ],
   "packageRules": [
     {
-      "matchPackageNames": ["io.dropwizard.metrics**"],
+      "matchPackageNames": [
+        "io.dropwizard.metrics**"
+      ],
       "allowedVersions": "<4.3.0"
     },
     {
-      "matchManagers": ["bundler"],
-      "addLabels": ["ruby"]
+      "matchManagers": [
+        "bundler"
+      ],
+      "addLabels": [
+        "ruby"
+      ]
     },
     {
-      "matchManagers": ["docker-compose", "dockerfile"],
-      "addLabels": ["docker"]
+      "matchManagers": [
+        "docker-compose",
+        "dockerfile"
+      ],
+      "addLabels": [
+        "docker"
+      ]
     },
     {
-      "matchManagers": ["maven", "maven-wrapper"],
-      "addLabels": ["java"]
+      "matchManagers": [
+        "maven",
+        "maven-wrapper"
+      ],
+      "addLabels": [
+        "java"
+      ]
     },
     {
-      "matchManagers": ["github-actions"],
-      "addLabels": ["github_actions"]
+      "matchManagers": [
+        "github-actions"
+      ],
+      "addLabels": [
+        "github_actions"
+      ]
     },
     {
-      "matchManagers": ["github-actions"],
+      "matchManagers": [
+        "github-actions"
+      ],
       "groupName": "GitHub Actions",
       "groupSlug": "github-actions"
     },
     {
-      "matchManagers": ["pip_requirements"],
-      "addLabels": ["python"]
+      "matchManagers": [
+        "pip_requirements"
+      ],
+      "addLabels": [
+        "python"
+      ]
     },
     {
       "groupName": "Maven plugins",
       "groupSlug": "maven-plugins",
-      "matchPackageNames": ["org.apache.maven.plugins**"]
+      "matchPackageNames": [
+        "org.apache.maven.plugins**"
+      ]
     }
   ],
   "platformAutomerge": true,
-  "reviewers": ["team:committers"]
+  "reviewers": [
+    "team:committers"
+  ]
 }
