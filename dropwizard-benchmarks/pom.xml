@@ -20,7 +20,6 @@
         <maven.deploy.skip>true</maven.deploy.skip>
         <maven.site.skip>true</maven.site.skip>
         <maven.site.deploy.skip>true</maven.site.deploy.skip>
-        <skipNexusStagingDeployMojo>true</skipNexusStagingDeployMojo>
         <!-- Ignore test coverage metrics for this module  -->
         <jacoco.skip>true</jacoco.skip>
         <sonar.coverage.exclusions>**/*.java</sonar.coverage.exclusions>
