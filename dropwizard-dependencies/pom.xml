@@ -27,7 +27,7 @@
         <commons-codec.version>1.19.0</commons-codec.version>
         <commons-collections4.version>4.5.0</commons-collections4.version>
         <commons-lang3.version>3.18.0</commons-lang3.version>
-        <commons-text.version>1.13.1</commons-text.version>
+        <commons-text.version>1.14.0</commons-text.version>
         <conscrypt-openjdk-uber.version>2.5.2</conscrypt-openjdk-uber.version>
         <error_prone.version>2.41.0</error_prone.version>
         <expressly.version>5.0.0</expressly.version>
