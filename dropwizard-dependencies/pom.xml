@@ -34,7 +34,7 @@
         <freemarker.version>2.3.34</freemarker.version>
         <guava.version>33.4.8-jre</guava.version>
         <hibernate-core.version>6.6.25.Final</hibernate-core.version>
-        <hibernate-validator.version>8.0.2.Final</hibernate-validator.version>
+        <hibernate-validator.version>8.0.3.Final</hibernate-validator.version>
         <hk2.version>3.0.6</hk2.version>
         <httpclient.version>5.5</httpclient.version>
         <httpcore.version>5.3.4</httpcore.version>
