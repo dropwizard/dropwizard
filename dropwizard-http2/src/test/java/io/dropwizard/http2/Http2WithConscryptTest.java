@@ -7,13 +7,13 @@ import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import org.conscrypt.OpenSSLProvider;
 import org.eclipse.jetty.http.HttpVersion;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIf;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.security.Security;
 
 import static io.dropwizard.testing.ConfigOverride.config;
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 @ExtendWith(DropwizardExtensionsSupport.class)
 class Http2WithConscryptTest extends Http2TestCommon {
@@ -35,19 +35,21 @@ class Http2WithConscryptTest extends Http2TestCommon {
     );
 
     @Test
+    @DisabledIf(
+        value = "isConscryptAvailable",
+        disabledReason ="Conscrypt native library not available on ARM MacOS - see https://github.com/google/conscrypt/issues/1034"
+    )
     void testHttp1WithCustomCipher() throws Exception {
-        assumeConscryptAvailable();
         assertResponse(http1Client.GET("https://localhost:" + appRule.getLocalPort() + "/api/test"), HttpVersion.HTTP_1_1);
     }
 
     @Test
+    @DisabledIf(
+        value = "isConscryptAvailable",
+        disabledReason ="Conscrypt native library not available on ARM MacOS - see https://github.com/google/conscrypt/issues/1034"
+    )
     void testHttp2WithCustomCipher() throws Exception {
-        assumeConscryptAvailable();
         assertResponse(http2Client.GET("https://localhost:" + appRule.getLocalPort() + "/api/test"), HttpVersion.HTTP_2);
-    }
-
-    private static void assumeConscryptAvailable() {
-        assumeTrue(isConscryptAvailable(), "Conscrypt native library not available on ARM MacOS - see https://github.com/google/conscrypt/issues/1034");
     }
 
     private static boolean isConscryptAvailable() {
