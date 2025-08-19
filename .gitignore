@@ -1,6 +1,3 @@
-# Git
-*.orig
-
 # Maven
 target/
 dependency-reduced-pom.xml
@@ -20,9 +17,6 @@ release.properties
 .classpath
 .project
 
-# vim
-*.swp
-
 # VSCode
 .vscode
 
@@ -34,6 +28,3 @@ logs
 .DS_Store
 
 out/jreleaser/
-
-# Test files
-/dropwizard-migrations/src/test/resources/test-db.mv.db
