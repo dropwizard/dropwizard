@@ -26,11 +26,11 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 class ExecutorServiceBuilderTest {
-
     private static final String WARNING = "Parameter 'maximumPoolSize' is conflicting with unbounded work queues";
 
     private final MetricRegistry metricRegistry = new MetricRegistry();
     private ExecutorServiceBuilder executorServiceBuilder;
+    @SuppressWarnings("Slf4jLoggerShouldBeFinal")
     private Logger log;
 
     @BeforeEach
