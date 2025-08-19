@@ -50,10 +50,11 @@ it sits in the queue for a long time, or cannot be accepted at all.**
 
 Developer List
 ===
-If you have questions, feel free to open an issue or [a Github
-Discussion][discussion] on the project.
+If you have questions, feel free to open an issue or a [discussion](https://github.com/dropwizard/dropwizard/discussions) on GitHub.
 
-[discussion]: https://github.com/dropwizard/dropwizard/discussions
+Feel free to post questions about internals, ideas for new features or refactorings,
+different strategies, requests for comment/review etc. This is the forum for everyone
+who wants to actively contribute to the project itself.
 
 Committers
 ===
