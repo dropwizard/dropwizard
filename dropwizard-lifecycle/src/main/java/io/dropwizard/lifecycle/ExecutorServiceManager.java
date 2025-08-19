@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 import java.util.concurrent.ExecutorService;
 
 public class ExecutorServiceManager implements Managed {
-
+    @SuppressWarnings("Slf4jLoggerShouldBeNonStatic")
     private static final Logger LOG = LoggerFactory.getLogger(ExecutorServiceManager.class);
     private final ExecutorService executor;
     private final Duration shutdownPeriod;

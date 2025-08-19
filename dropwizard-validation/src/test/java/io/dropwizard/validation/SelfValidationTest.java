@@ -55,6 +55,7 @@ class SelfValidationTest {
     private static final ListAppender listAppender = new ListAppender();
     private final Logger logger = (Logger)org.slf4j.LoggerFactory.getLogger(SelfValidationTest.class);
 
+    @SuppressWarnings("Slf4jIllegalPassedClass")
     @BeforeAll
     static void setUp() {
         Logger selfValidatingValidatorLogger = (Logger)LoggerFactory.getLogger(SelfValidatingValidator.class);
@@ -365,6 +366,7 @@ class SelfValidationTest {
         assertThat(listAppender.getAllLoggingEvents()).isEmpty();
     }
 
+    @SuppressWarnings("Slf4jIllegalPassedClass")
     @Test
     void messageParametersExample() {
         Logger hibernateLogger = (Logger)LoggerFactory.getLogger(AbstractMessageInterpolator.class);

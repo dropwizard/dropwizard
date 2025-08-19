@@ -19,7 +19,7 @@ import static java.util.Objects.requireNonNull;
 
 @Priority(Priorities.AUTHENTICATION)
 public abstract class AuthFilter<C, P extends Principal> implements ContainerRequestFilter {
-
+    @SuppressWarnings("Slf4jLoggerShouldBePrivate")
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     protected String prefix =  "Basic";
