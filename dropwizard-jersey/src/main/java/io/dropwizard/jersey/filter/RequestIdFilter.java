@@ -28,6 +28,7 @@ public class RequestIdFilter implements ContainerResponseFilter {
 
     private static final String REQUEST_ID = "X-Request-Id";
 
+    @SuppressWarnings("Slf4jLoggerShouldBeFinal") // Non-final to enable injecting a mock in tests
     private Logger logger = LoggerFactory.getLogger(RequestIdFilter.class);
 
     void setLogger(Logger logger) {

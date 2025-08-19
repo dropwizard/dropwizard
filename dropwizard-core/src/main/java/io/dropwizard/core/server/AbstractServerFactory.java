@@ -246,6 +246,7 @@ import static com.codahale.metrics.annotation.ResponseMeteredLevel.COARSE;
  * @see DefaultServerFactory
  * @see SimpleServerFactory
  */
+@SuppressWarnings("Slf4jIllegalPassedClass")
 public abstract class AbstractServerFactory implements ServerFactory {
     private static final Logger LOGGER = LoggerFactory.getLogger(ServerFactory.class);
 
