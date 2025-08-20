@@ -21,8 +21,6 @@ import io.dropwizard.metrics.jetty12.ee10.InstrumentedEE10Handler;
 import io.dropwizard.metrics.servlets.AdminServlet;
 import io.dropwizard.metrics.servlets.HealthCheckServlet;
 import io.dropwizard.metrics.servlets.MetricsServlet;
-import io.dropwizard.request.logging.LogbackAccessRequestLog;
-import io.dropwizard.request.logging.LogbackAccessRequestLogAwareHandler;
 import io.dropwizard.request.logging.LogbackAccessRequestLogFactory;
 import io.dropwizard.request.logging.RequestLogFactory;
 import io.dropwizard.servlets.ThreadNameFilter;
@@ -699,9 +697,6 @@ public abstract class AbstractServerFactory implements ServerFactory {
     protected void addRequestLog(Server server, String name, MutableServletContextHandler servletContextHandler) {
         if (getRequestLogFactory().isEnabled()) {
             RequestLog log = getRequestLogFactory().build(name);
-            if (log instanceof LogbackAccessRequestLog) {
-                servletContextHandler.insertHandler(new LogbackAccessRequestLogAwareHandler());
-            }
             server.setRequestLog(log);
         }
     }

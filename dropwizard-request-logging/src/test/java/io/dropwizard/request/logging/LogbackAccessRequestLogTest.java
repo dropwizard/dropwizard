@@ -2,9 +2,6 @@ package io.dropwizard.request.logging;
 
 import ch.qos.logback.access.common.spi.IAccessEvent;
 import ch.qos.logback.core.Appender;
-import org.eclipse.jetty.ee10.servlet.ServletChannel;
-import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
-import org.eclipse.jetty.ee10.servlet.ServletContextRequest;
 import org.eclipse.jetty.http.HttpFields;
 import org.eclipse.jetty.http.HttpURI;
 import org.eclipse.jetty.server.ConnectionMetaData;
@@ -33,12 +30,10 @@ class LogbackAccessRequestLogTest {
     private final Appender<IAccessEvent> appender = mock(Appender.class);
     private final LogbackAccessRequestLog requestLog = new LogbackAccessRequestLog();
 
-    private final ServletContextHandler servletContextHandler = new ServletContextHandler();
     private final Request request = mock(Request.class);
     private MockedStatic<Request> staticRequest;
     private final Response response = mock(Response.class);
     private MockedStatic<Response> staticResponse;
-    private ServletContextRequest servletContextRequest;
 
     @BeforeEach
     void setUp() throws Exception {
@@ -55,14 +50,10 @@ class LogbackAccessRequestLogTest {
         when(request.getConnectionMetaData()).thenReturn(connectionMetaData);
         when(request.getHeaders()).thenReturn(HttpFields.build());
 
-        ServletChannel servletChannel = new ServletChannel(servletContextHandler, connectionMetaData);
-        servletContextRequest = new TestServletContextRequest(servletChannel);
-        servletChannel.associate(servletContextRequest);
-
         staticRequest = mockStatic(Request.class);
         staticResponse = mockStatic(Response.class);
 
-        staticRequest.when(() -> Request.getRemoteAddr(servletContextRequest)).thenReturn("10.0.0.1");
+        staticRequest.when(() -> Request.getRemoteAddr(request)).thenReturn("10.0.0.1");
         staticRequest.when(() -> Request.getTimeStamp(request)).thenReturn(TimeUnit.SECONDS.toMillis(1353042047));
         staticRequest.when(() -> Request.as(any(), any())).thenCallRealMethod();
 
@@ -107,19 +98,11 @@ class LogbackAccessRequestLogTest {
     }
 
     private IAccessEvent logAndCapture() {
-        requestLog.log(servletContextRequest, response);
+        requestLog.log(request, response);
 
         final ArgumentCaptor<IAccessEvent> captor = ArgumentCaptor.forClass(IAccessEvent.class);
         verify(appender, timeout(1000)).doAppend(captor.capture());
 
         return captor.getValue();
-    }
-
-    public class TestServletContextRequest extends ServletContextRequest {
-
-        public TestServletContextRequest(ServletChannel servletChannel) {
-            super(servletContextHandler.newServletContextApi(), servletChannel, request, response,
-                null, null, null);
-        }
     }
 }

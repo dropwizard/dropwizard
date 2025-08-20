@@ -38,12 +38,12 @@
             <artifactId>logback-access-common</artifactId>
         </dependency>
         <dependency>
-            <groupId>ch.qos.logback.access</groupId>
-            <artifactId>logback-access-jetty12</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jspecify</groupId>
+            <artifactId>jspecify</artifactId>
         </dependency>
         <dependency>
             <groupId>jakarta.validation</groupId>
@@ -68,8 +68,8 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.jetty.ee10</groupId>
-            <artifactId>jetty-ee10-servlet</artifactId>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-security</artifactId>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>

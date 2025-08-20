@@ -401,11 +401,6 @@
                 <version>${logback.access.version}</version>
             </dependency>
             <dependency>
-                <groupId>ch.qos.logback.access</groupId>
-                <artifactId>logback-access-jetty12</artifactId>
-                <version>${logback.access.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>io.dropwizard.logback</groupId>
                 <artifactId>logback-throttling-appender</artifactId>
                 <version>${logback-throttling-appender.version}</version>

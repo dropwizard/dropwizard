@@ -1,81 +1,72 @@
 package io.dropwizard.request.logging;
 
-import ch.qos.logback.access.jetty.RequestLogImpl;
-import ch.qos.logback.access.common.spi.AccessEvent;
 import ch.qos.logback.access.common.spi.IAccessEvent;
 import ch.qos.logback.core.Appender;
-import ch.qos.logback.core.spi.FilterReply;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import org.eclipse.jetty.ee10.servlet.ServletApiRequest;
-import org.eclipse.jetty.ee10.servlet.ServletApiResponse;
-import org.eclipse.jetty.ee10.servlet.ServletContextRequest;
-import org.eclipse.jetty.ee10.servlet.ServletContextResponse;
+import ch.qos.logback.core.spi.AppenderAttachable;
+import ch.qos.logback.core.spi.AppenderAttachableImpl;
+import ch.qos.logback.core.spi.BasicSequenceNumberGenerator;
+import ch.qos.logback.core.spi.SequenceNumberGenerator;
 import org.eclipse.jetty.server.Request;
+import org.eclipse.jetty.server.RequestLog;
 import org.eclipse.jetty.server.Response;
+import org.eclipse.jetty.util.component.AbstractLifeCycle;
 
 import java.util.Iterator;
 
-/**
- * The Dropwizard request log uses logback-access, but we override it to remove the requirement for logback-access.xml
- * based configuration.
- */
-public class LogbackAccessRequestLog extends RequestLogImpl {
-    @Override
-    public void configure() {
-        setName("LogbackAccessRequestLog");
-    }
+public class LogbackAccessRequestLog extends AbstractLifeCycle implements RequestLog, AppenderAttachable<IAccessEvent> {
+
+    private final AppenderAttachableImpl<IAccessEvent> appenderAttachable = new AppenderAttachableImpl<>();
+    private final SequenceNumberGenerator sequenceNumberGenerator = new BasicSequenceNumberGenerator();
 
     @Override
-    public void log(Request jettyRequest, Response jettyResponse) {
-        DropwizardJettyServerAdapter adapter = new DropwizardJettyServerAdapter(jettyRequest, jettyResponse);
-        ServletContextRequest servletContextRequest = Request.as(jettyRequest, ServletContextRequest.class);
-        if (servletContextRequest == null) {
-            throw new IllegalStateException("Expecting request to be an instance of ServletContextRequest");
-        }
-        HttpServletRequest httpServletRequest = new DropwizardServletApiRequest(servletContextRequest);
-        HttpServletResponse httpServletResponse = new DropwizardServletApiResponse(servletContextRequest.getServletContextResponse());
-        IAccessEvent accessEvent = new AccessEvent(this, httpServletRequest, httpServletResponse, adapter);
-        if (getFilterChainDecision(accessEvent) == FilterReply.DENY) {
-            return;
-        }
-        appendLoopOnAppenders(accessEvent);
+    public void log(Request request, Response response) {
+        IAccessEvent accessEvent = new JettyAccessEvent(request, response, sequenceNumberGenerator);
+        appenderAttachable.appendLoopOnAppenders(accessEvent);
     }
 
-    private void appendLoopOnAppenders(IAccessEvent iAccessEvent) {
-        Iterator<Appender<IAccessEvent>> appenderIterator = this.iteratorForAppenders();
-        while (appenderIterator.hasNext()) {
-            appenderIterator.next().doAppend(iAccessEvent);
-        }
+    @Override
+    public void addAppender(Appender<IAccessEvent> newAppender) {
+        appenderAttachable.addAppender(newAppender);
     }
 
-    private static class DropwizardServletApiRequest extends ServletApiRequest {
-
-        private final ServletContextRequest servletContextRequest;
-
-        public DropwizardServletApiRequest(ServletContextRequest servletContextRequest) {
-            super(servletContextRequest);
-            this.servletContextRequest = servletContextRequest;
-        }
-
-        @Override
-        public Request getRequest() {
-            return servletContextRequest;
-        }
+    @Override
+    public Iterator<Appender<IAccessEvent>> iteratorForAppenders() {
+        return appenderAttachable.iteratorForAppenders();
     }
 
-    private static class DropwizardServletApiResponse extends ServletApiResponse {
+    @Override
+    public Appender<IAccessEvent> getAppender(String name) {
+        return appenderAttachable.getAppender(name);
+    }
 
-        private final ServletContextResponse servletContextResponse;
+    @Override
+    public boolean isAttached(Appender<IAccessEvent> appender) {
+        return appenderAttachable.isAttached(appender);
+    }
 
-        public DropwizardServletApiResponse(ServletContextResponse servletContextResponse) {
-            super(servletContextResponse);
-            this.servletContextResponse = servletContextResponse;
-        }
+    @Override
+    public void detachAndStopAllAppenders() {
+        appenderAttachable.detachAndStopAllAppenders();
+    }
 
-        @Override
-        public Response getResponse() {
-            return servletContextResponse;
-        }
+    @Override
+    public boolean detachAppender(Appender<IAccessEvent> appender) {
+        return appenderAttachable.detachAppender(appender);
+    }
+
+    @Override
+    public boolean detachAppender(String name) {
+        return appenderAttachable.detachAppender(name);
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+        detachAndStopAllAppenders();
     }
 }
