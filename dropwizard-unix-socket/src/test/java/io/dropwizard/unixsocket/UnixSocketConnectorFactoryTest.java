@@ -14,6 +14,7 @@ import org.eclipse.jetty.client.ContentResponse;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.transport.HttpClientTransportOverHTTP;
 import org.eclipse.jetty.io.ClientConnector;
+import org.eclipse.jetty.io.Transport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,7 +37,7 @@ class UnixSocketConnectorFactoryTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        ClientConnector clientConnector = ClientConnector.forUnixDomain(Paths.get("/tmp", "dropwizard.sock"));
+        ClientConnector clientConnector = new ClientConnector();
         httpClient = new HttpClient(new HttpClientTransportOverHTTP(clientConnector));
         httpClient.start();
     }
@@ -48,7 +49,12 @@ class UnixSocketConnectorFactoryTest {
 
     @Test
     void testClient() throws Exception {
-        assertThat(httpClient.GET("http://localhost:0/app/hello"))
+        Transport.TCPUnix transport = new Transport.TCPUnix(Paths.get("/tmp", "dropwizard.sock"));
+        ContentResponse response = httpClient
+            .newRequest("http://localhost:0/app/hello")
+            .transport(transport)
+            .send();
+        assertThat(response)
             .extracting(ContentResponse::getContentAsString)
             .isEqualTo("{\"hello\": \"World\"}");
     }

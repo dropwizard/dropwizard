@@ -26,7 +26,7 @@ class Http2CIntegrationTest extends Http2TestCommon {
     void setUp() throws Exception {
         final HTTP2Client http2Client = new HTTP2Client();
         HttpClientTransportOverHTTP2 httpClientTransportOverHTTP2 = new HttpClientTransportOverHTTP2(http2Client);
-        httpClientTransportOverHTTP2.setUseALPN(false);
+        http2Client.setUseALPN(false);
         this.http2Client = new HttpClient(httpClientTransportOverHTTP2);
         this.http2Client.start();
 
