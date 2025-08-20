@@ -8,7 +8,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.GenericType;
@@ -19,6 +18,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.assertArg;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
@@ -33,7 +33,6 @@ class PeopleResourceTest {
     public static final ResourceExtension RESOURCES = ResourceExtension.builder()
             .addResource(new PeopleResource(PERSON_DAO))
             .build();
-    private final ArgumentCaptor<Person> personCaptor = ArgumentCaptor.forClass(Person.class);
     private Person person;
 
     @BeforeEach
@@ -57,8 +56,8 @@ class PeopleResourceTest {
                 .post(Entity.entity(person, MediaType.APPLICATION_JSON_TYPE));
 
         assertThat(response.getStatusInfo()).isEqualTo(Response.Status.OK);
-        verify(PERSON_DAO).create(personCaptor.capture());
-        assertThat(personCaptor.getValue()).isEqualTo(person);
+        verify(PERSON_DAO).create(assertArg(personArg ->
+            assertThat(personArg).isEqualTo(person)));
     }
 
     @Test
