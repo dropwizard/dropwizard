@@ -29,13 +29,13 @@ class CommandTest {
         }
 
         @Override
-        public void run(Bootstrap<?> bootstrap, Namespace namespace) throws Exception {
+        public void run(Bootstrap<?> bootstrap, Namespace namespace) {
         }
     }
 
-    private final Application<Configuration> app = new Application<Configuration>() {
+    private final Application<Configuration> app = new Application<>() {
         @Override
-        public void run(Configuration configuration, Environment environment) throws Exception {
+        public void run(Configuration configuration, Environment environment) {
         }
     };
 
@@ -56,7 +56,7 @@ class CommandTest {
     }
 
     @Test
-    void listHelpOnceOnArgumentOmission() throws Exception {
+    void listHelpOnceOnArgumentOmission() {
         assertThat(cli.run("test", "-h"))
             .isEmpty();
 
@@ -73,7 +73,8 @@ class CommandTest {
                     "  -h, --help             show this help message and exit%n"
             ));
 
-        assertThat(stdErr.toString())
-            .isEmpty();
+        assertThat(stdErr.size())
+            .withFailMessage("Expected no output, got %s", stdErr)
+            .isZero();
     }
 }
