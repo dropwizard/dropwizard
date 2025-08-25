@@ -81,7 +81,7 @@ Hibernate has been upgraded from 6.1.x to 6.6.x. Notable changes include:
 * Bug fixes and stability improvements
 * Enhanced Jakarta Persistence 3.1 support
 
-For applications using Dropwizard's Hibernate integration, most changes should be transparent. However, if you use Hibernate APIs directly, review the `Hibernate migration guides <https://github.com/hibernate/hibernate-orm/blob/main/migration-guide.adoc>`_.
+For applications using Dropwizard's Hibernate integration, most changes should be transparent. However, if you use Hibernate APIs directly, review the `Hibernate migration guide <https://docs.jboss.org/hibernate/orm/6.6/migration-guide/migration-guide.html>`_.
 
 Liquibase 4.33.x upgrade
 ------------------------
