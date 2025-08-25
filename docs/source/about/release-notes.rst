@@ -8,32 +8,6 @@ Release Notes
 
 Please refer to `GitHub releases <https://github.com/dropwizard/dropwizard/releases>`__ for the most up-to-date release notes.
 
-.. _rel-5.0.0:
-
-v5.0.0: TBD
-===========
-
-* :ref:`upgrade-notes-dropwizard-5_0_x`
-* Requires Java 17 or higher
-* Major upgrade to Jakarta EE 10 components
-* Major dependency upgrades including:
-
-  * Jetty 12.1.0 (breaking API changes)
-  * Jersey 3.1.11 (major upgrade from 2.x)
-  * Jackson 2.19.2
-  * Hibernate 6.6.27.Final (major upgrade from 5.x)
-  * Hibernate Validator 8.0.3.Final (major upgrade from 6.x)
-  * Liquibase 4.33.0 (major upgrade from 3.x)
-  * JUnit 5.13.4 (major upgrade from 4.x)
-  * Logback 1.5.18
-  * All Jakarta EE APIs upgraded to 10.x versions
-
-* Virtual thread executor implementation improvements
-* Unix domain socket connector support
-* Removal of server push functionality (deprecated in Jetty)
-* GZIP error handling improvements
-* Request logging enhancements for Jetty 12
-
 .. _rel-2.0.0:
 
 v2.0.0: Dec 10, 2019
