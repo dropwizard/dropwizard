@@ -57,8 +57,8 @@ team to ship a *production-quality* web service in the shortest time possible.
 
    User mailing list <https://groups.google.com/forum/#!forum/dropwizard-user>
    Developer mailing list <https://groups.google.com/forum/#!forum/dropwizard-dev>
-   Twitter <https://twitter.com/dropwizardio>
-   Mastodon <https://jvm.social/@dropwizard>
+   Mastodon <https://foojay.social/@dropwizard>
+   Bluesky <https://bsky.app/profile/dropwizard.bsky.social>
 
 .. toctree::
    :maxdepth: 1
