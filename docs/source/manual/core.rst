@@ -267,8 +267,7 @@ For HTTP/2 servers you need to add an ALPN Conscrypt provider as a dependency.
 
 .. note::
 
-    If you are using Conscrypt with Java 8, you must exclude TLSv1.3 protocol as it is now enabled per default with
-    Conscrypt 2.0.0 but not supported by Java 8.
+    TLSv1.3 protocol is supported with Conscrypt and is enabled by default in Java 17+.
 
 .. _`Conscrypt`: https://github.com/google/conscrypt
 .. _`BoringSSL`: https://github.com/google/boringssl

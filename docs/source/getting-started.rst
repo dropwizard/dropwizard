@@ -102,6 +102,20 @@ you ship more quickly and with fewer regrets.
 
 Now that you've gotten the lay of the land, let's dig in!
 
+.. _gs-prerequisites:
+
+Prerequisites
+=============
+
+Before you begin, make sure you have the following installed:
+
+* **Java 17 or higher** - Dropwizard 5.0.x requires Java 17 as the minimum version due to Jetty 12's requirements
+* **Maven 3.6 or higher** - for building and managing dependencies
+
+.. note::
+
+    If you're upgrading from an earlier version of Dropwizard, see the :ref:`upgrade-notes-dropwizard-5_0_x` for important information about the Java version requirement and other breaking changes.
+
 .. _gs-maven-setup:
 
 Setting Up Using Maven
