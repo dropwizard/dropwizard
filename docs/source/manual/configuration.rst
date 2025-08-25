@@ -647,7 +647,7 @@ Logging
           appenders:
             - type: file
               currentLogFilename: /var/log/myapplication-sql.log
-              archivedLogFilenamePattern: /var/log/myapplication-sql-%d.log.gz
+              archivedLogFilenamePattern: /var/log/myapplication-sql-%i.log.gz
               archivedFileCount: 5
       appenders:
         - type: console
