@@ -479,6 +479,10 @@
                         <configuration>
                             <failOnWarning>true</failOnWarning>
                             <ignoreNonCompile>true</ignoreNonCompile>
+                            <ignoredDependencies>
+                                <ignoredDependency>org.jspecify:jspecify</ignoredDependency>
+                                <ignoredDependency>io.dropwizard.logback:logback-throttling-appender</ignoredDependency>
+                            </ignoredDependencies>
                         </configuration>
                     </execution>
                 </executions>
