@@ -11,7 +11,7 @@ Dropwizard Example, Step by Step
 * Preconditions
 
   * Make sure you have Maven_ installed
-  * Make sure ``JAVA_HOME`` points at JDK 11
+  * Make sure ``JAVA_HOME`` points at JDK 17
   * Make sure you have ``curl``
 
 .. _Maven: https://maven.apache.org/
@@ -21,12 +21,12 @@ Dropwizard Example, Step by Step
   * Open a terminal / cmd
   * Navigate to the project folder of the Dropwizard Example Application
   * ``mvn clean install``
-  * ``java -jar target/dropwizard-example-1.0.0.jar db migrate example.yml``
+  * ``java -jar target/dropwizard-example-5.0.0-SNAPSHOT.jar db migrate example.yml``
   * The statement above ran the liquibase migration in ``/src/main/resources/migrations.xml``, creating the table schema
 
 * Starting the Dropwizard Example Application
 
-  * You can now start the Dropwizard Example Application by running ``java -jar target/dropwizard-example-1.0.0.jar server example.yml``
+  * You can now start the Dropwizard Example Application by running ``java -jar target/dropwizard-example-5.0.0-SNAPSHOT.jar server example.yml``
   * Alternatively, you can run the Dropwizard Example Application in your IDE: ``com.example.helloworld.HelloWorldApplication server example.yml``
 
 * Working with the Dropwizard Example Application
