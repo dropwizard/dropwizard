@@ -4,6 +4,11 @@
 Other Versions
 ##############
 
+- `5.0.x <https://www.dropwizard.io/en/release-5.0.x/>`_
+- `4.0.x <https://www.dropwizard.io/en/release-4.0.x/>`_
+- `3.0.x <https://www.dropwizard.io/en/release-3.0.x/>`_
+- `2.1.x <https://www.dropwizard.io/en/release-2.1.x/>`_
+- `2.0.x <https://www.dropwizard.io/en/release-2.0.x/>`_
 - `1.3.x <https://www.dropwizard.io/en/release-1.3.x/>`_
 - `1.2.x <https://www.dropwizard.io/en/release-1.2.x/>`_
 - `1.1.x <https://www.dropwizard.io/en/release-1.1.x/>`_
