@@ -251,18 +251,6 @@
         </repository>
     </repositories>
 
-    <distributionManagement>
-        <repository>
-            <id>ossrh</id>
-            <name>Sonatype Central Portal Repository</name>
-        </repository>
-        <site>
-            <id>dropwizard-site</id>
-            <name>Dropwizard</name>
-            <url>https://dropwizard.io/</url>
-        </site>
-    </distributionManagement>
-
     <profiles>
         <profile>
             <id>all-modules</id>
