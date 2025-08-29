@@ -38,7 +38,7 @@
         <hk2.version>3.0.6</hk2.version>
         <httpclient.version>5.5</httpclient.version>
         <httpcore.version>5.3.4</httpcore.version>
-        <jackson.version>2.19.2</jackson.version>
+        <jackson.version>2.20.0</jackson.version>
         <jakarta.annotation-api.version>2.1.1</jakarta.annotation-api.version>
         <jakarta.el.version>5.0.1</jakarta.el.version>
         <jakarta.inject-api.version>2.0.1</jakarta.inject-api.version>
