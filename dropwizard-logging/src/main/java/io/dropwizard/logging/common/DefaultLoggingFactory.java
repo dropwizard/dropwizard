@@ -9,7 +9,7 @@ import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.AsyncAppenderBase;
 import ch.qos.logback.core.ConsoleAppender;
 import ch.qos.logback.core.encoder.LayoutWrappingEncoder;
-import ch.qos.logback.core.util.StatusPrinter;
+import ch.qos.logback.core.util.StatusPrinter2;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.logback.InstrumentedAppender;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -130,11 +130,12 @@ public class DefaultLoggingFactory implements LoggingFactory {
             root.addAppender(output.build(loggerContext, name, layoutFactory, levelFilterFactory, asyncAppenderFactory));
         }
 
-        StatusPrinter.setPrintStream(configurationErrorsStream);
+        StatusPrinter2 statusPrinter = new StatusPrinter2();
+        statusPrinter.setPrintStream(configurationErrorsStream);
         try {
-            StatusPrinter.printIfErrorsOccured(loggerContext);
+            statusPrinter.printIfErrorsOccured(loggerContext);
         } finally {
-            StatusPrinter.setPrintStream(System.out);
+            statusPrinter.setPrintStream(System.out);
         }
 
         configureInstrumentation(root, metricRegistry);
