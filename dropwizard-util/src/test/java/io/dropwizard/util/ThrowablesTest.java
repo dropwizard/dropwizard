@@ -73,7 +73,7 @@ class ThrowablesTest {
 
         @Override
         @Nullable
-        public Throwable getCause() {
+        public synchronized Throwable getCause() {
             return cause;
         }
     }
