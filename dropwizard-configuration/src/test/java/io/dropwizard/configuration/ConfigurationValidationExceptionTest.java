@@ -17,6 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @EnabledIf("isDefaultLocaleEnglish")
 class ConfigurationValidationExceptionTest {
     private static class Example {
+        @SuppressWarnings("MultipleNullnessAnnotations")
         @NotNull
         @Nullable // Weird combination, but Hibernate Validator is not good with the compile nullable checks
         String woo;
