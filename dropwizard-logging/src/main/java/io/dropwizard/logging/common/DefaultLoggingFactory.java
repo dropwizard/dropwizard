@@ -268,7 +268,7 @@ public class DefaultLoggingFactory implements LoggingFactory {
             return Level.OFF;
         } else if ("true".equalsIgnoreCase(text)) {
             // required because YAML maps "on" to a boolean true
-            return Level.ALL;
+            return Level.TRACE;
         }
         return Level.toLevel(text, Level.INFO);
     }
