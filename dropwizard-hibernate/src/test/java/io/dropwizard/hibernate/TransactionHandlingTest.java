@@ -129,16 +129,16 @@ class TransactionHandlingTest {
         private void initDatabase(SessionFactory sessionFactory) {
             try (Session session = sessionFactory.openSession()) {
                 Transaction transaction = session.beginTransaction();
-                session.createNativeQuery(
+                session.createNativeMutationQuery(
                     "CREATE TABLE people (name varchar(100) primary key, email varchar(16), birthday timestamp with time zone)")
                     .executeUpdate();
-                session.createNativeQuery(
+                session.createNativeMutationQuery(
                     "INSERT INTO people VALUES ('Coda', 'coda@example.com', '1979-01-02 00:22:00+0:00')")
                     .executeUpdate();
-                session.createNativeQuery(
+                session.createNativeMutationQuery(
                     "CREATE TABLE dogs (name varchar(100) primary key, owner varchar(100), CONSTRAINT fk_owner FOREIGN KEY (owner) REFERENCES people(name))")
                     .executeUpdate();
-                session.createNativeQuery(
+                session.createNativeMutationQuery(
                     "INSERT INTO dogs VALUES ('Raf', 'Coda')")
                     .executeUpdate();
                 transaction.commit();
