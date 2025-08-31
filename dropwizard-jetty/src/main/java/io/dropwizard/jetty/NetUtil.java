@@ -15,10 +15,10 @@
  */
 package io.dropwizard.jetty;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.Locale;
@@ -28,11 +28,10 @@ import java.util.Locale;
  * It has been modified, to remove dependencies on other classes, and to convert to methods, rather than a
  * static value.
  */
-
 class NetUtil {
     static final int DEFAULT_TCP_BACKLOG_WINDOWS = 200;
     static final int DEFAULT_TCP_BACKLOG_LINUX = 128;
-    static final String TCP_BACKLOG_SETTING_LOCATION = "/proc/sys/net/core/somaxconn";
+    static final Path TCP_BACKLOG_SETTING_LOCATION = Path.of("/proc/sys/net/core/somaxconn");
 
     /**
      * The SOMAXCONN value of the current machine.  If failed to get the value,  {@code 200}  is used as a
@@ -53,9 +52,8 @@ class NetUtil {
             // The known defaults:
             // - Windows NT Server 4.0+: 200
             // - Linux and Mac OS X: 128
-            final File file = new File(TCP_BACKLOG_SETTING_LOCATION);
-            try (BufferedReader in = new BufferedReader(new FileReader(file))) {
-                return Integer.parseInt(in.readLine().trim());
+            try {
+                return Integer.parseInt(Files.readAllLines(TCP_BACKLOG_SETTING_LOCATION, StandardCharsets.US_ASCII).get(0).trim());
             } catch (SecurityException | IOException | NumberFormatException | NullPointerException e) {
                 return tcpBacklog;
             }
