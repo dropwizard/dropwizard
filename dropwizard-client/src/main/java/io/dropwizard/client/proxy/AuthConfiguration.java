@@ -62,6 +62,7 @@ public class AuthConfiguration {
 
     public static final String BASIC_AUTH_SCHEME = "Basic";
 
+    @Deprecated
     public static final String NTLM_AUTH_SCHEME = "NTLM";
 
     public static final String USERNAME_PASSWORD_CREDS = "UsernamePassword";
