@@ -8,6 +8,7 @@ import jakarta.ws.rs.container.ResourceInfo;
 import jakarta.ws.rs.core.FeatureContext;
 import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.ext.Provider;
+import jakarta.ws.rs.ext.RuntimeDelegate;
 import org.glassfish.jersey.server.model.AnnotatedMethod;
 
 import java.io.IOException;
@@ -31,7 +32,9 @@ public class CacheControlledResponseFeature implements DynamicFeature {
 
     private static class CacheControlledResponseFilter implements ContainerResponseFilter {
         private static final int ONE_YEAR_IN_SECONDS = (int) TimeUnit.DAYS.toSeconds(365);
-        private String cacheResponseHeader;
+        private static final RuntimeDelegate.HeaderDelegate<jakarta.ws.rs.core.CacheControl> cacheControlHeaderDelegate =
+            RuntimeDelegate.getInstance().createHeaderDelegate(jakarta.ws.rs.core.CacheControl.class);
+        private final String cacheResponseHeader;
 
         CacheControlledResponseFilter(CacheControl control) {
             final jakarta.ws.rs.core.CacheControl cacheControl = new jakarta.ws.rs.core.CacheControl();
@@ -57,7 +60,7 @@ public class CacheControlledResponseFeature implements DynamicFeature {
                 );
             }
 
-            cacheResponseHeader = cacheControl.toString();
+            cacheResponseHeader = cacheControlHeaderDelegate.toString(cacheControl);
         }
 
         @Override
@@ -66,8 +69,6 @@ public class CacheControlledResponseFeature implements DynamicFeature {
             if (!cacheResponseHeader.isEmpty()) {
                 responseContext.getHeaders().add(HttpHeaders.CACHE_CONTROL, cacheResponseHeader);
             }
-
         }
-
     }
 }
