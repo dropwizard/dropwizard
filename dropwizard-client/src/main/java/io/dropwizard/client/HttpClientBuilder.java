@@ -20,6 +20,7 @@ import org.apache.hc.client5.http.auth.Credentials;
 import org.apache.hc.client5.http.auth.CredentialsStore;
 import org.apache.hc.client5.http.auth.NTCredentials;
 import org.apache.hc.client5.http.auth.UsernamePasswordCredentials;
+import org.apache.hc.client5.http.config.ConnectionConfig;
 import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.client5.http.cookie.StandardCookieSpec;
 import org.apache.hc.client5.http.impl.DefaultConnectionKeepAliveStrategy;
@@ -45,6 +46,7 @@ import org.apache.hc.core5.http.protocol.HttpContext;
 import org.apache.hc.core5.http.protocol.HttpProcessor;
 import org.apache.hc.core5.util.TimeValue;
 import org.jspecify.annotations.Nullable;
+import org.apache.hc.core5.util.Timeout;
 
 import javax.net.ssl.HostnameVerifier;
 import java.io.IOException;
@@ -356,7 +358,6 @@ public class HttpClientBuilder {
             final String name) {
         final String cookiePolicy = configuration.isCookiesEnabled() ? StandardCookieSpec.RELAXED : StandardCookieSpec.IGNORE;
         final int timeout = (int) configuration.getTimeout().toMilliseconds();
-        final int connectionTimeout = (int) configuration.getConnectionTimeout().toMilliseconds();
         final int connectionRequestTimeout = (int) configuration.getConnectionRequestTimeout().toMilliseconds();
         final long keepAlive = configuration.getKeepAlive().toMilliseconds();
         final ConnectionReuseStrategy reuseStrategy = keepAlive == 0
@@ -371,7 +372,6 @@ public class HttpClientBuilder {
         final RequestConfig requestConfig
                 = RequestConfig.custom().setCookieSpec(cookiePolicy)
                 .setResponseTimeout(timeout, TimeUnit.MILLISECONDS)
-                .setConnectTimeout(connectionTimeout, TimeUnit.MILLISECONDS)
                 .setConnectionKeepAlive(TimeValue.of(-1, TimeUnit.MILLISECONDS))
                 .setConnectionRequestTimeout(connectionRequestTimeout, TimeUnit.MILLISECONDS)
                 .setProtocolUpgradeEnabled(protocolUpgradeEnabled)
@@ -516,7 +516,11 @@ public class HttpClientBuilder {
             InstrumentedHttpClientConnectionManager connectionManager) {
         connectionManager.setDefaultMaxPerRoute(configuration.getMaxConnectionsPerRoute());
         connectionManager.setMaxTotal(configuration.getMaxConnections());
-        connectionManager.setValidateAfterInactivity(TimeValue.ofMilliseconds((int) configuration.getValidateAfterInactivityPeriod().toMilliseconds()));
+        final ConnectionConfig connectionConfig = ConnectionConfig.custom()
+            .setConnectTimeout(Timeout.of(configuration.getConnectionTimeout().toJavaDuration()))
+            .setValidateAfterInactivity(TimeValue.of(configuration.getValidateAfterInactivityPeriod().toJavaDuration()))
+            .build();
+        connectionManager.setConnectionConfigResolver(route -> connectionConfig);
         return connectionManager;
     }
 
