@@ -21,6 +21,7 @@ import org.apache.hc.client5.http.auth.CredentialsProvider;
 import org.apache.hc.client5.http.auth.CredentialsStore;
 import org.apache.hc.client5.http.auth.NTCredentials;
 import org.apache.hc.client5.http.auth.UsernamePasswordCredentials;
+import org.apache.hc.client5.http.config.ConnectionConfig;
 import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.client5.http.cookie.StandardCookieSpec;
 import org.apache.hc.client5.http.impl.DefaultConnectionKeepAliveStrategy;
@@ -33,6 +34,7 @@ import org.apache.hc.client5.http.routing.HttpRoutePlanner;
 import org.apache.hc.client5.http.socket.ConnectionSocketFactory;
 import org.apache.hc.client5.http.socket.PlainConnectionSocketFactory;
 import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactory;
+import org.apache.hc.core5.function.Resolver;
 import org.apache.hc.core5.http.ConnectionReuseStrategy;
 import org.apache.hc.core5.http.Header;
 import org.apache.hc.core5.http.HttpException;
@@ -356,13 +358,12 @@ class HttpClientBuilderTest {
 
     @Test
     void setsTheConnectTimeout() {
-        configuration.setConnectionTimeout(Duration.milliseconds(500));
-        assertThat(builder.using(configuration).createClient(apacheBuilder, connectionManager, "test")).isNotNull();
+        configuration.setConnectionTimeout(Duration.milliseconds(123));
 
-        assertThat(apacheBuilder)
-                .extracting("defaultRequestConfig")
-                .isInstanceOfSatisfying(RequestConfig.class, requestConfig ->
-                        assertThat(requestConfig.getConnectTimeout()).isEqualTo(Timeout.ofMilliseconds(500L)));
+        assertThat(builder.using(configuration).build("test"))
+            .extracting("connManager.connectionConfigResolver").isInstanceOfSatisfying(Resolver.class, resolver ->
+                assertThat(resolver.resolve(new HttpRoute(HttpHost.create(URI.create("https://example.org:443")))))
+                    .isInstanceOfSatisfying(ConnectionConfig.class, config -> assertThat(config.getConnectTimeout()).isEqualTo(Timeout.ofMilliseconds(123L))));
     }
 
     @Test
@@ -559,12 +560,11 @@ class HttpClientBuilderTest {
     void setValidateAfterInactivityPeriodFromConfiguration() {
         int validateAfterInactivityPeriod = 50000;
         configuration.setValidateAfterInactivityPeriod(Duration.milliseconds(validateAfterInactivityPeriod));
-        final ConfiguredCloseableHttpClient client = builder.using(configuration)
-                .createClient(apacheBuilder, builder.configureConnectionManager(connectionManager), "test");
 
-        assertThat(client).isNotNull();
-        assertThat(apacheBuilder).extracting("connManager").isSameAs(connectionManager);
-        verify(connectionManager).setValidateAfterInactivity(TimeValue.ofMilliseconds(validateAfterInactivityPeriod));
+        assertThat(builder.using(configuration).build("test"))
+            .extracting("connManager.connectionConfigResolver").isInstanceOfSatisfying(Resolver.class, resolver ->
+                assertThat(resolver.resolve(new HttpRoute(HttpHost.create(URI.create("https://example.org:443")))))
+                    .isInstanceOfSatisfying(ConnectionConfig.class, config -> assertThat(config.getValidateAfterInactivity()).isEqualTo(TimeValue.ofMilliseconds(validateAfterInactivityPeriod))));
     }
 
     @Test
