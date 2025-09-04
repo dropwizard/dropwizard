@@ -124,13 +124,14 @@ class JsonHealthResponseProviderTest {
         // then
         assertThatThrownBy(() -> jsonHealthResponseProvider.healthResponse(queryParams))
             .isInstanceOf(RuntimeException.class)
-            .hasCauseReference(exception);
+            .cause()
+            .isSameAs(exception);
         verifyNoInteractions(healthStatusChecker);
     }
 
     private String fixture(final String filename) throws IOException {
-        try (InputStream is = getClass().getResourceAsStream(filename)) {
-            return new String(requireNonNull(is).readAllBytes(), UTF_8);
+        try (InputStream is = requireNonNull(getClass().getResourceAsStream(filename))) {
+            return new String(is.readAllBytes(), UTF_8);
         }
     }
 }
