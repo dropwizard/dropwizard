@@ -2,6 +2,7 @@ package io.dropwizard.migrations;
 
 import io.dropwizard.core.Configuration;
 import io.dropwizard.db.DatabaseConfiguration;
+import liquibase.Contexts;
 import liquibase.Liquibase;
 import net.sourceforge.argparse4j.impl.Arguments;
 import net.sourceforge.argparse4j.inf.Namespace;
@@ -60,7 +61,7 @@ public class DbMigrateCommand<T extends Configuration> extends AbstractLiquibase
             }
         } else {
             if (dryRun) {
-                liquibase.update(context, new OutputStreamWriter(outputStream, StandardCharsets.UTF_8));
+                liquibase.updateSql(new Contexts(context), null, new OutputStreamWriter(outputStream, StandardCharsets.UTF_8));
             } else {
                 liquibase.update(context);
             }
