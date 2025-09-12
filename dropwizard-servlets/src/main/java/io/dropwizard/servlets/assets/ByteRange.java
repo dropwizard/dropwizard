@@ -29,7 +29,7 @@ public final class ByteRange {
 
     public static ByteRange parse(final String byteRange,
                                   final int resourceLength) {
-        final String asciiString = new String(byteRange.getBytes(), StandardCharsets.US_ASCII);
+        final String asciiString = new String(byteRange.getBytes(StandardCharsets.US_ASCII), StandardCharsets.US_ASCII);
         // missing separator
         if (!byteRange.contains("-")) {
             final int start = Integer.parseInt(asciiString);
