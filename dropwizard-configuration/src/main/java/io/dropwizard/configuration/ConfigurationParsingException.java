@@ -303,7 +303,7 @@ public class ConfigurationParsingException extends ConfigurationException {
 
         protected static class LevenshteinComparator implements Comparator<String>, Serializable {
             private static final long serialVersionUID = 1L;
-            private static final LevenshteinDistance LEVENSHTEIN_DISTANCE = new LevenshteinDistance();
+            private static final LevenshteinDistance LEVENSHTEIN_DISTANCE = LevenshteinDistance.getDefaultInstance();
 
             /**
              * The base string for the levenshtein comparator.
