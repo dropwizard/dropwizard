@@ -58,7 +58,6 @@ import java.util.function.Supplier;
 @JsonTypeName("classic")
 public class LogbackClassicRequestLogFactory implements RequestLogFactory<RequestLog> {
     private static class RequestLogLayout extends PatternLayoutBase<ILoggingEvent> {
-
         private RequestLogLayout(Context context) {
             super();
             setContext(context);
@@ -75,6 +74,8 @@ public class LogbackClassicRequestLogFactory implements RequestLogFactory<Reques
         }
 
         @Override
+        @Deprecated
+        @SuppressWarnings("InlineMeSuggester")
         public Map<String, String> getDefaultConverterMap() {
             return Collections.emptyMap();
         }
@@ -86,7 +87,7 @@ public class LogbackClassicRequestLogFactory implements RequestLogFactory<Reques
     @Valid
     @NotNull
     private List<AppenderFactory<ILoggingEvent>> appenders = Collections.singletonList(
-            new ConsoleAppenderFactory<ILoggingEvent>()
+            new ConsoleAppenderFactory<>()
     );
 
     @JsonProperty
