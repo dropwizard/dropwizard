@@ -48,7 +48,7 @@ class NetUtilTest {
     private static boolean isTcpBacklogSettingReadable() {
         return AccessController.doPrivileged((PrivilegedAction<Boolean>) () -> {
             try {
-                File f = new File(NetUtil.TCP_BACKLOG_SETTING_LOCATION);
+                File f = NetUtil.TCP_BACKLOG_SETTING_LOCATION.toFile();
                 return f.exists() && f.canRead();
             } catch (Exception e) {
                 return false;
