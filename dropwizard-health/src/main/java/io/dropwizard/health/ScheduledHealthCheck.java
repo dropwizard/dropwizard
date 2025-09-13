@@ -123,8 +123,8 @@ class ScheduledHealthCheck implements Runnable {
             ", healthCheck=" + healthCheck +
             ", schedule=" + schedule +
             ", state=" + state +
-            ", healthyCheckCounter=" + healthyCheckCounter +
-            ", unhealthyCheckCounter=" + unhealthyCheckCounter +
+            ", healthyCheckCounter=" + getCounterString(healthyCheckCounter) +
+            ", unhealthyCheckCounter=" + getCounterString(unhealthyCheckCounter) +
             ", previouslyRecovered=" + previouslyRecovered +
             '}';
     }
