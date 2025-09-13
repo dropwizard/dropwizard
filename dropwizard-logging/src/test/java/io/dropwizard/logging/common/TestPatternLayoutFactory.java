@@ -39,6 +39,8 @@ public class TestPatternLayoutFactory implements DiscoverableLayoutFactory<ILogg
         }
 
         @Override
+        @Deprecated
+        @SuppressWarnings("InlineMeSuggester")
         public Map<String, String> getDefaultConverterMap() {
             return Collections.emptyMap();
         }
