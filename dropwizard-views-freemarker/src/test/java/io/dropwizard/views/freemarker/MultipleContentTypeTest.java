@@ -2,6 +2,7 @@ package io.dropwizard.views.freemarker;
 
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import freemarker.template.Configuration;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.logging.common.BootstrapLogging;
@@ -52,7 +53,7 @@ class MultipleContentTypeTest extends JerseyTest {
 
     @Override
     protected Application configure() {
-        final ViewRenderer renderer = new FreemarkerViewRenderer();
+        final ViewRenderer renderer = new FreemarkerViewRenderer(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
         return DropwizardResourceConfig.forTesting()
                 .register(new ViewMessageBodyWriter(new MetricRegistry(), Collections.singletonList(renderer)))
                 .register(new InfoMessageBodyWriter())
