@@ -24,7 +24,7 @@ Caffeine            2.8.x                 3.2.x
 Guava               31.x                  33.4.x-jre
 Hibernate           6.1.x                 6.6.x
 Hibernate Validator 7.x                   8.0.x
-Jackson             2.15.x                2.19.x
+Jackson             2.15.x                2.20.x
 Jersey              3.0.x                 3.1.x
 Jetty               11.x                  12.1.x
 JUnit               5.9.x                 5.13.x
@@ -50,9 +50,9 @@ The implementation used virtual threads for Jetty's internal thread pools, which
 Dropwizard 5.x corrects this behavior.
 Now platform threads are used for the thread pools and a virtual thread executor is provided to Jetty's ``AdaptiveExecutionStrategy``, so that virtual threads can be utilized for task execution.
 
-Jackson 2.19.x upgrade
+Jackson 2.20.x upgrade
 ----------------------
-Jackson has been upgraded from 2.15.x to 2.19.x. This is a significant upgrade that includes:
+Jackson has been upgraded from 2.15.x to 2.20.x. This is a significant upgrade that includes:
 
 * Performance improvements and optimizations
 * Enhanced support for Java 17+ features
