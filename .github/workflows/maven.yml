@@ -34,6 +34,7 @@ jobs:
           - "11"
           - "17"
           - "21"
+          - "25"
         os:
           - ubuntu-latest
           - windows-latest
