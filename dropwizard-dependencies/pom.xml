@@ -486,5 +486,14 @@
                 </pluginManagement>
             </build>
         </profile>
+        <profile>
+            <id>jdk17</id>
+            <activation>
+                <jdk>[17,)</jdk>
+            </activation>
+            <properties>
+                <error_prone.version>2.42.0</error_prone.version>
+            </properties>
+        </profile>
     </profiles>
 </project>
