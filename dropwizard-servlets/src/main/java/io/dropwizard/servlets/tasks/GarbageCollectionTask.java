@@ -8,7 +8,7 @@ import java.util.Map;
  * Performs a full JVM garbage collection (probably).
  */
 public class GarbageCollectionTask extends Task {
-    private final Runtime runtime;
+    private final Runnable invokeGc;
 
     /**
      * Creates a new GarbageCollectionTask.
@@ -25,8 +25,13 @@ public class GarbageCollectionTask extends Task {
      * @param runtime a {@link Runtime} instance
      */
     public GarbageCollectionTask(Runtime runtime) {
+        this(runtime::gc);
+    }
+
+    // visible for testing
+    GarbageCollectionTask(Runnable invokeGc) {
         super("gc");
-        this.runtime = runtime;
+        this.invokeGc = invokeGc;
     }
 
     @Override
@@ -36,7 +41,7 @@ public class GarbageCollectionTask extends Task {
         for (int i = 0; i < count; i++) {
             output.println("Running GC...");
             output.flush();
-            runtime.gc();
+            invokeGc.run();
         }
 
         output.println("Done!");
