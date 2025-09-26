@@ -33,6 +33,7 @@ jobs:
         java_version:
           - "17"
           - "21"
+          - "25"
         os:
           - ubuntu-latest
           - windows-latest
