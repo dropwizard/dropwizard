@@ -25,7 +25,7 @@ class CachingAuthenticatorTest {
             .maximumSize(1L)
             .executor(Runnable::run);
 
-    @Mock(lenient = true)
+    @Mock(strictness = Mock.Strictness.LENIENT)
     private Authenticator<String, Principal> underlying;
     private CachingAuthenticator<String, Principal> cached;
 

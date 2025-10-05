@@ -5,7 +5,6 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.spi.AppenderAttachableImpl;
 import io.dropwizard.logging.common.BootstrapLogging;
-import org.eclipse.jetty.server.HttpChannelState;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,7 +14,6 @@ import static org.mockito.Mockito.assertArg;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 class DropwizardSlf4jRequestLogWriterTest {
     static {
@@ -28,9 +26,6 @@ class DropwizardSlf4jRequestLogWriterTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        final HttpChannelState channelState = mock();
-        when(channelState.isInitial()).thenReturn(true);
-
         appenders.addAppender(appender);
 
         slf4jRequestLog.start();

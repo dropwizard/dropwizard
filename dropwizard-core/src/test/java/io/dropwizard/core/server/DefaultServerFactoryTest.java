@@ -70,6 +70,7 @@ class DefaultServerFactoryTest {
     }
 
     @Test
+    @SuppressWarnings("deprecation")
     void loadsServerPushConfig() {
         final ServerPushFilterFactory serverPush = http.getServerPush();
         assertThat(serverPush.isEnabled()).isTrue();

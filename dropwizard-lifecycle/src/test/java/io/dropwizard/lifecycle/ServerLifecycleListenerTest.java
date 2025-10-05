@@ -64,7 +64,7 @@ class ServerLifecycleListenerTest {
         Assertions.assertThat(portDescriptorList).usingElementComparator((o1, o2) -> {
             if (Objects.equals(o1.getConnectorType(), o2.getConnectorType()) &&
                 Objects.equals(o1.getProtocol(), o2.getProtocol()) &&
-                Objects.equals(o1.getPort(), o2.getPort()) &&
+                o1.getPort() == o2.getPort() &&
                 Objects.equals(o1.getHost(), o2.getHost())) {
                 return 0;
             } else {
