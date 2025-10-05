@@ -31,6 +31,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
     private static class LoggingExceptionMapperBinder extends AbstractBinder {
+        @Override
         protected void configure() {
             this.bind(new LoggingExceptionMapper<Throwable>() {
             }).to(ExceptionMapper.class);

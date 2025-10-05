@@ -63,6 +63,7 @@ class ExceptionMapperBinderTest {
     @Produces("application/json")
     private static class TestValidationResource {
         @GET
+        @SuppressWarnings("unused")
         public String get(@NotEmpty @QueryParam("foo") String foo) {
             return foo;
         }

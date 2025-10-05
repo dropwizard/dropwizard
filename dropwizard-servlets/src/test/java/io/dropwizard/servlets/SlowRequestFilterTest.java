@@ -17,14 +17,12 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class SlowRequestFilterTest {
-
-    private HttpServletRequest request = mock(HttpServletRequest.class);
-    private HttpServletResponse response = mock(HttpServletResponse.class);
-    private FilterChain chain = mock(FilterChain.class);
-    private FilterConfig filterConfig = mock(FilterConfig.class);
-    private Logger logger = mock(Logger.class);
-
-    private SlowRequestFilter slowRequestFilter = new SlowRequestFilter(Duration.milliseconds(500));
+    private final HttpServletRequest request = mock();
+    private final HttpServletResponse response = mock();
+    private final FilterChain chain = mock();
+    private final FilterConfig filterConfig = mock();
+    private final Logger logger = mock();
+    private final SlowRequestFilter slowRequestFilter = new SlowRequestFilter(Duration.milliseconds(500));
 
     @BeforeEach
     void setUp() throws Exception {
@@ -64,5 +62,4 @@ class SlowRequestFilterTest {
 
         verify(logger, never()).warn("Slow request: {} {} ({}ms)", "GET", "/some/path", 499L);
     }
-
 }

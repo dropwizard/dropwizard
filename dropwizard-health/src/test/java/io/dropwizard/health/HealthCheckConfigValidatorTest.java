@@ -2,17 +2,12 @@ package io.dropwizard.health;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.ILoggingEvent;
-import ch.qos.logback.classic.spi.LoggingEvent;
-import ch.qos.logback.core.Appender;
+import ch.qos.logback.core.read.ListAppender;
 import com.codahale.metrics.health.HealthCheck;
 import com.codahale.metrics.health.HealthCheckRegistry;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
@@ -24,24 +19,24 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
 class HealthCheckConfigValidatorTest {
-
-    @Mock
-    private Appender<ILoggingEvent> mockLogAppender;
+    private final ListAppender<ILoggingEvent> listAppender = new ListAppender<>();
 
     @BeforeEach
-    void setUp() throws Exception {
+    @SuppressWarnings("Slf4jIllegalPassedClass")
+    void setUp() {
         ch.qos.logback.classic.Logger logger = (ch.qos.logback.classic.Logger) LoggerFactory
             .getLogger(HealthCheckConfigValidator.class);
-        logger.addAppender(mockLogAppender);
+        listAppender.start();
+        logger.addAppender(listAppender);
     }
 
     @AfterEach
-    void tearDown() throws Exception {
+    @SuppressWarnings("Slf4jIllegalPassedClass")
+    void tearDown() {
         ch.qos.logback.classic.Logger logger = (ch.qos.logback.classic.Logger) LoggerFactory
             .getLogger(HealthCheckConfigValidator.class);
-        logger.detachAppender(mockLogAppender);
+        logger.detachAppender(listAppender);
         MDC.clear();
     }
 
@@ -56,7 +51,7 @@ class HealthCheckConfigValidatorTest {
         validator.start();
 
         // then
-        verifyNoInteractions(mockLogAppender);
+        assertThat(listAppender.list).isEmpty();
     }
 
     @Test
@@ -78,13 +73,12 @@ class HealthCheckConfigValidatorTest {
         validator.start();
 
         // then
-        verifyNoInteractions(mockLogAppender);
+        assertThat(listAppender.list).isEmpty();
     }
 
     @Test
     void startValidationsShouldSucceedButLogWhenNotAllHealthChecksAreConfigured() throws Exception {
         // given
-        ArgumentCaptor<LoggingEvent> captor = ArgumentCaptor.forClass(LoggingEvent.class);
         HealthCheckConfiguration check1 = new HealthCheckConfiguration();
         check1.setName("check-1");
         List<HealthCheckConfiguration> configs = singletonList(check1);
@@ -98,21 +92,18 @@ class HealthCheckConfigValidatorTest {
         validator.start();
 
         // then
-        verify(mockLogAppender).doAppend(captor.capture());
-        LoggingEvent logEvent = captor.getValue();
-        assertThat(logEvent.getLevel()).isEqualTo(Level.INFO);
-        assertThat(logEvent.getFormattedMessage())
-            .doesNotContain("  * check-1");
-        assertThat(logEvent.getFormattedMessage())
-            .contains("  * check-2");
-        assertThat(logEvent.getFormattedMessage())
-            .contains("  * check-3");
+        assertThat(listAppender.list)
+            .singleElement()
+            .satisfies(logEvent -> assertThat(logEvent.getLevel()).isEqualTo(Level.INFO))
+            .satisfies(logEvent -> assertThat(logEvent.getFormattedMessage())
+                .doesNotContain("  * check-1")
+                .contains("  * check-2")
+                .contains("  * check-3"));
     }
 
     @Test
     void startValidationsShouldFailIfAHealthCheckConfiguredButNotRegistered() {
         // given
-        ArgumentCaptor<LoggingEvent> captor = ArgumentCaptor.forClass(LoggingEvent.class);
         List<HealthCheckConfiguration> configs = new ArrayList<>();
         HealthCheckConfiguration check1 = new HealthCheckConfiguration();
         check1.setName("check-1");
@@ -131,12 +122,11 @@ class HealthCheckConfigValidatorTest {
             .isThrownBy(validator::start)
             .withMessageContaining("[check-2, check-3]");
 
-        verify(mockLogAppender).doAppend(captor.capture());
-        LoggingEvent logEvent = captor.getValue();
-        assertThat(logEvent.getLevel())
-            .isEqualTo(Level.ERROR);
-        assertThat(logEvent.getFormattedMessage())
-            .doesNotContain("  * check-1")
-            .contains("  * check-2\n  * check-3");
+        assertThat(listAppender.list)
+            .singleElement()
+            .satisfies(logEvent -> assertThat(logEvent.getLevel()).isEqualTo(Level.ERROR))
+            .satisfies(logEvent -> assertThat(logEvent.getFormattedMessage())
+                .doesNotContain("  * check-1")
+                .contains("  * check-2\n  * check-3"));
     }
 }
