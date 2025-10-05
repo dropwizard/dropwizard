@@ -4,14 +4,11 @@ import com.codahale.metrics.Counter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheck;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class)
 class ScheduledHealthCheckTest {
     private static final HealthStateListener LISTENER = new HealthStateListener() {
         @Override
@@ -27,23 +24,20 @@ class ScheduledHealthCheckTest {
         }
     };
     private final MetricRegistry metrics = new MetricRegistry();
-    @Mock
-    private HealthCheck healthCheck;
-    @Mock
-    private Schedule schedule;
+    private final HealthCheck healthCheck = mock();
 
     @Test
     void healthyCheckShouldResultInSuccess() {
-        when(schedule.getSuccessAttempts()).thenReturn(1);
-        when(schedule.getFailureAttempts()).thenReturn(1);
+        int successAttempts = 1;
+        int failureAttempts = 1;
 
         final String name = "test";
 
         final Counter healthyCounter = metrics.counter("test.healthy");
         final Counter unhealthyCounter = metrics.counter("test.unhealthy");
-        final State state = new State(name, schedule.getFailureAttempts(), schedule.getSuccessAttempts(), false, LISTENER);
+        final State state = new State(name, failureAttempts, successAttempts, false, LISTENER);
         final ScheduledHealthCheck scheduledHealthCheck = new ScheduledHealthCheck(name, HealthCheckType.READY, true,
-            healthCheck, schedule, state, healthyCounter, unhealthyCounter);
+            healthCheck, mock(), state, healthyCounter, unhealthyCounter);
 
         when(healthCheck.execute()).thenReturn(HealthCheck.Result.healthy());
 
@@ -60,15 +54,15 @@ class ScheduledHealthCheckTest {
 
     @Test
     void unhealthyCheckShouldResultInFail() {
-        when(schedule.getSuccessAttempts()).thenReturn(1);
-        when(schedule.getFailureAttempts()).thenReturn(1);
+        int successAttempts = 1;
+        int failureAttempts = 1;
 
         final String name = "test";
         final Counter healthyCounter = metrics.counter("test.healthy");
         final Counter unhealthyCounter = metrics.counter("test.unhealthy");
-        final State state = new State(name, schedule.getFailureAttempts(), schedule.getSuccessAttempts(), false, LISTENER);
+        final State state = new State(name, failureAttempts, successAttempts, false, LISTENER);
         final ScheduledHealthCheck scheduledHealthCheck = new ScheduledHealthCheck(name, HealthCheckType.READY, true,
-            healthCheck, schedule, state, healthyCounter, unhealthyCounter);
+            healthCheck, mock(), state, healthyCounter, unhealthyCounter);
         when(healthCheck.execute()).thenReturn(HealthCheck.Result.unhealthy("something happened"));
 
         assertThat(scheduledHealthCheck.isPreviouslyRecovered()).isFalse();
