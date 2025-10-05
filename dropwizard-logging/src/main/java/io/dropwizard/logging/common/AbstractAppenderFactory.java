@@ -108,7 +108,7 @@ public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware>
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractAppenderFactory.class);
 
     @NotNull
-    protected Level threshold = Level.ALL;
+    protected Level threshold = Level.TRACE;
 
     @Nullable
     protected String logFormat;
