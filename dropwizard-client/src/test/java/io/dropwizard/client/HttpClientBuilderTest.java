@@ -711,7 +711,7 @@ class HttpClientBuilderTest {
     void configureCredentialReturnsUserNamePasswordCredentialsForBasicConfig() {
         assertThat(builder.configureCredentials(new AuthConfiguration("username", "password")))
                 .isInstanceOfSatisfying(UsernamePasswordCredentials.class, upCredentials -> assertThat(upCredentials)
-                        .satisfies(c -> assertThat(c.getPassword()).isEqualTo("password".toCharArray()))
+                        .satisfies(c -> assertThat(c.getUserPassword()).isEqualTo("password".toCharArray()))
                         .satisfies(c -> assertThat(c.getUserPrincipal().getName()).isEqualTo("username")));
     }
 }
