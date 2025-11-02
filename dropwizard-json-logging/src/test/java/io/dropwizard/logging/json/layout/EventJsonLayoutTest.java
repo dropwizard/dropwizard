@@ -10,12 +10,15 @@ import io.dropwizard.logging.json.EventAttribute;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.slf4j.event.KeyValuePair;
 import org.slf4j.Marker;
 
+import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -41,7 +44,8 @@ class EventJsonLayoutTest {
             EventAttribute.MESSAGE,
             EventAttribute.EXCEPTION,
             EventAttribute.TIMESTAMP,
-            EventAttribute.CALLER_DATA));
+            EventAttribute.CALLER_DATA,
+            EventAttribute.KEY_VALUE_PAIRS));
 
     private final TimestampFormatter timestampFormatter = new TimestampFormatter("yyyy-MM-dd'T'HH:mm:ss.SSSZ", ZoneId.of("UTC"));
     private final JsonFormatter jsonFormatter = new JsonFormatter(Jackson.newObjectMapper(), false, true);
@@ -65,11 +69,12 @@ class EventJsonLayoutTest {
         when(event.getCallerData()).thenReturn(new StackTraceElement[]{
                 new StackTraceElement("declaringClass", "methodName", "fileName", 42)
         });
+        when(event.getKeyValuePairs()).thenReturn(Collections.emptyList());
 
         when(marker.getName()).thenReturn("marker");
 
         eventJsonLayout = new EventJsonLayout(jsonFormatter, timestampFormatter, throwableProxyConverter,
-                DEFAULT_EVENT_ATTRIBUTES, Collections.emptyMap(), Collections.emptyMap(), Collections.emptySet(), false);
+                DEFAULT_EVENT_ATTRIBUTES, Collections.emptyMap(), Collections.emptyMap(), Collections.emptySet(), false, Collections.emptySet(), false);
 
         defaultExpectedFields = new HashMap<>();
         defaultExpectedFields.put("timestamp", timestamp);
@@ -128,7 +133,7 @@ class EventJsonLayoutTest {
                 "timestamp", "@timestamp",
                 "message", "@message");
         Map<String, Object> map = new EventJsonLayout(jsonFormatter, timestampFormatter, throwableProxyConverter, DEFAULT_EVENT_ATTRIBUTES,
-                customFieldNames, Collections.emptyMap(), Collections.emptySet(), false)
+                customFieldNames, Collections.emptyMap(), Collections.emptySet(), false, Collections.emptySet(), false)
             .toJsonMap(event);
 
         final HashMap<String, Object> expectedFields = new HashMap<>(defaultExpectedFields);
@@ -146,7 +151,7 @@ class EventJsonLayoutTest {
                 "serviceBuild", 207);
         Map<String, Object> map = new EventJsonLayout(jsonFormatter, timestampFormatter, throwableProxyConverter, DEFAULT_EVENT_ATTRIBUTES,
             Collections.emptyMap(), additionalFields,
-            Collections.emptySet(), false)
+            Collections.emptySet(), false, Collections.emptySet(), false)
             .toJsonMap(event);
 
         final HashMap<String, Object> expectedFields = new HashMap<>(defaultExpectedFields);
@@ -159,7 +164,7 @@ class EventJsonLayoutTest {
     void testFilterMdc() {
         final Set<String> includesMdcKeys = Set.of("userId", "orderId");
         Map<String, Object> map = new EventJsonLayout(jsonFormatter, timestampFormatter, throwableProxyConverter, DEFAULT_EVENT_ATTRIBUTES,
-            Collections.emptyMap(), Collections.emptyMap(), includesMdcKeys, false)
+            Collections.emptyMap(), Collections.emptyMap(), includesMdcKeys, false, Collections.emptySet(), false)
                 .toJsonMap(event);
 
         final Map<String, String> expectedMdc = Map.of(
@@ -173,7 +178,7 @@ class EventJsonLayoutTest {
     @Test
     void testFlattensMdcMap() {
         Map<String, Object> map = new EventJsonLayout(jsonFormatter, timestampFormatter, throwableProxyConverter,
-                DEFAULT_EVENT_ATTRIBUTES, Collections.emptyMap(), Collections.emptyMap(), Collections.emptySet(), true)
+                DEFAULT_EVENT_ATTRIBUTES, Collections.emptyMap(), Collections.emptyMap(), Collections.emptySet(), true, Collections.emptySet(), false)
                 .toJsonMap(event);
 
         final HashMap<String, Object> expectedFields = new HashMap<>(defaultExpectedFields);
@@ -198,5 +203,104 @@ class EventJsonLayoutTest {
         assertThat(eventJsonLayout.isStarted()).isFalse();
 
         verify(throwableProxyConverter).stop();
+    }
+
+    @Test
+    void testLogsKeyValuePairs() {
+        when(event.getKeyValuePairs()).thenReturn(List.of(
+            new KeyValuePair("test", "value"),
+            new KeyValuePair("testBoolean", true),
+            new KeyValuePair("testInt", 5),
+            new KeyValuePair("testNonPrimitive", LocalDate.of(2025, 11, 2))));
+        eventJsonLayout = new EventJsonLayout(jsonFormatter, timestampFormatter, throwableProxyConverter,
+            DEFAULT_EVENT_ATTRIBUTES, Collections.emptyMap(), Collections.emptyMap(), Collections.emptySet(), false, Collections.emptySet(), false);
+
+        final HashMap<String, Object> expectedFields = new HashMap<>(defaultExpectedFields);
+        expectedFields.put("keyValuePairs", Map.of(
+            "test", "value",
+            "testBoolean", true,
+            "testInt", 5,
+            "testNonPrimitive", LocalDate.of(2025, 11, 2).toString()
+            )
+        );
+        assertThat(eventJsonLayout.toJsonMap(event)).isEqualTo(expectedFields);
+    }
+
+    @Test
+    void testLogsFlattenedKeyValuePairs() {
+        when(event.getKeyValuePairs()).thenReturn(List.of(
+            new KeyValuePair("test", "value"),
+            new KeyValuePair("testBoolean", true),
+            new KeyValuePair("testInt", 5),
+            new KeyValuePair("testNonPrimitive", LocalDate.of(2025, 11, 2))));
+        eventJsonLayout = new EventJsonLayout(jsonFormatter, timestampFormatter, throwableProxyConverter,
+            DEFAULT_EVENT_ATTRIBUTES, Collections.emptyMap(), Collections.emptyMap(), Collections.emptySet(), false, Collections.emptySet(), true);
+
+        final HashMap<String, Object> expectedFields = new HashMap<>(defaultExpectedFields);
+        expectedFields.put("test", "value");
+        expectedFields.put("testBoolean", true);
+        expectedFields.put("testInt", 5);
+        expectedFields.put("testNonPrimitive", LocalDate.of(2025, 11, 2).toString());
+        assertThat(eventJsonLayout.toJsonMap(event)).isEqualTo(expectedFields);
+    }
+
+    @Test
+    void testFilterKeyValueKeys() {
+        final Set<String> includesKeyValuePairsKeys = Set.of("test");
+        when(event.getKeyValuePairs()).thenReturn(List.of(new KeyValuePair("test", "value"), new KeyValuePair("test2", "value2")));
+        eventJsonLayout= new EventJsonLayout(jsonFormatter, timestampFormatter, throwableProxyConverter, DEFAULT_EVENT_ATTRIBUTES,
+            Collections.emptyMap(), Collections.emptyMap(), Collections.emptySet(), false, includesKeyValuePairsKeys, false);
+
+        final Map<String, String> expectedKeyValuePairs = Map.of("test", "value");
+        final HashMap<String, Object> expectedFields = new HashMap<>(defaultExpectedFields);
+        expectedFields.put("keyValuePairs", expectedKeyValuePairs);
+        assertThat(eventJsonLayout.toJsonMap(event)).isEqualTo(expectedFields);
+    }
+
+    @Test
+    void testFilterAndFlattenKeyValueKeys() {
+        final Set<String> includesKeyValuePairsKeys = Set.of("test");
+        when(event.getKeyValuePairs()).thenReturn(java.util.List.of(new KeyValuePair("test", "value"), new KeyValuePair("test2", "value2")));
+        eventJsonLayout = new EventJsonLayout(jsonFormatter, timestampFormatter, throwableProxyConverter, DEFAULT_EVENT_ATTRIBUTES,
+            Collections.emptyMap(), Collections.emptyMap(), Collections.emptySet(), false, includesKeyValuePairsKeys, true);
+
+        final HashMap<String, Object> expectedFields = new HashMap<>(defaultExpectedFields);
+        expectedFields.put("test", "value");
+        assertThat(eventJsonLayout.toJsonMap(event)).isEqualTo(expectedFields);
+    }
+
+    @Test
+    void testLogsKeyValuePairsFilteringNullValues() {
+        when(event.getKeyValuePairs()).thenReturn(List.of(new KeyValuePair("test", "value"),new KeyValuePair("testNull", null)));
+        eventJsonLayout = new EventJsonLayout(jsonFormatter, timestampFormatter, throwableProxyConverter,
+            DEFAULT_EVENT_ATTRIBUTES, Collections.emptyMap(), Collections.emptyMap(), Collections.emptySet(), false, Collections.emptySet(), false);
+
+        final HashMap<String, Object> expectedFields = new HashMap<>(defaultExpectedFields);
+        expectedFields.put("keyValuePairs", Collections.singletonMap("test", "value"));
+        assertThat(eventJsonLayout.toJsonMap(event))
+            .as("Null values in keyValuePairs are filtered out")
+            .isEqualTo(expectedFields);
+    }
+
+    @Test
+    void testLogsKeyValuePairsDiscardedWhenAllValuesNull() {
+        when(event.getKeyValuePairs()).thenReturn(List.of(new KeyValuePair("testNull", null)));
+        eventJsonLayout = new EventJsonLayout(jsonFormatter, timestampFormatter, throwableProxyConverter,
+            DEFAULT_EVENT_ATTRIBUTES, Collections.emptyMap(), Collections.emptyMap(), Collections.emptySet(), false, Collections.emptySet(), false);
+
+        assertThat(eventJsonLayout.toJsonMap(event))
+            .as("keyValuePairs is not logged when all values are null")
+            .isEqualTo(defaultExpectedFields);
+    }
+
+    @Test
+    void testLogsFlattenedKeyValuePairsFilteringNullValues() {
+        when(event.getKeyValuePairs()).thenReturn(List.of(new KeyValuePair("test", "value"),new KeyValuePair("testNull", null)));
+        eventJsonLayout = new EventJsonLayout(jsonFormatter, timestampFormatter, throwableProxyConverter,
+            DEFAULT_EVENT_ATTRIBUTES, Collections.emptyMap(), Collections.emptyMap(), Collections.emptySet(), false, Collections.emptySet(), true);
+
+        final HashMap<String, Object> expectedFields = new HashMap<>(defaultExpectedFields);
+        expectedFields.put("test", "value");
+        assertThat(eventJsonLayout.toJsonMap(event)).isEqualTo(expectedFields);
     }
 }
