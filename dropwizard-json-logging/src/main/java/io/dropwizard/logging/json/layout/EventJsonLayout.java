@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Builds JSON messages from logging events of the type {@link ILoggingEvent}.
@@ -153,22 +154,21 @@ public class EventJsonLayout extends AbstractJsonLayout<ILoggingEvent> {
         this.includesKeyValuePairsKeys = new HashSet<>(includesKeyValuePairsKeys);
     }
 
-    private List<KeyValuePair> filterKeyValuePairs(List<KeyValuePair> keyValuePairs) {
+    private Stream<KeyValuePair> filterKeyValuePairs(List<KeyValuePair> keyValuePairs) {
         if (includesKeyValuePairsKeys.isEmpty()) {
-            return keyValuePairs;
+            return keyValuePairs.stream();
         }
         return keyValuePairs.stream()
-            .filter(kvp -> includesKeyValuePairsKeys.contains(kvp.key))
-            .collect(Collectors.toList());
+            .filter(kvp -> includesKeyValuePairsKeys.contains(kvp.key));
     }
 
-    private Map<String, ?> convertKeyValuePairsToMap(List<KeyValuePair> keyValuePairs) {
-        return keyValuePairs.stream()
+    private Map<String, ?> convertKeyValuePairsToMap(Stream<KeyValuePair> keyValuePairs) {
+        return keyValuePairs
             .filter(kvp -> kvp.value != null)
             .collect(Collectors.toMap(kvp -> kvp.key, kvp -> mayConvertKeyValuePairValue(kvp.value), (v1, v2) -> v2));
     }
 
-    private @Nullable Object mayConvertKeyValuePairValue(Object value) {
+    private @Nullable Object mayConvertKeyValuePairValue(@Nullable Object value) {
         if (value instanceof String || value instanceof Number || value instanceof Boolean) {
             return value;
         } else {
