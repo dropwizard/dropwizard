@@ -83,7 +83,7 @@
         <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
         <maven-site-plugin.version>3.21.0</maven-site-plugin.version>
         <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
-        <sonar-maven-plugin.version>5.2.0.4988</sonar-maven-plugin.version>
+        <sonar-maven-plugin.version>5.3.0.6276</sonar-maven-plugin.version>
 
         <sonar.moduleKey>${project.groupId}:${project.artifactId}</sonar.moduleKey>
     </properties>
