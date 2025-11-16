@@ -76,7 +76,7 @@
         <maven-help-plugin.version>3.5.1</maven-help-plugin.version>
         <maven-install-plugin.version>3.1.4</maven-install-plugin.version>
         <maven-invoker-plugin.version>3.9.1</maven-invoker-plugin.version>
-        <maven-jar-plugin.version>3.4.2</maven-jar-plugin.version>
+        <maven-jar-plugin.version>3.5.0</maven-jar-plugin.version>
         <maven-javadoc-plugin.version>3.12.0</maven-javadoc-plugin.version>
         <maven-project-info-reports-plugin.version>3.9.0</maven-project-info-reports-plugin.version>
         <maven-release-plugin.version>3.2.0</maven-release-plugin.version>
