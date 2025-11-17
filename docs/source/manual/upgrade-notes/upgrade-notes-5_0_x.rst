@@ -148,7 +148,7 @@ Jersey now treats HK2 binders as providers. This changes the semantics of binder
 
 Request logging
 ---------------
-The request logging through ``logback-access`` had it's quirks for some time, so Dropwizard provided a workaround for it.
+The request logging through ``logback-access`` had its quirks for some time, so Dropwizard provided a workaround for it.
 The new ``logback-access`` implementation for Jetty 12 provides a request wrapper that builds a ``HttpServletRequest`` from a Jetty ``Request`` only for some 'relevant' methods.
 Dropwizard provides a custom workaround which resolves the servlet context and uses the current active ``HttpServletRequest`` for request logging.
 This allows the use of all methods of the ``HttpServletRequest`` and should be more stable for the next servlet API updates.
