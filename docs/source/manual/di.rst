@@ -18,7 +18,7 @@ The underlying library for out-of-the-box dependency injection mechanism in Drop
 
 .. _HK2: https://github.com/eclipse-ee4j/glassfish-hk2
 
-To create a dependency injection configuration that can be overriden during test execution for mocking purposes,
+To create a dependency injection configuration that can be overridden during test execution for mocking purposes,
 put it into your app Configuration for bundle to consume:
 
 .. code-block:: java
