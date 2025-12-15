@@ -1,5 +1,6 @@
 package io.dropwizard.health;
 
+import java.util.Set;
 import org.jspecify.annotations.NonNull;
 
 import java.util.Collection;
@@ -11,4 +12,7 @@ public interface HealthStateAggregator {
 
     @NonNull
     Optional<HealthStateView> healthStateView(@NonNull String name);
+
+    @NonNull
+    Set<HealthStateView> healthStateViewByType(@NonNull String type);
 }
