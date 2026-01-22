@@ -263,6 +263,10 @@
                 <groupId>org.simplify4u.plugins</groupId>
                 <artifactId>pgpverify-maven-plugin</artifactId>
                 <configuration>
+                    <keysMapLocations>
+                      <keysMapLocation>/pgp-keys-map.list</keysMapLocation>
+                      <keysMapLocation>${maven.multiModuleProjectDirectory}/pgp-keys-map.list</keysMapLocation>
+                    </keysMapLocations>
                     <quiet>true</quiet>
                 </configuration>
                 <executions>
@@ -272,6 +276,13 @@
                         </goals>
                     </execution>
                 </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.simplify4u</groupId>
+                        <artifactId>pgp-keys-map</artifactId>
+                        <version>2026.01.20</version>
+                    </dependency>
+                </dependencies>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
