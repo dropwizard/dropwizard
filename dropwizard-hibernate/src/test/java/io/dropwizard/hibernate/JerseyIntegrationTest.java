@@ -226,7 +226,7 @@ class JerseyIntegrationTest extends JerseyTest {
         // closes the H2 Session
         // then no connections can be established to the db and a JdbcSQLNonTransientConnectionException is thrown
         try (Session session = Objects.requireNonNull(sessionFactory).openSession()) {
-            session.doWork(connection -> connection.unwrap(JdbcConnection.class).getSession().close());
+            session.doWork(connection -> connection.createStatement().execute("SHUTDOWN"));
         }
         Response response = target("/people/Coda").request(MediaType.APPLICATION_JSON).get();
         assertThat(response.getStatus()).isEqualTo(Response.Status.SERVICE_UNAVAILABLE.getStatusCode());
