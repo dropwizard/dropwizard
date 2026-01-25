@@ -8,6 +8,12 @@ import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.jersey.setup.JerseyContainerHolder;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
 import io.dropwizard.jetty.MutableServletContextHandler;
+import io.dropwizard.logging.common.ConsoleAppenderFactory;
+import io.dropwizard.request.logging.ExternalRequestLogFactory;
+import io.dropwizard.request.logging.LogbackAccessRequestLog;
+import io.dropwizard.request.logging.LogbackAccessRequestLogAwareHandler;
+import io.dropwizard.request.logging.LogbackAccessRequestLogFactory;
+import java.util.List;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.thread.ThreadPool;
 import org.junit.jupiter.api.BeforeEach;
@@ -80,6 +86,38 @@ class AbstractServerFactoryTest {
         assertThat(serverFactory.getMetricPrefix()).isNull();
     }
 
+    @Test
+    void addRequestLogWithLogbackAddsSpecialHandler() {
+        LogbackAccessRequestLogFactory requestLogFactory = new LogbackAccessRequestLogFactory();
+        requestLogFactory.setAppenders(List.of(new ConsoleAppenderFactory<>()));
+        serverFactory.setRequestLogFactory(requestLogFactory);
+
+        Server server = serverFactory.build(environment);
+
+        assertThat(server.getRequestLog()).isNotNull();
+        assertThat(server.getRequestLog()).isInstanceOf(LogbackAccessRequestLog.class);
+
+        // Check that LogbackAccessRequestLogAwareHandler was added to the application context
+        MutableServletContextHandler appContext = environment.getApplicationContext();
+        assertThat(appContext.getHandler()).isInstanceOf(LogbackAccessRequestLogAwareHandler.class);
+    }
+
+    @Test
+    void addRequestLogWithoutLogbackDoesNotAddSpecialHandler() {
+        ExternalRequestLogFactory requestLogFactory = new ExternalRequestLogFactory();
+        requestLogFactory.setEnabled(true);
+        serverFactory.setRequestLogFactory(requestLogFactory);
+
+        Server server = serverFactory.build(environment);
+
+        assertThat(server.getRequestLog()).isNotNull();
+        assertThat(server.getRequestLog()).isNotInstanceOf(LogbackAccessRequestLog.class);
+
+        // Check that no LogbackAccessRequestLogAwareHandler was added
+        MutableServletContextHandler appContext = environment.getApplicationContext();
+        assertThat(appContext.getHandler()).isNotInstanceOf(LogbackAccessRequestLogAwareHandler.class);
+    }
+
     /**
      * Test implementation of {@link AbstractServerFactory} used to run {@link #createAppServlet}, which triggers the
      * setting of {@link JerseyEnvironment#setUrlPattern(String)}.
@@ -97,6 +135,7 @@ class AbstractServerFactoryTest {
                                   environment.getApplicationContext(),
                                   environment.getJerseyServletContainer(),
                                   environment.metrics());
+            addRequestLog(server, environment.getName(), environment.getApplicationContext());
             return server;
         }
 
