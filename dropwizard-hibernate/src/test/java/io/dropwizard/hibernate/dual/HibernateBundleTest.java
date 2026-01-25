@@ -2,7 +2,7 @@ package io.dropwizard.hibernate.dual;
 
 import com.codahale.metrics.health.HealthCheckRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.hibernate5.jakarta.Hibernate5JakartaModule;
+import com.fasterxml.jackson.datatype.hibernate6.Hibernate6Module;
 import io.dropwizard.core.Configuration;
 import io.dropwizard.core.setup.Bootstrap;
 import io.dropwizard.core.setup.Environment;
@@ -86,7 +86,7 @@ public class HibernateBundleTest {
         bundle.initialize(bootstrap);
 
         verify(objectMapperFactory).registerModule(assertArg(module ->
-            assertThat(module).isInstanceOf(Hibernate5JakartaModule.class)));
+            assertThat(module).isInstanceOf(Hibernate6Module.class)));
     }
 
     @Test

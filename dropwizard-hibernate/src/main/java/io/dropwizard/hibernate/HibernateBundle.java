@@ -1,7 +1,7 @@
 package io.dropwizard.hibernate;
 
-import com.fasterxml.jackson.datatype.hibernate5.jakarta.Hibernate5JakartaModule;
-import com.fasterxml.jackson.datatype.hibernate5.jakarta.Hibernate5JakartaModule.Feature;
+import com.fasterxml.jackson.datatype.hibernate6.Hibernate6Module;
+import com.fasterxml.jackson.datatype.hibernate6.Hibernate6Module.Feature;
 import io.dropwizard.core.ConfiguredBundle;
 import io.dropwizard.core.setup.Bootstrap;
 import io.dropwizard.core.setup.Environment;
@@ -45,14 +45,14 @@ public abstract class HibernateBundle<T> implements ConfiguredBundle<T>, Databas
 
     @Override
     public final void initialize(Bootstrap<?> bootstrap) {
-        bootstrap.getObjectMapper().registerModule(createHibernate5Module());
+        bootstrap.getObjectMapper().registerModule(createHibernate6Module());
     }
 
     /**
-     * Override to configure the {@link Hibernate5JakartaModule}.
+     * Override to configure the {@link Hibernate6Module}.
      */
-    protected Hibernate5JakartaModule createHibernate5Module() {
-        Hibernate5JakartaModule module = new Hibernate5JakartaModule();
+    protected Hibernate6Module createHibernate6Module() {
+        Hibernate6Module module = new Hibernate6Module();
         if (lazyLoadingEnabled) {
             module.enable(Feature.FORCE_LAZY_LOADING);
         }
