@@ -1,0 +1,6 @@
+# io.reactivex.rxjava2:rxjava:jar:2.2.21 PGP key 0x94B291AEF984A085 has been revoked and public key is not available
+io.reactivex.rxjava2:rxjava = !0x1D9AA7F9E1E2824728B8CD1794B291AEF984A085
+# io.smallrye:jandex:jar:3.2.0 PGP key 0x94976E17E18DD3201447286954963C3E875A56AE has been revoked and public key is not available
+io.smallrye:jandex:3.2.0 = !0x94976E17E18DD3201447286954963C3E875A56AE
+# Not allowed artifact org.hibernate.orm:hibernate-core:jar:6.6.41.Final and keyID
+org.hibernate.orm:hibernate-core = 0x1452F35849B50750F6A3BBB4B54011358B352F85
