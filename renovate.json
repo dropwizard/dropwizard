@@ -15,8 +15,6 @@
     "schedule:weekly"
   ],
   "baseBranchPatterns": [
-    "release/3.0.x",
-    "release/4.0.x",
     "release/5.0.x"
   ],
   "dependencyDashboard": true,
