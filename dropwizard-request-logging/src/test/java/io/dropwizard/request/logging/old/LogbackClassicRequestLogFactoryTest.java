@@ -15,6 +15,8 @@ import io.dropwizard.request.logging.RequestLogFactory;
 import io.dropwizard.validation.BaseValidator;
 import org.eclipse.jetty.http.HttpFields;
 import org.eclipse.jetty.http.HttpURI;
+import org.eclipse.jetty.security.AuthenticationState;
+import org.eclipse.jetty.security.RolePrincipal;
 import org.eclipse.jetty.server.ConnectionMetaData;
 import org.eclipse.jetty.server.CustomRequestLog;
 import org.eclipse.jetty.server.Request;
@@ -25,6 +27,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.MockedStatic;
 
+import java.security.Principal;
 import java.util.Collections;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
@@ -84,6 +87,12 @@ class LogbackClassicRequestLogFactoryTest {
         try (MockedStatic<Request> staticRequest = mockStatic(Request.class);
              MockedStatic<Response> staticResponse = mockStatic(Response.class)) {
             staticRequest.when(() -> Request.getRemoteAddr(request)).thenReturn("10.0.0.1");
+            staticRequest.when(() -> Request.getAuthenticationState(request)).thenReturn(new AuthenticationState() {
+                @Override
+                public Principal getUserPrincipal() {
+                    return new RolePrincipal("user");
+                }
+            });
 
             // Jetty log format compares against System.currentTimeMillis, so there
             // isn't a way for us to set our own clock
