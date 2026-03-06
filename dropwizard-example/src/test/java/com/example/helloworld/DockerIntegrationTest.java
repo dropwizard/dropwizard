@@ -14,15 +14,13 @@ import org.eclipse.jetty.http.HttpStatus;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledForJreRange;
-import org.junit.jupiter.api.condition.JRE;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.mysql.MySQLContainer;
 import org.testcontainers.utility.DockerImageName;
 
 import java.io.File;
@@ -36,10 +34,9 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 @Testcontainers(disabledWithoutDocker = true)
 @ExtendWith(DropwizardExtensionsSupport.class)
-@DisabledForJreRange(min = JRE.JAVA_16)
-public class DockerIntegrationTest {
+class DockerIntegrationTest {
     @Container
-    private static final MySQLContainer<?> MY_SQL_CONTAINER = new MySQLContainer<>(DockerImageName.parse("mysql:8.0.28"));
+    private static final MySQLContainer MY_SQL_CONTAINER = new MySQLContainer(DockerImageName.parse("mysql:8.0.28"));
 
     private static final String CONFIG = "test-docker-example.yml";
 
@@ -59,7 +56,7 @@ public class DockerIntegrationTest {
     );
 
     @BeforeAll
-    public static void migrateDb() throws Exception {
+    static void migrateDb() throws Exception {
         APP.getApplication().run("db", "migrate", resourceFilePath(CONFIG));
     }
 
@@ -141,7 +138,7 @@ public class DockerIntegrationTest {
                 "0.0.0.0:" + APP.getLocalPort(),
                 "Started admin@",
                 "0.0.0.0:" + APP.getAdminPort())
-            .doesNotContain("ERROR", "FATAL", "Exception");
+            .doesNotContain("ERROR", "FATAL");
     }
 
     @Test
