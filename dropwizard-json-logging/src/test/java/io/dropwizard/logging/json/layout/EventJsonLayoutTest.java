@@ -248,7 +248,7 @@ class EventJsonLayoutTest {
     void testFilterKeyValueKeys() {
         final Set<String> includesKeyValuePairsKeys = Set.of("test");
         when(event.getKeyValuePairs()).thenReturn(List.of(new KeyValuePair("test", "value"), new KeyValuePair("test2", "value2")));
-        eventJsonLayout= new EventJsonLayout(jsonFormatter, timestampFormatter, throwableProxyConverter, DEFAULT_EVENT_ATTRIBUTES,
+        eventJsonLayout = new EventJsonLayout(jsonFormatter, timestampFormatter, throwableProxyConverter, DEFAULT_EVENT_ATTRIBUTES,
             Collections.emptyMap(), Collections.emptyMap(), Collections.emptySet(), false, includesKeyValuePairsKeys, false);
 
         final Map<String, String> expectedKeyValuePairs = Map.of("test", "value");
