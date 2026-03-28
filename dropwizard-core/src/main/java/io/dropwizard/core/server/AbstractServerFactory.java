@@ -699,7 +699,8 @@ public abstract class AbstractServerFactory implements ServerFactory {
     protected void addRequestLog(Server server, String name, MutableServletContextHandler servletContextHandler) {
         if (getRequestLogFactory().isEnabled()) {
             RequestLog log = getRequestLogFactory().build(name);
-            if (log instanceof LogbackAccessRequestLog) {
+            // Do not hard-code a dependency to logback when external logging such as Log4j is used
+            if ("io.dropwizard.request.logging.LogbackAccessRequestLog".equals(log.getClass().getName())) {
                 servletContextHandler.insertHandler(new LogbackAccessRequestLogAwareHandler());
             }
             server.setRequestLog(log);
