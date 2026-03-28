@@ -260,7 +260,7 @@ class EventJsonLayoutTest {
     @Test
     void testFilterAndFlattenKeyValueKeys() {
         final Set<String> includesKeyValuePairsKeys = Set.of("test");
-        when(event.getKeyValuePairs()).thenReturn(java.util.List.of(new KeyValuePair("test", "value"), new KeyValuePair("test2", "value2")));
+        when(event.getKeyValuePairs()).thenReturn(List.of(new KeyValuePair("test", "value"), new KeyValuePair("test2", "value2")));
         eventJsonLayout = new EventJsonLayout(jsonFormatter, timestampFormatter, throwableProxyConverter, DEFAULT_EVENT_ATTRIBUTES,
             Collections.emptyMap(), Collections.emptyMap(), Collections.emptySet(), false, includesKeyValuePairsKeys, true);
 
@@ -271,7 +271,7 @@ class EventJsonLayoutTest {
 
     @Test
     void testLogsKeyValuePairsFilteringNullValues() {
-        when(event.getKeyValuePairs()).thenReturn(List.of(new KeyValuePair("test", "value"),new KeyValuePair("testNull", null)));
+        when(event.getKeyValuePairs()).thenReturn(List.of(new KeyValuePair("test", "value"), new KeyValuePair("testNull", null)));
         eventJsonLayout = new EventJsonLayout(jsonFormatter, timestampFormatter, throwableProxyConverter,
             DEFAULT_EVENT_ATTRIBUTES, Collections.emptyMap(), Collections.emptyMap(), Collections.emptySet(), false, Collections.emptySet(), false);
 
@@ -295,7 +295,7 @@ class EventJsonLayoutTest {
 
     @Test
     void testLogsFlattenedKeyValuePairsFilteringNullValues() {
-        when(event.getKeyValuePairs()).thenReturn(List.of(new KeyValuePair("test", "value"),new KeyValuePair("testNull", null)));
+        when(event.getKeyValuePairs()).thenReturn(List.of(new KeyValuePair("test", "value"), new KeyValuePair("testNull", null)));
         eventJsonLayout = new EventJsonLayout(jsonFormatter, timestampFormatter, throwableProxyConverter,
             DEFAULT_EVENT_ATTRIBUTES, Collections.emptyMap(), Collections.emptyMap(), Collections.emptySet(), false, Collections.emptySet(), true);
 

@@ -79,7 +79,7 @@ public class EventJsonLayout extends AbstractJsonLayout<ILoggingEvent> {
 
         final boolean includeMdc = isIncluded(EventAttribute.MDC);
         if (flattenMdc) {
-            filterMdc(event.getMDCPropertyMap()).forEach((k,v) -> mapBuilder.add(k, includeMdc, v));
+            filterMdc(event.getMDCPropertyMap()).forEach((k, v) -> mapBuilder.add(k, includeMdc, v));
         } else {
             mapBuilder.addMap("mdc", includeMdc, () -> filterMdc(event.getMDCPropertyMap()));
         }
@@ -88,7 +88,7 @@ public class EventJsonLayout extends AbstractJsonLayout<ILoggingEvent> {
         if (includeKeyValuePairs && event.getKeyValuePairs() != null) {
             if (flattenKeyValuePairs) {
                 filterKeyValuePairs(event.getKeyValuePairs()).forEach(kvp ->
-                    mapBuilder.add(kvp.key, true, mayConvertKeyValuePairValue(kvp.value)));
+                    mapBuilder.addObject(kvp.key, true, mayConvertKeyValuePairValue(kvp.value)));
             } else {
                 mapBuilder.add("keyValuePairs", true, convertKeyValuePairsToMap(filterKeyValuePairs(event.getKeyValuePairs())));
             }

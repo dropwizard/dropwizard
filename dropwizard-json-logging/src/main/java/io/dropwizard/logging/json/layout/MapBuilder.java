@@ -141,7 +141,7 @@ public class MapBuilder {
      * Adds the value to the provided map under the provided field name if it should be included.
      * If the value is a String, Number, or Boolean it's added as it is, otherwise it's converted to string using `toString()`.
      */
-    public MapBuilder add(String fieldName, boolean include, @Nullable Object value) {
+    public MapBuilder addObject(String fieldName, boolean include, @Nullable Object value) {
         if (value instanceof String) {
             return add(fieldName, include, (String) value);
         } else if (value instanceof Number) {
