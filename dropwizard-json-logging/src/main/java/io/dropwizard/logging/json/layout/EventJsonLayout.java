@@ -85,7 +85,7 @@ public class EventJsonLayout extends AbstractJsonLayout<ILoggingEvent> {
         }
 
         final boolean includeKeyValuePairs = isIncluded(EventAttribute.KEY_VALUE_PAIRS);
-        if(includeKeyValuePairs && event.getKeyValuePairs() != null) {
+        if (includeKeyValuePairs && event.getKeyValuePairs() != null) {
             if (flattenKeyValuePairs) {
                 filterKeyValuePairs(event.getKeyValuePairs()).forEach(kvp ->
                     mapBuilder.add(kvp.key, true, mayConvertKeyValuePairValue(kvp.value)));
