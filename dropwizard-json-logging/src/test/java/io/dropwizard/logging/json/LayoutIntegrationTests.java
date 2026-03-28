@@ -18,7 +18,7 @@ import io.dropwizard.logging.common.ConsoleAppenderFactory;
 import io.dropwizard.logging.common.DefaultLoggingFactory;
 import io.dropwizard.request.logging.LogbackAccessRequestLogFactory;
 import io.dropwizard.validation.BaseValidator;
-import jdk.jfr.Event;
+
 import org.eclipse.jetty.ee10.servlet.ServletChannel;
 import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
 import org.eclipse.jetty.ee10.servlet.ServletContextRequest;
@@ -171,7 +171,7 @@ class LayoutIntegrationTests {
             Marker marker = MarkerFactory.getMarker("marker");
             LoggerFactory.getLogger("com.example.app").atInfo().addMarker(marker)
                 .addKeyValue("operation", "hello world")
-                .addKeyValue("number",5)
+                .addKeyValue("number", 5)
                 .log("Application log");
             // Need to wait, because the logger is async
             await().atMost(1, TimeUnit.SECONDS).until(() -> !redirectedStream.toString().isEmpty());
