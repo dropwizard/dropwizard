@@ -17,6 +17,6 @@ jobs:
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       # yamllint disable-line rule:line-length
-      - uses: ammaraskar/sphinx-action@8b4f60114d7fd1faeba1a712269168508d4750d2 # tag=0.4
+      - uses: ammaraskar/sphinx-action@54e52bfb642e9b60ea5b6bcb05fe3f74b40d290a # 8.2.3
         with:
           docs-folder: docs/
