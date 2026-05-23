@@ -67,7 +67,7 @@ jobs:
           path: '**/*-reports'
       - name: Publish Test Results
         if: github.event.pull_request.head.repo.full_name == 'dropwizard/dropwizard'
-        uses: scacap/action-surefire-report@5609ce4db72c09db044803b344a8968fd1f315da # v1
+        uses: scacap/action-surefire-report@3dacff26879cd2a7f2160d101254032a3707fe6f # v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           check_name: Test Report (${{ matrix.os }} - Java ${{ matrix.java_version }})
