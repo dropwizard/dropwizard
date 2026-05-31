@@ -4,3 +4,5 @@ io.reactivex.rxjava2:rxjava = !0x1D9AA7F9E1E2824728B8CD1794B291AEF984A085
 io.smallrye:jandex:3.2.0 = !0x94976E17E18DD3201447286954963C3E875A56AE
 # Not allowed artifact org.hibernate.orm:hibernate-core:jar:6.6.41.Final and keyID
 org.hibernate.orm:hibernate-core = 0x1452F35849B50750F6A3BBB4B54011358B352F85
+# Not allowed artifact org.jboss.logging:jboss-logging:jar:3.6.3.Final and keyID
+org.jboss.logging:jboss-logging = 0x6D2AF456B8CB597387901C786F29F72839B3A8E7
