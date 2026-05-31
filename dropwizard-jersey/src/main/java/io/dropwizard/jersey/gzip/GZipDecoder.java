@@ -37,14 +37,23 @@ public class GZipDecoder implements ReaderInterceptor {
             final var inputStream = context.getInputStream();
             if (!(inputStream instanceof GZIPInputStream)) {
                 final var pushbackInputStream = new PushbackInputStream(inputStream, 2);
-                final byte[] signature = pushbackInputStream.readNBytes(2);
-                pushbackInputStream.unread(signature);
+                try {
+                    final byte[] signature = pushbackInputStream.readNBytes(2);
+                    pushbackInputStream.unread(signature);
 
-                final int gzipMagic = GZIPInputStream.GZIP_MAGIC;
-                final boolean gzipped = signature.length == 2
-                        && signature[0] == (byte) (gzipMagic & 0xff)
-                        && signature[1] == (byte) ((gzipMagic >> 8) & 0xff);
-                context.setInputStream(gzipped ? new GZIPInputStream(pushbackInputStream) : pushbackInputStream);
+                    final int gzipMagic = GZIPInputStream.GZIP_MAGIC;
+                    final boolean gzipped = signature.length == 2
+                            && signature[0] == (byte) (gzipMagic & 0xff)
+                            && signature[1] == (byte) ((gzipMagic >> 8) & 0xff);
+                    if (gzipped) {
+                        context.setInputStream(new GZIPInputStream(pushbackInputStream));
+                    } else {
+                        context.setInputStream(pushbackInputStream);
+                    }
+                } catch (IOException e) {
+                    pushbackInputStream.close();
+                    throw e;
+                }
             }
         }
         return context.proceed();
