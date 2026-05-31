@@ -8,6 +8,7 @@ import jakarta.ws.rs.ext.ReaderInterceptor;
 import jakarta.ws.rs.ext.ReaderInterceptorContext;
 
 import java.io.IOException;
+import java.io.PushbackInputStream;
 import java.util.zip.GZIPInputStream;
 
 /**
@@ -33,7 +34,18 @@ public class GZipDecoder implements ReaderInterceptor {
         final String contentEncoding = context.getHeaders().getFirst(HttpHeaders.CONTENT_ENCODING);
         if (contentEncoding != null &&
                 (contentEncoding.equals("gzip") || contentEncoding.equals("x-gzip"))) {
-            context.setInputStream(new GZIPInputStream(context.getInputStream()));
+            final var inputStream = context.getInputStream();
+            if (!(inputStream instanceof GZIPInputStream)) {
+                final var pushbackInputStream = new PushbackInputStream(inputStream, 2);
+                final byte[] signature = pushbackInputStream.readNBytes(2);
+                pushbackInputStream.unread(signature);
+
+                final int gzipMagic = GZIPInputStream.GZIP_MAGIC;
+                final boolean gzipped = signature.length == 2
+                        && signature[0] == (byte) (gzipMagic & 0xff)
+                        && signature[1] == (byte) ((gzipMagic >> 8) & 0xff);
+                context.setInputStream(gzipped ? new GZIPInputStream(pushbackInputStream) : pushbackInputStream);
+            }
         }
         return context.proceed();
     }
