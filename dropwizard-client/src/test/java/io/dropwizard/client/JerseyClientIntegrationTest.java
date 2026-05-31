@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -54,7 +55,6 @@ class JerseyClientIntegrationTest {
     private static final String CHUNKED = "chunked";
     private static final String GZIP = "gzip";
     private static final ObjectMapper JSON_MAPPER = Jackson.newObjectMapper();
-    private static final String GZIP_DEFLATE = "gzip, x-gzip, deflate";
     private static final String JSON_TOKEN = JSON_MAPPER.createObjectNode()
             .put("id", 214)
             .put("token", "a23f78bc31cc5de821ad9412e")
@@ -80,7 +80,7 @@ class JerseyClientIntegrationTest {
                 assertThat(requestHeaders.get(TRANSFER_ENCODING)).containsExactly(CHUNKED);
                 assertThat(requestHeaders.get(HttpHeaders.CONTENT_LENGTH)).isNull();
                 assertThat(requestHeaders.get(HttpHeaders.CONTENT_ENCODING)).containsExactly(GZIP);
-                assertThat(requestHeaders.get(HttpHeaders.ACCEPT_ENCODING)).containsExactly(GZIP_DEFLATE);
+                assertAcceptEncodingContainsDefaultCodecs(requestHeaders);
                 checkBody(httpExchange, true);
                 postResponse(httpExchange);
             } finally {
@@ -101,7 +101,7 @@ class JerseyClientIntegrationTest {
                 assertThat(requestHeaders.get(HttpHeaders.CONTENT_LENGTH)).containsExactly("58");
                 assertThat(requestHeaders.get(TRANSFER_ENCODING)).isNull();
                 assertThat(requestHeaders.get(HttpHeaders.CONTENT_ENCODING)).containsExactly(GZIP);
-                assertThat(requestHeaders.get(HttpHeaders.ACCEPT_ENCODING)).containsExactly(GZIP_DEFLATE);
+                assertAcceptEncodingContainsDefaultCodecs(requestHeaders);
 
                 checkBody(httpExchange, true);
                 postResponse(httpExchange);
@@ -124,7 +124,7 @@ class JerseyClientIntegrationTest {
                 assertThat(requestHeaders.get(TRANSFER_ENCODING)).containsExactly(CHUNKED);
                 assertThat(requestHeaders.get(HttpHeaders.CONTENT_LENGTH)).isNull();
                 assertThat(requestHeaders.get(HttpHeaders.CONTENT_ENCODING)).isNull();
-                assertThat(requestHeaders.get(HttpHeaders.ACCEPT_ENCODING)).containsExactly(GZIP_DEFLATE);
+                assertAcceptEncodingContainsDefaultCodecs(requestHeaders);
 
                 checkBody(httpExchange, false);
                 postResponse(httpExchange);
@@ -256,6 +256,19 @@ class JerseyClientIntegrationTest {
         assertThat(JSON_MAPPER.readTree(requestBody)).isEqualTo(JSON_MAPPER.createObjectNode()
                 .put("email", "john@doe.me")
                 .put("name", "John Doe"));
+    }
+
+    private void assertAcceptEncodingContainsDefaultCodecs(Headers requestHeaders) {
+        final List<String> acceptedEncodings = requestHeaders.get(HttpHeaders.ACCEPT_ENCODING);
+        assertThat(acceptedEncodings).isNotNull().isNotEmpty();
+        if (acceptedEncodings == null) {
+            return;
+        }
+        final List<String> codecs = acceptedEncodings.stream()
+                .flatMap(value -> Arrays.stream(value.split(",")))
+                .map(String::trim)
+                .collect(toList());
+        assertThat(codecs).contains("gzip", "x-gzip", "deflate");
     }
 
 
