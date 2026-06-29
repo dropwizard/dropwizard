@@ -2,6 +2,7 @@ package io.dropwizard.views.common;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
+import io.dropwizard.jersey.filter.CspFilter;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.WebApplicationException;
@@ -73,7 +74,7 @@ public class ViewMessageBodyWriter implements MessageBodyWriter<View> {
                         OutputStream entityStream) throws IOException {
         final Timer.Context context = metricRegistry.timer(name(t.getClass(), "rendering")).time();
         final ContainerRequestContext requestContext = requestContextProvider != null ? requestContextProvider.get() : null;
-        final String nonce = requestContext != null ? (String) requestContext.getProperty("csp-nonce") : null;
+        final String nonce = requestContext != null ? (String) requestContext.getProperty(CspFilter.NONCE_PROPERTY_KEY) : null;
         try {
             if (nonce != null) {
                 CspNonceLookup.set(nonce);

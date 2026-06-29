@@ -13,14 +13,16 @@ import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HexFormat;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.zip.CRC32;
 
 public class AssetServlet extends HttpServlet {
     private static final long serialVersionUID = 6393345594784987908L;
@@ -47,9 +49,17 @@ public class AssetServlet extends HttpServlet {
         }
 
         private static String hash(byte[] resource) {
-            final CRC32 crc32 = new CRC32();
-            crc32.update(resource);
-            return Long.toHexString(crc32.getValue());
+            try {
+                final MessageDigest digest = MessageDigest.getInstance("SHA-256");
+                final byte[] hashBytes = digest.digest(resource);
+                // Use first 16 bytes (128 bits) for a compact, collision-resistant ETag.
+                // 128 bits of SHA-256 output gives 2^64 birthday resistance — far stronger
+                // than CRC32's 32-bit output which is trivially collided.
+                return HexFormat.of().formatHex(hashBytes, 0, 16);
+            } catch (NoSuchAlgorithmException e) {
+                // SHA-256 is mandated by the Java SE spec and must always be available.
+                throw new IllegalStateException("SHA-256 MessageDigest not available", e);
+            }
         }
 
         public byte[] getResource() {
@@ -201,7 +211,7 @@ public class AssetServlet extends HttpServlet {
 
             final String rangeHeader = req.getHeader(RANGE);
 
-            final int resourceLength = cachedAsset.getResource().length;
+            final long resourceLength = cachedAsset.getResource().length;
             List<ByteRange> ranges = Collections.emptyList();
 
             boolean usingRanges = false;
@@ -248,8 +258,11 @@ public class AssetServlet extends HttpServlet {
             try (ServletOutputStream output = resp.getOutputStream()) {
                 if (usingRanges) {
                     for (ByteRange range : ranges) {
-                        output.write(cachedAsset.getResource(), range.getStart(),
-                                range.getEnd() - range.getStart() + 1);
+                        // getStart()/getEnd() are long; assets are loaded into byte[] so length
+                        // fits in an int, but arithmetic is done in long to prevent overflow.
+                        final long rangeStart = range.getStart();
+                        final long rangeLen = range.getEnd() - rangeStart + 1;
+                        output.write(cachedAsset.getResource(), (int) rangeStart, (int) rangeLen);
                     }
                 } else {
                     output.write(cachedAsset.getResource());
@@ -321,7 +334,7 @@ public class AssetServlet extends HttpServlet {
      * @param resourceLength Length of the resource in bytes
      * @return List of parsed ranges
      */
-    private List<ByteRange> parseRangeHeader(final String rangeHeader, final int resourceLength) {
+    private List<ByteRange> parseRangeHeader(final String rangeHeader, final long resourceLength) {
         try {
 			final List<ByteRange> byteRanges;
 			if (rangeHeader.contains("=")) {
