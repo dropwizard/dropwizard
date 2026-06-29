@@ -349,6 +349,21 @@ public class AssetServletTest {
         response = HttpTester.parseResponse(SERVLET_TESTER.getResponses(request
                 .generate()));
         assertThat(response.getStatus()).isEqualTo(416);
+
+        request.setHeader(HttpHeader.RANGE.asString(), "bytes=20-");
+        response = HttpTester.parseResponse(SERVLET_TESTER.getResponses(request
+                .generate()));
+        assertThat(response.getStatus()).isEqualTo(416);
+
+        request.setHeader(HttpHeader.RANGE.asString(), "bytes=20-30");
+        response = HttpTester.parseResponse(SERVLET_TESTER.getResponses(request
+                .generate()));
+        assertThat(response.getStatus()).isEqualTo(416);
+
+        request.setHeader(HttpHeader.RANGE.asString(), "bytes=8-3");
+        response = HttpTester.parseResponse(SERVLET_TESTER.getResponses(request
+                .generate()));
+        assertThat(response.getStatus()).isEqualTo(416);
     }
 
     @Test

@@ -42,17 +42,26 @@ public final class ByteRange {
      */
     public static ByteRange parse(final String byteRange,
                                   final long resourceLength) {
+        if (resourceLength <= 0) {
+            throw new IllegalArgumentException("Resource length must be positive: " + resourceLength);
+        }
         final String asciiString = new String(byteRange.getBytes(StandardCharsets.US_ASCII), StandardCharsets.US_ASCII);
         // suffix-range: no start position, count from end (e.g. "-500")
         if (byteRange.indexOf("-") == 0) {
             final long suffixLength = Long.parseLong(asciiString);
             // suffixLength is negative because the string starts with '-'
             final long start = Math.max(0L, resourceLength + suffixLength);
+            if (start >= resourceLength) {
+                throw new IllegalArgumentException("Suffix range start offset out of bounds: " + start);
+            }
             return new ByteRange(start, resourceLength - 1);
         }
         // missing separator — treat the value as a plain start offset
         if (!byteRange.contains("-")) {
             final long start = Long.parseLong(asciiString);
+            if (start < 0 || start >= resourceLength) {
+                throw new IllegalArgumentException("Start index out of bounds: " + start);
+            }
             return new ByteRange(start, resourceLength - 1);
         }
         final List<String> parts = Arrays.stream(asciiString.split("-", -1))
@@ -61,6 +70,9 @@ public final class ByteRange {
                 .collect(Collectors.toList());
 
         final long start = Long.parseLong(parts.get(0));
+        if (start < 0 || start >= resourceLength) {
+            throw new IllegalArgumentException("Start index out of bounds: " + start);
+        }
         final long end;
         if (parts.size() == 2) {
             long rawEnd = Long.parseLong(parts.get(1));
@@ -68,6 +80,9 @@ public final class ByteRange {
             end = Math.min(rawEnd, resourceLength - 1);
         } else {
             end = resourceLength - 1;
+        }
+        if (start > end) {
+            throw new IllegalArgumentException("Start index " + start + " cannot be greater than end index " + end);
         }
         return new ByteRange(start, end);
     }

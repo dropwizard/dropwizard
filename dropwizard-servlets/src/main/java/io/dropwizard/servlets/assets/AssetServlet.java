@@ -351,7 +351,7 @@ public class AssetServlet extends HttpServlet {
 				byteRanges = Collections.emptyList();
 			}
 			return byteRanges;
-        } catch (NumberFormatException e) {
+        } catch (IllegalArgumentException e) {
             return Collections.emptyList();
         }
     }
