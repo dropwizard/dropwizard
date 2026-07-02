@@ -1,6 +1,12 @@
 package io.dropwizard.jersey;
 
+import com.codahale.metrics.jersey3.InstrumentedResourceMethodApplicationListener;
+import io.dropwizard.jersey.caching.CacheControlledResponseFeature;
 import io.dropwizard.jersey.dummy.DummyResource;
+import io.dropwizard.jersey.guava.OptionalParamBinder;
+import io.dropwizard.jersey.params.AbstractParamConverterProvider;
+import io.dropwizard.jersey.sessions.SessionFactoryProvider;
+import io.dropwizard.jersey.validation.FuzzyEnumParamConverterProvider;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
@@ -11,6 +17,7 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.Application;
 import jakarta.ws.rs.core.MediaType;
 import org.glassfish.jersey.internal.inject.AbstractBinder;
+import org.glassfish.jersey.server.ServerProperties;
 import org.glassfish.jersey.server.model.Resource;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -84,6 +91,48 @@ class DropwizardResourceConfigTest {
         assertThat(rc.getEndpointsInfo())
                 .contains("GET     /bar (io.dropwizard.jersey.DropwizardResourceConfigTest.ResourcePathOnMethodLevel)")
                 .contains("GET     /dummy (io.dropwizard.jersey.DropwizardResourceConfigTest.TestResource)");
+    }
+
+    @Test
+    void constructorWithoutMetricRegistryUsesDefaults() {
+        DropwizardResourceConfig config = new DropwizardResourceConfig();
+
+        assertThat(config.getContextPath()).isEqualTo("/");
+        assertThat(config.getUrlPattern()).isEqualTo("/*");
+        assertThat(config.getProperty(ServerProperties.WADL_FEATURE_DISABLE)).isEqualTo(true);
+        assertThat(config.getClasses()).contains(
+                CacheControlledResponseFeature.class,
+                io.dropwizard.jersey.guava.OptionalMessageBodyWriter.class,
+                io.dropwizard.jersey.optional.OptionalMessageBodyWriter.class,
+                io.dropwizard.jersey.optional.OptionalDoubleMessageBodyWriter.class,
+                io.dropwizard.jersey.optional.OptionalIntMessageBodyWriter.class,
+                io.dropwizard.jersey.optional.OptionalLongMessageBodyWriter.class,
+                AbstractParamConverterProvider.class
+        );
+        assertThat(config.getSingletons())
+                .map(singleton -> singleton.getClass().getName())
+                .contains(
+                        DropwizardResourceConfig.MetricRegistryBinder.class.getName(),
+                        InstrumentedResourceMethodApplicationListener.class.getName(),
+                        OptionalParamBinder.class.getName(),
+                        FuzzyEnumParamConverterProvider.class.getName(),
+                        SessionFactoryProvider.Binder.class.getName()
+                );
+    }
+
+    @Test
+    void logsEndpointsWithRelativeContextPathAndUrlPattern() {
+        rc.setContextPath("context");
+        rc.setUrlPattern("pattern/*");
+        rc.register(TestResource.class);
+        rc.register(ImplementingResource.class);
+
+        runJersey();
+        assertThat(rc.getEndpointsInfo()).isEqualTo(String.format(
+                "The following paths were found for the configured resources:%n"
+                + "%n"
+                + "    GET     /context/pattern/another (io.dropwizard.jersey.DropwizardResourceConfigTest.ImplementingResource)%n"
+                + "    GET     /context/pattern/dummy (io.dropwizard.jersey.DropwizardResourceConfigTest.TestResource)%n"));
     }
 
     @Test
@@ -443,6 +492,7 @@ class DropwizardResourceConfigTest {
             this.dependency = dependency;
         }
 
+        @Override
         public String bar() {
             return dependency.get();
         }
