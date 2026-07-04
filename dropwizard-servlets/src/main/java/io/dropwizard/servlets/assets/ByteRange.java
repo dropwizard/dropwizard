@@ -49,22 +49,33 @@ public final class ByteRange {
     public static ByteRange parse(final String byteRange,
                                   final long resourceLength) {
         final String asciiString = new String(byteRange.getBytes(StandardCharsets.US_ASCII), StandardCharsets.US_ASCII);
+
+        final long dashCount = asciiString.chars().filter(ch -> ch == '-').count();
+        if (dashCount > 1) {
+            throw new IllegalArgumentException("Invalid byte range (multiple dashes): " + byteRange);
+        }
+        if (dashCount == 0) {
+            // missing separator — treat the value as a plain start offset
+            final long start = Long.parseLong(asciiString.trim());
+            return new ByteRange(start, resourceLength - 1);
+        }
+
         // suffix-range: no start position, count from end (e.g. "-500")
-        if (byteRange.indexOf("-") == 0) {
-            final long suffixLength = Long.parseLong(asciiString);
+        if (asciiString.trim().startsWith("-")) {
+            final long suffixLength = Long.parseLong(asciiString.trim());
             // suffixLength is negative because the string starts with '-'
             final long start = Math.max(0L, resourceLength + suffixLength);
             return new ByteRange(start, resourceLength - 1);
         }
-        // missing separator — treat the value as a plain start offset
-        if (!byteRange.contains("-")) {
-            final long start = Long.parseLong(asciiString);
-            return new ByteRange(start, resourceLength - 1);
-        }
+
         final List<String> parts = Arrays.stream(asciiString.split("-", -1))
                 .map(String::trim)
                 .filter(s -> !s.isEmpty())
                 .collect(Collectors.toList());
+
+        if (parts.isEmpty()) {
+            throw new IllegalArgumentException("Invalid byte range: " + byteRange);
+        }
 
         final long start = Long.parseLong(parts.get(0));
         final long end;

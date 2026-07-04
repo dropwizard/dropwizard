@@ -587,4 +587,24 @@ public class AssetServletTest {
         assertThat(response.getStatus())
                 .isEqualTo(200);
     }
+
+    @Test
+    void ignoresTooManyByteRangesToPreventDos() throws Exception {
+        request.setURI(ROOT_SERVLET + "assets/example.txt");
+        // Request 6 ranges (5 commas) -> should ignore Range and return 200 OK
+        request.setHeader(HttpHeader.RANGE.asString(), "bytes=0-0,1-1,2-2,3-3,4-4,5-5");
+        response = HttpTester.parseResponse(SERVLET_TESTER.getResponses(request.generate()));
+        assertThat(response.getStatus()).isEqualTo(200);
+        assertThat(response.getContent()).isEqualTo("HELLO THERE");
+        assertThat(response.get(HttpHeader.CONTENT_RANGE)).isNull();
+    }
+
+    @Test
+    void handlesMalformedRangeHeaderGracefully() throws Exception {
+        request.setURI(ROOT_SERVLET + "assets/example.txt");
+        // Request range with space before dash -> throws IllegalArgumentException -> returns 416
+        request.setHeader(HttpHeader.RANGE.asString(), "bytes= -");
+        response = HttpTester.parseResponse(SERVLET_TESTER.getResponses(request.generate()));
+        assertThat(response.getStatus()).isEqualTo(416);
+    }
 }

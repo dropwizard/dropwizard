@@ -210,7 +210,10 @@ public class AssetServlet extends HttpServlet {
                 return;
             }
 
-            final String rangeHeader = req.getHeader(RANGE);
+            String rangeHeader = req.getHeader(RANGE);
+            if (rangeHeader != null && hasTooManyRanges(rangeHeader)) {
+                rangeHeader = null; // Ignore Range header to prevent Range DoS
+            }
 
             final long resourceLength = cachedAsset.getResource().length;
             List<ByteRange> ranges = Collections.emptyList();
@@ -370,5 +373,18 @@ public class AssetServlet extends HttpServlet {
         } catch (IllegalArgumentException e) {
             return Collections.emptyList();
         }
+    }
+
+    private boolean hasTooManyRanges(String rangeHeader) {
+        int commas = 0;
+        for (int i = 0; i < rangeHeader.length(); i++) {
+            if (rangeHeader.charAt(i) == ',') {
+                commas++;
+                if (commas >= 5) { // Limit to 5 ranges maximum (4 commas)
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

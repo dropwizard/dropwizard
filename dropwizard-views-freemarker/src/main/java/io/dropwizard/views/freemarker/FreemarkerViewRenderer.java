@@ -94,13 +94,14 @@ public class FreemarkerViewRenderer implements ViewRenderer {
         try {
             final Charset charset = view.getCharset().orElseGet(() -> Charset.forName(configuration.getEncoding(locale)));
             final Template template = configuration.getTemplate(view.getTemplateName(), locale, charset.name());
-            final OutputStreamWriter writer = new OutputStreamWriter(output, template.getEncoding());
-            final freemarker.core.Environment env = template.createProcessingEnvironment(view, writer);
-            final String nonce = io.dropwizard.views.common.CspNonceLookup.get().orElse(null);
-            if (nonce != null) {
-                env.setVariable("cspNonce", env.getObjectWrapper().wrap(nonce));
+            try (OutputStreamWriter writer = new OutputStreamWriter(output, template.getEncoding())) {
+                final freemarker.core.Environment env = template.createProcessingEnvironment(view, writer);
+                final String nonce = io.dropwizard.views.common.CspNonceLookup.get().orElse(null);
+                if (nonce != null) {
+                    env.setVariable("cspNonce", env.getObjectWrapper().wrap(nonce));
+                }
+                env.process();
             }
-            env.process();
         } catch (Exception e) {
             throw new ViewRenderException(e);
         }

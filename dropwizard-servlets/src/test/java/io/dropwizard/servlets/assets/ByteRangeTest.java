@@ -56,4 +56,16 @@ class ByteRangeTest {
         assertThatExceptionOfType(NumberFormatException.class)
             .isThrownBy(() -> ByteRange.parse("០-០", RESOURCE_LENGTH));
     }
+
+    @Test
+    void malformedRangesThrowIllegalArgumentException() {
+        assertThatExceptionOfType(IllegalArgumentException.class)
+            .isThrownBy(() -> ByteRange.parse(" -", RESOURCE_LENGTH));
+
+        assertThatExceptionOfType(IllegalArgumentException.class)
+            .isThrownBy(() -> ByteRange.parse(" - ", RESOURCE_LENGTH));
+
+        assertThatExceptionOfType(IllegalArgumentException.class)
+            .isThrownBy(() -> ByteRange.parse("1-2-3", RESOURCE_LENGTH));
+    }
 }
