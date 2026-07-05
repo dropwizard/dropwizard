@@ -20,7 +20,7 @@
         <!-- External dependencies -->
         <activation-api.version>2.1.4</activation-api.version>
         <argparse4j.version>0.9.0</argparse4j.version>
-        <byte-buddy.version>1.18.10-jdk5</byte-buddy.version>
+        <byte-buddy.version>1.18.11-jdk5</byte-buddy.version>
         <caffeine.version>3.2.4</caffeine.version>
         <classmate.version>1.7.3</classmate.version>
         <commons-codec.version>1.22.0</commons-codec.version>
@@ -48,7 +48,7 @@
         <javassist.version>3.32.0-GA</javassist.version>
         <jaxb-api.version>4.0.5</jaxb-api.version>
         <jboss-logging.version>3.6.3.Final</jboss-logging.version>
-        <jdbi3.version>3.53.0</jdbi3.version>
+        <jdbi3.version>3.54.0</jdbi3.version>
         <jersey.version>3.1.12</jersey.version>
         <jetty-setuid-jna.version>2.0.3</jetty-setuid-jna.version>
         <jetty.version>12.1.10</jetty.version>
