@@ -37,7 +37,7 @@
         <hk2.version>3.0.6</hk2.version>
         <httpclient.version>5.6.2</httpclient.version>
         <httpcore.version>5.4.3</httpcore.version>
-        <jackson.version>2.22.0</jackson.version>
+        <jackson.version>2.22.1</jackson.version>
         <jakarta.annotation-api.version>2.1.1</jakarta.annotation-api.version>
         <jakarta.el.version>5.0.1</jakarta.el.version>
         <jakarta.inject-api.version>2.0.1.MR</jakarta.inject-api.version>
@@ -56,13 +56,13 @@
         <liquibase-core.version>4.33.0</liquibase-core.version>
         <liquibase-slf4j.version>5.1.0</liquibase-slf4j.version>
         <logback-throttling-appender.version>1.5.3</logback-throttling-appender.version>
-        <logback.version>1.5.37</logback.version>
-        <logback.access.version>2.0.12</logback.access.version>
+        <logback.version>1.5.38</logback.version>
+        <logback.access.version>2.0.13</logback.access.version>
         <metrics4.version>4.2.39</metrics4.version>
         <mustache-compiler.version>0.9.14</mustache-compiler.version>
         <nullaway.version>0.13.7</nullaway.version>
         <slf4j.version>2.0.18</slf4j.version>
-        <tomcat-jdbc.version>11.0.23</tomcat-jdbc.version>
+        <tomcat-jdbc.version>11.0.24</tomcat-jdbc.version>
 
         <!-- Test dependencies -->
         <assertj.version>3.27.7</assertj.version>
