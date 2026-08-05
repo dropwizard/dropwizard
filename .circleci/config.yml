@@ -7,7 +7,7 @@ jobs:
       JAVA_OPTS: -Xms512m -Xmx2g -XX:+TieredCompilation -XX:TieredStopAtLevel=1
     docker:
       # yamllint disable-line rule:line-length
-      - image: cimg/openjdk:25.0.4@sha256:66839c5bf89aca9f6819b0750ffbb1a33400ae755b646542a01d6784fa6259cd
+      - image: cimg/openjdk:25.0.4@sha256:c2fae0b91d4c591f200f1d0221234a994a13436bc1f90dabb37902dd66504ee2
     steps:
       - checkout
       - restore_cache:
