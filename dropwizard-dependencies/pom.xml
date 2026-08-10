@@ -24,7 +24,7 @@
         <caffeine.version>3.2.4</caffeine.version>
         <classmate.version>1.7.3</classmate.version>
         <commons-codec.version>1.22.1</commons-codec.version>
-        <commons-collections4.version>4.5.0</commons-collections4.version>
+        <commons-collections4.version>4.6.0</commons-collections4.version>
         <commons-lang3.version>3.20.0</commons-lang3.version>
         <commons-text.version>1.15.0</commons-text.version>
         <conscrypt-openjdk-uber.version>2.5.2</conscrypt-openjdk-uber.version>
