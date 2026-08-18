@@ -81,16 +81,34 @@ public class JsonHealthResponseProvider implements HealthResponseProvider {
             .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
+    private Set<String> getTypesFromQueryParams(final Map<String, Collection<String>> queryParams) {
+        return queryParams.getOrDefault(CHECK_TYPE_QUERY_PARAM, Collections.emptyList())
+            .stream()
+            .map(String::toLowerCase)
+            .collect(Collectors.toCollection(LinkedHashSet::new));
+    }
+
     private Collection<HealthStateView> getViews(final Map<String, Collection<String>> queryParams) {
         final Set<String> names = getNamesFromQueryParams(queryParams);
+        final Set<String> types = getTypesFromQueryParams(queryParams);
 
         if (shouldReturnAllViews(names)) {
             return List.copyOf(healthStateAggregator.healthStateViews());
         } else {
-            return names.stream()
+            Set<HealthStateView> viewsByType = types.stream()
+                .map(healthStateAggregator::healthStateViewByType)
+                .flatMap(Set::stream)
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+
+            Set<HealthStateView> viewsByName = names.stream()
                 .map(healthStateAggregator::healthStateView)
                 .flatMap(Optional::stream)
-                .collect(Collectors.toUnmodifiableList());
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+
+            Set<HealthStateView> combinedViews = new LinkedHashSet<>();
+            combinedViews.addAll(viewsByType);
+            combinedViews.addAll(viewsByName);
+            return combinedViews;
         }
     }
 
