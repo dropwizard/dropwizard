@@ -7,19 +7,12 @@ import io.dropwizard.core.Configuration;
 import io.dropwizard.core.cli.Command;
 import io.dropwizard.core.cli.ServerCommand;
 import io.dropwizard.core.setup.Environment;
-import io.dropwizard.jersey.jackson.JacksonFeature;
 import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.DropwizardTestSupport;
 import jakarta.ws.rs.client.Client;
-import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
-import org.jspecify.annotations.Nullable;
-import org.glassfish.jersey.apache5.connector.Apache5ConnectorProvider;
-import org.glassfish.jersey.apache5.connector.Apache5HttpClientBuilderConfigurator;
-import org.glassfish.jersey.client.ClientConfig;
-import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.client.JerseyClientBuilder;
-import org.glassfish.jersey.client.RequestEntityProcessing;
+import org.jspecify.annotations.Nullable;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
@@ -43,15 +36,9 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 public class DropwizardAppExtension<C extends Configuration> implements DropwizardExtension,
     BeforeAllCallback, AfterAllCallback {
 
-    private static final int DEFAULT_CONNECT_TIMEOUT_MS = 1000;
-    private static final int DEFAULT_READ_TIMEOUT_MS = 5000;
-
     private final DropwizardTestSupport<C> testSupport;
 
     private final AtomicInteger recursiveCallCount = new AtomicInteger(0);
-
-    @Nullable
-    private Client client;
 
     public DropwizardAppExtension(Class<? extends Application<C>> applicationClass) {
         this(applicationClass, (String) null);
@@ -181,12 +168,6 @@ public class DropwizardAppExtension<C extends Configuration> implements Dropwiza
     public void after() {
         if (recursiveCallCount.decrementAndGet() == 0) {
             testSupport.after();
-            synchronized (this) {
-                if (client != null) {
-                    client.close();
-                    client = null;
-                }
-            }
         }
     }
 
@@ -242,29 +223,34 @@ public class DropwizardAppExtension<C extends Configuration> implements Dropwiza
      * Returns a new HTTP Jersey {@link Client} for performing HTTP requests against the tested
      * Dropwizard server. The client can be reused across different tests and automatically
      * closed along with the server. The client can be augmented by overriding the
-     * {@link #clientBuilder()} method.
+     * {@link #clientBuilder()} method or calling it directly.
      *
-     * @return a new {@link Client} managed by the extension.
+     * @return a shared {@link Client} managed by the extension. Do not close it.
      */
     public Client client() {
-        synchronized (this) {
-            if (client == null) {
-                client = clientBuilder().build();
-            }
-            return client;
-        }
+        return testSupport.client();
     }
 
-    protected JerseyClientBuilder clientBuilder() {
-        ClientConfig clientConfig = new ClientConfig();
-        Apache5HttpClientBuilderConfigurator contentCompressionConfigurator =
-            HttpClientBuilder::disableContentCompression;
-        clientConfig.connectorProvider(new Apache5ConnectorProvider())
-            .register(new JacksonFeature(getObjectMapper()))
-            .register(contentCompressionConfigurator)
-            .property(ClientProperties.CONNECT_TIMEOUT, DEFAULT_CONNECT_TIMEOUT_MS)
-            .property(ClientProperties.READ_TIMEOUT, DEFAULT_READ_TIMEOUT_MS)
-            .property(ClientProperties.REQUEST_ENTITY_PROCESSING, RequestEntityProcessing.BUFFERED);
-        return new JerseyClientBuilder().withConfig(clientConfig);
+    /**
+     * Alias for {@link #client()} that is more friendly to IDE warnings about not closing a resource.
+     *
+     * @return a shared {@link Client} managed by the extension. Do not close it.
+     */
+    public Client getClient() {
+        return client();
+    }
+
+    /**
+     * Returns a Jersey client builder object with the various configurations applied that would be done if the
+     * {@link #client()} or {@link #getClient()} methods were called to build/acquire the shared {@link Client} for
+     * testing.
+     * <p>
+     * Using this method means that the caller now inherits all responsibility of managing any created {@code Client}
+     * instance's lifecycle.
+     *
+     * @return builder for creating a {@link Client} object
+     */
+    public JerseyClientBuilder clientBuilder() {
+        return testSupport.clientBuilder();
     }
 }
