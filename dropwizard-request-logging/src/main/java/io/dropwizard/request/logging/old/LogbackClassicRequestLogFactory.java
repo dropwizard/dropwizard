@@ -61,6 +61,7 @@ public class LogbackClassicRequestLogFactory implements RequestLogFactory<Reques
         private RequestLogLayout(Context context) {
             super();
             setContext(context);
+            setPattern(" ");  // required by PatternLayoutBase.start(); doLayout bypasses it
         }
 
         @Override
