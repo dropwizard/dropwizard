@@ -2,6 +2,8 @@
 io.reactivex.rxjava2:rxjava = !0x1D9AA7F9E1E2824728B8CD1794B291AEF984A085
 # io.smallrye:jandex:jar:3.2.0 PGP key 0x94976E17E18DD3201447286954963C3E875A56AE has been revoked and public key is not available
 io.smallrye:jandex:3.2.0 = !0x94976E17E18DD3201447286954963C3E875A56AE
+# org.liquibase:liquibase-core:jar:4.33.0 PGP key 0x4F474D657AAB9B387B812DA2915C4D2EC1FE0D33 has been revoked and public key is not available
+org.liquibase:liquibase-core:4.33.0 = !0x4F474D657AAB9B387B812DA2915C4D2EC1FE0D33
 # Not allowed artifact org.hibernate.orm:hibernate-core:jar:6.6.41.Final and keyID
 org.hibernate.orm:hibernate-core = 0x1452F35849B50750F6A3BBB4B54011358B352F85
 # Not allowed artifact org.jboss.logging:jboss-logging:jar:3.6.3.Final and keyID
