@@ -145,7 +145,6 @@
                         <configuration>
                             <ignoredNonTestScopedDependencies>
                                 <!-- plugin reports test-only scope but really due to transitive requirements must be 'compile' scope -->
-                                <ignoredUsedUndeclaredDependency>org.eclipse.jetty:jetty-security</ignoredUsedUndeclaredDependency>
                                 <ignoredUsedUndeclaredDependency>org.eclipse.jetty:jetty-session</ignoredUsedUndeclaredDependency>
                             </ignoredNonTestScopedDependencies>
                         </configuration>
