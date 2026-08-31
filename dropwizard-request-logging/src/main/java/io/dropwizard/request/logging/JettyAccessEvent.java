@@ -1,12 +1,16 @@
 package io.dropwizard.request.logging;
 
+import ch.qos.logback.access.common.AccessConstants;
 import ch.qos.logback.access.common.spi.IAccessEvent;
 import ch.qos.logback.access.common.spi.ServerAdapter;
 import ch.qos.logback.core.spi.SequenceNumberGenerator;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.eclipse.jetty.ee10.servlet.ServletContextRequest;
 import org.eclipse.jetty.http.HttpCookie;
 import org.eclipse.jetty.http.HttpField;
+import org.eclipse.jetty.http.HttpHeader;
+import org.eclipse.jetty.http.MimeTypes;
 import org.eclipse.jetty.security.AuthenticationState;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Response;
@@ -16,12 +20,17 @@ import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.nio.charset.Charset;
+import java.nio.charset.IllegalCharsetNameException;
+import java.nio.charset.StandardCharsets;
+import java.nio.charset.UnsupportedCharsetException;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -32,8 +41,10 @@ public class JettyAccessEvent implements IAccessEvent {
 
     private final Request request;
     private final Response response;
-
-    private long sequenceNumber = 0;
+    private final DropwizardJettyServerAdapter jettyServerAdapter;
+    private final Charset requestCharset;
+    private final Charset responseCharset;
+    private final long sequenceNumber;
     private final long timeStamp;
     private final long elapsedTime;
 
@@ -54,27 +65,81 @@ public class JettyAccessEvent implements IAccessEvent {
     private final Lazy<Map<String, String>> cookies = new Lazy<>(this::buildCookieMapInternal);
     private final Lazy<Long> contentLength = new Lazy<>(this::getContentLengthInternal);
     private final Lazy<Integer> statusCode = new Lazy<>(this::getStatusCodeInternal);
+    private final Lazy<String> requestContent = new Lazy<>(this::getRequestContentInternal);
+    private final Lazy<String> responseContent = new Lazy<>(this::getResponseContentInternal);
     private final Lazy<Integer> localPort = new Lazy<>(this::getLocalPortInternal);
     private final Lazy<Map<String, String>> responseHeaders = new Lazy<>(this::getResponseHeaderMapInternal);
 
     public JettyAccessEvent(Request request, Response response, SequenceNumberGenerator sequenceNumberGenerator) {
         this.request = request;
         this.response = response;
+        this.jettyServerAdapter = new DropwizardJettyServerAdapter(request, response);
+        this.requestCharset = resolveRequestCharset();
+        this.responseCharset = resolveResponseCharset();
         if (sequenceNumberGenerator != null) {
             this.sequenceNumber = sequenceNumberGenerator.nextSequenceNumber();
+        } else {
+            this.sequenceNumber = 0;
         }
         this.timeStamp = System.currentTimeMillis();
         this.elapsedTime = this.timeStamp - Request.getTimeStamp(request);
     }
 
-    @Override
-    public HttpServletRequest getRequest() {
-        throw new UnsupportedOperationException("Not in a servlet environment");
+    private Charset resolveRequestCharset() {
+        try {
+            Charset cs = Request.getCharset(request);
+            return cs != null ? cs : StandardCharsets.UTF_8;
+        } catch (IllegalCharsetNameException | UnsupportedCharsetException e) {
+            return StandardCharsets.UTF_8;
+        }
     }
 
+    private Charset resolveResponseCharset() {
+        try {
+            String contentType = response.getHeaders().get(HttpHeader.CONTENT_TYPE);
+            if (contentType == null) {
+                return StandardCharsets.UTF_8;
+            }
+            String charsetName = MimeTypes.getCharsetFromContentType(contentType);
+            return charsetName != null ? Charset.forName(charsetName) : StandardCharsets.UTF_8;
+        } catch (IllegalCharsetNameException | UnsupportedCharsetException e) {
+            return StandardCharsets.UTF_8;
+        }
+    }
+
+    /**
+     * Returns the servlet-side request wrapper for consumers like AccessEventDiscriminator that call
+     * getSession(false), getRemoteUser(), etc. through the standard servlet API.
+     * <p>
+     * Warning: Not async-freeze safe: Must be called only in a synchronous context. This returns a live reference to
+     * Jetty's HttpServletRequest, which will return stale/wrong data (or possibly crash in a bad way) after Jetty
+     * recycles the request.
+     */
     @Override
+    @Nullable
+    public HttpServletRequest getRequest() {
+        final ServletContextRequest servletContextRequest = Request.as(request, ServletContextRequest.class);
+        if (servletContextRequest == null) {
+            return null;
+        }
+        return servletContextRequest.getServletApiRequest();
+    }
+
+    /**
+     * Returns the servlet-side response wrapper.
+     * <p>
+     * Warning: Not async-freeze safe: Must be called only in a synchronous context. This returns a live reference to
+     * Jetty's HttpServletResponse, which will return stale/wrong data (or possibly crash in a bad way) after Jetty
+     * recycles the request.
+     */
+    @Override
+    @Nullable
     public HttpServletResponse getResponse() {
-        throw new UnsupportedOperationException("Not in a servlet environment");
+        final ServletContextRequest servletContextRequest = Request.as(request, ServletContextRequest.class);
+        if (servletContextRequest == null) {
+            return null;
+        }
+        return servletContextRequest.getServletContextResponse().getServletApiResponse();
     }
 
     @Override
@@ -220,7 +285,9 @@ public class JettyAccessEvent implements IAccessEvent {
         return request.getHeaders()
             .stream()
             .collect(
-                Collectors.groupingBy(HttpField::getName,
+                Collectors.groupingBy(
+                    HttpField::getName,
+                    () -> new TreeMap<>(String.CASE_INSENSITIVE_ORDER),
                     Collectors.mapping(HttpField::getValue,
                         Collectors.joining(",")))
             );
@@ -291,12 +358,30 @@ public class JettyAccessEvent implements IAccessEvent {
 
     @Override
     public String getRequestContent() {
-        throw new UnsupportedOperationException("Should not retrieve raw request");
+        return requestContent.get();
+    }
+
+    private String getRequestContentInternal() {
+        // retrieve the byte array placed by TeeFilter, if present
+        Object attributeValue = request.getAttribute(AccessConstants.LB_INPUT_BUFFER);
+        if (!(attributeValue instanceof byte[] inputBuffer)) {
+            return "";
+        }
+        return new String(inputBuffer, requestCharset);
     }
 
     @Override
     public String getResponseContent() {
-        throw new UnsupportedOperationException("Should not retrieve raw response");
+        return responseContent.get();
+    }
+
+    private String getResponseContentInternal() {
+        // retrieve the byte array placed by TeeFilter, if present
+        Object attributeValue = request.getAttribute(AccessConstants.LB_OUTPUT_BUFFER);
+        if (!(attributeValue instanceof byte[] outputBuffer)) {
+            return "";
+        }
+        return new String(outputBuffer, responseCharset);
     }
 
     @Override
@@ -310,13 +395,12 @@ public class JettyAccessEvent implements IAccessEvent {
 
     @Override
     public ServerAdapter getServerAdapter() {
-        return new DropwizardJettyServerAdapter(request, response);
+        return jettyServerAdapter;
     }
 
     @Override
-    @Nullable
     public String getResponseHeader(String key) {
-        return getResponseHeaderMap().get(key);
+        return getResponseHeaderMap().getOrDefault(key, "-");
     }
 
     @Override
@@ -328,7 +412,9 @@ public class JettyAccessEvent implements IAccessEvent {
         return response.getHeaders()
             .stream()
             .collect(
-                Collectors.groupingBy(HttpField::getName,
+                Collectors.groupingBy(
+                    HttpField::getName,
+                    () -> new TreeMap<>(String.CASE_INSENSITIVE_ORDER),
                     Collectors.mapping(HttpField::getValue,
                         Collectors.joining(",")))
             );
@@ -355,6 +441,8 @@ public class JettyAccessEvent implements IAccessEvent {
         cookies.initialize();
         contentLength.initialize();
         statusCode.initialize();
+        requestContent.initialize();
+        responseContent.initialize();
         localPort.initialize();
         responseHeaders.initialize();
     }
