@@ -15,10 +15,17 @@ import java.util.TimeZone;
  */
 public class LogbackAccessRequestLayout extends PatternLayout {
 
-    static  {
-        // Replace the buggy default converter which don't work async appenders
-        ch.qos.logback.classic.PatternLayout.DEFAULT_CONVERTER_MAP.put("requestParameter", SafeRequestParameterConverter.class.getName());
-        ch.qos.logback.classic.PatternLayout.DEFAULT_CONVERTER_MAP.put("reqParameter", SafeRequestParameterConverter.class.getName());
+    static {
+        // Replace upstream's RequestParameterConverter (which reads live request state and is unsafe under async
+        // appenders) with our SafeRequestParameterConverter (which reads from the frozen parameter map that
+        // AccessEvent.prepareForDeferredProcessing captured).
+        //
+        // We must write to ACCESS_DEFAULT_CONVERTER_SUPPLIER_MAP (the access-layout supplier map) rather than the
+        // (deprecated) logback-classic DEFAULT_CONVERTER_MAP; the classic map is not consulted by access's
+        // PatternLayout at all anymore.
+        PatternLayout.ACCESS_DEFAULT_CONVERTER_SUPPLIER_MAP.put("requestParameter",
+            SafeRequestParameterConverter::new);
+        PatternLayout.ACCESS_DEFAULT_CONVERTER_SUPPLIER_MAP.put("reqParameter", SafeRequestParameterConverter::new);
     }
 
     public LogbackAccessRequestLayout(Context context, TimeZone timeZone) {
