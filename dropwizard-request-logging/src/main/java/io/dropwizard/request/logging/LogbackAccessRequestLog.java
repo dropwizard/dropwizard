@@ -25,6 +25,7 @@ public class LogbackAccessRequestLog extends AbstractLifeCycle implements Reques
     @Override
     public void log(Request request, Response response) {
         IAccessEvent accessEvent = new JettyAccessEvent(request, response, sequenceNumberGenerator);
+        accessEvent.setThreadName(Thread.currentThread().getName());
         appenderAttachable.appendLoopOnAppenders(accessEvent);
     }
 
