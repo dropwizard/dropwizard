@@ -38,10 +38,6 @@
             <artifactId>logback-access-common</artifactId>
         </dependency>
         <dependency>
-            <groupId>ch.qos.logback.access</groupId>
-            <artifactId>logback-access-jetty12</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
         </dependency>
