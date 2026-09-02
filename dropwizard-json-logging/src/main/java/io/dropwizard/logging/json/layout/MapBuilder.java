@@ -127,6 +127,32 @@ public class MapBuilder {
         return this;
     }
 
+    /**
+     * Adds the boolean to the provided map under the provided field name if it should be included.
+     */
+    public MapBuilder addBoolean(String fieldName, boolean include, Boolean value) {
+        if (include && value != null) {
+            map.put(getFieldName(fieldName), value);
+        }
+        return this;
+    }
+
+    /**
+     * Adds the value to the provided map under the provided field name if it should be included.
+     * If the value is a String, Number, or Boolean it's added as it is, otherwise it's converted to string using `toString()`.
+     */
+    public MapBuilder addObject(String fieldName, boolean include, @Nullable Object value) {
+        if (value instanceof String) {
+            return add(fieldName, include, (String) value);
+        } else if (value instanceof Number) {
+            return addNumber(fieldName, include, (Number) value);
+        } else if (value instanceof Boolean) {
+            return addBoolean(fieldName, include, (Boolean) value);
+        } else {
+            return add(fieldName, include, value != null ? value.toString() : null);
+        }
+    }
+
     private String getFieldName(String fieldName) {
         return customFieldNames.getOrDefault(fieldName, fieldName);
     }
