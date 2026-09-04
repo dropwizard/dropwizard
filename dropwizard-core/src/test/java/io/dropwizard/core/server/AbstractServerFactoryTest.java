@@ -13,7 +13,11 @@ import io.dropwizard.request.logging.ExternalRequestLogFactory;
 import io.dropwizard.request.logging.LogbackAccessRequestLog;
 import io.dropwizard.request.logging.LogbackAccessRequestLogAwareHandler;
 import io.dropwizard.request.logging.LogbackAccessRequestLogFactory;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
 import java.util.List;
+import java.util.Set;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.thread.ThreadPool;
 import org.junit.jupiter.api.BeforeEach;
@@ -116,6 +120,75 @@ class AbstractServerFactoryTest {
         // Check that no LogbackAccessRequestLogAwareHandler was added
         MutableServletContextHandler appContext = environment.getApplicationContext();
         assertThat(appContext.getHandler()).isNotInstanceOf(LogbackAccessRequestLogAwareHandler.class);
+    }
+
+    @Test
+    void registersCspFilterWhenCspConfigured() {
+        serverFactory.getCsp().setPolicy("default-src 'self'; script-src 'nonce-$NONCE';");
+        serverFactory.build(environment);
+
+        final boolean hasCspFilter = config.getSingletons().stream()
+                .anyMatch(s -> s instanceof io.dropwizard.jersey.filter.CspFilter);
+        assertThat(hasCspFilter).isTrue();
+    }
+
+    @Test
+    void registersCspFilterWhenCspReportOnlyConfigured() {
+        serverFactory.getCsp().setReportOnlyPolicy("default-src 'self';");
+        serverFactory.build(environment);
+
+        final boolean hasCspFilter = config.getSingletons().stream()
+                .anyMatch(s -> s instanceof io.dropwizard.jersey.filter.CspFilter);
+        assertThat(hasCspFilter).isTrue();
+    }
+
+    @Test
+    void doesNotRegisterCspFilterWhenNotConfigured() {
+        serverFactory.build(environment);
+
+        final boolean hasCspFilter = config.getSingletons().stream()
+                .anyMatch(s -> s instanceof io.dropwizard.jersey.filter.CspFilter);
+        assertThat(hasCspFilter).isFalse();
+    }
+
+    @Test
+    void cspPolicyWithoutNoncePlaceholderFailsValidation() {
+        final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+        final CspConfiguration cspConfig = new CspConfiguration();
+        cspConfig.setPolicy("default-src 'self';"); // missing $NONCE
+
+        final Set<ConstraintViolation<CspConfiguration>> violations = validator.validate(cspConfig);
+
+        assertThat(violations).isNotEmpty();
+        assertThat(violations).anyMatch(v ->
+                v.getMessage().contains("$NONCE") &&
+                v.getMessage().contains("policy"));
+    }
+
+    @Test
+    void cspReportOnlyPolicyWithoutNoncePlaceholderFailsValidation() {
+        final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+        final CspConfiguration cspConfig = new CspConfiguration();
+        cspConfig.setReportOnlyPolicy("default-src 'self';"); // missing $NONCE
+
+        final Set<ConstraintViolation<CspConfiguration>> violations = validator.validate(cspConfig);
+
+        assertThat(violations).isNotEmpty();
+        assertThat(violations).anyMatch(v ->
+                v.getMessage().contains("$NONCE") &&
+                v.getMessage().contains("report-only"));
+    }
+
+    @Test
+    void cspPolicyWithNoncePlaceholderPassesValidation() {
+        final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+        final CspConfiguration cspConfig = new CspConfiguration();
+        cspConfig.setPolicy("default-src 'self'; script-src 'nonce-$NONCE';");
+        cspConfig.setReportOnlyPolicy("default-src 'self'; script-src 'nonce-$NONCE';");
+
+        final Set<ConstraintViolation<CspConfiguration>> violations = validator.validate(cspConfig);
+
+        assertThat(violations).isEmpty();
     }
 
     /**
