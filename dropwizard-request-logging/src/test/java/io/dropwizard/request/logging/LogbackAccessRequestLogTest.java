@@ -27,6 +27,8 @@ import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+// Note: Due to the complexities of mocking accurately and correctly, consider adding tests asserting on Jetty logging
+// behavior to LogbackAccessRequestLogIntegrationTest instead of this class.
 class LogbackAccessRequestLogTest {
 
     @SuppressWarnings("unchecked")
