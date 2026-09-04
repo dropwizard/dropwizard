@@ -18,7 +18,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledForJreRange;
 import org.junit.jupiter.api.condition.JRE;
 
+import io.dropwizard.jetty.HttpConnectorFactory;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -78,6 +80,15 @@ class VirtualThreadsTest {
             Validators.newValidatorFactory(), new MetricRegistry(), this.getClass().getClassLoader(),
             new HealthCheckRegistry(), new VirtualThreadsConfiguration());
         DefaultServerFactory defaultServerFactory = new DefaultServerFactory();
+
+        final HttpConnectorFactory applicationConnector = new HttpConnectorFactory();
+        applicationConnector.setPort(0);
+        defaultServerFactory.setApplicationConnectors(Collections.singletonList(applicationConnector));
+
+        final HttpConnectorFactory adminConnector = new HttpConnectorFactory();
+        adminConnector.setPort(0);
+        defaultServerFactory.setAdminConnectors(Collections.singletonList(adminConnector));
+
         defaultServerFactoryConsumer.accept(defaultServerFactory);
         Server server = defaultServerFactory.build(environment);
         server.start();
@@ -110,11 +121,10 @@ class VirtualThreadsTest {
     }
 
     private ThreadPool selectAdminThreadPool(Server server) {
-        final int adminPort = 8081;
         return Arrays.stream(server.getConnectors())
             .filter(ServerConnector.class::isInstance)
             .map(ServerConnector.class::cast)
-            .filter(serverConnector -> serverConnector.getLocalPort() == adminPort)
+            .filter(serverConnector -> "admin".equals(serverConnector.getName()))
             .map(AbstractConnector::getExecutor)
             .filter(ThreadPool.class::isInstance)
             .map(ThreadPool.class::cast)

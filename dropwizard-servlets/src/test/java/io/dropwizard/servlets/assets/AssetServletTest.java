@@ -211,7 +211,7 @@ public class AssetServletTest {
                 .describedAs("eTag generation should be consistent with concurrent requests")
                 .hasSize(1);
         assertThat(firstEtag)
-                .isEqualTo("\"e7bd7e8e\"")
+                .isEqualTo("\"58c688a0f443e3a22ced922e51ea0ba7\"")
                 .isEqualTo(eTags.iterator().next());
     }
 
@@ -225,9 +225,9 @@ public class AssetServletTest {
         final String secondEtag = response.get(HttpHeader.ETAG);
 
         assertThat(firstEtag)
-                .isEqualTo("\"e7bd7e8e\"");
+                .isEqualTo("\"58c688a0f443e3a22ced922e51ea0ba7\"");
         assertThat(secondEtag)
-                .isEqualTo("\"2684fb5a\"");
+                .isEqualTo("\"25c732b9dce86d9e2778fd02e984e1d7\"");
     }
 
     @Test
@@ -346,6 +346,21 @@ public class AssetServletTest {
         assertThat(response.getStatus()).isEqualTo(416);
 
         request.setHeader(HttpHeader.RANGE.asString(), "test");
+        response = HttpTester.parseResponse(SERVLET_TESTER.getResponses(request
+                .generate()));
+        assertThat(response.getStatus()).isEqualTo(416);
+
+        request.setHeader(HttpHeader.RANGE.asString(), "bytes=20-");
+        response = HttpTester.parseResponse(SERVLET_TESTER.getResponses(request
+                .generate()));
+        assertThat(response.getStatus()).isEqualTo(416);
+
+        request.setHeader(HttpHeader.RANGE.asString(), "bytes=20-30");
+        response = HttpTester.parseResponse(SERVLET_TESTER.getResponses(request
+                .generate()));
+        assertThat(response.getStatus()).isEqualTo(416);
+
+        request.setHeader(HttpHeader.RANGE.asString(), "bytes=8-3");
         response = HttpTester.parseResponse(SERVLET_TESTER.getResponses(request
                 .generate()));
         assertThat(response.getStatus()).isEqualTo(416);
@@ -527,11 +542,69 @@ public class AssetServletTest {
                 .isEqualTo(400);
     }
 
+
+    /**
+     * Verifies that path-traversal requests using {@code ..} segments are rejected.
+     *
+     * <p>Jetty 12 (the embedded HTTP layer) normalises percent-encoded traversal sequences
+     * ({@code %2E%2E}) and rejects requests that attempt to escape the context root,
+     * returning HTTP <b>400 Bad Request</b> before the request reaches the servlet.
+     * This is the primary defence.
+     *
+     * <p>The {@code ..} guard added to {@link AssetServlet#loadAsset} provides
+     * defence-in-depth for servlet containers that pass decoded paths through to the
+     * servlet without prior normalisation, in which case it throws an
+     * {@link IllegalArgumentException} caught by {@code doGet()} and converted to a 404.
+     */
+    @Test
+    void doesNotAllowPathTraversalWithDotDot() throws Exception {
+        // Relative traversal using percent-encoded double-dots
+        request.setURI(DUMMY_SERVLET + "foo/%2E%2E/%2E%2E/etc/passwd");
+        response = HttpTester.parseResponse(SERVLET_TESTER.getResponses(request.generate()));
+        assertThat(response.getStatus())
+                .describedAs("Path traversal via percent-encoded '..' segments must be rejected")
+                .isIn(400, 404);
+
+        // Bare percent-encoded double-dot
+        request.setURI(DUMMY_SERVLET + "%2E%2E");
+        response = HttpTester.parseResponse(SERVLET_TESTER.getResponses(request.generate()));
+        assertThat(response.getStatus())
+                .describedAs("Bare percent-encoded '..' must be rejected")
+                .isIn(400, 404);
+
+        // Nested traversal with mixed encoding
+        request.setURI(DUMMY_SERVLET + "some_directory/%2E%2E/%2E%2E/secret");
+        response = HttpTester.parseResponse(SERVLET_TESTER.getResponses(request.generate()));
+        assertThat(response.getStatus())
+                .describedAs("Nested percent-encoded '..' traversal must be rejected")
+                .isIn(400, 404);
+    }
+
     @Test
     void allowsEncodedAssetNames() throws Exception {
         request.setURI(DUMMY_SERVLET + "encoded%20example.txt");
         response = HttpTester.parseResponse(SERVLET_TESTER.getResponses(request.generate()));
         assertThat(response.getStatus())
                 .isEqualTo(200);
+    }
+
+    @Test
+    void ignoresTooManyByteRangesToPreventDos() throws Exception {
+        request.setURI(ROOT_SERVLET + "assets/example.txt");
+        // Request 6 ranges (5 commas) -> should ignore Range and return 200 OK
+        request.setHeader(HttpHeader.RANGE.asString(), "bytes=0-0,1-1,2-2,3-3,4-4,5-5");
+        response = HttpTester.parseResponse(SERVLET_TESTER.getResponses(request.generate()));
+        assertThat(response.getStatus()).isEqualTo(200);
+        assertThat(response.getContent()).isEqualTo("HELLO THERE");
+        assertThat(response.get(HttpHeader.CONTENT_RANGE)).isNull();
+    }
+
+    @Test
+    void handlesMalformedRangeHeaderGracefully() throws Exception {
+        request.setURI(ROOT_SERVLET + "assets/example.txt");
+        // Request range with space before dash -> throws IllegalArgumentException -> returns 416
+        request.setHeader(HttpHeader.RANGE.asString(), "bytes= -");
+        response = HttpTester.parseResponse(SERVLET_TESTER.getResponses(request.generate()));
+        assertThat(response.getStatus()).isEqualTo(416);
     }
 }
