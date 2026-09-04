@@ -1,5 +1,7 @@
 package io.dropwizard.auth.basic;
 
+import java.security.MessageDigest;
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 import static java.util.Objects.requireNonNull;
@@ -46,6 +48,16 @@ public class BasicCredentials {
         return Objects.hash(username, password);
     }
 
+    /**
+     * Returns {@code true} if both the username and password match.
+     *
+     * <p>The password comparison uses {@link MessageDigest#isEqual} — a constant-time
+     * byte comparison — to eliminate a timing side-channel. Because {@link
+     * io.dropwizard.auth.CachingAuthenticator} uses {@code BasicCredentials} as a
+     * cache key, {@code equals} is on the critical authentication path; a short-circuit
+     * {@link String#equals} comparison would leak prefix information about the stored
+     * password to a remote attacker who can measure response latency.
+     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -55,7 +67,10 @@ public class BasicCredentials {
             return false;
         }
         final BasicCredentials other = (BasicCredentials) obj;
-        return Objects.equals(this.username, other.username) && Objects.equals(this.password, other.password);
+        return Objects.equals(this.username, other.username)
+                && MessageDigest.isEqual(
+                       this.password.getBytes(StandardCharsets.UTF_8),
+                       other.password.getBytes(StandardCharsets.UTF_8));
     }
 
 
