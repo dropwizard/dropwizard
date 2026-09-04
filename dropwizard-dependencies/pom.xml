@@ -68,7 +68,7 @@
         <assertj.version>3.27.7</assertj.version>
         <awaitility.version>4.3.0</awaitility.version>
         <bcprov-jdk18on.version>1.85.2</bcprov-jdk18on.version>
-        <h2.version>2.4.240</h2.version>
+        <h2.version>2.5.250</h2.version>
         <junit5.version>5.14.4</junit5.version>
         <mockito.version>5.23.0</mockito.version>
 
