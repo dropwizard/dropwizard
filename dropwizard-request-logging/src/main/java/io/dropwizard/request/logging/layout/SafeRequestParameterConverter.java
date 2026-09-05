@@ -20,7 +20,7 @@ public class SafeRequestParameterConverter extends AccessConverter {
     @Override
     public void start() {
         key = getFirstOption();
-        if (OptionHelper.isEmpty(key)) {
+        if (OptionHelper.isNullOrEmptyOrAllSpaces(key)) {
             addWarn("Missing key for the request parameter");
         } else {
             super.start();

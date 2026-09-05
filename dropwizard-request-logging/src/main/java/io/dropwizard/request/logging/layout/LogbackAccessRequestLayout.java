@@ -17,8 +17,8 @@ public class LogbackAccessRequestLayout extends PatternLayout {
 
     static  {
         // Replace the buggy default converter which don't work async appenders
-        ch.qos.logback.classic.PatternLayout.DEFAULT_CONVERTER_MAP.put("requestParameter", SafeRequestParameterConverter.class.getName());
-        ch.qos.logback.classic.PatternLayout.DEFAULT_CONVERTER_MAP.put("reqParameter", SafeRequestParameterConverter.class.getName());
+        PatternLayout.ACCESS_DEFAULT_CONVERTER_SUPPLIER_MAP.put("requestParameter", SafeRequestParameterConverter::new);
+        PatternLayout.ACCESS_DEFAULT_CONVERTER_SUPPLIER_MAP.put("reqParameter", SafeRequestParameterConverter::new);
     }
 
     public LogbackAccessRequestLayout(Context context, TimeZone timeZone) {
