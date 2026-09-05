@@ -53,6 +53,9 @@ class LogbackAccessRequestLayoutTest {
         layout.start();
         layout.doLayout(accessEvent);
 
+        assertThat(layout.getEffectiveConverterMap())
+                .hasEntrySatisfying(patternKey, supplier -> assertThat(supplier.get()).isInstanceOf(SafeRequestParameterConverter.class));
+
         verify(accessEvent).getRequestParameterMap();
     }
 
