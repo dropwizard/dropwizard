@@ -3,6 +3,7 @@ package io.dropwizard.testing.junit5;
 import io.dropwizard.core.setup.Environment;
 import io.dropwizard.testing.app.DropwizardTestApplication;
 import io.dropwizard.testing.app.TestConfiguration;
+import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.MediaType;
 import org.glassfish.jersey.client.JerseyClientBuilder;
@@ -71,6 +72,19 @@ abstract class AbstractDropwizardAppExtensionTest {
                 .getMessage();
         assertThat(message)
                 .hasValue("Yes, it's here");
+    }
+
+    @Test
+    void customBuiltClientUsesJacksonMapperFromEnvironment() {
+        try (Client createdClient = getExtension().clientBuilder().build()) {
+            final Optional<String> message
+                = createdClient.target("http://localhost:" + getExtension().getLocalPort() + "/message")
+                .request()
+                .get(DropwizardTestApplication.MessageView.class)
+                .getMessage();
+            assertThat(message)
+                .hasValue("Yes, it's here");
+        }
     }
 
     @Test

@@ -11,20 +11,24 @@ import io.dropwizard.core.setup.Environment;
 import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.servlets.tasks.PostBodyTask;
 import io.dropwizard.servlets.tasks.Task;
+import io.dropwizard.testing.app.DropwizardTestApplication;
 import io.dropwizard.testing.app.TestConfiguration;
 import io.dropwizard.validation.BaseValidator;
 import jakarta.validation.Validator;
+import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.MediaType;
 import org.glassfish.jersey.client.JerseyClientBuilder;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.PrintWriter;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static io.dropwizard.jackson.Jackson.newObjectMapper;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -126,6 +130,62 @@ class DropwizardTestSupportTest {
                 support.after();
             }
         });
+    }
+
+    @Nested
+    class ClientTests {
+        @Test
+        void canGetExpectedResourceOverHttp() {
+            final String content = TEST_SUPPORT.getClient()
+                .target("http://localhost:" + TEST_SUPPORT.getLocalPort() + "/test")
+                .request()
+                .get(String.class);
+
+            assertThat(content).isEqualTo("Yes, it's here");
+        }
+
+        @Test
+        void canPerformAdminTaskWithPostBody() {
+            final String response = TEST_SUPPORT.getClient()
+                .target("http://localhost:" + TEST_SUPPORT.getAdminPort() + "/tasks/echo")
+                .request()
+                .post(Entity.entity("Custom message", MediaType.TEXT_PLAIN), String.class);
+
+            assertThat(response).isEqualTo("Custom message");
+        }
+
+        @Test
+        void clientUsesJacksonMapperFromEnvironment() {
+            final Optional<String> message = TEST_SUPPORT.getClient()
+                .target("http://localhost:" + TEST_SUPPORT.getLocalPort() + "/message")
+                .request()
+                .get(DropwizardTestApplication.MessageView.class)
+                .getMessage();
+            assertThat(message)
+                .hasValue("Yes, it's here");
+        }
+
+        @Test
+        void customBuiltClientUsesJacksonMapperFromEnvironment() {
+            try (Client createdClient = TEST_SUPPORT.clientBuilder().build()) {
+                final Optional<String> message
+                    = createdClient.target("http://localhost:" + TEST_SUPPORT.getLocalPort() + "/message")
+                    .request()
+                    .get(DropwizardTestApplication.MessageView.class)
+                    .getMessage();
+                assertThat(message)
+                    .hasValue("Yes, it's here");
+            }
+        }
+
+        @Test
+        void clientSupportsPatchMethod() {
+            final String method = TEST_SUPPORT.getClient()
+                .target("http://localhost:" + TEST_SUPPORT.getLocalPort() + "/echoPatch")
+                .request()
+                .method("PATCH", Entity.text("Patch is working"), String.class);
+            assertThat(method).isEqualTo("Patch is working");
+        }
     }
 
     public static class FailingApplication extends Application<TestConfiguration> {

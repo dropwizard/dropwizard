@@ -11,14 +11,23 @@ import io.dropwizard.core.cli.EnvironmentCommand;
 import io.dropwizard.core.cli.ServerCommand;
 import io.dropwizard.core.setup.Bootstrap;
 import io.dropwizard.core.setup.Environment;
+import io.dropwizard.jersey.jackson.JacksonFeature;
 import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.logging.common.LoggingUtil;
 import jakarta.validation.constraints.NotNull;
+import jakarta.ws.rs.client.Client;
 import net.sourceforge.argparse4j.inf.Namespace;
-import org.jspecify.annotations.Nullable;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
+import org.glassfish.jersey.apache5.connector.Apache5ConnectorProvider;
+import org.glassfish.jersey.apache5.connector.Apache5HttpClientBuilderConfigurator;
+import org.glassfish.jersey.client.ClientConfig;
+import org.glassfish.jersey.client.ClientProperties;
+import org.glassfish.jersey.client.JerseyClientBuilder;
+import org.glassfish.jersey.client.RequestEntityProcessing;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 
 import java.lang.reflect.InvocationTargetException;
@@ -43,6 +52,9 @@ import static java.util.Objects.requireNonNull;
  * @param <C> the configuration type
  */
 public class DropwizardTestSupport<C extends Configuration> {
+    private static final int CLIENT_DEFAULT_CONNECT_TIMEOUT_MS = 1000;
+    private static final int CLIENT_DEFAULT_READ_TIMEOUT_MS = 5000;
+
     protected final Class<? extends Application<C>> applicationClass;
 
     @Nullable
@@ -53,6 +65,9 @@ public class DropwizardTestSupport<C extends Configuration> {
     @Nullable
     protected final String customPropertyPrefix;
     protected final Function<Application<C>, Command> commandInstantiator;
+
+    @Nullable
+    private Client client;
 
     /**
      * Flag that indicates whether instance was constructed with an explicit
@@ -218,6 +233,12 @@ public class DropwizardTestSupport<C extends Configuration> {
             stopIfRequired();
         } finally {
             resetConfigOverrides();
+            synchronized (this) {
+                if (client != null) {
+                    client.close();
+                    client = null;
+                }
+            }
         }
     }
 
@@ -361,5 +382,54 @@ public class DropwizardTestSupport<C extends Configuration> {
         public void onStop(DropwizardTestSupport<T> rule) throws Exception {
             // Default NOP
         }
+    }
+
+    /**
+     * Returns a new HTTP Jersey {@link Client} for performing HTTP requests against the tested
+     * Dropwizard server. The client can be reused across different tests and automatically
+     * closed along with the server. The client can be augmented by overriding the
+     * {@link #clientBuilder()} method or calling it directly.
+     *
+     * @return a shared {@link Client} managed by the extension. Do not close it.
+     */
+    public Client client() {
+        synchronized (this) {
+            if (client == null) {
+                client = clientBuilder().build();
+            }
+            return client;
+        }
+    }
+
+    /**
+     * Alias for {@link #client()} that is more friendly to IDE warnings about not closing a resource.
+     *
+     * @return a shared {@link Client} managed by the extension. Do not close it.
+     */
+    public Client getClient() {
+        return client();
+    }
+
+    /**
+     * Returns a Jersey client builder object with the various configurations applied that would be done if the
+     * {@link #client()} or {@link #getClient()} methods were called to build/acquire the shared {@link Client} for
+     * testing.
+     * <p>
+     * Using this method means that the caller now inherits all responsibility of managing any created {@code Client}
+     * instance's lifecycle.
+     *
+     * @return builder for creating a {@link Client} object
+     */
+    public JerseyClientBuilder clientBuilder() {
+        ClientConfig clientConfig = new ClientConfig();
+        Apache5HttpClientBuilderConfigurator contentCompressionConfigurator =
+            HttpClientBuilder::disableContentCompression;
+        clientConfig.connectorProvider(new Apache5ConnectorProvider())
+            .register(new JacksonFeature(getObjectMapper()))
+            .register(contentCompressionConfigurator)
+            .property(ClientProperties.CONNECT_TIMEOUT, CLIENT_DEFAULT_CONNECT_TIMEOUT_MS)
+            .property(ClientProperties.READ_TIMEOUT, CLIENT_DEFAULT_READ_TIMEOUT_MS)
+            .property(ClientProperties.REQUEST_ENTITY_PROCESSING, RequestEntityProcessing.BUFFERED);
+        return new JerseyClientBuilder().withConfig(clientConfig);
     }
 }
