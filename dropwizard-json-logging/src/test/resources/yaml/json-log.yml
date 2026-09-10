@@ -13,6 +13,7 @@ layout:
     - exception
     - timestamp
     - callerData
+    - keyValuePairs
   exception:
     rootFirst: false
     depth: 10
@@ -26,3 +27,6 @@ layout:
   includesMdcKeys:
     - userId
   flattenMdc: true
+  includesKeyValuePairsKeys:
+    - operation
+  flattenKeyValuePairs: true
