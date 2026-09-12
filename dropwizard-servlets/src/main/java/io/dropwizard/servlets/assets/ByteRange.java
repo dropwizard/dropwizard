@@ -11,43 +11,50 @@ import java.util.stream.Collectors;
 @Immutable
 public final class ByteRange {
 
-    private final int start;
-    private final int end;
+    private final long start;
+    private final long end;
 
-    public ByteRange(final int start, final int end) {
+    public ByteRange(final long start, final long end) {
+        if (start < 0) {
+            throw new IllegalArgumentException("start must be >= 0");
+        }
+        if (end < start) {
+            throw new IllegalArgumentException("end must be >= start");
+        }
         this.start = start;
         this.end = end;
     }
 
-    public int getStart() {
+    public long getStart() {
         return start;
     }
 
-    public int getEnd() {
+    public long getEnd() {
         return end;
     }
 
     public static ByteRange parse(final String byteRange,
-                                  final int resourceLength) {
+                                  final long resourceLength) {
         final String asciiString = new String(byteRange.getBytes(StandardCharsets.US_ASCII), StandardCharsets.US_ASCII);
         // missing separator
         if (!byteRange.contains("-")) {
-            final int start = Integer.parseInt(asciiString);
+            final long start = Long.parseLong(asciiString);
             return new ByteRange(start, resourceLength - 1);
         }
         // negative range
         if (byteRange.indexOf("-") == 0) {
-            final int start = Integer.parseInt(asciiString);
-            return new ByteRange(resourceLength + start, resourceLength - 1);
+            final long start = Long.parseLong(asciiString);
+            final long calculatedStart = resourceLength + start;
+            return new ByteRange(calculatedStart < 0 ? 0 : calculatedStart, resourceLength - 1);
         }
         final List<String> parts = Arrays.stream(asciiString.split("-", -1))
                 .map(String::trim)
                 .filter(s -> !s.isEmpty())
                 .collect(Collectors.toList());
 
-        final int start = Integer.parseInt(parts.get(0));
+        final long start = Long.parseLong(parts.get(0));
         if (parts.size() == 2) {
-            int end = Integer.parseInt(parts.get(1));
+            long end = Long.parseLong(parts.get(1));
             if (end > resourceLength) {
                 end = resourceLength - 1;
             }

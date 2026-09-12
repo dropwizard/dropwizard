@@ -29,10 +29,40 @@ class BasicCredentialsTest {
 
     @Test
     void hasAWorkingHashCode() {
+        // Same username AND password → same hashCode
         assertThat(credentials.hashCode())
-            .hasSameHashCodeAs(new BasicCredentials("u", "p"))
-            .isNotEqualTo(new BasicCredentials("u1", "p").hashCode())
-            .isNotEqualTo(new BasicCredentials("u", "p1").hashCode());
+            .hasSameHashCodeAs(new BasicCredentials("u", "p"));
+
+        // Different username → different hashCode (username drives the hash)
+        assertThat(credentials.hashCode())
+            .isNotEqualTo(new BasicCredentials("u1", "p").hashCode());
+
+        // Different password with the same username → same hashCode by design.
+        // Password is excluded from hashCode() to force all same-username lookups
+        // through the constant-time equals() path (see BasicCredentials#hashCode javadoc).
+        assertThat(credentials.hashCode())
+            .isEqualTo(new BasicCredentials("u", "p1").hashCode());
+    }
+
+    /**
+     * Verifies that the password is excluded from {@code hashCode()} so that
+     * same-username credentials always fall into the same {@link java.util.HashMap}
+     * bucket, guaranteeing that the constant-time {@code equals()} path is reached
+     * for every authentication attempt in {@link io.dropwizard.auth.CachingAuthenticator}.
+     */
+    @Test
+    void hashCodeExcludesPassword() {
+        final BasicCredentials sameUserDiffPass1 = new BasicCredentials("alice", "correcthorsebattery");
+        final BasicCredentials sameUserDiffPass2 = new BasicCredentials("alice", "wrongpassword");
+        final BasicCredentials differentUser    = new BasicCredentials("bob",   "correcthorsebattery");
+
+        assertThat(sameUserDiffPass1.hashCode())
+            .as("credentials with the same username must hash to the same bucket regardless of password")
+            .isEqualTo(sameUserDiffPass2.hashCode());
+
+        assertThat(sameUserDiffPass1.hashCode())
+            .as("credentials with a different username must not hash to the same bucket")
+            .isNotEqualTo(differentUser.hashCode());
     }
 
     @Test
