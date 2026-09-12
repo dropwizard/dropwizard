@@ -52,6 +52,22 @@ class ByteRangeTest {
     }
 
     @Test
+    void invalidByteRangesThrowIllegalArgumentException() {
+        assertThatExceptionOfType(IllegalArgumentException.class)
+            .isThrownBy(() -> ByteRange.parse("10000-20000", RESOURCE_LENGTH));
+        assertThatExceptionOfType(IllegalArgumentException.class)
+            .isThrownBy(() -> ByteRange.parse("10000-", RESOURCE_LENGTH));
+        assertThatExceptionOfType(IllegalArgumentException.class)
+            .isThrownBy(() -> ByteRange.parse("10500", RESOURCE_LENGTH));
+        assertThatExceptionOfType(IllegalArgumentException.class)
+            .isThrownBy(() -> ByteRange.parse("8-3", RESOURCE_LENGTH));
+        assertThatExceptionOfType(IllegalArgumentException.class)
+            .isThrownBy(() -> ByteRange.parse("0-499", 0));
+        assertThatExceptionOfType(IllegalArgumentException.class)
+            .isThrownBy(() -> ByteRange.parse("-500", 0));
+    }
+
+    @Test
     void nonASCIIDisallowed() {
         assertThatExceptionOfType(NumberFormatException.class)
             .isThrownBy(() -> ByteRange.parse("០-០", RESOURCE_LENGTH));
