@@ -67,6 +67,12 @@ class FreemarkerViewRendererTest extends JerseyTest {
         public AutoEscapingView showUserInputSafely(@FormParam("input") String userInput) {
             return new AutoEscapingView(userInput);
         }
+
+        @GET
+        @Path("/csp")
+        public CspView showCsp() {
+            return new CspView();
+        }
     }
 
     @Override
@@ -86,6 +92,7 @@ class FreemarkerViewRendererTest extends JerseyTest {
         ResourceConfig config = new ResourceConfig();
         final ViewRenderer renderer = new FreemarkerViewRenderer(Configuration.VERSION_2_3_30);
         config.register(new ViewMessageBodyWriter(new MetricRegistry(), Collections.singletonList(renderer)));
+        config.register(new io.dropwizard.jersey.filter.CspFilter("default-src 'self'; script-src 'nonce-$NONCE';", null));
         config.register(new ExampleResource());
         config.register(new ViewRenderExceptionMapper());
         return config;
@@ -137,6 +144,22 @@ class FreemarkerViewRendererTest extends JerseyTest {
                 .satisfies(r -> assertThat(r.getStatus()).isEqualTo(Response.Status.OK.getStatusCode()))
                 .satisfies(r -> assertThat(r.getHeaderString("content-type")).isEqualToIgnoringCase(MediaType.TEXT_HTML))
                 .satisfies(r -> assertThat(r.readEntity(String.class)).doesNotContain(unsafe));
+        }
+    }
+
+    @Test
+    void rendersViewsWithCspNonce() {
+        try (final Response response = target("/test/csp").request().get()) {
+            assertThat(response.getStatus()).isEqualTo(Response.Status.OK.getStatusCode());
+            final String body = response.readEntity(String.class);
+            final String cspHeader = response.getHeaderString("Content-Security-Policy");
+            assertThat(cspHeader).startsWith("default-src 'self'; script-src 'nonce-");
+
+            final String prefix = "default-src 'self'; script-src 'nonce-";
+            final String suffix = "';";
+            final String nonce = cspHeader.substring(prefix.length(), cspHeader.length() - suffix.length());
+
+            assertThat(body).isEqualTo("<script nonce=\"" + nonce + "\">console.log(\"hello\");</script>\n");
         }
     }
 }

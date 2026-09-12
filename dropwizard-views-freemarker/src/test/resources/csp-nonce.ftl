@@ -1,0 +1,1 @@
+<script nonce="${cspNonce}">console.log("hello");</script>

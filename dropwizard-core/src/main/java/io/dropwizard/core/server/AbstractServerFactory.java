@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.core.setup.AdminEnvironment;
 import io.dropwizard.core.setup.ExceptionMapperBinder;
 import io.dropwizard.jersey.filter.AllowedMethodsFilter;
+import io.dropwizard.jersey.filter.CspFilter;
 import io.dropwizard.jersey.jackson.JacksonFeature;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
 import io.dropwizard.jersey.validation.HibernateValidationBinder;
@@ -301,6 +302,10 @@ public abstract class AbstractServerFactory implements ServerFactory {
 
     private Optional<String> jerseyRootPath = Optional.empty();
 
+    @Valid
+    @NotNull
+    private CspConfiguration csp = new CspConfiguration();
+
     private boolean enableThreadNameFilter = true;
 
     private boolean dumpAfterStart = false;
@@ -516,6 +521,16 @@ public abstract class AbstractServerFactory implements ServerFactory {
         this.jerseyRootPath = Optional.ofNullable(jerseyRootPath);
     }
 
+    @JsonProperty("csp")
+    public CspConfiguration getCsp() {
+        return csp;
+    }
+
+    @JsonProperty("csp")
+    public void setCsp(CspConfiguration csp) {
+        this.csp = csp;
+    }
+
     @JsonProperty
     public boolean getEnableThreadNameFilter() {
         return enableThreadNameFilter;
@@ -616,6 +631,9 @@ public abstract class AbstractServerFactory implements ServerFactory {
             jersey.register(new HibernateValidationBinder(validator));
             if (registerDefaultExceptionMappers == null || registerDefaultExceptionMappers) {
                 jersey.register(new ExceptionMapperBinder(detailedJsonProcessingExceptionMapper));
+            }
+            if (csp.getPolicy().isPresent() || csp.getReportOnlyPolicy().isPresent()) {
+                jersey.register(new CspFilter(csp.getPolicy().orElse(null), csp.getReportOnlyPolicy().orElse(null)));
             }
             handler.addServlet(new ServletHolder("jersey", jerseyContainer), jersey.getUrlPattern());
         }
