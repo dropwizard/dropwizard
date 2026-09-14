@@ -42,10 +42,6 @@
                     <artifactId>jaxb-api</artifactId>
                 </exclusion>
                 <exclusion>
-                    <groupId>javax.activation</groupId>
-                    <artifactId>javax.activation-api</artifactId>
-                </exclusion>
-                <exclusion>
                     <groupId>org.apache.commons</groupId>
                     <artifactId>commons-collections4</artifactId>
                 </exclusion>
@@ -67,6 +63,10 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-jdbc</artifactId>
         </dependency>
 
         <dependency>
@@ -105,11 +105,6 @@
             <artifactId>h2</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.apache.tomcat</groupId>
-            <artifactId>tomcat-jdbc</artifactId>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
     <build>
@@ -117,13 +112,18 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
-                <configuration>
-                    <ignoredUnusedDeclaredDependencies>
-                        <ignoredUnusedDeclaredDependency>
-                            org.apache.commons:commons-collections4
-                        </ignoredUnusedDeclaredDependency>
-                    </ignoredUnusedDeclaredDependencies>
-                </configuration>
+                <executions>
+                    <execution>
+                        <id>analyze</id>
+                        <configuration>
+                            <ignoredUnusedDeclaredDependencies>
+                                <ignoredUnusedDeclaredDependency>
+                                    org.apache.commons:commons-collections4
+                                </ignoredUnusedDeclaredDependency>
+                            </ignoredUnusedDeclaredDependencies>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>

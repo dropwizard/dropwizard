@@ -132,32 +132,14 @@
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-security</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.eclipse.jetty.toolchain</groupId>
-                    <artifactId>jetty-jakarta-servlet-api</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-server</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.eclipse.jetty.toolchain</groupId>
-                    <artifactId>jetty-jakarta-servlet-api</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty.ee10</groupId>
             <artifactId>jetty-ee10-servlet</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.eclipse.jetty.toolchain</groupId>
-                    <artifactId>jetty-jakarta-servlet-api</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
@@ -174,26 +156,18 @@
         <dependency>
             <groupId>org.glassfish.jersey.core</groupId>
             <artifactId>jersey-common</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.glassfish.hk2.external</groupId>
-                    <artifactId>jakarta.inject</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.glassfish.jersey.ext</groupId>
             <artifactId>jersey-bean-validation</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.glassfish.hk2.external</groupId>
-                    <artifactId>jakarta.inject</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate.validator</groupId>
+            <artifactId>hibernate-validator</artifactId>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -218,17 +192,6 @@
         <dependency>
             <groupId>org.glassfish.jersey.test-framework.providers</groupId>
             <artifactId>jersey-test-framework-provider-inmemory</artifactId>
-            <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.glassfish.hk2.external</groupId>
-                    <artifactId>jakarta.inject</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate.validator</groupId>
-            <artifactId>hibernate-validator</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

@@ -39,12 +39,6 @@
             <groupId>io.dropwizard</groupId>
             <artifactId>dropwizard-testing</artifactId>
             <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>junit</groupId>
-                    <artifactId>junit</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>

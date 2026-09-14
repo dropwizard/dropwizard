@@ -19,6 +19,10 @@
     <dependencies>
         <dependency>
             <groupId>io.dropwizard</groupId>
+            <artifactId>dropwizard-configuration</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.dropwizard</groupId>
             <artifactId>dropwizard-core</artifactId>
         </dependency>
         <dependency>
@@ -27,11 +31,19 @@
         </dependency>
         <dependency>
             <groupId>io.dropwizard</groupId>
+            <artifactId>dropwizard-jackson</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.dropwizard</groupId>
             <artifactId>dropwizard-jersey</artifactId>
         </dependency>
         <dependency>
             <groupId>io.dropwizard</groupId>
             <artifactId>dropwizard-lifecycle</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.dropwizard</groupId>
+            <artifactId>dropwizard-logging</artifactId>
         </dependency>
         <dependency>
             <groupId>io.dropwizard</groupId>
@@ -44,6 +56,10 @@
         <dependency>
             <groupId>io.dropwizard.metrics</groupId>
             <artifactId>metrics-healthchecks</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -83,12 +99,10 @@
         <dependency>
             <groupId>org.glassfish.jersey.core</groupId>
             <artifactId>jersey-server</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.glassfish.hk2.external</groupId>
-                    <artifactId>jakarta.inject</artifactId>
-                </exclusion>
-            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.core</groupId>
+            <artifactId>jersey-client</artifactId>
         </dependency>
         <dependency>
             <groupId>net.bytebuddy</groupId>
@@ -97,12 +111,6 @@
         <dependency>
             <groupId>org.hibernate.orm</groupId>
             <artifactId>hibernate-core</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>jakarta.xml.bind</groupId>
-                    <artifactId>jakarta.xml.bind-api</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>jakarta.activation</groupId>
@@ -117,6 +125,10 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-jdbc</artifactId>
         </dependency>
 
         <dependency>
@@ -146,11 +158,6 @@
         </dependency>
         <dependency>
             <groupId>io.dropwizard</groupId>
-            <artifactId>dropwizard-configuration</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.dropwizard</groupId>
             <artifactId>dropwizard-testing</artifactId>
             <scope>test</scope>
         </dependency>
@@ -163,41 +170,10 @@
             <groupId>org.glassfish.jersey.test-framework</groupId>
             <artifactId>jersey-test-framework-core</artifactId>
             <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.glassfish.hk2.external</groupId>
-                    <artifactId>jakarta.inject</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.glassfish.jersey.test-framework.providers</groupId>
             <artifactId>jersey-test-framework-provider-inmemory</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.dropwizard</groupId>
-            <artifactId>dropwizard-jackson</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-annotations</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.tomcat</groupId>
-            <artifactId>tomcat-jdbc</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.dropwizard</groupId>
-            <artifactId>dropwizard-logging</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish.jersey.core</groupId>
-            <artifactId>jersey-client</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
