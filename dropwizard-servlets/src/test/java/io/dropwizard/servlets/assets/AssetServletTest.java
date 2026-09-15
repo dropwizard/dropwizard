@@ -211,7 +211,7 @@ public class AssetServletTest {
                 .describedAs("eTag generation should be consistent with concurrent requests")
                 .hasSize(1);
         assertThat(firstEtag)
-                .isEqualTo("\"e7bd7e8e\"")
+                .isEqualTo("\"58c688a0f443e3a22ced922e51ea0ba7\"")
                 .isEqualTo(eTags.iterator().next());
     }
 
@@ -225,9 +225,9 @@ public class AssetServletTest {
         final String secondEtag = response.get(HttpHeader.ETAG);
 
         assertThat(firstEtag)
-                .isEqualTo("\"e7bd7e8e\"");
+                .isEqualTo("\"58c688a0f443e3a22ced922e51ea0ba7\"");
         assertThat(secondEtag)
-                .isEqualTo("\"2684fb5a\"");
+                .isEqualTo("\"25c732b9dce86d9e2778fd02e984e1d7\"");
     }
 
     @Test
