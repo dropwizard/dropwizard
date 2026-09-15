@@ -1,5 +1,7 @@
 package io.dropwizard.auth.basic;
 
+import java.security.MessageDigest;
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 import static java.util.Objects.requireNonNull;
@@ -43,9 +45,32 @@ public class BasicCredentials {
 
     @Override
     public int hashCode() {
-        return Objects.hash(username, password);
+        // Intentionally exclude the password from the hash.
+        //
+        // BasicCredentials is used as the cache key of CachingAuthenticator, which stores
+        // credentials in a hash-map. Including the password in hashCode() would mean that
+        // two credentials for the same user with *different* passwords land in different
+        // buckets, so the constant-time equals() comparison (which uses MessageDigest.isEqual)
+        // is never reached. An attacker who can measure cache-hit vs. bucket-miss timing would
+        // gain a coarser timing oracle on the password.
+        //
+        // Excluding the password ensures that same-username lookups always enter the same
+        // bucket, forcing the constant-time equals() path for every authentication attempt.
+        // The Java hashCode/equals contract still holds: equal objects share the same username
+        // and therefore the same hashCode.
+        return username.hashCode();
     }
 
+    /**
+     * Returns {@code true} if both the username and password match.
+     *
+     * <p>The password comparison uses {@link MessageDigest#isEqual} — a constant-time
+     * byte comparison — to eliminate a timing side-channel. Because {@link
+     * io.dropwizard.auth.CachingAuthenticator} uses {@code BasicCredentials} as a
+     * cache key, {@code equals} is on the critical authentication path; a short-circuit
+     * {@link String#equals} comparison would leak prefix information about the stored
+     * password to a remote attacker who can measure response latency.
+     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -55,7 +80,10 @@ public class BasicCredentials {
             return false;
         }
         final BasicCredentials other = (BasicCredentials) obj;
-        return Objects.equals(this.username, other.username) && Objects.equals(this.password, other.password);
+        return Objects.equals(this.username, other.username)
+                && MessageDigest.isEqual(
+                       this.password.getBytes(StandardCharsets.UTF_8),
+                       other.password.getBytes(StandardCharsets.UTF_8));
     }
 
 
