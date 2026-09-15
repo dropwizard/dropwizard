@@ -102,14 +102,21 @@ public class ResourceURL {
                 return 0;
             case "file":
                 URLConnection connection = null;
+                InputStream stream = null;
                 try {
                     connection = resourceURL.openConnection();
+                    // Open the stream once so we hold a reference we can close in finally.
+                    // The original code called getInputStream() inside the finally block,
+                    // which opened a *new* FileInputStream that was then immediately closed
+                    // while the stream opened here was never closed — leaking a file
+                    // descriptor on every call.
+                    stream = connection.getInputStream();
                     return connection.getLastModified();
                 } catch (IOException ignored) {
                 } finally {
-                    if (connection != null) {
+                    if (stream != null) {
                         try {
-                            connection.getInputStream().close();
+                            stream.close();
                         } catch (IOException ignored) {
                         }
                     }
