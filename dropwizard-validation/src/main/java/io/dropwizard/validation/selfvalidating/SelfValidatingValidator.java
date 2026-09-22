@@ -38,7 +38,7 @@ public class SelfValidatingValidator implements ConstraintValidator<SelfValidati
     }
 
     @SuppressWarnings("rawtypes")
-    private final ConcurrentMap<Class<?>, List<ValidationCaller>> methodMap = new ConcurrentHashMap<>();
+    private final ConcurrentMap<Class<?>, List<ProxyValidationCaller>> methodMap = new ConcurrentHashMap<>();
     private final AnnotationConfiguration annotationConfiguration = new AnnotationConfiguration.StdConfiguration(AnnotationInclusion.INCLUDE_AND_INHERIT_IF_INHERITED);
     private final TypeResolver typeResolver = new TypeResolver();
     private final MemberResolver memberResolver = new MemberResolver(typeResolver);
@@ -48,21 +48,20 @@ public class SelfValidatingValidator implements ConstraintValidator<SelfValidati
     public boolean isValid(Object value, ConstraintValidatorContext context) {
         final ViolationCollector collector = new ViolationCollector(context);
         context.disableDefaultConstraintViolation();
-        for (ValidationCaller caller : methodMap.computeIfAbsent(value.getClass(), this::findMethods)) {
-            caller.setValidationObject(value);
-            caller.call(collector);
+        for (ProxyValidationCaller caller : methodMap.computeIfAbsent(value.getClass(), this::findMethods)) {
+            caller.call(collector, value);
         }
         return !collector.hasViolationOccurred();
     }
 
     /**
-     * This method generates <code>ValidationCaller</code>s for each method annotated
-     * with <code>@SelfValidation</code> that adheres to required signature.
+     * This method generates {@code ProxyValidationCaller}s for each method annotated
+     * with {@code @SelfValidation} that adheres to required signature.
      */
     @SuppressWarnings({ "rawtypes" })
-    private <T> List<ValidationCaller> findMethods(Class<T> annotated) {
+    private <T> List<ProxyValidationCaller> findMethods(Class<T> annotated) {
         ResolvedTypeWithMembers annotatedType = memberResolver.resolve(typeResolver.resolve(annotated), annotationConfiguration, null);
-        final List<ValidationCaller> callers = Arrays.stream(annotatedType.getMemberMethods())
+        final List<ProxyValidationCaller> callers = Arrays.stream(annotatedType.getMemberMethods())
             .filter(this::isValidationMethod)
             .filter(this::isMethodCorrect)
             .map(m -> new ProxyValidationCaller<>(annotated, m))
@@ -93,7 +92,7 @@ public class SelfValidatingValidator implements ConstraintValidator<SelfValidati
         return true;
     }
 
-    static final class ProxyValidationCaller<T> extends ValidationCaller<T> {
+    static final class ProxyValidationCaller<T> {
         private final Class<T> cls;
         private final ResolvedMethod resolvedMethod;
 
@@ -102,14 +101,13 @@ public class SelfValidatingValidator implements ConstraintValidator<SelfValidati
             this.resolvedMethod = resolvedMethod;
         }
 
-        @Override
-        public void call(ViolationCollector vc) {
+        public void call(ViolationCollector vc, T targetInstanceToValidate) {
             final Method method = resolvedMethod.getRawMember();
-            final T obj = cls.cast(getValidationObject());
+            final T obj = cls.cast(targetInstanceToValidate);
             try {
                 method.invoke(obj, vc);
             } catch (ReflectiveOperationException e) {
-                throw new IllegalStateException("Couldn't call " + resolvedMethod + " on " + getValidationObject(), e);
+                throw new IllegalStateException("Couldn't call " + resolvedMethod + " on " + obj, e);
             }
         }
     }
