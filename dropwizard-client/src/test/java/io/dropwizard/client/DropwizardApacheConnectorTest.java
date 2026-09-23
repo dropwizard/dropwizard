@@ -13,6 +13,7 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.ProcessingException;
 import jakarta.ws.rs.client.Invocation;
 import jakarta.ws.rs.client.WebTarget;
+import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.MultivaluedHashMap;
 import jakarta.ws.rs.core.Response;
 import org.apache.hc.client5.http.ConnectTimeoutException;
@@ -47,6 +48,12 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(DropwizardExtensionsSupport.class)
 class DropwizardApacheConnectorTest {
+
+    /**
+     * Large enough to exceed the server's default minimum gzip entity size (256 bytes),
+     * so the response is actually compressed on the wire.
+     */
+    private static final String GZIP_CONTENT = "Dropwizard ".repeat(200);
 
     private static final int SLEEP_TIME_IN_MILLIS = 1000;
     private static final int DEFAULT_CONNECT_TIMEOUT_IN_MILLIS = 500;
@@ -169,6 +176,24 @@ class DropwizardApacheConnectorTest {
         }
     }
 
+    /**
+     * Reproduces issue #11249. With {@code gzipEnabled=true} (the default), Apache HttpClient
+     * transparently decompresses the gzip response entity, but the connector copies the raw
+     * response headers verbatim — leaving a stale {@code Content-Encoding: gzip} and a
+     * {@code Content-Length} describing the compressed body onto the already-decompressed
+     * stream handed to Jersey. Those headers are inconsistent with the entity and drive
+     * Jersey's {@code GZipDecoder} to attempt a second decompression. The connector must drop
+     * them so the response describes the entity Jersey actually receives.
+     */
+    @Test
+    void when_server_gzips_response_then_stale_content_headers_are_dropped() {
+        try (Response response = client.target(testUri + "/gzipped_content").request().get()) {
+            assertThat(response.getHeaderString(HttpHeaders.CONTENT_ENCODING)).isNull();
+            assertThat(response.getHeaderString(HttpHeaders.CONTENT_LENGTH)).isNull();
+            assertThat(response.readEntity(String.class)).isEqualTo(GZIP_CONTENT);
+        }
+    }
+
     @Test
     void multiple_headers_with_the_same_name_are_processed_successfully() throws Exception {
 
@@ -204,6 +229,12 @@ class DropwizardApacheConnectorTest {
         public String getWithSleep() throws InterruptedException {
             TimeUnit.MILLISECONDS.sleep(SLEEP_TIME_IN_MILLIS);
             return "success";
+        }
+
+        @GET
+        @Path("/gzipped_content")
+        public String getGzippedContent() {
+            return GZIP_CONTENT;
         }
 
         @GET
