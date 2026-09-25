@@ -53,7 +53,12 @@ public class MustacheViewRenderer implements ViewRenderer {
             final Mustache template = mustacheFactory.compile(view.getTemplateName());
             final Charset charset = view.getCharset().orElse(StandardCharsets.UTF_8);
             try (OutputStreamWriter writer = new OutputStreamWriter(output, charset)) {
-                template.execute(writer, view);
+                final String nonce = io.dropwizard.views.common.CspNonceLookup.get().orElse(null);
+                if (nonce != null) {
+                    template.execute(writer, new Object[]{ view, java.util.Map.of("cspNonce", nonce) });
+                } else {
+                    template.execute(writer, view);
+                }
             }
         } catch (Throwable e) {
             throw new ViewRenderException("Mustache template error: " + view.getTemplateName(), e);
