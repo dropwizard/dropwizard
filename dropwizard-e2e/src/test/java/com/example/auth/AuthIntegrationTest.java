@@ -1,4 +1,4 @@
-package com.example.request_log;
+package com.example.auth;
 
 import com.codahale.metrics.health.HealthCheck;
 import io.dropwizard.auth.Auth;
@@ -7,35 +7,33 @@ import io.dropwizard.auth.AuthFilter;
 import io.dropwizard.auth.AuthValueFactoryProvider;
 import io.dropwizard.auth.PrincipalImpl;
 import io.dropwizard.auth.basic.BasicCredentialAuthFilter;
-import io.dropwizard.client.JerseyClientBuilder;
-import io.dropwizard.client.JerseyClientConfiguration;
 import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.core.Application;
 import io.dropwizard.core.Configuration;
 import io.dropwizard.core.setup.Environment;
-import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
-import io.dropwizard.util.Duration;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.InternalServerErrorException;
 import jakarta.ws.rs.Path;
-import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.core.Context;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import jakarta.ws.rs.core.HttpHeaders;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.io.TempDir;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.Base64;
+import java.util.Objects;
 import java.util.Optional;
 
-@ExtendWith(DropwizardExtensionsSupport.class)
-public abstract class AbstractRequestLogPatternIntegrationTest {
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.assertj.core.api.Assertions.assertThat;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@ExtendWith(DropwizardExtensionsSupport.class)
+public class AuthIntegrationTest {
     public static class TestApplication extends Application<Configuration> {
         public static void main(String[] args) throws Exception {
             new TestApplication().run(args);
@@ -62,46 +60,37 @@ public abstract class AbstractRequestLogPatternIntegrationTest {
     @Path("/greet")
     public static class TestResource {
         @GET
-        public String get(@QueryParam("name") String name, @Context HttpServletRequest httpRequest) {
-            return String.format("Hello, %s!", name);
-        }
-
-        @GET
         @Path("/authenticated")
-        public String getAuthenticatedUser(@Auth PrincipalImpl principal, @Context HttpServletRequest httpServletRequest) {
-            if (!principal.getName().equals(httpServletRequest.getRemoteUser())) {
+        public String getAuthenticatedUser(@Auth PrincipalImpl principal,
+                                           @Context HttpServletRequest httpServletRequest) {
+            if (principal == null || httpServletRequest.getRemoteUser() == null
+                || !Objects.equals(principal.getName(), httpServletRequest.getRemoteUser())) {
                 throw new InternalServerErrorException("Expecting Jetty and Jersey principals to match");
             }
             return httpServletRequest.getRemoteUser();
         }
     }
 
-    @TempDir
-    static java.nio.file.Path tempDir;
+    private final DropwizardAppExtension<Configuration> dropwizardAppRule = new DropwizardAppExtension<>(
+        TestApplication.class,
+        "auth/config.yml",
+        new ResourceConfigurationSourceProvider());
 
-    protected java.nio.file.Path requestLogFile = tempDir.resolve("request-logs");
-    protected Client client;
+    @Test
+    void testRemoteUserIsSetCorrectly() {
+        @SuppressWarnings("resource")
+        final Client client = dropwizardAppRule.client();
 
-    DropwizardAppExtension<Configuration> dropwizardAppRule = new DropwizardAppExtension<>(TestApplication.class,
-        "request_log/test-custom-request-log.yml",
-        new ResourceConfigurationSourceProvider(),
-        configOverrides().toArray(new ConfigOverride[0]));
+        final String username = "admin";
+        final String password = "";
+        final String basicAuth = String.format("%s:%s", username, password);
+        final String basicAuthHeader = "Basic " + Base64.getEncoder().encodeToString(basicAuth.getBytes(UTF_8));
 
-    protected List<ConfigOverride> configOverrides() {
-        return Collections.singletonList(ConfigOverride.config("server.requestLog.appenders[0].currentLogFilename", requestLogFile.toString()));
-    }
+        String url = String.format("http://localhost:%d/greet/authenticated", dropwizardAppRule.getLocalPort());
+        String remoteUser = client.target(url).request()
+            .header(HttpHeaders.AUTHORIZATION, basicAuthHeader)
+            .get(String.class);
 
-    @BeforeEach
-    public void setUp() {
-        final JerseyClientConfiguration configuration = new JerseyClientConfiguration();
-        configuration.setTimeout(Duration.seconds(2));
-        client = new JerseyClientBuilder(dropwizardAppRule.getEnvironment())
-            .using(configuration)
-            .build("test-request-logs");
-    }
-
-    @AfterEach
-    public void tearDown() {
-        client.close();
+        assertThat(remoteUser).isEqualTo(username);
     }
 }
