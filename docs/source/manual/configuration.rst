@@ -925,46 +925,51 @@ JSON layout
       timestampFormat: "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
       prettyPrint: false
       appendLineSeparator: true
-      includes: [timestamp, threadName, level, loggerName, message, mdc, exception]
+      includes: [timestamp, threadName, level, loggerName, message, mdc, exception, keyValuePairs]
       customFieldNames:
         timestamp: "@timestamp"
       additionalFields:
         service-name: "user-service"
       includesMdcKeys: [userId]
       flattenMdc: true
+      includesKeyValuePairsKeys: [traceId]
+      flattenKeyValuePairs: true
       exception:
         rootFirst: true
         depth: full
         evaluators: [org.apache]
 
 
-=======================  =====================  ================
-Name                     Default                Description
-=======================  =====================  ================
-timestampFormat          (none)                 By default, the timestamp is not formatted. To customize how timestamps are formatted,
+========================  =====================  ================
+Name                      Default                Description
+========================  =====================  ================
+timestampFormat           (none)                 By default, the timestamp is not formatted. To customize how timestamps are formatted,
                                                 set the property to the corresponding DateTimeFormatter_ string or one of the
                                                 predefined formats (e.g. ``ISO_LOCAL_TIME``, ``ISO_ZONED_DATE_TIME``, ``RFC_1123_DATE_TIME``).
-prettyPrint              false                  Whether the JSON output should be formatted for human readability.
-appendLineSeparator      true                   Whether to append a line separator at the end of the message formatted as JSON.
-includes                 (timestamp, level,
-                         threadName,  mdc,
-                         loggerName, message,
-                         exception)             Set of logging event attributes to include in the JSON map:
+prettyPrint               false                  Whether the JSON output should be formatted for human readability.
+appendLineSeparator       true                   Whether to append a line separator at the end of the message formatted as JSON.
+includes                  (timestamp, level,
+                          threadName,  mdc,
+                          loggerName, message,
+                          exception, keyValuePairs)             Set of logging event attributes to include in the JSON map:
 
-                                                - ``timestamp``   *true*   Whether to include the timestamp as the ``timestamp`` field.
-                                                - ``level``       *true*   Whether to include the logging level as the ``level`` field.
-                                                - ``threadName``  *true*   Whether to include the thread name as the ``thread`` field.
-                                                - ``mdc``         *true*   Whether to include the MDC properties as the ``mdc`` field.
-                                                - ``loggerName``  *true*   Whether to include the logger name as the ``logger`` field.
-                                                - ``message``     *true*   Whether to include the formatted message as the ``message`` field.
-                                                - ``exception``   *true*   Whether to log exceptions. If the property enabled and there is an exception, it will be formatted to a string as the ``exception`` field.
-                                                - ``contextName`` *false*  Whether to include the logging context name as the ``context`` field .
-customFieldNames         (empty)                Map of field name replacements . For example ``(requestTime:request_time, userAgent:user_agent)``.
-additionalFields         (empty)                Map of fields to add in the JSON map.
-includesMdcKeys          (empty)                Set of MDC keys which should be included in the JSON map. By default includes everything.
-flattenMdc               false                  Flatten the MDC to the root of the JSON object instead of nested in the ``mdc`` field.
-exception                (empty)                The :ref:`exception <man-configuration-json-layout-exception>` configuration for the ``exception`` field.
-=======================  =====================  ================
+                                                 - ``timestamp``      *true*   Whether to include the timestamp as the ``timestamp`` field.
+                                                 - ``level``          *true*   Whether to include the logging level as the ``level`` field.
+                                                 - ``threadName``     *true*   Whether to include the thread name as the ``thread`` field.
+                                                 - ``mdc``            *true*   Whether to include the MDC properties as the ``mdc`` field.
+                                                 - ``loggerName``     *true*   Whether to include the logger name as the ``logger`` field.
+                                                 - ``message``        *true*   Whether to include the formatted message as the ``message`` field.
+                                                 - ``exception``      *true*   Whether to log exceptions. If the property enabled and there is an exception, it will be formatted to a string as the ``exception`` field.
+                                                 - ``contextName``    *false*  Whether to include the logging context name as the ``context`` field.
+                                                 - ``keyValuePairs``  *true*  Whether to include structured logging key-value pairs as the ``keyValuePairs`` field (when not flattened).
+customFieldNames          (empty)                Map of field name replacements . For example ``(requestTime:request_time, userAgent:user_agent)``.
+additionalFields          (empty)                Map of fields to add in the JSON map.
+includesMdcKeys           (empty)                Set of MDC keys which should be included in the JSON map. By default includes everything.
+flattenMdc                false                  Flatten the MDC to the root of the JSON object instead of nested in the ``mdc`` field.
+includesKeyValuePairsKeys (empty)                Set of structured logging key-value pair keys which should be included in the JSON map. By default includes everything.
+flattenKeyValuePairs      false                  Flatten structured logging key-value pairs to the root of the JSON object instead of nested in the ``keyValuePairs`` field.
+exception                 (empty)                The :ref:`exception <man-configuration-json-layout-exception>` configuration for the ``exception`` field.
+========================  =====================  ================
 
 .. _DateTimeFormatter:  https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html
 

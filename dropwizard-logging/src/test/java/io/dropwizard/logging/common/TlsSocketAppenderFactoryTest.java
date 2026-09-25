@@ -72,6 +72,10 @@ class TlsSocketAppenderFactoryTest {
             Logger logger = LoggerFactory.getLogger("com.example.app");
             List<String> loggedMessages = generateLogs(logger);
 
+            // Give the OS network buffer and Logback's async appender a moment to physically
+            // flush the 100 messages to the server before we violently tear down the socket.
+            Thread.sleep(500);
+
             loggingFactory.stop();
             loggingFactory.reset();
 

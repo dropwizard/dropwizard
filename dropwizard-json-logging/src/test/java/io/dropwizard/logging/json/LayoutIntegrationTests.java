@@ -18,6 +18,7 @@ import io.dropwizard.logging.common.ConsoleAppenderFactory;
 import io.dropwizard.logging.common.DefaultLoggingFactory;
 import io.dropwizard.request.logging.LogbackAccessRequestLogFactory;
 import io.dropwizard.validation.BaseValidator;
+
 import org.eclipse.jetty.ee10.servlet.ServletChannel;
 import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
 import org.eclipse.jetty.ee10.servlet.ServletContextRequest;
@@ -91,13 +92,16 @@ class LayoutIntegrationTests {
                     EventAttribute.LOGGER_NAME,
                     EventAttribute.EXCEPTION,
                     EventAttribute.TIMESTAMP,
-                    EventAttribute.CALLER_DATA))
+                    EventAttribute.CALLER_DATA,
+                    EventAttribute.KEY_VALUE_PAIRS))
                 .satisfies(factory -> assertThat(factory.isFlattenMdc()).isTrue())
+                .satisfies(factory -> assertThat(factory.isFlattenKeyValuePairs()).isTrue())
                 .satisfies(factory -> assertThat(factory.getCustomFieldNames()).containsOnly(entry("timestamp", "@timestamp")))
                 .satisfies(factory -> assertThat(factory.getAdditionalFields()).containsOnly(
                     entry("service-name", "user-service"),
                     entry("service-build", 218)))
                 .satisfies(factory -> assertThat(factory.getIncludesMdcKeys()).containsOnly("userId"))
+                .satisfies(factory -> assertThat(factory.getIncludesKeyValuePairsKeys()).containsOnly("operation"))
                 .extracting(EventJsonLayoutBaseFactory::getExceptionFormat)
                 .satisfies(exceptionFormat -> assertThat(exceptionFormat.getDepth()).isEqualTo("10"))
                 .satisfies(exceptionFormat -> assertThat(exceptionFormat.isRootFirst()).isFalse())
@@ -151,9 +155,12 @@ class LayoutIntegrationTests {
                     EventAttribute.LOGGER_NAME,
                     EventAttribute.MESSAGE,
                     EventAttribute.EXCEPTION,
-                    EventAttribute.TIMESTAMP))
+                    EventAttribute.TIMESTAMP,
+                    EventAttribute.KEY_VALUE_PAIRS))
                 .satisfies(factory -> assertThat(factory.isFlattenMdc()).isFalse())
+                .satisfies(factory -> assertThat(factory.isFlattenKeyValuePairs()).isFalse())
                 .satisfies(factory -> assertThat(factory.getIncludesMdcKeys()).isEmpty())
+                .satisfies(factory -> assertThat(factory.getIncludesKeyValuePairsKeys()).isEmpty())
                 .satisfies(factory -> assertThat(factory.getExceptionFormat()).isNull()));
 
         PrintStream old = System.out;
@@ -162,7 +169,10 @@ class LayoutIntegrationTests {
             System.setOut(new PrintStream(redirectedStream));
             defaultLoggingFactory.configure(new MetricRegistry(), "json-log-test");
             Marker marker = MarkerFactory.getMarker("marker");
-            LoggerFactory.getLogger("com.example.app").info(marker, "Application log");
+            LoggerFactory.getLogger("com.example.app").atInfo().addMarker(marker)
+                .addKeyValue("operation", "hello world")
+                .addKeyValue("number", 5)
+                .log("Application log");
             // Need to wait, because the logger is async
             await().atMost(1, TimeUnit.SECONDS).until(() -> !redirectedStream.toString().isEmpty());
 
@@ -173,6 +183,10 @@ class LayoutIntegrationTests {
             assertThat(jsonNode.get("logger").asText()).isEqualTo("com.example.app");
             assertThat(jsonNode.get("marker").asText()).isEqualTo("marker");
             assertThat(jsonNode.get("message").asText()).isEqualTo("Application log");
+            assertThat(jsonNode.get("keyValuePairs").get("operation").asText()).isEqualTo("hello world");
+            assertThat(jsonNode.get("keyValuePairs").get("number").isNumber()).isTrue();
+            assertThat(jsonNode.get("keyValuePairs").get("number").asInt()).isEqualTo(5);
+
         } finally {
             System.setOut(old);
         }

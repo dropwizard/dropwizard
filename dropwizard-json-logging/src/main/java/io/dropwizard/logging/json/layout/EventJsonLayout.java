@@ -4,13 +4,16 @@ import ch.qos.logback.classic.pattern.ThrowableHandlingConverter;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import io.dropwizard.logging.json.EventAttribute;
 import org.jspecify.annotations.Nullable;
+import org.slf4j.event.KeyValuePair;
 
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Builds JSON messages from logging events of the type {@link ILoggingEvent}.
@@ -29,11 +32,13 @@ public class EventJsonLayout extends AbstractJsonLayout<ILoggingEvent> {
 
     private Set<String> includesMdcKeys;
     private final boolean flattenMdc;
+    private final boolean flattenKeyValuePairs;
+    private Set<String> includesKeyValuePairsKeys;
 
     public EventJsonLayout(JsonFormatter jsonFormatter, TimestampFormatter timestampFormatter,
                            ThrowableHandlingConverter throwableProxyConverter, Set<EventAttribute> includes,
                            Map<String, String> customFieldNames, Map<String, Object> additionalFields,
-                           Set<String> includesMdcKeys, boolean flattenMdc) {
+                           Set<String> includesMdcKeys, boolean flattenMdc, Set<String> includesKeyValuePairsKeys, boolean flattenKeyValuePairs) {
         super(jsonFormatter);
         this.timestampFormatter = timestampFormatter;
         this.additionalFields = new HashMap<>(additionalFields);
@@ -42,6 +47,8 @@ public class EventJsonLayout extends AbstractJsonLayout<ILoggingEvent> {
         this.includes = new HashSet<>(includes);
         this.includesMdcKeys = new HashSet<>(includesMdcKeys);
         this.flattenMdc = flattenMdc;
+        this.flattenKeyValuePairs = flattenKeyValuePairs;
+        this.includesKeyValuePairsKeys = new HashSet<>(includesKeyValuePairsKeys);
     }
 
     @Override
@@ -72,9 +79,19 @@ public class EventJsonLayout extends AbstractJsonLayout<ILoggingEvent> {
 
         final boolean includeMdc = isIncluded(EventAttribute.MDC);
         if (flattenMdc) {
-            filterMdc(event.getMDCPropertyMap()).forEach((k,v) -> mapBuilder.add(k, includeMdc, v));
+            filterMdc(event.getMDCPropertyMap()).forEach((k, v) -> mapBuilder.add(k, includeMdc, v));
         } else {
             mapBuilder.addMap("mdc", includeMdc, () -> filterMdc(event.getMDCPropertyMap()));
+        }
+
+        final boolean includeKeyValuePairs = isIncluded(EventAttribute.KEY_VALUE_PAIRS);
+        if (includeKeyValuePairs && event.getKeyValuePairs() != null) {
+            if (flattenKeyValuePairs) {
+                filterKeyValuePairs(event.getKeyValuePairs()).forEach(kvp ->
+                    mapBuilder.addObject(kvp.key, true, mayConvertKeyValuePairValue(kvp.value)));
+            } else {
+                mapBuilder.add("keyValuePairs", true, convertKeyValuePairsToMap(filterKeyValuePairs(event.getKeyValuePairs())));
+            }
         }
 
         final boolean includeCallerData = isIncluded(EventAttribute.CALLER_DATA);
@@ -127,5 +144,35 @@ public class EventJsonLayout extends AbstractJsonLayout<ILoggingEvent> {
 
     public void setIncludesMdcKeys(Set<String> includesMdcKeys) {
         this.includesMdcKeys = new HashSet<>(includesMdcKeys);
+    }
+
+    public Set<String> getIncludesKeyValuePairsKeys() {
+        return includesKeyValuePairsKeys;
+    }
+
+    public void setIncludesKeyValuePairsKeys(Set<String> includesKeyValuePairsKeys) {
+        this.includesKeyValuePairsKeys = new HashSet<>(includesKeyValuePairsKeys);
+    }
+
+    private Stream<KeyValuePair> filterKeyValuePairs(List<KeyValuePair> keyValuePairs) {
+        if (includesKeyValuePairsKeys.isEmpty()) {
+            return keyValuePairs.stream();
+        }
+        return keyValuePairs.stream()
+            .filter(kvp -> includesKeyValuePairsKeys.contains(kvp.key));
+    }
+
+    private Map<String, ?> convertKeyValuePairsToMap(Stream<KeyValuePair> keyValuePairs) {
+        return keyValuePairs
+            .filter(kvp -> kvp.value != null)
+            .collect(Collectors.toMap(kvp -> kvp.key, kvp -> mayConvertKeyValuePairValue(kvp.value), (v1, v2) -> v2));
+    }
+
+    private @Nullable Object mayConvertKeyValuePairValue(@Nullable Object value) {
+        if (value instanceof String || value instanceof Number || value instanceof Boolean) {
+            return value;
+        } else {
+            return value != null ? value.toString() : null;
+        }
     }
 }
