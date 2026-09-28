@@ -2,14 +2,15 @@ package io.dropwizard.jersey.validation;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorFactory;
-import org.hibernate.validator.internal.engine.constraintvalidation.ConstraintValidatorFactoryImpl;
+import jakarta.validation.Validation;
+import org.hibernate.validator.HibernateValidator;
 
 /**
  * @since 2.0
  */
 public class MutableValidatorFactory implements ConstraintValidatorFactory {
 
-    private ConstraintValidatorFactory validatorFactory = new ConstraintValidatorFactoryImpl();
+    private ConstraintValidatorFactory validatorFactory = Validation.byProvider(HibernateValidator.class).configure().getDefaultConstraintValidatorFactory();
 
     @Override
     public final <T extends ConstraintValidator<?, ?>> T getInstance(Class<T> key) {

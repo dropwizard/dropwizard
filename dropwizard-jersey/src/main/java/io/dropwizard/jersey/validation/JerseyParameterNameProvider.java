@@ -1,5 +1,7 @@
 package io.dropwizard.jersey.validation;
 
+import jakarta.validation.ParameterNameProvider;
+import jakarta.validation.Validation;
 import jakarta.ws.rs.CookieParam;
 import jakarta.ws.rs.FormParam;
 import jakarta.ws.rs.HeaderParam;
@@ -7,9 +9,10 @@ import jakarta.ws.rs.MatrixParam;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.Context;
-import org.hibernate.validator.parameternameprovider.ReflectionParameterNameProvider;
+import org.hibernate.validator.HibernateValidator;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
@@ -19,11 +22,18 @@ import java.util.Optional;
 /**
  * Adds jersey support to parameter name discovery in hibernate validator.
  *
- * <p>This provider will behave like the hibernate-provided {@link ReflectionParameterNameProvider} except when a
+ * <p>This provider will behave like the default hibernate-provided {@link ParameterNameProvider} implementation except when a
  * method parameter is annotated with a jersey parameter annotation, like {@link QueryParam}. If a jersey parameter
  * annotation is present the value of the annotation is used as the parameter name.</p>
  */
-public class JerseyParameterNameProvider extends ReflectionParameterNameProvider {
+public class JerseyParameterNameProvider implements ParameterNameProvider {
+
+    private final ParameterNameProvider delegate = Validation.byProvider(HibernateValidator.class).configure().getDefaultParameterNameProvider();
+
+    @Override
+    public List<String> getParameterNames(Constructor<?> constructor) {
+        return delegate.getParameterNames(constructor);
+    }
 
     @Override
     public List<String> getParameterNames(Method method) {

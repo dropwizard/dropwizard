@@ -5,13 +5,17 @@ import io.dropwizard.core.Configuration;
 import io.dropwizard.core.setup.Bootstrap;
 import io.dropwizard.core.setup.Environment;
 import io.dropwizard.jersey.validation.MutableValidatorFactory;
+import io.dropwizard.util.DataSize;
+import io.dropwizard.util.DataSizeUnit;
+import io.dropwizard.validation.MinDataSize;
+import io.dropwizard.validation.MinDataSizeValidator;
 import jakarta.validation.ConstraintValidatorFactory;
 import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 import jakarta.validation.constraints.Min;
-import org.hibernate.validator.internal.constraintvalidators.bv.number.bound.MinValidatorForInteger;
-import org.hibernate.validator.internal.engine.constraintvalidation.ConstraintValidatorFactoryImpl;
+import org.hibernate.validator.HibernateValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -24,7 +28,7 @@ import static org.mockito.Mockito.verify;
 
 class InjectValidatorFeatureTest {
 
-    private final Application<Configuration> application = new Application<Configuration>() {
+    private final Application<Configuration> application = new Application<>() {
         @Override
         public void initialize(Bootstrap<Configuration> bootstrap) { }
 
@@ -69,7 +73,7 @@ class InjectValidatorFeatureTest {
 
         ConstraintValidatorFactory mockedFactory = mock(
             ConstraintValidatorFactory.class,
-            delegatesTo(new ConstraintValidatorFactoryImpl())
+            delegatesTo(Validation.byProvider(HibernateValidator.class).configure().getDefaultConstraintValidatorFactory())
         );
 
         // Swap validator factory at runtime
@@ -77,9 +81,9 @@ class InjectValidatorFeatureTest {
 
         // Run validation manually
         Validator validator = validatorFactory.getValidator();
-        validator.validate(new Bean(1));
+        validator.validate(new DataSizeRecord(DataSize.bytes(100)));
 
-        verify(mockedFactory).getInstance(MinValidatorForInteger.class);
+        verify(mockedFactory).getInstance(MinDataSizeValidator.class);
     }
 
     static class Bean {
@@ -91,4 +95,9 @@ class InjectValidatorFeatureTest {
             this.value = value;
         }
     }
+
+    private record DataSizeRecord(@MinDataSize(value = 30, unit = DataSizeUnit.BYTES) DataSize value) {
+
+    }
+
 }
