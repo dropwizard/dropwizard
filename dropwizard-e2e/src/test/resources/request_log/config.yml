@@ -4,6 +4,10 @@ server:
     appenders:
       - type: file
         archive: false
+
+        # don't discard any log entries
+        discardingThreshold: 0
+        neverBlock: false
   applicationConnectors:
     - type: http
       port: 0

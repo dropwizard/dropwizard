@@ -1,33 +1,51 @@
 package io.dropwizard.request.logging;
 
-import ch.qos.logback.access.jetty.JettyServerAdapter;
-import ch.qos.logback.access.jetty.RequestLogImpl;
-import ch.qos.logback.access.jetty.RequestWrapper;
-import ch.qos.logback.access.jetty.ResponseWrapper;
-import ch.qos.logback.access.common.spi.AccessEvent;
 import ch.qos.logback.access.common.spi.IAccessEvent;
-import ch.qos.logback.access.common.spi.ServerAdapter;
 import ch.qos.logback.core.Appender;
-import ch.qos.logback.core.spi.FilterReply;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import ch.qos.logback.core.spi.AppenderAttachable;
+import ch.qos.logback.core.spi.AppenderAttachableImpl;
+import ch.qos.logback.core.spi.BasicSequenceNumberGenerator;
+import ch.qos.logback.core.spi.SequenceNumberGenerator;
 import org.eclipse.jetty.http.HttpField;
 import org.eclipse.jetty.http.HttpFields;
 import org.eclipse.jetty.server.Request;
+import org.eclipse.jetty.server.RequestLog;
 import org.eclipse.jetty.server.Response;
+import org.eclipse.jetty.util.component.AbstractLifeCycle;
 
 import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 
-/**
- * The Dropwizard request log uses logback-access, but we override it to remove the requirement for logback-access.xml
- * based configuration.
- */
-public class LogbackAccessRequestLog extends RequestLogImpl {
+public class LogbackAccessRequestLog extends AbstractLifeCycle implements RequestLog, AppenderAttachable<IAccessEvent> {
+
+    private final AppenderAttachableImpl<IAccessEvent> appenderAttachable = new AppenderAttachableImpl<>();
+    private final SequenceNumberGenerator sequenceNumberGenerator = new BasicSequenceNumberGenerator();
+
     @Override
-    public void configure() {
-        setName("LogbackAccessRequestLog");
+    public void log(Request request, Response response) {
+        IAccessEvent accessEvent = new JettyAccessEvent(request, response, sequenceNumberGenerator);
+        appenderAttachable.appendLoopOnAppenders(accessEvent);
+    }
+
+    @Override
+    public void addAppender(Appender<IAccessEvent> newAppender) {
+        appenderAttachable.addAppender(newAppender);
+    }
+
+    @Override
+    public Iterator<Appender<IAccessEvent>> iteratorForAppenders() {
+        return appenderAttachable.iteratorForAppenders();
+    }
+
+    @Override
+    public Appender<IAccessEvent> getAppender(String name) {
+        return appenderAttachable.getAppender(name);
+    }
+
+    @Override
+    public boolean isAttached(Appender<IAccessEvent> appender) {
+        return appenderAttachable.isAttached(appender);
     }
 
     private static Map<String, String> buildHeaderMap(HttpFields headers) {
@@ -41,33 +59,28 @@ public class LogbackAccessRequestLog extends RequestLogImpl {
     }
 
     @Override
-    public void log(Request jettyRequest, Response jettyResponse) {
-        // TODO: remove build*HeaderMap overrides once https://github.com/qos-ch/logback-access/pull/23
-        //       is merged and released in logback-access
-        HttpServletRequest httpServletRequest = new RequestWrapper(jettyRequest) {
-            @Override
-            public Map<String, String> buildRequestHeaderMap() {
-                return buildHeaderMap(jettyRequest.getHeaders());
-            }
-        };
-        HttpServletResponse httpServletResponse = new ResponseWrapper(jettyResponse);
-        ServerAdapter adapter = new JettyServerAdapter(jettyRequest, jettyResponse) {
-            @Override
-            public Map<String, String> buildResponseHeaderMap() {
-                return buildHeaderMap(jettyResponse.getHeaders());
-            }
-        };
-        IAccessEvent accessEvent = new AccessEvent(this, httpServletRequest, httpServletResponse, adapter);
-        if (getFilterChainDecision(accessEvent) == FilterReply.DENY) {
-            return;
-        }
-        appendLoopOnAppenders(accessEvent);
+    public void detachAndStopAllAppenders() {
+        appenderAttachable.detachAndStopAllAppenders();
     }
 
-    private void appendLoopOnAppenders(IAccessEvent iAccessEvent) {
-        Iterator<Appender<IAccessEvent>> appenderIterator = this.iteratorForAppenders();
-        while (appenderIterator.hasNext()) {
-            appenderIterator.next().doAppend(iAccessEvent);
-        }
+    @Override
+    public boolean detachAppender(Appender<IAccessEvent> appender) {
+        return appenderAttachable.detachAppender(appender);
+    }
+
+    @Override
+    public boolean detachAppender(String name) {
+        return appenderAttachable.detachAppender(name);
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+        detachAndStopAllAppenders();
     }
 }
