@@ -242,7 +242,7 @@
                     <dependency>
                         <groupId>org.simplify4u</groupId>
                         <artifactId>pgp-keys-map</artifactId>
-                        <version>2026.01.20</version>
+                        <version>2026.09.25</version>
                     </dependency>
                 </dependencies>
             </plugin>
