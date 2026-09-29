@@ -63,17 +63,17 @@ final class ProtectedClassResourceTest {
     }
 
     @Test
-    void testProtectedGuestEndpoint() {
-        String secret = RULE.target("/protected/guest").request()
-            .header(HttpHeaders.AUTHORIZATION, "Basic Z3Vlc3Q6c2VjcmV0")
+    void testProtectedRestrictedUserEndpoint() {
+        String secret = RULE.target("/protected/any-user").request()
+            .header(HttpHeaders.AUTHORIZATION, "Basic cmVzdHJpY3RlZDpzZWNyZXQ=")
             .get(String.class);
-        assertThat(secret).startsWith("Hey there, guest. You know the secret!");
+        assertThat(secret).startsWith("Hey there, restricted. You know the secret!");
     }
 
     @Test
     void testProtectedBasicUserEndpointPrincipalIsNotAuthorized403() {
         Invocation.Builder request = RULE.target("/protected").request()
-            .header(HttpHeaders.AUTHORIZATION, "Basic Z3Vlc3Q6c2VjcmV0");
+            .header(HttpHeaders.AUTHORIZATION, "Basic cmVzdHJpY3RlZDpzZWNyZXQ=");
         assertThatExceptionOfType(ForbiddenException.class)
             .isThrownBy(() -> request.get(String.class))
             .satisfies(e -> assertThat(e.getResponse().getStatus()).isEqualTo(403));

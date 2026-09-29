@@ -20,7 +20,7 @@ public final class ProtectedClassResource {
 
     @GET
     @PermitAll
-    @Path("guest")
+    @Path("any-user")
     public String showSecret(@Auth User user) {
         return String.format("Hey there, %s. You know the secret! %d", user.getName(), user.getId());
     }
