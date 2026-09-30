@@ -53,6 +53,12 @@ class MustacheViewRendererTest extends JerseyTest {
         public ErrorView showError() {
             return new ErrorView();
         }
+
+        @GET
+        @Path("/csp")
+        public CspView showCsp() {
+            return new CspView();
+        }
     }
 
     @Override
@@ -72,6 +78,7 @@ class MustacheViewRendererTest extends JerseyTest {
         ResourceConfig config = DropwizardResourceConfig.forTesting();
         final ViewRenderer renderer = new MustacheViewRenderer();
         config.register(new ViewMessageBodyWriter(new MetricRegistry(), Collections.singletonList(renderer)));
+        config.register(new io.dropwizard.jersey.filter.CspFilter("default-src 'self'; script-src 'nonce-$NONCE';", null));
         config.register(new ViewRenderExceptionMapper());
         config.register(new ExampleResource());
         return config;
@@ -123,5 +130,21 @@ class MustacheViewRendererTest extends JerseyTest {
         MustacheViewRenderer mustacheViewRenderer = new MustacheViewRenderer();
         mustacheViewRenderer.configure(Collections.singletonMap("cache", "false"));
         assertThat(mustacheViewRenderer.isUseCache()).isFalse();
+    }
+
+    @Test
+    void rendersViewsWithCspNonce() {
+        try (final jakarta.ws.rs.core.Response response = target("/test/csp").request().get()) {
+            assertThat(response.getStatus()).isEqualTo(jakarta.ws.rs.core.Response.Status.OK.getStatusCode());
+            final String body = response.readEntity(String.class);
+            final String cspHeader = response.getHeaderString("Content-Security-Policy");
+            assertThat(cspHeader).startsWith("default-src 'self'; script-src 'nonce-");
+
+            final String prefix = "default-src 'self'; script-src 'nonce-";
+            final String suffix = "';";
+            final String nonce = cspHeader.substring(prefix.length(), cspHeader.length() - suffix.length());
+
+            assertThat(body).isEqualTo("<script nonce=\"" + nonce + "\">console.log(\"hello\");</script>\n");
+        }
     }
 }

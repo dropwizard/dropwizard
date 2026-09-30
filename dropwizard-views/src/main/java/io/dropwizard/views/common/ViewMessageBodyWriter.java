@@ -3,6 +3,7 @@ package io.dropwizard.views.common;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.HttpHeaders;
@@ -31,6 +32,10 @@ public class ViewMessageBodyWriter implements MessageBodyWriter<View> {
     @Context
     @Nullable
     private HttpHeaders headers;
+
+    @Context
+    @SuppressWarnings("NullAway")
+    private jakarta.inject.Provider<ContainerRequestContext> requestContextProvider;
 
     void setHeaders(HttpHeaders headers) {
         this.headers = headers;
@@ -67,7 +72,12 @@ public class ViewMessageBodyWriter implements MessageBodyWriter<View> {
                         MultivaluedMap<String, Object> httpHeaders,
                         OutputStream entityStream) throws IOException {
         final Timer.Context context = metricRegistry.timer(name(t.getClass(), "rendering")).time();
+        final ContainerRequestContext requestContext = requestContextProvider != null ? requestContextProvider.get() : null;
+        final String nonce = requestContext != null ? (String) requestContext.getProperty("csp-nonce") : null;
         try {
+            if (nonce != null) {
+                CspNonceLookup.set(nonce);
+            }
             for (ViewRenderer renderer : renderers) {
                 if (renderer.isRenderable(t)) {
                     renderer.render(t, detectLocale(requireNonNull(headers)), entityStream);
@@ -78,6 +88,7 @@ public class ViewMessageBodyWriter implements MessageBodyWriter<View> {
         } catch (ViewRenderException e) {
             throw new WebApplicationException(e);
         } finally {
+            CspNonceLookup.remove();
             context.stop();
         }
     }

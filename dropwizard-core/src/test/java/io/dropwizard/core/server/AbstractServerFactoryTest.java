@@ -118,6 +118,35 @@ class AbstractServerFactoryTest {
         assertThat(appContext.getHandler()).isNotInstanceOf(LogbackAccessRequestLogAwareHandler.class);
     }
 
+    @Test
+    void registersCspFilterWhenCspConfigured() {
+        serverFactory.getCsp().setPolicy("default-src 'self'; script-src 'nonce-$NONCE';");
+        serverFactory.build(environment);
+
+        final boolean hasCspFilter = config.getSingletons().stream()
+                .anyMatch(s -> s instanceof io.dropwizard.jersey.filter.CspFilter);
+        assertThat(hasCspFilter).isTrue();
+    }
+
+    @Test
+    void registersCspFilterWhenCspReportOnlyConfigured() {
+        serverFactory.getCsp().setReportOnlyPolicy("default-src 'self';");
+        serverFactory.build(environment);
+
+        final boolean hasCspFilter = config.getSingletons().stream()
+                .anyMatch(s -> s instanceof io.dropwizard.jersey.filter.CspFilter);
+        assertThat(hasCspFilter).isTrue();
+    }
+
+    @Test
+    void doesNotRegisterCspFilterWhenNotConfigured() {
+        serverFactory.build(environment);
+
+        final boolean hasCspFilter = config.getSingletons().stream()
+                .anyMatch(s -> s instanceof io.dropwizard.jersey.filter.CspFilter);
+        assertThat(hasCspFilter).isFalse();
+    }
+
     /**
      * Test implementation of {@link AbstractServerFactory} used to run {@link #createAppServlet}, which triggers the
      * setting of {@link JerseyEnvironment#setUrlPattern(String)}.
