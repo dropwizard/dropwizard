@@ -15,24 +15,78 @@ Authenticators
 An authenticator is a strategy class which, given a set of client-provided credentials, possibly
 returns a principal (i.e., the person or entity on behalf of whom your service will do something).
 
-Authenticators implement the ``Authenticator<C, P extends Principal>`` interface, which has a single method:
+Authenticators implement the ``Authenticator<C, P extends Principal>`` interface, which has a single
+``authenticate(C credentials)`` method. Conceptual example of how an ``Authenticator`` might be implemented:
 
 .. code-block:: java
 
+    public record HashedPassword(String hash, String hashParameters) { }
+
     public class ExampleAuthenticator implements Authenticator<BasicCredentials, User> {
+        private final PasswordHasher passwordHasher;           // theoretical hashing library worker object, injected
+        private final HashedPassword placeholderPasswordHash;  // garbage value for 'user does not exist' flow
+
+        public ExampleAuthenticator(final PasswordHasher passwordHasher) {
+            this.passwordHasher = passwordHasher;
+            this.placeholderPasswordHash = passwordHasher.hashForStorage("placeholder-password");
+        }
+
         @Override
-        public Optional<User> authenticate(BasicCredentials credentials) throws AuthenticationException {
-            if ("secret".equals(credentials.getPassword())) {
-                return Optional.of(new User(credentials.getUsername()));
+        public Optional<User> authenticate(final BasicCredentials credentials) throws AuthenticationException {
+            final Optional<UserAccountRecord> userRecord = lookupUserInDb(credentials.getUsername());
+            final HashedPassword correctPassword = userRecord.map(UserAccountRecord::getPasswordHash)
+                .orElse(placeholderPasswordHash);
+
+            final boolean matches;
+            try {
+                // assuming:
+                //   * hashing library rate limits to avoid overload
+                //   * hashing library computes salted hash of input 'guess'
+                //   * hashing library uses constant-time hash comparison
+                matches = passwordHasher.verify(credentials.getPassword(), correctPassword);
+            } catch (RejectedExecutionException e) {
+                throw new AuthenticationException(...);
             }
-            return Optional.empty();
+
+            // Check user's existence/status after hashing so all paths take about the same time.
+            if (!matches || userRecord.isEmpty()) {
+                return Optional.empty();
+            }
+            final UserAccountRecord presentUserRecord = userRecord.get();
+
+            // if password hashing params older than current policy, regenerate and save new hash
+            if (passwordHasher.needsRehash(correctPassword.hashParameters())) {
+                final HashedPassword updatedHash = passwordHasher.hashForStorage(credentials.getPassword());
+                presentUserRecord.storePasswordUpdate(updatedHash);
+            }
+
+            // discard full user database object and replace with limited Principal (user and roles)
+            return Optional.of(new User(presentUserRecord.getUsername(), presentUserRecord.getRoles()));
         }
     }
 
-This authenticator takes :ref:`basic auth credentials <man-auth-basic>` and if the client-provided
-password is ``secret``, authenticates the client as a ``User`` with the client-provided username.
+    // assuming: some salted, slow (multi-round) password hashing library, probably implementing argon2id:
+    public interface PasswordHasher {
+        HashedPassword hashForStorage(String password);
+        boolean verify(String passwordGuess, HashedPassword correctPassword);
+        boolean needsRehash(String storedHashParameters);
+    }
 
-If the password doesn't match, an absent ``Optional`` is returned instead, indicating that the
+    // assuming: some database record tracking user account info, which includes password hash, e.g.:
+    public interface UserAccountRecord {
+        String getUsername();
+        HashedPassword getPasswordHash();
+
+        void storePasswordUpdate(HashedPassword hashedPassword);
+    }
+
+This example authenticator takes :ref:`basic auth credentials <man-auth-basic>` and uses the username attribute to
+resolve the user record in a hypothetical database. The database stores the 'correct password hash' which includes the
+hashing parameters used when computing the hash. Using the resolved hash and parameters, the input 'guess' is hashed
+and compared with the correct hash. If the user exists and the hash is valid, a present ``Optional`` is returned with
+the ``Principal`` object of the now-authenticated user.
+
+If the user does not exist or the guess is incorrect, an empty ``Optional`` is returned, indicating that the
 credentials are invalid.
 
 .. warning:: It's important for authentication services not to provide too much information in their

@@ -6,6 +6,8 @@ import io.dropwizard.auth.Authorizer;
 import io.dropwizard.auth.PrincipalImpl;
 import io.dropwizard.auth.basic.BasicCredentials;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
@@ -14,7 +16,10 @@ public class AuthUtil {
 
     public static Authenticator<BasicCredentials, Principal> getBasicAuthenticator(final List<String> validUsers) {
         return credentials -> {
-            if (validUsers.contains(credentials.getUsername()) && "secret".equals(credentials.getPassword())) {
+            if (validUsers.contains(credentials.getUsername())
+                && MessageDigest.isEqual(
+                    "secret".getBytes(StandardCharsets.UTF_8),
+                    credentials.getPassword().getBytes(StandardCharsets.UTF_8))) {
                 return Optional.of(new PrincipalImpl(credentials.getUsername()));
             }
             if ("bad-guy".equals(credentials.getUsername())) {
