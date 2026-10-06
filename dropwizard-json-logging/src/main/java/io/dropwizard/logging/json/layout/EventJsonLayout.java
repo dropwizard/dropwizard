@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
  * Builds JSON messages from logging events of the type {@link ILoggingEvent}.
  */
 public class EventJsonLayout extends AbstractJsonLayout<ILoggingEvent> {
+    private static final String ELLIPSIS = "…"; // single-char ellipsis (U+2026)
 
     private Set<EventAttribute> includes;
 
@@ -29,11 +30,12 @@ public class EventJsonLayout extends AbstractJsonLayout<ILoggingEvent> {
 
     private Set<String> includesMdcKeys;
     private final boolean flattenMdc;
+    private final int exceptionCharLimit;
 
     public EventJsonLayout(JsonFormatter jsonFormatter, TimestampFormatter timestampFormatter,
                            ThrowableHandlingConverter throwableProxyConverter, Set<EventAttribute> includes,
                            Map<String, String> customFieldNames, Map<String, Object> additionalFields,
-                           Set<String> includesMdcKeys, boolean flattenMdc) {
+                           Set<String> includesMdcKeys, boolean flattenMdc, int exceptionCharLimit) {
         super(jsonFormatter);
         this.timestampFormatter = timestampFormatter;
         this.additionalFields = new HashMap<>(additionalFields);
@@ -42,6 +44,7 @@ public class EventJsonLayout extends AbstractJsonLayout<ILoggingEvent> {
         this.includes = new HashSet<>(includes);
         this.includesMdcKeys = new HashSet<>(includesMdcKeys);
         this.flattenMdc = flattenMdc;
+        this.exceptionCharLimit = exceptionCharLimit;
     }
 
     @Override
@@ -68,7 +71,10 @@ public class EventJsonLayout extends AbstractJsonLayout<ILoggingEvent> {
             .add("context", isIncluded(EventAttribute.CONTEXT_NAME), () -> event.getLoggerContextVO().getName())
             .add("version", jsonProtocolVersion != null, jsonProtocolVersion)
             .add("exception", isIncluded(EventAttribute.EXCEPTION) && event.getThrowableProxy() != null,
-                () -> throwableProxyConverter.convert(event));
+                () -> {
+                    final String msg = throwableProxyConverter.convert(event);
+                    return truncateIfNeeded(msg, exceptionCharLimit);
+                });
 
         final boolean includeMdc = isIncluded(EventAttribute.MDC);
         if (flattenMdc) {
@@ -100,6 +106,46 @@ public class EventJsonLayout extends AbstractJsonLayout<ILoggingEvent> {
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
+    /**
+     * Truncates the input string so the result is no longer than charLimit. When result is truncated, it ends with
+     * an ellipsis character.
+     */
+    private static String truncateIfNeeded(String input, int charLimit) {
+        if (charLimit < 0) {
+            throw new IllegalArgumentException("charLimit cannot be negative");
+        }
+
+        if (input == null || input.length() <= charLimit) {
+            return input;
+        }
+
+        if (charLimit == 0) {
+            return "";
+        }
+
+        // reserve room for the ellipsis
+        int ellipsisLength = ELLIPSIS.length();
+
+        int keep = charLimit - ellipsisLength;
+        return safeSubstring(input, keep) + ELLIPSIS;
+    }
+
+    /**
+     * Returns the longest prefix of {@code input} whose length is {@code <= maxLength}, without splitting a surrogate
+     * pair (so emoji / non-BMP characters stay intact).
+     */
+    private static String safeSubstring(String input, int maxLength) {
+        if (input == null || maxLength < 0 || maxLength >= input.length()) {
+            return input;
+        }
+        int end = maxLength;
+        // if we'd split a surrogate pair, back off by one char
+        if (end > 0 && Character.isLowSurrogate(input.charAt(end))) {
+            end--;
+        }
+        return input.substring(0, end);
+    }
+
     private boolean isIncluded(EventAttribute include) {
         return includes.contains(include);
     }
@@ -127,5 +173,9 @@ public class EventJsonLayout extends AbstractJsonLayout<ILoggingEvent> {
 
     public void setIncludesMdcKeys(Set<String> includesMdcKeys) {
         this.includesMdcKeys = new HashSet<>(includesMdcKeys);
+    }
+
+    public int getExceptionCharLimit() {
+        return exceptionCharLimit;
     }
 }
