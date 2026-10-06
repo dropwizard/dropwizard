@@ -111,16 +111,14 @@ public class EventJsonLayout extends AbstractJsonLayout<ILoggingEvent> {
      * an ellipsis character.
      */
     private static String truncateIfNeeded(String input, int charLimit) {
-        if (charLimit < 0) {
-            throw new IllegalArgumentException("charLimit cannot be negative");
-        }
-
-        if (input == null || input.length() <= charLimit) {
+        // no limit defined, no truncation needed
+        if (charLimit <= 0) {
             return input;
         }
 
-        if (charLimit == 0) {
-            return "";
+        // input is less than the limit, no truncation needed
+        if (input == null || input.length() <= charLimit) {
+            return input;
         }
 
         // reserve room for the ellipsis

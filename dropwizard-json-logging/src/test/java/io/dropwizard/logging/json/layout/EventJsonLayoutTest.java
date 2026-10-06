@@ -106,6 +106,21 @@ class EventJsonLayoutTest {
     }
 
     @Test
+    void testLogsLongExceptionWithNoLimitDefined() {
+        String message = "Boom!Boom!Boom!Boom!"; // longer than limit used in other tests
+        when(event.getThrowableProxy()).thenReturn(new ThrowableProxyVO());
+        when(throwableProxyConverter.convert(event)).thenReturn(message);
+
+        EventJsonLayout eventJsonLayoutWithNoExceptionLimit = new EventJsonLayout(jsonFormatter, timestampFormatter,
+            throwableProxyConverter, DEFAULT_EVENT_ATTRIBUTES, Collections.emptyMap(), Collections.emptyMap(),
+            Collections.emptySet(), false, 0);
+
+        final HashMap<String, Object> expectedFields = new HashMap<>(defaultExpectedFields);
+        expectedFields.put("exception", message);
+        assertThat(eventJsonLayoutWithNoExceptionLimit.toJsonMap(event)).isEqualTo(expectedFields);
+    }
+
+    @Test
     void testLogsATooLongException() {
         String givenExceptionMessage = "test exception message";
         String expectedExceptionMessage = "test exception…";

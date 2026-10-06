@@ -35,12 +35,17 @@ import java.util.TimeZone;
  * <tr>
  * <td>{@code includesMdcKeys}</td>
  * <td>(empty)</td>
- * <td>Set of MDC keys which should be included in the JSON map. By default includes everything.</td>
+ * <td>Set of MDC keys which should be included in the JSON map. By default, includes everything.</td>
  * </tr>
  * <tr>
  * <td>{@code flattenMdc}</td>
  * <td>{@code false}</td>
  * <td>Whether the MDC should be included under the key "mdc" or flattened into the map.</td>
+ * </tr>
+ * <tr>
+ * <td>{@code exceptionCharLimit}</td>
+ * <td>{@code 0} - no limit</td>
+ * <td>If greater than zero, truncate the 'exception' field value to be no more than the defined limit.</td>
  * </tr>
  * </table>
  */
@@ -57,8 +62,8 @@ public class EventJsonLayoutBaseFactory extends AbstractJsonLayoutBaseFactory<IL
     @Nullable
     private ExceptionFormat exceptionFormat;
 
-    @Min(1)
-    private int exceptionCharLimit = 8000;
+    @Min(0)
+    private int exceptionCharLimit = 0;
 
     @JsonProperty
     public EnumSet<EventAttribute> getIncludes() {
