@@ -29,10 +29,17 @@ class BasicCredentialsTest {
 
     @Test
     void hasAWorkingHashCode() {
+        // Same username AND password → same hashCode
         assertThat(credentials.hashCode())
-            .hasSameHashCodeAs(new BasicCredentials("u", "p"))
-            .isNotEqualTo(new BasicCredentials("u1", "p").hashCode())
-            .isNotEqualTo(new BasicCredentials("u", "p1").hashCode());
+            .hasSameHashCodeAs(new BasicCredentials("u", "p"));
+
+        // Different username → different hashCode
+        assertThat(credentials.hashCode())
+            .doesNotHaveSameHashCodeAs(new BasicCredentials("u1", "p").hashCode());
+
+        // Different password with the same username → different hashCode
+        assertThat(credentials.hashCode())
+            .doesNotHaveSameHashCodeAs(new BasicCredentials("u", "p1").hashCode());
     }
 
     @Test

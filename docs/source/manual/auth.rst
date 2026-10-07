@@ -22,18 +22,19 @@ Authenticators implement the ``Authenticator<C, P extends Principal>`` interface
     public class ExampleAuthenticator implements Authenticator<BasicCredentials, User> {
         @Override
         public Optional<User> authenticate(BasicCredentials credentials) throws AuthenticationException {
-            if ("secret".equals(credentials.getPassword())) {
-                return Optional.of(new User(credentials.getUsername()));
+            if (user is successfully authenticated) {
+                return Optional.of(new User(...));
+            } else {
+                return Optional.empty();
             }
-            return Optional.empty();
         }
     }
 
-This authenticator takes :ref:`basic auth credentials <man-auth-basic>` and if the client-provided
-password is ``secret``, authenticates the client as a ``User`` with the client-provided username.
+If the user exists and the credentials are valid, a present ``Optional<Principal>`` is returned containing the
+now-authenticated user.
 
-If the password doesn't match, an absent ``Optional`` is returned instead, indicating that the
-credentials are invalid.
+If the credentials are incorrect, an empty ``Optional`` is returned, indicating that the authentication attempt was
+rejected.
 
 .. warning:: It's important for authentication services not to provide too much information in their
              errors. The fact that a username or email has an account may be meaningful to an
