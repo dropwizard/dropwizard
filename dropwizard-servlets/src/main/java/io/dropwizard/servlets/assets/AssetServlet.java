@@ -6,6 +6,7 @@ import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.eclipse.jetty.http.ByteRange;
 import org.jspecify.annotations.Nullable;
 
 import java.io.IOException;
@@ -13,27 +14,33 @@ import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
-import java.util.Arrays;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
+import java.util.HexFormat;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import java.util.zip.CRC32;
 
 public class AssetServlet extends HttpServlet {
     private static final long serialVersionUID = 6393345594784987908L;
 
     // HTTP header names
-    private static final String IF_MODIFIED_SINCE = "If-Modified-Since";
+    private static final String IF_MATCH = "If-Match";
+    private static final String IF_UNMODIFIED_SINCE = "If-Unmodified-Since";
     private static final String IF_NONE_MATCH = "If-None-Match";
+    private static final String IF_MODIFIED_SINCE = "If-Modified-Since";
     private static final String IF_RANGE = "If-Range";
     private static final String RANGE = "Range";
     private static final String ACCEPT_RANGES = "Accept-Ranges";
     private static final String CONTENT_RANGE = "Content-Range";
     private static final String ETAG = "ETag";
     private static final String LAST_MODIFIED = "Last-Modified";
+
+    private static final String MULTIPART_CONTENT_TYPE_PREFIX = "multipart/byteranges; boundary=";
 
     private static class CachedAsset {
         private final byte[] resource;
@@ -183,103 +190,135 @@ public class AssetServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req,
                          HttpServletResponse resp) throws ServletException, IOException {
-        try {
-            final StringBuilder builder = new StringBuilder(req.getServletPath());
-            if (req.getPathInfo() != null) {
-                builder.append(req.getPathInfo());
-            }
-            final CachedAsset cachedAsset = loadAsset(builder.toString());
-            if (cachedAsset == null) {
-                resp.sendError(HttpServletResponse.SC_NOT_FOUND);
+        final StringBuilder builder = new StringBuilder(req.getServletPath());
+        if (req.getPathInfo() != null) {
+            builder.append(req.getPathInfo());
+        }
+        final CachedAsset cachedAsset = loadAsset(builder.toString());
+        if (cachedAsset == null) {
+            resp.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+
+        // Representation metadata applies to every response, including 304 and 412 - see RFC 7232 4.1 and 4.2.
+        resp.setHeader(ETAG, cachedAsset.getETag());
+        resp.setDateHeader(LAST_MODIFIED, cachedAsset.getLastModifiedTime());
+        resp.setHeader(ACCEPT_RANGES, "bytes");
+
+        // RFC 7232 section 6 precondition evaluation order.
+        if (req.getHeader(IF_MATCH) != null) {
+            if (!ifMatchMatches(req.getHeader(IF_MATCH), cachedAsset.getETag())) {
+                resp.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);
                 return;
             }
-
-            if (isCachedClientSide(req, cachedAsset)) {
-                resp.sendError(HttpServletResponse.SC_NOT_MODIFIED);
+        } else if (req.getHeader(IF_UNMODIFIED_SINCE) != null) {  // If-Unmodified-Since only eval'd If-Match absent
+            final long ifUnmodifiedSince = parseDateHeader(req, IF_UNMODIFIED_SINCE);
+            if (ifUnmodifiedSince != -1 && cachedAsset.getLastModifiedTime() > ifUnmodifiedSince) {
+                resp.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);
                 return;
             }
+        }
 
-            final String rangeHeader = req.getHeader(RANGE);
+        if (req.getHeader(IF_NONE_MATCH) != null) {
+            if (ifNoneMatchMatches(req.getHeader(IF_NONE_MATCH), cachedAsset.getETag())) {
+                resp.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+                return;
+            }
+        } else if (req.getHeader(IF_MODIFIED_SINCE) != null) {  // If-Modified-Since only eval'd If-None-Match absent
+            final long ifModifiedSince = parseDateHeader(req, IF_MODIFIED_SINCE);
+            if (ifModifiedSince != -1 && cachedAsset.getLastModifiedTime() <= ifModifiedSince) {
+                resp.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+                return;
+            }
+        }
 
-            final int resourceLength = cachedAsset.getResource().length;
-            List<ByteRange> ranges = Collections.emptyList();
+        final String requestUri = req.getRequestURI();
+        final String mediaType = Optional.ofNullable(
+            req.getServletContext().getMimeType(
+                indexFile != null && requestUri.endsWith("/")  // If indexFile configured (and directory requested),
+                    ? requestUri + indexFile                   //   then use MIME type of the index file.
+                    : requestUri))
+            .orElse(defaultMediaType);
 
-            boolean usingRanges = false;
-            // Support for HTTP Byte Ranges
-            // http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html
-            if (rangeHeader != null) {
+        final List<String> rangeHeaders = Collections.list(
+            Optional.ofNullable(req.getHeaders(RANGE))
+                .orElse(Collections.emptyEnumeration()));
+        final long resourceLength = cachedAsset.getResource().length;
+        List<ByteRange> parsedRanges = null;
 
-                final String ifRange = req.getHeader(IF_RANGE);
+        if (!rangeHeaders.isEmpty()) {
+            if (req.getHeader(IF_RANGE) == null || ifRangeMatches(req, cachedAsset)) {
+                parsedRanges = ByteRange.parse(rangeHeaders, resourceLength);
 
-                if (ifRange == null || cachedAsset.getETag().equals(ifRange)) {
-                    ranges = parseRangeHeader(rangeHeader, resourceLength);
-
-                    if (ranges.isEmpty()) {
-                        resp.sendError(HttpServletResponse.SC_REQUESTED_RANGE_NOT_SATISFIABLE);
-                        return;
-                    }
-
-                    resp.setStatus(HttpServletResponse.SC_PARTIAL_CONTENT);
-                    usingRanges = true;
-
-                    final String byteRanges = ranges.stream()
-                            .map(ByteRange::toString)
-                            .collect(Collectors.joining(","));
-                    resp.addHeader(CONTENT_RANGE, "bytes " + byteRanges + "/" + resourceLength);
+                if (parsedRanges.isEmpty()) {
+                    resp.setHeader(CONTENT_RANGE, ByteRange.toNonSatisfiableHeaderValue(resourceLength));
+                    resp.setStatus(HttpServletResponse.SC_REQUESTED_RANGE_NOT_SATISFIABLE);
+                    return;
                 }
+
+                resp.setStatus(HttpServletResponse.SC_PARTIAL_CONTENT);
             }
+        }
 
-            resp.setDateHeader(LAST_MODIFIED, cachedAsset.getLastModifiedTime());
-            resp.setHeader(ETAG, cachedAsset.getETag());
-
-            final String requestUri = req.getRequestURI();
-            final String mediaType = Optional.ofNullable(req.getServletContext().getMimeType(
-                    indexFile != null && requestUri.endsWith("/") ? requestUri + indexFile : requestUri))
-                    .orElse(defaultMediaType);
-            if (mediaType.startsWith("video") || mediaType.startsWith("audio") || usingRanges) {
-                resp.addHeader(ACCEPT_RANGES, "bytes");
-            }
-
+        final String boundary;
+        if (parsedRanges != null && parsedRanges.size() > 1) {
+            // Top-level content type is multipart/byteranges; each part carries the asset's own media type in its
+            // own Content-Type header.
+            boundary = generateBoundary();
+            resp.setContentType(MULTIPART_CONTENT_TYPE_PREFIX + boundary);
+        } else {
+            boundary = null;
             resp.setContentType(mediaType);
             if (defaultCharset != null) {
                 resp.setCharacterEncoding(defaultCharset.toString());
             }
-
-            try (ServletOutputStream output = resp.getOutputStream()) {
-                if (usingRanges) {
-                    for (ByteRange range : ranges) {
-                        output.write(cachedAsset.getResource(), range.getStart(),
-                                range.getEnd() - range.getStart() + 1);
-                    }
-                } else {
-                    output.write(cachedAsset.getResource());
-                }
+            if (parsedRanges != null) {
+                // at most only one Range header exists (multiple are handled in above 'if' block)
+                resp.setHeader(CONTENT_RANGE, parsedRanges.get(0).toHeaderValue(resourceLength));
             }
-        } catch (RuntimeException | URISyntaxException ignored) {
-            if (!resp.isCommitted()) {
-                resp.reset();
-                resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        }
+
+        try (ServletOutputStream output = resp.getOutputStream()) {
+            if (parsedRanges == null) {
+                output.write(cachedAsset.getResource());
+            } else if (parsedRanges.size() == 1) {
+                final ByteRange singleRange = parsedRanges.get(0);
+                output.write(cachedAsset.getResource(), (int) singleRange.first(), (int) singleRange.getLength());
+            } else {
+                writeMultipartBody(output, cachedAsset.getResource(), parsedRanges, mediaType,
+                        Objects.requireNonNull(boundary), resourceLength);
             }
         }
     }
 
+    /**
+     * Loads and caches the asset at the given key.
+     *
+     * @return the cached asset, or {@code null} if the resource is missing — the caller translates this into a 404
+     * @throws IOException if the resource exists but cannot be read (translated to a 500 by the servlet container)
+     */
     @Nullable
-    private CachedAsset loadAsset(String key) throws URISyntaxException, IOException {
+    private CachedAsset loadAsset(String key) throws IOException {
         if (!key.startsWith(uriPath)) {
-            throw new IllegalArgumentException("Cache key must start with " + uriPath);
+            return null;
         }
 
         final String requestedResourcePath = trimSlashes(key.substring(uriPath.length()));
         final String absoluteRequestedResourcePath = trimSlashes(this.resourcePath + requestedResourcePath);
 
-        URL requestedResourceURL = getResourceURL(absoluteRequestedResourcePath);
-        if (ResourceURL.isDirectory(requestedResourceURL)) {
-            if (indexFile != null) {
+        URL requestedResourceURL;
+        try {
+            requestedResourceURL = getResourceURL(absoluteRequestedResourcePath);
+            if (ResourceURL.isDirectory(requestedResourceURL)) {
+                if (indexFile == null) {
+                    // directory requested but no index file defined
+                    return null;
+                }
                 requestedResourceURL = getResourceURL(absoluteRequestedResourcePath + '/' + indexFile);
-            } else {
-                // directory requested but no index file defined
-                return null;
             }
+        } catch (IllegalArgumentException | URISyntaxException | ResourceNotFoundException notFound) {
+            // Resource missing or path malformed - the caller translates null into a 404.
+            return null;
         }
 
         long lastModified = ResourceURL.getLastModified(requestedResourceURL);
@@ -303,43 +342,111 @@ public class AssetServlet extends HttpServlet {
         }
     }
 
-    private boolean isCachedClientSide(HttpServletRequest req, CachedAsset cachedAsset) {
-        // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/If-Modified-Since
-        // Indicates that with the presense of If-None-Match If-Modified-Since should be ignored.
-        String ifNoneMatchHeader = req.getHeader(IF_NONE_MATCH);
-        if (ifNoneMatchHeader != null) {
-            return cachedAsset.getETag().equals(ifNoneMatchHeader);
-        } else {
-            return req.getDateHeader(IF_MODIFIED_SINCE) >= cachedAsset.getLastModifiedTime();
+    /**
+     * Evaluates an {@code If-Match} header value against our ETag per RFC 7232 3.1. The header may be the wildcard
+     * {@code *} (matches any existing representation), or a comma-separated list of entity-tags, each compared with
+     * <em>strong</em> comparison (2.3.2). Per RFC, the {@code W/} (weak match) prefix disqualifies an If-Match match.
+     */
+    private static boolean ifMatchMatches(String ifMatch, String ourETag) {
+        if (ifMatch.trim().equals("*")) {
+            return true;
+        }
+        for (String entry : ifMatch.split(",")) {
+            final String candidate = entry.trim();
+            // Weak tags on If-Match are nonsensical; either side having a W/ prefix disqualifies a match.
+            if (!candidate.startsWith("W/") && ourETag.equals(candidate)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Evaluates an {@code If-None-Match} header value against our ETag per RFC 7232 3.2. The header may be the
+     * wildcard {@code *} (always a match for an existing resource), or a comma-separated list of entity-tags, each
+     * compared with weak comparison (2.3.2) - i.e. the optional {@code W/} prefix on either side is ignored.
+     * <p>
+     * This method returns {@code true} when a tag matches (meaning the caller should 304), whereas the RFC phrases the
+     * precondition as "true if none match, send 304 when false."
+     */
+    private static boolean ifNoneMatchMatches(String ifNoneMatch, String ourETag) {
+        if (ifNoneMatch.trim().equals("*")) {
+            return true;
+        }
+        final String ourOpaque = stripWeakPrefix(ourETag);
+        for (String entry : ifNoneMatch.split(",")) {
+            if (ourOpaque.equals(stripWeakPrefix(entry.trim()))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Strips an optional {@code W/} prefix, exposing the opaque-tag for weak comparison per RFC 7232 2.3.2.
+     */
+    private static String stripWeakPrefix(String eTag) {
+        return eTag.startsWith("W/") ? eTag.substring(2) : eTag;
+    }
+
+    /**
+     * Evaluates an {@code If-Range} precondition per RFC 7233 3.2. The header's value may be either a strong
+     * entity-tag or an HTTP-date; weak entity-tags ({@code W/"..."}) never match. A match means the client's cached
+     * copy is current, so the server may send a 206 partial response; a non-match means the server should fall back to
+     * a full 200 response.
+     */
+    private boolean ifRangeMatches(HttpServletRequest req, CachedAsset cachedAsset) {
+        final String ifRange = req.getHeader(IF_RANGE);
+        // Strong ETags start with a quote; weak ETags start with W/ and must never match.
+        if (ifRange.startsWith("\"")) {
+            return cachedAsset.getETag().equals(ifRange);
+        }
+        // Otherwise interpret as HTTP-date, matched only against an exact Last-Modified.
+        final long ifRangeDate = parseDateHeader(req, IF_RANGE);
+        return ifRangeDate != -1 && ifRangeDate == cachedAsset.getLastModifiedTime();
+    }
+
+    /**
+     * Parses a date-valued request header, treating any unparseable value as "not present" (returns {@code -1}).
+     * Servlet containers throw {@link IllegalArgumentException} when {@code getDateHeader} encounters a malformed
+     * value; per the RFC, we need to ignore such unparseable headers rather than rejecting the request.
+     */
+    private static long parseDateHeader(HttpServletRequest req, String header) {
+        try {
+            return req.getDateHeader(header);
+        } catch (IllegalArgumentException e) {
+            return -1;
         }
     }
 
     /**
-     * Parses a given Range header for one or more byte ranges.
-     *
-     * @param rangeHeader    Range header to parse
-     * @param resourceLength Length of the resource in bytes
-     * @return List of parsed ranges
+     * Generates a {@code multipart/byteranges} boundary token: 16 hex characters drawn from {@link ThreadLocalRandom}.
+     * Not cryptographically strong, but the content body separator is a loose guarantee. This aligns with Jetty
+     * behavior.
      */
-    private List<ByteRange> parseRangeHeader(final String rangeHeader, final int resourceLength) {
-        try {
-			final List<ByteRange> byteRanges;
-			if (rangeHeader.contains("=")) {
-				final String[] parts = rangeHeader.split("=", -1);
-				if (parts.length > 1) {
-					byteRanges = Arrays.stream(parts[1].split(",", -1))
-							.map(String::trim)
-							.map(s -> ByteRange.parse(s, resourceLength))
-							.collect(Collectors.toList());
-				} else {
-					byteRanges = Collections.emptyList();
-				}
-			} else {
-				byteRanges = Collections.emptyList();
-			}
-			return byteRanges;
-        } catch (NumberFormatException e) {
-            return Collections.emptyList();
+    private static String generateBoundary() {
+        return HexFormat.of().toHexDigits(ThreadLocalRandom.current().nextLong());
+    }
+
+    /**
+     * Writes an RFC 7233 4.1 {@code multipart/byteranges} body for the given ranges. Each part has its own
+     * {@code Content-Type} (echoing the asset's media type) and {@code Content-Range} header, followed by the raw byte
+     * slice and closing boundary.
+     */
+    private static void writeMultipartBody(ServletOutputStream output,
+                                           byte[] asset,
+                                           List<ByteRange> ranges,
+                                           String mediaType,
+                                           String boundary,
+                                           long totalLength) throws IOException {
+        for (ByteRange range : ranges) {
+            final String partHeader = "\r\n--" + boundary + "\r\n"
+                    + "Content-Type: " + mediaType + "\r\n"
+                    + "Content-Range: " + range.toHeaderValue(totalLength) + "\r\n"
+                    + "\r\n";
+            output.write(partHeader.getBytes(StandardCharsets.US_ASCII));
+            output.write(asset, (int) range.first(), (int) range.getLength());
         }
+        output.write(("\r\n--" + boundary + "--\r\n").getBytes(StandardCharsets.US_ASCII));
     }
 }
