@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.dropwizard.logging.json.layout.EventJsonLayout;
 import io.dropwizard.logging.json.layout.ExceptionFormat;
+import jakarta.validation.constraints.Min;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -34,12 +35,17 @@ import java.util.TimeZone;
  * <tr>
  * <td>{@code includesMdcKeys}</td>
  * <td>(empty)</td>
- * <td>Set of MDC keys which should be included in the JSON map. By default includes everything.</td>
+ * <td>Set of MDC keys which should be included in the JSON map. By default, includes everything.</td>
  * </tr>
  * <tr>
  * <td>{@code flattenMdc}</td>
  * <td>{@code false}</td>
  * <td>Whether the MDC should be included under the key "mdc" or flattened into the map.</td>
+ * </tr>
+ * <tr>
+ * <td>{@code exceptionCharLimit}</td>
+ * <td>{@code 0} - no limit</td>
+ * <td>If greater than zero, truncate the 'exception' field value to be no more than the defined limit.</td>
  * </tr>
  * </table>
  */
@@ -55,6 +61,9 @@ public class EventJsonLayoutBaseFactory extends AbstractJsonLayoutBaseFactory<IL
 
     @Nullable
     private ExceptionFormat exceptionFormat;
+
+    @Min(0)
+    private int exceptionCharLimit = 0;
 
     @JsonProperty
     public EnumSet<EventAttribute> getIncludes() {
@@ -103,11 +112,27 @@ public class EventJsonLayoutBaseFactory extends AbstractJsonLayoutBaseFactory<IL
         return exceptionFormat;
     }
 
+    /**
+     * @since 5.1.0
+     */
+    @JsonProperty("exceptionCharLimit")
+    public int getExceptionCharLimit() {
+        return exceptionCharLimit;
+    }
+
+    /**
+     * @since 5.1.0
+     */
+    @JsonProperty("exceptionCharLimit")
+    public void setExceptionCharLimit(int exceptionCharLimit) {
+        this.exceptionCharLimit = exceptionCharLimit;
+    }
+
     @Override
     public LayoutBase<ILoggingEvent> build(LoggerContext context, TimeZone timeZone) {
         final EventJsonLayout jsonLayout = new EventJsonLayout(createDropwizardJsonFormatter(),
             createTimestampFormatter(timeZone), createThrowableProxyConverter(context), includes, getCustomFieldNames(),
-            getAdditionalFields(), includesMdcKeys, flattenMdc);
+            getAdditionalFields(), includesMdcKeys, flattenMdc, exceptionCharLimit);
         jsonLayout.setContext(context);
         return jsonLayout;
     }
