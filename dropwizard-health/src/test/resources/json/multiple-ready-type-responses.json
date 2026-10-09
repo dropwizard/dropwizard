@@ -1,0 +1,14 @@
+[
+    {
+        "name": "baz",
+        "healthy": false,
+        "type": "READY",
+        "critical": false
+    },
+    {
+        "name": "foo",
+        "healthy": true,
+        "type": "READY",
+        "critical": true
+    }
+]
