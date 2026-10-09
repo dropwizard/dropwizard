@@ -994,6 +994,31 @@ class LogbackAccessRequestLogIntegrationTest extends AbstractRequestLogIntegrati
                         .isEqualTo("abc123"));
         }
 
+        @Test
+        void sessionCookie_duplicateNamesDoNotSuppressTheLogLine() throws Exception {
+            // when
+            //    Duplicate cookie names are legal (same name stored for different paths/domains) and fully
+            //    client-controlled. The first occurrence wins, per RFC 6265 5.4 ordering.
+            testSupport.getClient()
+                .target(baseUrl() + "/greet?name=Charley")
+                .request()
+                .header(HttpHeaders.USER_AGENT, "kitchen-sink-agent")
+                .header("Cookie", "sessionid=abc123; sessionid=def456")
+                .get()
+                .close();
+            sendAndAwaitSentinel(testSupport);
+
+            // then
+            List<LogLine> lines = readTestLogLines().stream()
+                .map(PARSER::parseLog)
+                .toList();
+            assertThat(lines)
+                .singleElement()
+                .satisfies(line ->
+                    assertThat(line.get("sessionCookie"))
+                        .isEqualTo("abc123"));
+        }
+
         // --- Request attributes (populated by HeaderToAttributeFilter) ---
 
         @Test

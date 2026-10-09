@@ -335,9 +335,11 @@ public class JettyAccessEvent implements IAccessEvent {
     }
 
     private Map<String, String> buildCookieMapInternal() {
+        // Duplicate cookie names are legal (e.g. the same name stored for different paths or domains); keep the
+        // first occurrence, per RFC 6265 5.4 ordering, instead of letting Collectors.toMap throw and lose the event.
         return Request.getCookies(request)
             .stream()
-            .collect(Collectors.toMap(HttpCookie::getName, HttpCookie::getValue));
+            .collect(Collectors.toMap(HttpCookie::getName, HttpCookie::getValue, (first, second) -> first));
     }
 
     @Override
