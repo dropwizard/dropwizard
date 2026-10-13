@@ -5,6 +5,7 @@ import ch.qos.logback.core.Appender;
 import org.eclipse.jetty.ee10.servlet.ServletChannel;
 import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
 import org.eclipse.jetty.ee10.servlet.ServletContextRequest;
+import org.eclipse.jetty.http.HttpCookie;
 import org.eclipse.jetty.http.HttpFields;
 import org.eclipse.jetty.http.HttpURI;
 import org.eclipse.jetty.server.ConnectionMetaData;
@@ -17,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.MockedStatic;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -106,6 +108,19 @@ class LogbackAccessRequestLogTest {
         final IAccessEvent event = logAndCapture();
 
         assertThat(event.getResponseHeaderMap()).containsEntry("Testheader", "Testvalue1,Testvalue2");
+    }
+
+    @Test
+    void keepsFirstCookieWhenNamesAreDuplicated() {
+        staticRequest.when(() -> Request.getCookies(servletContextRequest)).thenReturn(List.of(
+            HttpCookie.from("sessionid", "first"),
+            HttpCookie.from("sessionid", "second"),
+            HttpCookie.from("other", "value")));
+
+        final IAccessEvent event = logAndCapture();
+
+        assertThat(event.getCookie("sessionid")).isEqualTo("first");
+        assertThat(event.getCookie("other")).isEqualTo("value");
     }
 
     private IAccessEvent logAndCapture() {
