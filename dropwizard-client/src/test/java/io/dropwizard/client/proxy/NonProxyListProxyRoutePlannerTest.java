@@ -41,4 +41,12 @@ class NonProxyListProxyRoutePlannerTest {
     void testHostWithEndWildcardIsMatched() throws Exception {
         assertThat(routePlanner.determineProxy(new HttpHost("192.168.52.94"), httpContext)).isNull();
     }
+
+    @Test
+    void testDotIsNotTreatedAsWildcard() throws Exception {
+        assertThat(routePlanner.determineProxy(new HttpHost("testexample.com"), httpContext))
+                .isEqualTo(proxy);
+        assertThat(routePlanner.determineProxy(new HttpHost("192-168-52-94.dropwizard.io"), httpContext))
+                .isEqualTo(proxy);
+    }
 }

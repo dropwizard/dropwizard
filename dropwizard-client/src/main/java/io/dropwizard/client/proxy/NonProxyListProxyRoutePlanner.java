@@ -8,9 +8,11 @@ import org.apache.hc.core5.http.protocol.HttpContext;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Implementation of {@link org.apache.hc.client5.http.routing.HttpRoutePlanner}
@@ -41,8 +43,10 @@ public class NonProxyListProxyRoutePlanner extends DefaultProxyRoutePlanner {
 
         final List<Pattern> patterns = new ArrayList<>(nonProxyHosts.size());
         for (String nonProxyHost : nonProxyHosts) {
-            // Replaces a wildcard to a regular expression
-            patterns.add(Pattern.compile(WILDCARD.matcher(nonProxyHost).replaceAll(REGEX_WILDCARD)));
+            // Quotes the literal parts and replaces a wildcard to a regular expression
+            patterns.add(Pattern.compile(Arrays.stream(WILDCARD.split(nonProxyHost, -1))
+                    .map(Pattern::quote)
+                    .collect(Collectors.joining(REGEX_WILDCARD))));
         }
         return Collections.unmodifiableList(patterns);
     }
