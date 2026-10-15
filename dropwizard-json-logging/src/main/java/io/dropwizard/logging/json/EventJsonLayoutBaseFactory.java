@@ -8,9 +8,9 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.LayoutBase;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import io.dropwizard.logging.common.TruncatingThrowableHandlingConverter;
 import io.dropwizard.logging.json.layout.EventJsonLayout;
 import io.dropwizard.logging.json.layout.ExceptionFormat;
-import jakarta.validation.constraints.Min;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -42,11 +42,6 @@ import java.util.TimeZone;
  * <td>{@code false}</td>
  * <td>Whether the MDC should be included under the key "mdc" or flattened into the map.</td>
  * </tr>
- * <tr>
- * <td>{@code exceptionCharLimit}</td>
- * <td>{@code 0} - no limit</td>
- * <td>If greater than zero, truncate the 'exception' field value to be no more than the defined limit.</td>
- * </tr>
  * </table>
  */
 @JsonTypeName("json")
@@ -61,9 +56,6 @@ public class EventJsonLayoutBaseFactory extends AbstractJsonLayoutBaseFactory<IL
 
     @Nullable
     private ExceptionFormat exceptionFormat;
-
-    @Min(0)
-    private int exceptionCharLimit = 0;
 
     @JsonProperty
     public EnumSet<EventAttribute> getIncludes() {
@@ -112,27 +104,11 @@ public class EventJsonLayoutBaseFactory extends AbstractJsonLayoutBaseFactory<IL
         return exceptionFormat;
     }
 
-    /**
-     * @since 5.1.0
-     */
-    @JsonProperty("exceptionCharLimit")
-    public int getExceptionCharLimit() {
-        return exceptionCharLimit;
-    }
-
-    /**
-     * @since 5.1.0
-     */
-    @JsonProperty("exceptionCharLimit")
-    public void setExceptionCharLimit(int exceptionCharLimit) {
-        this.exceptionCharLimit = exceptionCharLimit;
-    }
-
     @Override
     public LayoutBase<ILoggingEvent> build(LoggerContext context, TimeZone timeZone) {
         final EventJsonLayout jsonLayout = new EventJsonLayout(createDropwizardJsonFormatter(),
             createTimestampFormatter(timeZone), createThrowableProxyConverter(context), includes, getCustomFieldNames(),
-            getAdditionalFields(), includesMdcKeys, flattenMdc, exceptionCharLimit);
+            getAdditionalFields(), includesMdcKeys, flattenMdc);
         jsonLayout.setContext(context);
         return jsonLayout;
     }
@@ -157,7 +133,12 @@ public class EventJsonLayoutBaseFactory extends AbstractJsonLayoutBaseFactory<IL
         throwableHandlingConverter.setOptionList(options);
         throwableHandlingConverter.setContext(context);
 
-        return throwableHandlingConverter;
+        int charLimit = exceptionFormat.getCharacterLimit();
+        if (charLimit > 0) {
+            // wrap converter if char limit is defined
+            return new TruncatingThrowableHandlingConverter(throwableHandlingConverter, charLimit);
+        } else {
+            return throwableHandlingConverter;
+        }
     }
-
 }
