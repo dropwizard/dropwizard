@@ -8,3 +8,14 @@ org.liquibase:liquibase-core:4.33.0 = !0x4F474D657AAB9B387B812DA2915C4D2EC1FE0D3
 org.hibernate.orm:hibernate-core = 0x1452F35849B50750F6A3BBB4B54011358B352F85
 # Not allowed artifact org.jboss.logging:jboss-logging:jar:3.6.3.Final and keyID
 org.jboss.logging:jboss-logging = 0x6D2AF456B8CB597387901C786F29F72839B3A8E7
+
+# Update Jetty keys list with new key
+# https://github.com/jetty/jetty.project/pull/15329
+org.eclipse.jetty.*             = \
+                                  0x1A2D608BF6D37AEF12D53A4F37B0A85F5CE89B0C, \
+                                  0x2A684B57436A81FA8706B53C61C3351A438A3B7D, \
+                                  0x5989BAF76217B843D66BE55B2D0E1FB8FE4B68B4, \
+                                  0x8B096546B1A8F02656B15D3B1677D141BCF3584D, \
+                                  0xB59B67FD7904984367F931800818D9D68FB67BAC, \
+                                  0xF254B35617DC255D9344BCFA873A8E86B4372146, \
+                                  0x716EE302674CDBB2E660E1B44DB5EA09F2E3C800
