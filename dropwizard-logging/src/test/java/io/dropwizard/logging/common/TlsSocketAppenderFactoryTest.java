@@ -14,7 +14,10 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.net.ssl.SSLHandshakeException;
+import javax.net.ssl.SSLSocket;
 import java.io.File;
+import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -25,6 +28,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 class TlsSocketAppenderFactoryTest {
 
@@ -81,6 +85,22 @@ class TlsSocketAppenderFactoryTest {
                 // Strip preamble from e.g. "INFO  [2021-11-20 10:23:57,620] com.example.app: Application log 0"
                 .extracting(s -> s.substring(s.lastIndexOf("com.example.app: ") + "com.example.app: ".length()))
                 .containsExactlyElementsOf(loggedMessages);
+        }
+    }
+
+    @Test
+    void testRejectsCertificateNotMatchingHost() throws Exception {
+        try (ServerSocket serverSocket = createServerSocket(); TcpServer tcpServer = new TcpServer(serverSocket)) {
+            tcpServer.receive();
+            TlsSocketAppenderFactory<?> appenderFactory = new TlsSocketAppenderFactory<>();
+            appenderFactory.setTrustStorePath(resourcePath("/stores/tls_client.jks"));
+            appenderFactory.setTrustStorePassword("client_pass");
+
+            // The server certificate is issued for "localhost" only, so connecting by IP address must fail
+            try (SSLSocket socket = (SSLSocket) appenderFactory.socketFactory().createSocket()) {
+                socket.connect(new InetSocketAddress(serverSocket.getInetAddress().getHostAddress(), serverSocket.getLocalPort()));
+                assertThatExceptionOfType(SSLHandshakeException.class).isThrownBy(socket::startHandshake);
+            }
         }
     }
 
