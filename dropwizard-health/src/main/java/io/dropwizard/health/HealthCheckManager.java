@@ -137,7 +137,6 @@ class HealthCheckManager implements HealthCheckRegistryListener, HealthStatusChe
                 // swallow error
             }
         });
-        healthStateListeners.forEach(listener -> listener.onStateChanged(name, isNowHealthy));
     }
 
     protected void initializeAppHealth() {
