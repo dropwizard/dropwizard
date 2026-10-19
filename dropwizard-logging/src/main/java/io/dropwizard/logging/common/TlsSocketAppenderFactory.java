@@ -341,7 +341,7 @@ public class TlsSocketAppenderFactory<E extends DeferredProcessingAware> extends
     }
 
     private SslContextFactory createSslContextFactory() {
-        SslContextFactory factory = new SslContextFactory.Server();
+        SslContextFactory factory = new SslContextFactory.Client();
         if (keyStorePath != null) {
             factory.setKeyStorePath(keyStorePath);
         }
