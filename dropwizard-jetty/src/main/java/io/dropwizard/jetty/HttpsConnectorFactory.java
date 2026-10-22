@@ -169,7 +169,8 @@ import java.util.stream.Collectors;
  *         <td>
  *             Whether or not to validate TLS peer certificates. This option will
  *             cause unconditional failure in Dropwizard 1.x until a new validation mechanism can be
- *             implemented.
+ *             implemented. Always enabled when {@code crlPath}, {@code enableCRLDP} or
+ *             {@code enableOCSP} is set.
  *         </td>
  *     </tr>
  *     <tr>
@@ -825,7 +826,10 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
         factory.setEndpointIdentificationAlgorithm(endpointIdentificationAlgorithm);
 
         factory.setValidateCerts(validateCerts);
-        factory.setValidatePeerCerts(validatePeers);
+        // Jetty only applies crlPath, enableCRLDP and enableOCSP when peer certificates are validated,
+        // so configuring any of them has to turn validation on or revoked client certificates are accepted.
+        factory.setValidatePeerCerts(validatePeers || crlPath != null
+            || Boolean.TRUE.equals(enableCRLDP) || Boolean.TRUE.equals(enableOCSP));
 
         if (supportedProtocols != null) {
             factory.setIncludeProtocols(supportedProtocols.toArray(new String[0]));
