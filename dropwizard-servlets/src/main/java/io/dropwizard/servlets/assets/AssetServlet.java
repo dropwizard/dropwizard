@@ -308,6 +308,17 @@ public class AssetServlet extends HttpServlet {
 
         URL requestedResourceURL;
         try {
+            // Defense-in-depth: reject any ".." path segment. In the standard fat-jar deployment the classloader
+            // treats the name as an opaque jar entry key and never resolves "..", but a directory-based classpath
+            // (dev mode, exploded WAR, an extra -cp entry) does, which would let a crafted path escape the configured
+            // asset root to sibling classpath entries. The servlet container normally normalizes these away before
+            // dispatch; this guards the case where it does not. See
+            // https://github.com/dropwizard/dropwizard/issues/11335
+            for (final String segment : requestedResourcePath.split("[/\\\\]")) {
+                if ("..".equals(segment)) {
+                    throw new IllegalArgumentException("Path traversal segment in resource path: " + requestedResourcePath);
+                }
+            }
             requestedResourceURL = getResourceURL(absoluteRequestedResourcePath);
             if (ResourceURL.isDirectory(requestedResourceURL)) {
                 if (indexFile == null) {

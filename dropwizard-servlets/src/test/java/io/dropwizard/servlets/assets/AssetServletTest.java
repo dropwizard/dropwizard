@@ -1,5 +1,7 @@
 package io.dropwizard.servlets.assets;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.ee10.servlet.ServletTester;
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpTester;
@@ -27,6 +29,9 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.Future;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class AssetServletTest {
     private static final String DUMMY_SERVLET = "/dummy_servlet/";
@@ -586,6 +591,34 @@ public class AssetServletTest {
         response = HttpTester.parseResponse(SERVLET_TESTER.getResponses(request.generate()));
         assertThat(response.getStatus())
                 .isEqualTo(200);
+    }
+
+    @Test
+    void servesFilenamesContainingDotDot() throws Exception {
+        // ".." only matters as a whole path segment; a filename that merely contains it must still be served
+        // (a naive contains("..") guard would wrongly reject this).
+        request.setURI(DUMMY_SERVLET + "app..min.js");
+        response = HttpTester.parseResponse(SERVLET_TESTER.getResponses(request.generate()));
+        assertThat(response.getStatus())
+                .isEqualTo(200);
+        assertThat(response.getContent())
+                .isEqualTo("console.log(\"ok\");");
+    }
+
+    @Test
+    void rejectsPathTraversalSegment() throws Exception {
+        // The servlet container normalizes ".." away before dispatch, but a directory-based classpath resolves it,
+        // so loadAsset must reject a ".." segment rather than resolve it to a sibling resource. Feeding the raw path
+        // straight to doGet bypasses the container normalization to exercise that guard directly. See #11335.
+        final AssetServlet servlet = new DummyAssetServlet();
+        final HttpServletRequest req = mock(HttpServletRequest.class);
+        final HttpServletResponse resp = mock(HttpServletResponse.class);
+        when(req.getServletPath()).thenReturn("/dummy_servlet");
+        when(req.getPathInfo()).thenReturn("/foo/../example.txt");
+
+        servlet.doGet(req, resp);
+
+        verify(resp).sendError(HttpServletResponse.SC_NOT_FOUND);
     }
 
     @Test
