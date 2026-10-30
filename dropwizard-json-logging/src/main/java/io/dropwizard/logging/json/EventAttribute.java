@@ -15,5 +15,6 @@ public enum EventAttribute {
     @JsonProperty("exception") EXCEPTION,
     @JsonProperty("contextName") CONTEXT_NAME,
     @JsonProperty("timestamp") TIMESTAMP,
-    @JsonProperty("callerData") CALLER_DATA
+    @JsonProperty("callerData") CALLER_DATA,
+    @JsonProperty("keyValuePairs") KEY_VALUE_PAIRS
 }
