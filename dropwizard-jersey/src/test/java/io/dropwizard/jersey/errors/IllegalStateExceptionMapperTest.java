@@ -16,18 +16,18 @@ class IllegalStateExceptionMapperTest {
     @Test
     void delegatesToParentClass() {
         @SuppressWarnings("serial")
-        final Response reponse = mapper.toResponse(new IllegalStateException(getClass().getName()) {
+        final Response response = mapper.toResponse(new IllegalStateException(getClass().getName()) {
         });
-        assertThat(reponse.getStatusInfo()).isEqualTo(INTERNAL_SERVER_ERROR);
+        assertThat(response.getStatusInfo()).isEqualTo(INTERNAL_SERVER_ERROR);
     }
 
     @Test
     void handlesFormParamContentTypeError() {
-        final Response reponse = mapper
+        final Response response = mapper
             .toResponse(new IllegalStateException(LocalizationMessages.FORM_PARAM_CONTENT_TYPE_ERROR()));
-        assertThat(reponse.getStatusInfo()).isEqualTo(UNSUPPORTED_MEDIA_TYPE);
-        assertThat(reponse.getEntity()).isInstanceOf(ErrorMessage.class);
-        assertThat(((ErrorMessage) reponse.getEntity()).getMessage())
+        assertThat(response.getStatusInfo()).isEqualTo(UNSUPPORTED_MEDIA_TYPE);
+        assertThat(response.getEntity()).isInstanceOf(ErrorMessage.class);
+        assertThat(((ErrorMessage) response.getEntity()).getMessage())
             .isEqualTo(new NotSupportedException().getLocalizedMessage());
     }
 }
