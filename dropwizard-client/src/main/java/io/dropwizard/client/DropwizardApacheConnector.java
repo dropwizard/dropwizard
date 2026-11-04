@@ -245,7 +245,7 @@ public class DropwizardApacheConnector implements Connector {
         /**
          * {@inheritDoc}
          * <p>
-         * This method isn't supported at will throw an {@link java.lang.UnsupportedOperationException}
+         * This method isn't supported and will throw an {@link java.lang.UnsupportedOperationException}
          * if invoked.
          * </p>
          */
@@ -328,7 +328,7 @@ public class DropwizardApacheConnector implements Connector {
         /**
          * {@inheritDoc}
          * <p>
-         * This method isn't supported at will throw an {@link java.lang.UnsupportedOperationException}
+         * This method isn't supported and will throw an {@link java.lang.UnsupportedOperationException}
          * if invoked.
          * </p>
          */
