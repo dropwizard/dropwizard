@@ -91,4 +91,20 @@ class DataSizeValidatorTest {
 
         assertThat(validator.validate(example)).isEmpty();
     }
+
+    @Test
+    void returnsAnErrorForASizeWhoseBitCountDoesNotFitInALong() {
+        final Example example = new Example();
+        // 2 EiB: 2^31 gibibytes is 2^64 bits, so the bit count wraps to zero
+        example.setTooBig(DataSize.gibibytes(2147483648L));
+        example.setTooSmall(DataSize.megabytes(10));
+        example.setOutOfRange(DataSize.kilobytes(64));
+        example.setMaxDataSize(Collections.singletonList(DataSize.bytes(10)));
+        example.setMinDataSize(Collections.singletonList(DataSize.megabytes(10)));
+        example.setRangeDataSize(Collections.singletonList(DataSize.kilobytes(64)));
+
+        assertThat(validator.validate(example))
+                .extracting(violation -> violation.getPropertyPath().toString())
+                .containsOnly("tooBig");
+    }
 }
