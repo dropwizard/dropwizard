@@ -1064,6 +1064,53 @@ The ``access-json`` layout will produces the following log message:
 
     {"timestamp":1515002688000, "method":"GET","uri":"/hello-world", "status":200, "protocol":"HTTP/1.1","contentLength":37,"remoteAddress":"127.0.0.1","requestTime":5, "userAgent":"Mozilla/5.0"}
 
+Structured Logging with JSON
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Structured logging is supported using SLF4J 2.0's key-value pair API. This allows you to add structured data to individual log entries that will be automatically included in the JSON output:
+
+.. code-block:: java
+
+    logger.atInfo()
+          .addKeyValue("userId", userId)
+          .addKeyValue("action", "login")
+          .addKeyValue("duration", duration)
+          .log("User login completed");
+
+By default, all key-value pairs are included in the JSON output under the ``keyValuePairs`` field. You can control this behavior using the ``includesKeyValuePairsKeys`` and ``flattenKeyValuePairs`` configuration options.
+
+**Nested format** (default):
+
+.. code-block:: json
+
+    {
+      "timestamp": "2024-01-02T15:19:21.000+0000",
+      "level": "INFO",
+      "message": "User login completed",
+      "keyValuePairs": {
+        "userId": "12345",
+        "action": "login",
+        "duration": 150
+      }
+    }
+
+**Flattened format** (``flattenKeyValuePairs: true``):
+
+.. code-block:: json
+
+    {
+      "timestamp": "2024-01-02T15:19:21.000+0000",
+      "level": "INFO",
+      "message": "User login completed",
+      "userId": "12345",
+      "action": "login",
+      "duration": 150
+    }
+
+.. note::
+
+    String, numeric, and boolean values are automatically detected and serialized with the appropriate JSON type. Other object types are serialized using their ``toString()`` representation.
+
 Logging Configuration via HTTP
 ------------------------------
 

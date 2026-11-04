@@ -41,6 +41,16 @@ import java.util.TimeZone;
  * <td>{@code false}</td>
  * <td>Whether the MDC should be included under the key "mdc" or flattened into the map.</td>
  * </tr>
+ * <tr>
+ * <td>{@code includesKeyValuePairsKeys}</td>
+ * <td>(empty)</td>
+ * <td>Set of structured logging key-value pair keys which should be included in the JSON map. By default includes everything.</td>
+ * </tr>
+ * <tr>
+ * <td>{@code flattenKeyValuePairs}</td>
+ * <td>{@code false}</td>
+ * <td>Whether the structured logging key-value pairs should be included under the key "keyValuePairs" or flattened into the map.</td>
+ * </tr>
  * </table>
  */
 @JsonTypeName("json")
@@ -48,10 +58,12 @@ public class EventJsonLayoutBaseFactory extends AbstractJsonLayoutBaseFactory<IL
 
     private EnumSet<EventAttribute> includes = EnumSet.of(EventAttribute.LEVEL,
         EventAttribute.THREAD_NAME, EventAttribute.MDC, EventAttribute.MARKER, EventAttribute.LOGGER_NAME,
-        EventAttribute.MESSAGE, EventAttribute.EXCEPTION, EventAttribute.TIMESTAMP);
+        EventAttribute.MESSAGE, EventAttribute.EXCEPTION, EventAttribute.TIMESTAMP, EventAttribute.KEY_VALUE_PAIRS);
 
     private Set<String> includesMdcKeys = Collections.emptySet();
     private boolean flattenMdc = false;
+    private boolean flattenKeyValuePairs = false;
+    private Set<String> includesKeyValuePairsKeys = Collections.emptySet();
 
     @Nullable
     private ExceptionFormat exceptionFormat;
@@ -86,6 +98,26 @@ public class EventJsonLayoutBaseFactory extends AbstractJsonLayoutBaseFactory<IL
         this.flattenMdc = flattenMdc;
     }
 
+    @JsonProperty
+    public boolean isFlattenKeyValuePairs() {
+        return flattenKeyValuePairs;
+    }
+
+    @JsonProperty
+    public void setFlattenKeyValuePairs(boolean flattenKeyValuePairs) {
+        this.flattenKeyValuePairs = flattenKeyValuePairs;
+    }
+
+    @JsonProperty
+    public Set<String> getIncludesKeyValuePairsKeys() {
+        return includesKeyValuePairsKeys;
+    }
+
+    @JsonProperty
+    public void setIncludesKeyValuePairsKeys(Set<String> includesKeyValuePairsKeys) {
+        this.includesKeyValuePairsKeys = includesKeyValuePairsKeys;
+    }
+
     /**
      * @since 2.0
      */
@@ -107,7 +139,7 @@ public class EventJsonLayoutBaseFactory extends AbstractJsonLayoutBaseFactory<IL
     public LayoutBase<ILoggingEvent> build(LoggerContext context, TimeZone timeZone) {
         final EventJsonLayout jsonLayout = new EventJsonLayout(createDropwizardJsonFormatter(),
             createTimestampFormatter(timeZone), createThrowableProxyConverter(context), includes, getCustomFieldNames(),
-            getAdditionalFields(), includesMdcKeys, flattenMdc);
+            getAdditionalFields(), includesMdcKeys, flattenMdc, includesKeyValuePairsKeys, flattenKeyValuePairs);
         jsonLayout.setContext(context);
         return jsonLayout;
     }
