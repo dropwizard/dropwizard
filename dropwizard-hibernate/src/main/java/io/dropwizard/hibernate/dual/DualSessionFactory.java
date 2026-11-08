@@ -43,12 +43,12 @@ public class DualSessionFactory implements SessionFactory {
 
     private final SessionFactory primary;
     private final SessionFactory reader;
-    private final ThreadLocal<SessionFactory> current = new ThreadLocal<SessionFactory>();
+    private final ThreadLocal<SessionFactory> current;
 
     public DualSessionFactory(final SessionFactory primary, final SessionFactory reader) {
         this.primary = primary;
         this.reader = reader;
-        this.current.set(primary);    // Main thread should use primary.
+        this.current = ThreadLocal.withInitial(() -> primary);    // Threads use primary until told otherwise.
     }
 
     /** Activates either the primary or the reader session factory depending on the readOnly parameter.
