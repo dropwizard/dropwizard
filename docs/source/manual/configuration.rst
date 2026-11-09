@@ -989,6 +989,8 @@ Name                   Default      Description
 rootFirst              true         Whether the root cause should be displayed first.
 depth                  full         The stack trace depth_.
 evaluators             (empty)      The packages to filter_ from the stacktrace.
+characterLimit         0            If greater than 0, limits the length of the exception content to be at most
+                                    characterLimit_ characters in length.
 ====================== ===========  ================================
 
 .. _depth:  https://logback.qos.ch/manual/layouts.html#ex
