@@ -107,9 +107,25 @@ public class CachingAuthenticator<C, P extends Principal> implements Authenticat
                 return optPrincipal;
             };
         }
-        this.cache = builder
-                .recordStats(supplier)
+        this.cache = withStats(builder, supplier)
                 .build(loader);
+    }
+
+    /**
+     * Enables statistics recording with the given supplier, unless the builder
+     * already records statistics (for example, when built from a
+     * {@link CaffeineSpec} containing {@code recordStats}). Caffeine only
+     * allows statistics recording to be set once, so reusing a builder that
+     * already records statistics keeps its existing counter instead of
+     * failing construction.
+     */
+    private static Caffeine<Object, Object> withStats(final Caffeine<Object, Object> builder,
+                                                      final Supplier<StatsCounter> supplier) {
+        try {
+            return builder.recordStats(supplier);
+        } catch (IllegalStateException e) {
+            return builder;
+        }
     }
 
     @Override
