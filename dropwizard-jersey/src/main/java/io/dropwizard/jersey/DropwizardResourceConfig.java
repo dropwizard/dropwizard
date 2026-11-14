@@ -7,6 +7,7 @@ import com.fasterxml.classmate.ResolvedType;
 import com.fasterxml.classmate.TypeResolver;
 import io.dropwizard.jersey.caching.CacheControlledResponseFeature;
 import io.dropwizard.jersey.params.AbstractParamConverterProvider;
+import io.dropwizard.jersey.params.UUIDParamConverterProvider;
 import io.dropwizard.jersey.sessions.SessionFactoryProvider;
 import io.dropwizard.jersey.validation.FuzzyEnumParamConverterProvider;
 import jakarta.validation.constraints.NotNull;
@@ -77,6 +78,7 @@ public class DropwizardResourceConfig extends ResourceConfig {
         register(io.dropwizard.jersey.optional.OptionalIntMessageBodyWriter.class);
         register(io.dropwizard.jersey.optional.OptionalLongMessageBodyWriter.class);
         register(AbstractParamConverterProvider.class);
+        register(new UUIDParamConverterProvider());
         register(new FuzzyEnumParamConverterProvider());
         register(new SessionFactoryProvider.Binder());
     }
