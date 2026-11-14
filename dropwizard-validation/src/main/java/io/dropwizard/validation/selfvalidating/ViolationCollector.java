@@ -2,6 +2,7 @@ package io.dropwizard.validation.selfvalidating;
 
 import jakarta.validation.ConstraintValidatorContext;
 import org.hibernate.validator.constraintvalidation.HibernateConstraintValidatorContext;
+import org.hibernate.validator.messageinterpolation.MessageParameterEscaping;
 
 import java.util.Collections;
 import java.util.Map;
@@ -155,7 +156,7 @@ public class ViolationCollector {
         for (Map.Entry<String, Object> messageParameter : messageParameters.entrySet()) {
             final Object value = messageParameter.getValue();
             final String escapedValue = value == null ? null : escapeMessageParameter(value.toString());
-            context.addMessageParameter(messageParameter.getKey(), escapedValue);
+            context.addMessageParameter(messageParameter.getKey(), escapedValue, MessageParameterEscaping.NONE);
         }
         return context;
     }
