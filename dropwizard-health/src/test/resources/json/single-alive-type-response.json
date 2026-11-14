@@ -1,0 +1,8 @@
+[
+    {
+        "name": "bar",
+        "healthy": true,
+        "type": "ALIVE",
+        "critical": true
+    }
+]
