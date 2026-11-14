@@ -44,6 +44,18 @@ class DAOTestExtensionTest {
     }
 
     @Test
+    void rollsBackTransactionOnError() {
+        assertThatExceptionOfType(AssertionError.class)
+            .isThrownBy(() -> daoTestExtension.inTransaction(() -> {
+                persist(new TestEntity("junit 5 description"));
+                throw new AssertionError("boom");
+            }));
+
+        // the failed transaction was rolled back, so the next one can start
+        daoTestExtension.inTransaction(() -> persist(new TestEntity("after error")));
+    }
+
+    @Test
     void rollsBackTransaction() {
         // given a successfully persisted entity
         final TestEntity testEntity = new TestEntity("junit 5 description");
