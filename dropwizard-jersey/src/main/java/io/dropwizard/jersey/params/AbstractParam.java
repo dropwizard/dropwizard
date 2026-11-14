@@ -61,7 +61,12 @@ public abstract class AbstractParam<T> {
         LOGGER.debug("Invalid input received: {}", input);
         String errorMessage = errorMessage(e);
         if (errorMessage.contains("%s")) {
-            errorMessage = String.format(errorMessage, parameterName);
+            // Substitute the parameter name literally rather than via String.format: when a
+            // subclass uses the default errorMessage(Exception), the message embeds the parsing
+            // exception text, which can contain attacker-controlled input. Treating that as a
+            // format string lets a value such as "%s%s" reach String.format as the format and
+            // throw an unhandled exception, turning the intended 400 into a 500.
+            errorMessage = errorMessage.replace("%s", parameterName);
         }
         return new ErrorMessage(getErrorStatus().getStatusCode(), errorMessage);
     }
