@@ -178,11 +178,11 @@ public class DAOTest {
             final T result = call.call();
             transaction.commit();
             return result;
+        } catch (final RuntimeException | Error e) {
+            transaction.rollback();
+            throw e;
         } catch (final Exception e) {
             transaction.rollback();
-            if (e instanceof RuntimeException runtimeException) {
-              throw runtimeException;
-            }
             throw new RuntimeException(e);
         }
     }
