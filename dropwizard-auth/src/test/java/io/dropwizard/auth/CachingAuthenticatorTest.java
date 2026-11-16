@@ -2,6 +2,7 @@ package io.dropwizard.auth;
 
 import com.codahale.metrics.MetricRegistry;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.CaffeineSpec;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -124,5 +125,24 @@ class CachingAuthenticatorTest {
         assertThat(cached.authenticate("credentials")).isEmpty();
         verify(underlying).authenticate("credentials");
         assertThat(cached.size()).isEqualTo(1);
+    }
+
+    @Test
+    void acceptsCacheSpecWithRecordStats() throws Exception {
+        cached = new CachingAuthenticator<>(new MetricRegistry(), underlying,
+            CaffeineSpec.parse("maximumSize=10,recordStats"));
+        assertThat(cached.authenticate("credentials")).isEqualTo(Optional.<Principal>of(new PrincipalImpl("principal")));
+        assertThat(cached.authenticate("credentials")).isEqualTo(Optional.<Principal>of(new PrincipalImpl("principal")));
+
+        verify(underlying, times(1)).authenticate("credentials");
+    }
+
+    @Test
+    void acceptsBuilderWithRecordStatsAlreadyEnabled() throws Exception {
+        Caffeine<Object, Object> caffeine = Caffeine.newBuilder().maximumSize(1L).executor(Runnable::run).recordStats();
+        cached = new CachingAuthenticator<>(new MetricRegistry(), underlying, caffeine);
+        assertThat(cached.authenticate("credentials")).isEqualTo(Optional.<Principal>of(new PrincipalImpl("principal")));
+
+        verify(underlying, times(1)).authenticate("credentials");
     }
 }

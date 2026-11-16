@@ -94,12 +94,28 @@ public class CachingAuthorizer<P extends Principal> implements Authorizer<P> {
         this.underlying = authorizer;
         this.cacheMisses = metricRegistry.meter(name(authorizer.getClass(), "cache-misses"));
         this.getsTimer = metricRegistry.timer(name(authorizer.getClass(), "gets"));
-        this.cache = builder
-                .recordStats(supplier)
+        this.cache = withStats(builder, supplier)
                 .build(key -> {
                     cacheMisses.mark();
                     return underlying.authorize(key.getPrincipal(), key.getRole(), key.getRequestContext());
                 });
+    }
+
+    /**
+     * Enables statistics recording with the given supplier, unless the builder
+     * already records statistics (for example, when built from a
+     * {@link CaffeineSpec} containing {@code recordStats}). Caffeine only
+     * allows statistics recording to be set once, so reusing a builder that
+     * already records statistics keeps its existing counter instead of
+     * failing construction.
+     */
+    private static Caffeine<Object, Object> withStats(final Caffeine<Object, Object> builder,
+                                                      final Supplier<StatsCounter> supplier) {
+        try {
+            return builder.recordStats(supplier);
+        } catch (IllegalStateException e) {
+            return builder;
+        }
     }
 
     @Override

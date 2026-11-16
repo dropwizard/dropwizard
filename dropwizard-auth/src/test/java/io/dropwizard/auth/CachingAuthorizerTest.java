@@ -1,6 +1,7 @@
 package io.dropwizard.auth;
 
 import com.codahale.metrics.MetricRegistry;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.CaffeineSpec;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import org.junit.jupiter.api.BeforeEach;
@@ -142,5 +143,24 @@ class CachingAuthorizerTest {
         assertThatNullPointerException()
             .isThrownBy(() -> cached.authorize(principal, role, requestContext))
             .isSameAs(e);
+    }
+
+    @Test
+    void acceptsCacheSpecWithRecordStats() {
+        final CachingAuthorizer<Principal> cachedWithStats = new CachingAuthorizer<>(
+            new MetricRegistry(), underlying, CaffeineSpec.parse("maximumSize=10,recordStats"));
+        assertThat(cachedWithStats.authorize(principal, role, requestContext)).isTrue();
+        assertThat(cachedWithStats.authorize(principal, role, requestContext)).isTrue();
+
+        verify(underlying, times(1)).authorize(principal, role, requestContext);
+    }
+
+    @Test
+    void acceptsBuilderWithRecordStatsAlreadyEnabled() {
+        final CachingAuthorizer<Principal> cachedWithStats = new CachingAuthorizer<>(
+            new MetricRegistry(), underlying, Caffeine.newBuilder().maximumSize(1L).recordStats());
+        assertThat(cachedWithStats.authorize(principal, role, requestContext)).isTrue();
+
+        verify(underlying, times(1)).authorize(principal, role, requestContext);
     }
 }
