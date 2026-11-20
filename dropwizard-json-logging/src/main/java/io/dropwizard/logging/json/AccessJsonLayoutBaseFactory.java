@@ -27,32 +27,56 @@ import java.util.TimeZone;
  * <tr>
  * <td>{@code requestHeaders}</td>
  * <td >(empty)</td>
- * <td>Set of request headers included in the JSON map as the ``headers`` field.</td>
+ * <td>Set of request headers included in the JSON map as the {@code headers} field.</td>
  * </tr>
  * <tr>
  * <td>{@code responseHeaders}</td>
  * <td>(empty)</td>
- * <td>Set of response headers included in the JSON map as the ``responseHeaders`` field.</td>
+ * <td>Set of response headers included in the JSON map as the {@code responseHeaders} field.</td>
+ * </tr>
+ * <tr>
+ * <td>{@code requestAttributes}</td>
+ * <td>(empty)</td>
+ * <td>Set of ServletRequest attributes included in the JSON map as the {@code requestAttributes} field.</td>
+ * </tr>
+ * <tr>
+ * <td>{@code flattenRequestHeaders}</td>
+ * <td>false</td>
+ * <td>Flatten the request headers to the root of the JSON object instead of nested in the {@code headers} field.</td>
+ * </tr>
+ * <tr>
+ * <td>{@code flattenResponseHeaders}</td>
+ * <td>false</td>
+ * <td>Flatten the response headers to the root of the JSON object instead of nested in the {@code responseHeaders} field.</td>
+ * </tr>
+ * <tr>
+ * <td>{@code flattenRequestAttributes}</td>
+ * <td>false</td>
+ * <td>Flatten the ServletRequest attributes to the root of the JSON object instead of nested in the {@code requestAttributes} field.</td>
  * </tr>
  * </table>
  */
 @JsonTypeName("access-json")
 public class AccessJsonLayoutBaseFactory extends AbstractJsonLayoutBaseFactory<IAccessEvent> {
     private EnumSet<AccessAttribute> includes = EnumSet.of(
-            AccessAttribute.REMOTE_ADDRESS,
-            AccessAttribute.REMOTE_USER,
-            AccessAttribute.REQUEST_TIME,
-            AccessAttribute.REQUEST_URI,
-            AccessAttribute.STATUS_CODE,
-            AccessAttribute.METHOD,
-            AccessAttribute.PROTOCOL,
-            AccessAttribute.CONTENT_LENGTH,
-            AccessAttribute.USER_AGENT,
-            AccessAttribute.TIMESTAMP);
+        AccessAttribute.REMOTE_ADDRESS,
+        AccessAttribute.REMOTE_USER,
+        AccessAttribute.REQUEST_TIME,
+        AccessAttribute.REQUEST_URI,
+        AccessAttribute.STATUS_CODE,
+        AccessAttribute.METHOD,
+        AccessAttribute.PROTOCOL,
+        AccessAttribute.CONTENT_LENGTH,
+        AccessAttribute.USER_AGENT,
+        AccessAttribute.TIMESTAMP);
 
     private Set<String> responseHeaders = Collections.emptySet();
     private Set<String> requestHeaders = Collections.emptySet();
     private Set<String> requestAttributes = Collections.emptySet();
+
+    private boolean flattenRequestHeaders = false;
+    private boolean flattenResponseHeaders = false;
+    private boolean flattenRequestAttributes = false;
 
     @JsonProperty
     public Set<String> getResponseHeaders() {
@@ -91,6 +115,36 @@ public class AccessJsonLayoutBaseFactory extends AbstractJsonLayoutBaseFactory<I
     }
 
     @JsonProperty
+    public boolean isFlattenRequestHeaders() {
+        return flattenRequestHeaders;
+    }
+
+    @JsonProperty
+    public void setFlattenRequestHeaders(boolean flattenRequestHeaders) {
+        this.flattenRequestHeaders = flattenRequestHeaders;
+    }
+
+    @JsonProperty
+    public boolean isFlattenResponseHeaders() {
+        return flattenResponseHeaders;
+    }
+
+    @JsonProperty
+    public void setFlattenResponseHeaders(boolean flattenResponseHeaders) {
+        this.flattenResponseHeaders = flattenResponseHeaders;
+    }
+
+    @JsonProperty
+    public boolean isFlattenRequestAttributes() {
+        return flattenRequestAttributes;
+    }
+
+    @JsonProperty
+    public void setFlattenRequestAttributes(boolean flattenRequestAttributes) {
+        this.flattenRequestAttributes = flattenRequestAttributes;
+    }
+
+    @JsonProperty
     public EnumSet<AccessAttribute> getIncludes() {
         return includes;
     }
@@ -103,11 +157,14 @@ public class AccessJsonLayoutBaseFactory extends AbstractJsonLayoutBaseFactory<I
     @Override
     public LayoutBase<IAccessEvent> build(LoggerContext context, TimeZone timeZone) {
         final AccessJsonLayout jsonLayout = new AccessJsonLayout(
-                createDropwizardJsonFormatter(),
-                createTimestampFormatter(timeZone),
-                includes,
-                getCustomFieldNames(),
-                getAdditionalFields());
+            createDropwizardJsonFormatter(),
+            createTimestampFormatter(timeZone),
+            getIncludes(),
+            getCustomFieldNames(),
+            getAdditionalFields(),
+            isFlattenRequestHeaders(),
+            isFlattenResponseHeaders(),
+            isFlattenRequestAttributes());
         jsonLayout.setContext(context);
         jsonLayout.setRequestHeaders(requestHeaders);
         jsonLayout.setResponseHeaders(responseHeaders);

@@ -67,15 +67,9 @@ public class EventJsonLayout extends AbstractJsonLayout<ILoggingEvent> {
             .add("message", isIncluded(EventAttribute.MESSAGE), event::getFormattedMessage)
             .add("context", isIncluded(EventAttribute.CONTEXT_NAME), () -> event.getLoggerContextVO().getName())
             .add("version", jsonProtocolVersion != null, jsonProtocolVersion)
+            .addMap("mdc", isIncluded(EventAttribute.MDC), flattenMdc, () -> filterMdc(event.getMDCPropertyMap()))
             .add("exception", isIncluded(EventAttribute.EXCEPTION) && event.getThrowableProxy() != null,
                 () -> throwableProxyConverter.convert(event));
-
-        final boolean includeMdc = isIncluded(EventAttribute.MDC);
-        if (flattenMdc) {
-            filterMdc(event.getMDCPropertyMap()).forEach((k,v) -> mapBuilder.add(k, includeMdc, v));
-        } else {
-            mapBuilder.addMap("mdc", includeMdc, () -> filterMdc(event.getMDCPropertyMap()));
-        }
 
         final boolean includeCallerData = isIncluded(EventAttribute.CALLER_DATA);
         final StackTraceElement[] callerData = event.getCallerData();
