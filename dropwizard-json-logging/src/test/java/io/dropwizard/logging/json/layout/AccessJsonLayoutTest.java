@@ -12,6 +12,7 @@ import org.mockito.Mockito;
 import java.time.ZoneId;
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -43,7 +44,7 @@ class AccessJsonLayoutTest {
         AccessAttribute.STATUS_CODE, AccessAttribute.METHOD, AccessAttribute.PROTOCOL, AccessAttribute.CONTENT_LENGTH,
         AccessAttribute.USER_AGENT, AccessAttribute.TIMESTAMP);
     private AccessJsonLayout accessJsonLayout = new AccessJsonLayout(jsonFormatter, timestampFormatter,
-        includes, Collections.emptyMap(), Collections.emptyMap());
+        includes, Collections.emptyMap(), Collections.emptyMap(), false, false, false);
 
     @BeforeEach
     void setUp() {
@@ -165,7 +166,7 @@ class AccessJsonLayoutTest {
                 "serviceName", "user-service",
                 "serviceVersion", "1.2.3");
         accessJsonLayout = new AccessJsonLayout(jsonFormatter, timestampFormatter, includes, Collections.emptyMap(),
-                additionalFields);
+                additionalFields, false, false, false);
         assertThat(accessJsonLayout.toJsonMap(event)).containsOnly(
             entry("timestamp", timestamp), entry("remoteUser", "john"),
             entry("method", "GET"), entry("uri", uri),
@@ -183,7 +184,8 @@ class AccessJsonLayoutTest {
                 "remoteAddress", "remote_address",
                 "contentLength", "content_length",
                 "requestTime", "request_time");
-        accessJsonLayout = new AccessJsonLayout(jsonFormatter, timestampFormatter, includes, customFieldNames, Collections.emptyMap());
+        accessJsonLayout = new AccessJsonLayout(jsonFormatter, timestampFormatter, includes, customFieldNames,
+            Collections.emptyMap(), false, false, false);
         assertThat(accessJsonLayout.toJsonMap(event)).containsOnly(
             entry("timestamp", timestamp), entry("remote_user", "john"),
             entry("method", "GET"), entry("uri", uri),
@@ -211,6 +213,47 @@ class AccessJsonLayoutTest {
         accessJsonLayout.setRequestAttributes(attributes.keySet());
         assertThat(accessJsonLayout.toJsonMap(event))
             .containsEntry("requestAttributes", attributes);
+    }
+
+    @Test
+    void testFlatten() {
+        final String attribute1 = "attribute1";
+        final String attribute2 = "attribute2";
+        final String attribute3 = "attribute3";
+        final Map<String, String> attributes =
+            Map.of(
+                attribute1, "value1",
+                attribute2, "value2",
+                attribute3, "value3");
+        when(event.getAttribute(attribute1)).thenReturn(attributes.get(attribute1));
+        when(event.getAttribute(attribute2)).thenReturn(attributes.get(attribute2));
+        when(event.getAttribute(attribute3)).thenReturn(attributes.get(attribute3));
+        final Map<String, Object> additionalFields = Map.of(
+            "serviceName", "user-service",
+            "serviceVersion", "1.2.3");
+        final Map<String, Object> expectedMap = new HashMap<>();
+        expectedMap.putAll(attributes);
+        expectedMap.putAll(this.responseHeaders);
+        expectedMap.putAll(this.requestHeaders);
+        expectedMap.putAll(additionalFields);
+        expectedMap.put("timestamp", timestamp);
+        expectedMap.put("remoteUser", "john");
+        expectedMap.put("method", "GET");
+        expectedMap.put("uri", uri);
+        expectedMap.put("protocol", "HTTP/1.1");
+        expectedMap.put("status", 200);
+        expectedMap.put("requestTime", 100L);
+        expectedMap.put("contentLength", 78L);
+        expectedMap.put("userAgent", userAgent);
+        expectedMap.put("remoteAddress", remoteAddress);
+
+        accessJsonLayout = new AccessJsonLayout(jsonFormatter, timestampFormatter, includes, Collections.emptyMap(),
+            additionalFields, true, true, true);
+        accessJsonLayout.setRequestHeaders(Set.of("Host", "User-Agent"));
+        accessJsonLayout.setResponseHeaders(Set.of("Transfer-Encoding", "Content-Type"));
+        accessJsonLayout.setRequestAttributes(attributes.keySet());
+
+        assertThat(accessJsonLayout.toJsonMap(event)).containsExactlyInAnyOrderEntriesOf(expectedMap);
     }
 
     @Test
