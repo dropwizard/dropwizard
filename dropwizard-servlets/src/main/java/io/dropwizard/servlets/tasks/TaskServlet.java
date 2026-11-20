@@ -17,6 +17,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.lang.reflect.Method;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collection;
@@ -34,7 +36,8 @@ import static java.util.Objects.requireNonNull;
 /**
  * A servlet which provides access to administrative {@link Task}s. It only responds to {@code POST}
  * requests, since most {@link Task}s aren't side effect free, and passes along the query string
- * parameters of the request to the task as a multimap.
+ * parameters of the request to the task as a multimap. Requests that a browser marks as cross-origin
+ * are rejected, so a web page can't make its visitors' browsers run tasks.
  *
  * @see Task
  */
@@ -42,6 +45,8 @@ public class TaskServlet extends HttpServlet {
     private static final long serialVersionUID = 7404713218661358124L;
     private static final Logger LOGGER = LoggerFactory.getLogger(TaskServlet.class);
     private static final String DEFAULT_CONTENT_TYPE = "text/plain;charset=UTF-8";
+    private static final String SEC_FETCH_SITE = "Sec-Fetch-Site";
+    private static final String ORIGIN = "Origin";
     private final ConcurrentMap<String, Task> tasks;
     private final ConcurrentMap<Task, TaskExecutor> taskExecutors;
 
@@ -138,6 +143,12 @@ public class TaskServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req,
                           HttpServletResponse resp) throws ServletException, IOException {
+        if (isCrossOriginRequest(req)) {
+            LOGGER.warn("Rejected cross-origin request to a task");
+            resp.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            return;
+        }
+
         final String pathInfo = req.getPathInfo();
         final Task task = pathInfo != null ? tasks.get(pathInfo) : null;
         if (task != null) {
@@ -172,6 +183,35 @@ public class TaskServlet extends HttpServlet {
                 resp.reset();
                 resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
             }
+        }
+    }
+
+    /**
+     * Browsers send form posts to other origins without a CORS preflight, so without this check any web page could
+     * make its visitors' browsers run tasks on an admin port they can reach, even one bound to localhost. Fetch
+     * Metadata ({@code Sec-Fetch-Site}) is used when present, otherwise the {@code Origin} header is compared with
+     * the requested host and port. Non-browser clients like {@code curl} send neither header and are not affected.
+     */
+    private static boolean isCrossOriginRequest(HttpServletRequest req) {
+        final String fetchSite = req.getHeader(SEC_FETCH_SITE);
+        if (fetchSite != null) {
+            return !"same-origin".equalsIgnoreCase(fetchSite) && !"none".equalsIgnoreCase(fetchSite);
+        }
+
+        final String origin = req.getHeader(ORIGIN);
+        if (origin == null) {
+            return false;
+        }
+
+        try {
+            final URI originUri = new URI(origin);
+            int originPort = originUri.getPort();
+            if (originPort == -1) {
+                originPort = "https".equalsIgnoreCase(originUri.getScheme()) ? 443 : 80;
+            }
+            return !req.getServerName().equalsIgnoreCase(originUri.getHost()) || req.getServerPort() != originPort;
+        } catch (URISyntaxException e) {
+            return true;
         }
     }
 

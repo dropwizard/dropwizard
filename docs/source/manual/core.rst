@@ -719,6 +719,10 @@ port. The task will receive any query parameters as arguments. For example::
     Running GC...
     Done!
 
+Requests that a browser marks as cross-origin, through the ``Sec-Fetch-Site`` header or an ``Origin`` header that
+doesn't match the requested host and port, are rejected with ``403 Forbidden``, so other web pages can't make a
+browser run your tasks. Clients like ``curl`` don't send these headers and aren't affected.
+
 You can also extend ``PostBodyTask`` to create a task which uses the body of the post request. Here's an example:
 
 .. dropwizard_literalinclude:: /examples/core/src/main/java/io/dropwizard/documentation/EchoTask.java
