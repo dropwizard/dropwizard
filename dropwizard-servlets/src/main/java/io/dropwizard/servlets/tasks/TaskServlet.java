@@ -144,7 +144,7 @@ public class TaskServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req,
                           HttpServletResponse resp) throws ServletException, IOException {
         if (isCrossOriginRequest(req)) {
-            LOGGER.warn("Rejected cross-origin request to {}", req.getRequestURI());
+            LOGGER.warn("Rejected cross-origin request to a task");
             resp.setStatus(HttpServletResponse.SC_FORBIDDEN);
             return;
         }
