@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
@@ -299,5 +300,20 @@ class HealthCheckManager implements HealthCheckRegistryListener, HealthStatusChe
     public Optional<HealthStateView> healthStateView(@NonNull final String name) {
         return Optional.ofNullable(checks.get(name))
             .map(ScheduledHealthCheck::view);
+    }
+
+    @NonNull
+    @Override
+    public Set<HealthStateView> healthStateViewByType(@NonNull String type) {
+        if (type.equalsIgnoreCase("alive") || type.equalsIgnoreCase("ready")) {
+            return checks.values()
+                .stream()
+                .filter(check -> check.getType().name().equalsIgnoreCase(type))
+                .map(ScheduledHealthCheck::view)
+                .collect(Collectors.toSet());
+        } else {
+            LOGGER.warn("Unexpected health check type requested: type={}", type);
+            return Set.of();
+        }
     }
 }
