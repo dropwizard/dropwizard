@@ -1,6 +1,7 @@
 package io.dropwizard.logging.json.layout;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.Min;
 
 import java.util.Collections;
 import java.util.List;
@@ -12,6 +13,8 @@ public class ExceptionFormat {
     private boolean rootFirst = true;
     private String depth = "full";
     private List<String> evaluators = Collections.emptyList();
+    @Min(0)
+    private int characterLimit = 0;
 
     @JsonProperty
     public boolean isRootFirst() {
@@ -41,5 +44,15 @@ public class ExceptionFormat {
     @JsonProperty
     public void setEvaluators(List<String> evaluators) {
         this.evaluators = evaluators;
+    }
+
+    @JsonProperty
+    public int getCharacterLimit() {
+        return characterLimit;
+    }
+
+    @JsonProperty
+    public void setCharacterLimit(int characterLimit) {
+        this.characterLimit = characterLimit;
     }
 }

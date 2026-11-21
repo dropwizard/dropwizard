@@ -8,6 +8,7 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.LayoutBase;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import io.dropwizard.logging.common.TruncatingThrowableHandlingConverter;
 import io.dropwizard.logging.json.layout.EventJsonLayout;
 import io.dropwizard.logging.json.layout.ExceptionFormat;
 import org.jspecify.annotations.Nullable;
@@ -34,7 +35,7 @@ import java.util.TimeZone;
  * <tr>
  * <td>{@code includesMdcKeys}</td>
  * <td>(empty)</td>
- * <td>Set of MDC keys which should be included in the JSON map. By default includes everything.</td>
+ * <td>Set of MDC keys which should be included in the JSON map. By default, includes everything.</td>
  * </tr>
  * <tr>
  * <td>{@code flattenMdc}</td>
@@ -132,7 +133,12 @@ public class EventJsonLayoutBaseFactory extends AbstractJsonLayoutBaseFactory<IL
         throwableHandlingConverter.setOptionList(options);
         throwableHandlingConverter.setContext(context);
 
-        return throwableHandlingConverter;
+        int charLimit = exceptionFormat.getCharacterLimit();
+        if (charLimit > 0) {
+            // wrap converter if char limit is defined
+            return new TruncatingThrowableHandlingConverter(throwableHandlingConverter, charLimit);
+        } else {
+            return throwableHandlingConverter;
+        }
     }
-
 }
