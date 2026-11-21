@@ -27,6 +27,7 @@ import static java.util.Collections.singletonList;
 import static java.util.Collections.singletonMap;
 import static java.util.Collections.unmodifiableList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -384,6 +385,54 @@ class HealthCheckManagerTest {
             .isEqualTo(1L);
         assertThat(unhealthyCounter).hasValue(3);
         assertThat(healthyCounter).hasValue(0);
+    }
+
+    @Test
+    void shouldNotifyStateChangedListenersOncePerStateChange() {
+        // given
+        final HealthCheckConfiguration config = new HealthCheckConfiguration();
+        config.setName(NAME);
+        config.setCritical(true);
+        config.setSchedule(new Schedule());
+        final AtomicInteger stateChangedCounter = new AtomicInteger();
+        final HealthStateListener countingListener = new HealthStateListener() {
+            @Override
+            public void onHealthyCheck(String healthCheckName) {
+            }
+
+            @Override
+            public void onUnhealthyCheck(String healthCheckName) {
+            }
+
+            @Override
+            public void onStateChanged(String healthCheckName, boolean healthy) {
+                stateChangedCounter.incrementAndGet();
+            }
+        };
+        final HealthStateListener throwingListener = new HealthStateListener() {
+            @Override
+            public void onHealthyCheck(String healthCheckName) {
+            }
+
+            @Override
+            public void onUnhealthyCheck(String healthCheckName) {
+            }
+
+            @Override
+            public void onStateChanged(String healthCheckName, boolean healthy) {
+                throw new IllegalStateException("broken listener");
+            }
+        };
+        final HealthCheckManager manager = new HealthCheckManager(singletonList(config), scheduler,
+            new MetricRegistry(), SHUTDOWN_WAIT, true, List.of(countingListener, throwingListener));
+        manager.onHealthCheckAdded(NAME, mock(HealthCheck.class));
+
+        // when
+        assertThatCode(() -> manager.onStateChanged(NAME, false))
+            .doesNotThrowAnyException();
+
+        // then
+        assertThat(stateChangedCounter).hasValue(1);
     }
 
     @Test
