@@ -145,6 +145,20 @@ public class AssetServletTest {
     }
 
     @Test
+    void ignoresPathParametersWhenDeterminingMediaType() throws Exception {
+        for (String suffix : new String[]{";x.html", ";.svg"}) {
+            request.setURI(DUMMY_SERVLET + "example.txt" + suffix);
+            response = HttpTester.parseResponse(SERVLET_TESTER.getResponses(request.generate()));
+            assertThat(response.getStatus())
+                    .isEqualTo(200);
+            assertThat(response.getContent())
+                    .isEqualTo("HELLO THERE");
+            assertThat(MimeTypes.CACHE.get(response.get(HttpHeader.CONTENT_TYPE)))
+                    .isEqualTo(MimeTypes.Type.TEXT_PLAIN_UTF_8);
+        }
+    }
+
+    @Test
     void servesFilesFromRootsWithSameName() throws Exception {
         request.setURI(DUMMY_SERVLET + "example2.txt");
         response = HttpTester.parseResponse(SERVLET_TESTER.getResponses(request.generate()));
