@@ -76,6 +76,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.validateMockitoUsage;
+import static org.mockito.ArgumentMatchers.assertArg;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -140,6 +141,21 @@ class HttpClientBuilderTest {
         connectionManager = spy(InstrumentedHttpClientConnectionManager.builder(metricRegistry).socketFactoryRegistry(registry).build());
         apacheBuilder = org.apache.hc.client5.http.impl.classic.HttpClientBuilder.create();
         anotherApacheBuilder = spy(AnotherHttpClientBuilder.create());
+    }
+
+    @Test
+    void timeoutsLongerThanAnIntOfMillisecondsAreNotTruncated() {
+        configuration.setTimeout(Duration.days(50));
+        configuration.setConnectionRequestTimeout(Duration.days(30));
+
+        final RequestConfig requestConfig = builder.using(configuration)
+            .createClient(apacheBuilder, connectionManager, "test")
+            .getDefaultRequestConfig();
+
+        assertThat(requestConfig.getResponseTimeout().toDays()).isEqualTo(50);
+        assertThat(requestConfig.getConnectionRequestTimeout().toDays()).isEqualTo(30);
+        verify(connectionManager).setDefaultSocketConfig(assertArg(socketConfig ->
+            assertThat(socketConfig.getSoTimeout().toDays()).isEqualTo(50)));
     }
 
     @AfterEach
