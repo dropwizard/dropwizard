@@ -60,7 +60,9 @@ public class CachingAuthorizer<P extends Principal> implements Authorizer<P> {
         final MetricRegistry metricRegistry,
         final Authorizer<P> authorizer,
         final CaffeineSpec cacheSpec) {
-        this(metricRegistry, authorizer, Caffeine.from(cacheSpec));
+        this(metricRegistry, authorizer, Caffeine.from(cacheSpec),
+                () -> new MetricsStatsCounter(metricRegistry, name(CachingAuthorizer.class)),
+                cacheSpec.toParsableString().contains("recordStats"));
     }
 
     /**
@@ -91,11 +93,22 @@ public class CachingAuthorizer<P extends Principal> implements Authorizer<P> {
         final Caffeine<Object, Object> builder,
         final Supplier<StatsCounter> supplier
         ) {
+        this(metricRegistry, authorizer, builder, supplier, false);
+    }
+
+    private CachingAuthorizer(
+        final MetricRegistry metricRegistry,
+        final Authorizer<P> authorizer,
+        final Caffeine<Object, Object> builder,
+        final Supplier<StatsCounter> supplier,
+        final boolean statsAlreadyConfigured
+        ) {
         this.underlying = authorizer;
         this.cacheMisses = metricRegistry.meter(name(authorizer.getClass(), "cache-misses"));
         this.getsTimer = metricRegistry.timer(name(authorizer.getClass(), "gets"));
-        this.cache = builder
-                .recordStats(supplier)
+        final Caffeine<Object, Object> cacheBuilder =
+                statsAlreadyConfigured ? builder : builder.recordStats(supplier);
+        this.cache = cacheBuilder
                 .build(key -> {
                     cacheMisses.mark();
                     return underlying.authorize(key.getPrincipal(), key.getRole(), key.getRequestContext());

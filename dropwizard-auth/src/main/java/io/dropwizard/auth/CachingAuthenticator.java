@@ -43,7 +43,9 @@ public class CachingAuthenticator<C, P extends Principal> implements Authenticat
     public CachingAuthenticator(final MetricRegistry metricRegistry,
                                 final Authenticator<C, P> authenticator,
                                 final CaffeineSpec cacheSpec) {
-        this(metricRegistry, authenticator, Caffeine.from(cacheSpec), false);
+        this(metricRegistry, authenticator, Caffeine.from(cacheSpec), false,
+                () -> new MetricsStatsCounter(metricRegistry, name(CachingAuthenticator.class)),
+                cacheSpec.toParsableString().contains("recordStats"));
     }
 
     /**
@@ -88,6 +90,15 @@ public class CachingAuthenticator<C, P extends Principal> implements Authenticat
                                 final Caffeine<Object, Object> builder,
                                 final boolean cacheNegativeResult,
                                 final Supplier<StatsCounter> supplier) {
+        this(metricRegistry, authenticator, builder, cacheNegativeResult, supplier, false);
+    }
+
+    private CachingAuthenticator(final MetricRegistry metricRegistry,
+                                final Authenticator<C, P> authenticator,
+                                final Caffeine<Object, Object> builder,
+                                final boolean cacheNegativeResult,
+                                final Supplier<StatsCounter> supplier,
+                                final boolean statsAlreadyConfigured) {
         this.cacheMisses = metricRegistry.meter(name(authenticator.getClass(), "cache-misses"));
         this.gets = metricRegistry.timer(name(authenticator.getClass(), "gets"));
         CacheLoader<C, Optional<P>> loader;
@@ -107,9 +118,9 @@ public class CachingAuthenticator<C, P extends Principal> implements Authenticat
                 return optPrincipal;
             };
         }
-        this.cache = builder
-                .recordStats(supplier)
-                .build(loader);
+        final Caffeine<Object, Object> cacheBuilder =
+                statsAlreadyConfigured ? builder : builder.recordStats(supplier);
+        this.cache = cacheBuilder.build(loader);
     }
 
     @Override
