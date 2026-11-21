@@ -1,5 +1,7 @@
 package io.dropwizard.util;
 
+import java.math.BigInteger;
+
 /**
  * A unit of information using SI and IEC prefixes.
  *
@@ -86,6 +88,9 @@ public enum DataSizeUnit {
      */
     PEBIBYTES(8L * 1024L * 1024L * 1024L * 1024L * 1024L);
 
+    private static final BigInteger MIN_LONG = BigInteger.valueOf(Long.MIN_VALUE);
+    private static final BigInteger MAX_LONG = BigInteger.valueOf(Long.MAX_VALUE);
+
     private final long bits;
 
     DataSizeUnit(long bits) {
@@ -94,13 +99,31 @@ public enum DataSizeUnit {
 
     /**
      * Converts a size of the given unit into the current unit.
+     * <p>Conversions whose result does not fit in a {@code long} saturate to {@link Long#MIN_VALUE}
+     * if negative or {@link Long#MAX_VALUE} if positive, as {@link java.util.concurrent.TimeUnit}
+     * does.</p>
      *
      * @param size the magnitude of the size
      * @param unit the unit of the size
      * @return the given size in the current unit.
      */
     public long convert(long size, DataSizeUnit unit) {
-        return (size * unit.bits) / bits;
+        try {
+            return Math.multiplyExact(size, unit.bits) / bits;
+        } catch (ArithmeticException tooManyBitsForALong) {
+            // The bit count overflowed, but the converted size may still be representable when
+            // converting to a coarser unit, so redo the scaling in arbitrary precision.
+            final BigInteger converted = BigInteger.valueOf(size)
+                    .multiply(BigInteger.valueOf(unit.bits))
+                    .divide(BigInteger.valueOf(bits));
+            if (converted.compareTo(MAX_LONG) > 0) {
+                return Long.MAX_VALUE;
+            }
+            if (converted.compareTo(MIN_LONG) < 0) {
+                return Long.MIN_VALUE;
+            }
+            return converted.longValue();
+        }
     }
 
     /**

@@ -1,5 +1,6 @@
 package io.dropwizard.util;
 
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -185,5 +186,24 @@ class DataSizeUnitTest {
     void oneSrcUnitInDstUnits(DataSizeUnit src, DataSizeUnit dst, Converter c, long value) {
         assertThat(dst.convert(1, src)).isEqualTo(value);
         assertThat(c.toOneDst()).isEqualTo(value);
+    }
+
+    @Test
+    void convertsSizesWhoseBitCountDoesNotFitInALong() {
+        // 2 EiB: 2^31 gibibytes is 2^64 bits, so the bit count wraps to zero
+        assertThat(DataSizeUnit.BYTES.convert(2147483648L, DataSizeUnit.GIBIBYTES))
+                .isEqualTo(2305843009213693952L);
+        assertThat(DataSizeUnit.KIBIBYTES.convert(Long.MAX_VALUE, DataSizeUnit.BYTES))
+                .isEqualTo(Long.MAX_VALUE / 1024L);
+        assertThat(DataSizeUnit.PEBIBYTES.convert(Long.MAX_VALUE, DataSizeUnit.KIBIBYTES))
+                .isEqualTo(Long.MAX_VALUE / (1024L * 1024L * 1024L * 1024L));
+    }
+
+    @Test
+    void saturatesSizesThatDoNotFitInALong() {
+        assertThat(DataSizeUnit.BYTES.convert(Long.MAX_VALUE, DataSizeUnit.PEBIBYTES))
+                .isEqualTo(Long.MAX_VALUE);
+        assertThat(DataSizeUnit.BYTES.convert(Long.MIN_VALUE, DataSizeUnit.PEBIBYTES))
+                .isEqualTo(Long.MIN_VALUE);
     }
 }
