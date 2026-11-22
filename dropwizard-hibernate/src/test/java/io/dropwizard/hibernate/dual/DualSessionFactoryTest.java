@@ -3,10 +3,12 @@ package io.dropwizard.hibernate.dual;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -31,6 +33,13 @@ public class DualSessionFactoryTest {
     public static void beforeAll() throws Exception {
         when(primaryFactory.getCurrentSession()).thenReturn(primary);
         when(readerFactory.getCurrentSession()).thenReturn(reader);
+    }
+
+    @Test
+    public void threadsThatNeverPreparedUseThePrimaryFactory() throws Exception {
+        try (final DualSessionFactory factory = new DualSessionFactory(primaryFactory, readerFactory)) {
+            assertThat(CompletableFuture.supplyAsync(factory::current).get()).isEqualTo(primaryFactory);
+        }
     }
 
     public static Stream<Arguments> current() {
