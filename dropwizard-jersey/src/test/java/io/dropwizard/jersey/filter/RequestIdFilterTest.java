@@ -66,4 +66,28 @@ class RequestIdFilterTest {
             "GET", "/some/path", requestId, 200, 2048);
     }
 
+    @Test
+    void generatesRequestIdWhenIncomingContainsControlCharacters() throws Exception {
+        String injected = "e286b503-aa36-43fe-8312-95ee8773e348\r\nX-Injected: evil";
+        when(request.getHeaderString("X-Request-Id")).thenReturn(injected);
+
+        requestIdFilter.filter(request, response);
+
+        String requestId = (String) headers.getFirst("X-Request-Id");
+        assertThat(requestId).isNotEqualTo(injected);
+        assertThat(UUID.fromString(requestId)).isNotNull();
+        verify(logger).trace("method={} path={} request_id={} status={} length={}",
+            "GET", "/some/path", requestId, 200, 2048);
+    }
+
+    @Test
+    void generatesRequestIdWhenIncomingIsMalformed() throws Exception {
+        when(request.getHeaderString("X-Request-Id")).thenReturn("short");
+
+        requestIdFilter.filter(request, response);
+
+        String requestId = (String) headers.getFirst("X-Request-Id");
+        assertThat(UUID.fromString(requestId)).isNotNull();
+    }
+
 }

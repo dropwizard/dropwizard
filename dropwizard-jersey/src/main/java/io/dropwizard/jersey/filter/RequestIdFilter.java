@@ -14,11 +14,16 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.regex.Pattern;
 
 /**
  * This class adds an "X-Request-Id" HTTP response header and logs the following
  * information: request method, request path, request ID, response status,
  * response length (or -1 if not known).
+ *
+ * <p>An incoming "X-Request-Id" is honored only if it matches the format documented by the Heroku
+ * article below; otherwise a fresh id is generated. This keeps a client from injecting an
+ * arbitrary value into the reflected response header and the log line.</p>
  *
  * @see <a href="https://devcenter.heroku.com/articles/http-request-id">Heroku - HTTP Request IDs</a>
  */
@@ -27,6 +32,9 @@ import java.util.concurrent.ThreadLocalRandom;
 public class RequestIdFilter implements ContainerResponseFilter {
 
     private static final String REQUEST_ID = "X-Request-Id";
+
+    // Matches the validation Heroku applies to an incoming Request-Id (see class javadoc).
+    private static final Pattern REQUEST_ID_PATTERN = Pattern.compile("[a-zA-Z0-9=+/-]{20,200}");
 
     @SuppressWarnings("Slf4jLoggerShouldBeFinal") // Non-final to enable injecting a mock in tests
     private Logger logger = LoggerFactory.getLogger(RequestIdFilter.class);
@@ -40,7 +48,7 @@ public class RequestIdFilter implements ContainerResponseFilter {
             final ContainerResponseContext response) throws IOException {
 
         String id = Optional.ofNullable(request.getHeaderString(REQUEST_ID))
-            .filter(header -> !header.isEmpty())
+            .filter(header -> REQUEST_ID_PATTERN.matcher(header).matches())
             .orElseGet(() -> generateRandomUuid().toString());
 
         logger.trace("method={} path={} request_id={} status={} length={}",
