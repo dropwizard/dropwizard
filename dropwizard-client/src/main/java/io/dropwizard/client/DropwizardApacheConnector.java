@@ -92,12 +92,8 @@ public class DropwizardApacheConnector implements Connector {
             final Response.StatusType status = Statuses.from(apacheResponse.getCode(), reasonPhrase == null ? "" : reasonPhrase);
 
             final ClientResponse jerseyResponse = new ClientResponse(status, jerseyRequest);
-            for (Header header : apacheResponse.getHeaders()) {
-                jerseyResponse.getHeaders().computeIfAbsent(header.getName(), k -> new ArrayList<>())
-                    .add(header.getValue());
-            }
-
             final HttpEntity httpEntity = apacheResponse.getEntity();
+            copyResponseHeaders(apacheResponse, httpEntity, jerseyResponse);
             jerseyResponse.setEntityStream(httpEntity != null ? httpEntity.getContent() :
                     new ByteArrayInputStream(new byte[0]));
 
@@ -105,6 +101,58 @@ public class DropwizardApacheConnector implements Connector {
         } catch (Exception e) {
             throw new ProcessingException(e);
         }
+    }
+
+    /**
+     * Copy the Apache response headers onto the Jersey response, reconciling
+     * {@link HttpHeaders#CONTENT_ENCODING} and {@link HttpHeaders#CONTENT_LENGTH} with the entity.
+     * <p>
+     * When content compression is enabled (the default), Apache HttpClient transparently
+     * decompresses the response body, unwrapping the entity to identity encoding while leaving
+     * the original {@code Content-Encoding} and {@code Content-Length} headers on the message.
+     * Passing those stale headers through would misdescribe the decompressed stream and drive
+     * Jersey's {@code GZipDecoder} to attempt a second decompression (see issue #11249).
+     * The entity is therefore treated as the source of truth for these two headers.
+     *
+     * @param apacheResponse the Apache HTTP response whose headers are copied
+     * @param httpEntity     the (possibly {@code null}) response entity, after HttpClient processing
+     * @param jerseyResponse the Jersey response to populate
+     */
+    private static void copyResponseHeaders(CloseableHttpResponse apacheResponse, @Nullable HttpEntity httpEntity,
+                                            ClientResponse jerseyResponse) {
+        for (Header header : apacheResponse.getHeaders()) {
+            final String headerName = header.getName();
+            if (httpEntity != null && isEntityDerivedHeader(headerName)) {
+                continue;
+            }
+            jerseyResponse.getHeaders().computeIfAbsent(headerName, k -> new ArrayList<>())
+                .add(header.getValue());
+        }
+
+        if (httpEntity == null) {
+            return;
+        }
+
+        final String contentEncoding = httpEntity.getContentEncoding();
+        if (contentEncoding != null) {
+            jerseyResponse.getHeaders().computeIfAbsent(HttpHeaders.CONTENT_ENCODING, k -> new ArrayList<>())
+                .add(contentEncoding);
+        }
+        final long contentLength = httpEntity.getContentLength();
+        if (contentLength >= 0) {
+            jerseyResponse.getHeaders().computeIfAbsent(HttpHeaders.CONTENT_LENGTH, k -> new ArrayList<>())
+                .add(Long.toString(contentLength));
+        }
+    }
+
+    /**
+     * Whether the given header is one that {@link #copyResponseHeaders} re-derives from the
+     * response entity ({@link HttpHeaders#CONTENT_ENCODING} or {@link HttpHeaders#CONTENT_LENGTH})
+     * rather than copying from the raw Apache response.
+     */
+    private static boolean isEntityDerivedHeader(String headerName) {
+        return HttpHeaders.CONTENT_ENCODING.equalsIgnoreCase(headerName)
+            || HttpHeaders.CONTENT_LENGTH.equalsIgnoreCase(headerName);
     }
 
     /**
