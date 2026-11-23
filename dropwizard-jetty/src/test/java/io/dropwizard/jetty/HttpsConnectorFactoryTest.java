@@ -11,12 +11,16 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.eclipse.jetty.server.ConnectionFactory;
+import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
+import org.eclipse.jetty.server.Request;
+import org.eclipse.jetty.server.Response;
 import org.eclipse.jetty.server.SecureRequestCustomizer;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.SslConnectionFactory;
+import org.eclipse.jetty.util.Callback;
 import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.util.resource.ResourceFactory;
 import org.eclipse.jetty.util.security.Credential;
@@ -28,8 +32,16 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledForJreRange;
 import org.junit.jupiter.api.condition.JRE;
 
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocket;
+import javax.net.ssl.TrustManagerFactory;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.util.Arrays;
@@ -40,6 +52,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 import static org.assertj.core.api.Assertions.entry;
@@ -388,6 +401,40 @@ class HttpsConnectorFactoryTest {
     }
 
     @Test
+    void rejectsRevokedClientCertificateWhenCrlPathIsSet() throws Exception {
+        final HttpsConnectorFactory https = new HttpsConnectorFactory();
+        https.setBindHost("127.0.0.1");
+        https.setPort(0);
+        https.setKeyStorePath(resourcePath("stores/server.p12"));
+        https.setKeyStoreType("PKCS12");
+        https.setKeyStorePassword("password");
+        https.setTrustStorePath(resourcePath("stores/ca_truststore.p12"));
+        https.setTrustStoreType("PKCS12");
+        https.setTrustStorePassword("password");
+        https.setNeedClientAuth(true);
+        https.setCrlPath(new File(resourcePath("stores/crl.pem")));
+
+        final Server server = new Server();
+        final ServerConnector connector = (ServerConnector) https.build(server, new MetricRegistry(), "test-https-connector", null);
+        server.addConnector(connector);
+        server.setHandler(new Handler.Abstract.NonBlocking() {
+            @Override
+            public boolean handle(Request request, Response response, Callback callback) {
+                response.setStatus(200);
+                callback.succeeded();
+                return true;
+            }
+        });
+        server.start();
+        try {
+            assertThat(canConnectWithClientCertificate(connector.getLocalPort(), "stores/client.p12")).isTrue();
+            assertThat(canConnectWithClientCertificate(connector.getLocalPort(), "stores/revoked_client.p12")).isFalse();
+        } finally {
+            server.stop();
+        }
+    }
+
+    @Test
     void partitionSupportOnlyEnable() {
         final String[] supported = {"SSLv2Hello", "SSLv3", "TLSv1", "TLSv1.1", "TLSv1.2"};
         final String[] enabled = {"TLSv1", "TLSv1.1", "TLSv1.2"};
@@ -452,5 +499,40 @@ class HttpsConnectorFactoryTest {
 
     private static Resource newResource(String resource, Server server) {
         return ResourceFactory.of(server).newResource(resource);
+    }
+
+    private static String resourcePath(String resource) throws Exception {
+        return new File(requireNonNull(HttpsConnectorFactoryTest.class.getClassLoader().getResource(resource)).toURI()).getPath();
+    }
+
+    private static boolean canConnectWithClientCertificate(int port, String keyStoreResource) throws Exception {
+        final KeyStore keyStore = KeyStore.getInstance("PKCS12");
+        try (InputStream in = new FileInputStream(resourcePath(keyStoreResource))) {
+            keyStore.load(in, "password".toCharArray());
+        }
+        final KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+        keyManagerFactory.init(keyStore, "password".toCharArray());
+
+        final KeyStore trustStore = KeyStore.getInstance("PKCS12");
+        try (InputStream in = new FileInputStream(resourcePath("stores/ca_truststore.p12"))) {
+            trustStore.load(in, "password".toCharArray());
+        }
+        final TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+        trustManagerFactory.init(trustStore);
+
+        final SSLContext sslContext = SSLContext.getInstance("TLS");
+        sslContext.init(keyManagerFactory.getKeyManagers(), trustManagerFactory.getTrustManagers(), null);
+
+        // With TLS 1.3 the server only rejects the client certificate after the client has finished
+        // its side of the handshake, so send a request and check that a response comes back.
+        try (SSLSocket socket = (SSLSocket) sslContext.getSocketFactory().createSocket("localhost", port)) {
+            socket.startHandshake();
+            socket.getOutputStream().write("GET / HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n".getBytes(StandardCharsets.US_ASCII));
+            socket.getOutputStream().flush();
+            final byte[] response = socket.getInputStream().readNBytes(12);
+            return new String(response, StandardCharsets.US_ASCII).equals("HTTP/1.1 200");
+        } catch (IOException e) {
+            return false;
+        }
     }
 }

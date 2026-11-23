@@ -448,7 +448,8 @@ validateCerts                    false                            Whether or not
                                                                   implemented.
 validatePeers                    false                            Whether or not to validate TLS peer certificates. This option will
                                                                   cause unconditional failure in Dropwizard 1.x until a new validation mechanism can be
-                                                                  implemented.
+                                                                  implemented. Always enabled when ``crlPath``, ``enableCRLDP`` or
+                                                                  ``enableOCSP`` is set.
 supportedProtocols               (none)                           A list of protocols (e.g., ``SSLv3``, ``TLSv1``) which are supported. All
                                                                   other protocols will be refused.
 excludedProtocols                ["SSL.*", "TLSv1", "TLSv1\\.1"]  A list of protocols (e.g., ``SSLv3``, ``TLSv1``) which are excluded. These
