@@ -26,9 +26,13 @@ import static org.glassfish.jersey.model.Parameter.Source.UNKNOWN;
 
 public class ConstraintMessage {
 
+    // Paths can contain client-chosen map keys, so the number of distinct cache keys must be bounded.
+    private static final long PREFIX_CACHE_MAX_SIZE = 10_000L;
+
     private static final Cache<AbstractMap.SimpleImmutableEntry<Path, ? extends ConstraintDescriptor<?>>, String> PREFIX_CACHE =
             Caffeine.newBuilder()
             .expireAfterWrite(Duration.ofHours(1))
+            .maximumSize(PREFIX_CACHE_MAX_SIZE)
             .build();
 
     private ConstraintMessage() {
