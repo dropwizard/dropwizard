@@ -106,15 +106,26 @@ public class MapBuilder {
      * @since 2.0
      */
     public MapBuilder addMap(String fieldName, boolean include, Supplier<Map<String, ?>> supplier) {
+        return addMap(fieldName, include, false, supplier);
+    }
+
+    /**
+     * Adds the map value to the provided map under the provided field name, if it should be
+     * included. The supplier is only invoked if the field is to be included.
+     */
+    public MapBuilder addMap(String fieldName, boolean include, boolean flatten, Supplier<Map<String, ?>> supplier) {
         if (include) {
             Map<String, ?> value = supplier.get();
             if (value != null && !value.isEmpty()) {
-                map.put(getFieldName(fieldName), value);
+                if (flatten) {
+                    value.forEach((k, v) -> map.put(getFieldName(k), v));
+                } else {
+                    map.put(getFieldName(fieldName), value);
+                }
             }
         }
         return this;
     }
-
 
     /**
      * Adds and optionally formats the timestamp to the provided map under the provided field name,

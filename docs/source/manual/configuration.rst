@@ -1011,10 +1011,13 @@ JSON access log layout
       includes: [timestamp, remoteAddress, remoteUser, protocol, method, requestUri, statusCode, requestTime, contentLength, userAgent]
       requestHeaders:
         - X-Request-Id
+      flattenRequestHeaders: false
       responseHeaders:
         - X-Request-Id
+      flattenResponseHeaders: false
       requestAttributes:
         - SomeAttributeName
+      flattenRequestAttributes: false
       customFieldNames:
         timestamp: "@timestamp"
       additionalFields:
@@ -1052,8 +1055,11 @@ includes                 (timestamp, remoteAddress,
                                                       - ``responseContent``   *false*    Whether to include the response body as the ``responseContent`` field. Must register_ the TeeFilter_ to be effective.
                                                       - ``serverName``        *false*    Whether to include the name of the server to which the request was sent as the ``serverName`` field.
 requestHeaders           (empty)                      Set of request headers included in the JSON map as the ``headers`` field.
+flattenRequestHeaders    false                        Flatten the request headers to the root of the JSON object instead of nested in the ``headers`` field.
 responseHeaders          (empty)                      Set of response headers included in the JSON map as the ``responseHeaders`` field.
+flattenResponseHeaders   false                        Flatten the response headers to the root of the JSON object instead of nested in the ``responseHeaders`` field.
 requestAttributes        (empty)                      Set of ServletRequest attributes included in the JSON map as the ``requestAttributes`` field.
+flattenRequestAttributes false                        Flatten the ServletRequest attributes to the root of the JSON object instead of nested in the ``requestAttributes`` field.
 customFieldNames         (empty)                      Map of field name replacements in the JSON map. For example ``requestTime:request_time, userAgent:user_agent)``.
 additionalFields         (empty)                      Map of fields to add in the JSON map.
 =======================  ===========================  ================

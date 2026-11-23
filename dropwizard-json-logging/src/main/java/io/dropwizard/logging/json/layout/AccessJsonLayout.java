@@ -33,14 +33,23 @@ public class AccessJsonLayout extends AbstractJsonLayout<IAccessEvent> {
     private final Map<String, Object> additionalFields;
     private final Map<String, String> customFieldNames;
 
+    private final boolean flattenRequestHeaders;
+    private final boolean flattenResponseHeaders;
+    private final boolean flattenRequestAttributes;
+
     public AccessJsonLayout(JsonFormatter jsonFormatter, TimestampFormatter timestampFormatter,
                             Set<AccessAttribute> includes, Map<String, String> customFieldNames,
-                            Map<String, Object> additionalFields) {
+                            Map<String, Object> additionalFields, boolean flattenRequestHeaders,
+                            boolean flattenResponseHeaders, boolean flattenRequestAttributes) {
         super(jsonFormatter);
+
         this.timestampFormatter = timestampFormatter;
         this.additionalFields = new HashMap<>(additionalFields);
         this.customFieldNames = new HashMap<>(customFieldNames);
         this.includes = EnumSet.copyOf(includes);
+        this.flattenRequestHeaders = flattenRequestHeaders;
+        this.flattenResponseHeaders = flattenResponseHeaders;
+        this.flattenRequestAttributes = flattenRequestAttributes;
     }
 
     @Override
@@ -54,7 +63,7 @@ public class AccessJsonLayout extends AbstractJsonLayout<IAccessEvent> {
             .add("requestContent", isIncluded(AccessAttribute.REQUEST_CONTENT), event::getRequestContent)
             .add("remoteAddress", isIncluded(AccessAttribute.REMOTE_ADDRESS), event::getRemoteAddr)
             .add("remoteUser", isIncluded(AccessAttribute.REMOTE_USER), event::getRemoteUser)
-            .addMap("headers", !requestHeaders.isEmpty(),
+            .addMap("headers", !requestHeaders.isEmpty(), flattenRequestHeaders,
                 () -> filterHeaders(event.getRequestHeaderMap(), requestHeaders))
             .addMap("params", isIncluded(AccessAttribute.REQUEST_PARAMETERS), event::getRequestParameterMap)
             .addNumber("requestTime", isIncluded(AccessAttribute.REQUEST_TIME), event::getElapsedTime)
@@ -63,13 +72,13 @@ public class AccessJsonLayout extends AbstractJsonLayout<IAccessEvent> {
             .add("pathQuery", isIncluded(AccessAttribute.PATH_QUERY), () -> event.getRequestURI() + event.getQueryString())
             .add("remoteHost", isIncluded(AccessAttribute.REMOTE_HOST), event::getRemoteHost)
             .add("responseContent", isIncluded(AccessAttribute.RESPONSE_CONTENT), event::getResponseContent)
-            .addMap("responseHeaders", !responseHeaders.isEmpty(),
+            .addMap("responseHeaders", !responseHeaders.isEmpty(), flattenResponseHeaders,
                 () -> filterHeaders(event.getResponseHeaderMap(), responseHeaders))
             .add("serverName", isIncluded(AccessAttribute.SERVER_NAME), event::getServerName)
             .addNumber("status", isIncluded(AccessAttribute.STATUS_CODE), event::getStatusCode)
             .add("userAgent", isIncluded(AccessAttribute.USER_AGENT), () -> event.getRequestHeader(USER_AGENT))
             .add("version", jsonProtocolVersion != null, jsonProtocolVersion)
-            .addMap("requestAttributes", !requestAttributes.isEmpty(),
+            .addMap("requestAttributes", !requestAttributes.isEmpty(), flattenRequestAttributes,
                 () -> filterRequestAttributes(requestAttributes, event))
             .build();
     }

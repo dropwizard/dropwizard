@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import java.time.ZoneId;
 import java.util.Collections;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
@@ -95,11 +96,13 @@ class MapBuilderTest {
         assertThat(mapBuilder.add("message", true, () -> message).build())
             .containsOnly(entry("message", message));
     }
+
     @Test
     void testAddNumberSupplier() {
         assertThat(mapBuilder.addNumber("status", true, () -> 200)
             .build()).containsOnly(entry("status", 200));
     }
+
     @Test
     void testAddMapSupplier() {
         assertThat(mapBuilder.addMap("headers", true, () -> Collections.singletonMap("userAgent", "Lynx/2.8.7"))
@@ -107,13 +110,21 @@ class MapBuilderTest {
     }
 
     @Test
+    void testAddFlattenedMapSupplier() {
+        assertThat(mapBuilder.addMap("headers", true, true, () -> Map.of("userAgent", "Lynx/2.8.7", "k2", "v2"))
+            .build()).containsOnly(entry("userAgent", "Lynx/2.8.7"), entry("k2", "v2"));
+    }
+
+    @Test
     void testAddSupplierNotInvoked() {
         assertThat(mapBuilder.add("status", false, () -> {throw new RuntimeException();}).build()).isEmpty();
     }
+
     @Test
     void testAddNumberSupplierNotInvoked() {
         assertThat(mapBuilder.addNumber("status", false, () -> {throw new RuntimeException();}).build()).isEmpty();
     }
+
     @Test
     void testAddMapSupplierNotInvoked() {
         assertThat(mapBuilder.addMap("status", false, () -> {throw new RuntimeException();}).build()).isEmpty();
@@ -129,6 +140,7 @@ class MapBuilderTest {
         assertThat(mapBuilder.build().keySet())
             .containsExactly("timestamp", "status", "code", "timestamp2");
     }
+
     @Test
     void testTimestampIsAlwaysFirstWhenRenamed() {
         final MapBuilder mapBuilder = new MapBuilder(timestampFormatter,
