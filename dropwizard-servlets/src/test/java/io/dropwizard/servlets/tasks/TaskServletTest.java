@@ -11,6 +11,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -28,6 +30,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -66,6 +69,69 @@ class TaskServletTest {
 
         when(request.getMethod()).thenReturn("POST");
         when(request.getPathInfo()).thenReturn("/gc");
+        when(request.getParameterNames()).thenReturn(Collections.enumeration(Collections.emptyList()));
+        when(response.getWriter()).thenReturn(output);
+        when(request.getInputStream()).thenReturn(bodyStream);
+
+        servlet.service(request, response);
+
+        verify(gc).execute(Collections.emptyMap(), output);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"cross-site", "same-site"})
+    @SuppressWarnings("unchecked")
+    void rejectsCrossOriginRequestsMarkedByFetchMetadata(String fetchSite) throws Exception {
+        final ServletInputStream bodyStream = new TestServletInputStream(
+            new ByteArrayInputStream("".getBytes(StandardCharsets.UTF_8)));
+
+        when(request.getMethod()).thenReturn("POST");
+        when(request.getPathInfo()).thenReturn("/gc");
+        when(request.getHeader("Sec-Fetch-Site")).thenReturn(fetchSite);
+        when(request.getHeader("Origin")).thenReturn("https://attacker.example");
+        when(request.getParameterNames()).thenReturn(Collections.enumeration(Collections.emptyList()));
+        when(request.getInputStream()).thenReturn(bodyStream);
+        when(response.getWriter()).thenReturn(mock(PrintWriter.class));
+
+        servlet.service(request, response);
+
+        verify(response).setStatus(403);
+        verify(gc, never()).execute(any(Map.class), any(PrintWriter.class));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"https://attacker.example", "http://localhost:8080", "null"})
+    @SuppressWarnings("unchecked")
+    void rejectsRequestsFromAnotherOrigin(String origin) throws Exception {
+        final ServletInputStream bodyStream = new TestServletInputStream(
+            new ByteArrayInputStream("".getBytes(StandardCharsets.UTF_8)));
+
+        when(request.getMethod()).thenReturn("POST");
+        when(request.getPathInfo()).thenReturn("/gc");
+        when(request.getServerName()).thenReturn("localhost");
+        when(request.getServerPort()).thenReturn(8081);
+        when(request.getHeader("Origin")).thenReturn(origin);
+        when(request.getParameterNames()).thenReturn(Collections.enumeration(Collections.emptyList()));
+        when(request.getInputStream()).thenReturn(bodyStream);
+        when(response.getWriter()).thenReturn(mock(PrintWriter.class));
+
+        servlet.service(request, response);
+
+        verify(response).setStatus(403);
+        verify(gc, never()).execute(any(Map.class), any(PrintWriter.class));
+    }
+
+    @Test
+    void runsSameOriginRequests() throws Exception {
+        final PrintWriter output = mock(PrintWriter.class);
+        final ServletInputStream bodyStream = new TestServletInputStream(
+            new ByteArrayInputStream("".getBytes(StandardCharsets.UTF_8)));
+
+        when(request.getMethod()).thenReturn("POST");
+        when(request.getPathInfo()).thenReturn("/gc");
+        when(request.getServerName()).thenReturn("localhost");
+        when(request.getServerPort()).thenReturn(8081);
+        when(request.getHeader("Origin")).thenReturn("http://localhost:8081");
         when(request.getParameterNames()).thenReturn(Collections.enumeration(Collections.emptyList()));
         when(response.getWriter()).thenReturn(output);
         when(request.getInputStream()).thenReturn(bodyStream);
